@@ -37,7 +37,6 @@ All `rhino-cli` subcommands follow a verb-last grammar introduced in §2a of the
 | `repo-governance validate vendor`          | `repo-governance vendor validate`          |
 | `repo-governance validate layer-coherence` | `repo-governance layer-coherence validate` |
 | `repo-governance validate traceability`    | `repo-governance traceability validate`    |
-| `specs validate gherkin-cardinality`       | `specs gherkin-cardinality validate`       |
 
 **Cross-domain moves** (domain changes, not just verb position):
 
@@ -55,12 +54,12 @@ All `rhino-cli` subcommands follow a verb-last grammar introduced in §2a of the
 
 - `env validate`, `env init`, `env backup`, `env restore`
 - `env staged-guard validate`
-- `specs structure validate`, `specs behavior-coverage validate`
+- `specs structure validate`
 - All `{domain} audit` leaf commands
 
 **Rules**:
 
 - Verbs (`validate`, `generate`, `clean`, `scaffold`) are always the LAST token.
-- Nouns are kebab-case (`heading-hierarchy`, `gherkin-cardinality`, `frontmatter-dates`).
+- Nouns are kebab-case (`heading-hierarchy`, `frontmatter-dates`).
 - Cross-domain moves require removing the old path entirely — no aliases are kept.
 - Any new CLI command added must follow this verb-last pattern.

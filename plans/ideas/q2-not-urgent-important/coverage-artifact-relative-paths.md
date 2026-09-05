@@ -61,8 +61,9 @@ the next project to add coverage must remember to write.
 The cost of acting is near zero and shrinking, because the hard part is done: two per-project ignore
 rules already exist and no tooling consumes either artifact. A repo-wide grep for `coverage.json`
 outside `plans/`, `node_modules/`, and build output finds only `.prettierignore`, the two `.gitignore`
-entries, and Nx terminal-output cache logs; `beaver-nest-be`'s `specs:behavior:coverage` target
-invokes rhino-cli with no `--unit-report` flags, so no gate ingests the JSON. That means the remaining
+entries, and Nx terminal-output cache logs; BeaverNest's now-retired
+`specs:behavior:coverage` target invoked rhino-cli with no `--unit-report` flags, so no gate ingested
+the JSON. That means the remaining
 work is a cheap generalization done while the context is fresh, before a third .NET or Rust project
 lands and re-introduces the same trap by omission.
 

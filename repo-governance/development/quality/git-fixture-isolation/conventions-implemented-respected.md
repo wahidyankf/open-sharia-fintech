@@ -27,13 +27,14 @@ This convention implements/respects the following conventions:
   exit-status check is missing. Standard 5 below (exit-status checking) is explicitly retained as
   one of the six required layers, not replaced.
 
-- **[Three-Level Testing Standard](.././three-level-testing-standard.md)**: CLI apps in this monorepo
+- **[Behaviour-Driven Development](../../behaviour-driven-development.md)**: CLI apps in this monorepo
   (`rhino-cli`, `crane-cli`) run integration tests against real `/tmp` filesystem
   fixtures per that standard's "CLI App Implementation Pattern." Any such fixture that also shells
   out to `git` (to build a throwaway repository as test data) is squarely inside this convention's
   scope -- the isolation boundary the Three-Level Testing Standard draws around the filesystem must
   extend to the git repository state living inside that filesystem, not stop at the directory
-  boundary alone.
+  boundary alone. Public CLI process invocation belongs to E2E, while the local fixture setup and
+  direct adapter proof belong to Integration.
 
 - **[Reproducible Environments Convention (Git Identity Guardrail)](../../workflow/reproducible-environments.md)**:
   That convention's Git Identity Guardrail prohibits any agent from writing a `[user]` override

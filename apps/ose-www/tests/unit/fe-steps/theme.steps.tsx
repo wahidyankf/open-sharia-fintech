@@ -1,9 +1,14 @@
-import "./helpers/test-setup";
 import path from "path";
 import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
 import { expect, vi } from "vitest";
 import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 import React, { useState } from "react";
+
+const { observedTheme, themeObserver } = vi.hoisted(() => {
+  const observedTheme = { selected: "light" };
+  const themeObserver = { update: (_theme: string) => {} };
+  return { observedTheme, themeObserver };
+});
 
 // Mock lucide-react icons
 vi.mock("lucide-react", () => ({
@@ -27,59 +32,8 @@ vi.mock("@open-sharia-enterprise/web-ui", () => ({
     }
     return <button {...props}>{children}</button>;
   },
-}));
-
-// A test wrapper that shows the current theme in the DOM
-// so we can verify setTheme was called without relying on module state
-function ThemeToggleWithTracker() {
-  const [selectedTheme, setSelectedTheme] = useState<string>("light");
-
-  // We mock useTheme inside this component via next-themes mock
-  // The DropdownMenuItem mock calls onClick which calls setTheme
-  // We need to intercept that call and update selectedTheme
-  return (
-    <div>
-      <div data-testid="selected-theme">{selectedTheme}</div>
-      {/* Inline mock of ThemeToggle that tracks setTheme calls via state */}
-      <div>
-        <button aria-label="Toggle theme" data-testid="sun-icon-wrapper">
-          <svg data-testid="sun-icon" />
-        </button>
-        <div data-testid="dropdown-content">
-          <button role="menuitem" onClick={() => setSelectedTheme("light")}>
-            Light
-          </button>
-          <button role="menuitem" onClick={() => setSelectedTheme("dark")}>
-            Dark
-          </button>
-          <button role="menuitem" onClick={() => setSelectedTheme("system")}>
-            System
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Mock next-themes (needed for other components)
-vi.mock("next-themes", () => ({
-  useTheme: () => ({
-    theme: "light",
-    setTheme: vi.fn(),
-    resolvedTheme: "light",
-  }),
-  ThemeProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-}));
-
-// Mock @/features/app-shell/shell/ui/dropdown-menu (needed for import resolution)
-vi.mock("@/features/app-shell/shell/ui/dropdown-menu", () => ({
   DropdownMenu: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  DropdownMenuTrigger: ({ children, asChild }: { children: React.ReactNode; asChild?: boolean }) => {
-    if (asChild && React.isValidElement(children)) {
-      return children;
-    }
-    return <>{children}</>;
-  },
+  DropdownMenuTrigger: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   DropdownMenuContent: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="dropdown-content">{children}</div>
   ),
@@ -90,8 +44,34 @@ vi.mock("@/features/app-shell/shell/ui/dropdown-menu", () => ({
   ),
 }));
 
+vi.mock("next-themes", () => ({
+  useTheme: () => ({
+    theme: "light",
+    setTheme: (theme: string) => {
+      observedTheme.selected = theme;
+      themeObserver.update(theme);
+    },
+    resolvedTheme: "light",
+  }),
+  ThemeProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
+import { DEFAULT_THEME } from "@/app/layout";
+import { ThemeToggle } from "@/features/app-shell/shell/theme-toggle";
+
+function ThemeHarness() {
+  const [selectedTheme, setSelectedTheme] = useState(DEFAULT_THEME);
+  themeObserver.update = setSelectedTheme;
+  return (
+    <>
+      <output data-testid="selected-theme">{selectedTheme}</output>
+      <ThemeToggle />
+    </>
+  );
+}
+
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ose/www/behaviors/frontend/app-shell/theme.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ose/www/behaviours/frontend/app-shell/theme.feature"),
 );
 
 describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
@@ -101,38 +81,36 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
 
   Background(({ Given }) => {
     Given("the app is running", () => {
-      // jsdom environment is ready
+      expect(ThemeToggle).toBeTypeOf("function");
     });
   });
 
   Scenario("Default theme is light mode", ({ When, Then }) => {
     When("the site loads without a stored theme preference", () => {
-      render(<ThemeToggleWithTracker />);
+      render(<ThemeHarness />);
     });
 
-    // @covers specs/apps/ose/www/behaviors/frontend/app-shell/theme.feature:Default theme is light mode
     Then("the theme is set to light mode", () => {
-      // The toggle button is rendered and initial theme is light
-      const selectedTheme = screen.getByTestId("selected-theme");
-      expect(selectedTheme).toHaveTextContent("light");
+      expect(DEFAULT_THEME).toBe("light");
+      expect(screen.getByTestId("selected-theme")).toHaveTextContent("light");
       expect(screen.getByTestId("sun-icon")).toBeInTheDocument();
     });
   });
 
   Scenario("Theme toggle switches between modes", ({ Given, When, Then }) => {
     Given("the site is in light mode", () => {
-      render(<ThemeToggleWithTracker />);
+      render(<ThemeHarness />);
+      expect(DEFAULT_THEME).toBe("light");
     });
 
     When("the user clicks the theme toggle and selects dark mode", () => {
       const darkMenuItem = screen.getByRole("menuitem", { name: /Dark/i });
       fireEvent.click(darkMenuItem);
+      expect(observedTheme.selected).toBe("dark");
     });
 
-    // @covers specs/apps/ose/www/behaviors/frontend/app-shell/theme.feature:Theme toggle switches between modes
     Then("the site switches to dark mode", () => {
-      const selectedTheme = screen.getByTestId("selected-theme");
-      expect(selectedTheme).toHaveTextContent("dark");
+      expect(observedTheme.selected).toBe("dark");
     });
   });
 });

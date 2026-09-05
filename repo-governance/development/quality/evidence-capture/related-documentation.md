@@ -18,7 +18,7 @@ when_to_use: "Use when you need a related convention on verification or plan str
 # Related Documentation
 
 - [Plan Execution Workflow](../../../workflows/plan/plan-execution.md) — Step 2d mandates evidence capture
-  during manual behavioral assertions.
+  during manual behavioural assertions.
 - [plan-execution-checker](../../../../.claude/agents/plan/plan-execution-checker.md) — validates evidence
   presence as part of Step 7.
 - [plan-maker](../../../../.claude/agents/plan/plan-maker.md) — emits evidence-capture steps in delivery

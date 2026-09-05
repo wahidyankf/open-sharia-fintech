@@ -1,7 +1,7 @@
 /**
  * Step definitions for the Home Screen feature.
  *
- * Covers: specs/apps/organiclever/app-web/behaviors/journal/home-screen.feature
+ * Covers: specs/apps/organiclever/app-web/behaviours/journal/home-screen.feature
  *
  * Selector notes:
  * - Home screen always renders "Good morning" as the greeting and "Last 7 days" in the week card.
@@ -12,6 +12,7 @@
  */
 import { createBdd } from "playwright-bdd";
 import { appPath } from "./_app-shell";
+import { seedHomeJournalEntries } from "./_journal-db";
 import { expect } from "@playwright/test";
 
 const { Given, When, Then } = createBdd();
@@ -19,9 +20,11 @@ const { Given, When, Then } = createBdd();
 Given("the home screen is loaded with entries", async ({ page }) => {
   await page.goto(appPath("home"));
   await page.waitForLoadState("domcontentloaded");
+  await seedHomeJournalEntries(page);
+  await page.reload();
+  await expect(page.getByText("Atomic Habits")).toBeVisible({ timeout: 15000 });
 });
 
-// @covers specs/apps/organiclever/app-web/behaviors/journal/home-screen.feature:Home screen shows entry list
 Then("the entry list is visible", async ({ page }) => {
   // Home screen always shows "Recent entries" label or the workout module section
   await expect(page.getByText("Recent entries").or(page.getByText("Last 7 days")).first()).toBeVisible({
@@ -32,69 +35,46 @@ Then("the entry list is visible", async ({ page }) => {
 Given("the home screen is loaded with workout and reading entries", async ({ page }) => {
   await page.goto(appPath("home"));
   await page.waitForLoadState("domcontentloaded");
+  await seedHomeJournalEntries(page);
+  await page.reload();
+  await expect(page.getByText("Atomic Habits")).toBeVisible({ timeout: 15000 });
+  await expect(page.getByText("Kettlebell day")).toBeVisible({ timeout: 15000 });
 });
 
 When("the user selects the Workout filter", async ({ page }) => {
   // Filter chips are <button> elements with the module label as text
   const btn = page.getByRole("button", { name: "Workout" });
-  if (await btn.isVisible()) {
-    await btn.click();
-  }
+  await expect(btn).toBeVisible();
+  await btn.click();
 });
 
-// @covers specs/apps/organiclever/app-web/behaviors/journal/home-screen.feature:Filter entries by kind
 Then("only workout entries are shown", async ({ page }) => {
-  // When the Workout filter is active the WorkoutModuleView is visible,
-  // showing "Workout" section. The entry list section is hidden for workout-only filter.
-  await expect(page.getByText("Workout").first()).toBeVisible({ timeout: 10000 });
+  await expect(page.getByRole("button", { name: "Workout" })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByText("Atomic Habits")).not.toBeVisible();
+  await expect(page.getByText("Workout templates")).toBeVisible();
 });
 
 Given("the home screen shows an entry", async ({ page }) => {
   await page.goto(appPath("home"));
   await page.waitForLoadState("domcontentloaded");
+  await seedHomeJournalEntries(page);
+  await page.reload();
+  await expect(page.getByText("Atomic Habits")).toBeVisible({ timeout: 15000 });
 });
 
 When("the user taps the entry", async ({ page }) => {
-  // EntryItem renders as a plain <div onClick> — no testid, no role.
-  // Try to click the first entry icon div (border-radius 10px colored div).
-  // If no entries exist (empty DB), this step is a graceful no-op.
-  const entryIcon = page.locator("div[style*='border-radius: 10px']").first();
-  if (await entryIcon.isVisible({ timeout: 2000 }).catch(() => false)) {
-    await entryIcon.click();
-    return;
-  }
-  // Fallback: click any visible entry text
-  const entryText = page.getByText(/Quick workout|Atomic Habits|Focus session|Morning run/).first();
-  if (await entryText.isVisible({ timeout: 1000 }).catch(() => false)) {
-    await entryText.click();
-  }
+  await page.getByText("Atomic Habits").click();
 });
 
 Then("the entry detail sheet opens", async ({ page }) => {
-  // EntryDetailSheet renders a fixed overlay with aria-label="Close" button.
-  // If no entries exist, the sheet won't open — assert the home screen loaded instead.
-  const closeBtn = page.getByRole("button", { name: "Close" });
-  if (await closeBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-    return; // sheet is open — pass
-  }
-  // No entries exist: assert the home screen is still loaded (the app works)
-  await expect(page.getByText("Good morning").or(page.getByText("Last 7 days")).first()).toBeVisible({
-    timeout: 5000,
-  });
+  await expect(page.getByRole("button", { name: "Close" })).toBeVisible();
+  await expect(page.getByText("James Clear")).toBeVisible();
 });
 
 When("the user closes the sheet", async ({ page }) => {
-  // EntryDetailSheet close button has aria-label="Close" — only close if open
-  const closeBtn = page.getByRole("button", { name: "Close" });
-  if (await closeBtn.isVisible({ timeout: 1000 }).catch(() => false)) {
-    await closeBtn.click();
-  }
+  await page.getByRole("button", { name: "Close" }).click();
 });
 
-// @covers specs/apps/organiclever/app-web/behaviors/journal/home-screen.feature:Open entry detail sheet
 Then("the entry detail sheet is closed", async ({ page }) => {
-  // After close (or if never opened), the home screen should be visible
-  await expect(page.getByText("Good morning").or(page.getByText("Last 7 days")).first()).toBeVisible({
-    timeout: 5000,
-  });
+  await expect(page.getByRole("button", { name: "Close" })).not.toBeVisible();
 });

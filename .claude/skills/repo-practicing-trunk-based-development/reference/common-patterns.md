@@ -12,8 +12,8 @@ Unit 1 — natural infrastructure seam:
 - Complete and test the internally useful infrastructure increment
 - Push to <plan-branch>; open a draft PR; land it once production-deployable and green
 
-Unit 2 — natural behavior seam:
-- Implement a complete-and-inert behavior increment behind the flag
+Unit 2 — natural behaviour seam:
+- Implement a complete-and-inert behaviour increment behind the flag
 - Test enabled and disabled paths and record rollout, rollback, and removal
 - Push to <plan-branch>; land it once production-deployable and green
 

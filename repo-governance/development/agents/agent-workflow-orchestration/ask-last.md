@@ -32,7 +32,7 @@ or authority to commit, push, deploy, publish, or create durable plan artifacts.
 
 - Search the repository and history for the existing storage abstraction before asking which one
   to use.
-- Ask when two product behaviors remain equally supported by evidence and the choice changes the
+- Ask when two product behaviours remain equally supported by evidence and the choice changes the
   user-visible contract.
 
 ## Validation

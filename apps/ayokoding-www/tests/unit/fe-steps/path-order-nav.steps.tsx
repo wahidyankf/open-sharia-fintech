@@ -1,6 +1,6 @@
 import path from "path";
 import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
-import { cleanup, render, screen, within, fireEvent } from "@testing-library/react";
+import { act, cleanup, render, screen, within, fireEvent } from "@testing-library/react";
 import { expect, vi } from "vitest";
 
 // course-paths plan (ayokoding-learning-path-03-navigation-ui), Cycles 2.2, 2.8, 2.9 — step
@@ -143,7 +143,7 @@ function MobileNavConsumer() {
 }
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviors/frontend/course-paths/path-order-nav.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviours/frontend/course-paths/path-order-nav.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {
@@ -169,7 +169,6 @@ describeFeature(feature, ({ Scenario }) => {
       expect(pageNav.getByRole("link", { name: /Data Structures/i })).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/path-order-nav.feature:Prev and next follow the active path's order
     And("both links preserve the path context query parameter", () => {
       const pageNav = within(screen.getByRole("navigation", { name: "Page navigation" }));
       expect(pageNav.getByRole("link", { name: /Git/i }).getAttribute("href")).toBe(
@@ -185,10 +184,8 @@ describeFeature(feature, ({ Scenario }) => {
     "The path rail shows the whole ordered arc beside a course at desktop width",
     ({ Given, When, Then, And }) => {
       Given("a reader opens a course in path context on a desktop-width viewport", () => {
-        // The rail component (path-rail.tsx) is not itself viewport-conditional — its host
-        // (SidebarHost) is shown/hidden by ResizableSidebar's existing md: breakpoint classes,
-        // unchanged by this plan (Cycle 2.8 REFACTOR note). Desktop width itself is exercised at
-        // E2E level; this scenario asserts the rail's own rendered content.
+        Object.defineProperty(window, "innerWidth", { configurable: true, value: 1280 });
+        expect(window.innerWidth).toBeGreaterThanOrEqual(768);
       });
 
       When("the page renders", () => {
@@ -219,7 +216,6 @@ describeFeature(feature, ({ Scenario }) => {
         expect(current.className).toContain("font-semibold");
       });
 
-      // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/path-order-nav.feature:The path rail shows the whole ordered arc beside a course at desktop width
       And("the rail offers a link back to the full path and to the whole course library", () => {
         expect(screen.getByRole("link", { name: /view full path/i })).toBeTruthy();
         expect(screen.getByRole("link", { name: /browse all courses/i })).toBeTruthy();
@@ -228,6 +224,8 @@ describeFeature(feature, ({ Scenario }) => {
   );
 
   Scenario("The path rail collapses into the existing navigation drawer on a phone", ({ Given, When, Then, And }) => {
+    let trigger: HTMLElement;
+
     Given("a reader opens a course in path context on a phone-width viewport", () => {
       mockPathname = "/en/learn/courses/just-enough-python";
       mockSearchParams = new URLSearchParams({ path: fixtureManifest.pathId });
@@ -241,20 +239,24 @@ describeFeature(feature, ({ Scenario }) => {
           <MobileNavConsumer />
         </MobileNavOpenProvider>,
       );
-      fireEvent.click(screen.getByRole("button", { name: /Open path course list/i }));
+      trigger = screen.getByRole("button", { name: /Open path course list/i });
+      fireEvent.click(trigger);
     });
 
     Then("the existing left navigation drawer opens showing that path's ordered courses", () => {
       expect(screen.getByRole("navigation", { name: "Python Fundamentals course list" })).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/path-order-nav.feature:The path rail collapses into the existing navigation drawer on a phone
-    And("focus moves into the drawer and returns to the control when the drawer is dismissed", () => {
-      // Radix's Dialog primitive (the shipped Sheet is built on it, unmodified — no custom
-      // focus-trap code exists in this plan's diff) already owns focus-in/focus-return; live
-      // focus-management behavior is verified at E2E level, matching the established convention
-      // for library-owned behavior (see course-rehome-redirects.steps.tsx's live-navigation notes).
-      expect(true).toBe(true);
+    And("focus moves into the drawer and returns to the control when the drawer is dismissed", async () => {
+      await act(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 0));
+      });
+      expect(document.activeElement).not.toBe(trigger);
+      fireEvent.keyDown(document, { key: "Escape", code: "Escape" });
+      await act(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 0));
+      });
+      expect(document.activeElement).toBe(trigger);
     });
   });
 });

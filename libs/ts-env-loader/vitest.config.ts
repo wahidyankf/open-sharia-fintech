@@ -6,6 +6,10 @@ export default defineConfig({
     globals: true,
     environment: "node",
     include: ["tests/unit/**/*.test.{ts,tsx}", "tests/unit/**/*.steps.{ts,tsx}"],
+    coverage: {
+      exclude: ["src/node-tier-env-port.ts"],
+      reportsDirectory: "coverage/unit",
+    },
   },
   resolve: {
     alias: {

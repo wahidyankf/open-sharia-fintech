@@ -1,6 +1,7 @@
 module OrganicleverBe.Tests.Unit.Tests.MessagingTests
 
 open System.Net
+open System.Threading.Tasks
 open Xunit
 open OrganicleverBe.Contexts.Messaging.Domain
 open OrganicleverBe.Contexts.Messaging.Application
@@ -37,3 +38,33 @@ let ``messaging status endpoint reflects a recorded outcome`` () =
     let resp = client.GetAsync("/api/v1/system/status/messaging").Result
     let body = resp.Content.ReadAsStringAsync().Result
     Assert.Contains("delivered_and_acked", body)
+
+[<Fact>]
+let ``runDemoWith publishes receives and acknowledges through injected ports`` () =
+    let calls = ResizeArray<string>()
+
+    let ports: OrganicleverBe.Contexts.Messaging.Infrastructure.JetStreamDemoPorts =
+        { EnsureStream =
+            fun () ->
+                calls.Add("stream")
+                Task.CompletedTask
+          EnsureConsumer =
+            fun () ->
+                calls.Add("consumer")
+                Task.CompletedTask
+          Publish =
+            fun () ->
+                calls.Add("publish")
+                Task.CompletedTask
+          ReceiveAndAcknowledge =
+            fun () ->
+                calls.Add("receive-and-ack")
+                Task.FromResult true }
+
+    let result =
+        OrganicleverBe.Contexts.Messaging.Infrastructure.runDemoWith ports
+        |> Async.AwaitTask
+        |> Async.RunSynchronously
+
+    Assert.Equal(DeliveredAndAcked, result)
+    Assert.Equal<string list>([ "stream"; "consumer"; "publish"; "receive-and-ack" ], List.ofSeq calls)

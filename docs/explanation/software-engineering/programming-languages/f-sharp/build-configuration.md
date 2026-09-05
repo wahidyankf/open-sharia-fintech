@@ -392,7 +392,7 @@ MethodInfo.MakeGenericMethod() is not compatible with AOT compilation`. F#'s pri
    though it publishes with only warnings (`IL2104`/`IL3053`). `Argu` builds its argument spec by
    reflecting over discriminated-union case metadata, which trimming removes by default.
    **Fix**: `System.CommandLine` (proven AOT-clean in the same spike — zero trim/AOT warnings, correct
-   runtime behavior) is the safe alternative if a trimmed or AOT publish is required.
+   runtime behaviour) is the safe alternative if a trimmed or AOT publish is required.
 3. **`System.Text.Json`'s default reflection-based serializer is disabled**, crashing with
    `System.InvalidOperationException: Reflection-based serialization has been disabled for this
 application`. **Fix**: a source-generated `JsonSerializerContext` per serialized type (the

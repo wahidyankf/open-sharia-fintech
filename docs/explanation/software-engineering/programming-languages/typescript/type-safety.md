@@ -744,7 +744,7 @@ logEntity(donation); // ✓ OK
 ### Conditional Constraints
 
 ```typescript
-// Different behavior based on type
+// Different behaviour based on type
 type ToArray<T> = T extends any[] ? T : T[];
 
 type A = ToArray<string>; // string[]

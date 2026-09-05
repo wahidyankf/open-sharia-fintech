@@ -40,7 +40,7 @@ rather than encapsulating them in domain objects. This creates three compounding
 business rules become invisible to domain experts, they duplicate silently across services
 as the system grows, and they are difficult to test in isolation. Martin Fowler identified
 the Anemic Domain Model as an anti-pattern in 2003, noting that it violates object-oriented
-principles by separating data from the behavior that operates on it. When domain objects
+principles by separating data from the behaviour that operates on it. When domain objects
 own their invariants, the same logic that makes an order invalid in a unit test is the
 same logic that runs in production — there is no gap for bugs to enter.
 ```

@@ -298,21 +298,35 @@ TypeScript path mappings are configured in `tsconfig.base.json`.
 Apps that use a shared OpenAPI contract (e.g., `organiclever-be`, `organiclever-app-web`) must
 satisfy these additional requirements:
 
-**Mandatory Nx targets** (all 7 required):
+**Required and applicable Nx targets**:
 
 - [ ] `codegen` — generates types + encoders/decoders from the OpenAPI spec at `specs/apps/[domain]/[owner]/contracts/`
 - [ ] `typecheck` — verifies types compile; must include `dependsOn: ["codegen"]`
 - [ ] `lint` — static analysis / format check
 - [ ] `build` — production build; must include `dependsOn: ["codegen"]`
-- [ ] `test:unit` — unit tests with mocked dependencies; cacheable
-- [ ] `test:quick` — unit tests + coverage validation; cacheable
-- [ ] `test:integration` — real PostgreSQL via docker-compose; must set `cache: false`
+- [ ] `test:unit` — in-process Unit tests with OS-facing dependencies replaced; collects native
+      line coverage and hard-fails below 99%
+- [ ] `test:coverage:*` plus `test:coverage` — static-only Gherkin/test mapping validation; never
+      executes or depends on a runtime test target
+- [ ] `test:quick` — typecheck, lint, mandatory Unit runtime, and applicable static coverage;
+      never Integration or E2E runtime
+- [ ] `test:integration` — only when the app owns a genuine deterministic local-resource boundary;
+      no network path, including loopback
+- [ ] a dedicated `*-e2e:test:e2e` — only when the app exposes a real public browser, HTTP, API, or
+      process boundary
 
-**Docker Compose setup**: Apps with `test:integration` that use a real database must provide a
-`docker-compose.integration.yml` at the app root. The file defines the database service and a
-`test-runner` service that runs the integration test suite. The `test:integration` target invokes
-`docker compose -f docker-compose.integration.yml up --abort-on-container-exit --exit-code-from test-runner --build`
-and must set `"cache": false` in `project.json`.
+Omit inapplicable Integration/E2E targets; never add an echo or no-op placeholder. Every active
+Gherkin scenario still has Unit proof. An applicable higher layer may be exempt only with the
+canonical explicit boundary reason and named alternative proof.
+
+**Integration setup**: Apps with `test:integration` isolate real non-network resources such as
+temporary files, embedded databases accessed without network transport, process environment, or
+child-process standard streams. The target must use no HTTP, TCP, UDP, loopback, local server, or
+Docker-hosted network service and must set `"cache": false` in `project.json`.
+
+**E2E stack setup**: Put Docker-hosted PostgreSQL, message brokers, and other networked services in
+the app's E2E stack. The E2E target must enter through the app's public browser, HTTP/API, or process
+boundary and use isolated synthetic data.
 
 **Specs folder**: Create a `specs/apps/[domain]/` folder at the repository root holding one
 logical owner corpus per deployed surface. Gherkin feature files must be placed here, not inside
@@ -326,7 +340,7 @@ specs/apps/[product]/
     ├── README.md
     ├── architecture.md     # As-built: context, containers, components, constraints
     ├── contracts/          # Optional — OpenAPI, in the owner that serves it
-    └── behaviors/          # Gherkin feature files — domain subdirs required
+    └── behaviours/          # Gherkin feature files — domain subdirs required
         ├── README.md
         └── [domain]/
 ```
@@ -342,7 +356,7 @@ array — do not inline the raw glob directly into a target's `inputs`:
 ```json
 {
   "namedInputs": {
-    "specs": ["{workspaceRoot}/specs/apps/[domain]/be/behaviors/**/*.feature"]
+    "specs": ["{workspaceRoot}/specs/apps/[domain]/be/behaviours/**/*.feature"]
   },
   "targets": {
     "test:quick": {
@@ -352,7 +366,7 @@ array — do not inline the raw glob directly into a target's `inputs`:
 }
 ```
 
-- `namedInputs.specs` — the `{workspaceRoot}/specs/apps/[domain]/be/behaviors/**/*.feature` glob for backends
+- `namedInputs.specs` — the `{workspaceRoot}/specs/apps/[domain]/be/behaviours/**/*.feature` glob for backends
 - `test:unit`/`test:quick` `inputs` — `"specs"` (the named-input reference) plus `{projectRoot}/generated-contracts/**/*` and language-specific source file globs (see `repo-governance/development/infra/nx-targets.md` for per-language patterns)
 
 **See**: [Nx Target Standards](../../repo-governance/development/infra/nx-targets.md) for canonical target names, caching rules, and per-language input patterns.
@@ -384,5 +398,5 @@ array — do not inline the raw glob directly into a target's `inputs`:
 - [Run Nx Commands](./run-nx-commands.md)
 - [Monorepo Structure Reference](../reference/monorepo-structure.md)
 - [Nx Target Standards](../../repo-governance/development/infra/nx-targets.md)
-- [Three-Level Testing Standard](../../repo-governance/development/quality/three-level-testing-standard.md)
+- [Behaviour-Driven Development](../../repo-governance/development/behaviour-driven-development.md)
 - [Specs README](../../specs/README.md) - Standard folder layout for Gherkin specs and contracts

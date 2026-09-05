@@ -41,7 +41,7 @@ outputs:
 **Purpose**: Use
 [`api-exploratory-tester`](../../../.claude/agents/general/api-exploratory-tester.md) to exercise a
 **running** REST or GraphQL API against its contract and `specs/**` Gherkin, apply at most one fix,
-rebuild/redeploy once, then verify original findings and affected behavior.
+rebuild/redeploy once, then verify original findings and affected behaviour.
 
 This gate is the API counterpart of the [UI Quality Gate](../ui/ui-quality-gate.md): the UI gate
 checks component source, while this gate uses tester-driven evidence from actual HTTP responses.
@@ -55,7 +55,7 @@ checks component source, while this gate uses tester-driven evidence from actual
 - [Step 1: Discovery](./api-quality-gate/step-1-discovery.md) — invoke the tester for one full API sweep.
 - [Step 2: Triage Against Mode](./api-quality-gate/step-2-triage-against-mode.md) — severity-to-threshold mapping.
 - [Step 3: Fix](./api-quality-gate/step-3-fix.md) — route findings to the matching `swe-*-dev` agent.
-- [Step 4: Verification](./api-quality-gate/step-4-verification.md) — rebuild and redeploy once, then verify original findings and affected behavior.
+- [Step 4: Verification](./api-quality-gate/step-4-verification.md) — rebuild and redeploy once, then verify original findings and affected behaviour.
 - [Step 5: Finalization](./api-quality-gate/step-5-finalization.md) — pass, partial, fail, and lifecycle outcomes.
 - [Success Criteria](./api-quality-gate/success-criteria.md) — clean-discovery, verified-fix,
   partial, and lifecycle scenarios.

@@ -381,7 +381,7 @@ Guide to testing React applications.
 - Integration testing
 - Mocking (API calls, modules, timers)
 - Testing user interactions
-- Testing asynchronous behavior
+- Testing asynchronous behaviour
 - Testing custom hooks
 - Snapshot testing (when appropriate)
 - E2E testing with Playwright/Cypress
@@ -1466,7 +1466,7 @@ export const Button: React.FC<ButtonProps> = ({
 ### Development Practices
 
 - **[Test-Driven Development](../../../development/test-driven-development-tdd/README.md)** - TDD with React
-- **[Behavior-Driven Development](../../../development/behavior-driven-development-bdd/README.md)** - BDD with React Testing Library
+- **[Behaviour-Driven Development](../../../development/behaviour-driven-development-bdd/README.md)** - BDD with React Testing Library
 - **[Functional Programming](../../../../../../repo-governance/development/pattern/functional-programming.md)** - FP principles
 
 ### Code Quality

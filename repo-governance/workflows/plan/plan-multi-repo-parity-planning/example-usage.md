@@ -1,7 +1,7 @@
 ---
 title: "Example Usage"
 description: Three worked examples — default worktree-to-pr, direct push with backlog stage, and a single-repo subset.
-when_to_use: Use when constructing an invocation of this workflow or explaining its behavior with a concrete example.
+when_to_use: Use when constructing an invocation of this workflow or explaining its behaviour with a concrete example.
 ---
 
 # Example Usage
@@ -33,7 +33,7 @@ a PR. Useful when the invoker wants to skip the formal review step for low-risk 
 ## Subset of One Repo
 
 ```
-User: "Run plan-multi-repo-parity-planning for objective: add specs:coverage gate
+User: "Run plan-multi-repo-parity-planning for objective: add test:coverage:behaviour gate
        repos: ose-public"
 ```
 

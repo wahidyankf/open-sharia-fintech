@@ -65,13 +65,18 @@ npm exec nx -- run ose-www:test:quick
 # Run the unit suite only
 npm exec nx -- run ose-www:test:unit
 
+# Run the deterministic local-filesystem Integration suite manually
+npm exec nx -- run ose-www:test:integration
+
 # Run the website's companion frontend E2E suite
 npm exec nx -- run ose-www-fe-e2e:test:e2e
 ```
 
-The focused quality gate enforces 99% line coverage. `ose-www:test:integration` currently reports
-that integration testing is not applicable; that tier is delegated to the companion backend E2E
-suite (`ose-www-be-e2e`), not a gap.
+The Unit runtime enforces 99% line coverage. Static `test:coverage:*` targets check the Gherkin
+scenario-to-adapter mapping without running tests and are mandatory in `test:quick`.
+`ose-www:test:integration` exercises the real content filesystem and prebuilt search-index paths
+with isolated synthetic fixtures; it remains manual-impacted and scheduled-full, never part of
+hooks or PR CI.
 
 ## Project layout
 
@@ -81,11 +86,13 @@ apps/ose-www/
 ├── public/        # Static site assets
 ├── src/app/       # Thin Next.js routes
 ├── src/features/  # Product features, organized into core/ and shell/
-├── tests/unit/    # Unit test definitions
+├── tests/unit/    # Mandatory in-process Unit adapters
+├── tests/integration/ # Local-filesystem Integration adapters
+├── tests/e2e-fixtures/ # Synthetic content shared with public-boundary tests
 └── project.json   # Nx targets for development, build, and verification
 ```
 
-The behavior specifications that describe the web and tRPC perspectives are in
+The behaviour specifications that describe the web and tRPC perspectives are in
 [specs/apps/ose](../../specs/apps/ose/).
 
 ## Production delivery
@@ -104,3 +111,12 @@ delivery path.
 - [Repository onboarding tutorial](../../docs/tutorials/getting-started-with-ose-public.md)
 - [OSE specifications](../../specs/apps/ose/README.md)
 - [Application architecture](../../docs/reference/system-architecture/applications.md)
+
+## BDD and Testing
+
+The canonical corpus is `specs/apps/ose/www/behaviours/`. This project owns mandatory Unit proof
+through `test:unit` and deterministic local-resource proof through `test:integration`.
+`ose-www-fe-e2e:test:e2e` and `ose-www-be-e2e:test:e2e` own the public browser and HTTP boundaries.
+Matching `test:coverage:*` targets validate every applicable adapter or explicit boundary exemption
+statically. The owner omits only a local `test:e2e` runtime because dedicated projects own that
+public-boundary execution.

@@ -11,7 +11,7 @@ model](../plan-execution/task-checklist-synchronization.md), the [Atomic Sync
 Ritual](../plan-execution/atomic-sync-ritual.md), [Resume Reconciliation (disk is
 truth)](../plan-execution/resume-reconciliation.md), the [Iron
 Rules](../plan-execution/iron-rules-1-5.md), Steps 0–8, per-phase quality gates,
-post-push CI verification, manual behavioral assertions, and archival — is **inherited verbatim**
+post-push CI verification, manual behavioural assertions, and archival — is **inherited verbatim**
 from `plan-execution.md` and applied per plan. This document specifies only the multi-plan additions:
 the DAG (Phase A), the union granular Task list (Phase B), the ready-queue scheduler (Phase C), and
 failure isolation (Phase D). Where the two ever appear to conflict, `plan-execution.md`'s per-plan

@@ -26,12 +26,12 @@ when_to_use: "Use to trace this convention's rationale."
   Every rule converts an implicit assumption ("tests pass, so it must look and work right") into an
   explicit, checkable delivery step.
 - **[Deliberate Problem-Solving](../../../principles/general/deliberate-problem-solving.md)**: Visual
-  and value-bearing verification forces deliberate observation of actual behavior instead of trust
+  and value-bearing verification forces deliberate observation of actual behaviour instead of trust
   in green checkmarks.
 
 ## Conventions Implemented/Respected
 
-- **[Manual Behavioral Verification](.././manual-behavioral-verification.md)**: This convention
+- **[Manual Behavioural Verification](.././manual-behavioural-verification.md)**: This convention
   extends it from "verify before done" to "verify against the design mockups, per breakpoint, per
   locale, before **archival**."
 - **[Evidence Capture Convention](.././evidence-capture.md)**: The per-breakpoint, per-locale sign-off

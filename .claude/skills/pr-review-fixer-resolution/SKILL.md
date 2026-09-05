@@ -44,7 +44,7 @@ or not at all — the execution shapes are meaningless without the invariants th
 1. **Preserve lifecycle ownership.** In PR quality-gate invocation, do not rerun exact delegated
    predicates before push. Invalidate affected evidence, return the updated ledger, and let
    current-head aggregate PR CI replace `pending`. Outside that workflow, retain the existing
-   relevant-gate pre-push verification behavior.
+   relevant-gate pre-push verification behaviour.
 
 ## Related Agents
 

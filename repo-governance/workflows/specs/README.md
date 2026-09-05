@@ -28,7 +28,7 @@ These workflows define **WHEN and HOW to validate specifications**, orchestratin
 **Not Included:**
 
 - Implementation code validation (that's per-language developer agents and CI)
-- Test step definitions (that's `rhino-cli specs coverage`)
+- Test binding substance (use the [Gherkin implementation review](../gherkin-implementation-review.md))
 - Repository governance (that's repository/)
 - Documentation quality (that's docs/)
 
@@ -40,5 +40,5 @@ These workflows define **WHEN and HOW to validate specifications**, orchestratin
 
 - [Workflows Index](../README.md) - All orchestrated workflows
 - [Maker-Checker-Fixer Pattern](../../development/pattern/maker-checker-fixer.md) - Core workflow pattern
-- [Three-Level Testing Standard](../../development/quality/three-level-testing-standard.md) - Testing standard that specs support
-- [BDD Spec-Test Mapping](../../development/infra/bdd-spec-test-mapping.md) - How specs map to test implementations
+- [Behaviour-Driven Development](../../development/behaviour-driven-development.md) - Testing standard and scenario-to-adapter mapping that specs support
+- [Gherkin Implementation Review](../gherkin-implementation-review.md) - Semantic adapter review

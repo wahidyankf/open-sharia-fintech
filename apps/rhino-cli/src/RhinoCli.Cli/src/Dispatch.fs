@@ -279,18 +279,25 @@ let private runRepoConfigValidateLeaf (repoRoot: string) : int =
 
         1
     | Ok config ->
-        match RepoConfig.semanticFindings config with
-        | [] ->
-            printfn "repo-config validate: repo-config.yml matches the canonical schema (key set + enums OK)"
-            0
-        | findings ->
-            findings |> List.iter (printfn "%s")
+        let raw = IO.File.ReadAllText(IO.Path.Combine(repoRoot, "repo-config.yml"))
 
-            eprintfn
-                "Error: repo-config validate: %d schema finding(s); fix the key(s) listed above"
-                (List.length findings)
-
+        match Governance.checkNoUnknownWordBudgetKeys raw with
+        | Error message ->
+            eprintfn "Error: repo-config validate: %s" message
             1
+        | Ok() ->
+            match RepoConfig.semanticFindings config with
+            | [] ->
+                printfn "repo-config validate: repo-config.yml matches the canonical schema (key set + enums OK)"
+                0
+            | findings ->
+                findings |> List.iter (printfn "%s")
+
+                eprintfn
+                    "Error: repo-config validate: %d schema finding(s); fix the key(s) listed above"
+                    (List.length findings)
+
+                1
 
 /// `env init` also ignores `-o`/`--output` — it always prints the same plain
 /// text and always exits `0`, regardless of per-file outcome [Repo-grounded —
@@ -392,13 +399,13 @@ let private printEnvOperationResult
     | Json -> printfn "%s" (Env.formatJson result)
     | Markdown -> printf "%s" (Env.formatMarkdown result)
 
-/// `confirm` always answers "yes": the real Rust binary never prompts either
-/// — `Options.force` is threaded through but never read inside `backup()`'s
-/// or `restore()`'s body (see `Env.fs`'s module doc comment) — so answering
-/// unconditionally reproduces that always-overwrite behaviour exactly rather
-/// than risking a shadow-diff mismatch by blocking on a real prompt this CLI
-/// shim has no terminal to service.
-let private alwaysConfirm () : bool = true
+/// Reads the explicit overwrite decision required by the canonical backup
+/// and restore behaviours. The Application layer invokes this callback only
+/// when a real destination conflict exists and `--force` is absent.
+let private confirmOverwrite () : bool =
+    printf "Destination files already exist. Overwrite? [y/N] "
+
+    Console.ReadLine() |> Option.ofObj |> Env.isAffirmativeConfirmation
 
 let private runEnvBackupLeaf (repoRoot: string) (format: OutputFormat) (args: string list) : int =
     let parsed = parseBackupRestoreArgs args
@@ -426,7 +433,7 @@ let private runEnvBackupLeaf (repoRoot: string) (format: OutputFormat) (args: st
             eprintfn "Error: %s" message
             1
         | Ok opts ->
-            match Env.backup opts alwaysConfirm with
+            match Env.backup opts confirmOverwrite with
             | Error message ->
                 eprintfn "Error: env backup failed: %s" message
                 1
@@ -460,7 +467,7 @@ let private runEnvRestoreLeaf (repoRoot: string) (format: OutputFormat) (args: s
             eprintfn "Error: %s" message
             1
         | Ok opts ->
-            match Env.restore opts alwaysConfirm with
+            match Env.restore opts confirmOverwrite with
             | Error message ->
                 eprintfn "Error: env restore failed: %s" message
                 1
@@ -541,7 +548,7 @@ type private DoctorArgsParsed =
 /// Collects every `--tools value[,value...]` occurrence, comma-splitting
 /// each and flattening in order, `None` when the flag never appears
 /// [Repo-grounded — `DoctorArgs.tools`'s `value_delimiter = ','` plus
-/// clap's repeat-to-append behavior for `Vec` args].
+/// clap's repeat-to-append behaviour for `Vec` args].
 let private collectDoctorToolsFlag (args: string list) : string list option =
     let rec loop (args: string list) (acc: string list) : string list =
         match args with
@@ -931,30 +938,40 @@ let private mdLinksValidateRun
     (format: OutputFormat)
     (rawArgs: string list)
     : string * string option =
+    let positional = collectPositionals [ "--exclude" ] rawArgs
     let stagedOnly = hasFlag [ "--staged-only" ] rawArgs
     let exclude = collectRepeatableFlag [ "--exclude" ] rawArgs
     let stagedFiles = if stagedOnly then stagedMdFilesOption repoRoot else None
 
-    let result: Md.LinkValidationResult =
-        Md.validateAllLinksDetailed
-            { RepoRoot = repoRoot
-              StagedFiles = stagedFiles
-              ExcludePrefixes = exclude }
+    let scanRoot =
+        match positional with
+        | target :: _ when IO.Path.IsPathRooted target -> target
+        | target :: _ -> IO.Path.Combine(repoRoot, target)
+        | [] -> repoRoot
 
-    let output =
-        Formatters.render
-            format
-            (fun () -> Formatters.linksText result)
-            (fun () -> Formatters.linksJson result)
-            (fun () -> Formatters.linksMarkdown result)
+    if not (IO.Directory.Exists scanRoot) then
+        "", Some(sprintf "spec folder does not exist: %s" (positional |> List.tryHead |> Option.defaultValue scanRoot))
+    else
+        let result: Md.LinkValidationResult =
+            Md.validateAllLinksDetailed
+                { RepoRoot = scanRoot
+                  StagedFiles = stagedFiles
+                  ExcludePrefixes = exclude }
 
-    let err =
-        if List.isEmpty result.BrokenLinks then
-            None
-        else
-            Some(sprintf "found %d broken links" (List.length result.BrokenLinks))
+        let output =
+            Formatters.render
+                format
+                (fun () -> Formatters.linksText result)
+                (fun () -> Formatters.linksJson result)
+                (fun () -> Formatters.linksMarkdown result)
 
-    output, err
+        let err =
+            if List.isEmpty result.BrokenLinks then
+                None
+            else
+                Some(sprintf "found %d broken links" (List.length result.BrokenLinks))
+
+        output, err
 
 let private runMdLinksValidateLeaf (repoRoot: string) (format: OutputFormat) (rawArgs: string list) : int =
     let output, err = mdLinksValidateRun repoRoot format rawArgs
@@ -1871,52 +1888,6 @@ let private runSpecsStructureValidateLeaf (repoRoot: string) (rawArgs: string li
     let output, err = specsStructureValidateRun repoRoot rawArgs
     printResultAndExitCode output err
 
-/// `specs gherkin-cardinality validate` [Repo-grounded —
-/// `specs_gherkin_cardinality.rs::run`]. Positional paths win over `-p`/`--path`;
-/// with neither, the whole repository is scanned.
-let private specsCardinalityRun
-    (repoRoot: string)
-    (format: OutputFormat)
-    (rawArgs: string list)
-    : string * string option =
-    let positional = collectPositionals [] rawArgs
-    let flagged = collectPathFlags rawArgs
-
-    let relative =
-        if not (List.isEmpty positional) then positional
-        elif not (List.isEmpty flagged) then flagged
-        else [ "." ]
-
-    let fullPaths =
-        relative
-        |> List.map (fun p ->
-            if IO.Path.IsPathRooted p then
-                p
-            else
-                IO.Path.Combine(repoRoot, p))
-
-    match Specs.auditGherkinKeywordCardinality fullPaths with
-    | Error message -> "", Some message
-    | Ok findings ->
-        let output =
-            Formatters.render
-                format
-                (fun () -> Formatters.cardinalityText findings)
-                (fun () -> Formatters.cardinalityJson findings)
-                (fun () -> Formatters.cardinalityMarkdown findings)
-
-        let err =
-            if List.isEmpty findings then
-                None
-            else
-                Some(sprintf "%d gherkin keyword cardinality finding(s) found" (List.length findings))
-
-        output, err
-
-let private runSpecsCardinalityLeaf (repoRoot: string) (format: OutputFormat) (rawArgs: string list) : int =
-    let output, err = specsCardinalityRun repoRoot format rawArgs
-    printResultAndExitCode output err
-
 /// `specs scaffold dart` [Repo-grounded — `specs_scaffold_dart.rs::run`].
 /// `--dir` defaults to the process working directory, not the repo root.
 let private runSpecsScaffoldDartLeaf (format: OutputFormat) (rawArgs: string list) : int =
@@ -1936,12 +1907,11 @@ let private runSpecsScaffoldDartLeaf (format: OutputFormat) (rawArgs: string lis
 
         printResultAndExitCode output None
 
-/// `specs audit` [Repo-grounded — `specs_audit.rs::run`]. Runs the three
-/// default-argument validators in order; `behavior-coverage` is excluded
-/// because it needs positional arguments `audit` cannot default.
+/// `specs audit` runs the default-argument structure and link validators.
+/// Static behaviour coverage remains an owner-specific Nx target.
 let private runSpecsAuditLeaf (repoRoot: string) (format: OutputFormat) (rawArgs: string list) : int =
     let skip = collectRepeatableFlag [ "--skip" ] rawArgs
-    let members = [ "structure-validate"; "validate-links"; "gherkin-cardinality" ]
+    let members = [ "structure-validate"; "validate-links" ]
     let failures = ResizeArray<string>()
 
     for name in members do
@@ -1950,7 +1920,7 @@ let private runSpecsAuditLeaf (repoRoot: string) (format: OutputFormat) (rawArgs
                 match name with
                 | "structure-validate" -> specsStructureValidateRun repoRoot []
                 | "validate-links" -> mdLinksValidateRun repoRoot format []
-                | _ -> specsCardinalityRun repoRoot format []
+                | _ -> failwithf "unsupported specs audit member: %s" name
 
             printf "%s" output
 
@@ -1969,552 +1939,6 @@ let private runSpecsAuditLeaf (repoRoot: string) (format: OutputFormat) (rawArgs
 
         eprintfn "Error: specs audit found %d failure(s)" failures.Count
         1
-
-/// Value-taking flags on `specs behavior-coverage validate`, listed so
-/// `collectPositionals` never mistakes a flag's value for a path.
-let private coverageValueFlags =
-    [ "--exclude-dir"
-      "--exclude-source-dir"
-      "--unit-dir"
-      "--integration-dir"
-      "--e2e-dir"
-      "--unit-report"
-      "--integration-report"
-      "--e2e-report" ]
-
-/// One level of a three-level coverage run.
-type private LevelDir =
-    { Name: string
-      TestLevel: Specs.TestLevel
-      Dir: string
-      Report: string option }
-
-let private capitalizeFirst (s: string) : string =
-    // The empty-string branch is genuinely unreachable: this function's one
-    // call site (`printfn "=== %s level ==="` below) always passes
-    // `level.Name`, and `resolveLevelDirs`'s three `level` constructions
-    // below hardcode the literal names `"unit"`/`"integration"`/`"e2e"` —
-    // never `""`.
-    if s = "" then
-        s
-    else
-        (Char.ToUpperInvariant s.[0]).ToString() + s.Substring 1
-
-/// `Ok None` when no level dir is given, `Ok (Some levels)` when all three
-/// are, and `Error` for a partial set [Repo-grounded —
-/// `specs_coverage.rs::resolve_level_dirs`].
-let private resolveLevelDirs (repoRoot: string) (rawArgs: string list) : Result<LevelDir list option, string> =
-    let dirOf (flag: string) = stringFlag [ flag ] rawArgs
-
-    let unitDir = dirOf "--unit-dir"
-    let integrationDir = dirOf "--integration-dir"
-    let e2eDir = dirOf "--e2e-dir"
-
-    let present =
-        [ unitDir; integrationDir; e2eDir ] |> List.filter Option.isSome |> List.length
-
-    let level name testLevel (dir: string option) (reportFlag: string) =
-        { Name = name
-          TestLevel = testLevel
-          Dir = IO.Path.Combine(repoRoot, Option.get dir)
-          Report = dirOf reportFlag |> Option.map (fun r -> IO.Path.Combine(repoRoot, r)) }
-
-    match present with
-    | 0 -> Ok None
-    | 3 ->
-        Ok(
-            Some
-                [ level "unit" Specs.Unit unitDir "--unit-report"
-                  level "integration" Specs.Integration integrationDir "--integration-report"
-                  level "e2e" Specs.E2e e2eDir "--e2e-report" ]
-        )
-    | _ -> Error "must provide all three or none of --unit-dir, --integration-dir, --e2e-dir"
-
-let private scanOptionsFor
-    (repoRoot: string)
-    (specsDirs: string list)
-    (appDir: string)
-    (rawArgs: string list)
-    : Specs.ScanOptions =
-    { RepoRoot = repoRoot
-      SpecsDir = List.head specsDirs
-      SpecsDirs = specsDirs
-      AppDir = appDir
-      SharedSteps = hasFlag [ "--shared-steps" ] rawArgs
-      ExcludeDirs = collectRepeatableFlag [ "--exclude-dir" ] rawArgs
-      ExcludeSourceDirs = collectRepeatableFlag [ "--exclude-source-dir" ] rawArgs }
-
-let private coverageHasGaps (result: Specs.CheckResult) : bool =
-    not (
-        List.isEmpty result.Gaps
-        && List.isEmpty result.ScenarioGaps
-        && List.isEmpty result.StepGaps
-        && List.isEmpty result.OrphanStepImpls
-    )
-
-let private printCoverageResult (format: OutputFormat) (result: Specs.CheckResult) : unit =
-    printf
-        "%s"
-        (Formatters.render
-            format
-            (fun () -> Formatters.coverageText result)
-            (fun () -> Formatters.coverageJson result)
-            (fun () -> Formatters.coverageMarkdown result))
-
-let private levelName (level: Specs.TestLevel) : string = Specs.testLevelName level
-
-let private printMarkerViolations (violations: Specs.BehaviorCoverageViolation list) : unit =
-    if not (List.isEmpty violations) then
-        printfn "\n@covers marker violations (%d):" (List.length violations)
-
-        for v in violations do
-            match v with
-            | Specs.UntaggedScenario(featurePath, title) ->
-                printfn "  - %s\n    → Scenario: \"%s\" has no @unit/@integration/@e2e level tag" featurePath title
-            // Genuinely unreachable from this dispatcher: `Specs.TestLevel`
-            // has exactly three cases (`Unit`/`Integration`/`E2e`), and
-            // `runThreeLevel`'s `envelope` (below) hardcodes `Levels = set [
-            // Unit; Integration; E2e ]` — every possible tag is always a
-            // member, so `Specs.validate` can never construct this case for
-            // a caller in this file.
-            | Specs.LevelOutsideEnvelope(featurePath, title, requiredLevel) ->
-                printfn
-                    "  - %s\n    → Scenario: \"%s\" requires level [%s], which is outside the project envelope"
-                    featurePath
-                    title
-                    (levelName requiredLevel)
-            | Specs.MissingCoverage(featurePath, title, missingLevel) ->
-                printfn
-                    "  - %s\n    → Scenario: \"%s\" has no @covers marker at the [%s] level"
-                    featurePath
-                    title
-                    (levelName missingLevel)
-            | Specs.CoverageAtUndeclaredLevel(sourceFile, featurePath, title, extraLevel) ->
-                printfn
-                    "  - %s\n    → marks \"%s\" (%s) covered at [%s], a level not declared on that scenario"
-                    sourceFile
-                    title
-                    featurePath
-                    (levelName extraLevel)
-            | Specs.OrphanMarker(sourceFile, featurePath, scenarioTitle) ->
-                printfn
-                    "  - %s\n    → marks \"%s\" (%s), which no feature file contains (orphan marker)"
-                    sourceFile
-                    scenarioTitle
-                    featurePath
-
-let private printRuntimeViolations (violations: Specs.RuntimeCoverageViolation list) : unit =
-    if not (List.isEmpty violations) then
-        printfn "\nRuntime cross-check violations (%d):" (List.length violations)
-
-        for v in violations do
-            match v with
-            | Specs.NotExecuted(sourceFile, featurePath, scenarioTitle, level) ->
-                printfn
-                    "  - %s\n    → Scenario: \"%s\" [%s] marked-but-not-executed (marker: %s)"
-                    featurePath
-                    scenarioTitle
-                    (levelName level)
-                    sourceFile
-            | Specs.RunFailed(sourceFile, featurePath, scenarioTitle, level) ->
-                printfn
-                    "  - %s\n    → Scenario: \"%s\" [%s] marked-but-failed (marker: %s)"
-                    featurePath
-                    scenarioTitle
-                    (levelName level)
-                    sourceFile
-
-/// Three-level mode: one coverage pass per level dir, then the opt-in
-/// `@covers` marker and runtime cross-checks [Repo-grounded —
-/// `specs_coverage.rs::run_three_level`].
-let private runThreeLevel
-    (repoRoot: string)
-    (levels: LevelDir list)
-    (specsDirs: string list)
-    (format: OutputFormat)
-    (rawArgs: string list)
-    : int =
-    let failingLevels = ResizeArray<string>()
-
-    for level in levels do
-        printfn "=== %s level ===" (capitalizeFirst level.Name)
-        let result = Specs.checkAll (scanOptionsFor repoRoot specsDirs level.Dir rawArgs)
-        printCoverageResult format result
-
-        if coverageHasGaps result then
-            failingLevels.Add level.Name
-
-            if format = Text then
-                eprintfn
-                    "\nERROR: [%s] spec coverage gaps found: %d file gap(s), %d scenario gap(s), %d step gap(s), %d orphan step impl(s)"
-                    level.Name
-                    (List.length result.Gaps)
-                    (List.length result.ScenarioGaps)
-                    (List.length result.StepGaps)
-                    (List.length result.OrphanStepImpls)
-
-    // The marker and runtime checks stay opt-in: without a `--<level>-report`
-    // every existing three-level caller would start failing on level-tag
-    // violations it never opted into.
-    let coversEnabled = levels |> List.exists (fun l -> l.Report.IsSome)
-
-    // `Result`-wrapped rather than a bare tuple: a malformed/unreadable
-    // `--<level>-report` file must surface as a clean `Error: ...` exit
-    // (matching every other failure path in this file), not the unhandled
-    // exception `Specs.parseRunReport`'s `Error` case previously reached via
-    // `failwith` — a real crash-on-bad-input defect found while closing this
-    // file's coverage gap. The `List.fold` short-circuit mirrors
-    // `validateSelectedTools`'s identical Result-accumulation idiom above.
-    let markerAndRuntimeResult
-        : Result<Specs.BehaviorCoverageViolation list * Specs.RuntimeCoverageViolation list, string> =
-        if not coversEnabled then
-            Ok([], [])
-        else
-            let scenarios =
-                specsDirs
-                |> List.collect (fun specsDir ->
-                    Specs.coverageWalkFeatureFiles specsDir []
-                    |> List.collect (fun featureFile ->
-                        let featurePath =
-                            if featureFile.StartsWith(repoRoot, StringComparison.Ordinal) then
-                                featureFile.Substring(repoRoot.Length).TrimStart(IO.Path.DirectorySeparatorChar)
-                            else
-                                featureFile
-
-                        Specs.extractScenarioSpecs featureFile featurePath))
-
-            let markers =
-                levels
-                |> List.collect (fun level -> Specs.extractCoversMarkers level.Dir level.TestLevel repoRoot)
-
-            let envelope: Specs.ProjectEnvelope =
-                { Levels = set [ Specs.Unit; Specs.Integration; Specs.E2e ] }
-
-            let runtimeResult: Result<Specs.RuntimeCoverageViolation list, string> =
-                levels
-                |> List.fold
-                    (fun acc level ->
-                        match acc with
-                        | Error e -> Error e
-                        | Ok accViolations ->
-                            match level.Report with
-                            | None -> Ok accViolations
-                            | Some reportPath ->
-                                let levelMarkers = Specs.extractCoversMarkers level.Dir level.TestLevel repoRoot
-
-                                if List.isEmpty levelMarkers then
-                                    Ok accViolations
-                                else
-                                    match Specs.parseRunReport (IO.File.ReadAllText reportPath) with
-                                    | Error message -> Error message
-                                    | Ok report -> Ok(accViolations @ Specs.checkRuntime levelMarkers report))
-                    (Ok [])
-
-            runtimeResult
-            |> Result.map (fun runtime -> Specs.validate scenarios markers envelope, runtime)
-
-    match markerAndRuntimeResult with
-    | Error message ->
-        eprintfn "Error: %s" message
-        1
-    | Ok(markerViolations, runtimeViolations) ->
-        if format = Text then
-            printMarkerViolations markerViolations
-            printRuntimeViolations runtimeViolations
-
-        if
-            failingLevels.Count = 0
-            && List.isEmpty markerViolations
-            && List.isEmpty runtimeViolations
-        then
-            0
-        else
-            let parts =
-                [ if failingLevels.Count > 0 then
-                      sprintf "level(s) %s" (String.concat ", " failingLevels)
-                  if not (List.isEmpty markerViolations) then
-                      sprintf "%d @covers marker violation(s)" (List.length markerViolations)
-                  if not (List.isEmpty runtimeViolations) then
-                      sprintf "%d runtime cross-check violation(s)" (List.length runtimeViolations) ]
-
-            eprintfn "Error: spec coverage gaps found: %s" (String.concat "; " parts)
-            1
-
-/// Reproduces clap's own missing-required-argument diagnostic for the
-/// coverage leaves, whose two-positional arity is enforced by
-/// `#[arg(required = true, num_args = 2..)]` rather than by handler code
-/// [Repo-grounded — observed `rhino-cli specs behavior-coverage validate`
-/// output]. The usage line echoes back the flags clap actually saw, and both
-/// shapes exit `2`, the clap parse-failure code.
-let private printMissingPathsError (leafPath: string) (rawArgs: string list) (provided: int) : int =
-    let flagSegment =
-        if hasFlag [ "--help"; "-h" ] rawArgs then
-            "--help "
-        elif
-            rawArgs
-            |> List.exists (fun a ->
-                a = "-o"
-                || a = "--output"
-                || a.StartsWith("--output=", StringComparison.Ordinal))
-        then
-            "--output <OUTPUT> "
-        elif provided > 0 then
-            "[OPTIONS] "
-        else
-            ""
-
-    if provided = 0 then
-        eprintfn "error: the following required arguments were not provided:"
-        eprintfn "  <PATHS> <PATHS>..."
-    else
-        eprintfn "error: %d values required by '<PATHS> <PATHS>...'; only %d was provided" 2 provided
-
-    eprintfn ""
-    eprintfn "Usage: rhino-cli %s %s<PATHS> <PATHS>..." leafPath flagSegment
-    2
-
-/// `specs behavior-coverage validate` [Repo-grounded — `specs_coverage.rs::run`].
-let private runSpecsBehaviorCoverageLeaf (repoRoot: string) (format: OutputFormat) (rawArgs: string list) : int =
-    let paths = collectPositionals coverageValueFlags rawArgs
-
-    if List.length paths < 2 then
-        printMissingPathsError "specs behavior-coverage validate" rawArgs (List.length paths)
-    else
-        let specsDirs =
-            paths
-            |> List.take (List.length paths - 1)
-            |> List.map (fun sd -> IO.Path.Combine(repoRoot, sd))
-
-        match resolveLevelDirs repoRoot rawArgs with
-        | Error message ->
-            eprintfn "Error: %s" message
-            1
-        | Ok(Some levels) -> runThreeLevel repoRoot levels specsDirs format rawArgs
-        | Ok None ->
-            let appDir = IO.Path.Combine(repoRoot, List.last paths)
-            let result = Specs.checkAll (scanOptionsFor repoRoot specsDirs appDir rawArgs)
-            printCoverageResult format result
-
-            if not (coverageHasGaps result) then
-                0
-            else
-                if format = Text then
-                    if not (List.isEmpty result.Gaps) then
-                        eprintfn "\nERROR: Found %d spec(s) without matching test files" (List.length result.Gaps)
-
-                    if not (List.isEmpty result.ScenarioGaps) then
-                        eprintfn
-                            "ERROR: Found %d scenario(s) without matching test implementations"
-                            (List.length result.ScenarioGaps)
-
-                    if not (List.isEmpty result.StepGaps) then
-                        eprintfn
-                            "ERROR: Found %d step(s) without matching step definitions"
-                            (List.length result.StepGaps)
-
-                    if not (List.isEmpty result.OrphanStepImpls) then
-                        eprintfn
-                            "ERROR: Found %d orphan step implementation(s) (no Gherkin step matches them)"
-                            (List.length result.OrphanStepImpls)
-
-                eprintfn
-                    "Error: spec coverage gaps found: %d file gap(s), %d scenario gap(s), %d step gap(s), %d orphan step impl(s)"
-                    (List.length result.Gaps)
-                    (List.length result.ScenarioGaps)
-                    (List.length result.StepGaps)
-                    (List.length result.OrphanStepImpls)
-
-                1
-
-/// Resolves a `--features` glob relative to `projectDir`, returning matched
-/// `.feature` paths [Repo-grounded — `specs_e2e_coverage.rs::collect_declared`,
-/// which delegates to the `glob` crate].
-///
-/// The default `projectDir` is `"."` — joining it onto a pattern via
-/// `Path.Combine`/Rust's `PathBuf::join` both literally produce a
-/// `./`-prefixed string, but the `glob` crate drops that leading `./` from
-/// its match results, while `Directory.GetFiles` preserves whatever `root`
-/// string it is given verbatim. A `Feature` path carrying that stray `./`
-/// never equality-matches the checked-in baseline manifest's un-prefixed
-/// entries, turning every already-accepted unbound scenario into a false
-/// "new gap" — caught via Wave E/F's shadow-diff never exercising an
-/// external consuming project's own `specs e2e-coverage validate`
-/// invocation, only rhino-cli's own spec directory.
-let private globFeatureFiles (projectDir: string) (pattern: string) : string list =
-    let combined = IO.Path.Combine(projectDir, pattern)
-
-    let normalized =
-        let withForwardSlashes = combined.Replace('\\', '/')
-
-        if withForwardSlashes.StartsWith("./", StringComparison.Ordinal) then
-            withForwardSlashes.Substring(2)
-        else
-            withForwardSlashes
-
-    match normalized.IndexOf '*' with
-    | -1 -> if IO.File.Exists normalized then [ normalized ] else []
-    | starIndex ->
-        let lastSlashBeforeStar = normalized.LastIndexOf('/', starIndex)
-
-        let root =
-            if lastSlashBeforeStar < 0 then
-                "."
-            else
-                normalized.Substring(0, lastSlashBeforeStar)
-
-        let tail = normalized.Substring(lastSlashBeforeStar + 1)
-
-        if not (IO.Directory.Exists root) then
-            []
-        else
-            let searchOption =
-                if tail.Contains "**" then
-                    IO.SearchOption.AllDirectories
-                else
-                    IO.SearchOption.TopDirectoryOnly
-
-            let filePattern =
-                let last = tail.Split('/') |> Array.last
-                if last = "" then "*" else last
-
-            IO.Directory.GetFiles(root, filePattern, searchOption)
-            |> Array.sortWith (fun a b -> String.CompareOrdinal(a, b))
-            |> List.ofArray
-
-/// `specs e2e-coverage validate` [Repo-grounded — `specs_e2e_coverage.rs::run`].
-let private runSpecsE2eCoverageLeaf (format: OutputFormat) (rawArgs: string list) : int =
-    let valueFlags = [ "--features"; "--features-gen"; "--baseline"; "--project" ]
-    let features = collectRepeatableFlag [ "--features" ] rawArgs
-    let featuresGen = stringFlag [ "--features-gen" ] rawArgs
-    let baseline = stringFlag [ "--baseline" ] rawArgs
-    let project = stringFlag [ "--project" ] rawArgs
-
-    let missing =
-        [ if List.isEmpty features then
-              "  --features <GLOB>"
-          if featuresGen.IsNone then
-              "  --features-gen <DIR>"
-          if baseline.IsNone then
-              "  --baseline <PATH>"
-          if project.IsNone then
-              "  --project <NAME>" ]
-
-    if not (List.isEmpty missing) then
-        // clap reports every missing required flag at once, then echoes the
-        // full required-argument usage line including the flags it did see.
-        eprintfn "error: the following required arguments were not provided:"
-
-        for m in missing do
-            eprintfn "%s" m
-
-        let seen =
-            [ if hasFlag [ "--help"; "-h" ] rawArgs then
-                  "--help"
-              if
-                  rawArgs
-                  |> List.exists (fun a ->
-                      a = "-o"
-                      || a = "--output"
-                      || a.StartsWith("--output=", StringComparison.Ordinal))
-              then
-                  "--output <OUTPUT>" ]
-
-        eprintfn ""
-
-        eprintfn
-            "Usage: rhino-cli specs e2e-coverage validate --features <GLOB> --features-gen <DIR> --baseline <PATH> --project <NAME>%s [PROJECT_DIR]"
-            (if List.isEmpty seen then
-                 ""
-             else
-                 " " + String.concat " " seen)
-
-        2
-    else
-        let projectDir =
-            match collectPositionals valueFlags rawArgs with
-            | dir :: _ -> dir
-            | [] -> "."
-
-        let featuresGenDir = IO.Path.Combine(projectDir, Option.get featuresGen)
-        let baselinePath = IO.Path.Combine(projectDir, Option.get baseline)
-
-        let declaredWithPaths =
-            features
-            |> List.collect (fun pattern ->
-                globFeatureFiles projectDir pattern
-                |> List.collect (fun path ->
-                    let canonical = IO.Path.GetFullPath path
-
-                    Specs.extractScenarioSpecs path path
-                    |> Specs.declaredE2eEntries
-                    |> List.map (fun entry -> canonical, entry)))
-
-        let anyFeatureFileMatched =
-            features
-            |> List.exists (fun pattern -> not (List.isEmpty (globFeatureFiles projectDir pattern)))
-
-        // The generated-output scan runs before the empty-glob guard: a
-        // missing `.features-gen` is the more specific diagnostic, and both
-        // conditions can hold at once on a freshly scaffolded project.
-        match Specs.scanFixmeDir featuresGenDir with
-        | Error message ->
-            eprintfn "Error: %s" message
-            1
-        | Ok fixmeByFile ->
-            if not anyFeatureFileMatched then
-                eprintfn
-                    "Error: --features matched no .feature files across glob(s) %A — check for a path typo or directory rename (an empty declared set would otherwise make this gate always silently pass)"
-                    features
-
-                1
-            else
-                let fixme =
-                    declaredWithPaths
-                    |> List.filter (fun (featureAbs, entry) ->
-                        Specs.isUnboundOrAbsent featureAbs entry.Scenario fixmeByFile)
-                    |> List.map snd
-
-                let declared = declaredWithPaths |> List.map snd
-
-                if hasFlag [ "--update-baseline" ] rawArgs then
-                    match
-                        Specs.saveBaseline
-                            baselinePath
-                            { Project = Option.get project
-                              AllowedUnbound = fixme }
-                    with
-                    | Error message ->
-                        eprintfn "Error: %s" message
-                        1
-                    | Ok() ->
-                        printfn "Wrote baseline manifest to %s" baselinePath
-                        0
-                else
-                    match Specs.loadBaseline baselinePath with
-                    | Error message ->
-                        eprintfn "Error: %s" message
-                        1
-                    | Ok manifest ->
-                        let report = Specs.diffGaps declared fixme manifest.AllowedUnbound
-
-                        let output =
-                            Formatters.render
-                                format
-                                (fun () -> Specs.formatGapText report)
-                                (fun () -> Specs.formatGapJson report)
-                                (fun () -> Specs.formatGapMarkdown report)
-
-                        let err =
-                            if report.Failed then
-                                Some(
-                                    sprintf
-                                        "%d new unbound scenario(s) found beyond baseline"
-                                        (List.length report.NewGaps)
-                                )
-                            else
-                                None
-
-                        printResultAndExitCode output err
 
 /// Prints a validation result in the requested format and returns the exit
 /// code, with `errorFor` naming the failure message shape each harness leaf
@@ -2738,37 +2162,66 @@ let private runHarnessBindingsGenerateLeaf (repoRoot: string) (format: OutputFor
     | None ->
         let stopwatch = Diagnostics.Stopwatch.StartNew()
 
-        match Harness.runHarnessBindingsGenerateDetailed repoRoot with
-        | Error message ->
-            eprintfn "Error: %s" message
-            1
-        | Ok outcome ->
+        let renderAgents (agents: Harness.ConvertAllResult) =
             stopwatch.Stop()
 
             if not (hasFlag [ "--quiet"; "-q" ] rawArgs) then
                 let verbose = hasFlag [ "--verbose"; "-v" ] rawArgs
 
                 match format with
-                | Text -> printf "%s" (Formatters.syncText outcome.Agents stopwatch.Elapsed verbose false)
-                | Json -> printfn "%s" (Formatters.syncJson outcome.Agents stopwatch.Elapsed)
-                | Markdown -> printf "%s" (Formatters.syncMarkdown outcome.Agents stopwatch.Elapsed)
+                | Text -> printf "%s" (Formatters.syncText agents stopwatch.Elapsed verbose false)
+                | Json -> printfn "%s" (Formatters.syncJson agents stopwatch.Elapsed)
+                | Markdown -> printf "%s" (Formatters.syncMarkdown agents stopwatch.Elapsed)
 
-                printfn "codex: %d agent(s) emitted" outcome.Codex.Result.Converted
+        let finishAgents (agents: Harness.ConvertAllResult) =
+            renderAgents agents
 
-                printfn
-                    "codex: %d skill file(s) mirrored, %d stale removed"
-                    outcome.Mirror.Copied
-                    outcome.Mirror.Removed
-
-            if List.isEmpty outcome.Agents.FailedFiles then
+            if List.isEmpty agents.FailedFiles then
                 0
             else
                 eprintfn
                     "Error: generation completed with %d failure(s): %s"
-                    (List.length outcome.Agents.FailedFiles)
-                    (String.concat ", " outcome.Agents.FailedFiles)
+                    (List.length agents.FailedFiles)
+                    (String.concat ", " agents.FailedFiles)
 
                 1
+
+        let dryRun = hasFlag [ "--dry-run" ] rawArgs
+        let agentsOnly = hasFlag [ "--agents-only" ] rawArgs
+
+        if dryRun || agentsOnly then
+            let options =
+                { Harness.syncOptionsDefault repoRoot with
+                    DryRun = dryRun
+                    AgentsOnly = agentsOnly }
+
+            match Harness.syncAll options with
+            | Error message ->
+                eprintfn "Error: %s" message
+                1
+            | Ok result ->
+                finishAgents
+                    { Converted = result.AgentsConverted
+                      Failed = result.AgentsFailed
+                      FailedFiles = result.FailedFiles
+                      Warnings = result.Warnings }
+        else
+            match Harness.runHarnessBindingsGenerateDetailed repoRoot with
+            | Error message ->
+                eprintfn "Error: %s" message
+                1
+            | Ok outcome ->
+                let exitCode = finishAgents outcome.Agents
+
+                if not (hasFlag [ "--quiet"; "-q" ] rawArgs) then
+                    printfn "codex: %d agent(s) emitted" outcome.Codex.Result.Converted
+
+                    printfn
+                        "codex: %d skill file(s) mirrored, %d stale removed"
+                        outcome.Mirror.Copied
+                        outcome.Mirror.Removed
+
+                exitCode
 
 /// `harness audit` [Repo-grounded — `harness_audit.rs::run`]. Each member is
 /// named before it runs, because the per-validator reporters print only
@@ -2810,511 +2263,6 @@ let private runHarnessAuditLeaf (repoRoot: string) (format: OutputFormat) (rawAr
         eprintfn "Error: harness audit found %d failure(s)" failures.Count
         1
 
-/// Collects every occurrence of a repeatable `--flag <value>` pair.
-let private collectRepeatable (names: string list) (args: string list) : string list =
-    let rec loop (args: string list) (acc: string list) : string list =
-        match args with
-        | [] -> List.rev acc
-        | a :: v :: rest when List.contains a names -> loop rest (v :: acc)
-        | _ :: rest -> loop rest acc
-
-    loop args []
-
-/// Rejects the first `--flag` token `allowed` does not declare. Fails closed
-/// so a mistyped or retired option can never be silently ignored — the
-/// `snapshot --project` case the migration contract forbids relies on this.
-let private rejectUnknownOptions (allowed: string list) (args: string list) : Result<unit, string> =
-    match
-        args
-        |> List.filter (fun a -> a.StartsWith("--", StringComparison.Ordinal))
-        |> List.filter (fun a ->
-            let name =
-                match a.IndexOf('=') with
-                | -1 -> a
-                | index -> a.Substring(0, index)
-
-            not (List.contains name allowed))
-    with
-    | [] -> Ok()
-    | first :: _ -> Error(sprintf "unknown option: %s" first)
-
-/// Maps a [`TestContract.Failure`] onto the migration contract's exit codes:
-/// `1` for a contract failure, `2` for CLI or input misuse.
-let private reportTestContractFailure (failure: TestContract.Failure) : int =
-    match failure with
-    | TestContract.ContractFailure message ->
-        eprintfn "Error: %s" message
-        1
-    | TestContract.Misuse message ->
-        eprintfn "Error: %s" message
-        2
-
-/// Writes `lines` to `path` as a trailing-newline-terminated UTF-8 file,
-/// creating the parent directory. `path` is always a caller-supplied
-/// destination (a `local-tmp/` artifact in every documented use), never a
-/// tracked registry file.
-let private writeLines (path: string) (lines: string list) : unit =
-    let parent = System.IO.Path.GetDirectoryName(path: string)
-
-    if not (String.IsNullOrEmpty parent) then
-        System.IO.Directory.CreateDirectory parent |> ignore
-
-    let body =
-        match lines with
-        | [] -> ""
-        | lines -> String.concat "\n" lines + "\n"
-
-    System.IO.File.WriteAllText(path, body)
-
-/// Reads a snapshot TSV back into rows, rejecting any line that does not
-/// carry the four contracted fields.
-let private readSnapshotRows (path: string) : Result<TestContract.SnapshotRow list, string> =
-    if not (System.IO.File.Exists path) then
-        Error(sprintf "snapshot file not found: %s" path)
-    else
-        let rows =
-            System.IO.File.ReadAllLines path
-            |> Array.toList
-            |> List.filter (fun line -> line <> "")
-            |> List.map (fun line -> line, line.Split('\t'))
-
-        match rows |> List.tryFind (fun (_, fields) -> fields.Length <> 4) with
-        | Some(line, fields) -> Error(sprintf "snapshot row carries %d fields rather than 4: \"%s\"" fields.Length line)
-        | None ->
-            rows
-            |> List.map (fun (_, fields) ->
-                let row: TestContract.SnapshotRow =
-                    { Project = fields.[0]
-                      CanonicalOwner = fields.[1]
-                      BehaviorId = fields.[2]
-                      RuntimeIdentities = fields.[3] }
-
-                row)
-            |> Ok
-
-/// Reads the first tab-separated field of every non-empty line — the
-/// `--project-list-from` contract, which consumes a legacy snapshot verbatim
-/// so the canonical projection reproduces its exact project set.
-let private readProjectList (path: string) : Result<string list, string> =
-    if not (System.IO.File.Exists path) then
-        Error(sprintf "project list file not found: %s" path)
-    else
-        System.IO.File.ReadAllLines path
-        |> Array.toList
-        |> List.filter (fun line -> line <> "")
-        |> List.map (fun line -> line.Split('\t').[0])
-        |> Ok
-
-/// `test-contract registry snapshot` — projects one side of the dual reader
-/// into a sorted TSV. `--source legacy` accepts no project list and
-/// `--source canonical` requires one; neither form accepts `--project`.
-let private runTestContractSnapshotLeaf (repoRoot: string) (args: string list) : int =
-    let allowed = [ "--source"; "--project-list-from"; "--output"; "--help" ]
-
-    match rejectUnknownOptions allowed args with
-    | Error message ->
-        eprintfn "Error: %s" message
-        2
-    | Ok() ->
-
-        let source =
-            match stringFlag [ "--source" ] args with
-            | Some "legacy" -> Ok TestContract.SourceLegacy
-            | Some "canonical" -> Ok TestContract.SourceCanonical
-            | Some other -> Error(sprintf "--source must be legacy or canonical, found \"%s\"" other)
-            | None -> Error "--source is required and must be legacy or canonical"
-
-        match source, stringFlag [ "--output" ] args with
-        | Error message, _ ->
-            eprintfn "Error: %s" message
-            2
-        | _, None ->
-            eprintfn "Error: --output is required"
-            2
-        | Ok source, Some output ->
-            let projectList =
-                match stringFlag [ "--project-list-from" ] args with
-                | None -> Ok None
-                | Some path -> readProjectList path |> Result.map Some
-
-            match projectList with
-            | Error message ->
-                eprintfn "Error: %s" message
-                2
-            | Ok projectList ->
-                match TestContract.parseRegistry repoRoot with
-                | Error failure -> reportTestContractFailure failure
-                | Ok registry ->
-                    match TestContract.snapshot registry source projectList with
-                    | Error failure -> reportTestContractFailure failure
-                    | Ok rows ->
-                        writeLines output (rows |> List.map TestContract.renderRow)
-
-                        printfn
-                            "registry-snapshot: rows=%d source=%s"
-                            (List.length rows)
-                            (match source with
-                             | TestContract.SourceLegacy -> "legacy"
-                             | TestContract.SourceCanonical -> "canonical")
-
-                        0
-
-/// `test-contract registry compare` — requires byte equality of the two
-/// identity projections, which is what proves the expand step lost nothing.
-let private runTestContractCompareLeaf (args: string list) : int =
-    match rejectUnknownOptions [ "--legacy"; "--canonical"; "--help" ] args with
-    | Error message ->
-        eprintfn "Error: %s" message
-        2
-    | Ok() ->
-
-        match stringFlag [ "--legacy" ] args, stringFlag [ "--canonical" ] args with
-        | None, _ ->
-            eprintfn "Error: --legacy is required"
-            2
-        | _, None ->
-            eprintfn "Error: --canonical is required"
-            2
-        | Some legacyPath, Some canonicalPath ->
-            match readSnapshotRows legacyPath, readSnapshotRows canonicalPath with
-            | Error message, _
-            | _, Error message ->
-                eprintfn "Error: %s" message
-                2
-            | Ok legacy, Ok canonical ->
-                match TestContract.compareSnapshots legacy canonical with
-                | Error failure -> reportTestContractFailure failure
-                | Ok rows ->
-                    printfn "registry-preservation: equal rows=%d" rows
-                    0
-
-/// `test-contract registry validate` — the canonical registry root's own
-/// contract, plus whichever migration-step assertions the caller pins.
-let private runTestContractValidateLeaf (repoRoot: string) (args: string list) : int =
-    let allowed =
-        [ "--require-state"
-          "--require-behavior-state"
-          "--allow-bootstrap"
-          "--forbid-legacy"
-          "--forbid-compatibility"
-          "--help" ]
-
-    match rejectUnknownOptions allowed args with
-    | Error message ->
-        eprintfn "Error: %s" message
-        2
-    | Ok() ->
-
-        let requireState =
-            match stringFlag [ "--require-state" ] args with
-            | None -> Ok None
-            | Some "expanded" -> Ok(Some TestContract.Expanded)
-            | Some "migrating" -> Ok(Some TestContract.Migrating)
-            | Some "verified" -> Ok(Some TestContract.Verified)
-            | Some "contracted" -> Ok(Some TestContract.Contracted)
-            | Some other ->
-                Error(
-                    sprintf "--require-state must be expanded, migrating, verified, or contracted, found \"%s\"" other
-                )
-
-        let requireBehaviorState =
-            match stringFlag [ "--require-behavior-state" ] args with
-            | None -> Ok None
-            | Some "bootstrap" -> Ok(Some TestContract.Bootstrap)
-            | Some "active" -> Ok(Some TestContract.Active)
-            | Some other -> Error(sprintf "--require-behavior-state must be bootstrap or active, found \"%s\"" other)
-
-        match requireState, requireBehaviorState with
-        | Error message, _
-        | _, Error message ->
-            eprintfn "Error: %s" message
-            2
-        | Ok requireState, Ok requireBehaviorState ->
-            let options: TestContract.ValidateOptions =
-                { RequireState = requireState
-                  RequireBehaviorState = requireBehaviorState
-                  AllowBootstrap = collectRepeatable [ "--allow-bootstrap" ] args
-                  ForbidLegacy = hasFlag [ "--forbid-legacy" ] args
-                  ForbidCompatibility = hasFlag [ "--forbid-compatibility" ] args }
-
-            match TestContract.parseRegistry repoRoot with
-            | Error failure -> reportTestContractFailure failure
-            | Ok registry ->
-                match TestContract.validate registry (TestContract.enumerateNxProjects repoRoot) options with
-                | Error failure -> reportTestContractFailure failure
-                | Ok report ->
-                    printfn
-                        "registry-valid state=%s projects=%d behavior=bootstrap:%d,active:%d legacy=%s compatibility=%s"
-                        report.State
-                        report.Projects
-                        report.BootstrapCount
-                        report.ActiveCount
-                        (if report.LegacyPresent then "present" else "absent")
-                        (if report.CompatibilityPresent then "present" else "absent")
-
-                    0
-
-/// `test-contract registry validate-mapping` — the compatibility half: the
-/// frozen legacy values, the current canonical values, and the bijection.
-let private runTestContractValidateMappingLeaf (repoRoot: string) (args: string list) : int =
-    match rejectUnknownOptions [ "--all"; "--require-state"; "--require-count"; "--project"; "--help" ] args with
-    | Error message ->
-        eprintfn "Error: %s" message
-        2
-    | Ok() ->
-
-        let requireState =
-            match stringFlag [ "--require-state" ] args with
-            | None -> Ok None
-            | Some "identity" -> Ok(Some TestContract.MappingIdentity)
-            | Some "redirected" -> Ok(Some TestContract.MappingRedirected)
-            | Some "verified" -> Ok(Some TestContract.MappingVerified)
-            | Some other ->
-                Error(sprintf "--require-state must be identity, redirected, or verified, found \"%s\"" other)
-
-        if
-            not (hasFlag [ "--all" ] args)
-            && Option.isNone (stringFlag [ "--project" ] args)
-        then
-            eprintfn "Error: one of --all or --project <PROJECT> is required"
-            2
-        else
-
-            match requireState with
-            | Error message ->
-                eprintfn "Error: %s" message
-                2
-            | Ok requireState ->
-                match TestContract.parseRegistry repoRoot with
-                | Error failure -> reportTestContractFailure failure
-                | Ok registry ->
-                    match
-                        TestContract.validateMapping registry (TestContract.enumerateNxProjects repoRoot) requireState
-                    with
-                    | Error failure -> reportTestContractFailure failure
-                    | Ok report ->
-                        let succeed () =
-                            printfn "registry-mapping-valid state=%s mappings=%d" report.State report.Mappings
-                            0
-
-                        match stringFlag [ "--require-count" ] args with
-                        | None -> succeed ()
-                        | Some raw ->
-                            match Int32.TryParse(raw, NumberStyles.None, CultureInfo.InvariantCulture) with
-                            | true, expected when expected = report.Mappings -> succeed ()
-                            | true, expected ->
-                                eprintfn
-                                    "Error: testing.compatibility.mappings[]: --require-count %d but the registry declares %d"
-                                    expected
-                                    report.Mappings
-
-                                1
-                            | _ ->
-                                reportTestContractFailure (
-                                    TestContract.Misuse "--require-count expects a non-negative integer"
-                                )
-
-/// `test-contract validate --owner --check --fixture` — resolves one owner
-/// RED fixture and reports the diagnostic it asserts. The document is read
-/// into memory only; no tracked file is opened for writing.
-let private runTestContractFixtureLeaf (repoRoot: string) (args: string list) : int =
-    match rejectUnknownOptions [ "--owner"; "--check"; "--fixture"; "--help" ] args with
-    | Error message ->
-        eprintfn "Error: %s" message
-        2
-    | Ok() ->
-
-        let check =
-            match stringFlag [ "--check" ] args with
-            | Some "layout" -> Ok TestContract.CheckLayout
-            | Some "coverage" -> Ok TestContract.CheckCoverage
-            | Some "bdd" -> Ok TestContract.CheckBdd
-            | Some "manifest" -> Ok TestContract.CheckManifest
-            | Some other -> Error(sprintf "--check must be layout, coverage, bdd, or manifest, found \"%s\"" other)
-            | None -> Error "--check is required and must be layout, coverage, bdd, or manifest"
-
-        match stringFlag [ "--owner" ] args, check, stringFlag [ "--fixture" ] args with
-        | None, _, _ ->
-            eprintfn "Error: --owner is required"
-            2
-        | _, Error message, _ ->
-            eprintfn "Error: %s" message
-            2
-        | _, _, None ->
-            eprintfn "Error: --fixture is required"
-            2
-        | Some owner, Ok check, Some fixture ->
-            match TestContract.loadFixture repoRoot owner check fixture with
-            | Error failure -> reportTestContractFailure failure
-            | Ok document ->
-                printfn
-                    "fixture-loaded owner=%s check=%s code=%s"
-                    document.OwnerId
-                    (match document.Check with
-                     | TestContract.CheckLayout -> "layout"
-                     | TestContract.CheckCoverage -> "coverage"
-                     | TestContract.CheckBdd -> "bdd"
-                     | TestContract.CheckManifest -> "manifest")
-                    document.ExpectedDiagnostic.Code
-
-                0
-
-/// The four fixture-driven policy checks share one shape: resolve one document
-/// under the check's own fixture root, validate it, and print either the
-/// check's success line or its exact diagnostic. Keeping them in one function
-/// means a new check adds a route and a tuple, not another copy of this body.
-let private runTestContractPolicyLeaf
-    (repoRoot: string)
-    (check: string)
-    (validate: string -> string -> Result<string, TestContract.Failure>)
-    (projectValidate: (string -> string -> Result<string, TestContract.Failure>) option)
-    (args: string list)
-    : int =
-    match rejectUnknownOptions [ "--fixture"; "--project"; "--help" ] args with
-    | Error message ->
-        eprintfn "Error: %s" message
-        2
-    | Ok() ->
-        match stringFlag [ "--fixture" ] args, stringFlag [ "--project" ] args, projectValidate with
-        | Some _, Some _, _ ->
-            eprintfn "Error: --fixture and --project are mutually exclusive"
-            2
-        | Some fixture, None, _ ->
-            match validate repoRoot fixture with
-            | Error failure -> reportTestContractFailure failure
-            | Ok rendered ->
-                printfn "%s" rendered
-                0
-        | None, Some project, Some validateProject ->
-            match validateProject repoRoot project with
-            | Error failure -> reportTestContractFailure failure
-            | Ok rendered ->
-                printfn "%s" rendered
-                0
-        | None, Some _, None ->
-            eprintfn "Error: --project is not supported for %s validation" check
-            2
-        | None, None, _ ->
-            eprintfn "Error: one of --fixture or --project is required for %s validation" check
-            2
-
-/// The BDD reader resolves a repository-relative path where the other three
-/// resolve a bare document name. The verb grammar is uniform, so this wrapper
-/// composes the corpus prefix; a traversal segment survives the composition and
-/// is still rejected by the reader.
-let private validateBddFixture (repoRoot: string) (fixture: string) : Result<string, TestContract.Failure> =
-    TestContractBdd.loadDocument repoRoot (TestContractBdd.FixtureRoot + "/" + fixture)
-    |> Result.bind TestContractBdd.validateDocument
-    |> Result.map TestContractBdd.formatReport
-
-let private validateCoverageFixture (repoRoot: string) (fixture: string) : Result<string, TestContract.Failure> =
-    TestContractCoverage.loadDocument repoRoot fixture
-    |> Result.bind TestContractCoverage.validateDocument
-    |> Result.map TestContractCoverage.formatReport
-
-let private validateLayoutFixture (repoRoot: string) (fixture: string) : Result<string, TestContract.Failure> =
-    TestContractLayout.loadDocument repoRoot fixture
-    |> Result.bind TestContractLayout.validateDocument
-    |> Result.map TestContractLayout.formatReport
-
-let private validateManifestFixture (repoRoot: string) (fixture: string) : Result<string, TestContract.Failure> =
-    TestContractManifest.loadDocument repoRoot fixture
-    |> Result.bind TestContractManifest.validateDocument
-    |> Result.map TestContractManifest.formatReport
-
-/// `test-contract bdd validate --project --adapter` against the real
-/// repository, shared by every `--adapter` value below.
-let private runBddProject (repoRoot: string) (project: string) (adapter: TestContractBdd.Adapter) : int =
-    match TestContractProject.validateBehaviorCoverageForProject repoRoot project adapter with
-    | Error failure -> reportTestContractFailure failure
-    | Ok rendered ->
-        printfn "%s" rendered
-        0
-
-/// `test-contract bdd validate` — the one policy leaf with a fourth
-/// dimension (`--adapter`) beyond the `--fixture`/`--project` dichotomy the
-/// other three checks use, so it composes its own leaf rather than
-/// stretching `runTestContractPolicyLeaf`'s shape to fit a parameter the
-/// other three never take.
-let private runTestContractBddLeaf (repoRoot: string) (args: string list) : int =
-    match rejectUnknownOptions [ "--fixture"; "--project"; "--adapter"; "--help" ] args with
-    | Error message ->
-        eprintfn "Error: %s" message
-        2
-    | Ok() ->
-        match stringFlag [ "--fixture" ] args, stringFlag [ "--project" ] args with
-        | Some _, Some _ ->
-            eprintfn "Error: --fixture and --project are mutually exclusive"
-            2
-        | Some fixture, None ->
-            match stringFlag [ "--adapter" ] args with
-            | Some _ ->
-                eprintfn "Error: --adapter is not supported for --fixture validation"
-                2
-            | None ->
-                match validateBddFixture repoRoot fixture with
-                | Error failure -> reportTestContractFailure failure
-                | Ok rendered ->
-                    printfn "%s" rendered
-                    0
-        | None, Some project ->
-            match stringFlag [ "--adapter" ] args with
-            | None ->
-                eprintfn "Error: --adapter is required for --project BDD validation"
-                2
-            | Some "unit" -> runBddProject repoRoot project TestContractBdd.AdapterUnit
-            | Some "integration" -> runBddProject repoRoot project TestContractBdd.AdapterIntegration
-            | Some "e2e" -> runBddProject repoRoot project TestContractBdd.AdapterE2e
-            | Some other ->
-                eprintfn "Error: --adapter must be unit, integration, or e2e, found \"%s\"" other
-                2
-        | None, None ->
-            eprintfn "Error: one of --fixture or --project is required for BDD validation"
-            2
-
-/// Routes one `test-contract` leaf, intercepting `-h`/`--help` ahead of the
-/// blanket top-level help so this namespace prints its own two snapshot
-/// invocation forms rather than the canonical command list.
-let private runTestContractLeaf (getRepoRoot: unit -> Result<string, string>) (leaf: string) (args: string list) : int =
-    if List.exists (fun a -> a = "-h" || a = "--help") args then
-        printf "%s" HelpText.TestContractText
-        0
-    elif leaf = "test-contract-registry-compare" then
-        runTestContractCompareLeaf args
-    else
-        match getRepoRoot () with
-        | Error message ->
-            eprintfn "Error: failed to find git repository root: %s" message
-            1
-        | Ok repoRoot ->
-            match leaf with
-            | "test-contract-registry-snapshot" -> runTestContractSnapshotLeaf repoRoot args
-            | "test-contract-registry-validate" -> runTestContractValidateLeaf repoRoot args
-            | "test-contract-registry-validate-mapping" -> runTestContractValidateMappingLeaf repoRoot args
-            | "test-contract-bdd-validate" -> runTestContractBddLeaf repoRoot args
-            | "test-contract-coverage-validate" ->
-                runTestContractPolicyLeaf
-                    repoRoot
-                    "coverage"
-                    validateCoverageFixture
-                    (Some TestContractProject.validateCoveragePolicyForProject)
-                    args
-            | "test-contract-layout-validate" ->
-                runTestContractPolicyLeaf
-                    repoRoot
-                    "layout"
-                    validateLayoutFixture
-                    (Some TestContractProject.validateLayoutForProject)
-                    args
-            | "test-contract-manifest-validate" ->
-                runTestContractPolicyLeaf
-                    repoRoot
-                    "manifest"
-                    validateManifestFixture
-                    (Some TestContractProject.validateManifestForProject)
-                    args
-            | _ -> runTestContractFixtureLeaf repoRoot args
-
 let private routeTable: (string list * string) list =
     [ [ "convention"; "emoji"; "validate" ], "emoji"
       [ "convention"; "license"; "validate" ], "license"
@@ -3347,9 +2295,7 @@ let private routeTable: (string list * string) list =
       [ "repo-governance"; "audit" ], "repo-governance-audit"
       [ "specs"; "counts"; "validate" ], "specs-counts-validate"
       [ "specs"; "structure"; "validate" ], "specs-structure-validate"
-      [ "specs"; "gherkin-cardinality"; "validate" ], "specs-gherkin-cardinality-validate"
       [ "specs"; "scaffold"; "dart" ], "specs-scaffold-dart"
-      [ "specs"; "behavior-coverage"; "validate" ], "specs-behavior-coverage-validate"
       [ "harness"; "duplication"; "validate" ], "harness-duplication-validate"
       [ "harness"; "claude"; "validate" ], "harness-claude-validate"
       [ "harness"; "sync"; "validate" ], "harness-sync-validate"
@@ -3361,21 +2307,11 @@ let private routeTable: (string list * string) list =
       [ "harness"; "catalog"; "generate" ], "harness-catalog-generate"
       [ "harness"; "catalog"; "validate" ], "harness-catalog-validate"
       [ "harness"; "audit" ], "harness-audit"
-      [ "specs"; "e2e-coverage"; "validate" ], "specs-e2e-coverage-validate"
       [ "specs"; "audit" ], "specs-audit"
       [ "gate"; "list" ], "gate-list"
       [ "gate"; "emit" ], "gate-emit"
       [ "gate"; "run" ], "gate-run"
-      [ "gate"; "validate" ], "gate-validate"
-      [ "test-contract"; "registry"; "snapshot" ], "test-contract-registry-snapshot"
-      [ "test-contract"; "registry"; "compare" ], "test-contract-registry-compare"
-      [ "test-contract"; "registry"; "validate-mapping" ], "test-contract-registry-validate-mapping"
-      [ "test-contract"; "registry"; "validate" ], "test-contract-registry-validate"
-      [ "test-contract"; "bdd"; "validate" ], "test-contract-bdd-validate"
-      [ "test-contract"; "coverage"; "validate" ], "test-contract-coverage-validate"
-      [ "test-contract"; "layout"; "validate" ], "test-contract-layout-validate"
-      [ "test-contract"; "manifest"; "validate" ], "test-contract-manifest-validate"
-      [ "test-contract"; "validate" ], "test-contract-validate" ]
+      [ "gate"; "validate" ], "gate-validate" ]
 
 /// Returns the first `routeTable` entry whose prefix `argvList` starts with,
 /// paired with the arguments left after that prefix — the data-driven
@@ -3401,7 +2337,7 @@ let route (getRepoRoot: unit -> Result<string, string>) (argv: string[]) : int =
         | Some(name, rest) -> Some name, rest
         | None -> None, []
 
-    // `test-coverage validate`, the two coverage leaves, and `governance
+    // `test-coverage validate` and `governance
     // readme-index rewrite-paths` have required arguments (positional /
     // `--map`), whose absence must win over `--help` — clap reports the
     // missing argument even for `--help`, so these are checked ahead of the
@@ -3418,23 +2354,6 @@ let route (getRepoRoot: unit -> Result<string, string>) (argv: string[]) : int =
             eprintfn "Error: failed to find git repository root: %s" message
             1
         | Ok repoRoot -> runHarnessSyncPromoteLeaf repoRoot rest
-    elif path = Some "specs-e2e-coverage-validate" then
-        match parseOutputFormat rest with
-        | Error message ->
-            eprintfn "Error: %s" message
-            1
-        | Ok format -> runSpecsE2eCoverageLeaf format rest
-    elif path = Some "specs-behavior-coverage-validate" then
-        match getRepoRoot () with
-        | Error message ->
-            eprintfn "Error: failed to find git repository root: %s" message
-            1
-        | Ok repoRoot ->
-            match parseOutputFormat rest with
-            | Error message ->
-                eprintfn "Error: %s" message
-                1
-            | Ok format -> runSpecsBehaviorCoverageLeaf repoRoot format rest
     elif path = Some "governance-readme-index-rewrite-paths" then
         match getRepoRoot () with
         | Error message ->
@@ -3459,12 +2378,6 @@ let route (getRepoRoot: unit -> Result<string, string>) (argv: string[]) : int =
             eprintfn "Error: failed to find git repository root: %s" message
             1
         | Ok repoRoot -> runGateRunLeaf repoRoot rest
-    elif
-        (match path with
-         | Some name -> name.StartsWith("test-contract", StringComparison.Ordinal)
-         | None -> false)
-    then
-        runTestContractLeaf getRepoRoot (Option.defaultValue "" path) rest
     elif wantsHelp argv then
         printf "%s" HelpText.Text
         0
@@ -3517,7 +2430,6 @@ let route (getRepoRoot: unit -> Result<string, string>) (argv: string[]) : int =
                     | "repo-governance-audit" -> runRepoGovernanceAuditLeaf repoRoot format rest
                     | "specs-counts-validate" -> runSpecsCountsValidateLeaf repoRoot rest
                     | "specs-structure-validate" -> runSpecsStructureValidateLeaf repoRoot rest
-                    | "specs-gherkin-cardinality-validate" -> runSpecsCardinalityLeaf repoRoot format rest
                     | "specs-scaffold-dart" -> runSpecsScaffoldDartLeaf format rest
                     | "harness-duplication-validate" -> runHarnessDuplicationLeaf repoRoot format
                     | "harness-claude-validate" -> runHarnessClaudeLeaf repoRoot format rest
@@ -3529,24 +2441,16 @@ let route (getRepoRoot: unit -> Result<string, string>) (argv: string[]) : int =
                     | "harness-catalog-generate" -> runHarnessCatalogGenerateLeaf repoRoot format rest
                     | "harness-catalog-validate" -> runHarnessCatalogValidateLeaf repoRoot format rest
                     | "harness-audit" -> runHarnessAuditLeaf repoRoot format rest
-                    // "specs-behavior-coverage-validate" has no arm here: the
-                    // `elif path = Some "specs-behavior-coverage-validate"`
-                    // branch above always intercepts that path first (it
-                    // needs its own two-stage getRepoRoot/parseOutputFormat
-                    // sequencing), so a match arm for it here could never
-                    // run. Coverlet flagged the dead arm as a line this test
-                    // suite could never reach; deleting it is the fix.
                     | "specs-audit" -> runSpecsAuditLeaf repoRoot format rest
                     // Genuinely unreachable, not deletable: every leaf name
                     // `routeTable` can ever produce is either handled by an
                     // explicit arm above or intercepted earlier by one of
                     // this function's `elif path = Some "..."`/`StartsWith
                     // "test-contract"` branches (verified by diffing
-                    // `routeTable`'s leaf-name column against every arm and
-                    // `elif` guard in this file — none are left over). F#'s
+                    // `routeTable`'s leaf-name column against every arm in
+                    // this file — none are left over). F#'s
                     // string-pattern matching still requires an exhaustive
                     // wildcard, so this arm cannot be removed the way the
-                    // dead `specs-behavior-coverage-validate` arm above was;
                     // it stands as a safety net against a future
                     // `routeTable` entry left unwired here.
                     | _ -> 2

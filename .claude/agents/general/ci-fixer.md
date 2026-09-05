@@ -47,8 +47,10 @@ Without this handoff, suppress nothing. See the
 
 ## Fix Capabilities
 
-- Add missing Nx targets to `project.json`
-- Fix coverage thresholds in `test:quick` targets
+- Add missing applicable real Nx targets and remove inapplicable/no-op targets
+- Make every `test:coverage:*` static-only and include applicable validators in `test:quick`
+- Remove Integration/E2E runtime from hooks and PR/main gates
+- Restore scheduled static → Integration → E2E fail-closed execution
 - Create missing `.env.example` files
 - Create missing `specs/` directory structures
 - Fix Nx tag declarations

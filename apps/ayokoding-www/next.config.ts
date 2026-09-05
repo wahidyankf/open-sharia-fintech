@@ -6,6 +6,8 @@ import { learnReorgRedirects } from "./src/redirects/learn-reorg";
 import { courseRehomeRedirects } from "./src/redirects/course-rehome";
 import { contentNamespaceRedirects } from "./src/redirects/content-namespace";
 import { learnThreeBucketRedirects } from "./src/redirects/learn-three-bucket";
+import { localeEntryRedirects } from "./src/redirects/locale-entry";
+import { contentCacheRule, TRPC_RUNTIME_TRACED_ASSETS } from "./src/features/content/core/static-delivery";
 
 const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
@@ -16,22 +18,6 @@ const securityHeaders = [
     value:
       "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://www.google.com;",
   },
-];
-
-const localeEntryRedirects = [
-  { source: "/", destination: "/en", permanent: true },
-  { source: "/EN", destination: "/en", permanent: true },
-  { source: "/En", destination: "/en", permanent: true },
-  { source: "/eN", destination: "/en", permanent: true },
-  { source: "/ID", destination: "/id", permanent: true },
-  { source: "/Id", destination: "/id", permanent: true },
-  { source: "/iD", destination: "/id", permanent: true },
-  { source: "/EN/:path*", destination: "/en/:path*", permanent: true },
-  { source: "/En/:path*", destination: "/en/:path*", permanent: true },
-  { source: "/eN/:path*", destination: "/en/:path*", permanent: true },
-  { source: "/ID/:path*", destination: "/id/:path*", permanent: true },
-  { source: "/Id/:path*", destination: "/id/:path*", permanent: true },
-  { source: "/iD/:path*", destination: "/id/:path*", permanent: true },
 ];
 
 const nextConfig: NextConfig = {
@@ -54,7 +40,7 @@ const nextConfig: NextConfig = {
     // tRPC serves navigation, search, and course-path data from the standalone
     // function at runtime. These are filesystem reads, so trace their assets
     // independently of the static content route.
-    "/api/trpc/[trpc]": ["./content/**/*", "./generated/**/*", "./src/features/course-paths/manifests/**/*"],
+    "/api/trpc/[trpc]": [...TRPC_RUNTIME_TRACED_ASSETS],
   },
   serverExternalPackages: ["flexsearch"],
   images: {
@@ -66,6 +52,7 @@ const nextConfig: NextConfig = {
         source: "/(.*)",
         headers: securityHeaders,
       },
+      contentCacheRule(),
     ];
   },
   async redirects() {

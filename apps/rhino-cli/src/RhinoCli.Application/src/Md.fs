@@ -4,9 +4,9 @@
 /// `apps/rhino-cli/src/commands/md_validate_frontmatter.rs`,
 /// `apps/rhino-cli/src/application/docs/heading_hierarchy.rs`,
 /// `apps/rhino-cli/src/commands/md_validate_heading_hierarchy.rs`] for
-/// `specs/apps/rhino/cli/behaviors/md/docs-validate-frontmatter.feature`'s
+/// `specs/apps/rhino/cli/behaviours/md/docs-validate-frontmatter.feature`'s
 /// 11 scenarios and
-/// `specs/apps/rhino/cli/behaviors/md/docs-validate-heading-hierarchy.feature`'s
+/// `specs/apps/rhino/cli/behaviours/md/docs-validate-heading-hierarchy.feature`'s
 /// 12 scenarios.
 ///
 /// Scope: this PR (Wave D PR2) additionally ports the heading-hierarchy
@@ -37,7 +37,7 @@
 /// flowchart,graph,state,validator}.rs`,
 /// `apps/rhino-cli/src/infrastructure/mermaid/reporter.rs`,
 /// `apps/rhino-cli/src/commands/md_validate_mermaid.rs`] for
-/// `specs/apps/rhino/cli/behaviors/md/docs-validate-mermaid.feature`'s
+/// `specs/apps/rhino/cli/behaviours/md/docs-validate-mermaid.feature`'s
 /// 39 scenarios. Unlike the three validators above, several of this
 /// feature's scenarios assert on rendered JSON/Markdown/text output and on
 /// parser internals (edge counts, rank depth) directly, so this section
@@ -246,7 +246,7 @@ let private mkWarn (path: string) (message: string) : Finding =
 /// scenarios, and "Software-engineering doc missing title fails", "...missing
 /// category field fails", "...category other than software fails", and
 /// "...deprecated software category emits warn not fail" — all from
-/// `specs/apps/rhino/cli/behaviors/md/docs-validate-frontmatter.feature`.
+/// `specs/apps/rhino/cli/behaviours/md/docs-validate-frontmatter.feature`.
 let private validateSoftwareSchema (path: string) (fm: IDictionary<obj, obj>) : Finding list =
     let titleFinding =
         if hasNonEmptyString fm "title" then
@@ -300,12 +300,12 @@ let private validateSoftwareSchema (path: string) (fm: IDictionary<obj, obj>) : 
 /// Validates the lighter governance-document frontmatter schema. `title` is
 /// required; `description` and `when_to_use` are both `Blocking` too — FR-4
 /// armed at Phase 9/16, matching `frontmatter.rs`'s current (post-dark-launch)
-/// behavior [Repo-grounded — `frontmatter.rs::validate_governance_schema`].
+/// behaviour [Repo-grounded — `frontmatter.rs::validate_governance_schema`].
 ///
 /// Gherkin (binds) — "Governance doc with only title fails once when_to_use
 /// and description are armed" and "Governance doc with title, description,
 /// and when_to_use passes the lighter schema" —
-/// `specs/apps/rhino/cli/behaviors/md/docs-validate-frontmatter.feature`.
+/// `specs/apps/rhino/cli/behaviours/md/docs-validate-frontmatter.feature`.
 let private validateGovernanceSchema (path: string) (fm: IDictionary<obj, obj>) : Finding list =
     let titleFinding =
         if hasNonEmptyString fm "title" then
@@ -336,10 +336,8 @@ let private validateGovernanceSchema (path: string) (fm: IDictionary<obj, obj>) 
 /// `serde_norway::Value::get` returning `None` for every key on a
 /// non-mapping value, rather than as a parse failure
 /// [Repo-grounded — `frontmatter.rs::scan_frontmatter_file`].
-let private scanFrontmatterFile (path: string) (area: DocArea) : Finding list =
-    let data = File.ReadAllText(path)
-
-    match extractFrontmatter data with
+let private scanFrontmatterContent (path: string) (area: DocArea) (content: string) : Finding list =
+    match extractFrontmatter content with
     | None -> [ mkFail path "file has no YAML frontmatter (delimited by `---` fences)" ]
     | Some frontmatter ->
         try
@@ -361,6 +359,10 @@ let private scanFrontmatterFile (path: string) (area: DocArea) : Finding list =
         with ex ->
             [ mkFail path (sprintf "frontmatter is not valid YAML: %s" ex.Message) ]
 
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
+let private scanFrontmatterFile (path: string) (area: DocArea) : Finding list =
+    scanFrontmatterContent path area (File.ReadAllText path)
+
 /// Recursively collects every file path reachable from `root`, skipping
 /// directories named in `skip`. Mirrors `WalkDir`'s ability to accept either
 /// a single file or a directory as its root
@@ -377,6 +379,7 @@ let private scanFrontmatterFile (path: string) (area: DocArea) : Finding list =
 /// order is the only way that JSON array can agree between the two
 /// binaries [Repo-grounded — `links.rs::get_all_markdown_files`'s bare
 /// `WalkDir::new(repo_root)`, no `.sort_by`].
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let rec private collectFilesSkippingUnsorted (skip: Set<string>) (root: string) : string list =
     if File.Exists root then
         [ root ]
@@ -394,6 +397,7 @@ let rec private collectFilesSkippingUnsorted (skip: Set<string>) (root: string) 
     else
         []
 
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let rec private collectFilesSkipping (skip: Set<string>) (root: string) : string list =
     if File.Exists root then
         [ root ]
@@ -415,12 +419,14 @@ let rec private collectFilesSkipping (skip: Set<string>) (root: string) : string
 /// `collectFilesSkipping` specialised to the frontmatter validator's
 /// `skipDirs` [Repo-grounded — `frontmatter.rs::walk_frontmatter_path`'s
 /// `WalkDir` use].
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let private collectFiles (root: string) : string list = collectFilesSkipping skipDirs root
 
 /// Walks `root` recursively and collects frontmatter findings from every
 /// markdown file in a recognised documentation area. Returns an empty list
 /// when `root` does not exist on the filesystem
 /// [Repo-grounded — `frontmatter.rs::walk_frontmatter_path`].
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let private walkFrontmatterPath (root: string) : Finding list =
     collectFiles root
     |> List.filter (fun p -> p.EndsWith(".md", StringComparison.Ordinal))
@@ -501,6 +507,7 @@ let private walkFrontmatterPath (root: string) : Finding list =
 ///   When the developer runs docs validate-frontmatter
 ///   Then the command exits successfully
 ///   And the frontmatter output reports zero fail-level findings
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let validateDocsFrontmatter (paths: string list) : Result<Finding list, string> =
     if List.isEmpty paths then
         Error "at least one path is required"
@@ -509,6 +516,17 @@ let validateDocsFrontmatter (paths: string list) : Result<Finding list, string> 
         |> List.collect walkFrontmatterPath
         |> List.sortBy (fun f -> (f.Path |> Option.defaultValue "", f.Message))
         |> Ok
+
+/// Validates repository-relative Markdown documents entirely in memory.
+/// Files outside the documentation areas governed by the frontmatter rule
+/// are ignored exactly as they are by the filesystem adapter above.
+let validateDocsFrontmatterDocuments (documents: (string * string) list) : Finding list =
+    documents
+    |> List.collect (fun (path, content) ->
+        match classifyDocArea path with
+        | UnknownArea -> []
+        | area -> scanFrontmatterContent path area content)
+    |> List.sortBy (fun finding -> finding.Path |> Option.defaultValue "", finding.Message)
 
 // ---------------------------------------------------------------------------
 // docs validate-heading-hierarchy
@@ -622,7 +640,7 @@ let private collectHeadings (content: string) : Heading list =
 /// levels passes", "File with two H1 headings fails", "File with H2 followed
 /// directly by H4 (skipping H3) fails", and "Single-line file with no
 /// headings is ignored (passes)" — all from
-/// `specs/apps/rhino/cli/behaviors/md/docs-validate-heading-hierarchy.feature`.
+/// `specs/apps/rhino/cli/behaviours/md/docs-validate-heading-hierarchy.feature`.
 /// One finding from [`analyzeHeadingsDetailed`], carrying the `line`/`kind`
 /// fields the CLI's JSON/Markdown rendering needs beyond generic `Finding`
 /// [Repo-grounded — `heading_hierarchy.rs::DocsHeadingFinding`].
@@ -693,12 +711,14 @@ let private analyzeHeadings (path: string) (headings: Heading list) : Finding li
 
 /// Reads `path`, extracts its headings, and applies the hierarchy rules
 /// [Repo-grounded — `heading_hierarchy.rs::scan_file_heading_hierarchy`].
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let private scanFileHeadingHierarchy (path: string) : Finding list =
     File.ReadAllText(path) |> collectHeadings |> analyzeHeadings path
 
 /// Walks `root` recursively and validates each markdown file. Returns an
 /// empty list when `root` does not exist on the filesystem
 /// [Repo-grounded — `heading_hierarchy.rs::walk_heading_hierarchy_path`].
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let private walkHeadingHierarchyPath (root: string) : Finding list =
     collectFilesSkipping namingSkipDirs root
     |> List.filter (fun p -> p.EndsWith(".md", StringComparison.Ordinal))
@@ -743,6 +763,41 @@ let private isProseAllowlisted (repoRel: string) : bool =
                 let tail = rest.Substring(idx + 1)
                 tail = "README.md" || tail.StartsWith("docs/", StringComparison.Ordinal)
 
+/// Applies the heading-hierarchy rules to an in-memory staged document.
+/// This is the pure core used by hook policy tests; filesystem enumeration
+/// and reads remain adapter concerns in the functions below.
+let validateDocsHeadingHierarchyContent (repoRelativePath: string) (content: string) : Finding list =
+    if isProseAllowlisted repoRelativePath then
+        content |> collectHeadings |> analyzeHeadings repoRelativePath
+    else
+        []
+
+/// Validates an in-memory Markdown document set. `allowlistedOnly` selects
+/// the repository prose policy used by the public command; the unrestricted
+/// mode models explicit path operands, which validate every supplied file.
+let validateDocsHeadingHierarchyDocuments
+    (allowlistedOnly: bool)
+    (excludePrefixes: string list)
+    (documents: (string * string) list)
+    : Finding list =
+    let isExcluded (path: string) : bool =
+        let normalized = path.Replace('\\', '/')
+
+        excludePrefixes
+        |> List.exists (fun prefix ->
+            let trimmed = prefix.Replace('\\', '/').TrimEnd('/')
+
+            trimmed <> ""
+            && (normalized = trimmed
+                || normalized.StartsWith(trimmed + "/", StringComparison.Ordinal)))
+
+    documents
+    |> List.filter (fun (path, _) -> path.EndsWith(".md", StringComparison.Ordinal))
+    |> List.filter (fun (path, _) -> not (isExcluded path))
+    |> List.filter (fun (path, _) -> not allowlistedOnly || isProseAllowlisted path)
+    |> List.collect (fun (path, content) -> content |> collectHeadings |> analyzeHeadings path)
+    |> List.sortBy (fun finding -> finding.Path |> Option.defaultValue "", finding.Message)
+
 /// Performs an allowlisted heading-hierarchy scan rooted at `repoRoot`. Only
 /// files whose repository-relative path satisfies `isProseAllowlisted` are
 /// checked; `excludePrefixes` are additional repository-relative prefixes to
@@ -759,7 +814,8 @@ let private isProseAllowlisted (repoRel: string) : bool =
 /// finding", "app-internals-default-deny — deep app files yield no finding",
 /// and "project-docs-subtree-allowlisted — app and lib docs trees trigger
 /// findings" — all from
-/// `specs/apps/rhino/cli/behaviors/md/docs-validate-heading-hierarchy.feature`.
+/// `specs/apps/rhino/cli/behaviours/md/docs-validate-heading-hierarchy.feature`.
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let validateDocsHeadingHierarchyAllowlisted (repoRoot: string) (excludePrefixes: string list) : Finding list =
     collectFilesSkipping namingSkipDirs repoRoot
     |> List.filter (fun p -> p.EndsWith(".md", StringComparison.Ordinal))
@@ -784,6 +840,7 @@ let validateDocsHeadingHierarchyAllowlisted (repoRoot: string) (excludePrefixes:
 /// generic-`Finding` overload above, which sorts by message for lack of a
 /// `Line` field to sort on
 /// [Repo-grounded — `heading_hierarchy.rs::validate_docs_heading_hierarchy_allowlisted`].
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let validateDocsHeadingHierarchyAllowlistedDetailed
     (repoRoot: string)
     (excludePrefixes: string list)
@@ -810,6 +867,7 @@ let validateDocsHeadingHierarchyAllowlistedDetailed
 /// use when they already know every supplied path should be checked. The
 /// returned list is sorted by file path, then by message
 /// [Repo-grounded — `heading_hierarchy.rs::validate_docs_heading_hierarchy`].
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let validateDocsHeadingHierarchy (paths: string list) : Result<Finding list, string> =
     if List.isEmpty paths then
         Error "at least one path is required"
@@ -833,7 +891,8 @@ let validateDocsHeadingHierarchy (paths: string list) : Result<Finding list, str
 /// Gherkin (binds) — "staged-prose-heading-blocks — staged docs file with bad
 /// heading hierarchy blocks commit" and "staged-skill-file-exempt — staged
 /// SKILL.md with bad heading hierarchy does not block commit" — both from
-/// `specs/apps/rhino/cli/behaviors/git/git-pre-commit.feature`.
+/// `specs/apps/rhino/cli/behaviours/git/git-pre-commit.feature`.
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let validateDocsHeadingHierarchyForPaths (repoRoot: string) (paths: string list) : Finding list =
     let allowlisted =
         paths
@@ -998,8 +1057,8 @@ let shouldSkipLink (link: string) : bool =
 /// heading-hierarchy one) and inline code spans, discarding external URLs,
 /// `mailto:` links, and known placeholder patterns
 /// [Repo-grounded — `links.rs::extract_links`].
-let private extractLinks (path: string) : LinkInfo list =
-    let lines = (File.ReadAllText path).Split('\n')
+let private extractLinksFromContent (content: string) : LinkInfo list =
+    let lines = content.Split('\n')
     let mutable inCodeBlock = false
     let links = ResizeArray<LinkInfo>()
 
@@ -1024,6 +1083,10 @@ let private extractLinks (path: string) : LinkInfo list =
                     links.Add { LineNumber = lineNum; Url = url }
 
     links |> List.ofSeq
+
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
+let private extractLinks (path: string) : LinkInfo list =
+    File.ReadAllText path |> extractLinksFromContent
 
 /// Converts a heading title string to a GitHub-flavoured markdown anchor
 /// slug. Rules: lowercase, remove all chars that are not alphanumeric,
@@ -1098,7 +1161,7 @@ let private resolveLink (sourceFile: string) (link: string) : string =
         else
             resolved
 
-/// Options controlling `validateDocsLinks`'s file-selection behavior.
+/// Options controlling `validateDocsLinks`'s file-selection behaviour.
 /// `StagedFiles`, when `Some`, is the literal list of repository-relative
 /// staged paths to scan in place of a full recursive walk — mirrors
 /// `checkStagedFiles`'s precedent (see `Env.fs`) of taking the staged-file
@@ -1116,6 +1179,7 @@ type LinkScanOptions =
 /// `opts.ExcludePrefixes` is then applied against each file's
 /// repository-relative path [Repo-grounded — `links.rs::get_markdown_files`,
 /// `links.rs::filter_skip_paths`].
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let private getMarkdownLinkFiles (opts: LinkScanOptions) : string list =
     let files =
         match opts.StagedFiles with
@@ -1143,7 +1207,13 @@ let private getMarkdownLinkFiles (opts: LinkScanOptions) : string list =
 /// exists, any anchor fragment is validated against the target's (or, for a
 /// pure `#fragment` link, the source file's) heading slugs
 /// [Repo-grounded — `links.rs::validate_file`].
-let private validateFileLinks (repoRoot: string) (filePath: string) (links: LinkInfo list) : Finding list =
+let private validateFileLinksWith
+    (repoRoot: string)
+    (filePath: string)
+    (links: LinkInfo list)
+    (pathExists: string -> bool)
+    (readContent: string -> string)
+    : Finding list =
     let normalizedPath = filePath.Replace('\\', '/')
 
     if skillTreeMarkers |> List.exists normalizedPath.Contains then
@@ -1158,7 +1228,7 @@ let private validateFileLinks (repoRoot: string) (filePath: string) (links: Link
             if pathPart = "" then
                 match fragment with
                 | Some frag when frag <> "" ->
-                    let slugs = slugsFromContent (File.ReadAllText filePath)
+                    let slugs = slugsFromContent (readContent filePath)
 
                     if Set.contains frag slugs then
                         []
@@ -1170,7 +1240,7 @@ let private validateFileLinks (repoRoot: string) (filePath: string) (links: Link
             else
                 let target = resolveLink filePath pathPart
 
-                if not (File.Exists target || Directory.Exists target) then
+                if not (pathExists target) then
                     [ mkFail
                           rel
                           (sprintf
@@ -1182,7 +1252,7 @@ let private validateFileLinks (repoRoot: string) (filePath: string) (links: Link
                 else
                     match fragment with
                     | Some frag when frag <> "" ->
-                        let slugs = slugsFromContent (File.ReadAllText target)
+                        let slugs = slugsFromContent (readContent target)
 
                         if Set.contains frag slugs then
                             []
@@ -1197,6 +1267,89 @@ let private validateFileLinks (repoRoot: string) (filePath: string) (links: Link
                                       rel
                                       targetRel) ]
                     | _ -> [])
+
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
+let private validateFileLinks (repoRoot: string) (filePath: string) (links: LinkInfo list) : Finding list =
+    validateFileLinksWith
+        repoRoot
+        filePath
+        links
+        (fun target -> File.Exists target || Directory.Exists target)
+        File.ReadAllText
+
+/// Validates one staged Markdown document without touching the filesystem.
+/// The caller owns target lookup through `pathExists` and `readContent`, so
+/// Unit tests can prove hook policy with an in-memory repository while the
+/// real links adapter continues to use filesystem functions above.
+let validateDocsLinksContent
+    (repoRoot: string)
+    (repoRelativePath: string)
+    (content: string)
+    (excludePrefixes: string list)
+    (pathExists: string -> bool)
+    (readContent: string -> string)
+    : Finding list =
+    let normalized = repoRelativePath.Replace('\\', '/')
+
+    if
+        excludePrefixes
+        |> List.exists (fun prefix ->
+            let trimmed = prefix.TrimEnd('/')
+
+            trimmed <> ""
+            && (normalized = trimmed
+                || normalized.StartsWith(trimmed + "/", StringComparison.Ordinal)))
+    then
+        []
+    else
+        let absolutePath = Path.GetFullPath(Path.Combine(repoRoot, repoRelativePath))
+        let links = extractLinksFromContent content
+        validateFileLinksWith repoRoot absolutePath links pathExists readContent
+
+/// Validates a complete in-memory Markdown repository with the same staged
+/// and exclusion selection semantics as `validateDocsLinks`. Target and
+/// anchor resolution operate against the supplied document map, never the
+/// host filesystem.
+let validateDocsLinksDocuments
+    (documents: (string * string) list)
+    (stagedFiles: string list option)
+    (excludePrefixes: string list)
+    : Finding list =
+    let repoRoot = Path.GetFullPath("/virtual-rhino-markdown-repository")
+
+    let normalizedDocuments =
+        documents
+        |> List.map (fun (path, content) -> Path.GetFullPath(Path.Combine(repoRoot, path.Replace('\\', '/'))), content)
+        |> Map.ofList
+
+    let pathExists (path: string) : bool =
+        let normalized = Path.GetFullPath(path)
+
+        normalizedDocuments.ContainsKey normalized
+        || (normalizedDocuments
+            |> Map.exists (fun candidate _ ->
+                candidate.StartsWith(normalized + string Path.DirectorySeparatorChar, StringComparison.Ordinal)))
+
+    let readContent (path: string) : string =
+        normalizedDocuments
+        |> Map.tryFind (Path.GetFullPath path)
+        |> Option.defaultWith (fun () -> failwithf "in-memory Markdown target does not exist: %s" path)
+
+    let selected =
+        match stagedFiles with
+        | Some staged ->
+            let stagedSet =
+                staged |> List.map (fun path -> path.Replace('\\', '/')) |> Set.ofList
+
+            documents
+            |> List.filter (fun (path, _) -> stagedSet.Contains(path.Replace('\\', '/')))
+        | None -> documents
+
+    selected
+    |> List.filter (fun (path, _) -> path.EndsWith(".md", StringComparison.Ordinal))
+    |> List.collect (fun (path, content) ->
+        validateDocsLinksContent repoRoot path content excludePrefixes pathExists readContent)
+    |> List.sortBy (fun finding -> finding.Path |> Option.defaultValue "", finding.Message)
 
 /// Validates every relative markdown link (and anchor fragment) reachable
 /// from `opts.RepoRoot`, per `opts`'s staged-file and exclude-prefix
@@ -1267,6 +1420,7 @@ let private validateFileLinks (repoRoot: string) (filePath: string) (links: Link
 ///   When the developer runs docs validate-links
 ///   Then the command exits successfully
 ///   And the output reports no broken links found
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let validateDocsLinks (opts: LinkScanOptions) : Finding list =
     getMarkdownLinkFiles opts
     |> List.collect (fun path -> validateFileLinks opts.RepoRoot path (extractLinks path))
@@ -1308,6 +1462,7 @@ let categorizeBrokenLink (link: string) : string =
 /// number, link text, target path, category) the CLI's JSON/Markdown
 /// rendering needs instead of a prose `Finding.Message`
 /// [Repo-grounded — `links.rs::validate_file`].
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let private validateFileLinksDetailed (repoRoot: string) (filePath: string) (links: LinkInfo list) : BrokenLink list =
     let normalizedPath = filePath.Replace('\\', '/')
 
@@ -1362,6 +1517,7 @@ let private validateFileLinksDetailed (repoRoot: string) (filePath: string) (lin
 /// (total files/links scanned, category-grouped broken links) the CLI's
 /// JSON/Markdown rendering needs
 /// [Repo-grounded — `links.rs::validate_all_links`].
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let validateAllLinksDetailed (opts: LinkScanOptions) : LinkValidationResult =
     let files = getMarkdownLinkFiles opts
 
@@ -2491,7 +2647,7 @@ let private mermaidSkipDirs: Set<string> =
           ".nx"
           ".git" ]
 
-/// Options controlling `validateMermaidDocs`'s file-selection behavior.
+/// Options controlling `validateMermaidDocs`'s file-selection behaviour.
 /// `Paths`, when non-empty, restricts the scan to those repository-relative
 /// (or absolute) subtrees — mirrors `md_validate_mermaid.rs::collect_md_files`.
 /// `StagedFiles`/`ChangedFiles`, when `Some`, are the literal repository-
@@ -2511,6 +2667,7 @@ type MermaidScanOptions =
 /// with any of the `exclude` prefixes. An empty `exclude` list, or an
 /// individual empty prefix within it, excludes nothing
 /// [Repo-grounded — `md_validate_mermaid.rs::apply_excludes`].
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let private applyMermaidExcludes (repoRoot: string) (files: string list) (exclude: string list) : string list =
     if List.isEmpty exclude then
         files
@@ -2535,6 +2692,7 @@ let private applyMermaidExcludes (repoRoot: string) (files: string list) (exclud
 /// when non-empty, otherwise a full repository walk
 /// [Repo-grounded — `md_validate_mermaid.rs::run`'s file-selection `if`/`else`
 /// chain].
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let private collectMermaidFiles (opts: MermaidScanOptions) : string list =
     match opts.StagedFiles, opts.ChangedFiles with
     | Some staged, _ ->
@@ -2565,9 +2723,10 @@ let private collectMermaidFiles (opts: MermaidScanOptions) : string list =
 /// [Repo-grounded — `md_validate_mermaid.rs::run`].
 ///
 /// Gherkin (binds) — this function backs all of
-/// `specs/apps/rhino/cli/behaviors/md/docs-validate-mermaid.feature`'s
+/// `specs/apps/rhino/cli/behaviours/md/docs-validate-mermaid.feature`'s
 /// 39 scenarios; see `MdSteps.fs`'s `docs-validate-mermaid.feature` section
 /// for the per-scenario step-definition bindings.
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let validateMermaidDocs (opts: MermaidScanOptions) : MermaidValidationResult =
     let files =
         applyMermaidExcludes opts.RepoRoot (collectMermaidFiles opts) opts.ExcludePrefixes
@@ -2581,6 +2740,51 @@ let validateMermaidDocs (opts: MermaidScanOptions) : MermaidValidationResult =
                 [])
 
     validateMermaidBlocks blocks opts.Options
+
+/// Validates Mermaid blocks from an in-memory repository while preserving
+/// the public command's path, staged/changed, and exclusion precedence.
+let validateMermaidDocuments
+    (documents: (string * string) list)
+    (paths: string list)
+    (stagedFiles: string list option)
+    (changedFiles: string list option)
+    (excludePrefixes: string list)
+    (options: MermaidValidateOptions)
+    : MermaidValidationResult =
+    let normalize (path: string) : string = path.Replace('\\', '/').TrimStart('/')
+
+    let isWithin (prefix: string) (path: string) : bool =
+        let normalizedPrefix = normalize prefix |> fun value -> value.TrimEnd('/')
+        let normalizedPath = normalize path
+
+        normalizedPrefix = ""
+        || normalizedPath = normalizedPrefix
+        || normalizedPath.StartsWith(normalizedPrefix + "/", StringComparison.Ordinal)
+
+    let selected =
+        match stagedFiles, changedFiles with
+        | Some staged, _ ->
+            let selectedPaths = staged |> List.map normalize |> Set.ofList
+
+            documents
+            |> List.filter (fun (path, _) -> selectedPaths.Contains(normalize path))
+        | None, Some changed ->
+            let selectedPaths = changed |> List.map normalize |> Set.ofList
+
+            documents
+            |> List.filter (fun (path, _) -> selectedPaths.Contains(normalize path))
+        | None, None when not (List.isEmpty paths) ->
+            documents
+            |> List.filter (fun (path, _) -> paths |> List.exists (fun prefix -> isWithin prefix path))
+        | None, None -> documents
+
+    selected
+    |> List.filter (fun (path, _) -> path.EndsWith(".md", StringComparison.Ordinal))
+    |> List.filter (fun (path, _) ->
+        excludePrefixes
+        |> List.forall (fun prefix -> prefix.Trim('/') = "" || not (isWithin prefix path)))
+    |> List.collect (fun (path, content) -> extractMermaidBlocks (normalize path) content)
+    |> fun blocks -> validateMermaidBlocks blocks options
 
 /// Returns a human-readable description of a single violation
 /// [Repo-grounded — `reporter.rs::violation_detail`].
@@ -2866,6 +3070,7 @@ let private pathIsWithinGeneratedReports (path: string) : bool =
 /// files, skipping any name matching `exemptGlobs`. Returns an empty list
 /// when `root` does not exist on the filesystem
 /// [Repo-grounded — `naming.rs::walk_naming_path`].
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let private walkNamingPath (exemptGlobs: string list) (root: string) : Finding list =
     collectFilesSkipping namingSkipDirs root
     |> List.filter (fun p -> p.EndsWith(".md", StringComparison.Ordinal))
@@ -2904,6 +3109,7 @@ let private walkNamingPath (exemptGlobs: string list) (root: string) : Finding l
 ///   When the developer runs docs validate-naming
 ///   Then the command exits successfully
 ///   And the output reports zero docs naming findings
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let validateDocsNamingExempt (paths: string list) (exemptGlobs: string list) : Result<Finding list, string> =
     if List.isEmpty paths then
         Error "at least one path is required"
@@ -2913,7 +3119,29 @@ let validateDocsNamingExempt (paths: string list) (exemptGlobs: string list) : R
         |> List.sortBy (fun f -> (f.Path |> Option.defaultValue "", f.Message))
         |> Ok
 
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let validateDocsNaming (paths: string list) : Result<Finding list, string> = validateDocsNamingExempt paths []
+
+/// Applies the Markdown filename policy to repository-relative in-memory
+/// documents. Content is intentionally ignored because this rule concerns
+/// names only.
+let validateDocsNamingDocuments (documents: (string * string) list) (exemptGlobs: string list) : Finding list =
+    documents
+    |> List.map fst
+    |> List.filter (fun path -> path.EndsWith(".md", StringComparison.Ordinal))
+    |> List.filter (fun path -> not (pathIsWithinGeneratedReports path))
+    |> List.choose (fun path ->
+        let basename = Path.GetFileName path
+
+        if
+            Set.contains basename alwaysExemptNamingBasenames
+            || matchesAnyExemptGlob exemptGlobs basename
+            || kebabCaseRegex.IsMatch basename
+        then
+            None
+        else
+            Some(mkFail path (namingViolationMessage basename)))
+    |> List.sortBy (fun finding -> finding.Path |> Option.defaultValue "", finding.Message)
 
 // ---------------------------------------------------------------------------
 // md frontmatter-dates validate
@@ -3048,16 +3276,21 @@ let private checkBodyAnnotationsDetailed
 /// date-metadata violations, returning the richer per-finding shape (line
 /// number) the CLI's JSON/Markdown rendering needs
 /// [Repo-grounded — `frontmatter_audit.rs::scan_frontmatter_content`].
-let private scanFrontmatterDatesFileDetailed (path: string) : FrontmatterDatesFinding list =
+let private scanFrontmatterDatesContentDetailed (path: string) (content: string) : FrontmatterDatesFinding list =
     let frontmatter, body, frontmatterEndLine =
-        File.ReadAllText path |> splitFrontmatterAndBodyWithEndLine
+        splitFrontmatterAndBodyWithEndLine content
 
     checkFrontmatterUpdatedFieldDetailed path frontmatter
     @ checkBodyAnnotationsDetailed path body frontmatterEndLine
 
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
+let private scanFrontmatterDatesFileDetailed (path: string) : FrontmatterDatesFinding list =
+    scanFrontmatterDatesContentDetailed path (File.ReadAllText path)
+
 /// Reads `path` and scans its content for both frontmatter and body
 /// date-metadata violations [Repo-grounded —
 /// `frontmatter_audit.rs::scan_frontmatter_content`].
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let private scanFrontmatterDatesFile (path: string) : Finding list =
     scanFrontmatterDatesFileDetailed path
     |> List.map (fun f -> mkFail f.File f.Message)
@@ -3076,6 +3309,7 @@ let private isFrontmatterDatesExcluded (excludedPrefixes: string list) (path: st
 /// is itself skipped during the walk — unlike every other `md` validator
 /// above, this one ports no `SKIP_DIRS` constant
 /// [Repo-grounded — `frontmatter_audit.rs::walk_paths`].
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let private walkFrontmatterDatesPath (excludedPrefixes: string list) (root: string) : string list =
     collectFilesSkipping Set.empty root
     |> List.filter (fun p -> p.EndsWith(".md", StringComparison.Ordinal))
@@ -3117,6 +3351,7 @@ let private walkFrontmatterDatesPath (excludedPrefixes: string list) (root: stri
 ///   When the developer runs md frontmatter validate on the file
 ///   Then the command exits successfully
 ///   And the output reports zero frontmatter findings
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let validateFrontmatterDates (paths: string list) (excludedPrefixes: string list) : Result<Finding list, string> =
     if List.isEmpty paths then
         Error "at least one path is required"
@@ -3131,6 +3366,7 @@ let validateFrontmatterDates (paths: string list) (excludedPrefixes: string list
 /// `FrontmatterDatesFinding` shape (line), sorted by file then line —
 /// matching the Rust source's own sort key exactly
 /// [Repo-grounded — `frontmatter_audit.rs::audit_frontmatter`].
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let validateFrontmatterDatesDetailed
     (paths: string list)
     (excludedPrefixes: string list)
@@ -3143,6 +3379,32 @@ let validateFrontmatterDatesDetailed
         |> List.collect scanFrontmatterDatesFileDetailed
         |> List.sortBy (fun f -> (f.File, f.Line))
         |> Ok
+
+/// Audits repository-relative in-memory Markdown documents for forbidden
+/// date metadata, applying the same literal path-substring exclusions as the
+/// filesystem command adapter.
+let validateFrontmatterDatesDocuments
+    (documents: (string * string) list)
+    (selectedPrefixes: string list)
+    (excludedPrefixes: string list)
+    : Finding list =
+    let isSelected (path: string) : bool =
+        List.isEmpty selectedPrefixes
+        || (selectedPrefixes
+            |> List.exists (fun prefix ->
+                let normalizedPrefix = prefix.Replace('\\', '/').TrimEnd('/')
+                let normalizedPath = path.Replace('\\', '/')
+
+                normalizedPath = normalizedPrefix
+                || normalizedPath.StartsWith(normalizedPrefix + "/", StringComparison.Ordinal)))
+
+    documents
+    |> List.filter (fun (path, _) -> path.EndsWith(".md", StringComparison.Ordinal))
+    |> List.filter (fun (path, _) -> isSelected path && not (isFrontmatterDatesExcluded excludedPrefixes path))
+    |> List.collect (fun (path, content) ->
+        scanFrontmatterDatesContentDetailed path content
+        |> List.map (fun finding -> mkFail finding.File finding.Message))
+    |> List.sortBy (fun finding -> finding.Path |> Option.defaultValue "", finding.Message)
 
 // ---------------------------------------------------------------------------
 // md audit
@@ -3180,6 +3442,7 @@ type MdAuditResult =
 /// The blocking-severity check itself is `RhinoCli.Domain.Finding.hasBlocking`
 /// (Wave D PR11) rather than a private copy here, since the git pre-commit
 /// hook shim's integration tests need the identical predicate.
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let private findingsOutcome (name: string) (result: Result<Finding list, string>) : Result<unit, string> =
     match result with
     // Coverage note: every call site of findingsOutcome in this file passes
@@ -3200,6 +3463,7 @@ let private findingsOutcome (name: string) (result: Result<Finding list, string>
 /// `validate-mermaid`, no violations), or `Error message` naming the
 /// validator and the reason it failed
 /// [Repo-grounded — `md_audit.rs::run_member`, restricted to `auditMembers`].
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let private runAuditMember (repoRoot: string) (name: string) : Result<unit, string> =
     match name with
     | "validate-naming" -> findingsOutcome name (validateDocsNaming [ repoRoot ])
@@ -3246,6 +3510,7 @@ let private runAuditMember (repoRoot: string) (name: string) : Result<unit, stri
 ///   When the developer runs "rhino-cli md audit"
 ///   Then the command exits successfully
 ///   And the output reports all md validators passed
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let runAudit (repoRoot: string) : MdAuditResult =
     let failures =
         auditMembers
@@ -3253,6 +3518,37 @@ let runAudit (repoRoot: string) : MdAuditResult =
             match runAuditMember repoRoot name with
             | Ok() -> None
             | Error message -> Some message)
+
+    if List.isEmpty failures then
+        { Failures = []
+          Report = sprintf "MD AUDIT PASSED: all %d validators passed" auditMembers.Length }
+    else
+        { Failures = failures
+          Report = sprintf "MD AUDIT FAILED: %d validator(s) reported failures" failures.Length }
+
+/// Runs the aggregate Markdown audit over an in-memory repository. This is
+/// the policy core used by mandatory Unit scenarios; `runAudit` remains the
+/// filesystem adapter used by Integration and the public CLI.
+let runAuditDocuments (documents: (string * string) list) : MdAuditResult =
+    let findingFailure (name: string) (findings: Finding list) : string option =
+        if RhinoCli.Domain.Finding.hasBlocking findings then
+            Some(sprintf "%s: %d finding(s) reported" name findings.Length)
+        else
+            None
+
+    let mermaidResult =
+        validateMermaidDocuments documents [] None None [] defaultMermaidValidateOptions
+
+    let failures =
+        [ findingFailure "validate-naming" (validateDocsNamingDocuments documents [])
+          findingFailure "validate-frontmatter" (validateDocsFrontmatterDocuments documents)
+          findingFailure "validate-heading-hierarchy" (validateDocsHeadingHierarchyDocuments false [] documents)
+          findingFailure "validate-links" (validateDocsLinksDocuments documents None [])
+          if List.isEmpty mermaidResult.Violations then
+              None
+          else
+              Some(sprintf "validate-mermaid: %d violation(s) reported" mermaidResult.Violations.Length) ]
+        |> List.choose id
 
     if List.isEmpty failures then
         { Failures = []

@@ -20,9 +20,6 @@
     <Compile Include="Tests/FigureCheckerTests.fs" />
     <Compile Include="Tests/MermaidValidatorTests.fs" />
     <Compile Include="Tests/OcrAssessorTests.fs" />
-    <Compile Include="Tests/ReportManagerTests.fs" />
-    <Compile Include="Tests/SkiplistManagerTests.fs" />
-    <Compile Include="Tests/PdfExtractionCacheTests.fs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -48,15 +45,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="../../../../specs/libs/fsharp-crane-core/behaviours/**/*.feature" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="xunit.runner.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
-  <Target Name="CopyGherkinSpecs" BeforeTargets="Build">
-    <ItemGroup>
-      <GherkinFiles Include="$(ProjectDir)..\..\..\..\specs\libs\fsharp-crane-core\behaviors\**\*.feature" />
-    </ItemGroup>
-    <Copy SourceFiles="@(GherkinFiles)" DestinationFolder="$(OutputPath)specs\%(RecursiveDir)" />
-  </Target>
 </Project>

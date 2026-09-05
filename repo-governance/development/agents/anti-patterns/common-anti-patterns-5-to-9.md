@@ -40,7 +40,7 @@ description: >
 
 **Rationale:**
 
-- Clear error behavior
+- Clear error behaviour
 - Graceful degradation
 - Better user experience
 
@@ -71,7 +71,7 @@ tools: [Read, Write, Bash, WebFetch]
 
 **Rationale:**
 
-- Transparent behavior
+- Transparent behaviour
 - Security clarity
 - Easier troubleshooting
 

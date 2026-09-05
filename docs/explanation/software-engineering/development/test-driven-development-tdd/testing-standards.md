@@ -45,7 +45,7 @@ fn should_calculate_zakat_for_wealth_above_nisab() {
     let wealth = Money::usd(100_000);
     let nisab = NisabThreshold::gold_equivalent(Money::from_gold(87.48));
 
-    // ACT: Execute behavior
+    // ACT: Execute behaviour
     let zakat = ZakatCalculator::calculate(wealth, nisab);
 
     // ASSERT: Verify outcome
@@ -55,16 +55,16 @@ fn should_calculate_zakat_for_wealth_above_nisab() {
 
 ## Test Naming
 
-**REQUIRED**: Test names MUST describe behavior in plain language.
+**REQUIRED**: Test names MUST describe behaviour in plain language.
 
-**Format**: `should [expected behavior] when [context]`
+**Format**: `should [expected behaviour] when [context]`
 
 **Examples**:
 
 - ✅ `shouldCalculateZakatWhenWealthExceedsNisab`
 - ✅ `shouldRejectDonationWhenCampaignExpired`
 - ❌ `test1` (vague)
-- ❌ `testCalculate` (doesn't describe behavior)
+- ❌ `testCalculate` (doesn't describe behaviour)
 
 ## One Logical Assertion Per Test
 
@@ -119,19 +119,17 @@ mod tests {
 }
 ```
 
-## Mocking Boundary
+## Boundary Contract
 
-**REQUIRED**: Unit and integration tests MUST mock all external I/O.
+- **Unit**: mandatory in-process production behaviour with filesystem, environment, process,
+  network, clock, and randomness replaced by deterministic injected ports.
+- **Integration**: at least one real isolated same-machine resource and zero network, including
+  loopback. In-memory repositories and intercepted HTTP remain Unit proof.
+- **E2E**: a real public browser, HTTP/API, or published process boundary with isolated synthetic
+  identity/data and no fallback to developer, staging, or production state.
 
-**REQUIRED**: E2E tests MUST NOT mock anything.
-
-| Tier        | External I/O | DB                      | Outbound HTTP |
-| ----------- | ------------ | ----------------------- | ------------- |
-| Unit        | Mocked       | Mocked / in-memory impl | Mocked        |
-| Integration | Mocked       | In-memory impl          | MSW / mockito |
-| E2E         | Real         | Real                    | Real          |
-
-**See**: [Three-Tier Testing Model](./three-tier-testing.md) for full definitions and examples.
+**See**: [Three-Level Testing Model](./three-tier-testing.md) for full definitions, applicability,
+and examples.
 
 ## OSE Platform Test Organization
 
@@ -140,9 +138,9 @@ mod tests {
 ```
 src/
   test/
-    unit/               # Fast isolated tests — all collaborators mocked
-    integration/        # Internal layers wired — external I/O mocked
-    e2e/               # Full system — no mocking
+    unit/               # Mandatory in-process deterministic tests
+    integration/        # Real isolated local resources; zero network
+    e2e/                # Real public browser/API/process boundary
 ```
 
 **File Naming:**

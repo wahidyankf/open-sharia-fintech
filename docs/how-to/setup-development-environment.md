@@ -258,14 +258,16 @@ copying a set from this page:
 apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=pre-push
 ```
 
-### Test integration tests
+### Test Integration tests
 
 ```bash
-# Run the OrganicLever backend's integration suite (uses Docker + PostgreSQL)
+# Run the OrganicLever backend's non-networked local-resource suite
 npm exec nx -- run organiclever-be:test:integration
 ```
 
-If this passes, Docker and database integration work correctly.
+If this passes, the app's isolated filesystem and process-environment boundaries work correctly.
+Docker-hosted databases and brokers communicate over a network path, so verify them through the
+app's E2E stack instead of `test:integration`.
 
 ## Troubleshooting
 
@@ -278,7 +280,7 @@ the matching step above.
 ### Pre-push hook times out
 
 The slow half of the pre-push gate set is its Nx targets: `test:quick` (which itself composes
-`typecheck`, `lint`, `test:unit`, `test:coverage`, and `test:specs` per project),
+types/lint, `test:unit`, and every applicable static `test:coverage:*` per project),
 `compat:min-version`, and `specs:structure-validation`. On a cold cache this takes a while. Warm
 them first:
 

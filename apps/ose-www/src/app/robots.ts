@@ -1,8 +1,6 @@
 import type { MetadataRoute } from "next";
+import { buildRobots } from "@/features/seo/core/robots";
 
 export default function robots(): MetadataRoute.Robots {
-  return {
-    rules: [{ userAgent: "*", allow: "/" }],
-    sitemap: "https://oseplatform.com/sitemap.xml",
-  };
+  return buildRobots();
 }

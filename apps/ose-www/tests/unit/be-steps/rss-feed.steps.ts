@@ -4,44 +4,18 @@ import { expect } from "vitest";
 import type { ContentMeta } from "@/features/content/core/types";
 import { InMemoryContentRepository } from "@/features/content/core/repository-memory";
 import { ContentService } from "@/features/content/shell/service";
+import { buildFeedResponse } from "@/features/rss-feed/core/feed";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ose/www/behaviors/backend/rss-feed/rss-feed.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ose/www/behaviours/backend/rss-feed/rss-feed.feature"),
 );
 
 const SITE_URL = "https://oseplatform.com";
 
-function buildRssFeed(updates: ContentMeta[]): string {
-  const items = updates
-    .map((update) => {
-      const dateStr = update.date ? new Date(update.date).toUTCString() : "";
-      return `    <item>
-      <title><![CDATA[${update.title}]]></title>
-      <link>${SITE_URL}/${update.slug}/</link>
-      <guid>${SITE_URL}/${update.slug}/</guid>
-      ${dateStr ? `<pubDate>${dateStr}</pubDate>` : ""}
-      ${update.summary ? `<description><![CDATA[${update.summary}]]></description>` : ""}
-    </item>`;
-    })
-    .join("\n");
-
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>OSE Platform Updates</title>
-    <link>${SITE_URL}/updates/</link>
-    <description>Updates on the Open Sharia Enterprise Platform development</description>
-    <language>en</language>
-    <atom:link href="${SITE_URL}/feed.xml" rel="self" type="application/rss+xml"/>
-${items}
-  </channel>
-</rss>`;
-}
-
 describeFeature(feature, ({ Scenario, Background }) => {
   Background(({ Given }) => {
-    Given("the API is running", () => {
-      // service is ready
+    Given("the API is running", async () => {
+      expect(await buildFeedResponse([]).text()).toContain("<rss");
     });
   });
 
@@ -73,8 +47,8 @@ describeFeature(feature, ({ Scenario, Background }) => {
       updates = await service.listUpdates();
     });
 
-    When("the RSS feed is generated", () => {
-      feedXml = buildRssFeed(updates);
+    When("the RSS feed is generated", async () => {
+      feedXml = await buildFeedResponse(updates).text();
     });
 
     Then('the feed has a channel with title "OSE Platform Updates"', () => {
@@ -85,7 +59,6 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(feedXml).toContain(`<link>${SITE_URL}/updates/</link>`);
     });
 
-    // @covers specs/apps/ose/www/behaviors/backend/rss-feed/rss-feed.feature:RSS feed contains valid structure
     And("the feed contains item elements for each update", () => {
       expect(feedXml).toContain("<item>");
       expect(feedXml).toContain("</item>");
@@ -120,8 +93,8 @@ describeFeature(feature, ({ Scenario, Background }) => {
       updates = await service.listUpdates();
     });
 
-    When("the RSS feed is generated", () => {
-      feedXml = buildRssFeed(updates);
+    When("the RSS feed is generated", async () => {
+      feedXml = await buildFeedResponse(updates).text();
     });
 
     Then('the feed entry has the title "Phase 0 End"', () => {
@@ -136,7 +109,6 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(feedXml).toContain(`<link>${SITE_URL}/updates/2026-02-08-phase-0-end/</link>`);
     });
 
-    // @covers specs/apps/ose/www/behaviors/backend/rss-feed/rss-feed.feature:RSS feed entries contain required fields
     And("the feed entry has a description", () => {
       expect(feedXml).toContain("<description>");
     });

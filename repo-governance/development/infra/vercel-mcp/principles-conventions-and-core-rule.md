@@ -36,8 +36,8 @@ at execution Phase 0 before any step depends on it.
 - **[Vercel Deployment Convention](../vercel-deployment.md)**: defines which projects deploy through
   Vercel and how their builds are configured. This convention governs what an agent may **observe**
   about those deployments; that one governs how they are **built**.
-- **[Manual Behavioral Verification](../../quality/manual-behavioral-verification.md)**: the same
-  shape — a capability an agent uses to verify real running behavior instead of asserting from
+- **[Manual Behavioural Verification](../../quality/manual-behavioural-verification.md)**: the same
+  shape — a capability an agent uses to verify real running behaviour instead of asserting from
   source.
 - **[Plans Organization Convention](../../../conventions/structure/plans.md)**: supplies the
   `[AI]` / `[HUMAN]` executor tags this convention shifts between.

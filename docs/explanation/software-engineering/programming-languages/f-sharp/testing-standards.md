@@ -32,7 +32,7 @@ created: 2026-03-09
 
 ## Purpose
 
-This document defines **authoritative testing standards** for F# development in OSE Platform. These standards ensure consistent, high-quality test suites that verify domain correctness and maintain >=95% line coverage.
+This document defines **authoritative testing standards** for F# development in OSE Platform. These standards ensure consistent, high-quality test suites that verify domain correctness and maintain >=99% Unit line coverage.
 
 **Target Audience**: OSE Platform F# developers, technical reviewers
 
@@ -126,7 +126,7 @@ testPropertyWithConfig config "Zakat is never negative" <| fun (wealth: decimal)
 **MUST** use `testList` and `testCase` for all test organization:
 
 ```fsharp
-// CORRECT: testList groups related tests; testCase names specific behavior
+// CORRECT: testList groups related tests; testCase names specific behaviour
 let zakatCalculationTests =
     testList "ZakatCalculation" [
         testCase "wealth above nisab returns 2.5 percent" <| fun () ->
@@ -272,13 +272,13 @@ tests/
 
 ## Coverage Requirements
 
-**MUST** achieve >=95% line coverage, measured with Coverlet and enforced by the native `test:coverage`
-Nx target:
+**MUST** achieve >=99% line coverage, measured with Coverlet and enforced during the native
+`test:unit` runtime. Static `test:coverage:*` targets never execute Coverlet or another test runner:
 
 ```bash
 # Run tests with coverage collection and threshold enforcement
 dotnet test --collect:"XPlat Code Coverage" --results-directory ./coverage \
-  /p:Threshold=95 /p:ThresholdType=line /p:ThresholdStat=Total
+  /p:Threshold=99 /p:ThresholdType=line /p:ThresholdStat=Total
 ```
 
 **Do NOT** add coverage exclusions to increase the reported percentage. Instead, write the missing tests.
@@ -320,14 +320,14 @@ let ``Zakat calculation returns 2.5 percent`` () =
 
 ## Enforcement
 
-- **Coverlet** - Collects coverage in CI; native `test:coverage` Nx target enforces >=95%
+- **Coverlet** - Collects and enforces >=99% coverage during the native `test:unit` runtime
 - **dotnet test** - Runs Expecto suite as part of Nx `test:quick` target
 - **Code reviews** - Verify property tests exist for domain invariants
 
 **Pre-commit checklist**:
 
 - [ ] All tests pass (`dotnet test`)
-- [ ] Coverage >=95% (`nx run <project>:test:coverage`)
+- [ ] Unit line coverage >=99% (`nx run <project>:test:unit`)
 - [ ] Property tests exist for core domain invariants
 - [ ] Async tests use `testAsync` CE
 - [ ] No test doubles for pure domain functions

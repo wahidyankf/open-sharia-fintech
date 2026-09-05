@@ -12,19 +12,19 @@ when_to_use: Use for a quick-reference table of every anti-pattern and solution,
 
 ## Summary of Anti-Patterns
 
-| Anti-Pattern                            | Problem                   | Solution                           |
-| --------------------------------------- | ------------------------- | ---------------------------------- |
-| **Scattered Temporary Files**           | Repository clutter        | Use designated directories         |
-| **Placeholder UUIDs**                   | Defeats audit trail       | Generate real UUIDs and timestamps |
-| **Buffering Reports**                   | Lost during compaction    | Write progressively                |
-| **Missing Tools**                       | Can't generate reports    | Add Write and Bash tools           |
-| **Global Tracking**                     | Race conditions           | Scope-based tracking               |
-| **Mismatched Reports**                  | Breaks audit trail        | Use same UUID and timestamp        |
-| **Multiple Primary When/Then Keywords** | Violates cardinality rule | Chain extras with `And`/`But`      |
-| **Vague Criteria**                      | Not testable              | Use Gherkin format                 |
-| **Never Cleaning Up**                   | Directory bloat           | Periodic cleanup                   |
-| **Conversation-Only Output**            | Lost during compaction    | Write report files                 |
-| **Undocumented Temp Files**             | Purpose unclear           | Add README documentation           |
+| Anti-Pattern                          | Problem                    | Solution                           |
+| ------------------------------------- | -------------------------- | ---------------------------------- |
+| **Scattered Temporary Files**         | Repository clutter         | Use designated directories         |
+| **Placeholder UUIDs**                 | Defeats audit trail        | Generate real UUIDs and timestamps |
+| **Buffering Reports**                 | Lost during compaction     | Write progressively                |
+| **Missing Tools**                     | Can't generate reports     | Add Write and Bash tools           |
+| **Global Tracking**                   | Race conditions            | Scope-based tracking               |
+| **Mismatched Reports**                | Breaks audit trail         | Use same UUID and timestamp        |
+| **Unrelated actions in one scenario** | Hides independent outcomes | Split at the behaviour boundary    |
+| **Vague Criteria**                    | Not testable               | Use Gherkin format                 |
+| **Never Cleaning Up**                 | Directory bloat            | Periodic cleanup                   |
+| **Conversation-Only Output**          | Lost during compaction     | Write report files                 |
+| **Undocumented Temp Files**           | Purpose unclear            | Add README documentation           |
 
 ## Related Documentation
 

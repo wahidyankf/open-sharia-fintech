@@ -6,7 +6,7 @@ structural/brand split updates this document in the same delivery unit.
 ## Scope
 
 `web-ui-token` holds the design tokens every application and `web-ui` component reads. It ships CSS
-custom properties and their TypeScript counterparts; it contains no components and no behavior
+custom properties and their TypeScript counterparts; it contains no components and no behaviour
 beyond exporting those values.
 
 ## Consuming Boundary
@@ -49,6 +49,6 @@ the other is a defect a scenario should catch.
 
 ## Related
 
-- [Behaviors](./behaviors/README.md) — the scenarios this library must satisfy.
+- [Behaviours](./behaviours/README.md) — the scenarios this library must satisfy.
 - [`libs/web-ui-token/README.md`](../../../libs/web-ui-token/README.md) — the implementing package.
 - [`specs/libs/web-ui`](../web-ui/README.md) — the component library that consumes these tokens.

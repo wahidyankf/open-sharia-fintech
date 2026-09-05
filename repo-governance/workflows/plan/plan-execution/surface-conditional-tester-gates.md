@@ -17,9 +17,9 @@ and again as merge precondition (e) in the
 - **API- or backend-bearing plan** → run [`api/api-quality-gate.md`](../../api/api-quality-gate.md).
 - **Several of these** → run each set.
 - **A reachable surface with no gate listed above** (a CLI, a library under `libs/`, a hook, a CI
-  workflow) → **not exempt**. Exercise the changed behavior through its own interface and record what
+  workflow) → **not exempt**. Exercise the changed behaviour through its own interface and record what
   was run.
-- **Genuinely no reachable behavior** → the plan MUST state the exemption explicitly in
+- **Genuinely no reachable behaviour** → the plan MUST state the exemption explicitly in
   its chosen technical form; an executor that finds no such statement treats it as a gap, not as a pass.
 
 **The three UI gates are complementary, never substitutes**: `plan-checker` **Step 5k** gates the

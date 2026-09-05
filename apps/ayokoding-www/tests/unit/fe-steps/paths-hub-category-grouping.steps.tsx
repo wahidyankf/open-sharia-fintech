@@ -75,7 +75,7 @@ import ContentPage from "@/app/[locale]/(content)/[...slug]/page";
 const feature = await loadFeature(
   path.resolve(
     process.cwd(),
-    "../../specs/apps/ayokoding/www/behaviors/frontend/course-paths/paths-hub-category-grouping.feature",
+    "../../specs/apps/ayokoding/www/behaviours/frontend/course-paths/paths-hub-category-grouping.feature",
   ),
 );
 
@@ -84,7 +84,8 @@ describeFeature(feature, ({ Scenario }) => {
     let jsx: React.ReactElement;
 
     Given("a fixture manifest set covers both a careers-shaped and a skills-shaped fixture", () => {
-      // Fixture: `manifests` above — two careers-arc manifests plus one skills manifest.
+      expect(manifests.some(({ pathId }) => pathId.startsWith("careers/"))).toBe(true);
+      expect(manifests.some(({ pathId }) => pathId.startsWith("skills/"))).toBe(true);
     });
 
     When("a reader opens the paths hub at /en/learn/paths", async () => {
@@ -100,7 +101,6 @@ describeFeature(feature, ({ Scenario }) => {
       expect(screen.getByRole("heading", { level: 2, name: /skills/i })).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/paths-hub-category-grouping.feature:The paths hub groups paths by category, not a flat grid
     And("no path card from either category is rendered outside its category's section", () => {
       const careersSection = document.querySelector("section[aria-labelledby='careers-heading']");
       const skillsSection = document.querySelector("section[aria-labelledby='skills-heading']");

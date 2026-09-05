@@ -9,7 +9,7 @@ tags:
   - development
   - standards
 created: 2025-11-23
-when_to_use: Use when deciding whether a new agent should omit its model field for planning-grade, budget-adaptive behavior.
+when_to_use: Use when deciding whether a new agent should omit its model field for planning-grade, budget-adaptive behaviour.
 ---
 
 # Model Tiers — Planning-Grade (Inherit / No Model Specified)
@@ -61,5 +61,5 @@ account tier and token budget:
 This means a Max-plan user gets planning-grade plans, architecture, and code generation,
 while a Pro-plan user gets execution-grade output — proportional to their purchasing
 decision. Do NOT add `model: opus` to these agents. Doing so overrides budget-adaptive
-behavior and forces planning-grade API charges regardless of the user's account tier (see Common
+behaviour and forces planning-grade API charges regardless of the user's account tier (see Common
 Mistakes).

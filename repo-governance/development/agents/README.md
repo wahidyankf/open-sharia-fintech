@@ -55,7 +55,7 @@ This set of development practices implements/respects the following core princip
 
 - **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: AI agents automate repetitive tasks like content validation, file management, and quality checks, ensuring consistency and reducing manual effort.
 
-- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Agent development conventions require explicit tool permissions, clear descriptions, and defined scopes, making agent behavior transparent and predictable.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Agent development conventions require explicit tool permissions, clear descriptions, and defined scopes, making agent behaviour transparent and predictable.
 
 ## Conventions Implemented/Respected
 

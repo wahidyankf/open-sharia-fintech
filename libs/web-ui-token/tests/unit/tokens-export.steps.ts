@@ -4,30 +4,35 @@ import { expect } from "vitest";
 import * as webUiToken from "../../src/index";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../specs/libs/web-ui-token/behaviors/tokens/tokens-export.feature"),
+  path.resolve(__dirname, "../../../../specs/libs/web-ui-token/behaviours/tokens/tokens-export.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {
   Scenario("The package exports every structural token module", ({ Given, When, Then, And }) => {
-    Given("the web-ui-token package", () => {});
+    let importedPackage: typeof webUiToken | undefined;
 
-    When('I import from "@open-sharia-enterprise/web-ui-token"', () => {});
+    Given("the web-ui-token package", () => {
+      expect(webUiToken).toBeTypeOf("object");
+    });
 
-    // @covers specs/libs/web-ui-token/behaviors/tokens/tokens-export.feature:The package exports every structural token module
+    When('I import from "@open-sharia-enterprise/web-ui-token"', () => {
+      importedPackage = webUiToken;
+    });
+
     Then('"colorTokens" should be exported', () => {
-      expect(webUiToken.colorTokens).toBeDefined();
+      expect(importedPackage?.colorTokens).toBeDefined();
     });
 
     And('"radius" should be exported', () => {
-      expect(webUiToken.radius).toBeDefined();
+      expect(importedPackage?.radius).toBeDefined();
     });
 
     And('"spacing" should be exported', () => {
-      expect(webUiToken.spacing).toBeDefined();
+      expect(importedPackage?.spacing).toBeDefined();
     });
 
     And('"typography" should be exported', () => {
-      expect(webUiToken.typography).toBeDefined();
+      expect(importedPackage?.typography).toBeDefined();
     });
   });
 });

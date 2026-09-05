@@ -12,28 +12,11 @@
 // port indirection lands as a single edit here rather than a wide
 // find-and-replace.
 //
-// Use-case naming notes (per `tech-docs.md` § "xstate machine placement"
-// and the bounded-context map):
-// - `appendEntries` is the batched form of the ubiquitous-language
-//   "append journal event" use-case.
-// - `bumpEntry` re-orders an existing journal event to "now" without
-//   altering its payload.
-// - `listEntries` returns the canonical event log ordered most-recent
-//   first.
-// - `updateEntry`, `deleteEntry`, `clearEntries` round out the mutation
-//   API used by the journal-machine and presentation hooks.
+// `appendEntries` is the batched form of the ubiquitous-language “append
+// journal event” use-case. `listEntries` returns that immutable event log
+// most-recent first for the routed Home, History, and Stats projections.
 
-export {
-  appendEntries,
-  listEntries,
-  updateEntry,
-  deleteEntry,
-  bumpEntry,
-  clearEntries,
-} from "../infrastructure/journal-store";
-
-export { journalMachine } from "./journal-machine";
-export type { JournalContext, JournalEvent } from "./journal-machine";
+export { appendEntries, listEntries } from "../infrastructure/journal-store";
 
 // Runtime composition + seed routine are exposed here so the Next.js
 // `src/app/**` layer (boundary type `app`) and other contexts that need
@@ -50,20 +33,12 @@ export type { JournalRuntime } from "../infrastructure/runtime";
 // Schema's `EntryName`, `EntryPayload`, `IsoTimestamp`, `EntryId` are
 // runtime constants whose `typeof X.Type` carries the branded type, so a
 // value-export covers both the type and the runtime decoder. `JournalEntry`,
-// `NewEntryInput`, `UpdateEntryInput` are also runtime Schema constants.
-export {
-  JournalEntry,
-  EntryId,
-  EntryName,
-  EntryPayload,
-  IsoTimestamp,
-  NewEntryInput,
-  UpdateEntryInput,
-} from "../domain/schema";
+// `NewEntryInput` is also a runtime Schema constant.
+export { JournalEntry, EntryId, EntryName, EntryPayload, IsoTimestamp, NewEntryInput } from "../domain/schema";
 
 // Tagged error classes are runtime constructors (so callers can match
 // `_tag` and throw new instances), not pure types — value-export them.
-export { NotFound, StorageUnavailable, InvalidPayload, EmptyBatch } from "../domain/errors";
+export { NotFound, StorageUnavailable, EmptyBatch } from "../domain/errors";
 export type { StoreError } from "../domain";
 
 // Migration runner is an infrastructure utility, but tests inside other

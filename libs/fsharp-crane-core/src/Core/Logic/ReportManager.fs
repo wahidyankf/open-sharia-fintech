@@ -15,18 +15,34 @@ let private chainFilePath (scope: string) : string =
 /// them, so they belong to the `pdf-to-md` family directory rather than to `generated-reports/`.
 let private reportDir = "local-tmp/pdf-to-md"
 
-let getOrExtendChain (scope: string) : string =
+type Dependencies =
+    { FileExists: string -> bool
+      ReadAllText: string -> string
+      WriteAllText: string -> string -> unit
+      EnsureDirectory: string -> unit
+      UtcNow: unit -> DateTimeOffset
+      NewId: unit -> string }
+
+let private systemDependencies =
+    { FileExists = File.Exists
+      ReadAllText = File.ReadAllText
+      WriteAllText = fun path content -> File.WriteAllText(path, content)
+      EnsureDirectory = fun path -> Directory.CreateDirectory(path) |> ignore
+      UtcNow = fun () -> DateTimeOffset.UtcNow
+      NewId = fun () -> Guid.NewGuid().ToString("N").Substring(0, 6) }
+
+let getOrExtendChainWith (dependencies: Dependencies) (scope: string) : string =
     let chainFile = chainFilePath scope
-    let newId = Guid.NewGuid().ToString("N").Substring(0, 6)
+    let now = dependencies.UtcNow().ToUnixTimeSeconds()
+    let newId = dependencies.NewId()
 
     let existingChain =
-        if File.Exists(chainFile) then
-            let parts = File.ReadAllText(chainFile).Trim().Split(' ', 2)
+        if dependencies.FileExists chainFile then
+            let parts = dependencies.ReadAllText(chainFile).Trim().Split(' ', 2)
 
             if parts.Length = 2 then
                 match Int64.TryParse(parts.[0]) with
-                | true, ts when DateTimeOffset.UtcNow.ToUnixTimeSeconds() - ts < chainWindowSeconds ->
-                    Some(parts.[1] + "__" + newId)
+                | true, ts when now - ts < chainWindowSeconds -> Some(parts.[1] + "__" + newId)
                 | _ -> None
             else
                 None
@@ -34,36 +50,48 @@ let getOrExtendChain (scope: string) : string =
             None
 
     let chain = existingChain |> Option.defaultValue newId
-    Directory.CreateDirectory("local-tmp") |> ignore
-    File.WriteAllText(chainFile, sprintf "%d %s" (DateTimeOffset.UtcNow.ToUnixTimeSeconds()) chain)
+    dependencies.EnsureDirectory "local-tmp"
+    dependencies.WriteAllText chainFile $"{now} {chain}"
     chain
 
-let utc7Timestamp () : string =
-    DateTimeOffset.UtcNow.ToOffset(utc7Offset).ToString("yyyy-MM-dd--HH-mm")
+let getOrExtendChain (scope: string) : string =
+    getOrExtendChainWith systemDependencies scope
 
-let initReport (scope: string) (pdf: string) (md: string) : Result<string, string> =
+let utc7TimestampAt (now: DateTimeOffset) : string =
+    now.ToOffset(utc7Offset).ToString("yyyy-MM-dd--HH-mm")
+
+let utc7Timestamp () : string =
+    utc7TimestampAt (systemDependencies.UtcNow())
+
+let initReportWith (dependencies: Dependencies) (scope: string) (pdf: string) (md: string) : Result<string, string> =
     try
-        let chain = getOrExtendChain scope
-        let ts = utc7Timestamp ()
-        let reportPath = sprintf "%s/%s__%s__%s__audit.md" reportDir scope chain ts
-        Directory.CreateDirectory(reportDir) |> ignore
+        let chain = getOrExtendChainWith dependencies scope
+        let ts = utc7TimestampAt (dependencies.UtcNow())
+        let reportPath = $"{reportDir}/{scope}__{chain}__{ts}__audit.md"
+        dependencies.EnsureDirectory reportDir
 
         let header =
-            sprintf "# Audit Report\n\nScope: %s\nPDF: %s\nMD: %s\nStatus: IN_PROGRESS\n" scope pdf md
+            $"# Audit Report\n\nScope: {scope}\nPDF: {pdf}\nMD: {md}\nStatus: IN_PROGRESS\n"
 
-        File.WriteAllText(reportPath, header)
+        dependencies.WriteAllText reportPath header
         Ok reportPath
     with ex ->
-        Error(sprintf "Failed to init report: %s" ex.Message)
+        Error $"Failed to init report: {ex.Message}"
 
-let finalizeReport (reportPath: string) (status: string) : Result<unit, string> =
+let initReport (scope: string) (pdf: string) (md: string) : Result<string, string> =
+    initReportWith systemDependencies scope pdf md
+
+let finalizeReportWith (dependencies: Dependencies) (reportPath: string) (status: string) : Result<unit, string> =
     try
-        if not (File.Exists(reportPath)) then
-            Error(sprintf "Report not found: %s" reportPath)
+        if not (dependencies.FileExists reportPath) then
+            Error $"Report not found: {reportPath}"
         else
-            let content = File.ReadAllText(reportPath)
-            let updated = content.Replace("Status: IN_PROGRESS", sprintf "Status: %s" status)
-            File.WriteAllText(reportPath, updated)
+            let content = dependencies.ReadAllText reportPath
+            let updated = content.Replace("Status: IN_PROGRESS", $"Status: {status}")
+            dependencies.WriteAllText reportPath updated
             Ok()
     with ex ->
-        Error(sprintf "Failed to finalize report: %s" ex.Message)
+        Error $"Failed to finalize report: {ex.Message}"
+
+let finalizeReport (reportPath: string) (status: string) : Result<unit, string> =
+    finalizeReportWith systemDependencies reportPath status

@@ -19,9 +19,9 @@ This workflow validates **source definitions only**. Source includes governance 
 - PASS: **Validates**: `.claude/skills/` (primary agent-skill source — agent-skill-to-agent-skill consolidation opportunities and content quality). Non-vendored mirrors under `.agents/skills/` are rebuilt by `npm run generate:bindings`; registry-declared vendored plugin subtrees remain hand-maintained and are outside this workflow. `.claude/skills/` remains the authored source for generated mirrors.
 - PASS: **Validates (partial)**: `docs/explanation/` through the AI checker for rules-governance and software-engineering alignment. The retained deterministic preflight covers only layer coherence and traceability; lifecycle-owned documentation predicates, including frontmatter checks, are consumed as exact external evidence rather than rerun here.
 - FAIL: **Skips**: the rest of `docs/` (`docs/tutorials/`, `docs/how-to/`, `docs/reference/`, `docs/explanation/` non-software-engineering subtrees, `docs/metadata/`) — out of scope for this workflow today; validated by the specialized `docs/` agent family (`docs-checker`, `docs-tutorial-checker`, `docs-link-checker`, `docs-software-engineering-separation-checker`). Extending coverage to all of `docs/` is a backlog item — see [Backlog](./backlog.md).
-  - **One carve-out to that skip**: Gherkin step-keyword cardinality (Step 7 sub-check 9) applies to
-    ` ```gherkin ` fences **anywhere** in `docs/`, including the otherwise-skipped subtrees. The skip
-    above is about document-level validation, not about that one cross-cutting fence rule.
+  - **One carve-out to that skip**: Gherkin journey coherence (Step 7 sub-check 9) applies to
+    ` ```gherkin ` fences **anywhere** in `docs/`. It requires explicit `When` and `Then` while
+    allowing repeated primary keywords for one continuous journey.
 - FAIL: **Skips**: generated platform bindings (for example `.opencode/agents/` and non-vendored
   mirrors under `.agents/skills/`) — rebuild them with `npm run generate:bindings`, then validate
   them with `rhino-cli harness bindings validate` / `npm run harness:bindings-validation`, not this

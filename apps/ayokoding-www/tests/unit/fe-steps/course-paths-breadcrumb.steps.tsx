@@ -1,12 +1,8 @@
 import path from "path";
 import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, within } from "@testing-library/react";
 import { expect, vi } from "vitest";
-
-// course-paths plan (ayokoding-learning-path-03-navigation-ui), Cycle 2.3 — step binding for
-// breadcrumb.feature's single Phase-2-owned scenario ("The breadcrumb reflects the active path");
-// its two sibling scenarios stay @wip (see specs README.md) so are not bound here. Reuses the
-// fixture already proven in breadcrumb.test.tsx's "Cycle 2.3" describe block.
+import type { PathManifest } from "@/features/course-paths/core/schemas";
 
 vi.mock("next/link", () => ({
   default: ({ href, children, ...rest }: { href: string; children: React.ReactNode; [key: string]: unknown }) => (
@@ -18,6 +14,22 @@ vi.mock("next/link", () => ({
 
 // eslint-disable-next-line import/first
 import { Breadcrumb } from "@/features/navigation/shell/breadcrumb";
+import { PathLanding } from "@/features/course-paths/shell/path-landing";
+import { courseRehomeRedirects } from "@/redirects/course-rehome";
+
+const fixtureManifest: PathManifest = {
+  pathId: "careers/interview-ready/example-role",
+  arc: "interview-ready",
+  title: "Interview-Ready Example Role",
+  description: "An interview-first track.",
+  courseOrder: ["just-enough-python", "just-enough-bash", "version-control-and-git"],
+};
+
+const courseTitles = {
+  "just-enough-python": "Just Enough Python",
+  "just-enough-bash": "Just Enough Bash",
+  "version-control-and-git": "Version Control & Git",
+};
 
 const courseSegments = [
   { label: "Home", slug: "" },
@@ -35,56 +47,105 @@ const pathContext = {
 };
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviors/frontend/course-paths/breadcrumb.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviours/frontend/course-paths/breadcrumb.feature"),
 );
 
-// This file binds exactly one of this feature's three scenarios. The other two stay unbound here:
-// "A legacy fundamentally-strong URL redirects..." is @wip (see specs README.md), and "A path
-// landing page lists its courses in manifest order" (@unit @e2e) is bound elsewhere per its own
-// inline comment above (`path-landing.test.tsx`, `route-paths-hub.test.tsx`, and e2e's
-// `course-paths.steps.ts`) — not by this breadcrumb-only unit binder. excludeTags (passed to
-// describeFeature itself, not loadFeature) keeps vitest-cucumber from demanding a Scenario() call
-// for either: "wip" excludes the legacy-redirect scenario, and "e2e" excludes the path-landing one
-// (the scenario this file does bind carries only @unit, never @e2e).
-describeFeature(
-  feature,
-  ({ Scenario }) => {
-    Scenario("The breadcrumb reflects the active path", ({ Given, When, Then, And }) => {
-      Given("a reader is on a course with an active path context", () => {
-        // Fixture: `pathContext` above, matching a reader who arrived via a path landing page.
-      });
+describeFeature(feature, ({ Scenario }) => {
+  Scenario("A path landing page lists its courses in manifest order", ({ Given, When, Then, And }) => {
+    Given("a fixture path manifest is loaded by the manifest repository", () => {
+      expect(fixtureManifest.courseOrder).toHaveLength(3);
+    });
 
-      When("the breadcrumb renders", () => {
-        cleanup();
-        render(
-          <Breadcrumb
-            locale="en"
-            slug="learn/courses/just-enough-python"
-            segments={courseSegments}
-            showCurrent
-            pathContext={pathContext}
-          />,
-        );
-      });
+    When("a reader opens that fixture path's landing page under /en/learn/paths/", () => {
+      cleanup();
+      render(<PathLanding locale="en" manifest={fixtureManifest} courseTitles={courseTitles} />);
+    });
 
-      Then("it shows Home, Learn, the path title, and the course title", () => {
-        expect(screen.getByRole("link", { name: "Home" })).toBeTruthy();
-        expect(screen.getByRole("link", { name: "Learn" })).toBeTruthy();
-        expect(screen.getByRole("link", { name: "Python Fundamentals" })).toBeTruthy();
-        const current = screen.getByText("Just Enough Python");
-        expect(current.getAttribute("aria-current")).toBe("page");
-      });
+    Then("the courses appear in the fixture manifest's courseOrder", () => {
+      const list = document.querySelector("ol");
+      expect(list).not.toBeNull();
+      const items = within(list as HTMLElement).getAllByRole("listitem");
+      expect(items.map((item) => item.textContent)).toEqual([
+        "Just Enough Python",
+        "Just Enough Bash",
+        "Version Control & Git",
+      ]);
+    });
 
-      // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/breadcrumb.feature:The breadcrumb reflects the active path
-      And(
-        "the path crumb links to the path landing page /en/learn/paths/<path-id> with the path context preserved",
-        () => {
-          expect(screen.getByRole("link", { name: "Python Fundamentals" }).getAttribute("href")).toBe(
-            "/en/learn/paths/skills/python-fundamentals?path=skills/python-fundamentals",
-          );
-        },
+    And("every course link carries the path context query parameter", () => {
+      const link = screen.getByRole("link", { name: "Just Enough Python" });
+      expect(link.getAttribute("href")).toBe(
+        "/en/learn/courses/just-enough-python?path=careers/interview-ready/example-role",
       );
     });
-  },
-  { excludeTags: ["wip", "e2e"] },
-);
+  });
+
+  Scenario("The breadcrumb reflects the active path", ({ Given, When, Then, And }) => {
+    Given("a reader is on a course with an active path context", () => {
+      expect(pathContext.pathId).toBe("skills/python-fundamentals");
+      expect(courseSegments.at(-1)?.slug).toBe("learn/courses/just-enough-python");
+    });
+
+    When("the breadcrumb renders", () => {
+      cleanup();
+      render(
+        <Breadcrumb
+          locale="en"
+          slug="learn/courses/just-enough-python"
+          segments={courseSegments}
+          showCurrent
+          pathContext={pathContext}
+        />,
+      );
+    });
+
+    Then("it shows Home, Learn, the path title, and the course title", () => {
+      expect(screen.getByRole("link", { name: "Home" })).toBeTruthy();
+      expect(screen.getByRole("link", { name: "Learn" })).toBeTruthy();
+      expect(screen.getByRole("link", { name: "Python Fundamentals" })).toBeTruthy();
+      const current = screen.getByText("Just Enough Python");
+      expect(current.getAttribute("aria-current")).toBe("page");
+    });
+
+    And(
+      "the path crumb links to the path landing page /en/learn/paths/<path-id> with the path context preserved",
+      () => {
+        expect(screen.getByRole("link", { name: "Python Fundamentals" }).getAttribute("href")).toBe(
+          "/en/learn/paths/skills/python-fundamentals?path=skills/python-fundamentals",
+        );
+      },
+    );
+  });
+
+  Scenario("A legacy fundamentally-strong URL redirects to the canonical course URL", ({ Given, When, Then, And }) => {
+    let rule: (typeof courseRehomeRedirects)[number] | undefined;
+
+    Given(
+      "a re-homed course previously lived under the legacy fundamentally-strong/software-engineer content path",
+      () => {
+        expect(courseRehomeRedirects.length).toBeGreaterThan(0);
+      },
+    );
+
+    When("a reader requests the legacy URL", () => {
+      rule = courseRehomeRedirects.find(
+        (candidate) =>
+          candidate.source === "/en/learn/fundamentally-strong/software-engineer/just-enough-python/:path*",
+      );
+    });
+
+    Then("the app redirects to the course's canonical /en/learn/courses/<course-id> URL", () => {
+      expect(rule).toEqual({
+        source: "/en/learn/fundamentally-strong/software-engineer/just-enough-python/:path*",
+        destination: "/en/learn/courses/just-enough-python/:path*",
+        permanent: true,
+      });
+    });
+
+    And("the redirect preserves any path context query parameter", () => {
+      // Next.js preserves incoming query parameters when a redirect destination does not replace
+      // them. This production rule carries no destination query, so `?path=...` remains intact.
+      expect(rule?.destination).not.toContain("?");
+    });
+  });
+});

@@ -1,11 +1,12 @@
 /**
  * Step definitions for the OSE Application BE health endpoint feature.
  *
- * Covers: specs/apps/ose/be/behaviors/health/health.feature
+ * Covers: specs/apps/ose/be/behaviours/health/health.feature
  */
 import { expect } from "@playwright/test";
 import { createBdd } from "playwright-bdd";
 import { setResponse, getResponse, clearResponse } from "../utils/response-store";
+import { ensureBackendStarted } from "./backend-process";
 
 const { Given, When, Then, Before } = createBdd();
 
@@ -13,8 +14,10 @@ Before(() => {
   clearResponse();
 });
 
-Given("the ose-be service is running", async () => {
-  // No-op: the test suite assumes the BE is running at baseURL (http://localhost:8302).
+Given("the ose-be service is running", async ({ request }) => {
+  await ensureBackendStarted();
+  const readinessResponse = await request.get("/api/v1/health");
+  expect(readinessResponse.status()).toBe(200);
 });
 
 When(/^I send GET \/api\/v1\/health$/, async ({ request }) => {
@@ -26,7 +29,6 @@ Then("the response status is {int}", async ({}, expectedStatus: number) => {
   expect(getResponse().status()).toBe(expectedStatus);
 });
 
-// @covers specs/apps/ose/be/behaviors/health/health.feature:Health endpoint returns 200
 Then(
   "the response body has a {string} field equal to {string}",
   // oxlint-disable-next-line no-empty-pattern

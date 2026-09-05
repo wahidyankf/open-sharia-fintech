@@ -173,7 +173,7 @@ nx graph --file=dependency-graph.json
 
 Nx caches task outputs to speed up subsequent runs.
 
-### Cache Behavior
+### Cache Behaviour
 
 ```bash
 # First build (executes task)
@@ -353,7 +353,11 @@ jobs:
     run: nx affected -t lint --base=origin/main --head=HEAD
 ```
 
-> **Note**: `test:quick` is the required GitHub Actions status check before PR merge. E2E tests (`test:e2e`) run separately on a scheduled cron job, not on every PR. See [Nx Target Standards](../../repo-governance/development/infra/nx-targets.md) for the full execution model.
+> **Note**: `test:quick` is the required GitHub Actions status check before PR merge. Run impacted
+> Integration (`test:integration`) and E2E (`test:e2e`) targets manually during development or
+> review; scheduled workflows run the complete suites. Neither runtime layer runs on every PR. See
+> [Nx Target Standards](../../repo-governance/development/infra/nx-targets.md) for the full execution
+> model.
 
 ### Optimize CI with Caching
 

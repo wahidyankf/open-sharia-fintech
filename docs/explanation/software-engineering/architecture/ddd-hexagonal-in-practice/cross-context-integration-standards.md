@@ -206,7 +206,7 @@ com.organicleverbe.
 
 **PROHIBITED**: Two contexts defining their own incompatible `Money` type. Cross-context event payloads carrying monetary values will silently use different precision or currency handling.
 
-**REQUIRED**: Shared kernel types MUST be immutable value objects with no behavioral dependencies on any single context's domain logic.
+**REQUIRED**: Shared kernel types MUST be immutable value objects with no behavioural dependencies on any single context's domain logic.
 
 **Current shared kernel location**: `libs/` holds the shared libraries (`web-ui`, `web-ui-token`, `ts-env-loader`, `fsharp-env-loader`, `fsharp-crane-core`). Shared types are collocated in `organiclever-be` under a `shared-kernel` module until a dedicated library is warranted.
 

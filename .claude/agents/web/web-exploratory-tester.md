@@ -1,6 +1,6 @@
 ---
 name: web-exploratory-tester
-description: Performs spec-aware session-based exploratory testing of a live website and records findings in local-tmp by default. Hunts edge cases and compares behavior with specs; output-mode plan or delivery must be explicit.
+description: Performs spec-aware session-based exploratory testing of a live website and records findings in local-tmp by default. Hunts edge cases and compares behaviour with specs; output-mode plan or delivery must be explicit.
 tools: Read, Write, Edit, Glob, Grep, Bash, WebFetch, WebSearch
 model: sonnet
 color: green

@@ -4,7 +4,6 @@ import { getResilient } from "../support/resilient-request";
 
 const { Then } = createBdd();
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/course-rehome-redirects.feature:The course library the retired browse roots redirect to resolves every re-homed course
 Then(
   "every course catalog entry should resolve to live content, not a drained or missing location",
   async ({ page }) => {
@@ -35,7 +34,6 @@ Then(
   },
 );
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/course-rehome-redirects.feature:A course reached via its legacy course URL resolves to the single canonical course body
 Then(
   "the resolved page title should equal the canonical course page title at {string}",
   async ({ page }, canonicalUrl: string) => {

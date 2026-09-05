@@ -39,106 +39,65 @@
     "test:unit": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "if grep -rn -E --include='*.fs' 'Skip\\s*=' libs/fsharp-crane-core/tests/unit; then echo 'ERROR: xunit Skip= attribute found in test files above'; exit 1; fi && dotnet test libs/fsharp-crane-core/tests/unit/fsharp-crane-core-unit-tests.fsproj"
+        "command": "if grep -rn -E --include='*.fs' 'Skip\\s*=' libs/fsharp-crane-core/tests/unit; then echo 'ERROR: xunit Skip= attribute found in test files above'; exit 1; fi && dotnet test libs/fsharp-crane-core/tests/unit/fsharp-crane-core-unit-tests.fsproj /p:CollectCoverage=true /p:Threshold=99 /p:ThresholdType=line \"/p:ExcludeByFile=**/Adapters/Out/PdfAdapter.fs%2C**/Adapters/Out/OcrAdapter.fs%2C**/Core/Logic/ReportManager.fs%2C**/Core/Logic/SkiplistManager.fs%2C**/Core/Logic/PdfExtractionCache.fs\""
       },
       "cache": true,
       "inputs": [
         "{projectRoot}/src/**/*.fs",
         "{projectRoot}/tests/unit/**/*.fs",
-        "{projectRoot}/fsharp-crane-core.fsproj"
+        "{projectRoot}/tests/unit/fsharp-crane-core-unit-tests.fsproj",
+        "{projectRoot}/fsharp-crane-core.fsproj",
+        "{workspaceRoot}/specs/libs/fsharp-crane-core/behaviours/**/*.feature"
       ]
     },
-    "test:coverage": {
+    "test:integration": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet test libs/fsharp-crane-core/tests/unit/fsharp-crane-core-unit-tests.fsproj /p:CollectCoverage=true /p:Threshold=99 /p:ThresholdType=line \"/p:ExcludeByFile=**/Adapters/Out/PdfAdapter.fs%2C**/Adapters/Out/OcrAdapter.fs\""
+        "command": "if grep -rn -E --include='*.fs' 'Skip\\s*=' libs/fsharp-crane-core/tests/integration; then echo 'ERROR: xunit Skip= attribute found in test files above'; exit 1; fi && dotnet test libs/fsharp-crane-core/tests/integration/fsharp-crane-core-integration-tests.fsproj"
       },
       "cache": true,
-      "inputs": [
-        "{projectRoot}/src/**/*.fs",
-        "{projectRoot}/tests/unit/**/*.fs",
-        "{projectRoot}/fsharp-crane-core.fsproj"
-      ]
+      "inputs": ["{projectRoot}/src/**/*.fs", "{projectRoot}/tests/integration/**/*"]
     },
     "test:quick": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "npx nx run fsharp-crane-core:typecheck",
-          "npx nx run fsharp-crane-core:lint",
-          "npx nx run fsharp-crane-core:test:unit",
-          "npx nx run fsharp-crane-core:test:coverage",
-          "npx nx run fsharp-crane-core:test:specs",
-          "npx nx run fsharp-crane-core:test:layout:validation",
-          "npx nx run fsharp-crane-core:coverage:policy:validation",
-          "npx nx run fsharp-crane-core:package-manifest:policy:validation"
+          {
+            "command": "npm exec -- nx run fsharp-crane-core:typecheck",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run fsharp-crane-core:lint",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run fsharp-crane-core:test:unit",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run fsharp-crane-core:specs:structure-validation",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run fsharp-crane-core:test:coverage",
+            "forwardAllArgs": false
+          }
         ],
-        "parallel": false
-      },
-      "dependsOn": ["typecheck", "lint"],
-      "cache": true,
-      "inputs": ["default", "specs"]
-    },
-    "specs:behavior:coverage": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps specs/libs/fsharp-crane-core/behaviors libs/fsharp-crane-core"
+        "parallel": false,
+        "forwardAllArgs": false
       },
       "cache": true,
       "inputs": [
-        "{workspaceRoot}/specs/libs/fsharp-crane-core/behaviors/**/*.feature",
-        "{projectRoot}/src/**/*.fs",
-        "{projectRoot}/tests/**/*.fs"
+        "default",
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/libs/fsharp-crane-core/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/libs/fsharp-crane-core/behaviours/**/*.feature",
+        "{workspaceRoot}/libs/fsharp-crane-core/tests/unit/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/fsharp-crane-core/tests/unit/fsharp-crane-core-unit-tests.fsproj",
+        "{workspaceRoot}/libs/fsharp-crane-core/tests/integration/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/fsharp-crane-core/tests/integration/fsharp-crane-core-integration-tests.fsproj"
       ]
-    },
-    "test:behavior:coverage:unit": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract bdd validate --project fsharp-crane-core --adapter unit"
-      },
-      "cache": true,
-      "inputs": [
-        "{workspaceRoot}/specs/libs/fsharp-crane-core/behaviors/**/*.feature",
-        "{workspaceRoot}/repo-config.yml",
-        "default"
-      ]
-    },
-    "test:behavior:coverage:integration": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract bdd validate --project fsharp-crane-core --adapter integration"
-      },
-      "cache": true,
-      "inputs": [
-        "{workspaceRoot}/specs/libs/fsharp-crane-core/behaviors/**/*.feature",
-        "{workspaceRoot}/repo-config.yml",
-        "default"
-      ]
-    },
-    "test:behavior:coverage:e2e": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract bdd validate --project fsharp-crane-core --adapter e2e"
-      },
-      "cache": true,
-      "inputs": [
-        "{workspaceRoot}/specs/libs/fsharp-crane-core/behaviors/**/*.feature",
-        "{workspaceRoot}/repo-config.yml",
-        "default"
-      ]
-    },
-    "test:behavior:coverage": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "npx nx run fsharp-crane-core:test:behavior:coverage:unit",
-          "npx nx run fsharp-crane-core:test:behavior:coverage:integration",
-          "npx nx run fsharp-crane-core:test:behavior:coverage:e2e"
-        ],
-        "parallel": false
-      },
-      "dependsOn": ["test:behavior:coverage:unit", "test:behavior:coverage:integration", "test:behavior:coverage:e2e"],
-      "cache": true
     },
     "specs:structure-validation": {
       "executor": "nx:run-commands",
@@ -147,32 +106,6 @@
       },
       "cache": true,
       "inputs": ["{workspaceRoot}/specs/libs/fsharp-crane-core/**/*"]
-    },
-    "test:specs": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "npx nx run fsharp-crane-core:specs:structure-validation",
-          "npx nx run fsharp-crane-core:specs:behavior:coverage"
-        ],
-        "parallel": false
-      },
-      "cache": true,
-      "inputs": ["{workspaceRoot}/specs/libs/fsharp-crane-core/**/*", "{projectRoot}/src/**/*.fs", "specs"]
-    },
-    "test:integration": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "echo 'no-op: target not applicable for this project'"
-      },
-      "cache": true
-    },
-    "test:e2e": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "echo 'no-op: target not applicable for this project'"
-      },
-      "cache": true
     },
     "deps:audit": {
       "executor": "nx:run-commands",
@@ -188,33 +121,90 @@
       },
       "cache": true
     },
-    "test:layout:validation": {
+    "test:coverage:unit": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract layout validate --project fsharp-crane-core"
+        "command": "node scripts/behaviour-coverage.mjs --config libs/fsharp-crane-core/behaviour-coverage.json --adapter unit"
       },
       "cache": true,
-      "inputs": ["default", "{projectRoot}/project.json"]
+      "inputs": [
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/libs/fsharp-crane-core/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/libs/fsharp-crane-core/behaviours/**/*.feature",
+        "{workspaceRoot}/libs/fsharp-crane-core/tests/unit/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/fsharp-crane-core/tests/unit/fsharp-crane-core-unit-tests.fsproj"
+      ]
     },
-    "coverage:policy:validation": {
+    "test:coverage:integration": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract coverage validate --project fsharp-crane-core"
+        "command": "node scripts/behaviour-coverage.mjs --config libs/fsharp-crane-core/behaviour-coverage.json --adapter integration"
       },
       "cache": true,
-      "inputs": ["default", "{projectRoot}/project.json"]
+      "inputs": [
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/libs/fsharp-crane-core/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/libs/fsharp-crane-core/behaviours/**/*.feature",
+        "{workspaceRoot}/libs/fsharp-crane-core/tests/unit/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/fsharp-crane-core/tests/unit/fsharp-crane-core-unit-tests.fsproj",
+        "{workspaceRoot}/libs/fsharp-crane-core/tests/integration/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/fsharp-crane-core/tests/integration/fsharp-crane-core-integration-tests.fsproj"
+      ]
     },
-    "package-manifest:policy:validation": {
+    "test:coverage:behaviour": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract manifest validate --project fsharp-crane-core"
+        "command": "node scripts/behaviour-coverage.mjs --config libs/fsharp-crane-core/behaviour-coverage.json --adapter behaviour"
       },
       "cache": true,
-      "inputs": ["default", "{projectRoot}/project.json"]
+      "inputs": [
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/libs/fsharp-crane-core/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/libs/fsharp-crane-core/behaviours/**/*.feature",
+        "{workspaceRoot}/libs/fsharp-crane-core/tests/unit/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/fsharp-crane-core/tests/unit/fsharp-crane-core-unit-tests.fsproj",
+        "{workspaceRoot}/libs/fsharp-crane-core/tests/integration/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/fsharp-crane-core/tests/integration/fsharp-crane-core-integration-tests.fsproj"
+      ]
+    },
+    "test:coverage": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "npm exec -- nx run fsharp-crane-core:test:coverage:unit",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run fsharp-crane-core:test:coverage:integration",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run fsharp-crane-core:test:coverage:behaviour",
+            "forwardAllArgs": false
+          }
+        ],
+        "parallel": false,
+        "forwardAllArgs": false
+      },
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/libs/fsharp-crane-core/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/libs/fsharp-crane-core/behaviours/**/*.feature",
+        "{workspaceRoot}/libs/fsharp-crane-core/tests/unit/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/fsharp-crane-core/tests/unit/fsharp-crane-core-unit-tests.fsproj",
+        "{workspaceRoot}/libs/fsharp-crane-core/tests/integration/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/fsharp-crane-core/tests/integration/fsharp-crane-core-integration-tests.fsproj"
+      ]
     }
   },
   "namedInputs": {
-    "specs": ["{workspaceRoot}/specs/libs/fsharp-crane-core/behaviors/**/*.feature"]
+    "specs": ["{workspaceRoot}/specs/libs/fsharp-crane-core/behaviours/**/*.feature"]
   },
   "tags": ["type:lib", "domain:crane", "lang:fsharp"],
   "implicitDependencies": []

@@ -7,10 +7,10 @@ Outside a lifecycle-filtered quality gate, validate listed `specs/apps/<app-fami
 `rhino-cli:specs:structure-validation`). It aggregates adoption, tree, and app-tree counts. Use
 `rhino-cli specs counts validate <folder>` only for non-app trees that the aggregator cannot reach.
 Use `rhino-cli md links validate` for Markdown paths/fragments and
-`rhino-cli specs gherkin-cardinality validate` for primary-keyword cardinality.
+the project `test:coverage:behaviour` target for explicit When/Then and corpus structure.
 
 In a quality-gate invocation, skip a command and any LLM substitute when its exact gate ID is in
-`delegated-gate-ids`: `specs-structure`, `md-links`, `specs-gherkin-cardinality`, or
+`delegated-gate-ids`: `specs-structure`, `md-links`, or
 `governance-readme-index`. Preserve the supplied lifecycle evidence instead.
 
 Route-level drift (endpoints, contracts) is not currently implemented — the placeholder command

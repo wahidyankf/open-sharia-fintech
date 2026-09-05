@@ -27,7 +27,7 @@ Scenario: Update user email
 
 ## Avoiding UI Coupling
 
-**Focus on behavior, not UI elements**.
+**Focus on behaviour, not UI elements**.
 
 ```gherkin
 # ❌ Bad - Coupled to UI implementation
@@ -38,7 +38,7 @@ Scenario: Login
   And I click button with class "btn-submit"
   Then I should be redirected to "https://example.com/dashboard"
 
-# ✅ Good - Focused on business behavior
+# ✅ Good - Focused on business behaviour
 Scenario: Login with valid credentials
   Given I am on login page
   When I log in with email "user@example.com" and password "password"

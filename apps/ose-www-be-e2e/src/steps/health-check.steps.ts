@@ -12,7 +12,6 @@ When("the health endpoint is called", async ({ request }) => {
   state.healthResult = extractTrpcData(body);
 });
 
-// @covers specs/apps/ose/www/behaviors/backend/health/health.feature:Health endpoint returns ok status
 Then("the response contains status {string}", async ({}, expectedStatus: string) => {
   expect(state.healthResult).toMatchObject({ status: expectedStatus });
 });

@@ -11,7 +11,7 @@ tags:
   - compaction
   - discipline
 created: 2026-08-01
-when_to_use: Use when reviewing your own staging behavior for signs of these four failure patterns, or when explaining why a specific staging shortcut is unsafe.
+when_to_use: Use when reviewing your own staging behaviour for signs of these four failure patterns, or when explaining why a specific staging shortcut is unsafe.
 ---
 
 # Anti-Patterns: Ledger Integrity

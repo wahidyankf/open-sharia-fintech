@@ -36,7 +36,7 @@ when_to_use: Use before pushing, to run the pre-push checklist, or when planning
 - [ ] Linting passes (`npm run lint`)
 - [ ] Build succeeds (`npm run build`)
 - [ ] The resulting `main` state is safe to deploy to production immediately
-- [ ] Incomplete behavior is complete-and-inert behind a temporary production-disabled feature flag
+- [ ] Incomplete behaviour is complete-and-inert behind a temporary production-disabled feature flag
 - [ ] Both flag paths pass and rollout, rollback, and removal are recorded
 - [ ] Commit message follows [Conventional Commits](../commit-messages.md)
 
@@ -73,7 +73,7 @@ FAIL: **Bad large changes**:
 2. **Complete that piece**: include required tests, docs, specs, references, generated artifacts,
    operations, and rollback support
 3. **Repeat**: Build on top of previous work
-4. **Use feature flags**: Keep incomplete behavior internally complete and inert behind a temporary
+4. **Use feature flags**: Keep incomplete behaviour internally complete and inert behind a temporary
    production-disabled flag; test both paths and record rollout, rollback, and removal
 
 **Example - "Add user login" broken down**:

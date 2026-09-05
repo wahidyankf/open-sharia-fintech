@@ -48,8 +48,8 @@ This document establishes the separation between:
 
 - **[Test-Driven Development](./development/test-driven-development-tdd/README.md)** - TDD methodology
   - **Prerequisite**: [AyoKoding Test-Driven Development](../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/development/test-driven-development-tdd/)
-- **[Behavior-Driven Development](./development/behavior-driven-development-bdd/README.md)** - BDD with Gherkin
-  - **Prerequisite**: [AyoKoding Behavior-Driven Development](../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/development/behavior-driven-development-bdd/)
+- **[Behaviour-Driven Development](./development/behaviour-driven-development-bdd/README.md)** - BDD with Gherkin
+  - **Prerequisite**: [AyoKoding Behaviour-Driven Development](../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/development/behavior-driven-development-bdd/)
 
 ### Language-Specific Coding Standards
 

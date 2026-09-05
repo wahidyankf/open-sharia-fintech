@@ -53,11 +53,9 @@ CHAIN_FILE="local-tmp/.execution-chain"
 
 ## Practice 6: Write Gherkin Acceptance Criteria
 
-**Principle**: Use Given-When-Then format for testable requirements. Follow the
-[step-keyword cardinality HARD rule](../acceptance-criteria/gherkin-format-and-step-keyword-cardinality.md#step-keyword-cardinality-hard-rule):
-every `Scenario` uses exactly one primary `Given`, one `When`, and one `Then`; chain all
-additional steps with `And`/`But`. `Background` blocks and `Scenario Outline` `Examples`
-tables are exempt.
+**Principle**: Use Given-When-Then format for testable requirements. Every scenario needs an
+explicit `When` and `Then`. Prefer `And`/`But` for continuation, but allow repeated primary
+keywords for one continuous journey.
 
 **Good Example:**
 
@@ -69,18 +67,15 @@ Scenario: User logs in with valid credentials
   And a session token is created
 ```
 
-**Bad Example (violates — two primary `When` lines):**
+**Continuous-journey example:**
 
 ```gherkin
-# NON-CONFORMING EXAMPLE — deliberate illustration of the violation
 Scenario: User logs in with valid credentials
   Given a registered user with email "user@example.com"
   When the user navigates to the login page
   When the user submits login form with correct password
   Then the user is redirected to dashboard
 ```
-
-(Fix: replace the second `When` with `And`.)
 
 **Bad Example (vague):**
 
@@ -94,7 +89,7 @@ The system should allow users to log in.
 - Clear setup, action, and expected outcome
 - Enables automated testing
 - Reduces ambiguity in requirements
-- One primary keyword per step type enforces the "one action / one behavior" norm
+- Journey coherence keeps related actions together without hiding unrelated outcomes
 
 ## Practice 7: Require Write and Bash Tools for Report Generators
 

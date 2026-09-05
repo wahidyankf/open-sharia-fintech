@@ -12,51 +12,12 @@ const workspaceRoot = path.resolve(__dirname, "../..");
 const testDir = defineBddConfig({
   featuresRoot: workspaceRoot,
   features: [
-    path.join(workspaceRoot, "specs/apps/ayokoding/www/behaviors/frontend/**/*.feature"),
-    // The five backend/tRPC-API features (content, health, i18n, navigation, search) are tagged
-    // `@unit @e2e` — real e2e-level coverage is required, not just unit — but they live outside
-    // this project's frontend/**/*.feature glob above. Adding the backend tree here mirrors
-    // ayokoding-www-be-e2e's own integration-level coverage of the identical corpus: real HTTP
-    // requests via Playwright's `request` fixture against the same live server the frontend e2e
-    // tests already exercise (backend-*.steps.ts), not a browser DOM check.
-    path.join(workspaceRoot, "specs/apps/ayokoding/www/behaviors/backend/**/*.feature"),
-    // The resizable-panel primitive's own Gherkin lives under libs/web-ui (see
-    // specs/libs/web-ui/behaviors/README.md). Its drag/clamp/keyboard scenarios are bound a
-    // second time here — real browser, real docs page — alongside their existing web-ui
-    // unit-level binding (resizable-panel.steps.tsx), matching this plan's "Gherkin (binds)"
-    // dual-test-level convention rather than duplicating the scenario text under this app's
-    // own gherkin/ tree.
-    path.join(workspaceRoot, "specs/libs/web-ui/behaviors/resizable-panel/resizable-panel.feature"),
+    path.join(workspaceRoot, "specs/apps/ayokoding/www/behaviours/frontend/**/*.feature"),
+    // The backend API features exercise the same live server through Playwright's request fixture.
+    path.join(workspaceRoot, "specs/apps/ayokoding/www/behaviours/backend/**/*.feature"),
   ],
   steps: "./tests/e2e/steps/**/*.steps.ts",
-  // Default is 'fail-on-gen': bddgen refuses to generate ANY test file while ANY scenario in
-  // the globbed features lacks a matching step def. This app's Gherkin surface (many features,
-  // most scenarios tagged plain @unit or @unit @e2e) has grown well past this project's own
-  // e2e step-def coverage — ~104 preexisting scenarios across unrelated features (content
-  // links, search, i18n, etc.) have no e2e implementation. 'skip-scenario' lets generation
-  // succeed for every feature that IS covered, rendering the rest as `test.fixme` (visibly
-  // pending, not silently passing) instead of hard-blocking the whole suite.
-  //
-  // `tags` (a Cucumber tag expression scoping which scenarios get GENERATED at all) was
-  // considered as a narrower alternative — e.g. `tags: "@e2e"` + `missingSteps: "fail-on-gen"`,
-  // keeping the hard-fail guarantee for every scenario declaring e2e intent while excluding
-  // plain-`@unit` scenarios (42 repo-wide, confirmed via
-  // `grep -rhoE "^\s*@unit\s*$" specs/apps/ayokoding/www/behaviors/frontend/ | wc -l`)
-  // that were never meant to run at e2e level. It does not solve this project's actual blocker:
-  // every one of the ~104 gap scenarios is ALREADY tagged `@unit @e2e` (149 such scenarios exist
-  // repo-wide; zero scenarios anywhere carry a literal `@unit-only` tag, despite earlier
-  // phrasing in this comment implying one exists). A tag filter can only include/exclude
-  // scenarios by their declared tags — it cannot
-  // distinguish "declared e2e intent, not yet implemented" from "declared e2e intent,
-  // implemented"; that distinction is exactly what `missingSteps` exists to handle. Excluding
-  // the gap scenarios via tags instead would mean manually re-tagging ~104 scenarios across many
-  // unrelated preexisting features — the same per-scenario bookkeeping `skip-scenario` already
-  // does automatically via `test.fixme`, done by hand, and a far larger unrelated-scope change
-  // than this plan's own resizable-sidebar work. `skip-scenario` is deliberately project-wide
-  // because the gap it papers over is already project-wide; the follow-up
-  // (`plans/ideas/ayokoding-www-e2e-coverage-gaps.md`) is to burn the ~104 scenarios down and
-  // revert to `fail-on-gen`.
-  missingSteps: "skip-scenario",
+  tags: "not @e2e-exempt",
 });
 
 export default defineConfig({
@@ -83,7 +44,11 @@ export default defineConfig({
     command:
       "cp -r apps/ayokoding-www/.next/static apps/ayokoding-www/.next/standalone/apps/ayokoding-www/.next/ && cp -r apps/ayokoding-www/public apps/ayokoding-www/.next/standalone/apps/ayokoding-www/ && node apps/ayokoding-www/.next/standalone/apps/ayokoding-www/server.js",
     url: "http://localhost:3101",
-    reuseExistingServer: true,
+    // This target builds the production app immediately before Playwright starts. Reusing a server
+    // can bind the run to an older standalone process whose in-memory manifest no longer matches
+    // the freshly replaced `.next` tree, producing cross-browser cascades of missing UI. Require
+    // Playwright to own this server lifecycle so the browser proof always exercises this build.
+    reuseExistingServer: false,
     timeout: 120000,
     cwd: workspaceRoot,
     env: {

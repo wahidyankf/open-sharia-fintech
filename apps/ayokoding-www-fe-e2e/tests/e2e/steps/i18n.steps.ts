@@ -7,16 +7,14 @@ When(/a visitor is on a page under the \/en locale/, async ({ page }) => {
   await page.goto("/en");
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/i18n/i18n.feature:Language switcher displays the current locale
 Then('the language switcher should display "English" as the current language', async ({ page }) => {
   const langButton = page.getByRole("button", { name: /switch language|english/i });
   await expect(langButton).toBeVisible();
-  const text = await langButton.textContent();
-  expect(text?.toLowerCase()).toContain("en");
+  await expect(langButton).toContainText("English");
 });
 
-Given(/a visitor is on the English version of a content page at \/en\/some-page/, async ({ page }) => {
-  await page.goto("/en");
+Given(/a visitor is on the English AI benchmark page at \/en\/tools\/ai-benchmark/, async ({ page }) => {
+  await page.goto("/en/tools/ai-benchmark");
 });
 
 When("the visitor selects Indonesian from the language switcher", async ({ page }) => {
@@ -27,40 +25,42 @@ When("the visitor selects Indonesian from the language switcher", async ({ page 
   await idOption.click();
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/i18n/i18n.feature:Switching language redirects to the locale-specific URL
-Then(/the visitor should be redirected to the Indonesian version of that page at \/id\/some-page/, async ({ page }) => {
-  await expect(page).toHaveURL(/\/id/);
-});
+Then(
+  /the visitor should be redirected to the Indonesian AI benchmark page at \/id\/tools\/ai-benchmark/,
+  async ({ page }) => {
+    await expect(page).toHaveURL(/\/id\/tools\/ai-benchmark$/u);
+  },
+);
 
 Given("a visitor is on the Indonesian version of a page", async ({ page }) => {
-  await page.goto("/id");
+  await page.goto("/id/tools");
 });
 
 Then("navigation labels and UI text should be displayed in Indonesian", async ({ page }) => {
-  await expect(page).toHaveTitle(/.+/);
-  const heading = page.getByRole("heading", { level: 1 });
-  await expect(heading).toBeVisible();
+  const primaryNavigation = page.getByRole("navigation", { name: "Primary" });
+  await expect(primaryNavigation.getByRole("link", { name: "Belajar", exact: true })).toBeVisible();
+  await expect(primaryNavigation.getByRole("link", { name: "Alat", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Switch language" })).toContainText("Bahasa Indonesia");
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/i18n/i18n.feature:UI labels change to the selected language
 Then("the page title and headings should reflect the Indonesian locale content", async ({ page }) => {
-  const heading = page.getByRole("heading", { level: 1 });
-  await expect(heading).toBeVisible();
-  const text = await heading.textContent();
-  expect(text?.trim().length).toBeGreaterThan(0);
+  await expect(page.locator("html")).toHaveAttribute("lang", "id");
+  const main = page.getByRole("main");
+  await expect(main.getByRole("heading", { level: 1, name: "Alat", exact: true })).toBeVisible();
+  await expect(main.getByRole("link", { name: "Kalkulator Biaya Hidup", exact: true })).toBeVisible();
 });
 
-When(/a visitor opens the root URL \//, async ({ page }) => {
+When("a visitor opens the root URL \\/", async ({ page }) => {
   await page.goto("/");
 });
 
 Then(/they should be redirected to \/en/, async ({ page }) => {
-  await expect(page).toHaveURL(/\/en/);
+  await expect(page).toHaveURL(/\/en$/u);
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/i18n/i18n.feature:Root URL redirects to the default locale
 Then("the English version of the home page should be displayed", async ({ page }) => {
-  await expect(page).toHaveTitle(/.+/);
-  const heading = page.getByRole("heading", { level: 1 });
-  await expect(heading).toBeVisible();
+  await expect(page.locator("html")).toHaveAttribute("lang", "en");
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Learn to build software, the clear way.", exact: true }),
+  ).toBeVisible();
 });

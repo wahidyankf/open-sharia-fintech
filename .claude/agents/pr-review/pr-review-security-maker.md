@@ -1,6 +1,6 @@
 ---
 name: pr-review-security-maker
-description: Reviews injection and unsafe git/FS behavior in semantic passes; in leak-only mode reviews sensitive values, protected environment properties, and machine paths.
+description: Reviews injection and unsafe git/FS behaviour in semantic passes; in leak-only mode reviews sensitive values, protected environment properties, and machine paths.
 tools: Read, Bash, Grep, Glob, WebFetch, WebSearch
 model: sonnet
 color: blue

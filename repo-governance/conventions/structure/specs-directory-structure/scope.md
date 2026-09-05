@@ -22,7 +22,7 @@ created: 2026-04-02
 
 - The logical owner corpus for app spec areas and library spec areas
 - **Gherkin feature file placement** for apps (BE, FE/web, CLI) and libs, within an owner's
-  `behaviors/` tree
+  `behaviours/` tree
 - **Domain subdirectory rules** for grouping related feature files
 - **C4 placement** as sections of an owner's `architecture.md` rather than as folders
 - **OpenAPI contract placement** within the owner that serves the contract
@@ -35,6 +35,6 @@ created: 2026-04-02
 - **Gherkin writing standards** (covered by [Acceptance Criteria Convention](../../../development/infra/acceptance-criteria.md))
 - **C4 diagram content** (covered by C4 model documentation within each project)
 - **OpenAPI spec authoring** (covered by contract project documentation)
-- **Test implementation** (covered by [Three-Level Testing Standard](../../../development/quality/three-level-testing-standard.md))
+- **Test implementation** (covered by [Behaviour-Driven Development](../../../development/behaviour-driven-development.md))
 - **Content split decisions** (what belongs in app README vs specs/) — see [App README vs Specs Convention](../app-readme-vs-specs.md)
 - **PM-readability requirements** for spec files — see [App README vs Specs Convention](../app-readme-vs-specs.md)

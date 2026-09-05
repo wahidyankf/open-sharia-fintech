@@ -194,7 +194,7 @@ async function processParallel(ids: string[]): Promise<Donation[]> {
 %% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 graph LR
-    A["Multiple Promises<br/>to Coordinate?"]:::blue --> B{"What<br/>Behavior?"}:::orange
+    A["Multiple Promises<br/>to Coordinate?"]:::blue --> B{"What<br/>Behaviour?"}:::orange
 
     B -->|"All must succeed"| C["✅ Promise.all()<br/>(Fail-fast)"]:::teal
     B -->|"First to complete"| D{"Success or<br/>Completion?"}:::orange

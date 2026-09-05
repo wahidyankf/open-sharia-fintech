@@ -19,7 +19,7 @@ created: 2025-11-24
 
 **CRITICAL**: The `\n` escape sequence does not create line breaks in Mermaid diagrams. It renders as the literal characters `\n` in both node labels and edge labels.
 
-**Root Cause**: Mermaid ESM receives the literal string `\n` and does not interpret it as a line break. This is a Mermaid behavior, not a platform issue.
+**Root Cause**: Mermaid ESM receives the literal string `\n` and does not interpret it as a line break. This is a Mermaid behaviour, not a platform issue.
 
 **Context**:
 

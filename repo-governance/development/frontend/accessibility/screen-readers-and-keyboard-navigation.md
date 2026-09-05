@@ -10,7 +10,7 @@ tags:
   - aria
   - focus
 created: 2026-03-28
-when_to_use: Use when reviewing a component's screen-reader behavior, or implementing keyboard interaction for menus, tabs, dialogs, or lists.
+when_to_use: Use when reviewing a component's screen-reader behaviour, or implementing keyboard interaction for menus, tabs, dialogs, or lists.
 ---
 
 # Screen Readers and Keyboard Navigation
@@ -36,7 +36,7 @@ when_to_use: Use when reviewing a component's screen-reader behavior, or impleme
 
 All interactive elements must follow these keyboard interaction patterns:
 
-| Key        | Behavior                                           |
+| Key        | Behaviour                                          |
 | ---------- | -------------------------------------------------- |
 | Tab        | Move focus forward through interactive elements    |
 | Shift+Tab  | Move focus backward                                |

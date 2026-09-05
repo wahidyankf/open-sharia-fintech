@@ -1,14 +1,14 @@
 ---
 title: "Git Push Default Convention"
-description: "Default git push behavior — every plan uses worktree-to-pr; direct push to origin main is unavailable or restricted per-repo."
+description: "Default git push behaviour — every plan uses worktree-to-pr; direct push to origin main is unavailable or restricted per-repo."
 when_to_use: "Read this index to find the right Git Push Default Convention child document."
 ---
 
 # Git Push Default Convention
 
 - [Principles and Conventions Implemented](./principles-and-conventions-implemented.md) — The principles and companion conventions the Git Push Default Convention implements and respects. Use when tracing why the worktree-to-pr default and its precedence rules exist back to the principles and conventions they respect.
-- [Scope](./scope.md) — What the Git Push Default Convention covers — delivery-mode push behavior and checklist authoring — and what it explicitly defers to companion conventions. Use when determining whether a git-push question is governed by this convention or by one of its companions.
-- [Standard 1: Default Integration Target Is a PR Branch](./standard-1-default-integration-target-is-a-pr-branch.md) — The default worktree-to-pr workflow, the situations it applies to, and the Phase 0 exception where no PR is opened at all. Use when confirming the default push behavior for a delivery, or when checking whether Phase 0 of a plan should push or open a PR.
+- [Scope](./scope.md) — What the Git Push Default Convention covers — delivery-mode push behaviour and checklist authoring — and what it explicitly defers to companion conventions. Use when determining whether a git-push question is governed by this convention or by one of its companions.
+- [Standard 1: Default Integration Target Is a PR Branch](./standard-1-default-integration-target-is-a-pr-branch.md) — The default worktree-to-pr workflow, the situations it applies to, and the Phase 0 exception where no PR is opened at all. Use when confirming the default push behaviour for a delivery, or when checking whether Phase 0 of a plan should push or open a PR.
 - [Standard 2: Direct Push Modes Are Explicit Selections, Not Inferred — and Are Repo-Restricted](./standard-2-direct-push-modes-are-explicit-selections-not-inferred-and-are-repo-restricted.md) — Per-repository availability of the two direct-push modes, the explicit selection signals required, and the further content restriction on main-to-origin-main. Use when a plan or invocation might call for pushing directly to origin main, to confirm the repository allows it and a valid selection signal is present.
 - [Standard 3: Plans Must Declare a Delivery Mode Only to Override the Default](./standard-3-plans-must-declare-a-delivery-mode-only-to-override-the-default.md) — When plan-maker adds a Delivery Mode field, what plan-checker flags, and how plan-fixer and plan-execution resolve the mode. Use when authoring, checking, or fixing a plan's `## Delivery Mode` field.
 - [Standard 4: Maintain Linear History Before Pushing](./standard-4-maintain-linear-history-before-pushing.md) — Rebase rather than merge before every push, and never let a merge commit reach main or a PR branch. Use before pushing when the remote may have moved forward since the last pull or push.

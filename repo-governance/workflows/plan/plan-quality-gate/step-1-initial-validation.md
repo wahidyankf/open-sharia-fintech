@@ -11,9 +11,10 @@ when_to_use: Use when checking exactly what plan-checker validates on the initia
 First apply the
 [lifecycle validation ownership policy](../../meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
 Record exact `delegated-gate-ids` and their evidence ledger. Deterministic gates own links, maps,
-word budgets, formatting, Mermaid mechanics, and Gherkin cardinality. Plan semantics remain in
-scope; remove only exact registry-owned predicates from checker prompts, and consume their evidence
-without rederiving it.
+word budgets, formatting, and Mermaid mechanics. Project-local `test:coverage:behaviour` owns
+static Gherkin corpus, adapter, exemption, and journey-shape evidence. Gherkin journey semantics
+remain in scope; remove only exact registry-owned predicates from checker prompts, and consume
+their evidence without rederiving it.
 
 Run plan validation to identify completeness, accuracy, and hallucination issues.
 
@@ -37,7 +38,7 @@ Run plan validation to identify completeness, accuracy, and hallucination issues
   resulting `main` states; applicable flag tests and rollout/rollback/removal; no LOC/file-count
   boundary tests; no copied full Gherkin)
 - Operational readiness (Step 5b — quality gates, CI verification, env setup)
-- Manual behavioral assertions (Step 5c — Playwright MCP / curl)
+- Manual behavioural assertions (Step 5c — Playwright MCP / curl)
 - Worktree specification (Step 5d — declared `## Worktree` section + path format)
 - Execution-grade clarity (Step 5e — file paths, commands, acceptance criteria per checkbox)
 - **Anti-hallucination scan** (Step 5f — confidence labels, Anti-Pattern Catalog AP-1 through
@@ -51,8 +52,8 @@ Run plan validation to identify completeness, accuracy, and hallucination issues
   no-loss proof
 - Rule propagation and exact as-built C4 packets in the phase that changes them, plus explicit
   triggers and evidence-backed `Not triggered` dispositions for dormant recovery work
-- **Specs & Gherkin delivery coverage** (Step 5j — conditional: behavior-changing plans under
-  `apps/`/`libs/`/`specs/` must carry companion Gherkin + a `specs:coverage` gate) per the
+- **Specs & Gherkin delivery coverage** (Step 5j — conditional: behaviour-changing plans under
+  `apps/`/`libs/`/`specs/` must carry companion Gherkin + a `test:coverage:behaviour` gate) per the
   [Feature Change Completeness Convention](../../../development/quality/feature-change-completeness.md)
 - **UI-design-funnel completeness** (Step 5k — conditional: fires only on **UI-bearing** plans that
   add/change user-facing screens or components under `apps/` or `libs/`; FLAGS at HIGH any missing

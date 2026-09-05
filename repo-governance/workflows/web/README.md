@@ -10,7 +10,7 @@ created: 2026-06-20
 
 # Web Workflows
 
-Use these workflows when a live site needs to be experienced as a real visitor would experience it. They turn observed behavior, usability, and design findings into an actionable delivery plan.
+Use these workflows when a live site needs to be experienced as a real visitor would experience it. They turn observed behaviour, usability, and design findings into an actionable delivery plan.
 
 ## Purpose
 

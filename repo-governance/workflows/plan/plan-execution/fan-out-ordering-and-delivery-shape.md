@@ -27,7 +27,7 @@ intermediate phases pass their own gate without integrating
 ([§PRs Open at Delivery Boundaries](../../../conventions/structure/plans/prs-open-at-delivery-boundaries-rules.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule)).
 Each unit follows one natural cohesive seam, keeps all artifacts required for internal consistency,
 and leaves `main` immediately safe to deploy to production. LOC and file counts never create,
-erase, or force the boundary. Incomplete behavior requires a temporary production-disabled flag,
+erase, or force the boundary. Incomplete behaviour requires a temporary production-disabled flag,
 tests for both paths, and rollout/rollback/removal evidence. Integrate a ready unit promptly rather
 than holding it to batch.
 Cleanup is the terminal DAG node, so a provisioned worktree is removed only once **every** delivery

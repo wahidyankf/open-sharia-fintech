@@ -1,91 +1,39 @@
-/**
- * Step definitions for the Disabled Routes feature.
- *
- * Covers: specs/apps/organiclever/app-web/behaviors/routing/disabled-routes.feature
- *
- * Verifies that previously-removed routes have no corresponding page/route
- * files on disk. Next.js serves 404 for any path with no matching file,
- * so absent files are the authoritative source of truth for routing.
- */
 import path from "path";
-import { existsSync, readFileSync } from "fs";
 import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
 import { expect } from "vitest";
+import { resolveAppRoute, type AppRouteResult } from "@/contexts/routing/application";
 
 const feature = await loadFeature(
   path.resolve(
     __dirname,
-    "../../../../../../specs/apps/organiclever/app-web/behaviors/routing/disabled-routes.feature",
+    "../../../../../../specs/apps/organiclever/app-web/behaviours/routing/disabled-routes.feature",
   ),
 );
 
-const appRoot = path.resolve(__dirname, "../../../../../src/app");
-
-/**
- * Resolves the file-system path candidates for a Next.js App Router route.
- * GET /login -> src/app/login/page.tsx
- * GET /profile -> src/app/profile/page.tsx
- */
-function routeFilePaths(method: string, routePath: string): string[] {
-  const segments = routePath.replace(/^\//, "").split("/");
-  const dir = path.join(appRoot, ...segments);
-  if (method === "GET") {
-    return [
-      path.join(dir, "page.tsx"),
-      path.join(dir, "page.ts"),
-      path.join(dir, "page.jsx"),
-      path.join(dir, "page.js"),
-    ];
-  }
-  return [path.join(dir, "route.ts"), path.join(dir, "route.js")];
-}
-
 describeFeature(feature, ({ ScenarioOutline, Scenario }) => {
+  let result: AppRouteResult;
+
   ScenarioOutline("Disabled routes return 404", ({ Given, When, Then }, examples) => {
-    // The examples object provides the substituted values for this row.
     const method = String(examples["method"] ?? "");
     const routePath = String(examples["path"] ?? "");
-
     Given("the application is running in local-first mode", () => {
-      // Local-first mode is the default — no setup required.
+      expect(resolveAppRoute("GET", "/app/home").status).toBe(200);
     });
-
-    // Step text must match the raw feature step (before example substitution).
     When("a visitor requests <method> <path>", () => {
-      // The method and routePath values are captured from the examples row above.
-      // Assertion happens in Then to keep Given/When/Then structure clean.
+      result = resolveAppRoute(method, routePath);
     });
-
-    // @covers specs/apps/organiclever/app-web/behaviors/routing/disabled-routes.feature:Disabled routes return 404
-    Then("the response status is 404", () => {
-      const candidates = routeFilePaths(method, routePath);
-      const anyExists = candidates.some((p) => existsSync(p));
-      expect(anyExists, `Route file found for ${method} ${routePath} — this route should be disabled`).toBe(false);
-    });
+    Then("the response status is 404", () => expect(result.status).toBe(404));
   });
 
   Scenario("Old /app URL permanent-redirects to /app/home", ({ Given, When, Then }) => {
-    let configSource = "";
-
     Given("the application is running in local-first mode", () => {
-      // The redirect lives in next.config.ts (config-level) so the dev server
-      // and the production build both emit the 308 response. The page.tsx
-      // form returned an HTTP 200 with an embedded RSC redirect in dev mode,
-      // which broke the e2e status assertion.
-      const configFile = path.resolve(__dirname, "../../../../next.config.ts");
-      expect(existsSync(configFile), `expected next.config.ts at ${configFile}`).toBe(true);
-      configSource = readFileSync(configFile, "utf8");
+      expect(resolveAppRoute("GET", "/app/home").status).toBe(200);
     });
-
-    When(`a visitor requests GET "/app"`, () => {
-      // Static analysis only — confirmed below in Then.
+    When('a visitor requests GET "/app"', () => {
+      result = resolveAppRoute("GET", "/app");
     });
-
-    // @covers specs/apps/organiclever/app-web/behaviors/routing/disabled-routes.feature:Old /app URL permanent-redirects to /app/home
-    Then(`the response is a 308 redirect to "/app/home"`, () => {
-      expect(configSource).toMatch(/source:\s*"\/app"/);
-      expect(configSource).toMatch(/destination:\s*"\/app\/home"/);
-      expect(configSource).toMatch(/permanent:\s*true/);
+    Then('the response is a 308 redirect to "/app/home"', () => {
+      expect(result).toMatchObject({ status: 308, location: "/app/home" });
     });
   });
 });

@@ -4,27 +4,27 @@
 
 Enforces the
 [Feature Change Completeness Convention §Two Paths](../../../../repo-governance/development/quality/feature-change-completeness.md)
-for the plan path: a plan creating, modifying, or deleting observable behavior in `apps/`, `libs/`,
+for the plan path: a plan creating, modifying, or deleting observable behaviour in `apps/`, `libs/`,
 or `specs/` MUST carry explicit steps adding/updating companion `specs/` `.feature` files and running
-`specs:coverage`.
+`test:coverage:behaviour`.
 
 **What to validate**:
 
 1. **Scope detection** — from Scope (`README.md`/`prd.md`), the chosen technical form's file-impact
-   analysis, and delivery steps, determine whether observable behavior under `apps/**`, `libs/**`,
+   analysis, and delivery steps, determine whether observable behaviour under `apps/**`, `libs/**`,
    or `specs/**` is created, modified, or deleted.
 2. **Specs/Gherkin authoring step present** — if yes, the checklist includes at least one step
    creating/updating the relevant `specs/apps/**` or `specs/libs/**` feature file(s). Missing:
    **HIGH**.
-3. **`specs:coverage` gate present** — the checklist or a phase gate runs the project's
-   `specs:coverage` target. Missing: **HIGH**.
-4. **Behavior-change exemption** — behavior-preserving refactors, no-behavior-change dependency bumps,
+3. **`test:coverage:behaviour` gate present** — the checklist or a phase gate runs the project's
+   `test:coverage:behaviour` target. Missing: **HIGH**.
+4. **Behaviour-change exemption** — behaviour-preserving refactors, no-behaviour-change dependency bumps,
    docs/governance-only plans are exempt (mirrors Feature Change Completeness applicability). Verify
    the exemption is legitimate and stated; an illegitimate exemption is **HIGH**.
 
-**Finding severity**: behavior-affecting plan with no specs/Gherkin step: **HIGH**. Specs step present
-but no `specs:coverage` gate: **HIGH**. Step present but vague (no specific feature path/domain):
-**MEDIUM**. Illegitimate "no behavior change" exemption: **HIGH**.
+**Finding severity**: behaviour-affecting plan with no specs/Gherkin step: **HIGH**. Specs step present
+but no `test:coverage:behaviour` gate: **HIGH**. Step present but vague (no specific feature path/domain):
+**MEDIUM**. Illegitimate "no behaviour change" exemption: **HIGH**.
 
 ## 16b. Regression Test Mandate (bug-fix plans — MANDATORY)
 

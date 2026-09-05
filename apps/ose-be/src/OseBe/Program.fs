@@ -11,6 +11,7 @@ open OseBe.Infrastructure.Database
 open OseBe.Contexts.Config.Infrastructure
 open OseBe.Infrastructure.NatsClient
 open OseBe.Infrastructure.NatsConnect
+open OseBe.Contexts.Db.Application
 open OseBe.Contexts.Db.Infrastructure
 open OseBe.Contexts.Messaging.Application
 open OseBe.Contexts.Messaging.Infrastructure
@@ -43,7 +44,9 @@ let main args =
     let connStr = requireDatabaseUrl ()
 
     // 3. Schema migration on boot (db context — DbUp embedded scripts).
+    let migrationStatus = newMigrationStatus ()
     runMigrations connStr
+    migrationStatus.MarkApplied()
 
     // 4. Messaging: fail-fast on missing OSE_BE_NATS_URL (a configuration error);
     //    once configured, the connect attempt itself + JetStream durable demo
@@ -72,7 +75,8 @@ let main args =
             eprintfn "%s" message
             exit 1
 
-    let host = buildHost args connStr (buildWebApp status) listenUrl
+    let host =
+        buildHost args connStr (buildWebAppWithMigrationStatus migrationStatus status) listenUrl
 
     host.Run()
 

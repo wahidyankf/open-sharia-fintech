@@ -1,6 +1,6 @@
 ---
 title: "File-Touch Discipline — Standards 4-5: Carrying and Losing the Ledger"
-description: How the ledger survives context compaction and handoffs, and the degraded-mode default-deny behavior required when it does not survive
+description: How the ledger survives context compaction and handoffs, and the degraded-mode default-deny behaviour required when it does not survive
 category: explanation
 subcategory: development
 tags:

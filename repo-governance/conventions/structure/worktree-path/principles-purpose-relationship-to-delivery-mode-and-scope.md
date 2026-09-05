@@ -19,7 +19,7 @@ created: 2026-05-03
 
 This convention implements the following core principles:
 
-- **[Explicit Over Implicit](../../../principles/software-engineering/explicit-over-implicit.md)**: Worktree paths are explicitly routed via hook rather than relying on defaults. The routing behavior is documented and reproducible.
+- **[Explicit Over Implicit](../../../principles/software-engineering/explicit-over-implicit.md)**: Worktree paths are explicitly routed via hook rather than relying on defaults. The routing behaviour is documented and reproducible.
 
 - **[Reproducibility First](../../../principles/software-engineering/reproducibility.md)**: All worktrees are created in a predictable location (`worktrees/<name>/`) with consistent naming, ensuring reliable git operations and CI/CD integration.
 

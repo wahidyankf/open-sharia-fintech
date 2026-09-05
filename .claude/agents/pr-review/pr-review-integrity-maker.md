@@ -41,7 +41,7 @@ swallowing an error a test was designed to surface. Per
 [CI Blocker Resolution](../../../repo-governance/development/quality/ci-blocker-resolution.md): CI
 blockers get fixed at the root cause, never bypassed.
 
-**Routes elsewhere**: whether the underlying **behavior** is correct → `pr-review-logic-maker` —
+**Routes elsewhere**: whether the underlying **behaviour** is correct → `pr-review-logic-maker` —
 this agent asks "does this weaken the check?", not "is the defect actually fixed?".
 
 **Severity definitions**: `CRITICAL` = CI-gaming that hides a real, currently-shipping defect;
@@ -54,7 +54,7 @@ minor test hygiene concern with no gaming risk.
 During PR quality-gate invocation, first apply the shared
 [lifecycle-owned mechanical suppression](../../skills/pr-review-specialist-protocol/reference/lifecycle-owned-mechanical-suppression.md).
 
-- A legitimate test simplification that still exercises the same behavior at the same strength.
+- A legitimate test simplification that still exercises the same behaviour at the same strength.
 - A test refactor improving clarity (renaming, extracting helpers) without weakening assertions.
 - An intentional, **tracked** skip carrying a linked follow-up issue or plan reference — the
   mandate is against untracked skips, not all skips.

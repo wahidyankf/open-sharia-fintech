@@ -41,13 +41,13 @@ Presentation comes from `@open-sharia-enterprise/web-ui` and `@open-sharia-enter
 so a visual change belongs to the design system rather than to this app unless it is genuinely
 marketing-specific.
 
-## Behavior Perspectives
+## Behaviour Perspectives
 
-`behaviors/` splits by perspective rather than by deployable, because there is one deployable:
+`behaviours/` splits by perspective rather than by deployable, because there is one deployable:
 
-- `behaviors/frontend/` asserts what a visitor sees — the landing experience, accessibility, and
+- `behaviours/frontend/` asserts what a visitor sees — the landing experience, accessibility, and
   environment-driven configuration.
-- `behaviors/backend/` asserts the route-level behavior of the Next.js server tier.
+- `behaviours/backend/` asserts the route-level behaviour of the Next.js server tier.
 
 ## Constraints
 
@@ -59,5 +59,5 @@ signal the library is missing something, not a shortcut.
 
 ## Related
 
-- [Behaviors](./behaviors/README.md) — the scenarios this system must satisfy.
+- [Behaviours](./behaviours/README.md) — the scenarios this system must satisfy.
 - [`apps/organiclever-www/README.md`](../../../../apps/organiclever-www/README.md) — the implementing project.

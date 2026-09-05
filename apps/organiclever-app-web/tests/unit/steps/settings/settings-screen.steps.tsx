@@ -1,106 +1,75 @@
-/**
- * Step definitions for the Settings Screen feature.
- *
- * Covers: specs/apps/organiclever/app-web/behaviors/settings/settings-screen.feature
- *
- * Tests settings logic directly without browser APIs:
- * - useSettings state shape and loading lifecycle
- * - Rest chip selection (pure state mutation)
- * - Saved toast state flag (boolean toggle with timeout)
- *
- * Avoids rendering SettingsScreen directly because it depends on
- * JournalRuntime (PGlite/IndexedDB), which is unavailable in jsdom.
- */
-
 import path from "path";
 import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
+import { cleanup, fireEvent, render, screen, waitFor, type RenderResult } from "@testing-library/react";
 import { expect, vi } from "vitest";
-import type { RestSeconds, AppSettings } from "@/contexts/settings/application";
+import type { AppRuntime } from "@/shared/runtime";
+import type { AppSettings } from "@/contexts/settings/application";
 
-// ---------------------------------------------------------------------------
-// Pure logic helpers mirroring SettingsScreen behaviour
-// ---------------------------------------------------------------------------
+const settingsHarness = vi.hoisted(() => ({
+  settings: { name: "Tester", restSeconds: 60, darkMode: false, lang: "en" } as AppSettings,
+  update: vi.fn(),
+}));
 
-function makeSettings(overrides: Partial<AppSettings> = {}): AppSettings {
-  return {
-    name: "Tester",
-    restSeconds: 60,
-    darkMode: false,
-    lang: "en",
-    ...overrides,
-  };
-}
+vi.mock("@/contexts/settings/presentation/use-settings", () => ({
+  useSettings: () => ({
+    state: { status: "ready", settings: settingsHarness.settings },
+    update: settingsHarness.update,
+  }),
+}));
 
-function selectRest(settings: AppSettings, value: RestSeconds): AppSettings {
-  return { ...settings, restSeconds: value };
-}
-
-// ---------------------------------------------------------------------------
-// Feature
-// ---------------------------------------------------------------------------
+import { SettingsScreen } from "@/contexts/settings/presentation/components/settings-screen";
 
 const feature = await loadFeature(
   path.resolve(
     __dirname,
-    "../../../../../../specs/apps/organiclever/app-web/behaviors/settings/settings-screen.feature",
+    "../../../../../../specs/apps/organiclever/app-web/behaviours/settings/settings-screen.feature",
   ),
 );
 
-describeFeature(feature, ({ Scenario }) => {
-  let settings: AppSettings;
-  let nameInputVisible: boolean;
-  let savedToast: boolean;
+const runtime = { runPromise: vi.fn().mockResolvedValue(undefined) } as unknown as AppRuntime;
+let rendered: RenderResult;
+
+function renderSettings() {
+  rendered = render(<SettingsScreen runtime={runtime} darkMode={false} onToggleDarkMode={vi.fn()} />);
+}
+
+describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
+  AfterEachScenario(() => {
+    cleanup();
+    settingsHarness.settings = { name: "Tester", restSeconds: 60, darkMode: false, lang: "en" };
+    settingsHarness.update.mockReset().mockImplementation(async (patch: Partial<AppSettings>) => {
+      settingsHarness.settings = { ...settingsHarness.settings, ...patch };
+    });
+  });
 
   Scenario("Settings screen loads user profile", ({ When, Then }) => {
-    When("the settings screen is loaded", () => {
-      settings = makeSettings({ name: "Tester" });
-      nameInputVisible = true;
-      savedToast = false;
-    });
-
-    // @covers specs/apps/organiclever/app-web/behaviors/settings/settings-screen.feature:Settings screen loads user profile
+    When("the settings screen is loaded", () => renderSettings());
     Then("the user name input is visible", () => {
-      expect(nameInputVisible).toBe(true);
-      expect(settings.name).toBe("Tester");
+      expect(screen.getByLabelText("Your name")).toBeVisible();
+      expect(screen.getByLabelText("Your name")).toHaveValue("Tester");
     });
   });
 
   Scenario("Change rest setting", ({ Given, When, Then }) => {
-    Given("the settings screen is loaded", () => {
-      settings = makeSettings({ restSeconds: 60 });
-      savedToast = false;
+    Given("the settings screen is loaded", () => renderSettings());
+    When("the user selects 30s rest", async () => {
+      fireEvent.click(screen.getByTestId("rest-chip-30"));
+      await waitFor(() => expect(settingsHarness.update).toHaveBeenCalledWith({ restSeconds: 30 }));
+      rendered.rerender(<SettingsScreen runtime={runtime} darkMode={false} onToggleDarkMode={vi.fn()} />);
     });
-
-    When("the user selects 30s rest", () => {
-      settings = selectRest(settings, 30);
-      savedToast = true;
-      // Simulate toast timeout reset
-      vi.useFakeTimers();
-      setTimeout(() => {
-        savedToast = false;
-      }, 1500);
-    });
-
-    // @covers specs/apps/organiclever/app-web/behaviors/settings/settings-screen.feature:Change rest setting
     Then("the 30s rest chip is active", () => {
-      expect(settings.restSeconds).toBe(30);
-      vi.useRealTimers();
+      expect(screen.getByTestId("rest-chip-30")).toHaveAttribute("data-active", "true");
     });
   });
 
   Scenario("Saved toast appears after save", ({ Given, When, Then }) => {
-    Given("the settings screen is loaded", () => {
-      settings = makeSettings();
-      savedToast = false;
+    Given("the settings screen is loaded", () => renderSettings());
+    When("the user saves settings", async () => {
+      fireEvent.click(screen.getByTestId("rest-chip-30"));
+      await waitFor(() => expect(settingsHarness.update).toHaveBeenCalled());
     });
-
-    When("the user saves settings", () => {
-      savedToast = true;
-    });
-
-    // @covers specs/apps/organiclever/app-web/behaviors/settings/settings-screen.feature:Saved toast appears after save
-    Then("the saved toast appears", () => {
-      expect(savedToast).toBe(true);
+    Then("the saved toast appears", async () => {
+      expect(await screen.findByTestId("saved-toast")).toHaveTextContent("Saved");
     });
   });
 });

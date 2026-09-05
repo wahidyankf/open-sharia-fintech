@@ -12,7 +12,7 @@ Create new `.feature` files following conventions: `Feature:` header with user s
 / I want / So that); `Background:` with standard context step (surface-appropriate); `Scenario:`
 blocks with Given/When/Then steps; UI-semantic steps for web specs, HTTP-semantic for BE specs,
 shell-semantic for CLI specs; BE/web/CLI placed in a domain subdirectory under the owning
-corpus's `behaviors/<domain>/` (e.g. `specs/apps/ayokoding/www/behaviors/build-tools/` for
+corpus's `behaviours/<domain>/` (e.g. `specs/apps/ayokoding/www/behaviours/build-tools/` for
 ayokoding build-time features).
 
 ## Create C4 Diagrams

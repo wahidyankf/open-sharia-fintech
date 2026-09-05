@@ -17,30 +17,34 @@ principles:
 created: 2026-03-04
 ---
 
-# Three-Tier Testing Model
+# Three-Level Testing Model
 
-## The Mocking Boundary — The Most Important Rule
+## The Boundary Contract — The Most Important Rule
 
-**Unit and integration tests MUST mock all external I/O. E2E tests MUST NOT mock anything.**
+Classify a test by the real boundary it crosses, not by its framework or size.
 
 ```
-Unit        → mock everything external
-Integration → mock everything external
-E2E         → mock nothing
+Unit        → in-process production behaviour; no real OS, network, clock, or randomness
+Integration → at least one real isolated same-machine resource; zero network, including loopback
+E2E         → real public browser, HTTP/API, or process boundary; isolated synthetic data
 ```
 
-This single rule defines the boundary between tiers. Every other property of each tier follows from it.
+Unit is mandatory for every active Gherkin scenario. Integration and E2E apply only when the owner
+has their real boundary; a genuine mismatch requires an independently documented scenario-level
+exemption and alternative proof.
 
 ## The Three Tiers
 
 ### Unit Tests
 
-**What they are**: Tests that verify one class or function in complete isolation from all collaborators.
+**What they are**: Tests that invoke production behaviour entirely in process through deterministic
+inputs, injected ports, and in-memory collaborators.
 
-**Scope**: Single class, function, or module. No integration with other real components.
+**Scope**: One behaviour path. It may compose multiple in-process modules; physical class count does
+not define the layer.
 
-**Mocking rule**: All collaborators mocked. Repositories replaced with in-memory fakes or mocks.
-HTTP clients stubbed. File system mocked. Clock frozen. No real network. No real DB.
+**Boundary rule**: No real filesystem, process environment, child process, standard stream, network,
+database service, live clock, or uncontrolled randomness. Inject or freeze each such dependency.
 
 **Speed**: Milliseconds per test. Hundreds run in seconds.
 
@@ -61,48 +65,44 @@ HTTP clients stubbed. File system mocked. Clock frozen. No real network. No real
 
 ### Integration Tests
 
-**What they are**: Tests that verify multiple internal layers working together — routing, use cases,
-services, and repositories — while keeping all external I/O mocked.
+**What they are**: Tests that invoke production code against at least one real, isolated resource
+owned on the same machine.
 
-**Scope**: A feature flow end-to-end within the application boundary. The full internal stack is
-real (routing, middleware, use cases, services), but external dependencies (DB, external HTTP
-services, email, payment gateways) are replaced with mocks or in-memory implementations.
+**Scope**: Real temporary files, environment state, child processes, standard streams, or an
+embedded/local database reached without a socket. Setup and cleanup use unique synthetic resources.
 
-**Mocking rule**: Same as unit tests — no real network, no real DB. Differences from unit:
-in-memory repository implementations (instead of mocks) are preferred because they behave more
-realistically. HTTP calls to external services are intercepted by MSW (TypeScript) or `mockito`
-(Rust).
+**Boundary rule**: No HTTP, TCP, UDP, Unix socket, loopback, `localhost`, `127.0.0.1`, or local test
+server. MSW, WireMock, mockito, and in-memory repositories are Unit doubles, not Integration proof.
 
 **Speed**: Seconds per test. Dozens run in under a minute.
 
 **When to use**:
 
-- BDD Gherkin scenarios (user-facing feature flows through the system)
-- Testing that routing, middleware, authentication, and business logic wire together correctly
-- Testing response shapes and status codes of internal API routes
-- Multi-step workflows involving several internal services
+- Filesystem persistence, environment loading, caches, and generated artifacts
+- Child-process/stdin/stdout adapters whose subject is not the product's public process boundary
+- Embedded databases or local stores reached without networking
+- Composition against real same-machine resources that Unit replaces with ports
 
-**What they prove**: The internal layers are correctly wired and behave as specified — without
-depending on external infrastructure.
+**What they prove**: Production adapters behave against their real local resource without network
+or shared external infrastructure.
 
-**Rust tools**: `#[tokio::test]` + `cucumber` crate + `axum-test` (in-process HTTP) + `mockito` +
-in-memory repository implementations
+**Rust tools**: Built-in test runner plus temporary filesystem/process/embedded-store fixtures
 
-**TypeScript tools**: Vitest + `@amiceli/vitest-cucumber` + MSW (Mock Service Worker) + in-memory
-state + Testing Library
+**TypeScript tools**: Vitest plus Node temporary filesystem/process/embedded-store fixtures
 
 ---
 
 ### E2E Tests
 
-**What they are**: Tests that exercise the complete deployed system — real network, real database,
-real browser (if applicable) — with no mocking of any kind.
+**What they are**: Tests that invoke the product through its real public browser, HTTP/API, or
+published process boundary.
 
-**Scope**: The full system from the user's point of view. Clicks a button → HTTP request →
-real server → real DB → real response → UI updates.
+**Scope**: The observable system from the caller's point of view. Internal dependencies may use an
+isolated test deployment, but the public boundary and result under assertion are real.
 
-**Mocking rule**: **Zero mocking.** No MSW. No mockito. No in-memory implementations. Every
-layer is real.
+**Boundary rule**: Do not replace the public subject with route interception, a fake process, or a
+direct internal call. Use synthetic identities/data only and fail closed rather than falling back to
+developer, staging, or production state.
 
 **Speed**: Seconds to minutes per test. Run in scheduled CI pipelines, not on every commit.
 
@@ -124,26 +124,24 @@ testing
 
 ## Tier Comparison
 
-| Property        | Unit                    | Integration                                       | E2E                            |
-| --------------- | ----------------------- | ------------------------------------------------- | ------------------------------ |
-| Scope           | 1 class/function        | Internal layers                                   | Full system                    |
-| External I/O    | Mocked                  | Mocked                                            | Real                           |
-| DB              | Mocked / in-memory impl | In-memory impl                                    | Real (Docker PostgreSQL)       |
-| HTTP (outbound) | Mocked                  | MSW / mockito                                     | Real                           |
-| Browser         | N/A                     | N/A                                               | Real (Playwright)              |
-| Speed           | ms                      | seconds                                           | minutes                        |
-| Run frequency   | Every commit            | Pre-push                                          | Scheduled CI                   |
-| Rust tools      | `#[test]` + mockall     | `#[tokio::test]` + cucumber + axum-test + mockito | Playwright + Docker PostgreSQL |
-| TS tools        | Vitest + vi.fn          | Vitest + vitest-cucumber + MSW                    | Playwright + playwright-bdd    |
+| Property      | Unit                          | Integration                             | E2E                                  |
+| ------------- | ----------------------------- | --------------------------------------- | ------------------------------------ |
+| Boundary      | In-process behaviour          | Real isolated local resource            | Real public browser/API/process      |
+| Files/env     | Injected or in-memory         | Real and isolated                       | Through public subject as applicable |
+| Network       | None                          | None, including loopback                | Allowed when it is the public path   |
+| Clock/random  | Fixed/injected                | Controlled and restored                 | Isolated test identity/data          |
+| Applicability | Mandatory for every scenario  | Only for a genuine local boundary       | Only for a genuine public boundary   |
+| Execution     | Every `test:quick`            | Manual impacted; scheduled complete     | Manual impacted; scheduled complete  |
+| Typical tools | Native runner + injected port | Native runner + temp/embedded resources | Playwright, HTTP client, public CLI  |
 
 ## Test Pyramid
 
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
 flowchart TD
-    E2E["E2E Tests\nNo mocking — real system\nPlaywright + real DB\nSlow · Scheduled CI"]
-    INT["Integration Tests\nAll external I/O mocked\nMSW / mockito / in-memory\nMedium · Pre-push"]
-    UNIT["Unit Tests\nAll collaborators mocked\nmockall / Vitest + mock\nFast · Every commit"]
+    E2E["E2E Tests\nReal public boundary\nImpacted manual + scheduled"]
+    INT["Integration Tests\nReal local · no network\nImpacted manual + scheduled"]
+    UNIT["Unit Tests\nIn process · deterministic\nMandatory in every quick gate"]
 
     E2E --> INT
     INT --> UNIT
@@ -161,7 +159,7 @@ flowchart TD
 src/
   test/
     unit/               # Fast isolated tests (co-located with source is also acceptable for TS)
-    integration/        # Mocked-infrastructure feature flows
+    integration/        # Real isolated local resources; zero network
   components/
     Foo.unit.test.tsx   # TypeScript: unit tests may be co-located with source
 ```
@@ -184,43 +182,46 @@ it("should load member list", async () => {
   const response = await fetch("https://api.example.com/members"); // ❌ real network
 });
 
-// CORRECT — MSW intercepts the call
-server.use(
-  http.get("/api/members", () => HttpResponse.json(MOCK_MEMBERS)),
-);
-it("should load member list", async () => {
-  render(<MemberList />);
-  expect(await screen.findByText("Alice")).toBeInTheDocument(); // ✅ MSW-mocked
+// CORRECT — public HTTP behaviour belongs to E2E
+test("should load member list", async ({ request }) => {
+  const response = await request.get("/api/members");
+  expect(response.ok()).toBe(true); // ✅ real public API boundary
 });
 ```
 
-### Using Testcontainers in integration tests
+### Using networked databases in integration tests
 
 ```rust
-// WRONG — real Docker PostgreSQL = belongs in E2E, not integration
-// (sqlx::test with a live database is E2E-level)
+// WRONG — PostgreSQL uses a network transport, even on the same machine
 #[sqlx::test]
 async fn member_repository_integration_test(pool: PgPool) { // ❌ real DB = E2E tier
     // …
 }
 
-// CORRECT — in-memory repository for integration tests
-#[tokio::test]
-async fn member_repository_integration_test() {
-    let repository = InMemoryMemberRepository::new(); // ✅ no real DB
-    // …
+// CORRECT — a real isolated embedded database file uses no network
+#[test]
+fn member_repository_integration_test() {
+    let temp_dir = tempfile::tempdir().expect("isolated database directory");
+    let connection = rusqlite::Connection::open(temp_dir.path().join("members.sqlite"))
+        .expect("open isolated SQLite file");
+    let repository = SqliteMemberRepository::new(connection); // ✅ real local resource
+    // Exercise and assert repository persistence, then let temp_dir clean up.
 }
 ```
+
+An in-memory repository is a Unit double. A networked database can support E2E only when the test
+observes the product through its real public HTTP or process boundary; direct database access does
+not become E2E merely because networking is enabled.
 
 ### Mocking in E2E tests
 
 ```typescript
-// WRONG — mocking in E2E defeats the purpose
+// WRONG — replacing the public subject defeats E2E proof
 test("user can log in", async ({ page }) => {
   await page.route("**/api/auth", (route) => route.fulfill({ body: JSON.stringify({ token: "fake" }) })); // ❌
 });
 
-// CORRECT — let the real system handle it
+// CORRECT — invoke the real public boundary with synthetic test identity/data
 test("user can log in", async ({ page }) => {
   await page.goto("/login");
   await page.fill("[name=email]", "user@example.com");
@@ -231,6 +232,6 @@ test("user can log in", async ({ page }) => {
 ## Related Standards
 
 - [Testing Standards](./testing-standards.md) — FIRST principles, AAA pattern, test naming
-- [Integration Testing Standards](./integration-testing-standards.md) — in-memory repos, MSW, mockito patterns
+- [Integration Testing Standards](./integration-testing-standards.md) — real isolated local resources and zero-network rules
 - [Test Doubles Standards](./test-doubles-standards.md) — mocks, stubs, in-memory implementations
 - [TypeScript Testing](../../programming-languages/typescript/testing.md) — TypeScript-specific tools and patterns

@@ -79,7 +79,7 @@ git push origin main
 **Additional Anti-Pattern: Not Configuring Pull Strategy**
 
 ```bash
-# No pull strategy configured - behavior inconsistent
+# No pull strategy configured - behaviour inconsistent
 git pull origin main
 # Uses default (merge on some systems, rebase on others)
 # Team members have different history results
@@ -91,7 +91,7 @@ git pull origin main
 # Configure pull strategy for main branch
 git config branch.main.rebase true
 
-# Now consistent behavior for entire team
+# Now consistent behaviour for entire team
 git pull origin main  # Always rebases for main branch
 ```
 

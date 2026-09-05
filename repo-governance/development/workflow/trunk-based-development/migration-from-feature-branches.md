@@ -42,7 +42,7 @@ If you're used to feature-branch workflows (GitFlow, GitHub Flow), here's how to
 
 - PASS: Tests and CI catch most issues before push
 - PASS: Rapid revert if something slips through
-- PASS: Temporary flags keep incomplete behavior complete-and-inert while both paths remain tested
+- PASS: Temporary flags keep incomplete behaviour complete-and-inert while both paths remain tested
 
 **"What if I need to work on multiple things?"**
 

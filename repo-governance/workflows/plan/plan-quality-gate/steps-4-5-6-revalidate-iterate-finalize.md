@@ -45,7 +45,7 @@ Determine whether to continue fixing or terminate.
 
 **Notes**:
 
-- **Default behavior**: Runs up to 7 iterations (default max-iterations). Override with higher value for more attempts
+- **Default behaviour**: Runs up to 7 iterations (default max-iterations). Override with higher value for more attempts
 - **Consecutive pass requirement**: Zero findings must be confirmed by a second independent check before declaring success
 - **Convergence target**: Workflow should stabilize in 3-5 iterations with convergence safeguards (scoped re-validation, cached verification, false positive tracking)
 - **Escalation threshold**: If findings count is not monotonically decreasing after iteration 5, log a warning: "Convergence not achieved — likely non-deterministic findings or scope expansion"

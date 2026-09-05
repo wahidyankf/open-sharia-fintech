@@ -40,6 +40,6 @@ invent a number). AP-6 (fabricated test name) → `Grep` for the real name if pr
 `_New test_` and ensure the checklist creates it. AP-7 (agent/skill name doesn't resolve) → list
 `.claude/agents/`/`.claude/skills/`, find closest match, else MEDIUM. AP-8 (CLI flag without
 evidence) → run `<cmd> --help`, append `[Repo-grounded]` if confirmed, else replace with verified
-usage. AP-9 (behavior claim without source) → delegate to `web-researcher`, embed inline excerpt +
+usage. AP-9 (behaviour claim without source) → delegate to `web-researcher`, embed inline excerpt +
 URL + access date, classify HIGH only after citation appended. AP-10 (broken cross-link) → resolve
 relative path, update if moved, else MEDIUM.

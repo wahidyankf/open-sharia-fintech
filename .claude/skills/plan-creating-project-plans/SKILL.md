@@ -39,7 +39,7 @@ every applicable rule; mandatory safeguards remain part of sufficiency. See
 
 ## Automatic Rule-Impact Coverage
 
-During authoring, classify both proposed behavior and the file-impact tree against the full repo
+During authoring, classify both proposed behaviour and the file-impact tree against the full repo
 rules surface. If any scoped repository may add, change, supersede, or delete a rule or enforcement,
 `delivery.md` automatically includes the complete repository-local
 [`rules-propagation`](../../../repo-governance/workflows/rules/rules-propagation.md) outcome in that
@@ -79,7 +79,7 @@ lifecycle rules; numeric counts never set their boundaries.
 - [verification-recipes.md](reference/verification-recipes.md) — pre-write verification recipes + confidence labels
 - [refuse-uncertainty-and-anti-patterns.md](reference/refuse-uncertainty-and-anti-patterns.md) — refuse-on-uncertainty + AP-1..AP-10 catalog
 - [specialized-executor-annotation.md](reference/specialized-executor-annotation.md) — suggested-executor annotation
-- [gherkin-acceptance-criteria.md](reference/gherkin-acceptance-criteria.md) — Gherkin format + Step-Keyword Cardinality
+- [gherkin-acceptance-criteria.md](reference/gherkin-acceptance-criteria.md) — Gherkin format and journey coherence
 - [delivery-plan-tdd-structure.md](reference/delivery-plan-tdd-structure.md) — outcome-section and granular RED/GREEN/REFACTOR evidence shape
 - [operational-readiness.md](reference/operational-readiness.md) — Local Quality Gates, Post-Push, Env Setup, Commits
 - [manual-ui-and-api-verification.md](reference/manual-ui-and-api-verification.md) — Playwright/curl manual verification

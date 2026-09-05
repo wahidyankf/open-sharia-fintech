@@ -1,6 +1,6 @@
 ---
 title: "Standards"
-description: The three standards governing git identity — no per-repo [user] section, global-config-only resolution, and behavioral guardrail enforcement.
+description: The three standards governing git identity — no per-repo [user] section, global-config-only resolution, and behavioural guardrail enforcement.
 category: explanation
 subcategory: development
 tags:
@@ -84,7 +84,7 @@ GIT_AUTHOR_NAME="Your Name" GIT_AUTHOR_EMAIL="other@example.com" \
 Environment variables override config for a single invocation without touching any
 `.git/config` file.
 
-## Standard 3: Enforcement Is a Behavioral Guardrail, Not a Pre-Commit Script
+## Standard 3: Enforcement Is a Behavioural Guardrail, Not a Pre-Commit Script
 
 `ose-public` previously enforced Standard 1 with an automated `scripts/git-identity-check.sh`
 pre-commit guard. That script has been **removed** — see
@@ -96,7 +96,7 @@ Enforcement today is the **Git Identity Guardrail** documented in
 [Reproducible Environments Convention §Git Identity Guardrail](../reproducible-environments/git-identity-guardrail.md#git-identity-guardrail)
 and in `AGENTS.md`: no AI agent may set or modify git identity at any scope
 (`git config --local/--global/--system user.*`, or a direct `.git/config` `[user]`-block edit).
-This is a behavioral rule enforced by agent instruction-following, not a Husky hook — human
+This is a behavioural rule enforced by agent instruction-following, not a Husky hook — human
 developers remain free to use `includeIf` for legitimate multi-identity workflows, which is
 exactly what the removed script could not distinguish from a violation.
 

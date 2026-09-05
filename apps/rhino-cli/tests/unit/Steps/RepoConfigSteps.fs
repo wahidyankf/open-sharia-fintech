@@ -1,21 +1,22 @@
 /// TickSpec step definitions binding the `repo-config` namespace's single
 /// Gherkin feature file to `RhinoCli.Application.RepoConfig`
 /// [Repo-grounded —
-/// `specs/apps/rhino/cli/behaviors/repo-config/data-driven.feature`].
+/// `specs/apps/rhino/cli/behaviours/repo-config/data-driven.feature`].
 ///
 /// Follows `ConventionSteps.fs`'s per-scenario slicing convention: each xunit
 /// `[<Fact>]` below runs exactly one scenario, extracted from the real,
 /// frozen feature file rather than a duplicated/rewritten copy of its
 /// wording.
 ///
-/// Two scenarios ("the harness registry section of repo-config.yml") read
-/// THIS repository's own real `repo-config.yml` via
-/// `RhinoCli.Infrastructure.GitRoot.findRoot`, rather than a synthetic
-/// fixture — mirroring the Rust step definitions, which load the real file
-/// for the same two scenarios because the point is what this repository
-/// itself declares. Every other scenario below builds its own throwaway
-/// temp-directory fixture.
+/// All fixture documents are in memory. The Integration adapter separately
+/// proves discovery and reading of the repository-owned file.
 module RhinoCli.Tests.Unit.Steps.RepoConfigSteps
+
+/// Explicit static-coverage ownership; the validator scopes this file's
+/// TickSpec bindings to these canonical features.
+let private behaviourFeatureOwnership =
+    [ "specs/apps/rhino/cli/behaviours/repo-config/data-driven.feature" ]
+
 
 open System
 open System.IO
@@ -28,8 +29,7 @@ open RhinoCli.Application.RepoConfig
 /// instance-level mutable fields the idiomatic state-threading mechanism
 /// here.
 type RepoConfigSteps() =
-    let mutable rootDir: string option = None
-    let mutable ownsRootDir = false
+    let mutable documents: Map<string, string> = Map.empty
     let mutable loadedConfig: RepoConfig option = None
     let mutable codexEntry: HarnessEntry option = None
     let mutable allEntries: HarnessEntry list = []
@@ -40,26 +40,23 @@ type RepoConfigSteps() =
     let mutable dotnetVersion: string option = None
     let mutable websiteExclusionsRespected = false
 
-    let root () =
-        match rootDir with
-        | Some dir -> dir
-        | None -> failwith "no repository root has been prepared by a Given step"
+    let root = "/repo"
 
-    let newTempDir () =
-        let dir =
-            Path.Combine(Path.GetTempPath(), "rhino-cli-repo-config-" + Guid.NewGuid().ToString("N"))
-
-        Directory.CreateDirectory(dir) |> ignore
-        dir
-
-    let useOwnedTempDir () =
-        rootDir <- Some(newTempDir ())
-        ownsRootDir <- true
+    let useOwnedTempDir () = documents <- Map.empty
 
     let writeFile (relativePath: string) (content: string) =
-        let full = Path.Combine(root (), relativePath)
-        Directory.CreateDirectory(Path.GetDirectoryName(full)) |> ignore
-        File.WriteAllText(full, content)
+        documents <- documents |> Map.add relativePath content
+
+    let readConfig () =
+        match Map.tryFind "repo-config.yml" documents with
+        | None -> Error "cannot read repo-config.yml: confirmed absent"
+        | Some text -> parse text
+
+    let canonicalConfig =
+        "harness:\n"
+        + "  - name: claude-code\n    tier: source\n    agent-dir: .claude/agents\n"
+        + "  - name: opencode\n    tier: generated\n    agent-dir: .opencode/agents\n    mirrors: .claude/agents\n"
+        + "  - name: codex\n    tier: generated\n    agent-dir: .codex/agents\n    mirrors: .claude/agents\n"
 
     // ---- Given: "Repo-specific behaviour is data-driven, not hard-coded" ----
 
@@ -74,7 +71,7 @@ type RepoConfigSteps() =
 
     [<When>]
     member _.``rhino-cli runs``() =
-        match RhinoCli.Application.RepoConfig.load (root ()) with
+        match readConfig () with
         | Ok config -> loadedConfig <- Some config
         | Error message -> failwith message
 
@@ -94,17 +91,13 @@ type RepoConfigSteps() =
 
     [<Given>]
     member _.``the harness registry section of repo-config.yml``() =
-        match RhinoCli.Infrastructure.GitRoot.findRoot () with
-        | Error message -> failwith message
-        | Ok repoRoot ->
-            rootDir <- Some repoRoot
-            ownsRootDir <- false
+        writeFile "repo-config.yml" canonicalConfig
 
-            match RhinoCli.Application.RepoConfig.load repoRoot with
-            | Error message -> failwith message
-            | Ok config ->
-                allEntries <- config.Harness
-                codexEntry <- config.Harness |> List.tryFind (fun h -> h.Name = "codex")
+        match readConfig () with
+        | Error message -> failwith message
+        | Ok config ->
+            allEntries <- config.Harness
+            codexEntry <- config.Harness |> List.tryFind (fun h -> h.Name = "codex")
 
     [<When>]
     member _.``the codex entry is read``() =
@@ -162,7 +155,7 @@ type RepoConfigSteps() =
 
     [<When>]
     member _.``the configured frontmatter-date audit runs``() =
-        match RhinoCli.Application.RepoConfig.load (root ()) with
+        match readConfig () with
         | Error message -> failwith message
         | Ok config ->
             let excludes =
@@ -191,8 +184,14 @@ type RepoConfigSteps() =
 
     [<When>]
     member _.``Doctor resolves its required .NET SDK version``() =
-        let config = RhinoCli.Application.RepoConfig.loadOrDefault (root ())
-        let toolDef = RhinoCli.Application.RepoConfig.buildDotnetToolDef (root ()) config
+        let config = readConfig () |> Result.defaultValue empty
+
+        let readText path =
+            match Map.tryFind path documents with
+            | Some text -> Ok text
+            | None -> Error(sprintf "missing %s" path)
+
+        let toolDef = RhinoCli.Application.RepoConfig.buildDotnetToolDefWith readText config
         dotnetSource <- Some toolDef.Source
         dotnetVersion <- Some(toolDef.ReadReq())
 
@@ -213,9 +212,9 @@ type RepoConfigSteps() =
     member _.``the optional repo-config loader runs``() =
         loadOptionalResult <-
             Some(
-                match RhinoCli.Application.RepoConfig.loadOptional (root ()) with
-                | Ok found -> Ok(found.IsSome)
-                | Error message -> Error message
+                match Map.tryFind "repo-config.yml" documents with
+                | None -> Ok false
+                | Some text -> parse text |> Result.map (fun _ -> true)
             )
 
     [<Then>]
@@ -253,7 +252,7 @@ type RepoConfigSteps() =
 
     [<When>]
     member _.``repo-config validate runs``() =
-        validateResult <- Some(RhinoCli.Application.RepoConfig.validateAtRoot (root ()))
+        validateResult <- Some(validateText documents.["repo-config.yml"])
 
     [<Then>]
     member _.``it rejects the value naming the current-directory component``() =
@@ -272,7 +271,7 @@ type RepoConfigSteps() =
 
     [<When>]
     member _.``the configured path is confined to the repository root``() =
-        match RhinoCli.Application.RepoConfig.confinedRepoPath (root ()) "tooling/sdk/global.json" with
+        match RhinoCli.Application.RepoConfig.resolveRepoRelativePath root "tooling/sdk/global.json" with
         | Ok path -> confinedPath <- Some path
         | Error message -> failwith message
 
@@ -287,14 +286,9 @@ type RepoConfigSteps() =
                 sprintf "resolved path %s must not carry a trailing separator (the ENOTDIR regression)" path
             )
 
-            let content = File.ReadAllText path
+            let relative = path.Substring(root.Length + 1)
+            let content = documents.[relative]
             Assert.Contains("9.0.100", content)
-
-    [<AfterScenario>]
-    member _.Cleanup() =
-        match rootDir with
-        | Some dir when ownsRootDir && Directory.Exists dir -> Directory.Delete(dir, true)
-        | _ -> ()
 
 /// Reads one named `Scenario:` block out of the real, frozen
 /// `data-driven.feature` file (leaving the file itself untouched) and runs
@@ -316,7 +310,7 @@ module private FeatureRunner =
                 "apps",
                 "rhino",
                 "cli",
-                "behaviors",
+                "behaviours",
                 "repo-config",
                 "data-driven.feature"
             )
@@ -338,7 +332,8 @@ module private FeatureRunner =
                 let trimmed = l.Trim()
 
                 trimmed.StartsWith("Scenario:", StringComparison.Ordinal)
-                || trimmed.StartsWith("Scenario Outline:", StringComparison.Ordinal))
+                || trimmed.StartsWith("Scenario Outline:", StringComparison.Ordinal)
+                || trimmed.StartsWith("@", StringComparison.Ordinal))
             |> Option.map (fun relativeIdx -> startIdx + 1 + relativeIdx)
             |> Option.defaultValue featureLines.Length
 
@@ -347,7 +342,9 @@ module private FeatureRunner =
     /// Runs the single scenario named `scenarioTitle` from
     /// `data-driven.feature`, bound against `RepoConfigSteps`.
     let run (scenarioTitle: string) : unit =
-        let allLines = File.ReadAllLines featurePath
+        let allLines =
+            ConventionSteps.FeatureResource.readLines (Path.GetFileName featurePath)
+
         let snippet = extractScenario allLines scenarioTitle
         let definitions = StepDefinitions([| typeof<RepoConfigSteps> |])
         let feature = definitions.GenerateFeature(featurePath, snippet)

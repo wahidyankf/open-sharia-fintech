@@ -1,6 +1,6 @@
 # web-ui Specs
 
-The behavioral corpus for [web-ui](../../../libs/web-ui/README.md), the shared React component
+The behavioural corpus for [web-ui](../../../libs/web-ui/README.md), the shared React component
 library.
 
 A library owns exactly one surface, so the three corpus entries sit directly under the library
@@ -13,17 +13,23 @@ root rather than under an owner directory — see
 specs/libs/web-ui/
 ├── README.md
 ├── architecture.md     # the current, as-built library
-└── behaviors/          # Gherkin feature files, one folder per component
+└── behaviours/          # Gherkin feature files, one folder per component
 ```
 
-## Status
+## Adapters and Targets
 
 ```bash
 nx run web-ui:test:unit
+nx run web-ui:test:e2e
+nx run web-ui:test:coverage
 ```
 
-Every scenario is consumed at the unit level by the matching `*.steps.tsx` file co-located with
-its component under `libs/web-ui/src/`.
+The Unit adapter consumes every scenario through the matching `*.steps.tsx` files under
+`libs/web-ui/src/`. The E2E adapter under `libs/web-ui/tests/e2e/` drives Chromium against
+Storybook, the library's genuine public browser boundary. Static `test:coverage:unit`,
+`test:coverage:e2e`, `test:coverage:behaviour`, and aggregate `test:coverage` validate both
+adapters without executing them. Integration is omitted because the library owns no non-networked
+local-resource boundary.
 
 - [Architecture — web-ui](./architecture.md) — The current, as-built shared React component library
-- [Behaviors — web-ui](./behaviors/README.md) — Gherkin feature files, one folder per component
+- [Behaviours — web-ui](./behaviours/README.md) — Gherkin feature files, one folder per component

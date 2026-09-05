@@ -62,7 +62,7 @@ Agent tool invocation:
   prompt: "Apply fixes from local-tmp/plan/plan__abc123__2026-03-24--10-00__audit.md"
 ```
 
-## Expected Behavior
+## Expected Behaviour
 
 - Real audit reports created in `local-tmp/plan/`
 - Real fixes applied to target files

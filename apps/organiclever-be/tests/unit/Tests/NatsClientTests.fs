@@ -1,43 +1,54 @@
 module OrganicleverBe.Tests.Unit.Tests.NatsClientTests
 
 open System
+open System.Threading.Tasks
 open Xunit
 open OrganicleverBe.Infrastructure.NatsClient
 open OrganicleverBe.Infrastructure.NatsConnect
 
-let private withNatsUrl (value: string option) (body: unit -> unit) =
-    let previous = Environment.GetEnvironmentVariable("ORGANICLEVER_BE_NATS_URL")
+[<Fact>]
+let ``requireNatsUrlWith fails fast when ORGANICLEVER_BE_NATS_URL is unset`` () =
+    let ex =
+        Assert.Throws<Exception>(fun () -> requireNatsUrlWith (fun _ -> null) |> ignore)
 
-    try
-        Environment.SetEnvironmentVariable("ORGANICLEVER_BE_NATS_URL", (defaultArg value null))
-        body ()
-    finally
-        Environment.SetEnvironmentVariable("ORGANICLEVER_BE_NATS_URL", previous)
+    Assert.Contains("ORGANICLEVER_BE_NATS_URL", ex.Message)
 
 [<Fact>]
-let ``requireNatsUrl returns the configured URL when set`` () =
-    withNatsUrl (Some "nats://example.internal:4222") (fun () ->
-        Assert.Equal("nats://example.internal:4222", requireNatsUrl ()))
+let ``requireNatsUrlWith returns the configured URL`` () =
+    Assert.Equal("nats://fake", requireNatsUrlWith (fun _ -> "nats://fake"))
 
 [<Fact>]
-let ``requireNatsUrl fails fast when ORGANICLEVER_BE_NATS_URL is unset`` () =
-    withNatsUrl None (fun () ->
-        let ex = Assert.Throws<Exception>(fun () -> requireNatsUrl () |> ignore)
-        Assert.Contains("ORGANICLEVER_BE_NATS_URL", ex.Message))
+let ``connectWith returns a connected instance without touching a network`` () =
+    let mutable connected = false
 
-[<Fact>]
-let ``requireNatsUrl fails fast when ORGANICLEVER_BE_NATS_URL is blank`` () =
-    withNatsUrl (Some "") (fun () ->
-        let ex = Assert.Throws<Exception>(fun () -> requireNatsUrl () |> ignore)
-        Assert.Contains("ORGANICLEVER_BE_NATS_URL", ex.Message))
-
-// connectAsync's success path requires a live NATS broker and is excluded from
-// unit coverage (see NatsClient.fs); this test proves the documented
-// graceful-failure behavior on a connection that cannot succeed, with no
-// broker required.
-[<Fact>]
-let ``connectAsync returns None instead of throwing when the broker is unreachable`` () =
     let result =
-        connectAsync "nats://127.0.0.1:1" |> Async.AwaitTask |> Async.RunSynchronously
+        connectWith
+            id
+            (fun _ ->
+                connected <- true
+                Task.CompletedTask)
+            (fun _ -> Task.CompletedTask)
+            "nats://fake"
+        |> Async.AwaitTask
+        |> Async.RunSynchronously
 
+    Assert.True(connected)
+    Assert.Equal(Some "nats://fake", result)
+
+[<Fact>]
+let ``connectWith disposes and returns None when connection fails`` () =
+    let mutable disposed = false
+
+    let result =
+        connectWith
+            id
+            (fun _ -> Task.FromException(Exception "unavailable"))
+            (fun _ ->
+                disposed <- true
+                Task.CompletedTask)
+            "nats://fake"
+        |> Async.AwaitTask
+        |> Async.RunSynchronously
+
+    Assert.True(disposed)
     Assert.True(result.IsNone)

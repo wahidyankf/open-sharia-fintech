@@ -1,34 +1,20 @@
-/**
- * Step definitions for the Home Screen feature.
- *
- * Covers: specs/apps/organiclever/app-web/behaviors/journal/home-screen.feature
- *
- * Tests component logic directly without browser APIs:
- * - kindToHue and kindToIcon utility functions
- * - Entry filtering logic (pure function over arrays)
- * - EntryDetailSheet open/close state
- *
- * Avoids rendering HomeScreen directly because it depends on JournalRuntime
- * (PGlite/IndexedDB), which is not available in jsdom. Logic under test is
- * extracted to pure functions that mirror the component behaviour.
- */
-
 import path from "path";
 import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
-import { expect } from "vitest";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { expect, vi } from "vitest";
 import { Schema } from "effect";
-import { JournalEntry } from "@/contexts/journal/application";
-import { kindToHue, kindToIcon } from "@/contexts/app-shell/presentation/components/home/kind-hue";
+import { JournalEntry, type JournalRuntime } from "@/contexts/journal/application";
+import { HomeScreen } from "@/contexts/app-shell/presentation/components/home/home-screen";
 
-// ---------------------------------------------------------------------------
-// Helpers that mirror HomeScreen logic without needing a runtime
-// ---------------------------------------------------------------------------
+const feature = await loadFeature(
+  path.resolve(__dirname, "../../../../../../specs/apps/organiclever/app-web/behaviours/journal/home-screen.feature"),
+);
 
-function makeEntry(name: string, startedAt = "2026-05-01T08:00:00.000Z"): JournalEntry {
+function makeEntry(name: string, id: string, title: string, startedAt: string): JournalEntry {
   return Schema.decodeUnknownSync(JournalEntry)({
-    id: `id-${Math.random().toString(36).slice(2)}`,
+    id,
     name,
-    payload: {},
+    payload: name === "reading" ? { title, author: "Test Author" } : { task: title },
     createdAt: startedAt,
     updatedAt: startedAt,
     startedAt,
@@ -37,120 +23,69 @@ function makeEntry(name: string, startedAt = "2026-05-01T08:00:00.000Z"): Journa
   });
 }
 
-function filterEntries(entries: JournalEntry[], activeFilter: string | null): JournalEntry[] {
-  if (activeFilter == null) return entries;
-  return entries.filter((e) => String(e.name) === activeFilter);
+const workout = makeEntry("workout", "workout-1", "Strength", "2026-05-01T10:00:00.000Z");
+const reading = makeEntry("reading", "reading-1", "Atomic Habits", "2026-05-01T09:00:00.000Z");
+
+function renderHome(entries: ReadonlyArray<JournalEntry>) {
+  const runtime = {
+    runPromise: vi
+      .fn()
+      .mockResolvedValueOnce(0)
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce({ workoutsThisWeek: 0, streak: 0, totalMins: 0, totalSets: 0 })
+      .mockResolvedValueOnce(entries)
+      .mockResolvedValueOnce([]),
+  } as unknown as JournalRuntime;
+  render(<HomeScreen runtime={runtime} onStartWorkout={vi.fn()} onEditRoutine={vi.fn()} />);
+  return runtime;
 }
 
-// ---------------------------------------------------------------------------
-// Feature scenarios
-// ---------------------------------------------------------------------------
-
-const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../specs/apps/organiclever/app-web/behaviors/journal/home-screen.feature"),
-);
-
-describeFeature(feature, ({ Scenario }) => {
-  let entries: JournalEntry[] = [];
-  let activeFilter: string | null = null;
-  let selectedEntry: JournalEntry | null = null;
+describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
+  AfterEachScenario(() => cleanup());
 
   Scenario("Home screen shows entry list", ({ When, Then }) => {
-    When("the home screen is loaded with entries", () => {
-      entries = [makeEntry("workout"), makeEntry("reading")];
-      activeFilter = null;
+    When("the home screen is loaded with entries", async () => {
+      renderHome([reading]);
+      await screen.findByText("Atomic Habits");
     });
-
-    // @covers specs/apps/organiclever/app-web/behaviors/journal/home-screen.feature:Home screen shows entry list
     Then("the entry list is visible", () => {
-      const visible = filterEntries(entries, activeFilter);
-      expect(visible.length).toBeGreaterThan(0);
+      expect(screen.getByText("Recent entries")).toBeVisible();
+      expect(screen.getByText("Atomic Habits")).toBeVisible();
     });
   });
 
   Scenario("Filter entries by kind", ({ Given, When, Then }) => {
-    Given("the home screen is loaded with workout and reading entries", () => {
-      entries = [makeEntry("workout"), makeEntry("reading"), makeEntry("workout")];
-      activeFilter = null;
+    Given("the home screen is loaded with workout and reading entries", async () => {
+      renderHome([workout, reading]);
+      await screen.findByText("Atomic Habits");
     });
-
     When("the user selects the Workout filter", () => {
-      activeFilter = "workout";
+      fireEvent.click(screen.getByRole("button", { name: "Workout" }));
     });
-
-    // @covers specs/apps/organiclever/app-web/behaviors/journal/home-screen.feature:Filter entries by kind
-    Then("only workout entries are shown", () => {
-      const visible = filterEntries(entries, activeFilter);
-      expect(visible.length).toBe(2);
-      expect(visible.every((e) => String(e.name) === "workout")).toBe(true);
-      // Reading entry is excluded
-      expect(visible.some((e) => String(e.name) === "reading")).toBe(false);
+    Then("only workout entries are shown", async () => {
+      await waitFor(() => expect(screen.queryByText("Atomic Habits")).not.toBeInTheDocument());
+      expect(screen.getByRole("button", { name: "Workout" })).toHaveAttribute("aria-pressed", "true");
+      expect(screen.getByText("Workout templates")).toBeVisible();
     });
   });
 
   Scenario("Open entry detail sheet", ({ Given, When, Then, And }) => {
-    Given("the home screen shows an entry", () => {
-      entries = [makeEntry("focus")];
-      selectedEntry = null;
+    Given("the home screen shows an entry", async () => {
+      renderHome([reading]);
+      await screen.findByText("Atomic Habits");
     });
-
     When("the user taps the entry", () => {
-      const entry = entries[0];
-      expect(entry).toBeDefined();
-      selectedEntry = entry ?? null;
+      fireEvent.click(screen.getByText("Atomic Habits"));
     });
-
     Then("the entry detail sheet opens", () => {
-      expect(selectedEntry).not.toBeNull();
-      expect(String(selectedEntry?.name)).toBe("focus");
+      expect(screen.getByRole("button", { name: "Close" })).toBeVisible();
+      expect(screen.getAllByText("Atomic Habits").length).toBeGreaterThan(1);
     });
-
     And("the user closes the sheet", () => {
-      selectedEntry = null;
+      fireEvent.click(screen.getByRole("button", { name: "Close" }));
     });
-
-    // @covers specs/apps/organiclever/app-web/behaviors/journal/home-screen.feature:Open entry detail sheet
     And("the entry detail sheet is closed", () => {
-      expect(selectedEntry).toBeNull();
+      expect(screen.queryByRole("button", { name: "Close" })).not.toBeInTheDocument();
     });
-  });
-});
-
-// ---------------------------------------------------------------------------
-// Supplemental unit tests for kind-hue utilities
-// ---------------------------------------------------------------------------
-
-import { describe, it } from "vitest";
-
-describe("kindToHue", () => {
-  it("maps known kinds to correct hues", () => {
-    expect(kindToHue("workout")).toBe("teal");
-    expect(kindToHue("reading")).toBe("plum");
-    expect(kindToHue("learning")).toBe("honey");
-    expect(kindToHue("meal")).toBe("terracotta");
-    expect(kindToHue("focus")).toBe("sky");
-  });
-
-  it("maps custom- prefix to sage", () => {
-    expect(kindToHue("custom-meditation")).toBe("sage");
-    expect(kindToHue("custom-stretch")).toBe("sage");
-  });
-
-  it("falls back to sage for unknown kinds", () => {
-    expect(kindToHue("unknown")).toBe("sage");
-  });
-});
-
-describe("kindToIcon", () => {
-  it("maps known kinds to correct icons", () => {
-    expect(kindToIcon("workout")).toBe("dumbbell");
-    expect(kindToIcon("reading")).toBe("calendar");
-    expect(kindToIcon("learning")).toBe("zap");
-    expect(kindToIcon("meal")).toBe("clock");
-    expect(kindToIcon("focus")).toBe("timer");
-  });
-
-  it("maps custom- prefix to plus-circle", () => {
-    expect(kindToIcon("custom-yoga")).toBe("plus-circle");
   });
 });

@@ -1,6 +1,6 @@
 ---
 title: "Function Composition"
-description: "The pipe pattern, compose pattern, and higher-order functions for building complex behavior from simple functions."
+description: "The pipe pattern, compose pattern, and higher-order functions for building complex behaviour from simple functions."
 category: explanation
 subcategory: development
 tags:

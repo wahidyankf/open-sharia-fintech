@@ -1,6 +1,6 @@
 ---
 title: "Verification Before Done"
-description: "Defines the verification requirements before marking a task done, for different task types, and how to compare diffs and behavior."
+description: "Defines the verification requirements before marking a task done, for different task types, and how to compare diffs and behaviour."
 category: explanation
 subcategory: development
 tags:
@@ -23,7 +23,7 @@ Before marking any task complete:
 
 1. **Run the relevant tests** - If code changed, tests must pass
 2. **Check logs for errors** - Silent failures are still failures
-3. **Demonstrate the behavior** - Show that the output matches the requirement, not just that the code was written
+3. **Demonstrate the behaviour** - Show that the output matches the requirement, not just that the code was written
 4. **Apply the senior engineer test** - Ask "would a senior engineer approve this?" If not, keep working
 
 ## Verification for Different Task Types
@@ -33,13 +33,13 @@ Before marking any task complete:
 | Code change          | Run `nx run [project]:test:quick`, check no regressions     |
 | Documentation update | Verify links work, content renders correctly                |
 | Bug fix              | Show the failing test now passes; existing tests still pass |
-| Refactor             | All tests pass before and after; behavior unchanged         |
-| New feature          | Tests cover the new behavior; edge cases handled            |
+| Refactor             | All tests pass before and after; behaviour unchanged        |
+| New feature          | Tests cover the new behaviour; edge cases handled           |
 
-## Diffs and Behavior Comparison
+## Diffs and Behaviour Comparison
 
-When a change might have unintended side effects, compare behavior before and after. This is especially relevant for:
+When a change might have unintended side effects, compare behaviour before and after. This is especially relevant for:
 
 - Changes to shared utilities used by many consumers
-- Changes to configuration that affects build or test behavior
+- Changes to configuration that affects build or test behaviour
 - Refactors touching core logic

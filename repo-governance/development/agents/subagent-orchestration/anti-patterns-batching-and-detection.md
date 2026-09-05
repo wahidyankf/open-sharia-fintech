@@ -9,7 +9,7 @@ tags:
   - orchestration
   - development
 created: 2025-11-23
-when_to_use: Use when reviewing an orchestrator's batching or stuck-detection behavior for a common mistake.
+when_to_use: Use when reviewing an orchestrator's batching or stuck-detection behaviour for a common mistake.
 ---
 
 # Anti-Patterns — Batching and Stuck-Detection Mistakes

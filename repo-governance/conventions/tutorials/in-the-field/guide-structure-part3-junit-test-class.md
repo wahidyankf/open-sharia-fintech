@@ -53,7 +53,7 @@ class CalculatorTest {
 
     @Test
     void add_shouldReturnSum() {
-        // => Test method naming: [method]_should[Behavior]
+        // => Test method naming: [method]_should[Behaviour]
         // => @Test annotation marks test method
         // => JUnit discovers and runs this method
         // => Must be void, no parameters
@@ -75,7 +75,7 @@ class CalculatorTest {
     @Test
     void divide_shouldThrowOnZeroDivisor() {
         // => Test exception handling
-        // => Verifies correct error behavior
+        // => Verifies correct error behaviour
         // => Negative test case (error path)
 
         assertThrows(ArithmeticException.class, () -> {

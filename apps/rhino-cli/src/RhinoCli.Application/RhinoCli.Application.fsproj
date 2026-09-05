@@ -15,20 +15,15 @@
     <Compile Include="src/Parity.fs" />
     <Compile Include="src/RepoConfig.fs" />
     <Compile Include="src/Env.fs" />
+    <Compile Include="src/DoctorResource.fs" />
     <Compile Include="src/Doctor.fs" />
     <Compile Include="src/TestCoverage.fs" />
     <Compile Include="src/Md.fs" />
     <Compile Include="src/Governance.fs" />
     <Compile Include="src/Git.fs" />
-    <Compile Include="src/Harness.fs" />
+    <Compile Include="src/HarnessPolicy.fs" />
+    <Compile Include="src/HarnessRuntime.fs" />
     <Compile Include="src/Specs.fs" />
-    <Compile Include="src/TestContract.fs" />
-    <Compile Include="src/TestContractJson.fs" />
-    <Compile Include="src/TestContractBdd.fs" />
-    <Compile Include="src/TestContractCoverage.fs" />
-    <Compile Include="src/TestContractLayout.fs" />
-    <Compile Include="src/TestContractManifest.fs" />
-    <Compile Include="src/TestContractProject.fs" />
     <Compile Include="src/Contracts.fs" />
     <Compile Include="src/RepoGovernance.fs" />
   </ItemGroup>

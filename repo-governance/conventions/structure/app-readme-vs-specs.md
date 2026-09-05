@@ -19,7 +19,7 @@ created: 2026-05-09
 
 App READMEs drift. They accumulate routes tables, architecture diagrams, bounded-context narratives, and API endpoint listings — content that describes what a system does rather than how to run it locally. This drift makes READMEs long, makes specifications hard to find, and forces engineers to maintain the same information in two places.
 
-This convention draws a hard boundary. App and infra READMEs contain only dev-runtime content. Everything describing system behavior, architecture, contracts, or design intent lives in `specs/apps/<app-family>/` as one logical owner corpus per deployed surface. Both audiences — engineers and Technical Product/Project Managers — benefit from knowing exactly where to look.
+This convention draws a hard boundary. App and infra READMEs contain only dev-runtime content. Everything describing system behaviour, architecture, contracts, or design intent lives in `specs/apps/<app-family>/` as one logical owner corpus per deployed surface. Both audiences — engineers and Technical Product/Project Managers — benefit from knowing exactly where to look.
 
 ## Children
 
@@ -39,8 +39,8 @@ This convention draws a hard boundary. App and infra READMEs contain only dev-ru
 
 ## Related
 
-- [Specs Directory Structure Convention](../structure/specs-directory-structure.md) — canonical path patterns and domain subdirectory rules within the `behavior/` tree
+- [Specs Directory Structure Convention](../structure/specs-directory-structure.md) — canonical path patterns and domain subdirectory rules within the `behaviour/` tree
 - [README Quality Convention](../writing/readme-quality.md) — README writing quality: voice, scannability, and engagement standards
 - [Acceptance Criteria Convention](../../development/infra/acceptance-criteria.md) — Gherkin writing standards for feature files
-- [Three-Level Testing Standard](../../development/quality/three-level-testing-standard.md) — unit, integration, and E2E testing levels consuming Gherkin specs
+- [Behaviour-Driven Development](../../development/behaviour-driven-development.md) — mandatory Unit proof and boundary-applicable Integration/E2E adapters consuming Gherkin specs
 - [Repository Governance Architecture](../../repository-governance-architecture.md) — six-layer governance hierarchy

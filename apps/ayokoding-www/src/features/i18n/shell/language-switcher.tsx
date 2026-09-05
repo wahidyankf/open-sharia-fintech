@@ -46,7 +46,7 @@ export function LanguageSwitcher({ locale }: LanguageSwitcherProps) {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="sm" className="gap-1" aria-label="Switch language">
           <Globe className="h-4 w-4" />
-          <span className="hidden sm:inline">{locale.toUpperCase()}</span>
+          <span className="hidden sm:inline">{LOCALE_LABELS[locale as keyof typeof LOCALE_LABELS]}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

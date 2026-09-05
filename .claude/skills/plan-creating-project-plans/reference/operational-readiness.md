@@ -12,7 +12,7 @@ Every plan must include steps for running affected quality checks locally before
 - [ ] Run affected typecheck: `nx affected -t typecheck`
 - [ ] Run affected linting: `nx affected -t lint`
 - [ ] Run affected quick tests: `nx affected -t test:quick`
-- [ ] Run affected spec coverage: `nx affected -t specs:coverage`
+- [ ] Run affected spec coverage: `nx affected -t test:coverage:behaviour`
 - [ ] Fix ALL failures found — including preexisting issues not caused by your changes
 - [ ] Verify all checks pass before pushing
 ```

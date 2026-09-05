@@ -68,14 +68,14 @@ Red→Green→Refactor:
 Manual verification scripts are TDD-compliant when they are written, dated, repeatable, and contain
 discrete expected observations (e.g., "Navigate to /products → snapshot shows product list with 3
 items"). Informal "tested manually" notes are not TDD-compliant. Promote manual scripts to
-automated Playwright specs whenever the behavior recurs.
+automated Playwright specs whenever the behaviour recurs.
 
 **Canonical references**:
 
 - [Test-Driven Development Convention](../../../repo-governance/development/workflow/test-driven-development.md)
   — full Red→Green→Refactor rules, "Manual verification is part of TDD" subsection, and all test
   levels covered.
-- [Manual Behavioral Verification](../../../repo-governance/development/quality/manual-behavioral-verification.md)
+- [Manual Behavioural Verification](../../../repo-governance/development/quality/manual-behavioural-verification.md)
   — Playwright MCP tool list, verification checklists, and `curl` for API verification.
 
 ## Related Standards

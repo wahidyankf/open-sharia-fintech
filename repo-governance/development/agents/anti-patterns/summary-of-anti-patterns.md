@@ -20,7 +20,7 @@ when_to_use: Use when you need a quick-reference list of every anti-pattern inst
 | **Excessive Tool Permissions** | Requesting unused tools                       | Request only necessary tools                            |
 | **Vague Descriptions**         | Unclear purpose                               | Clear, actionable descriptions                          |
 | **Hardcoded Paths**            | Breaks in different environments              | Use relative paths                                      |
-| **No Error Handling Guidance** | Unclear error behavior                        | Document error handling                                 |
+| **No Error Handling Guidance** | Unclear error behaviour                       | Document error handling                                 |
 | **Missing Tool Usage Docs**    | Unclear how tools are used                    | Document tool usage                                     |
 | **Wrong Model Selection**      | Cost/performance mismatch                     | Match model to task complexity                          |
 | **No Testing**                 | Production issues                             | Test edge cases before deployment                       |

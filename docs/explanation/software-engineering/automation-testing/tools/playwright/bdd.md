@@ -27,7 +27,7 @@ tests from Gherkin feature files.
 
 **REQUIRED before using this document:**
 
-- **[BDD Standards](../../../development/behavior-driven-development-bdd/README.md)** — OSE
+- **[BDD Standards](../../../development/behaviour-driven-development-bdd/README.md)** — OSE
   Platform BDD requirements, Three Amigos process, framework requirements per language
 - **[Playwright Framework](README.md)** — Playwright standards, configuration, and test
   organization patterns in this codebase
@@ -85,8 +85,8 @@ import { defineConfig } from "@playwright/test";
 import { defineBddConfig } from "playwright-bdd";
 
 const testDir = defineBddConfig({
-  featuresRoot: "../../specs/apps/organiclever/be/behaviors",
-  features: "../../specs/apps/organiclever/be/behaviors/**/*.feature",
+  featuresRoot: "../../specs/apps/organiclever/be/behaviours",
+  features: "../../specs/apps/organiclever/be/behaviours/**/*.feature",
   steps: "./tests/steps/**/*.ts",
 });
 
@@ -291,9 +291,9 @@ npx bddgen && npx playwright test
 
 ## Related Documentation
 
-- **[BDD Standards](../../../development/behavior-driven-development-bdd/README.md)** — Framework
+- **[BDD Standards](../../../development/behaviour-driven-development-bdd/README.md)** — Framework
   requirements, Three Amigos process, coverage rules
-- **[specs/apps/organiclever/be/behaviors/](../../../../../../specs/apps/organiclever/be/behaviors/README.md)** — Feature files
+- **[specs/apps/organiclever/be/behaviours/](../../../../../../specs/apps/organiclever/be/behaviours/README.md)** — Feature files
   and their organization
 - **[Configuration Standards](configuration.md)** — playwright.config.ts
   patterns including the BDD configuration section

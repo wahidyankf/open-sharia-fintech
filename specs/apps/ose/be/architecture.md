@@ -36,16 +36,16 @@ asynchronous work; it is infrastructure the service depends on, not a container 
 
 Eight bounded contexts under `src/OseBe/Contexts/`:
 
-| Bounded context    | Responsibility                                          |
-| ------------------ | ------------------------------------------------------- |
-| `RegulatorySource` | ingesting and serving a regulator's rule document       |
-| `InternalPolicy`   | ingesting and serving the organisation's own policy     |
-| `GapAnalysis`      | comparing the two and producing a report                |
-| `AiOrchestration`  | prompt construction, provider calls, and retry behavior |
-| `Messaging`        | NATS connection, configuration, and JetStream usage     |
-| `Db`               | connection handling and migration application           |
-| `Config`           | tiered environment loading                              |
-| `Health`           | the readiness route operations depends on               |
+| Bounded context    | Responsibility                                           |
+| ------------------ | -------------------------------------------------------- |
+| `RegulatorySource` | ingesting and serving a regulator's rule document        |
+| `InternalPolicy`   | ingesting and serving the organisation's own policy      |
+| `GapAnalysis`      | comparing the two and producing a report                 |
+| `AiOrchestration`  | prompt construction, provider calls, and retry behaviour |
+| `Messaging`        | NATS connection, configuration, and JetStream usage      |
+| `Db`               | connection handling and migration application            |
+| `Config`           | tiered environment loading                               |
+| `Health`           | the readiness route operations depends on                |
 
 Each context keeps its domain, its infrastructure, and its HTTP surface together, so a route's
 persistence and its provider calls are readable in one place.
@@ -63,6 +63,6 @@ rather than editing one that has already run somewhere.
 
 ## Related
 
-- [Behaviors](./behaviors/README.md) — the scenarios this system must satisfy.
+- [Behaviours](./behaviours/README.md) — the scenarios this system must satisfy.
 - [Contracts](./contracts/README.md) — the OpenAPI document this service generates from.
 - [`apps/ose-be/README.md`](../../../../apps/ose-be/README.md) — the implementing project.

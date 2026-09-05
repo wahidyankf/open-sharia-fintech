@@ -17,7 +17,7 @@ list or `local-tmp/` and do not continue to plan creation.
 
 **Orchestrator action**:
 
-1. Parse the prompt: extract the desired behavior, likely affected areas (governance files,
+1. Parse the prompt: extract the desired behaviour, likely affected areas (governance files,
    agents, workflows, apps, libs), and any explicit constraints
 2. Explore the repo:
    - Read relevant `repo-governance/` files (conventions, workflows, development practices that

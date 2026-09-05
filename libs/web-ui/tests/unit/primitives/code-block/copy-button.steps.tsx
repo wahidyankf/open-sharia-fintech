@@ -8,7 +8,7 @@ import { expect, vi } from "vitest";
 import { CopyButton } from "../../../../src/primitives/code-block/copy-button";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../specs/libs/web-ui/behaviors/code-block/copy-button.feature"),
+  path.resolve(__dirname, "../../../../../../specs/libs/web-ui/behaviours/code-block/copy-button.feature"),
 );
 
 /** Installs a mock `navigator.clipboard.writeText` (jsdom lacks it). Returns the spy. */
@@ -27,7 +27,10 @@ describeFeature(feature, ({ Scenario }) => {
     let writeText: ReturnType<typeof vi.fn>;
 
     Given('a CopyButton rendered with the value "npm install"', () => {
-      // render + click happen together in the When step (steps run as sequential tests)
+      cleanup();
+      stubClipboard(true);
+      render(<CopyButton value="npm install" />);
+      expect(getButton().getAttribute("aria-label")).toBe("Copy");
     });
 
     When("the user clicks the button", () => {
@@ -48,8 +51,12 @@ describeFeature(feature, ({ Scenario }) => {
       let showsCheck = false;
       let announced = "";
 
-      Given("a CopyButton rendered with a value and a stubbed clipboard that resolves", () => {
-        // render + click happen together in the When step
+      Given("a CopyButton rendered with a value and a stubbed clipboard that resolves", async () => {
+        cleanup();
+        const writeText = stubClipboard(true);
+        render(<CopyButton value="npm install" copiedLabel="Copied" />);
+        fireEvent.click(getButton());
+        await waitFor(() => expect(writeText).toHaveBeenCalledWith("npm install"));
       });
 
       When("the user clicks the button", async () => {
@@ -76,8 +83,17 @@ describeFeature(feature, ({ Scenario }) => {
     let showsCopy = false;
     let announced = "unset";
 
-    Given("a CopyButton that has just shown its success state", () => {
-      // render + copy + timeout happen together in the When step
+    Given("a CopyButton that has just shown its success state", async () => {
+      cleanup();
+      vi.useFakeTimers();
+      stubClipboard(true);
+      render(<CopyButton value="npm install" resetMs={2000} />);
+      fireEvent.click(getButton());
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(0);
+      });
+      expect(getButton().querySelector(".lucide-check")).not.toBeNull();
+      vi.useRealTimers();
     });
 
     When("the revert timeout elapses", async () => {
@@ -113,7 +129,11 @@ describeFeature(feature, ({ Scenario }) => {
     let announced = "unset";
 
     Given("a CopyButton rendered with a stubbed clipboard that rejects", () => {
-      // render + click happen together in the When step
+      cleanup();
+      const writeText = stubClipboard(false);
+      render(<CopyButton value="npm install" copiedLabel="Copied" />);
+      expect(writeText).not.toHaveBeenCalled();
+      expect(getButton().isConnected).toBe(true);
     });
 
     When("the user clicks the button", async () => {
@@ -144,7 +164,11 @@ describeFeature(feature, ({ Scenario }) => {
     let writeText: ReturnType<typeof vi.fn>;
 
     Given("a CopyButton is focused", () => {
-      // render + focus + keypress happen together in the When step
+      cleanup();
+      stubClipboard(true);
+      render(<CopyButton value="npm install" />);
+      getButton().focus();
+      expect(document.activeElement).toBe(getButton());
     });
 
     When("the user presses Enter", async () => {
@@ -167,7 +191,10 @@ describeFeature(feature, ({ Scenario }) => {
     let accessibleName: string | null = null;
 
     Given("a CopyButton rendered with the default labels", () => {
-      // render + inspection happen together in the When step
+      cleanup();
+      stubClipboard(true);
+      render(<CopyButton value="npm install" />);
+      expect(getButton().getAttribute("aria-label")).toBe("Copy");
     });
 
     When("the accessibility tree is inspected", () => {
@@ -186,7 +213,10 @@ describeFeature(feature, ({ Scenario }) => {
     let accessibleName: string | null = null;
 
     Given('a CopyButton rendered with copyLabel "Salin"', () => {
-      // render + inspection happen together in the When step
+      cleanup();
+      stubClipboard(true);
+      render(<CopyButton value="npm install" copyLabel="Salin" />);
+      expect(getButton().getAttribute("aria-label")).toBe("Salin");
     });
 
     When("the accessibility tree is inspected", () => {
@@ -205,7 +235,10 @@ describeFeature(feature, ({ Scenario }) => {
     let results: Awaited<ReturnType<typeof axe>>;
 
     Given("a CopyButton is rendered in its resting state", () => {
-      // render + scan happen together in the When step
+      cleanup();
+      stubClipboard(true);
+      render(<CopyButton value="npm install" />);
+      expect(getButton().querySelector(".lucide-copy")).not.toBeNull();
     });
 
     When("an automated accessibility scan runs", async () => {
@@ -225,7 +258,10 @@ describeFeature(feature, ({ Scenario }) => {
     let className = "";
 
     Given("a CopyButton rendered at its default size", () => {
-      // render + measurement happen together in the When step
+      cleanup();
+      stubClipboard(true);
+      render(<CopyButton value="npm install" />);
+      expect(getButton().getAttribute("data-size")).toBe("icon-sm");
     });
 
     When("its rendered box is measured", () => {
@@ -248,8 +284,17 @@ describeFeature(feature, ({ Scenario }) => {
     let stillSuccessPastFirstWindow = false;
     let revertedAfterSecondWindow = false;
 
-    Given("a CopyButton has just shown its success state from a first click", () => {
-      // first click + re-click + timer advances all happen together in the When step
+    Given("a CopyButton has just shown its success state from a first click", async () => {
+      cleanup();
+      vi.useFakeTimers();
+      stubClipboard(true);
+      render(<CopyButton value="npm install" resetMs={2000} />);
+      fireEvent.click(getButton());
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(0);
+      });
+      expect(getButton().querySelector(".lucide-check")).not.toBeNull();
+      vi.useRealTimers();
     });
 
     When("the user clicks the button again before the revert timeout elapses", async () => {
@@ -296,8 +341,12 @@ describeFeature(feature, ({ Scenario }) => {
     let showsCheck = false;
     let announced = "";
 
-    Given("a CopyButton whose previous click failed to write to the clipboard", () => {
-      // the failing first click + the resolving retry happen together in the When step
+    Given("a CopyButton whose previous click failed to write to the clipboard", async () => {
+      cleanup();
+      stubClipboard(false);
+      render(<CopyButton value="npm install" errorLabel="Copy failed" />);
+      fireEvent.click(getButton());
+      await waitFor(() => expect(getButton().querySelector(".lucide-x")).not.toBeNull());
     });
 
     When("the user clicks the button again and the clipboard write resolves", async () => {
@@ -330,7 +379,11 @@ describeFeature(feature, ({ Scenario }) => {
     let writeText: ReturnType<typeof vi.fn>;
 
     Given("a CopyButton is focused", () => {
-      // render + focus + keypress happen together in the When step
+      cleanup();
+      stubClipboard(true);
+      render(<CopyButton value="npm install" />);
+      getButton().focus();
+      expect(document.activeElement).toBe(getButton());
     });
 
     When("the user presses Space", async () => {
@@ -354,7 +407,11 @@ describeFeature(feature, ({ Scenario }) => {
     let announced = "";
 
     Given("a CopyButton rendered with a stubbed clipboard that rejects", () => {
-      // render + click happen together in the When step
+      cleanup();
+      const writeText = stubClipboard(false);
+      render(<CopyButton value="npm install" errorLabel="Copy failed" />);
+      expect(writeText).not.toHaveBeenCalled();
+      expect(getButton().isConnected).toBe(true);
     });
 
     When("the user clicks the button", async () => {
@@ -381,7 +438,10 @@ describeFeature(feature, ({ Scenario }) => {
     let accessibleName: string | null = null;
 
     Given("a CopyButton rendered with the default labels", () => {
-      // render + inspection happen together in the When step
+      cleanup();
+      stubClipboard(true);
+      render(<CopyButton value="npm install" />);
+      expect(getButton().getAttribute("title")).toBe("Copy");
     });
 
     When("the button's attributes are inspected", () => {

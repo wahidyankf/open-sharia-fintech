@@ -45,7 +45,7 @@ when_to_use: Use for Layer 2's scope and governance relationships.
 
 - Each convention MUST include "Principles Implemented/Respected" section
 - Implemented by Layer 4 (AI Agents)
-- Changes impact both documentation and agent behavior
+- Changes impact both documentation and agent behaviour
 
 **Relationship to Other Layers**:
 

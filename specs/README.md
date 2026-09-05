@@ -5,7 +5,7 @@ you need to understand a user outcome, a command's contract, or the boundary bet
 product. The matching README in `apps/` or `libs/` complements it with the practical details for
 running, building, and testing that implementation.
 
-Specifications describe intent and observable behavior. They are deliberately separate from the
+Specifications describe intent and observable behaviour. They are deliberately separate from the
 code so that product, engineering, and quality conversations can begin with the same source of
 truth.
 
@@ -32,7 +32,7 @@ An application or library index leads to the most useful level of detail:
   the product above them.
 - Inside an owner, `architecture.md` describes the system boundary, its running parts, and their
   internals as one document read top to bottom.
-- `behaviors/` contains the acceptance scenarios. These use Gherkin, a concise
+- `behaviours/` contains the acceptance scenarios. These use Gherkin, a concise
   `Given`/`When`/`Then` format for an observable outcome.
 
 Some owners also include `contracts/`, which holds the API contract. That folder appears only in
@@ -41,22 +41,22 @@ the owner that serves it.
 ## How specifications relate to code and tests
 
 Specs answer “what should happen?”; applications and libraries answer “how is it delivered?” A
-feature change keeps both aligned. Gherkin scenarios express the accepted behavior, while unit,
+feature change keeps both aligned. Gherkin scenarios express the accepted behaviour, while unit,
 integration, and end-to-end tests check the implementation at the appropriate level. For a CLI,
-the same scenarios can also define command input, output, and exit-code behavior.
+the same scenarios can also define command input, output, and exit-code behaviour.
 
 Specifications do not replace implementation tests, and implementation tests do not replace a
-clear statement of the intended behavior. Together they make a change easier to discuss, build,
+clear statement of the intended behaviour. Together they make a change easier to discuss, build,
 and verify.
 
 ## A safe next step
 
 When exploring or preparing a change:
 
-1. Read the relevant specification index and the closest existing behavior scenario before
+1. Read the relevant specification index and the closest existing behaviour scenario before
    interpreting the requirement. Use the linked app or library README for local commands and
    implementation-specific setup.
-2. Put a new or changed observable outcome in the `behaviors/` tree of the owner that deploys the
+2. Put a new or changed observable outcome in the `behaviours/` tree of the owner that deploys the
    surface. Keep the scenario focused on the outcome, not framework details.
 3. Update the matching code and its tests. If an HTTP API changes, review its contract; if a system
    boundary changes, review the associated architecture material as well.
@@ -64,7 +64,7 @@ When exploring or preparing a change:
    specification structure itself changes, such as adding, renaming, or removing a product or
    library tree.
 
-For the detailed rules, see the [BDD standards](../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md), [Gherkin standards](../docs/explanation/software-engineering/development/behavior-driven-development-bdd/gherkin-standards.md), [scenario standards](../docs/explanation/software-engineering/development/behavior-driven-development-bdd/scenario-standards.md), and [spec-to-test mapping](../repo-governance/development/infra/bdd-spec-test-mapping.md).
+For the detailed rules, see the [BDD standards](../docs/explanation/software-engineering/development/behaviour-driven-development-bdd/README.md), [Gherkin standards](../docs/explanation/software-engineering/development/behaviour-driven-development-bdd/gherkin-standards.md), [scenario standards](../docs/explanation/software-engineering/development/behaviour-driven-development-bdd/scenario-standards.md), and [spec-to-test mapping](../repo-governance/development/infra/bdd-spec-test-mapping.md).
 
 - [Apps](./apps/README.md) — Product-family specification indexes for AyoKoding, Crane, OrganicLever, OSE, and Rhino.
 - [Libs](./libs/README.md) — Specification indexes for the shared libraries: Crane core, env loaders, and web UI.

@@ -4,12 +4,12 @@
 
 `apps/rhino-cli/scripts/rhino-bin.sh` originally resolved the rhino-cli binary through a three-tier
 Rust-era mechanism (`RHINO_CLI_BIN` override → prebuilt `target/gate/rhino-cli` → `cargo build
---profile gate` on demand), and `specs/apps/rhino/cli/behaviors/gate/gate-binary-resolution.feature`
+--profile gate` on demand), and `specs/apps/rhino/cli/behaviours/gate/gate-binary-resolution.feature`
 carried four scenarios exercising exactly that logic. `rewrite-rhino-cli-to-fsharp`'s Phase 9a
 retired the whole file when Phase 9c's crate deletion made every one of those scenarios describe a
 mechanism that would no longer exist. Phase 9c then simplified the shim to one resolution path:
 `RHINO_CLI_FSHARP_BIN` override → `apps/rhino-cli/src/dist/rhino-cli-fsharp` → `dotnet run`
-fallback — real, live behavior with **zero scenario-level test coverage**. Phase 9a's own verdict
+fallback — real, live behaviour with **zero scenario-level test coverage**. Phase 9a's own verdict
 table flagged this ("may still warrant fresh, F#-only-tier scenarios for 'explicit override takes
 precedence' and 'invalid override falls through to discovery'") and Phase 9c explicitly declined to
 author it in-plan, recording the decision rather than silently dropping it: "authoring that coverage
@@ -28,8 +28,8 @@ reference the script only as a black-box invocation target, not as the subject u
 override → dist binary → `dotnet run` fallback) in both `ose-public` and `ose-private` (the script is
 inside the byte-identity boundary, so it is identical in both repos).
 
-**Out of scope**: any change to the shim's actual resolution behavior — this item adds coverage for
-existing, shipped behavior, it does not change that behavior.
+**Out of scope**: any change to the shim's actual resolution behaviour — this item adds coverage
+for existing, shipped behaviour; it does not change that behaviour.
 
 ## Business Rationale (condensed BRD)
 
@@ -50,7 +50,7 @@ equivalent Rust-side mechanism.
 
 **User story**: As a contributor relying on `rhino-bin.sh` to invoke the correct rhino-cli binary, I
 want its resolution precedence to be tested, so that a regression in override handling or fallback
-behavior is caught by CI rather than by a confusing downstream failure.
+behaviour is caught by CI rather than by a confusing downstream failure.
 
 **Acceptance criteria**:
 
@@ -85,7 +85,7 @@ jobs), which are already exercised by their own existing tests.
 ## Technical Approach
 
 Add a new `.feature` file (e.g.
-`specs/apps/rhino/cli/behaviors/gate/gate-binary-resolution-fsharp.feature`, naming it
+`specs/apps/rhino/cli/behaviours/gate/gate-binary-resolution-fsharp.feature`, naming it
 distinctly from the retired Rust-era file since it covers a different mechanism) with the three
 scenarios above. Given the subject is a shell script's environment-variable and filesystem-based
 branching, a subprocess-driven test (spawn `rhino-bin.sh` with controlled env vars and a temp
@@ -111,10 +111,10 @@ coverage into the private parity surface. Each repository integrates independent
 
 ### Delivery Boundaries
 
-| Phase(s) | Natural cohesive seam                                                                                              | Worktree                                                  | Branch                             | Delivery opportunity | Exact resulting `main` / rollback / feature-flag evidence                                                                                                                                                                                                                                                                                     |
-| -------- | ------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------- | ---------------------------------- | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1        | Public resolver coverage: Gherkin, executable bindings, negative proof, coverage registration, and verification    | `ose-public/worktrees/rhino-bin-resolver-shim-coverage/`  | `rhino-bin-resolver-shim-coverage` | PR at Phase 1        | The exact resulting `ose-public/main` state preserves shipped resolver behavior while adding passing regression coverage, so it is immediately production-deployable. A feature flag is not applicable because this is test-only work with no production behavior change; rollback is a PR revert. Integrate promptly after the Phase 1 gate. |
-| 2        | Private resolver coverage: byte-identical coverage, parity-manifest disposition, and repository-local verification | `ose-private/worktrees/rhino-bin-resolver-shim-coverage/` | `rhino-bin-resolver-shim-coverage` | PR at Phase 2        | The exact resulting `ose-private/main` state preserves behavior and parity while adding the same passing regression coverage, so it is immediately production-deployable. The same test-only no-flag rationale and PR-revert rollback apply. Integrate promptly after the Phase 2 gate.                                                       |
+| Phase(s) | Natural cohesive seam                                                                                              | Worktree                                                  | Branch                             | Delivery opportunity | Exact resulting `main` / rollback / feature-flag evidence                                                                                                                                                                                                                                                                                       |
+| -------- | ------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------- | ---------------------------------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1        | Public resolver coverage: Gherkin, executable bindings, negative proof, coverage registration, and verification    | `ose-public/worktrees/rhino-bin-resolver-shim-coverage/`  | `rhino-bin-resolver-shim-coverage` | PR at Phase 1        | The exact resulting `ose-public/main` state preserves shipped resolver behaviour while adding passing regression coverage, so it is immediately production-deployable. A feature flag is not applicable because this is test-only work with no production behaviour change; rollback is a PR revert. Integrate promptly after the Phase 1 gate. |
+| 2        | Private resolver coverage: byte-identical coverage, parity-manifest disposition, and repository-local verification | `ose-private/worktrees/rhino-bin-resolver-shim-coverage/` | `rhino-bin-resolver-shim-coverage` | PR at Phase 2        | The exact resulting `ose-private/main` state preserves behaviour and parity while adding the same passing regression coverage, so it is immediately production-deployable. The same test-only no-flag rationale and PR-revert rollback apply. Integrate promptly after the Phase 2 gate.                                                        |
 
 Each boundary keeps its specification, executable proof, parity metadata when applicable, and
 verification together. LOC and file counts never define these repository-local seams.
@@ -126,18 +126,18 @@ Executor legend: `[AI]` = autonomous agent action, `[HUMAN]` = requires human ju
 ### Phase 1: Author and prove (ose-public)
 
 - [ ] [AI] Write the three Gherkin scenarios above into a new `.feature` file under
-      `specs/apps/rhino/cli/behaviors/gate/`.
+      `specs/apps/rhino/cli/behaviours/gate/`.
 - [ ] [AI] Implement step bindings (TickSpec if expressible; otherwise a plain `xunit.v3` test per
       this repo's TickSpec-fallback protocol, recorded as such if invoked).
 - [ ] [AI] Prove each scenario fails against a deliberately-broken shim (e.g., swap the precedence
       order) and passes against the real, unmodified `rhino-bin.sh`.
-- [ ] [AI] `rhino-cli:specs:behavior:coverage` reports the new scenarios covered.
+- [ ] [AI] `rhino-cli:test:coverage` reports the new Unit and E2E adapters covered statically.
 
 ### Phase 1 Gate
 
 - [ ] [AI] Full `nx affected -t test:quick` clean.
-- [ ] [AI] `rhino-cli:test:coverage` unaffected (shell-script coverage is out of scope for the .NET
-      line-coverage gate; this only needs the new xunit/TickSpec test itself to pass).
+- [ ] [AI] `rhino-cli:test:unit` retains its native .NET line-coverage threshold; static
+      `rhino-cli:test:coverage` remains runtime-free.
 
 ### Phase 2: Repeat in ose-private
 
@@ -157,10 +157,10 @@ Executor legend: `[AI]` = autonomous agent action, `[HUMAN]` = requires human ju
 
 ## Quality Gates
 
-`rtk nx affected -t typecheck,lint,test:quick,specs:behavior:coverage` in both repos.
+`rtk nx affected -t typecheck,lint,test:quick` in both repos.
 
 ## Verification
 
-`rhino-cli:specs:behavior:coverage` scenario count increases by exactly 3 (or however many scenarios
+`rhino-cli:test:coverage` scenario count increases by exactly 3 (or however many scenarios
 the final Gherkin authoring produces) in both repos, and each new scenario demonstrably fails against
 a deliberately-broken shim before the fix/coverage is proven correct.

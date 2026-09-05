@@ -36,7 +36,7 @@ specs/apps/<product>/
     │   ├── paths/
     │   ├── schemas/
     │   └── generated/
-    └── behaviors/
+    └── behaviours/
         ├── README.md
         └── <domain>/
             └── <feature>.feature
@@ -49,8 +49,8 @@ zoom levels on the same system. A reader following a change needs all three, and
 one current has to keep all three current; splitting them across `system-context/`, `containers/`,
 and `components/` made four places to forget rather than four places to look.
 
-**`behaviors/` is recursive and sits inside the owner.** Scenarios belong to the thing that must
-satisfy them. A cross-cutting `behavior/` tree at the product root made every surface's scenarios
+**`behaviours/` is recursive and sits inside the owner.** Scenarios belong to the thing that must
+satisfy them. A cross-cutting `behaviour/` tree at the product root made every surface's scenarios
 a sibling of every other's, which is exactly the relationship they do not have.
 
 **`contracts/` sits inside the owner that serves it.** A contract in a shared folder has no owner;

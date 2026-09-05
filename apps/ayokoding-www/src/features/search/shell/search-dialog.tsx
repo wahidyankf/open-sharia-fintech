@@ -18,7 +18,7 @@ import type { SearchResult } from "@/features/content/core/types";
 import { contentUrl } from "@/features/content/core/content-url";
 import type { Locale } from "@/features/i18n/core/config";
 
-function formatSectionPath(slug: string): string {
+export function formatSectionPath(slug: string): string {
   const parts = slug.split("/");
   if (parts.length <= 1) return "";
   return parts
@@ -97,6 +97,7 @@ export function SearchDialog() {
             {results.map((result) => (
               <CommandItem
                 key={result.slug}
+                data-result-slug={result.slug}
                 // Rule-15 e2e regression fix (surfaced by USS-001): cmdk's own client-side fuzzy
                 // filter re-filters items against this `value` string. Results are already
                 // server-filtered (ContentService.search), so re-filtering here is redundant AND
@@ -109,9 +110,15 @@ export function SearchDialog() {
                 className="cursor-pointer"
               >
                 <div className="flex flex-col gap-1">
-                  <span className="font-medium">{result.title}</span>
-                  <span className="line-clamp-1 text-xs text-muted-foreground">{formatSectionPath(result.slug)}</span>
-                  <span className="line-clamp-1 text-xs text-muted-foreground">{result.excerpt}</span>
+                  <span data-testid="search-result-title" className="font-medium">
+                    {result.title}
+                  </span>
+                  <span data-testid="search-result-path" className="line-clamp-1 text-xs text-muted-foreground">
+                    {formatSectionPath(result.slug)}
+                  </span>
+                  <span data-testid="search-result-excerpt" className="line-clamp-1 text-xs text-muted-foreground">
+                    {result.excerpt}
+                  </span>
                 </div>
               </CommandItem>
             ))}

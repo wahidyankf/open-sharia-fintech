@@ -19,7 +19,7 @@ created: 2026-02-04
 
 - Same standard as by-example/by-concept
 - Production code still requires educational annotations
-- Focus on framework behavior, configuration, integration, security, performance
+- Focus on framework behaviour, configuration, integration, security, performance
 - **Enhanced examples**: All code blocks now meet 1.0-2.25 density target
 - **Multiple comprehensive examples** per topic (testing, HTTP, database, async, DI)
 

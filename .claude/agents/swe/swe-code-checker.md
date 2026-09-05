@@ -32,6 +32,11 @@ Validate that all `apps/` and `libs/` projects conform to platform coding standa
 tools. **Scope**: project infrastructure + language-specific code standards. **Not in scope**:
 documentation content quality (`docs-checker`), repository governance (`repo-rules-checker`).
 
+When invoked by `gherkin-implementation-review`, switch to its row-by-row semantic protocol. Expand
+Scenario Outlines, inspect every applicable adapter, trace Given–When–Then through production code
+and independent evidence, validate exemptions independently, and retain explicit `EXEMPT` rows.
+Counts, grep heuristics, and green runtime results cannot replace this inspection.
+
 ## Validation Methodology
 
 See `swe-developing-applications-common` Skill's reference modules for the complete rule set:
@@ -43,6 +48,8 @@ through cross-project consistency checks;
 covers TDD compliance and specs/Gherkin completeness for the direct-code path;
 [checker-regression-and-fixture-isolation.md](../../skills/swe-developing-applications-common/reference/checker-regression-and-fixture-isolation.md)
 covers the regression-test mandate for bug fixes and the six mandatory git-fixture-isolation layers.
+The [Gherkin implementation review](../../../repo-governance/workflows/gherkin-implementation-review.md)
+defines semantic review rows, placeholder failures, execution proof, and termination.
 
 ## Convergence Safeguards
 

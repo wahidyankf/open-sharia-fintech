@@ -5,6 +5,8 @@ import { SearchProvider } from "@/features/search/shell/search-provider";
 import { TooltipProvider } from "@open-sharia-enterprise/web-ui";
 import "./globals.css";
 
+export const DEFAULT_THEME = "light";
+
 export const metadata: Metadata = {
   title: {
     default: "OSE Platform",
@@ -19,7 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="min-h-screen antialiased">
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+        <ThemeProvider attribute="class" defaultTheme={DEFAULT_THEME} enableSystem>
           <TRPCProvider>
             <TooltipProvider>
               <SearchProvider>{children}</SearchProvider>

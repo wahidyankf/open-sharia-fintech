@@ -1,6 +1,6 @@
 ---
 title: "Gherkin Feature File Placement and Lib Spec Structure"
-description: The canonical path pattern and domain-subdirectory rules for placing .feature files under behavior/, plus the simpler layout used for library specs
+description: The canonical path pattern and domain-subdirectory rules for placing .feature files under behaviour/, plus the simpler layout used for library specs
 when_to_use: Read this when adding or locating a Gherkin .feature file for an app or a library.
 category: explanation
 subcategory: conventions
@@ -20,13 +20,13 @@ created: 2026-04-02
 
 ## Gherkin Feature File Placement
 
-Gherkin feature files live inside the `behaviors/` tree of a
+Gherkin feature files live inside the `behaviours/` tree of a
 [logical owner corpus](./logical-owner-corpus.md).
 
 ### Canonical Path Pattern
 
 ```
-specs/apps/<product>/<owner>/behaviors/{domain}/{feature}.feature
+specs/apps/<product>/<owner>/behaviours/{domain}/{feature}.feature
 ```
 
 Where:
@@ -42,17 +42,17 @@ The owner segment is already inside `specs/apps/<product>/`, so it carries the b
 
 ### Domain Subdirectory Rules
 
-**Every surface** (BE, web, CLI) uses domain subdirectories under its owner's `behaviors/`. Each domain folder groups related feature files by business domain or command group, not by technical concern. Single-feature domains are permitted when the surface area is small.
+**Every surface** (BE, web, CLI) uses domain subdirectories under its owner's `behaviours/`. Each domain folder groups related feature files by business domain or command group, not by technical concern. Single-feature domains are permitted when the surface area is small.
 
 ```
-specs/apps/organiclever/be/behaviors/journal/journal-entries.feature
-specs/apps/organiclever/be/behaviors/health/health.feature
-specs/apps/organiclever/app-web/behaviors/settings/dark-mode.feature
-specs/apps/organiclever/www/behaviors/frontend/home/home.feature
+specs/apps/organiclever/be/behaviours/journal/journal-entries.feature
+specs/apps/organiclever/be/behaviours/health/health.feature
+specs/apps/organiclever/app-web/behaviours/settings/dark-mode.feature
+specs/apps/organiclever/www/behaviours/frontend/home/home.feature
 ```
 
 AyoKoding's build-time features once sat in their own `ayokoding-build-tools/` surface. They now
-live at `specs/apps/ayokoding/www/behaviors/build-tools/`, inside the site's own corpus, because
+live at `specs/apps/ayokoding/www/behaviours/build-tools/`, inside the site's own corpus, because
 they belong to the site they build.
 
 A domain folder may contain one or many feature files.
@@ -60,13 +60,13 @@ A domain folder may contain one or many feature files.
 **CLI specs** use the same domain subdirectory rule as BE and web. Group features by command domain (e.g., `system/`, `env/`, `links/`). Single-feature domains are fine when the CLI surface area is small:
 
 ```
-specs/apps/rhino/cli/behaviors/system/doctor.feature
-specs/apps/rhino/cli/behaviors/env/env-backup.feature
-specs/apps/rhino/cli/behaviors/spec-coverage/spec-coverage-validate.feature
-specs/apps/crane/cli/behaviors/pdf/pdf-commands.feature
+specs/apps/rhino/cli/behaviours/system/doctor.feature
+specs/apps/rhino/cli/behaviours/env/env-backup.feature
+specs/apps/rhino/cli/behaviours/gate/gate-execution.feature
+specs/apps/crane/cli/behaviours/pdf/pdf-commands.feature
 ```
 
-A `behaviors/` tree is recursive, so `rhino-cli specs validate-tree` accepts a feature file at its root; the domain subdirectory is what keeps a growing surface navigable, not what the validator counts.
+A `behaviours/` tree is recursive, so `rhino-cli specs validate-tree` accepts a feature file at its root; the domain subdirectory is what keeps a growing surface navigable, not what the validator counts.
 
 ## Lib Spec Structure
 
@@ -78,7 +78,7 @@ root:
 specs/libs/<lib-name>/
 ├── README.md
 ├── architecture.md          # the current, as-built library
-└── behaviors/
+└── behaviours/
     └── <domain>/            # domain, package, or component subdirectories
         └── <feature>.feature
 ```
@@ -86,6 +86,6 @@ specs/libs/<lib-name>/
 **Examples:**
 
 ```
-specs/libs/web-ui-token/behaviors/tokens/tokens-export.feature
-specs/libs/ts-env-loader/behaviors/env-loader/env-loader.feature
+specs/libs/web-ui-token/behaviours/tokens/tokens-export.feature
+specs/libs/ts-env-loader/behaviours/env-loader/env-loader.feature
 ```

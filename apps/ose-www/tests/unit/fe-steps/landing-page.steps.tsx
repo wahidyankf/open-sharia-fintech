@@ -50,7 +50,7 @@ import { Hero } from "@/features/landing/shell/hero";
 import { SocialIcons } from "@/features/landing/shell/social-icons";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ose/www/behaviors/frontend/landing/landing-page.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ose/www/behaviours/frontend/landing/landing-page.feature"),
 );
 
 describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
@@ -60,7 +60,7 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
 
   Background(({ Given }) => {
     Given("the app is running", () => {
-      // jsdom environment is ready
+      expect(Hero).toBeTypeOf("function");
     });
   });
 
@@ -84,7 +84,6 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
       expect(link).toHaveAttribute("href", "/about/");
     });
 
-    // @covers specs/apps/ose/www/behaviors/frontend/landing/landing-page.feature:Hero section displays platform information
     And('the hero section contains a "GitHub" link', () => {
       const githubLink = screen.getByRole("link", { name: /GitHub/i });
       expect(githubLink).toBeInTheDocument();
@@ -101,7 +100,6 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
       expect(githubLink).toBeInTheDocument();
     });
 
-    // @covers specs/apps/ose/www/behaviors/frontend/landing/landing-page.feature:Social icons are displayed
     And("an RSS feed icon link is visible", () => {
       const rssLink = screen.getByRole("link", { name: /RSS feed/i });
       expect(rssLink).toBeInTheDocument();

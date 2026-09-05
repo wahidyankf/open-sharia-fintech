@@ -1,8 +1,8 @@
-# Manual Behavioral Assertion Verification (Step 5c): UI, API, End-to-End, Locale
+# Manual Behavioural Assertion Verification (Step 5c): UI, API, End-to-End, Locale
 
-## 2. Verify Manual Behavioral Assertions (Step 5c — MANDATORY)
+## 2. Verify Manual Behavioural Assertions (Step 5c — MANDATORY)
 
-After verifying operational readiness (Step 5b), verify that manual behavioral assertions were
+After verifying operational readiness (Step 5b), verify that manual behavioural assertions were
 performed.
 
 ### What to Validate

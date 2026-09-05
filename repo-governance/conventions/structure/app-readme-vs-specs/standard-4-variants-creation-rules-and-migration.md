@@ -27,13 +27,13 @@ created: 2026-05-09
 | Library         | none — the three entries sit at the library root | absent                        |
 
 One owner per **deployed** surface. Two perspectives on one process — a site's pages and the API
-running inside it — are one owner whose `behaviors/` nests them as `frontend/` and `backend/`.
+running inside it — are one owner whose `behaviours/` nests them as `frontend/` and `backend/`.
 
 ## Creation rules
 
 - An owner exists only once something deploys it. Do not pre-create a corpus for a planned surface.
-- Every corpus carries all three entries. A `behaviors/` with no feature file is an owner that
-  declares no behavior, which is an owner nothing can prove.
+- Every corpus carries all three entries. A `behaviours/` with no feature file is an owner that
+  declares no behaviour, which is an owner nothing can prove.
 - Every directory holding children carries a `README.md` indexing them.
 - An owner MAY carry more than the three required entries — an API reference, a routes inventory —
   when that document says something `architecture.md` does not.
@@ -43,9 +43,9 @@ running inside it — are one owner whose `behaviors/` nests them as `frontend/`
 Full procedure and path mapping:
 [Migration Path](../specs-directory-structure/migration-path.md). In outline:
 
-1. Decide the owners first, from what deploys rather than from what the old `behavior/` folders
+1. Decide the owners first, from what deploys rather than from what the old `behaviour/` folders
    were called.
-2. In one atomic commit: move each `gherkin/` tree to its owner's `behaviors/`, move any
+2. In one atomic commit: move each `gherkin/` tree to its owner's `behaviours/`, move any
    `containers/contracts/` into the owner that serves it, write each `README.md` and
    `architecture.md`, delete the retired folders, and update every path reference.
 3. Verify with `rhino-cli specs validate-tree <product>` and

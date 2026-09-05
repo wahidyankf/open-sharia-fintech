@@ -1,7 +1,7 @@
 /**
  * Step definitions for the Progress Screen feature.
  *
- * Covers: specs/apps/organiclever/app-web/behaviors/stats/progress-screen.feature
+ * Covers: specs/apps/organiclever/app-web/behaviours/stats/progress-screen.feature
  *
  * Selector notes:
  * - Progress screen is a machine state tab (navigation: "main", tab: "progress").
@@ -14,6 +14,7 @@
  */
 import { createBdd } from "playwright-bdd";
 import { appPath } from "./_app-shell";
+import { seedHomeJournalEntries, seedWorkoutProgress } from "./_journal-db";
 import { expect } from "@playwright/test";
 
 const { Given, When, Then } = createBdd();
@@ -23,56 +24,40 @@ Given("the progress screen is loaded", async ({ page }) => {
   await page.waitForLoadState("domcontentloaded");
   // Click the Progress TabBar button to navigate to the progress screen
   const progressBtn = page.getByRole("link", { name: "Progress" }).first();
-  if (await progressBtn.isVisible()) {
-    await progressBtn.click();
-  }
+  await expect(progressBtn).toBeVisible();
+  await progressBtn.click();
 });
 
-// @covers specs/apps/organiclever/app-web/behaviors/stats/progress-screen.feature:Progress screen shows workout module by default
 Then("the workout module is active", async ({ page }) => {
-  // Progress screen shows "Analytics" heading; workout module is default (aria-pressed="true")
-  await expect(page.getByText("Analytics").or(page.getByText("Patterns & progress over time")).first()).toBeVisible({
-    timeout: 10000,
-  });
+  await expect(page.getByRole("button", { name: "Workout" })).toHaveAttribute("aria-pressed", "true");
 });
 
 When("the user selects the Reading module", async ({ page }) => {
   // Module pill tabs are <button type="button"> with aria-pressed.
   // Use first() to avoid ambiguity with filter chips on other screens.
   const btn = page.getByRole("button", { name: "Reading" }).first();
-  if (await btn.isVisible()) {
-    await btn.click();
-  }
+  await expect(btn).toBeVisible();
+  await btn.click();
 });
 
-// @covers specs/apps/organiclever/app-web/behaviors/stats/progress-screen.feature:Switch to reading module
 Then("the reading module content is shown", async ({ page }) => {
-  // When Reading module is selected the ActivityBars renders "Last 7 days" or empty state
-  // with "{n} total" and the Reading button has aria-pressed="true"
-  await expect(page.getByText(/last 7 days|No reading sessions yet|Analytics/).first()).toBeVisible({ timeout: 10000 });
+  await expect(page.getByRole("button", { name: "Reading" })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByText(/No reading sessions yet|\d+ total/)).toBeVisible();
 });
 
 Given("there is exercise progress data", async ({ page }) => {
   await page.goto(appPath("home"));
   await page.waitForLoadState("domcontentloaded");
-  const progressBtn = page.getByRole("link", { name: "Progress" }).first();
-  if (await progressBtn.isVisible()) {
-    await progressBtn.click();
-  }
+  await seedHomeJournalEntries(page);
+  await seedWorkoutProgress(page);
+  await page.goto(appPath("progress"));
+  await expect(page.getByRole("button", { name: "Squat progress" })).toBeVisible({ timeout: 15000 });
 });
 
 When("the user taps an exercise card", async ({ page }) => {
-  // ExerciseProgressCard renders as a clickable div/button. If no workout data exists,
-  // there are no cards — this step is a graceful no-op.
-  const card = page.getByText(/exercise|workout/i).first();
-  if (await card.isVisible()) {
-    await card.click();
-  }
+  await page.getByRole("button", { name: "Squat progress" }).click();
 });
 
-// @covers specs/apps/organiclever/app-web/behaviors/stats/progress-screen.feature:Exercise progress card expands
 Then("the SVG chart is visible", async ({ page }) => {
-  // ExerciseProgressCard expands to show an SVG chart when clicked.
-  // If no exercise data, the "Analytics" heading is still visible.
-  await expect(page.locator("svg").or(page.getByText("Analytics")).first()).toBeVisible({ timeout: 10000 });
+  await expect(page.getByLabel("Weight progression chart for Squat")).toBeVisible({ timeout: 10000 });
 });

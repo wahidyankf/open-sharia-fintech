@@ -2,7 +2,7 @@
 /// `repo-config-validate.feature`'s five scenarios to
 /// `RhinoCli.Application.RepoConfig`
 /// [Repo-grounded —
-/// `specs/apps/rhino/cli/behaviors/repo-config-validate/repo-config-validate.feature`,
+/// `specs/apps/rhino/cli/behaviours/repo-config-validate/repo-config-validate.feature`,
 /// `apps/rhino-cli/tests/repo_config_validate.rs`].
 ///
 /// Follows `RepoConfigSteps.fs`'s per-scenario slicing convention: each xunit
@@ -10,16 +10,8 @@
 /// frozen feature file rather than a duplicated/rewritten copy of its
 /// wording.
 ///
-/// Scenarios 2 and 3 ("the canonical repo-config.yml") read THIS
-/// repository's own real `repo-config.yml` via
-/// `RhinoCli.Infrastructure.GitRoot.findRoot` — mirroring the Rust step
-/// definitions, which load the real file for the same reason. The vendored
-/// skill-directory set is derived from the real `.agents/skills`/
-/// `.claude/skills` trees at test-run time rather than hard-coded, because
-/// any vendored plugin payload is repository-local — a sibling repository
-/// may carry one while another carries none — and a hard-coded expectation
-/// here would make this file non-portable across them, breaking this port's
-/// byte-identical-source goal.
+/// Unit fixtures are self-contained documents. The Integration adapter owns
+/// discovery of the repository's real declaration and directory inventory.
 ///
 /// Scenarios 4 and 5 build a synthetic, self-contained fixture (mirroring
 /// the Rust suite's `synthetic_config_with_vendored_probe`) for the same
@@ -27,6 +19,12 @@
 /// probing the vendored/ownership cross-check must not depend on either
 /// repo's actual vendored set.
 module RhinoCli.Tests.Unit.Steps.RepoConfigValidateSteps
+
+/// Explicit static-coverage ownership; the validator scopes this file's
+/// TickSpec bindings to these canonical features.
+let private behaviourFeatureOwnership =
+    [ "specs/apps/rhino/cli/behaviours/repo-config-validate/repo-config-validate.feature" ]
+
 
 open System
 open System.IO
@@ -50,31 +48,9 @@ type RepoConfigValidateSteps() =
 
     let probePath = ".agents/skills/probe"
 
-    let newTempDir () =
-        let dir =
-            Path.Combine(Path.GetTempPath(), "rhino-cli-repo-config-validate-" + Guid.NewGuid().ToString("N"))
+    let runLoad (content: string) : Result<RepoConfig, string> = parse content
 
-        Directory.CreateDirectory(dir) |> ignore
-        dir
-
-    /// Writes `content` as `repo-config.yml` inside a fresh, throwaway temp
-    /// directory, runs `f` against that directory, then deletes it — every
-    /// synthetic fixture below is validated through this rather than a
-    /// persistent shared directory, since each call is independent.
-    let withTempConfig (content: string) (f: string -> 'a) : 'a =
-        let dir = newTempDir ()
-
-        try
-            File.WriteAllText(Path.Combine(dir, "repo-config.yml"), content)
-            f dir
-        finally
-            Directory.Delete(dir, true)
-
-    let runLoad (content: string) : Result<RepoConfig, string> =
-        withTempConfig content RhinoCli.Application.RepoConfig.load
-
-    let runValidate (content: string) : bool * string =
-        withTempConfig content RhinoCli.Application.RepoConfig.validateAtRoot
+    let runValidate (content: string) : bool * string = validateText content
 
     /// Replaces the first (and, for every call site below, only) occurrence
     /// of `pattern` in `input` with `replacement` — `String.Replace` would
@@ -88,10 +64,21 @@ type RepoConfigValidateSteps() =
 
         input.Substring(0, idx) + replacement + input.Substring(idx + pattern.Length)
 
-    let readCanonicalConfigText () : string * string =
-        match RhinoCli.Infrastructure.GitRoot.findRoot () with
-        | Error message -> failwith message
-        | Ok repoRoot -> repoRoot, File.ReadAllText(Path.Combine(repoRoot, "repo-config.yml"))
+    let canonicalConfigText =
+        "harness:\n"
+        + "  - name: claude-code\n    tier: source\n    agent-dir: .claude/agents\n    ownership:\n"
+        + "      - { path: .claude/agents, class: source, reason: canonical source }\n"
+        + "  - name: opencode\n    tier: generated\n    agent-dir: .opencode/agents\n    mirrors: .claude/agents\n"
+        + "    config: .opencode/opencode.json\n    ownership:\n"
+        + "      - { path: .opencode/agents, class: generated, reason: generated mirror }\n"
+        + "  - name: codex\n    tier: generated\n    agent-dir: .codex/agents\n    mirrors: .claude/agents\n"
+        + "    skills-dir: .agents/skills\n    skills-mirrors: .claude/skills\n    vendored:\n"
+        + "      - .agents/skills/plugin-probe # plugin fixture\n    ownership:\n"
+        + "      - { path: .codex/agents, class: generated, reason: generated mirror }\n"
+        + "      - { path: .agents/skills, class: generated, reason: skills mirror }\n"
+        + "      - { path: .agents/skills/plugin-probe, class: vendored, reason: plugin fixture }\n"
+
+    let readCanonicalConfigText () : string = canonicalConfigText
 
     /// Slices the `- name: codex` harness entry out of raw repo-config.yml
     /// text: from its own line up to (but excluding) the next line that
@@ -112,24 +99,6 @@ type RepoConfigValidateSteps() =
             |> Array.takeWhile (fun l -> l.Length = 0 || Char.IsWhiteSpace(l.[0]))
 
         String.concat "\n" (Array.append [| lines.[0] |] entryLines)
-
-    /// Every `.agents/skills/<dir>` with no `.claude/skills/<dir>`
-    /// counterpart: plugin payload with no canonical source to regenerate it
-    /// from, derived from the real filesystem rather than hard-coded (see
-    /// module doc comment). Repo-relative, sorted.
-    let vendoredSkillDirs (repoRoot: string) : string list =
-        let mirror = Path.Combine(repoRoot, ".agents", "skills")
-        let source = Path.Combine(repoRoot, ".claude", "skills")
-
-        if not (Directory.Exists mirror) then
-            []
-        else
-            Directory.GetDirectories(mirror)
-            |> Array.map Path.GetFileName
-            |> Array.filter (fun name -> not (Directory.Exists(Path.Combine(source, name))))
-            |> Array.map (fun name -> ".agents/skills/" + name)
-            |> Array.sort
-            |> List.ofArray
 
     /// A minimal, self-contained registry declaring one generated harness
     /// entry whose `vendored:` list and `ownership: class: vendored`
@@ -155,8 +124,7 @@ type RepoConfigValidateSteps() =
 
     [<Given>]
     member _.``"rhino-cli repo-config validate" in each repo's pre-commit and pre-push/PR``() =
-        let _, text = readCanonicalConfigText ()
-        canonicalText <- Some text
+        canonicalText <- Some(readCanonicalConfigText ())
 
     [<When>]
     member _.``repo-config.yml is validated``() =
@@ -224,10 +192,10 @@ type RepoConfigValidateSteps() =
 
     [<Given>]
     member _.``the canonical repo-config.yml``() =
-        let repoRoot, text = readCanonicalConfigText ()
+        let text = readCanonicalConfigText ()
         canonicalText <- Some text
 
-        match RhinoCli.Application.RepoConfig.load repoRoot with
+        match runLoad text with
         | Error message -> failwith message
         | Ok config -> loadedConfig <- Some config
 
@@ -255,8 +223,7 @@ type RepoConfigValidateSteps() =
 
     [<Then>]
     member _.``it declares every vendored skill subdirectory``() =
-        let repoRoot, _ = readCanonicalConfigText ()
-        let expected = vendoredSkillDirs repoRoot
+        let expected = [ ".agents/skills/plugin-probe" ]
 
         match codexEntry with
         | None -> Assert.Fail("codex entry was not loaded by a When step")
@@ -483,7 +450,7 @@ module private FeatureRunner =
                 "apps",
                 "rhino",
                 "cli",
-                "behaviors",
+                "behaviours",
                 "repo-config-validate",
                 "repo-config-validate.feature"
             )
@@ -514,7 +481,9 @@ module private FeatureRunner =
     /// Runs the single scenario named `scenarioTitle` from
     /// `repo-config-validate.feature`, bound against `RepoConfigValidateSteps`.
     let run (scenarioTitle: string) : unit =
-        let allLines = File.ReadAllLines featurePath
+        let allLines =
+            ConventionSteps.FeatureResource.readLines (Path.GetFileName featurePath)
+
         let snippet = extractScenario allLines scenarioTitle
         let definitions = StepDefinitions([| typeof<RepoConfigValidateSteps> |])
         let feature = definitions.GenerateFeature(featurePath, snippet)

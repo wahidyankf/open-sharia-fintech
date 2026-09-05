@@ -66,7 +66,7 @@ FAIL: **Complex (Avoid)**:
 docs-manager.md - Creates, validates, fixes, organizes, and links documentation
 ```
 
-**Why this fails**: Multi-purpose agent. Hard to predict behavior. Unclear when to use.
+**Why this fails**: Multi-purpose agent. Hard to predict behaviour. Unclear when to use.
 
 ## Minimal Frontmatter
 

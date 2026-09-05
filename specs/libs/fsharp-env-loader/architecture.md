@@ -53,7 +53,7 @@ fallback is itself a programming error caught the same way.
 
 ## Related
 
-- [Behaviors](./behaviors/README.md) — the scenarios this library must satisfy.
+- [Behaviours](./behaviours/README.md) — the scenarios this library must satisfy.
 - [`libs/fsharp-env-loader/README.md`](../../../libs/fsharp-env-loader/README.md) — the implementing
   package.
 - [`specs/libs/ts-env-loader/`](../ts-env-loader/README.md) — the TypeScript twin this library

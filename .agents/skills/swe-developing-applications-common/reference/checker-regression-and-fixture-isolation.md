@@ -6,15 +6,15 @@ Regression-test mandate and git-fixture isolation — run for every code change 
 
 Reference: [Regression Test Mandate](../../../repo-governance/development/quality/regression-test-mandate.md).
 
-A `fix(...)` commit or any diff correcting wrong observable behavior MUST land with a reproducing
+A `fix(...)` commit or any diff correcting wrong observable behaviour MUST land with a reproducing
 test in the same change set (fails before the fix, passes after) — blocking, no exemption, applies
 to every defect type including cosmetic/visual. Form adapts to the defect: behavioural/functional →
 a `specs/**` Gherkin scenario plus the consuming unit/integration/e2e test (per the
-[Three-Level Testing Standard](../../../repo-governance/development/quality/three-level-testing-standard.md));
+[Behaviour-Driven Development](../../../../repo-governance/development/behaviour-driven-development.md));
 visual/design/UI → a DOM/computed-style or component test (or a Gherkin scenario for the on-design
 expectation); content/copy/i18n → a test asserting the corrected string/translation. HIGH when
 missing — unlike Step 6.6, the pure-refactor exemption never applies (a fix by definition changes
-behavior to correct it).
+behaviour to correct it).
 
 ## Step 6.8: Git Fixture Isolation
 

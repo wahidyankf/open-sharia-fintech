@@ -65,7 +65,7 @@ The root condition was the **absence of an ignore rule** protecting emitter-gene
 
 The proximate trigger was a **routine `Edit` call** in the agent session. The Claude Code PostToolUse hook is configured to run Prettier over all staged files after every `Edit` or `Write` operation. With `.amazonq/**` absent from `.prettierignore`, the hook formatted the binding artifacts on the first operation that staged any file.
 
-The trigger is distinct from the root cause: an `Edit` call running Prettier is expected, correct behavior. The fault was the missing ignore rule that left emitter-generated files exposed to that behavior.
+The trigger is distinct from the root cause: an `Edit` call running Prettier is expected, correct behaviour. The fault was the missing ignore rule that left emitter-generated files exposed to that behaviour.
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Brown #CA9161, Gray #808080
@@ -94,7 +94,7 @@ graph TD
 ## Contributing Factors
 
 - **No Prettier ignore rule for emitter-generated paths**: `.prettierignore` covered hand-authored files but had no entry for `.amazonq/**` or the category of "files produced by code generation / emitters." The pattern was not established at the time the `.amazonq/` directory was introduced.
-- **PostToolUse hook scope**: the hook runs Prettier on all staged files without any allowlist or denylist beyond `.prettierignore`. This is correct behavior, but it means any emitter-generated path missing from `.prettierignore` is silently at risk.
+- **PostToolUse hook scope**: the hook runs Prettier on all staged files without any allowlist or denylist beyond `.prettierignore`. This is correct behaviour, but it means any emitter-generated path missing from `.prettierignore` is silently at risk.
 - **Parity guard found the problem, but only after the fact**: the guard is a strong correctness check, but it fires after the damage is already done (bytes already rewritten). There was no pre-flight warning that `.amazonq/` was about to be modified.
 - **Pattern not yet documented**: the general principle — "emitter-generated output files must be excluded from formatters" — was not written down as a convention before this incident. Future maintainers adding new emitter-generated directories had no signal to add an ignore rule.
 

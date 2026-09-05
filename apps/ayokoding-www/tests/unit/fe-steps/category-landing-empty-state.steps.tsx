@@ -3,9 +3,8 @@ import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
 import { cleanup, render, screen } from "@testing-library/react";
 import { expect, vi } from "vitest";
 
-// course-paths plan (ayokoding-learning-path-03-navigation-ui), Cycle 3.1a — step binding for
-// category-landing-empty-state.feature's unit-only scenario (delivery.md's Cycle 3.1a carries no
-// e2e command for it). Reuses the fixtures/approach already proven in category-landing.test.tsx.
+// Unit binding for category-landing-empty-state.feature, reusing the fixtures already proven in
+// category-landing.test.tsx.
 
 vi.mock("next/link", () => ({
   default: ({ href, children, ...rest }: { href: string; children: React.ReactNode; [key: string]: unknown }) => (
@@ -17,11 +16,12 @@ vi.mock("next/link", () => ({
 
 // eslint-disable-next-line import/first
 import { CategoryLanding } from "@/features/course-paths/shell/category-landing";
+import type { PathManifest } from "@/features/course-paths/core/schemas";
 
 const feature = await loadFeature(
   path.resolve(
     process.cwd(),
-    "../../specs/apps/ayokoding/www/behaviors/frontend/course-paths/category-landing-empty-state.feature",
+    "../../specs/apps/ayokoding/www/behaviours/frontend/course-paths/category-landing-empty-state.feature",
   ),
 );
 
@@ -29,14 +29,16 @@ describeFeature(feature, ({ Scenario }) => {
   Scenario(
     "A category landing with no populated manifest renders an explicit empty state",
     ({ Given, When, Then, And }) => {
+      let manifests: PathManifest[];
+
       Given("a structural category index exists with zero published path manifests", () => {
-        // Fixture: `manifests={[]}` below — the structural category page exists (the route
-        // resolves) but no manifest has been loaded for it yet.
+        manifests = [];
+        expect(manifests).toHaveLength(0);
       });
 
       When("a reader opens that category's landing page", () => {
         cleanup();
-        render(<CategoryLanding locale="en" category="careers" manifests={[]} />);
+        render(<CategoryLanding locale="en" category="careers" manifests={manifests} />);
       });
 
       Then('the page renders a stated "being written, check back soon" message with a fallback link', () => {
@@ -45,7 +47,6 @@ describeFeature(feature, ({ Scenario }) => {
         expect(screen.getByRole("link")).toBeTruthy();
       });
 
-      // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/category-landing-empty-state.feature:A category landing with no populated manifest renders an explicit empty state
       And("the page never renders a blank content area with no message", () => {
         const status = screen.getByRole("alert");
         expect(status.textContent?.trim().length).toBeGreaterThan(0);

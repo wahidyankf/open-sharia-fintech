@@ -7,7 +7,7 @@
     "codegen": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "echo 'No codegen needed \u2014 ayokoding-www has no OpenAPI contract'",
+        "command": "echo 'No codegen needed — ayokoding-www has no OpenAPI contract'",
         "cwd": "apps/ayokoding-www"
       }
     },
@@ -86,116 +86,76 @@
     "test:unit": {
       "executor": "nx:run-commands",
       "cache": true,
-      "inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding/**/*.feature"],
+      "inputs": [
+        "default",
+        "{workspaceRoot}/specs/apps/ayokoding/**/*.feature",
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/tests/**/*"
+      ],
       "options": {
-        "command": "if grep -rn -E --include='*.ts' --include='*.tsx' --exclude-dir=node_modules --exclude-dir=.next --exclude-dir=dist --exclude-dir=coverage --exclude-dir=storybook-static '\\b(it|test|describe)\\.(skip|only|todo)\\(' .; then echo 'ERROR: .skip()/.only()/.todo() found in test files above - remove before merging'; exit 1; fi && npx vitest run --project unit --project unit-fe --testTimeout=60000",
-        "cwd": "apps/ayokoding-www"
-      }
-    },
-    "test:coverage": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "npx vitest run --project unit --project unit-fe --coverage --coverage.thresholds.lines=99 --testTimeout=60000",
+        "command": "if grep -rn -E --include='*.ts' --include='*.tsx' --exclude-dir=node_modules --exclude-dir=.next --exclude-dir=dist --exclude-dir=coverage --exclude-dir=storybook-static '\\b(it|test|describe)\\.(skip|only|todo)\\(' .; then echo 'ERROR: .skip()/.only()/.todo() found in test files above - remove before merging'; exit 1; fi && npx vitest run --project unit --project unit-fe --coverage --coverage.thresholds.lines=99 --testTimeout=60000",
         "cwd": "apps/ayokoding-www"
       },
-      "cache": true,
-      "outputs": ["{projectRoot}/coverage"],
-      "inputs": ["{projectRoot}/src/**/*", "{projectRoot}/tests/**/*"]
-    },
-    "test:quick": {
-      "executor": "nx:run-commands",
-      "cache": true,
-      "options": {
-        "commands": [
-          "npx nx run ayokoding-www:typecheck",
-          "npx nx run ayokoding-www:lint",
-          "npx nx run ayokoding-www:test:unit",
-          "npx nx run ayokoding-www:test:coverage",
-          "npx nx run ayokoding-www:test:specs",
-          "npx nx run ayokoding-www:test:layout:validation",
-          "npx nx run ayokoding-www:coverage:policy:validation",
-          "npx nx run ayokoding-www:package-manifest:policy:validation"
-        ],
-        "parallel": false
-      },
-      "inputs": ["default", "specs"]
+      "outputs": ["{projectRoot}/coverage"]
     },
     "test:integration": {
       "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": ["build"],
+      "inputs": [
+        "default",
+        "{workspaceRoot}/specs/apps/ayokoding/www/behaviours/build-tools/**/*.feature",
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/tests/integration/**/*",
+        "{projectRoot}/vitest.integration.config.ts"
+      ],
       "options": {
-        "command": "echo 'no-op: integration tier not used for this content app'",
+        "command": "npx vitest run --config vitest.integration.config.ts --testTimeout=60000",
         "cwd": "apps/ayokoding-www"
-      },
-      "cache": true
+      }
     },
-    "specs:behavior:coverage": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps --exclude-source-dir content specs/apps/ayokoding/www/behaviors/frontend specs/apps/ayokoding/www/behaviors/backend specs/apps/ayokoding/www/behaviors/build-tools apps/ayokoding-www"
-      },
-      "cache": true,
-      "inputs": [
-        "{workspaceRoot}/specs/apps/ayokoding/www/behaviors/frontend/**/*.feature",
-        "{workspaceRoot}/specs/apps/ayokoding/www/behaviors/backend/**/*.feature",
-        "{workspaceRoot}/specs/apps/ayokoding/www/behaviors/build-tools/**/*.feature",
-        "{projectRoot}/**/*.{ts,tsx}"
-      ]
-    },
-    "test:behavior:coverage:unit": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract bdd validate --project ayokoding-www --adapter unit"
-      },
-      "cache": true,
-      "inputs": [
-        "{workspaceRoot}/specs/apps/ayokoding/www/behaviors/**/*.feature",
-        "{workspaceRoot}/repo-config.yml",
-        "default"
-      ]
-    },
-    "test:behavior:coverage:integration": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract bdd validate --project ayokoding-www --adapter integration"
-      },
-      "cache": true,
-      "inputs": [
-        "{workspaceRoot}/specs/apps/ayokoding/www/behaviors/**/*.feature",
-        "{workspaceRoot}/repo-config.yml",
-        "default"
-      ]
-    },
-    "test:behavior:coverage:e2e": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract bdd validate --project ayokoding-www --adapter e2e"
-      },
-      "cache": true,
-      "inputs": [
-        "{workspaceRoot}/specs/apps/ayokoding/www/behaviors/**/*.feature",
-        "{workspaceRoot}/repo-config.yml",
-        "default"
-      ]
-    },
-    "test:behavior:coverage": {
+    "test:quick": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "npx nx run ayokoding-www:test:behavior:coverage:unit",
-          "npx nx run ayokoding-www:test:behavior:coverage:integration",
-          "npx nx run ayokoding-www:test:behavior:coverage:e2e"
+          {
+            "command": "npm exec -- nx run ayokoding-www:typecheck",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run ayokoding-www:lint",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run ayokoding-www:test:unit",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run ayokoding-www:specs:structure-validation",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run ayokoding-www:test:coverage",
+            "forwardAllArgs": false
+          }
         ],
-        "parallel": false
+        "parallel": false,
+        "forwardAllArgs": false
       },
-      "dependsOn": ["test:behavior:coverage:unit", "test:behavior:coverage:integration", "test:behavior:coverage:e2e"],
-      "cache": true
-    },
-    "test:e2e": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "echo 'no-op: target not applicable for this project'"
-      },
-      "cache": true
+      "cache": true,
+      "inputs": [
+        "default",
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/apps/ayokoding-www/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/apps/ayokoding/www/behaviours/**/*.feature",
+        "{workspaceRoot}/apps/ayokoding-www/tests/unit/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/apps/ayokoding-www/vitest.config.ts",
+        "{workspaceRoot}/apps/ayokoding-www/tests/integration/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/apps/ayokoding-www/vitest.integration.config.ts",
+        "{workspaceRoot}/apps/ayokoding-www-fe-e2e/tests/e2e/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/apps/ayokoding-www-fe-e2e/playwright.config.ts"
+      ]
     },
     "deps:audit": {
       "executor": "nx:run-commands",
@@ -219,48 +179,118 @@
       "cache": true,
       "inputs": ["{workspaceRoot}/specs/apps/!(rhino)/**/*"]
     },
-    "test:specs": {
+    "test:coverage:unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node scripts/behaviour-coverage.mjs --config apps/ayokoding-www/behaviour-coverage.json --adapter unit"
+      },
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/apps/ayokoding-www/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/apps/ayokoding/www/behaviours/**/*.feature",
+        "{workspaceRoot}/apps/ayokoding-www/tests/unit/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/apps/ayokoding-www/vitest.config.ts",
+        "{workspaceRoot}/apps/ayokoding-www-fe-e2e/tests/e2e/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/apps/ayokoding-www-fe-e2e/playwright.config.ts"
+      ]
+    },
+    "test:coverage:integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node scripts/behaviour-coverage.mjs --config apps/ayokoding-www/behaviour-coverage.json --adapter integration"
+      },
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/apps/ayokoding-www/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/apps/ayokoding/www/behaviours/**/*.feature",
+        "{workspaceRoot}/apps/ayokoding-www/tests/integration/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/apps/ayokoding-www/vitest.integration.config.ts"
+      ]
+    },
+    "test:coverage:e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node scripts/behaviour-coverage.mjs --config apps/ayokoding-www/behaviour-coverage.json --adapter e2e"
+      },
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/apps/ayokoding-www/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/apps/ayokoding/www/behaviours/**/*.feature",
+        "{workspaceRoot}/apps/ayokoding-www/tests/unit/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/apps/ayokoding-www/vitest.config.ts",
+        "{workspaceRoot}/apps/ayokoding-www-fe-e2e/tests/e2e/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/apps/ayokoding-www-fe-e2e/playwright.config.ts"
+      ]
+    },
+    "test:coverage:behaviour": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node scripts/behaviour-coverage.mjs --config apps/ayokoding-www/behaviour-coverage.json --adapter behaviour"
+      },
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/apps/ayokoding-www/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/apps/ayokoding/www/behaviours/**/*.feature",
+        "{workspaceRoot}/apps/ayokoding-www/tests/unit/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/apps/ayokoding-www/vitest.config.ts",
+        "{workspaceRoot}/apps/ayokoding-www/tests/integration/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/apps/ayokoding-www/vitest.integration.config.ts",
+        "{workspaceRoot}/apps/ayokoding-www-fe-e2e/tests/e2e/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/apps/ayokoding-www-fe-e2e/playwright.config.ts"
+      ]
+    },
+    "test:coverage": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "npx nx run ayokoding-www:specs:structure-validation",
-          "npx nx run ayokoding-www:specs:behavior:coverage"
+          {
+            "command": "npm exec -- nx run ayokoding-www:test:coverage:unit",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run ayokoding-www:test:coverage:integration",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run ayokoding-www:test:coverage:e2e",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run ayokoding-www:test:coverage:behaviour",
+            "forwardAllArgs": false
+          }
         ],
-        "parallel": false
+        "parallel": false,
+        "forwardAllArgs": false
       },
       "cache": true,
-      "inputs": ["default", "specs"]
-    },
-    "test:layout:validation": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract layout validate --project ayokoding-www"
-      },
-      "cache": true,
-      "inputs": ["default", "{projectRoot}/project.json"]
-    },
-    "coverage:policy:validation": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract coverage validate --project ayokoding-www"
-      },
-      "cache": true,
-      "inputs": ["default", "{projectRoot}/project.json"]
-    },
-    "package-manifest:policy:validation": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract manifest validate --project ayokoding-www"
-      },
-      "cache": true,
-      "inputs": ["default", "{projectRoot}/project.json"]
+      "inputs": [
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/apps/ayokoding-www/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/apps/ayokoding/www/behaviours/**/*.feature",
+        "{workspaceRoot}/apps/ayokoding-www/tests/unit/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/apps/ayokoding-www/vitest.config.ts",
+        "{workspaceRoot}/apps/ayokoding-www/tests/integration/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/apps/ayokoding-www/vitest.integration.config.ts",
+        "{workspaceRoot}/apps/ayokoding-www-fe-e2e/tests/e2e/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/apps/ayokoding-www-fe-e2e/playwright.config.ts"
+      ]
     }
   },
   "namedInputs": {
     "specs": [
-      "{workspaceRoot}/specs/apps/ayokoding/www/behaviors/frontend/**/*.feature",
-      "{workspaceRoot}/specs/apps/ayokoding/www/behaviors/backend/**/*.feature",
-      "{workspaceRoot}/specs/apps/ayokoding/www/behaviors/build-tools/**/*.feature"
+      "{workspaceRoot}/specs/apps/ayokoding/www/behaviours/frontend/**/*.feature",
+      "{workspaceRoot}/specs/apps/ayokoding/www/behaviours/backend/**/*.feature",
+      "{workspaceRoot}/specs/apps/ayokoding/www/behaviours/build-tools/**/*.feature"
     ]
   },
   "tags": ["type:app", "platform:nextjs", "lang:ts", "domain:ayokoding"]

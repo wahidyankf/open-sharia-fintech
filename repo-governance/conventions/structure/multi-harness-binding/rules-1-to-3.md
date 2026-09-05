@@ -52,7 +52,7 @@ file. It must not contain independent instruction prose.
 
 Some harnesses rank a tool-specific instruction file **above** the canonical root instruction file.
 If such a higher-precedence file exists in the repository, it silently overrides `AGENTS.md` for
-that tool only, producing divergent behavior that is invisible to contributors using any other
+that tool only, producing divergent behaviour that is invisible to contributors using any other
 harness.
 
 **The repository must not commit any higher-precedence file whose content diverges from `AGENTS.md`.**

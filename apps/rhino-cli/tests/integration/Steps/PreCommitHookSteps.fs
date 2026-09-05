@@ -1,7 +1,7 @@
 /// TickSpec step definitions binding the resequenced `git-pre-commit.feature`'s
 /// 5 scenarios to the git pre-commit hook's `md links validate`, `md mermaid
 /// validate`, and `md heading-hierarchy validate` steps
-/// [Repo-grounded — `specs/apps/rhino/cli/behaviors/git/git-pre-commit.feature`,
+/// [Repo-grounded — `specs/apps/rhino/cli/behaviours/git/git-pre-commit.feature`,
 /// `apps/rhino-cli/tests/git_hooks.rs`].
 ///
 /// **Integration-tier**, unlike every other Wave D feature file: the Rust
@@ -32,6 +32,9 @@
 /// the first whose `git init`/`add`/`commit` sequence a CRITICAL-severity
 /// convention (per that document's Enforcement section) governs end to end.
 module RhinoCli.Tests.Integration.Steps.PreCommitHookSteps
+
+let private behaviourFeatureOwnership =
+    [ "specs/apps/rhino/cli/behaviours/git/git-pre-commit.feature" ]
 
 open System
 open System.Diagnostics
@@ -361,7 +364,7 @@ module private FeatureRunner =
                 "apps",
                 "rhino",
                 "cli",
-                "behaviors",
+                "behaviours",
                 "git",
                 "git-pre-commit.feature"
             )

@@ -6,7 +6,7 @@ import { expect } from "vitest";
 import { HomeContent } from "@/features/home";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../specs/apps/organiclever/www/behaviors/frontend/home/home.feature"),
+  path.resolve(__dirname, "../../../../../../specs/apps/organiclever/www/behaviours/frontend/home/home.feature"),
 );
 
 describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
@@ -28,7 +28,6 @@ describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
       expect(screen.getByText(/tracked\./i)).toBeDefined();
     });
 
-    // @covers specs/apps/organiclever/www/behaviors/frontend/home/home.feature:Hero heading visible
     And('I see text "Analyzed."', () => {
       expect(screen.getByText(/Analyzed\./)).toBeDefined();
     });
@@ -40,7 +39,6 @@ describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
       render(<HomeContent />);
     });
 
-    // @covers specs/apps/organiclever/www/behaviors/frontend/home/home.feature:Primary call-to-action button present
     Then('I see a button "Open the app"', () => {
       expect(screen.getByRole("button", { name: /Open the app/i })).toBeDefined();
     });
@@ -52,7 +50,6 @@ describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
       render(<HomeContent />);
     });
 
-    // @covers specs/apps/organiclever/www/behaviors/frontend/home/home.feature:Footer link present
     Then('I see text "Open app →"', () => {
       expect(screen.getByText(/Open app →/)).toBeDefined();
     });
@@ -64,7 +61,6 @@ describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
       render(<HomeContent />);
     });
 
-    // @covers specs/apps/organiclever/www/behaviors/frontend/home/home.feature:Pre-Alpha badge visible in nav
     Then('I see text "Pre-Alpha"', () => {
       expect(screen.getAllByText(/Pre-Alpha/i).length).toBeGreaterThan(0);
     });
@@ -76,7 +72,6 @@ describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
       render(<HomeContent />);
     });
 
-    // @covers specs/apps/organiclever/www/behaviors/frontend/home/home.feature:Alpha warning banner visible
     Then('I see text "Pre-Alpha — expect bugs, rough edges, and breaking changes"', () => {
       expect(screen.getByText(/Pre-Alpha — expect bugs, rough edges, and breaking changes/i)).toBeDefined();
     });
@@ -104,7 +99,6 @@ describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
       expect(screen.getByText("Meals")).toBeDefined();
     });
 
-    // @covers specs/apps/organiclever/www/behaviors/frontend/home/home.feature:All five event type cards visible
     And('I see text "Focus"', () => {
       expect(screen.getAllByText("Focus").length).toBeGreaterThan(0);
     });
@@ -116,7 +110,6 @@ describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
       render(<HomeContent />);
     });
 
-    // @covers specs/apps/organiclever/www/behaviors/frontend/home/home.feature:Custom event card visible
     Then('I see text "Plus your own."', () => {
       expect(screen.getByText(/Plus your own\./i)).toBeDefined();
     });
@@ -128,7 +121,6 @@ describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
       render(<HomeContent />);
     });
 
-    // @covers specs/apps/organiclever/www/behaviors/frontend/home/home.feature:Weekly rhythm demo visible
     Then('I see text "Last 7 days"', () => {
       expect(screen.getByText("Last 7 days")).toBeDefined();
     });
@@ -160,7 +152,6 @@ describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
       expect(screen.getByText("Open")).toBeDefined();
     });
 
-    // @covers specs/apps/organiclever/www/behaviors/frontend/home/home.feature:All six principles visible
     And('I see text "Multilingual"', () => {
       expect(screen.getByText("Multilingual")).toBeDefined();
     });

@@ -16,45 +16,48 @@ vi.mock("next/link", () => ({
 
 // eslint-disable-next-line import/first
 import { PrerequisiteList } from "@/features/course-paths/shell/prerequisite-list";
+import type { PrerequisiteLink } from "@/features/course-paths/shell/course-path-nav";
 
-const prerequisites = [{ title: "Version Control and Git", slug: "learn/courses/version-control-and-git" }];
+const prerequisites: PrerequisiteLink[] = [
+  { title: "Version Control and Git", slug: "learn/courses/version-control-and-git" },
+];
 
 const feature = await loadFeature(
   path.resolve(
     process.cwd(),
-    "../../specs/apps/ayokoding/www/behaviors/frontend/course-paths/prerequisite-display.feature",
+    "../../specs/apps/ayokoding/www/behaviours/frontend/course-paths/prerequisite-display.feature",
   ),
 );
 
 describeFeature(feature, ({ Scenario }) => {
   Scenario("A course page surfaces its declared prerequisites", ({ Given, When, Then, And }) => {
     Given("a course declares prerequisites in its canonical metadata", () => {
-      // Fixture: `prerequisites` above (one declared prerequisite: Version Control and Git).
+      expect(prerequisites).toEqual([
+        { title: "Version Control and Git", slug: "learn/courses/version-control-and-git" },
+      ]);
     });
 
     When("a reader opens the course page with or without a path context", () => {
-      // Both rendering branches are asserted directly in the Then/And steps below — no shared
-      // render happens here since each branch needs its own props.
+      cleanup();
+      render(
+        <PrerequisiteList
+          locale="en"
+          prerequisites={[
+            {
+              ...prerequisites[0]!,
+              pathId: "skills/python-fundamentals",
+            },
+          ]}
+        />,
+      );
     });
 
     Then("the page lists each prerequisite course with a link to its canonical URL", () => {
-      cleanup();
-      // EWT-002 fix: `pathId` is now carried per-item (set only when that prerequisite is itself a
-      // member of the active manifest) rather than as a blanket prop applied to every prerequisite.
-      const pathAwarePrerequisites = [
-        {
-          title: "Version Control and Git",
-          slug: "learn/courses/version-control-and-git",
-          pathId: "skills/python-fundamentals",
-        },
-      ];
-      render(<PrerequisiteList locale="en" prerequisites={pathAwarePrerequisites} />);
       expect(screen.getByRole("link", { name: "Version Control and Git" }).getAttribute("href")).toBe(
         "/en/learn/courses/version-control-and-git?path=skills/python-fundamentals",
       );
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/prerequisite-display.feature:A course page surfaces its declared prerequisites
     And("the prerequisite list renders even in the canonical no-path view", () => {
       cleanup();
       render(<PrerequisiteList locale="en" prerequisites={prerequisites} />);

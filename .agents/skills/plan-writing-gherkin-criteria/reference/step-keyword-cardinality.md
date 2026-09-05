@@ -1,31 +1,21 @@
-# Gherkin Acceptance Criteria — Step-Keyword Cardinality (HARD Rule)
+# Gherkin Acceptance Criteria — Journey Coherence
 
-> **HARD rule — one primary keyword each**: Every `Scenario` MUST use exactly **one** primary `Given` line, exactly **one** primary `When` line, and exactly **one** primary `Then` line. Every additional precondition, action, or outcome MUST be chained with `And` or `But` — never a repeated `Given` / `When` / `Then` keyword. This reinforces the "one action / one behavior per scenario" norm.
->
-> **Exemptions**: `Background` blocks and `Scenario Outline` `Examples` tables are exempt from the one-each constraint.
+Every scenario requires an explicit `When` and `Then`. Prefer `And`/`But` when a step simply
+continues the previous semantic phase, but do not impose a one-primary-keyword cardinality rule.
 
-**Conforming example**:
+Repeat `Given`, `When`, or `Then` when the steps describe one continuous user journey. Split a
+scenario only when its actions/outcomes are independently meaningful or unrelated. Never rewrite
+an existing coherent journey solely for keyword uniformity.
 
-```gherkin
-Scenario: Login succeeds
-  Given a registered user
-  And the login page is open
-  When the user submits valid credentials
-  Then the dashboard is shown
-  And a session token is set
-```
-
-**Non-conforming example** (violates — two primary `When` keyword lines):
+Scenario Outline rows expand into separate executable scenarios. Each expanded scenario must map
+to Unit and every applicable higher-layer adapter under the
+[BDD standard](../../../../repo-governance/development/behaviour-driven-development.md).
 
 ```gherkin
-# Deliberate non-conforming example — repeats the primary When keyword
-Scenario: Login succeeds
-  Given a registered user
-  When the user opens the login page
-  When the user submits valid credentials
-  Then the dashboard is shown
+Scenario: Complete a two-step recovery journey
+  Given a member has an expired session
+  When the member requests a recovery code
+  Then the request is recorded
+  When the member submits the valid code
+  Then the session is restored
 ```
-
-(The fix replaces the second `When` with `And`.)
-
-**Canonical convention**: [Acceptance Criteria Convention §Step-Keyword Cardinality (HARD Rule)](../../../../repo-governance/development/infra/acceptance-criteria.md#step-keyword-cardinality-hard-rule) — the deterministic `rhino-cli repo-governance gherkin-keyword-cardinality` audit enforces this rule on `.feature` files, and `plan-checker` / `repo-rules-checker` apply it to Gherkin fences in plan markdown.

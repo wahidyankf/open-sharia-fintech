@@ -11,20 +11,20 @@ learner sees, what a tRPC procedure returns, or what a build-time script must pr
 
 - [Architecture](./architecture.md) — the current as-built system: its context, the one container it
   deploys, the bounded contexts inside it, and the constraints that bind them.
-- [Behaviors](./behaviors/README.md) — the recursive Gherkin corpus, split by the perspective a
+- [Behaviours](./behaviours/README.md) — the recursive Gherkin corpus, split by the perspective a
   scenario takes rather than by deployable.
 
 ## Why one owner
 
 AyoKoding ships exactly one deployable. The server tier and the browser tier are two runtime tiers
 of the same Next.js container, and the build-time index generators run before it is built. All three
-therefore belong to one owner corpus, with `behaviors/` carrying the split:
+therefore belong to one owner corpus, with `behaviours/` carrying the split:
 
-| Directory                | Perspective                                                         |
-| ------------------------ | ------------------------------------------------------------------- |
-| `behaviors/frontend/`    | what a learner sees — DOM, navigation, accessibility, locale toggle |
-| `behaviors/backend/`     | what a tRPC procedure returns — shapes, error codes, locale scoping |
-| `behaviors/build-tools/` | what the build-time index generators must produce                   |
+| Directory                 | Perspective                                                         |
+| ------------------------- | ------------------------------------------------------------------- |
+| `behaviours/frontend/`    | what a learner sees — DOM, navigation, accessibility, locale toggle |
+| `behaviours/backend/`     | what a tRPC procedure returns — shapes, error codes, locale scoping |
+| `behaviours/build-tools/` | what the build-time index generators must produce                   |
 
 ## Related
 

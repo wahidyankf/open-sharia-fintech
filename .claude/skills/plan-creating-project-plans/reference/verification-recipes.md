@@ -18,7 +18,7 @@ See [Plan Anti-Hallucination Convention](../../../../repo-governance/development
 | Test name         | `Grep` test files; if NEW, mark `_New test_`                                                                      |
 | Agent / skill     | `find .claude/agents -name '<name>.md'` (nested role subfolders) or `Bash test -f .claude/skills/<name>/SKILL.md` |
 | External standard | Delegate to `web-researcher`; cite URL + access date + excerpt                                                    |
-| Behavior claim    | `web-researcher` with cited official-doc excerpt                                                                  |
+| Behaviour claim   | `web-researcher` with cited official-doc excerpt                                                                  |
 | Cross-link target | `Bash test -f` on the resolved relative path                                                                      |
 | Numeric KPI       | Forbidden as bare fact; observable check / cited measurement / `_Judgment call:_` only                            |
 

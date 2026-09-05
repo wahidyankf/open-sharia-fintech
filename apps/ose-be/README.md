@@ -96,25 +96,33 @@ Useful starting points:
   and the HTTP host.
 - [`src/OseBe/WebApp.fs`](./src/OseBe/WebApp.fs) brings the bounded-context routes together.
 - [`db/migrations/`](./db/migrations/) contains the embedded PostgreSQL migrations.
-- [`specs/apps/ose/`](../../specs/apps/ose/README.md) contains the product, behavior, and contract
+- [`specs/apps/ose/`](../../specs/apps/ose/README.md) contains the product, behaviour, and contract
   specifications.
 
 ## Common commands
 
 Run these from the repository root.
 
-| Command                                      | Use it for                                                                  |
-| -------------------------------------------- | --------------------------------------------------------------------------- |
-| `npm exec nx -- run ose-be:codegen`          | Generate F# contract types from the bundled OpenAPI specification.          |
-| `npm exec nx -- run ose-be:dev`              | Run the backend with file watching.                                         |
-| `npm exec nx -- run ose-be:build`            | Produce the release build.                                                  |
-| `npm exec nx -- run ose-be:typecheck`        | Compile and type-check the F# service.                                      |
-| `npm exec nx -- run ose-be:lint`             | Run formatting and strict F# analysis.                                      |
-| `npm exec nx -- run ose-be:test:unit`        | Run the fast F# unit tests.                                                 |
-| `npm exec nx -- run ose-be:test:integration` | Test migrations and repositories against a temporary PostgreSQL container.  |
-| `npm exec nx -- run ose-be:test:quick`       | Run the backend's focused quality gate, including specs coverage.           |
-| `npm exec nx -- run ose-be-e2e:test:e2e`     | Run the separate Playwright backend end-to-end suite with local containers. |
+| Command                                      | Use it for                                                                                       |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `npm exec nx -- run ose-be:codegen`          | Generate F# contract types from the bundled OpenAPI specification.                               |
+| `npm exec nx -- run ose-be:dev`              | Run the backend with file watching.                                                              |
+| `npm exec nx -- run ose-be:build`            | Produce the release build.                                                                       |
+| `npm exec nx -- run ose-be:typecheck`        | Compile and type-check the F# service.                                                           |
+| `npm exec nx -- run ose-be:lint`             | Run formatting and strict F# analysis.                                                           |
+| `npm exec nx -- run ose-be:test:unit`        | Run the fast F# unit tests.                                                                      |
+| `npm exec nx -- run ose-be:test:integration` | Test owned filesystem/process-environment adapters with isolated local resources and no network. |
+| `npm exec nx -- run ose-be:test:quick`       | Run the backend's focused quality gate, including specs coverage.                                |
+| `npm exec nx -- run ose-be-e2e:test:e2e`     | Run the separate Playwright backend end-to-end suite with local containers.                      |
 
-For the backend's expected behavior, see the
-[Gherkin scenarios](../../specs/apps/ose/be/behaviors/README.md). For the broader product
+For the backend's expected behaviour, see the
+[Gherkin scenarios](../../specs/apps/ose/be/behaviours/README.md). For the broader product
 direction, see the [OSE application overview](../../specs/apps/ose/overview.md).
+
+## BDD and Testing
+
+The canonical corpus is `specs/apps/ose/be/behaviours/`. `test:unit` uses injected boundary
+doubles; `test:integration` exercises owned non-networked local resources; and the dedicated
+`ose-be-e2e:test:e2e` target owns public HTTP/messaging proof. Matching `test:coverage:*` targets
+validate all applicable adapters statically. Owner-local E2E runtime is omitted because the
+dedicated project owns that boundary.

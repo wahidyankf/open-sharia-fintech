@@ -42,7 +42,7 @@ void transfer_shouldMoveMoneyBetweenAccounts() {
     Account source = new Account("A", Money.of(100));
     Account target = new Account("B", Money.of(50));
 
-    // Act: Execute behavior under test
+    // Act: Execute behaviour under test
     transferService.transfer(source, target, Money.of(30));
 
     // Assert: Verify outcome
@@ -54,10 +54,10 @@ void transfer_shouldMoveMoneyBetweenAccounts() {
 
 ## Test Naming Conventions
 
-**Production standard**: `[method]_should[Behavior]_when[Condition]`
+**Production standard**: `[method]_should[Behaviour]_when[Condition]`
 
-- Clear behavior specification
-- Fails become documentation of broken behavior
+- Clear behaviour specification
+- Fails become documentation of broken behaviour
 - Readable test reports for non-developers
 
 ## Security Considerations
@@ -99,7 +99,7 @@ void api_shouldAuthenticate() {
 
 - Financial calculations (correctness critical)
 - Complex business logic (many edge cases)
-- Public APIs (behavior contracts)
+- Public APIs (behaviour contracts)
 - Refactoring legacy code (regression safety)
 
 ### Simpler Approaches When:

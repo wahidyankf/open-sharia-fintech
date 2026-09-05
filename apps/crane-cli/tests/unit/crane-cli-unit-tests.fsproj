@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <Compile Include="Steps/BddState.fs" />
+    <Compile Include="Steps/InMemoryBoundaries.fs" />
     <Compile Include="Steps/PdfSteps.fs" />
     <Compile Include="Steps/TextSteps.fs" />
     <Compile Include="Steps/HeadingSteps.fs" />
@@ -29,10 +30,6 @@
     <Compile Include="Tests/FigureCheckerTests.fs" />
     <Compile Include="Tests/MermaidValidatorTests.fs" />
     <Compile Include="Tests/OcrAssessorTests.fs" />
-    <Compile Include="Tests/ReportManagerTests.fs" />
-    <Compile Include="Tests/SkiplistManagerTests.fs" />
-    <Compile Include="Tests/PdfExtractionCacheTests.fs" />
-    <Compile Include="Tests/CliAdapterTests.fs" />
     <Compile Include="Suite.fs" />
   </ItemGroup>
 
@@ -56,6 +53,10 @@
 
   <ItemGroup>
     <ProjectReference Include="../../crane-cli.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="../../../../specs/apps/crane/cli/behaviours/**/*.feature" />
   </ItemGroup>
 
   <ItemGroup>

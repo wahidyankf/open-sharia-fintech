@@ -7,7 +7,6 @@ open OseBe.Contexts.InternalPolicy.Domain
 open OseBe.Contexts.InternalPolicy.Api
 open OseBe.Tests.Unit.Steps.BddState
 
-// @covers specs/apps/ose/be/behaviors/internal-policy/internal-policy.feature:Internal policy context is declared
 [<Fact>]
 let ``internal-policy reports ready to accept internal policy documents`` () =
     let readiness = initializeContext ()

@@ -21,7 +21,7 @@ when_to_use: Use when checking which repo-governance conventions govern a specif
 
 ## Notes
 
-- **Fully inherits per-plan behavior** — this document is intentionally thin; its only job is
+- **Fully inherits per-plan behaviour** — this document is intentionally thin; its only job is
   cross-plan scheduling. When in doubt about a per-plan step, defer to `plan-execution.md`.
 - **Observable** — the union Task list plus the DAG and summary reports make the parallel schedule
   legible before, during, and after the run.

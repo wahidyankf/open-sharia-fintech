@@ -33,7 +33,7 @@ inputs:
     type: enum
     values: [worktree-to-pr]
     description: >
-      This workflow's own git delivery behavior for the changes it makes to plans/ideas/**. Fixed at
+      This workflow's own git delivery behaviour for the changes it makes to plans/ideas/**. Fixed at
       worktree-to-pr — unconditional, no override. This workflow's write scope is strictly
       plans/ideas/** (see the Scope Boundary below), which by construction is never an
       infrastructure-as-code change, so the ose-private infrastructure-as-code carve-out (Plans

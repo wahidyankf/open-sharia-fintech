@@ -7,7 +7,7 @@
 - **All work converges on `main`** (the "trunk") — one integration target, no long-lived parallel lines
 - **Small, frequent commits** integrated continuously, many times a day
 - **Short-lived branches** - single-purpose, landed within 1-2 days; TBD forbids _long-lived_ branches, not branches
-- **Feature flags** for complete-and-inert increments of incomplete behavior, so nothing needs an
+- **Feature flags** for complete-and-inert increments of incomplete behaviour, so nothing needs an
   open branch to stay hidden and every merged state remains production-deployable
 - **Continuous integration** enabled by that frequent landing
 
@@ -34,7 +34,7 @@ full detail.
 **Tradeoffs**:
 
 - **Requires discipline**: Commits must be small and safe
-- **Needs feature flags**: Keep incomplete behavior complete-and-inert behind temporary
+- **Needs feature flags**: Keep incomplete behaviour complete-and-inert behind temporary
   production-disabled flags, with both paths tested and rollout, rollback, and removal recorded
 - **Depends on CI/CD**: Automated tests prevent breakage
 - **Cultural shift**: Teams used to long-lived branches must adapt

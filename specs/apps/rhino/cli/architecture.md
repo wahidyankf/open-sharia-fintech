@@ -37,7 +37,7 @@ rather than a code change.
 | ------------------------------------- | ----------------------------------------------- | --------------------------------------------------------------- |
 | `rhino-cli-fsharp`                    | one self-contained .NET 10 executable           | published by `nx run rhino-cli:build` to `src/dist/`            |
 | `apps/rhino-cli/scripts/rhino-bin.sh` | resolver shim every generated gate command uses | `RHINO_CLI_FSHARP_BIN`, then `src/dist/`, then `dotnet run`     |
-| Nx targets                            | the named surfaces that invoke the binary       | `test:quick`, `test:specs`, and the per-gate validation targets |
+| Nx targets                            | the named surfaces that invoke the binary       | `test:quick`, static `test:coverage:*`, and per-gate validation |
 
 The shim exists so a gate invocation skips the .NET SDK's per-run startup cost once a binary is
 available. It passes argv through unchanged and `exec`s, so no exit code is swallowed or remapped.
@@ -109,5 +109,5 @@ collapsing every node to rank 0.
 
 ## Related
 
-- [Behaviors](./behaviors/README.md) — the scenarios this system must satisfy.
+- [Behaviours](./behaviours/README.md) — the scenarios this system must satisfy.
 - [`apps/rhino-cli/README.md`](../../../../apps/rhino-cli/README.md) — the implementing project.

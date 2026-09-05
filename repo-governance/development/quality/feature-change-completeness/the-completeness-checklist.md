@@ -18,11 +18,11 @@ when_to_use: "Use as a final check before declaring a feature change done."
 
 Before declaring a feature change complete, verify:
 
-- [ ] **Gherkin specs** reflect the new/changed/removed behavior
+- [ ] **Gherkin specs** reflect the new/changed/removed behaviour
 - [ ] **OpenAPI contracts** reflect the new/changed/removed API surface (if applicable)
 - [ ] **Unit tests** cover the new/changed logic (coverage thresholds met)
 - [ ] **Integration tests** cover cross-component interactions (if applicable)
 - [ ] **E2E tests** cover user-facing flows (if applicable)
-- [ ] **Documentation** reflects the new/changed behavior (READMEs, docs/, inline)
+- [ ] **Documentation** reflects the new/changed behaviour (READMEs, docs/, inline)
 - [ ] **C4 diagrams** reflect architectural changes (if applicable)
 - [ ] **specs/README.md** updated (if project structure changed)

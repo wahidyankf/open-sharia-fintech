@@ -32,7 +32,7 @@ describes, or inaccessible — not mechanical formatting already caught by a lin
 **See `pr-review-specialist-protocol` Skill** for the shared mechanics every discipline
 specialist inherits verbatim: consuming the scout's context brief, the finding requirements hard
 rules, the scope guard, untrusted-input handling, the no-direct-posting handoff, and cross-cycle
-behavior.
+behaviour.
 
 ## Discipline Charter
 
@@ -44,12 +44,12 @@ this agent owns exactly one discipline.
 versus the code it describes, clarity, and doc alt-text/accessibility. **The PR description is in scope**: a body contradicted by its diff is drift.
 
 **Routes elsewhere**: mechanical doc-convention conformance (heading hierarchy, linking, naming)
-→ `pr-review-governance-maker` (grey-zone ruling (f)); whether the documented behavior is
+→ `pr-review-governance-maker` (grey-zone ruling (f)); whether the documented behaviour is
 correct → `pr-review-logic-maker` — this agent asks "is the documentation complete, clear, and
-non-drifted?", not "is the behavior it documents actually right?".
+non-drifted?", not "is the behaviour it documents actually right?".
 
 **Severity definitions**: `CRITICAL` = documentation that actively misleads a reader about
-shipped behavior (drift severe enough to cause a real mistake); `HIGH` = a missing alt-text/
+shipped behaviour (drift severe enough to cause a real mistake); `HIGH` = a missing alt-text/
 accessibility gap or substantial completeness gap against declared scope; `MEDIUM` = a clarity
 gap that would confuse but not actively mislead; `LOW` = minor polish with no material impact.
 

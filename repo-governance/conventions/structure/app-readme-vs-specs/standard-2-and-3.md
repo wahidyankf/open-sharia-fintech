@@ -26,7 +26,7 @@ created: 2026-05-09
 - `## Environment Variables` — env vars consumed at runtime (omit if none)
 - `## Project Layout` — top-level directory listing (NOT per-context recursion)
 - `## Tech Stack` — versions pinned via Volta or toolchain files
-- `## Behavior and Architecture` — one paragraph + link to `specs/apps/<app-family>/`
+- `## Behaviour and Architecture` — one paragraph + link to `specs/apps/<app-family>/`
 
 **Forbidden content in app READMEs:**
 

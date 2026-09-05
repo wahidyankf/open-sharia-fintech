@@ -16,17 +16,19 @@ when_to_use: "Read this index to find the right Nx Target Standards child docume
 - [Tag Convention — Four-Dimension Scheme](./tag-convention-four-dimension-scheme.md) — Defines the four required project.json tag dimensions (type, platform, language, domain) and the special-case rules for Rust libs and tooling projects.
 - [Tag Convention — Tags, Examples, and Anti-Patterns](./tag-convention-current-tags-and-examples.md) — The current per-project tag table, two worked tag-declaration examples, and the tag anti-patterns to avoid.
 - [Mandatory Targets — Summary Matrix](./mandatory-targets-summary-matrix.md) — The per-project-type summary matrix of which mandatory targets are real versus echo, plus backend typecheck examples and CI schedules.
-- [Mandatory Targets — Mandatory-Six and Required-Where-Applicable Targets](./mandatory-targets-all-projects-six-and-required.md) — The mandatory-six targets every registered project must declare, and the required-where-applicable targets declared only when a condition applies.
+- [Mandatory and Applicable Nx Targets](./mandatory-targets-all-projects-six-and-required.md) — Real targets required by project role and boundary.
 - [Mandatory Targets — test:quick Composition and Gate-Surface Rule](./mandatory-targets-all-projects-quick-and-gate.md) — The canonical five-step test:quick composition with a worked rhino-cli example, and the gate-surface / scheduled-tier rule.
 - [Mandatory Targets — Type, Build, Server, and Unit-Test Requirements](./mandatory-targets-type-build-server-unit.md) — Requirements for typecheck on statically typed projects, build on compiled/bundled projects, dev/start on server apps, and test:unit.
-- [Projects with Integration Tests](./mandatory-targets-integration-tests.md) — The two integration-test patterns (Docker+PostgreSQL for API backends, in-process mocking elsewhere) and the Rust CLI two-test-file convention.
+- [Projects with Integration Tests](./mandatory-targets-integration-tests.md) — Applicability and
+  runtime rules for deterministic local-resource tests, including the prohibition on network and
+  loopback access.
 - [Mandatory Targets — CLI and E2E Test Projects](./mandatory-targets-cli-e2e.md) — The run/install targets required on CLI applications and the install/test:e2e/test:e2e:ui/test:e2e:report targets required on \*-e2e projects.
-- [Specs:Behavior:Coverage Projects](./mandatory-targets-specs-behavior-coverage.md) — The specs:behavior:coverage command-flag reference and per-project coverage-status table for Gherkin behavior-level validation.
+- [Mandatory Static Behaviour Coverage](./mandatory-targets-behaviour-coverage.md) — Canonical corpus, adapter, and exemption validation without test execution.
 - [Accessibility Testing](./mandatory-targets-accessibility-testing.md) — The two-level accessibility testing requirement (static a11y linting and runtime axe-core E2E tests) for UI projects.
 - [Workspace Defaults, Caching, and Build Output](./workspace-defaults-caching-build-output.md) — The nx.json targetDefaults block, the per-target caching-rules table, and the build output directory conventions.
 - [Cache and Inputs Convention — Canonical Inputs](./cache-and-inputs-convention-canonical.md) — Why explicit inputs are required for correct cache invalidation, with canonical Rust/Go input examples for CLI apps and API backends.
 - [Cross-Repo rhino-cli Byte-Identity Standard](./cache-cross-repo-byte-identity.md) — The four rules holding apps/rhino-cli to a stricter, byte-identical standard across ose-public and ose-private.
 - [Codegen Dependency Chain](./codegen-dependency-chain.md) — The codegen -> typecheck / codegen -> build dependency chain for apps with OpenAPI contract specs.
-- [Anti-Patterns — Echo Placeholders](./anti-patterns-echo-placeholders.md) — Clarifies that echo placeholders for test:unit/test:integration/test:e2e are required, not an anti-pattern -- omitting the mandatory-six is.
+- [Anti-Pattern — Echo and No-Op Test Targets](./anti-patterns-echo-placeholders.md) — Omit inapplicable boundaries instead of claiming false proof.
 - [Target Anti-Patterns](./target-anti-patterns.md) — The catalog of Nx target anti-patterns to avoid -- non-standard names, omitted mandatory targets, heavy test:quick, and more.
 - [Principles Traceability](./principles-traceability.md) — Maps each major Nx target design decision to the software-engineering principle it implements.

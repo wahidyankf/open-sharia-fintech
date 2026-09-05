@@ -7,8 +7,8 @@ title: "Reference"
 - [01 Validation Scope](./validation-scope.md) — the core responsibility and scope of post-execution plan verification
 - [02 Workflow Overview](./workflow-overview.md) — the workflow overview, sharing the Step-0/Final-Step report scaffold with repo-applying-maker-checker-fixer
 - [03 Operational Readiness Execution](./operational-readiness-execution.md) — verifying operational readiness was actually executed (Step 5b)
-- [04 Manual Assertions Ui Api E2e Locale](./manual-assertions-ui-api-e2e-locale.md) — verifying manual UI, API, end-to-end, and locale behavioral assertions (Step 5c)
-- [05 Manual Assertions Evidence And Retests](./manual-assertions-evidence-and-retests.md) — evidence capture and retest requirements for manual behavioral assertions (Step 5c continued)
+- [04 Manual Assertions Ui Api E2e Locale](./manual-assertions-ui-api-e2e-locale.md) — verifying manual UI, API, end-to-end, and locale behavioural assertions (Step 5c)
+- [05 Manual Assertions Evidence And Retests](./manual-assertions-evidence-and-retests.md) — evidence capture and retest requirements for manual behavioural assertions (Step 5c continued)
 - [06 Plan Archival](./plan-archival.md) — verifying plan archival and README updates were completed (Step 5d)
 - [07 Worktree Verification Declaration And History](./worktree-verification-declaration-and-history.md) — verifying the worktree was used, via declaration and git history (Step 5e)
 - [08 Worktree Verification Freshness Cleanup And Cap](./worktree-verification-freshness-cleanup-and-cap.md) — verifying worktree freshness sync, cleanup, and the one-worktree cap (Step 5e continued)

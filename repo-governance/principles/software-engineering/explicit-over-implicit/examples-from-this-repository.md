@@ -25,12 +25,12 @@ when_to_use: Use to find an existing explicit configuration to reuse or extend.
 npx lint-staged
 ```
 
-**Explicit behavior**:
+**Explicit behaviour**:
 
 - Hook triggers on pre-commit
 - Runs `npx lint-staged` command
 - No hidden magic
-- Behavior visible in file
+- Behaviour visible in file
 
 ## Prettier Configuration
 
@@ -48,7 +48,7 @@ npx lint-staged
 }
 ```
 
-**Explicit behavior**:
+**Explicit behaviour**:
 
 - File patterns explicitly listed
 - Command explicitly stated
@@ -69,9 +69,9 @@ npx lint-staged
 }
 ```
 
-**Explicit behavior**:
+**Explicit behaviour**:
 
 - Path alias explicitly mapped
 - Exact file path specified
 - No convention-based discovery
-- Behavior traceable
+- Behaviour traceable

@@ -1,7 +1,11 @@
-import { describe, it, expect } from "vitest";
+import { afterEach, describe, it, expect, vi } from "vitest";
 import { formatRelativeTime } from "../../../../src/shared/utils/format-relative-time";
 
 const now = new Date("2024-01-15T12:00:00.000Z");
+
+afterEach(() => {
+  vi.useRealTimers();
+});
 
 describe("formatRelativeTime", () => {
   it("returns 'just now' for less than 60 seconds ago", () => {
@@ -53,7 +57,9 @@ describe("formatRelativeTime", () => {
   });
 
   it("uses current date when now is not provided", () => {
-    const recentIso = new Date(Date.now() - 5000).toISOString();
+    vi.useFakeTimers();
+    vi.setSystemTime(now);
+    const recentIso = new Date(now.getTime() - 5000).toISOString();
     expect(formatRelativeTime(recentIso)).toBe("just now");
   });
 });

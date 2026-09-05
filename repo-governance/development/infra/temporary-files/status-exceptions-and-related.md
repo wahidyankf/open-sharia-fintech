@@ -77,7 +77,7 @@ This convention provides:
 2. **Prevent Clutter** - No temporary files scattered across the repository
 3. **Easy Cleanup** - Both directories can be safely cleared when needed
 4. **Traceability** - Generated reports include dates for tracking
-5. **Consistent Behavior** - All agents follow the same pattern
+5. **Consistent Behaviour** - All agents follow the same pattern
 
 ## Important Notes
 

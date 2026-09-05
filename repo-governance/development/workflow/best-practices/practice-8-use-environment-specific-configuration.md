@@ -37,5 +37,5 @@ const DB_URL = "production-db.example.com";  # Hardcoded!
 
 - Safe local development
 - No production credentials in code
-- Environment-specific behavior
+- Environment-specific behaviour
 - Follows 12-factor app principles

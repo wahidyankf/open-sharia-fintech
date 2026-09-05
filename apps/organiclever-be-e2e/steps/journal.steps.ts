@@ -1,7 +1,7 @@
 /**
  * Step definitions for the OrganicLever BE journal CRUD feature.
  *
- * Covers: specs/apps/organiclever/be/behaviors/journal/journal-crud.feature
+ * Covers: specs/apps/organiclever/be/behaviours/journal/journal-crud.feature
  *
  * All HTTP calls target POST/GET/PUT/DELETE /api/v1/journal/entries (and /{id}),
  * which are implemented by the F# Giraffe journal context.
@@ -9,6 +9,7 @@
 import { expect } from "@playwright/test";
 import { createBdd } from "playwright-bdd";
 import { setResponse, getResponse, clearResponse } from "../utils/response-store";
+import { ensureBackendStarted } from "./backend-process";
 
 const { Given, When, Then, Before } = createBdd();
 
@@ -20,8 +21,10 @@ Before(() => {
   createdEntryId = null;
 });
 
-Given("the journal API is running", async () => {
-  // No-op: the test suite assumes the API is running at baseURL.
+Given("the journal API is running", async ({ request }) => {
+  await ensureBackendStarted();
+  const readinessResponse = await request.get("/api/v1/health");
+  expect(readinessResponse.status()).toBe(200);
 });
 
 Given("a journal entry has been created", async ({ request }) => {
@@ -76,21 +79,17 @@ When("a client deletes the journal entry", async ({ request }) => {
   setResponse(await request.delete(`/api/v1/journal/entries/${createdEntryId}`));
 });
 
-// @covers specs/apps/organiclever/be/behaviors/journal/journal-crud.feature:Reject a journal entry with a blank name
-// @covers specs/apps/organiclever/be/behaviors/journal/journal-crud.feature:Fetch a missing journal entry
 // oxlint-disable-next-line no-empty-pattern
 Then("the journal response status code should be {int}", async ({}, expectedStatus: number) => {
   expect(getResponse().status()).toBe(expectedStatus);
 });
 
-// @covers specs/apps/organiclever/be/behaviors/journal/journal-crud.feature:Create a journal entry
 Then("the journal response body should include an id", async () => {
   const body = (await getResponse().json()) as Record<string, unknown>;
   expect(typeof body["id"]).toBe("string");
   expect((body["id"] as string).length).toBeGreaterThan(0);
 });
 
-// @covers specs/apps/organiclever/be/behaviors/journal/journal-crud.feature:List journal entries
 Then("the journal list should include the created entry", async () => {
   expect(createdEntryId).not.toBeNull();
   const entries = (await getResponse().json()) as Array<Record<string, unknown>>;
@@ -98,13 +97,11 @@ Then("the journal list should include the created entry", async () => {
   expect(found).toBe(true);
 });
 
-// @covers specs/apps/organiclever/be/behaviors/journal/journal-crud.feature:Update a journal entry
 Then("the updated journal entry should reflect the new name", async () => {
   const body = (await getResponse().json()) as Record<string, unknown>;
   expect(body["name"]).toBe("focus");
 });
 
-// @covers specs/apps/organiclever/be/behaviors/journal/journal-crud.feature:Delete a journal entry
 Then("fetching the deleted journal entry should return 404", async ({ request }) => {
   expect(createdEntryId).not.toBeNull();
   const resp = await request.get(`/api/v1/journal/entries/${createdEntryId}`);

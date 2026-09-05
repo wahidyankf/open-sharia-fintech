@@ -1,6 +1,6 @@
 ---
 title: "Step 6 — Quality Gate"
-description: Describes invoking plan-quality-gate at strict mode and the success criteria and retry behavior.
+description: Describes invoking plan-quality-gate at strict mode and the success criteria and retry behaviour.
 when_to_use: Use when running the plan-quality-gate workflow as Step 6 of plan-establishment.
 ---
 

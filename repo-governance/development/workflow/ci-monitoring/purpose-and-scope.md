@@ -23,7 +23,7 @@ The target audience is any agent or developer performing the post-push CI verifi
 - Correct tool selection for watching CI runs to completion
 - Minimum poll intervals when manual polling is unavoidable
 - Trigger discipline to avoid redundant concurrent runs
-- Rate limit budget facts and window behavior
+- Rate limit budget facts and window behaviour
 - Recovery procedure when rate-limited (HTTP 403 from `gh`)
 - Runner/action contention across the shared, limited OSE runner pools (free hosted + self-hosted) and the wait-and-check response
 - Retriggering a genuinely stuck run (no contention) via rebase-and-push

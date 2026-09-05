@@ -14,7 +14,6 @@ When("the client calls meta.health", async ({ request }) => {
   backendState.healthResult = extractTrpcData(body);
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/backend/health/health-check.feature:meta.health returns status ok
 Then('the response should contain "status" equal to "ok"', async () => {
   expect(backendState.healthResult).toMatchObject({ status: "ok" });
 });
@@ -37,7 +36,6 @@ Then('the "languages" array should include "en"', async () => {
   expect(languages.some((l) => l.code === "en")).toBe(true);
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/backend/health/health-check.feature:meta.languages returns the list of available locales
 Then('the "languages" array should include "id"', async () => {
   const languages = backendState.languagesResult as { code: string }[];
   expect(languages.some((l) => l.code === "id")).toBe(true);

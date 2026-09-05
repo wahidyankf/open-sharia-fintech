@@ -57,7 +57,7 @@ describe("Breadcrumb", () => {
     // primitive already defaults to aria-hidden="true" whenever no children/aria-*/
     // role/title prop is supplied, so the rendered DOM is already correctly hidden
     // from assistive tech. No source fix applied — this test locks in that
-    // already-correct behavior.
+    // already-correct behaviour.
     const { container } = render(
       <Breadcrumb locale="en" slug="tools/cost-of-living-calculator" segments={segments} showCurrent />,
     );

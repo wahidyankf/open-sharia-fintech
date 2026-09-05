@@ -60,7 +60,7 @@ See reference module 01 in the skill for both patterns in full.
 When invoked by `rules-quality-gate`, consume `delegated-gate-ids` and never repair or revalidate
 those exact predicates. Missing/stale lifecycle evidence remains `pending`; it is not fixer work.
 After edits, intersect changed files with delegated scopes, invalidate only affected evidence, and
-return the updated ledger. Standalone invocation retains the complete audit-fix behavior.
+return the updated ledger. Standalone invocation retains the complete audit-fix behaviour.
 
 ## When to Use This Agent
 

@@ -147,9 +147,22 @@ repo-wide `md links validate` check runs as the `md-links` job in this workflow.
 ### Registry-derived CI matrix
 
 The former scheduled whole-repository quality workflow is retired. Gate-surface checks run through
-`pr-quality-gate.yml`; scheduled service workflows retain only their explicit integration, E2E, audit,
-or deployment responsibilities. This deliberately trades periodic all-project revalidation for a
-single enforced gate definition on PRs and pushes to `main`.
+`pr-quality-gate.yml`; scheduled service workflows retain their explicit full test-layer, audit, or
+deployment responsibilities. Product workflows cover their owning groups, while
+`non-product-full-quality.yml` covers libraries and executable tools.
+
+### Non-Product Full-Quality Workflow
+
+**File**: `.github/workflows/non-product-full-quality.yml`
+
+**Trigger**: Scheduled at 8 AM and 8 PM WIB daily or manual `workflow_dispatch`
+
+**Steps**: Run complete non-product Unit and static quick gates serially, then every applicable
+non-networked Integration suite, then every applicable complete public-boundary E2E suite. The
+ordered jobs fail closed; Integration and E2E remain outside pre-commit, pre-push, and PR/main.
+
+**Purpose**: Ensure libraries and executable tools receive full scheduled test-layer coverage even
+when no product deployment workflow owns them.
 
 ### AyoKoding Web Test + Deploy Workflow
 
@@ -184,11 +197,11 @@ single enforced gate definition on PRs and pushes to `main`.
 
 **Steps:**
 
-1. Run `specs:coverage` across the OrganicLever app projects (`organiclever-be`, `organiclever-app-web`, `organiclever-be-e2e`, and the app-web E2E projects)
+1. Run each project's static `test:coverage:behaviour` validator across the OrganicLever app projects (`organiclever-be`, `organiclever-app-web`, `organiclever-be-e2e`, and the app-web E2E projects)
 2. Run `fe-lint` for `organiclever-app-web`
-3. Run `be-integration` tests with docker-compose (real PostgreSQL) under the `organiclever-app-staging` env
-4. Run `fe-integration` tests (MSW-mocked)
-5. Run combined `e2e` stage: full stack via docker-compose, then the `organiclever-be-e2e` (`BASE_URL: http://localhost:8202`) and `organiclever-app-web` FE E2E (`WEB_BASE_URL: http://localhost:3202`) Playwright tests
+3. Run backend and frontend Integration suites only for their isolated non-network local-resource boundaries
+4. Start the full Docker Compose stack, including PostgreSQL, for E2E proof through public boundaries
+5. Run the `organiclever-be-e2e` (`BASE_URL: http://localhost:8202`) and `organiclever-app-web` FE E2E (`WEB_BASE_URL: http://localhost:3202`) Playwright tests with isolated synthetic data
 6. `detect-changes`: check the app paths vs previous commit
 7. `deploy` (gated on all test jobs + `detect-changes == true`): "deploy" by force-pushing `HEAD` to BOTH `stag-organiclever-app-web` (Vercel auto-builds the staging app) and `stag-organiclever-be` (the be-build-deploy workflow fires for the backend image)
 

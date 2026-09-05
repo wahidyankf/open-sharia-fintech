@@ -32,7 +32,7 @@ Technology stack summary, quality tools, and future architecture considerations 
 - **Framework**: Giraffe (ASP.NET Core)
 - **Language**: F# (.NET 10)
 - **Build**: dotnet via Nx
-- **Testing**: NUnit / xUnit + Testcontainers (>=90% coverage)
+- **Testing**: NUnit / xUnit + Testcontainers (>=99% Unit line coverage)
 - **Applications**: organiclever-be, ose-be
 
 ### CLI Tools

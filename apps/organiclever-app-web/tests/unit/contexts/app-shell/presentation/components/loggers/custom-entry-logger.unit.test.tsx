@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { render, screen, fireEvent, cleanup } from "@testing-library/react";
+import { render, screen, fireEvent, cleanup, waitFor } from "@testing-library/react";
 import { CustomEntryLogger } from "../../../../../../../src/contexts/app-shell/presentation/components/loggers/custom-entry-logger";
 import type { JournalRuntime } from "@/contexts/journal/application";
 
@@ -62,14 +62,23 @@ describe("CustomEntryLogger", () => {
     expect(saveButton?.disabled).toBe(false);
   });
 
-  it("calls onSaved after saving with valid name", () => {
+  it("calls onSaved only after persistence succeeds", async () => {
     const onSaved = vi.fn();
-    render(<CustomEntryLogger isOpen={true} onClose={vi.fn()} onSaved={onSaved} runtime={makeRuntime()} />);
+    let resolvePersistence: (value: unknown[]) => void = () => undefined;
+    const persistence = new Promise((resolve) => {
+      resolvePersistence = resolve;
+    });
+    const runtime = {
+      runPromise: vi.fn().mockReturnValue(persistence),
+    } as unknown as JournalRuntime;
+    render(<CustomEntryLogger isOpen={true} onClose={vi.fn()} onSaved={onSaved} runtime={runtime} />);
     const nameInput = screen.getByPlaceholderText("e.g. Evening walk, Cold shower, Meditation");
     fireEvent.change(nameInput, { target: { value: "Evening walk" } });
     const saveButtons = screen.getAllByText("Save");
     fireEvent.click(saveButtons[0] as HTMLElement);
-    expect(onSaved).toHaveBeenCalledTimes(1);
+    expect(onSaved).not.toHaveBeenCalled();
+    resolvePersistence([]);
+    await waitFor(() => expect(onSaved).toHaveBeenCalledTimes(1));
   });
 
   it("does not call onSaved when name is empty (fails validation)", () => {

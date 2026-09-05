@@ -76,7 +76,6 @@ graph TD
 graph TD
   %% E2E tests (top level)
   OLWWWFEE2E[organiclever-www-fe-e2e]
-  OLWWWBEE2E[organiclever-www-be-e2e]
   OLAPPE2E[organiclever-app-web-e2e]
   OLBE2E[organiclever-be-e2e]
 
@@ -91,7 +90,6 @@ graph TD
 
   %% Edges
   OLWWWFEE2E --> OLWWW
-  OLWWWBEE2E -.-> OLWWW
   OLAPPE2E --> OLAPP
   OLBE2E --> OLB
   OLAPP --> OLC
@@ -104,7 +102,7 @@ graph TD
 
   class RC cli
   class OLWWW,OLAPP,OLB,OLC product
-  class OLWWWFEE2E,OLWWWBEE2E,OLAPPE2E,OLBE2E e2e
+  class OLWWWFEE2E,OLAPPE2E,OLBE2E e2e
 ```
 
 **Legend**:
@@ -121,8 +119,9 @@ graph TD
 
 **Location**: `apps/rhino-cli/`
 
-Repository management CLI used by most projects for spec coverage (`rhino-cli specs coverage`)
-and other validation tasks.
+Repository management CLI used by projects for structural spec checks and other repository
+validation tasks. Scenario-to-adapter coverage is now owned by each project's static
+`test:coverage:*` targets, not a central Rhino command.
 
 - **Dependents**: CLI tools, libs, content platforms, organiclever-app-web
 - **Mechanism**: `implicitDependencies`
@@ -147,7 +146,6 @@ and other validation tasks.
 | organiclever-app-web     | rhino-cli, organiclever-contracts | organiclever-app-web/\* (test:integration)      |
 | organiclever-be          | organiclever-contracts            | organiclever-be/\* (test:integration)           |
 | organiclever-www-fe-e2e  | organiclever-www                  | organiclever-www/\* (test:e2e)                  |
-| organiclever-www-be-e2e  | (none — placeholder slot)         | organiclever-www-be/\* (test:e2e)               |
 | organiclever-app-web-e2e | organiclever-app-web              | organiclever-app-web/\* (typecheck, test:quick) |
 | organiclever-be-e2e      | organiclever-be                   | organiclever-be/\* (typecheck, test:quick)      |
 
@@ -182,5 +180,5 @@ All Gherkin specs and API contracts live under `specs/` and are consumed via
 - [Monorepo Structure Reference](./monorepo-structure.md) - Folder organization and file formats
 - [Nx Configuration Reference](./nx-configuration.md) - Workspace configuration options
 - [Nx Target Standards](../../repo-governance/development/infra/nx-targets.md) - Canonical target names and caching rules
-- [Three-Level Testing Standard](../../repo-governance/development/quality/three-level-testing-standard.md) - Unit, integration, and E2E testing requirements
+- [Behaviour-Driven Development](../../repo-governance/development/behaviour-driven-development.md) - Unit, integration, and E2E testing requirements
 - [Code Coverage Reference](./code-coverage.md) - Coverage measurement and tools

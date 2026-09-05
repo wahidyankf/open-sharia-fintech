@@ -1,7 +1,7 @@
 ---
 title: "Delivery-Unit Integration Timing, Temporary Flags, and worktree-to-pr Binding"
-description: States when a delivery unit integrates, when incomplete behavior requires a temporary flag, and how the worktree-to-pr default binds.
-when_to_use: Use when deciding when a unit should integrate, whether incomplete behavior needs a flag, or how the worktree-to-pr default applies.
+description: States when a delivery unit integrates, when incomplete behaviour requires a temporary flag, and how the worktree-to-pr default binds.
+when_to_use: Use when deciding when a unit should integrate, whether incomplete behaviour needs a flag, or how the worktree-to-pr default applies.
 ---
 
 # Delivery-Unit Integration Timing, Temporary Flags, and worktree-to-pr Binding
@@ -27,14 +27,14 @@ The **merge actor** follows the inverted default in
 `[AI]` merges once the hardened preconditions hold, and `[HUMAN]` applies **only** where a plan's
 own step states that gate explicitly.
 
-## Temporary Flags for Incomplete Behavior
+## Temporary Flags for Incomplete Behaviour
 
-Incomplete behavior reaches `main` only as a **complete-and-inert** increment behind a temporary
+Incomplete behaviour reaches `main` only as a **complete-and-inert** increment behind a temporary
 feature flag disabled in production by default rather than waiting on a long-lived branch. Every
 exact resulting `main` state must be safe to deploy to production immediately. The enabled and
 disabled paths must both pass; flagging never excuses a broken or internally incomplete increment.
 
-- **Complete behavior**: complete user-reachable behavior may be active without a flag. Record why
+- **Complete behaviour**: complete user-reachable behaviour may be active without a flag. Record why
   the resulting state is safe; no exemption vocabulary applies.
 - **Removal**: every temporary flag introduced carries a named **flag removal step** in the plan's final
   phase. A flag with no removal step is an unbounded commitment, not a rollout mechanism.

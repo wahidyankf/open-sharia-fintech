@@ -25,11 +25,11 @@ when_to_use: Use when reviewing an agent's workflow for common orchestration mis
 
 ## Premature Completion
 
-**Problem**: Declaring a task done when tests pass, without verifying the actual behavior.
+**Problem**: Declaring a task done when tests pass, without verifying the actual behaviour.
 
-**Why it fails**: Tests are necessary but not sufficient. Verification requires demonstrating that the correct behavior is present, not just that no existing test fails.
+**Why it fails**: Tests are necessary but not sufficient. Verification requires demonstrating that the correct behaviour is present, not just that no existing test fails.
 
-**Fix**: After tests pass, demonstrate the behavior directly. Read the output. Confirm it matches the requirement.
+**Fix**: After tests pass, demonstrate the behaviour directly. Read the output. Confirm it matches the requirement.
 
 ## Context Bloat
 

@@ -27,7 +27,7 @@ when_to_use: Use when checking whether a subagent-orchestration question is in s
 
 ### What This Convention Does NOT Cover
 
-- Subagent internal behavior (covered by [Agent Workflow Orchestration Convention](../agent-workflow-orchestration.md))
+- Subagent internal behaviour (covered by [Agent Workflow Orchestration Convention](../agent-workflow-orchestration.md))
 - Agent frontmatter or file structure (covered by [AI Agents Convention](../ai-agents.md))
 - Workflows that call agents sequentially rather than in background (no special rules needed)
 - Bash-based tool parallelism (distinct from Agent-tool spawning)

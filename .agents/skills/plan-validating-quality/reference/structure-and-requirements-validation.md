@@ -25,7 +25,7 @@
   and revisit triggers. Evidence-backed disqualification is valid; invented alternatives are
   **HIGH**.
 - A material decision changes the proposed product, architecture, implementation contract,
-  delivery boundary, rollout, operation, testing strategy, or recovery behavior. Wording, section
+  delivery boundary, rollout, operation, testing strategy, or recovery behaviour. Wording, section
   layout, checker/fixer iterations, and other plan-authoring history are not alternatives unless
   they change that delivered contract; flag editorial changelogs presented as decision records
   **HIGH**.
@@ -47,11 +47,10 @@ Non-Goals; business risks and mitigations.
 **In `prd.md` (product perspective)**: product overview; personas (solo-maintainer hats and
 consuming agents — not external stakeholder roles, flag **HIGH** if present); user stories in
 `As a … I want … So that …` form; Gherkin acceptance criteria (Given/When/Then/And; flag if Gherkin
-lives elsewhere); **step-keyword cardinality HARD rule** — every `Scenario` uses exactly one primary
-`Given`, `When`, `Then`, extras chain with `And`/`But`, `Background` and `Scenario Outline`
-`Examples` tables exempt; flag violations **HIGH**; applies to `plans/in-progress/` and
-`plans/backlog/` (`plans/done/` exempt) — see
-[Acceptance Criteria Convention §Step-Keyword Cardinality](../../../../repo-governance/development/infra/acceptance-criteria/gherkin-format-and-step-keyword-cardinality.md#step-keyword-cardinality-hard-rule);
+lives elsewhere); **journey coherence** — every scenario has explicit `When` and `Then`; repeated
+primary keywords are valid for one continuous journey; split only independently meaningful
+actions/outcomes; flag incoherent or missing action/outcome scenarios **HIGH** — see the
+[Acceptance Criteria Convention](../../../../repo-governance/development/infra/acceptance-criteria/gherkin-format-and-step-keyword-cardinality.md);
 product scope (in/out); product-level risks.
 
 **Content-placement violations (flag HIGH)**: business framing (sign-off, sponsors, stakeholders,

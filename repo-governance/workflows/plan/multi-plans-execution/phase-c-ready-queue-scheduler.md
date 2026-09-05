@@ -30,7 +30,7 @@ selected mode requires. A1 has already promoted backlog-sourced plans, so nodes 
 its selected agent, then run the Atomic Sync Ritual (B3). When a node completes a **phase boundary**,
 run that plan's [per-phase quality gate](../plan-execution/per-phase-quality-gate-gates.md),
 [post-push CI verification](../plan-execution/post-push-ci-verification-overview.md),
-and [manual behavioral assertions](../plan-execution/manual-behavioral-assertions-web-and-api.md)
+and [manual behavioural assertions](../plan-execution/manual-behavioural-assertions-web-and-api.md)
 exactly as the single-plan workflow prescribes — these are that plan's own gates, unaffected by other
 plans in flight.
 

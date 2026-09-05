@@ -153,7 +153,7 @@ impl ContractId {
 // Now the compiler prevents using CustomerId where ContractId is required:
 fn find_contract(id: ContractId) -> Option<MurabahaContract> { ... }
 let customer_id = CustomerId::new();
-find_contract(customer_id); // COMPILE ERROR — correct behavior!
+find_contract(customer_id); // COMPILE ERROR — correct behaviour!
 
 // WRONG: Raw Uuid — no type safety across entity boundaries
 fn find_contract(id: Uuid) -> Option<MurabahaContract> { ... }

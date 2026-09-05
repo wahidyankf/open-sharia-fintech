@@ -29,7 +29,7 @@ human gate governs every recipe, tag, verb, and delivery mode.
   capture, FALSE_POSITIVE persistence, self-verification, confidence-level domain examples, factual
   accuracy fixes.
 - `reference/07-operational-readiness-fixes.md` — operational readiness fixes (5 items).
-- `reference/08-manual-behavioral-assertion-fixes.md` — manual behavioral assertion fixes (3 items).
+- `reference/08-manual-behavioural-assertion-fixes.md` — manual behavioural assertion fixes (3 items).
 - `reference/09-ui-design-funnel-scaffolding-fixes.md` — UI-design-funnel scaffolding.
 - `reference/10-learning-bearing-syllabus-scaffolding-fixes.md` — learning-bearing syllabus
   scaffolding.
@@ -79,7 +79,7 @@ canonical Gherkin; never add copied scenarios or detail-free/keystroke checkboxe
 phase gates, ownership, natural cohesive delivery seams, production-deployable `main` states,
 delivery mode, manual/operational verification, and Knowledge Capture. Remove LOC or file-count
 boundary tests. Keep every artifact needed to build, verify, operate, roll back, and remain
-internally consistent in its delivery unit; incomplete behavior requires a temporary
+internally consistent in its delivery unit; incomplete behaviour requires a temporary
 production-disabled flag with both paths tested and rollout, rollback, and removal recorded. Do not
 migrate archived plans or the existing Rhino plan.
 

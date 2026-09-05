@@ -44,4 +44,4 @@ Before considering documentation complete:
 - [ ] No assumptions left unstated; terminology consistent with source code and existing docs
 - [ ] Step-by-step instructions followed completely and verified
 - [ ] Edge cases and limitations documented
-- [ ] Accuracy checked against source code and actual behavior
+- [ ] Accuracy checked against source code and actual behaviour

@@ -14,7 +14,7 @@ when_to_use: "Read this when creating or reviewing a repository's CODE_OF_CONDUC
 
 # Code of Conduct
 
-The CODE_OF_CONDUCT.md establishes behavioral standards for the community.
+The CODE_OF_CONDUCT.md establishes behavioural standards for the community.
 
 **Location:** `CODE_OF_CONDUCT.md` at repository root
 
@@ -30,8 +30,8 @@ The CODE_OF_CONDUCT.md establishes behavioral standards for the community.
 
 **Minimum Requirements:**
 
-- Expected behavior standards
-- Unacceptable behavior examples
+- Expected behaviour standards
+- Unacceptable behaviour examples
 - Consequences of violations
 - Reporting mechanism
 - Enforcement process
@@ -47,14 +47,14 @@ We pledge to make participation in our project a harassment-free experience for 
 
 ## Our Standards
 
-**Examples of behavior that contributes to a positive environment:**
+**Examples of behaviour that contributes to a positive environment:**
 
 - Using welcoming and inclusive language
 - Being respectful of differing viewpoints
 - Gracefully accepting constructive criticism
 - Focusing on what is best for the community
 
-**Examples of unacceptable behavior:**
+**Examples of unacceptable behaviour:**
 
 - Trolling, insulting/derogatory comments, and personal attacks
 - Public or private harassment
@@ -63,5 +63,5 @@ We pledge to make participation in our project a harassment-free experience for 
 
 ## Enforcement
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the project team at conduct@example.com. All complaints will be reviewed and investigated promptly and fairly.
+Instances of abusive, harassing, or otherwise unacceptable behaviour may be reported to the project team at conduct@example.com. All complaints will be reviewed and investigated promptly and fairly.
 ```

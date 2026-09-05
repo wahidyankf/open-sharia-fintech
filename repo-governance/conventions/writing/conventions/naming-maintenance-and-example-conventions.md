@@ -44,7 +44,7 @@ Convention files follow the [File Naming Convention](../../structure/file-naming
 ### Version Control
 
 - Git history is the authoritative record of changes (no `updated:` field needed)
-- Significant changes should update AGENTS.md if they affect agent behavior
+- Significant changes should update AGENTS.md if they affect agent behaviour
 - Use `repo-rules-maker` to propagate changes across related files
 
 ### Deprecation

@@ -8,7 +8,6 @@ open OseBe.Contexts.GapAnalysis.Api
 open OseBe.Contexts.GapAnalysis.Infrastructure
 open OseBe.Tests.Unit.Steps.BddState
 
-// @covers specs/apps/ose/be/behaviors/gap-analysis/gap-analysis.feature:Gap analysis context is declared
 [<Fact>]
 let ``gap-analysis reports ready to compare regulatory and policy documents`` () =
     let readiness = initializeContext ()
@@ -27,7 +26,7 @@ let ``gap-analysis status endpoint reports the context readiness`` () =
 // isLlmConfigured and compareWithLlm read the ambient OSE_BE_OPENROUTER_API_KEY,
 // which the test process never sets (see apps/ose-be/.env.example, which
 // defaults it to blank); OpenRouterClientTests.fs owns direct mutation of that
-// variable, so this asserts the same not-configured behavior without touching
+// variable, so this asserts the same not-configured behaviour without touching
 // process-wide environment state itself.
 [<Fact>]
 let ``gap-analysis reports the LLM integration is not configured by default`` () = Assert.False(isLlmConfigured ())

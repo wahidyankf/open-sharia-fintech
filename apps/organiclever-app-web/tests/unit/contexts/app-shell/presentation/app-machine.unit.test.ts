@@ -69,6 +69,13 @@ describe("appMachine (overlay-only, post-route-refactor)", () => {
   });
 
   describe("OPEN_CUSTOM_LOGGER / CLOSE_CUSTOM_LOGGER", () => {
+    it("opens a new custom logger without pre-filling a name", () => {
+      const actor = makeActor();
+      actor.send({ type: "OPEN_CUSTOM_LOGGER" });
+      expect(actor.getSnapshot().value).toBe("customLoggerOpen");
+      expect(actor.getSnapshot().context.customLoggerName).toBeNull();
+    });
+
     it("stores the custom logger name and transitions", () => {
       const actor = makeActor();
       actor.send({ type: "OPEN_CUSTOM_LOGGER", name: "writing" });

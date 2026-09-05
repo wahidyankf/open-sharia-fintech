@@ -36,8 +36,8 @@ suffice; add complexity only for a concrete unmet need or applicable repository 
 ## Reference
 
 - [Relationship to Other Principles](./simplicity-over-complexity/relationship-to-other-principles.md) — Cross-references to deliberate-problem-solving, root-cause-orientation, explicit-over-implicit, automation-over-manual, progressive-disclosure. Use when tracing connections to the repo's other principles.
-- [For AI Agents](./simplicity-over-complexity/for-ai-agents.md) — Five agent-specific obligations for applying minimal sufficiency without weakening required safeguards. Use when auditing agent behavior against this principle.
-- [Common Violations](./simplicity-over-complexity/common-violations.md) — Three before/after examples of common simplicity violations. Use when identifying whether a behavior violates this principle.
+- [For AI Agents](./simplicity-over-complexity/for-ai-agents.md) — Five agent-specific obligations for applying minimal sufficiency without weakening required safeguards. Use when auditing agent behaviour against this principle.
+- [Common Violations](./simplicity-over-complexity/common-violations.md) — Three before/after examples of common simplicity violations. Use when identifying whether a behaviour violates this principle.
 - [Summary](./simplicity-over-complexity/summary.md) — Short recap of the smallest-responsible-change rule, its stop condition, and its safeguards. Use for the shortest possible recap of this principle.
 - [Related Conventions](./simplicity-over-complexity/related-conventions.md) — Links to implementation workflow, monorepo structure, AI agents, and Diátaxis framework. Use when looking for related conventions.
 - [References](./simplicity-over-complexity/references.md) — External references - KISS, YAGNI, Rule of Three, books, and articles. Use when looking for external sources backing this principle.

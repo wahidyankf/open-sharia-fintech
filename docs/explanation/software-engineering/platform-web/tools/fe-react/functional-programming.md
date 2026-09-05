@@ -1132,7 +1132,7 @@ export const MurabahaApplicationForm: React.FC = () => {
 
 - ✅ **Pure components**: No side effects in render
 - ✅ **Immutable updates**: Never mutate state or props
-- ✅ **Function composition**: Build complex behavior from simple functions
+- ✅ **Function composition**: Build complex behaviour from simple functions
 - ✅ **Higher-order functions**: Use map, filter, reduce over loops
 - ✅ **Declarative code**: Express WHAT, not HOW
 - ✅ **Type safety**: Use TypeScript for compile-time guarantees

@@ -39,34 +39,34 @@ repository's own Markdown tree, and the search index is an in-memory FlexSearch 
 
 Seven feature contexts under `src/features/`:
 
-| Feature context | Responsibility                                        |
-| --------------- | ----------------------------------------------------- |
-| `landing`       | the marketing entry point                             |
-| `content`       | Markdown pipeline, rendering, and code-block behavior |
-| `search`        | the search index and the search UI                    |
-| `rss-feed`      | the feed built from published updates                 |
-| `seo`           | metadata and the sitemap                              |
-| `app-shell`     | navigation, theme, responsive layout, accessibility   |
-| `health`        | the readiness route                                   |
+| Feature context | Responsibility                                         |
+| --------------- | ------------------------------------------------------ |
+| `landing`       | the marketing entry point                              |
+| `content`       | Markdown pipeline, rendering, and code-block behaviour |
+| `search`        | the search index and the search UI                     |
+| `rss-feed`      | the feed built from published updates                  |
+| `seo`           | metadata and the sitemap                               |
+| `app-shell`     | navigation, theme, responsive layout, accessibility    |
+| `health`        | the readiness route                                    |
 
-## Behavior Perspectives
+## Behaviour Perspectives
 
-`behaviors/` splits by perspective rather than by deployable, because there is one deployable:
+`behaviours/` splits by perspective rather than by deployable, because there is one deployable:
 
-- `behaviors/frontend/` asserts what a visitor sees in the DOM.
-- `behaviors/backend/` asserts what the in-process API returns over HTTP.
+- `behaviours/frontend/` asserts what a visitor sees in the DOM.
+- `behaviours/backend/` asserts what the in-process API returns over HTTP.
 
 ## Constraints
 
 **Static generation is the default.** Every content route is generated at build time. A feature that
-needs per-request rendering changes the deployment's cost and cache behavior.
+needs per-request rendering changes the deployment's cost and cache behaviour.
 
 **Content is a build input.** Markdown and its frontmatter are read at build time, not fetched. A
 page that needs live data belongs in `ose-app-web`.
 
-**Accessibility is asserted, not reviewed.** WCAG AA behavior is covered by scenarios.
+**Accessibility is asserted, not reviewed.** WCAG AA behaviour is covered by scenarios.
 
 ## Related
 
-- [Behaviors](./behaviors/README.md) — the scenarios this system must satisfy.
+- [Behaviours](./behaviours/README.md) — the scenarios this system must satisfy.
 - [`apps/ose-www/README.md`](../../../../apps/ose-www/README.md) — the implementing project.

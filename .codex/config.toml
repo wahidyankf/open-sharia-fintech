@@ -133,7 +133,7 @@ description = "Deploys web-ui Storybook to Vercel via force-push to prod-web-ui"
 config_file = "agents/apps-web-ui-storybook-deployer.toml"
 
 [agents.ci-checker]
-description = "Validates all projects against CI/CD standards including mandatory Nx targets, coverage thresholds, Docker setup, Gherkin consumption, workflow files, E2E pairing, and env variable compliance"
+description = "Validates project-role Nx targets, static BDD coverage, runtime boundaries, hook/PR isolation, scheduled suites, and CI safety"
 config_file = "agents/ci-checker.toml"
 
 [agents.ci-fixer]
@@ -233,7 +233,7 @@ description = "Execution-grade PR reviewer scoped to the CI-gaming/test-integrit
 config_file = "agents/pr-review-integrity-maker.toml"
 
 [agents.pr-review-logic-maker]
-description = "Execution-grade PR reviewer scoped to the business-logic/correctness discipline only — behavior vs. domain intent plus Gherkin acceptance-criteria conformance across edge/error cases. One of nine discipline-scoped specialists feeding the pr-review-synthesis-maker coordinator; inherits pr-review-maker's hard rules verbatim, scoped to its own charter and SUPPRESS block."
+description = "Execution-grade PR reviewer scoped to the business-logic/correctness discipline only — behaviour vs. domain intent plus Gherkin acceptance-criteria conformance across edge/error cases. One of nine discipline-scoped specialists feeding the pr-review-synthesis-maker coordinator; inherits pr-review-maker's hard rules verbatim, scoped to its own charter and SUPPRESS block."
 config_file = "agents/pr-review-logic-maker.toml"
 
 [agents.pr-review-performance-maker]
@@ -245,7 +245,7 @@ description = "Planning-grade PR-review pass stage 0. Pins one head, selects the
 config_file = "agents/pr-review-scout-maker.toml"
 
 [agents.pr-review-security-maker]
-description = "Reviews injection and unsafe git/FS behavior in semantic passes; in leak-only mode reviews sensitive values, protected environment properties, and machine paths."
+description = "Reviews injection and unsafe git/FS behaviour in semantic passes; in leak-only mode reviews sensitive values, protected environment properties, and machine paths."
 config_file = "agents/pr-review-security-maker.toml"
 
 [agents.pr-review-synthesis-maker]
@@ -253,7 +253,7 @@ description = "Planning-grade PR-review coordinator — the mandatory synthesize
 config_file = "agents/pr-review-synthesis-maker.toml"
 
 [agents.pr-review-types-maker]
-description = "Execution-grade PR reviewer scoped to the type-soundness discipline only — type-system soundness beyond what the compiler already enforces, across TypeScript, Rust, F#, and C#. Flags unsound type escapes (unjustified any/unknown, unexplained unsafe blocks, panic-prone unwrap/expect on fallible paths, null-forgiving-operator misuse, non-exhaustive match/switch), never a compile/build failure (already CI-gated) and never whether a well-typed function's behavior is correct (pr-review-logic-maker's charter). One of nine discipline-scoped specialists feeding the pr-review-synthesis-maker coordinator; inherits pr-review-maker's hard rules verbatim, scoped to its own charter and SUPPRESS block."
+description = "Execution-grade PR reviewer scoped to the type-soundness discipline only — type-system soundness beyond what the compiler already enforces, across TypeScript, Rust, F#, and C#. Flags unsound type escapes (unjustified any/unknown, unexplained unsafe blocks, panic-prone unwrap/expect on fallible paths, null-forgiving-operator misuse, non-exhaustive match/switch), never a compile/build failure (already CI-gated) and never whether a well-typed function's behaviour is correct (pr-review-logic-maker's charter). One of nine discipline-scoped specialists feeding the pr-review-synthesis-maker coordinator; inherits pr-review-maker's hard rules verbatim, scoped to its own charter and SUPPRESS block."
 config_file = "agents/pr-review-types-maker.toml"
 
 [agents.readme-checker]
@@ -273,7 +273,7 @@ description = "Validates cross-vendor parity invariants (Phase 0, deterministic)
 config_file = "agents/repo-harness-compatibility-checker.toml"
 
 [agents.repo-harness-compatibility-fixer]
-description = "Applies validated fixes from a repo-harness-compatibility-checker audit report. Auto-remediates Phase 0 parity sync drift (Invariant 3 via npm run generate:bindings) and Phase 1 catalog/binding updates. Also updates specs/apps/rhino/ when harness changes alter documented CLI behavior. Flags all other findings for human resolution."
+description = "Applies validated fixes from a repo-harness-compatibility-checker audit report. Auto-remediates Phase 0 parity sync drift (Invariant 3 via npm run generate:bindings) and Phase 1 catalog/binding updates. Also updates specs/apps/rhino/ when harness changes alter documented CLI behaviour. Flags all other findings for human resolution."
 config_file = "agents/repo-harness-compatibility-fixer.toml"
 
 [agents.repo-rules-checker]
@@ -361,7 +361,7 @@ description = "Performs design-aware evaluation of a live website and records fi
 config_file = "agents/web-design-tester.toml"
 
 [agents.web-exploratory-tester]
-description = "Performs spec-aware session-based exploratory testing of a live website and records findings in local-tmp by default. Hunts edge cases and compares behavior with specs; output-mode plan or delivery must be explicit."
+description = "Performs spec-aware session-based exploratory testing of a live website and records findings in local-tmp by default. Hunts edge cases and compares behaviour with specs; output-mode plan or delivery must be explicit."
 config_file = "agents/web-exploratory-tester.toml"
 
 [agents.web-researcher]

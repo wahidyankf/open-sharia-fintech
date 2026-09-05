@@ -38,7 +38,7 @@ replace it, repeat every path, or contain delivery checkboxes. Execution steps r
 │   ├── project.json [E] — register the new target
 │   ├── src/Feature.ts [N] — feature boundary
 │   └── src/Legacy.ts [D] — superseded implementation
-└── specs/apps/example/feature.feature [E] — companion behavior
+└── specs/apps/example/feature.feature [E] — companion behaviour
 ```
 
 ## More Detail

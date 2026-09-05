@@ -63,7 +63,7 @@ when_to_use: Use when you need a worked example of applying deliberate problem-s
 - Unclear if settings are per-user or global
 - Unclear if settings need persistence
 - Implements one interpretation
-- User wanted different behavior
+- User wanted different behaviour
 
 **✅ PASS - Name Confusion**:
 

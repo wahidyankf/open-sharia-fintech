@@ -18,7 +18,7 @@ when_to_use: "Use when you need to know what evidence the plan-execution-checker
 # What plan-execution-checker Validates
 
 The [plan-execution-checker](../../../../.claude/agents/plan/plan-execution-checker.md) validates evidence
-capture as part of Step 7 (Manual Behavioral Assertions). It checks:
+capture as part of Step 7 (Manual Behavioural Assertions). It checks:
 
 1. **Screenshots exist** — for each UI verification step, `evidence/` contains at least one
    screenshot per locale per breakpoint tested.

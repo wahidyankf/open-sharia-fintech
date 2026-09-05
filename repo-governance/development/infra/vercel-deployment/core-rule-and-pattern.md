@@ -54,7 +54,7 @@ ayokoding-www` locally, Nx resolves the dependency graph and runs `generate-inde
 Vercel bypasses Nx entirely. It calls `next build` (or the configured `buildCommand`) in the app
 directory. No Nx, no dependency graph, no `dependsOn` resolution.
 
-If a build-time step is missing, the app still deploys — but runtime behavior is broken. The
+If a build-time step is missing, the app still deploys — but runtime behaviour is broken. The
 generated files that `next build` expected to find are absent, and the runtime fallback (if any)
 runs in a constrained serverless environment where it may exceed function timeout limits.
 

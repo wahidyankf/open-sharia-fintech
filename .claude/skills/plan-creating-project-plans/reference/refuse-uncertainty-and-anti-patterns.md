@@ -31,5 +31,5 @@ Reject these patterns at authoring time. `plan-checker` flags occurrences as HIG
 - **AP-6** — inventing a test name (mark `_New test_` when applicable)
 - **AP-7** — citing an agent or skill that does not exist
 - **AP-8** — citing a CLI flag without `--help` or repo-doc reference
-- **AP-9** — citing a behavior claim without a source
+- **AP-9** — citing a behaviour claim without a source
 - **AP-10** — cross-linking to a file that does not exist

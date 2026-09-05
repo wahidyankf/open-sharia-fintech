@@ -38,7 +38,7 @@ created: 2025-12-04
 
 5. **Agent configuration files** - AGENTS.md, primary binding agent files, secondary binding agent files
    - AGENTS.md - Human-readable navigation document for developers
-   - Primary binding agent files (`.claude/agents/*.md`) - Primary agent definitions (source of truth) read by developers to understand agent behavior
+   - Primary binding agent files (`.claude/agents/*.md`) - Primary agent definitions (source of truth) read by developers to understand agent behaviour
    - Secondary binding agent files (`.opencode/agents/*.md`) - Secondary agent definitions (auto-generated from primary binding) for secondary platform binding compatibility
    - Emojis enhance scannability for:
      - Criticality level definitions (CRITICAL, HIGH, MEDIUM, LOW)
@@ -63,7 +63,7 @@ created: 2025-12-04
 **Enhanced scannability:**
 
 - AGENTS.md is a human-readable navigation document that benefits from emoji-enhanced scannability
-- Agent files are human-readable specifications - developers read them to understand behavior, patterns, workflows
+- Agent files are human-readable specifications - developers read them to understand behaviour, patterns, workflows
 - Emojis provide semantic visual markers that help developers quickly locate sections (criticality, purpose, references)
 
 **Consistency with referenced content:**
@@ -75,7 +75,7 @@ created: 2025-12-04
 **Why agent files now get emojis:**
 
 - Agent files are specifications for both humans (developers) AND AI (execution)
-- Developers read agent files to understand behavior, patterns, and workflows
+- Developers read agent files to understand behaviour, patterns, and workflows
 - Emojis enhance scannability without changing agent execution logic
 - Similar to how docs/\*_/_.md use emojis for human scannability
 

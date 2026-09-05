@@ -40,6 +40,9 @@ Workflows support two execution modes and standard inputs (`mode`, `max-concurre
 
 ## Workflow Directories
 
+- [Gherkin Implementation Review](./gherkin-implementation-review.md) — Semantically inspects every
+  applicable scenario adapter for real production invocation and independent evidence; static
+  binding counts cannot replace it.
 - [API Workflows](api/README.md) — Orchestrated processes for live REST and GraphQL API quality validation and remediation. Use when routing to a workflow that exercises a running REST or GraphQL API against its contract and specs.
 - [AyoKoding Web Workflows](ayokoding-web/README.md) — Workflows for keeping AyoKoding learning content accurate, useful, and well structured. Use when routing to a workflow that validates a specific AyoKoding tutorial type's quality.
 - [CI Workflows](ci/README.md) — Workflows for checking that repository CI setup follows its documented standards. Use when routing to a workflow that validates or fixes CI/CD standards compliance.

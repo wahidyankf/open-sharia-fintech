@@ -42,10 +42,16 @@ when_to_use: Use when deciding whether a target should be cached, or where a pro
     "test:coverage": {
       "cache": true
     },
-    "specs:behavior:coverage": {
+    "test:coverage:unit": {
       "cache": true
     },
-    "test:specs": {
+    "test:coverage:integration": {
+      "cache": true
+    },
+    "test:coverage:e2e": {
+      "cache": true
+    },
+    "test:coverage:behaviour": {
       "cache": true
     },
     "test:integration": {
@@ -60,25 +66,24 @@ when_to_use: Use when deciding whether a target should be cached, or where a pro
 
 ### Caching Rules
 
-| Target                    | Cached | Notes                                                                                                                                                                                                                                      |
-| ------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `build`                   | Yes    | Declare `outputs` in `project.json` for cache restoration                                                                                                                                                                                  |
-| `typecheck`               | Yes    | Pure analysis; safe to cache against source changes                                                                                                                                                                                        |
-| `lint`                    | Yes    | Pure static analysis; safe to cache                                                                                                                                                                                                        |
-| `test:quick`              | Yes    | Cache hit skips redundant pre-push runs                                                                                                                                                                                                    |
-| `test:unit`               | Yes    | Deterministic; safe to cache against source changes                                                                                                                                                                                        |
-| `test:coverage`           | Yes    | Deterministic native coverage gate; safe to cache against source changes                                                                                                                                                                   |
-| `specs:behavior:coverage` | Yes    | Pure behavior-level Gherkin coverage analysis; deterministic against source and spec changes                                                                                                                                               |
-| `test:specs`              | Yes    | Pure specs validation; deterministic against source, spec, and `repo-config.yml` changes; caches the aggregate of all `specs:*` validators                                                                                                 |
-| `test:integration`        | No     | Demo-be backends use real PostgreSQL via docker-compose (non-deterministic external state). Default `cache: false` in `nx.json`. Projects using in-process mocking only (MSW, Godog) may override to `cache: true` in their `project.json` |
-| `dev`                     | No     | Long-running process                                                                                                                                                                                                                       |
-| `start`                   | No     | Long-running process                                                                                                                                                                                                                       |
-| `run`                     | No     | Side-effectful execution                                                                                                                                                                                                                   |
-| `test:e2e`                | No     | Requires live app state; run via scheduled cron, not pre-push                                                                                                                                                                              |
-| `test:e2e:ui`             | No     | Interactive process                                                                                                                                                                                                                        |
-| `test:e2e:report`         | No     | Reads filesystem state at invocation time                                                                                                                                                                                                  |
-| `install`                 | No     | Must always run to ensure dep state                                                                                                                                                                                                        |
-| `clean`                   | No     | Destructive operation                                                                                                                                                                                                                      |
+| Target             | Cached      | Notes                                                                                                    |
+| ------------------ | ----------- | -------------------------------------------------------------------------------------------------------- |
+| `build`            | Yes         | Declare `outputs` in `project.json` for cache restoration                                                |
+| `typecheck`        | Yes         | Pure analysis; safe to cache against source changes                                                      |
+| `lint`             | Yes         | Pure static analysis; safe to cache                                                                      |
+| `test:quick`       | Yes         | Cache hit skips redundant pre-push runs                                                                  |
+| `test:unit`        | Yes         | Deterministic; safe to cache against source changes                                                      |
+| `test:coverage`    | Yes         | Aggregate of applicable static coverage validators                                                       |
+| `test:coverage:*`  | Yes         | Deterministic static test/corpus coverage; never executes runtime tests                                  |
+| `test:integration` | Conditional | Cache only when every real local resource is deterministic, isolated, and represented by declared inputs |
+| `dev`              | No          | Long-running process                                                                                     |
+| `start`            | No          | Long-running process                                                                                     |
+| `run`              | No          | Side-effectful execution                                                                                 |
+| `test:e2e`         | No          | Requires a live public boundary; manual impacted and scheduled full only                                 |
+| `test:e2e:ui`      | No          | Interactive process                                                                                      |
+| `test:e2e:report`  | No          | Reads filesystem state at invocation time                                                                |
+| `install`          | No          | Must always run to ensure dep state                                                                      |
+| `clean`            | No          | Destructive operation                                                                                    |
 
 ## Build Output Conventions
 

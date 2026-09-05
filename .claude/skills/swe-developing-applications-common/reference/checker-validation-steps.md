@@ -16,12 +16,11 @@ Reference: `repo-governance/development/infra/nx-targets.md`.
 - **Tag convention**: all 4 dimensions present (`type:app|lib`, `platform:*`, `lang:*`,
   `domain:*`) with values following convention.
 - **Cache configuration**: `build`/`lint`/`test:quick` need `cache: true` (`build` needs proper
-  `outputs`); `test:integration` only if it uses in-process mocking; `dev` needs `cache: false` or
-  absent.
-- **Coverage enforcement**: TypeScript `test:quick` must include
-  `rhino-cli test-coverage validate <path>/lcov.info 95`; Rust must enforce ≥90% via
-  `cargo-llvm-cov`/`rhino-cli test-coverage validate`; F# must pass a `/p:Threshold` line
-  threshold to `dotnet test --collect:"XPlat Code Coverage"`.
+  `outputs`); runtime Integration and E2E targets must stay outside commit/push/PR gates; `dev`
+  needs `cache: false` or absent.
+- **Coverage enforcement**: every behaviour-owning source project's `test:unit` must run native
+  coverage and enforce at least 99% line coverage. Its `test:quick` must run that Unit target and
+  all applicable static `test:coverage:*` validators.
 
 ## Step 3: F#-Specific Standards
 
@@ -43,15 +42,15 @@ Reference: `docs/explanation/software-engineering/programming-languages/f-sharp/
 Reference: `docs/explanation/software-engineering/programming-languages/typescript/`.
 
 - **Vitest coverage**: `vitest.config.ts` configures thresholds, v8 provider preferred — HIGH.
-- **Test structure**: unit as `*.test.ts`/`*.spec.ts`; MSW-based integration in a separate
-  `test:integration` target; no unit/integration duplication — MEDIUM.
+- **Test structure**: Unit remains in-process with all boundaries replaced; Integration exercises
+  deterministic local resources/processes without any network, including loopback — MEDIUM.
 - **ESLint**: lint target present, no per-project overrides that weaken rules — MEDIUM.
 
 ## Step 5: Rust-Specific Standards
 
 Reference: `docs/explanation/software-engineering/programming-languages/rust/README.md`.
 
-- **Coverage**: `cargo-llvm-cov` line coverage ≥90% via `rhino-cli test-coverage validate` — HIGH.
+- **Coverage**: `cargo-llvm-cov` Unit line coverage ≥99% enforced by `test:unit` — HIGH.
 - **Error handling**: `Result<T, E>` for fallible ops, no `.unwrap()` in production paths, typed
   enums (not `anyhow::Error`) at domain boundaries — HIGH.
 - **Axum patterns** (if applicable): handlers return `impl IntoResponse` with no panics; state via

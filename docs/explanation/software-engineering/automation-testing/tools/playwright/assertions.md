@@ -34,7 +34,7 @@ This document defines **authoritative assertion standards** for Playwright end-t
 
 **Target Audience**: OSE Platform E2E test developers, technical reviewers, automated test quality tools
 
-**Scope**: OSE Platform assertion patterns, web-first assertions, auto-waiting behavior, and assertion best practices
+**Scope**: OSE Platform assertion patterns, web-first assertions, auto-waiting behaviour, and assertion best practices
 
 ## Software Engineering Principles
 
@@ -106,7 +106,7 @@ test.describe("Zakat Calculation Auto-Verification", () => {
 
 ### 2. Explicit Over Implicit
 
-**Principle**: Choose explicit composition and configuration over magic, convenience, and hidden behavior.
+**Principle**: Choose explicit composition and configuration over magic, convenience, and hidden behaviour.
 
 **How Playwright Assertions Implement**:
 
@@ -158,11 +158,11 @@ test("validates Murabaha profit margin explicitly", async ({ page }) => {
 
 **How Playwright Assertions Implement**:
 
-- Deterministic assertion behavior (no random timeouts)
+- Deterministic assertion behaviour (no random timeouts)
 - Consistent auto-waiting across environments
 - Exact value matching for reproducibility
 - Snapshot assertions for consistent UI validation
-- Explicit timeout configuration ensures reproducible behavior
+- Explicit timeout configuration ensures reproducible behaviour
 
 **PASS Example** (Reproducible Zakat Payment Assertions):
 

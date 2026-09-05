@@ -17,7 +17,7 @@ when_to_use: "Use when authoring a UI plan and checking against rules 1-6."
 # The Sixteen Rules (1-6)
 
 1. **(Authoring) A UI plan MUST carry a manual visual-parity gate, executed before archival.** Gap:
-   automated tests asserted DOM/behavior presence; none compared the rendered pixels to the
+   automated tests asserted DOM/behaviour presence; none compared the rendered pixels to the
    approved `assets/` mockups, and the workflow's Playwright visual step was skipped. Apply: any
    plan that ships UI carries an explicit, checked "screenshot vs each mockup, per breakpoint, per
    locale" step; `plan-checker` flags its absence the way it flags a missing design funnel. The

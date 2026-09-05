@@ -21,15 +21,15 @@
 
 ## End-to-end tests
 
-End-to-end projects keep browser and API behavior separate from the application they exercise. Use the app README for prerequisites, then run the matching project's `test:e2e` target.
+End-to-end projects keep browser and API behaviour separate from the application they exercise. Use the app README for prerequisites, then run the matching project's `test:e2e` target.
 
-| Product or service          | Browser tests                                                    | API tests                                                      |
-| --------------------------- | ---------------------------------------------------------------- | -------------------------------------------------------------- |
-| OSE public website          | [ose-www-fe-e2e](./ose-www-fe-e2e/)                              | [ose-www-be-e2e](./ose-www-be-e2e/)                            |
-| OSE product                 | [ose-app-web-e2e](./ose-app-web-e2e/README.md)                   | [ose-be-e2e](./ose-be-e2e/README.md)                           |
-| AyoKoding                   | [ayokoding-www-fe-e2e](./ayokoding-www-fe-e2e/)                  | [ayokoding-www-be-e2e](./ayokoding-www-be-e2e/)                |
-| OrganicLever public website | [organiclever-www-fe-e2e](./organiclever-www-fe-e2e/README.md)   | [organiclever-www-be-e2e](./organiclever-www-be-e2e/README.md) |
-| OrganicLever product        | [organiclever-app-web-e2e](./organiclever-app-web-e2e/README.md) | [organiclever-be-e2e](./organiclever-be-e2e/README.md)         |
+| Product or service          | Browser tests                                                    | API tests                                               |
+| --------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------- |
+| OSE public website          | [ose-www-fe-e2e](./ose-www-fe-e2e/)                              | [ose-www-be-e2e](./ose-www-be-e2e/)                     |
+| OSE product                 | [ose-app-web-e2e](./ose-app-web-e2e/README.md)                   | [ose-be-e2e](./ose-be-e2e/README.md)                    |
+| AyoKoding                   | [ayokoding-www-fe-e2e](./ayokoding-www-fe-e2e/)                  | [ayokoding-www-be-e2e](./ayokoding-www-be-e2e/)         |
+| OrganicLever public website | [organiclever-www-fe-e2e](./organiclever-www-fe-e2e/README.md)   | Not applicable; the site has no backend public boundary |
+| OrganicLever product        | [organiclever-app-web-e2e](./organiclever-app-web-e2e/README.md) | [organiclever-be-e2e](./organiclever-be-e2e/README.md)  |
 
 ## Work with an app
 

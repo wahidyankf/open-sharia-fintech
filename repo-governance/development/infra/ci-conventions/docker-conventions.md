@@ -65,11 +65,15 @@ CMD ["node", "dist/main.js"]
 
 Three docker-compose file roles exist per app:
 
-| Role            | Path                                        | Purpose                                                               |
-| --------------- | ------------------------------------------- | --------------------------------------------------------------------- |
-| **Dev**         | `infra/dev/{app}/docker-compose.yml`        | Local development services (databases, message queues, etc.)          |
-| **Integration** | `apps/{app}/docker-compose.integration.yml` | Real infrastructure for `test:integration` (PostgreSQL + test runner) |
-| **CI overlay**  | `infra/dev/{app}/docker-compose.ci.yml`     | Overrides for CI environment (no volume mounts, deterministic ports)  |
+| Role           | Path                                    | Purpose                                                                   |
+| -------------- | --------------------------------------- | ------------------------------------------------------------------------- |
+| **Dev**        | `infra/dev/{app}/docker-compose.yml`    | Local development services (databases, message queues, etc.)              |
+| **E2E**        | `apps/{app}/docker-compose.e2e.yml`     | Networked test stack for public-boundary E2E with isolated synthetic data |
+| **CI overlay** | `infra/dev/{app}/docker-compose.ci.yml` | Overrides for CI E2E environment (no volume mounts, deterministic ports)  |
+
+Docker Compose is never an Integration-test classifier. Any test that reaches a container over
+HTTP, TCP, UDP, loopback, or a local server belongs to E2E and must enter through the application's
+public boundary. Integration may use only isolated real local resources with no network path.
 
 All compose files must pass `docker compose config` without errors before merging. The CI overlay
 is applied with `-f docker-compose.yml -f docker-compose.ci.yml` to keep dev and CI configs DRY.

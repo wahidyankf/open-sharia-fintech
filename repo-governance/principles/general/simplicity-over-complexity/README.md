@@ -16,8 +16,8 @@ when_to_use: "Read this index to find the right Simplicity Over Complexity child
 - [Implementation Guidelines](./implementation-guidelines.md) — Applies the minimal-sufficiency test to lasting mechanisms, completion, and mandatory safeguards. Use when choosing an implementation or deciding when work is complete.
 - [Application Examples](./application-examples.md) — Three worked examples (dark mode, API errors, utilities) contrasting over-engineered and minimal solutions. Use when you need a worked feature-request example.
 - [Relationship to Other Principles](./relationship-to-other-principles.md) — Cross-references to deliberate-problem-solving, root-cause-orientation, explicit-over-implicit, automation-over-manual, progressive-disclosure. Use when tracing connections to the repo's other principles.
-- [For AI Agents](./for-ai-agents.md) — Five agent-specific obligations for applying minimal sufficiency without weakening required safeguards. Use when auditing agent behavior against this principle.
-- [Common Violations](./common-violations.md) — Three before/after examples of common simplicity violations. Use when identifying whether a behavior violates this principle.
+- [For AI Agents](./for-ai-agents.md) — Five agent-specific obligations for applying minimal sufficiency without weakening required safeguards. Use when auditing agent behaviour against this principle.
+- [Common Violations](./common-violations.md) — Three before/after examples of common simplicity violations. Use when identifying whether a behaviour violates this principle.
 - [Summary](./summary.md) — Short recap of the smallest-responsible-change rule, its stop condition, and its safeguards. Use for the shortest possible recap of this principle.
 - [Related Conventions](./related-conventions.md) — Links to implementation workflow, monorepo structure, AI agents, and Diátaxis framework. Use when looking for related conventions.
 - [References](./references.md) — External references - KISS, YAGNI, Rule of Three, books, and articles. Use when looking for external sources backing this principle.

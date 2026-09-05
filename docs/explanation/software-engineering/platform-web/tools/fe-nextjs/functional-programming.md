@@ -209,7 +209,7 @@ const immutableUser: Readonly<MutableUser> = { id: "1", name: "John", age: 30 };
 
 ## ✨ Pure Functions
 
-Functions without side effects for predictable behavior.
+Functions without side effects for predictable behaviour.
 
 ### Identifying Pure vs Impure
 

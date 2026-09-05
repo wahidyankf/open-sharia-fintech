@@ -31,6 +31,6 @@ when_to_use: Use when deriving a new `{domain}:{work}` target name from a subjec
 | `validate:mermaid`        | `mermaid:validation`        | `validate:*` prefix abolished          |
 | `validate:links`          | `links:validation`          | same                                   |
 | `validate:specs-adoption` | `specs:adoption-validation` | same                                   |
-| `spec-coverage`           | `specs:coverage`            | Hyphen dropped; domain clarified       |
+| `spec-coverage`           | `test:coverage:behaviour`   | Hyphen dropped; domain clarified       |
 | `fmt:check`               | `format:check`              | Domain must be the noun (`format`)     |
 | `check:msrv`              | `compat:min-version`        | Verb follows domain: `{domain}:{verb}` |

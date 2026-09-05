@@ -32,7 +32,10 @@ This practice respects the following core principles:
 
 This practice implements/respects the following conventions:
 
-- **[Code Quality Convention](.././code.md)**: The quality gates (typecheck, lint, test:quick, specs:coverage) are the CI boundary this convention protects. Bypassing those gates with `--no-verify` or test skipping is the specific action this convention forbids.
+- **[Code Quality Convention](.././code.md)**: The quality gates (including `test:quick`, which
+  owns Unit runtime plus every applicable static `test:coverage:*` validator) are the CI boundary
+  this convention protects. Bypassing those gates with `--no-verify` or test skipping is the
+  specific action this convention forbids.
 
 - **[Git Push Safety Convention](../../workflow/git-push-safety.md)**: Both conventions share the stance that `--no-verify` is not a routine shortcut. This convention extends the principle to the broader case of any CI bypass mechanism.
 

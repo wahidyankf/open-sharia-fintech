@@ -28,7 +28,7 @@ Without consistent validation approaches, automated checks can:
 Standardized methods ensure:
 
 - PASS: **Accuracy** - Correct identification of actual issues
-- PASS: **Reliability** - Consistent behavior across all agents
+- PASS: **Reliability** - Consistent behaviour across all agents
 - PASS: **Efficiency** - Reusable patterns reduce duplication
 - PASS: **Maintainability** - Single source of truth for validation logic
 

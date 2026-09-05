@@ -23,7 +23,7 @@ User: "Run ayokoding-web by-example quality gate workflow for golang/tutorials/b
 - 8 MEDIUM findings (missing annotations)
 - 12 LOW findings (style improvements)
 
-**Fixer behavior**:
+**Fixer behaviour**:
 
 - Fixes: 3 CRITICAL + 5 HIGH = 8 fixes applied
 - Skips: 8 MEDIUM + 12 LOW = 20 findings reported but not fixed
@@ -52,7 +52,7 @@ User: "Run ayokoding-web by-example quality gate workflow for elixir/tutorials/b
 - 10 MEDIUM findings
 - 15 LOW findings
 
-**Fixer behavior**:
+**Fixer behaviour**:
 
 - Fixes: 2 CRITICAL + 4 HIGH + 10 MEDIUM = 16 fixes applied
 - Skips: 15 LOW findings reported but not fixed
@@ -80,7 +80,7 @@ User: "Run ayokoding-web by-example quality gate workflow for java/tutorials/by-
 - 6 MEDIUM findings
 - 20 LOW findings
 
-**Fixer behavior**:
+**Fixer behaviour**:
 
 - Fixes: 1 CRITICAL + 3 HIGH + 6 MEDIUM + 20 LOW = 30 fixes applied
 - Skips: None
@@ -89,4 +89,4 @@ User: "Run ayokoding-web by-example quality gate workflow for java/tutorials/by-
 **Final audit**:
 
 - Zero findings at all levels
-- Equivalent to pre-mode parameter behavior
+- Equivalent to pre-mode parameter behaviour

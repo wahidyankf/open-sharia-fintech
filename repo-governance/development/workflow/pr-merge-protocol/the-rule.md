@@ -31,7 +31,7 @@ hold.**
   non-destructively when behind, and GitHub reports no merge conflict.
 - **(d) Conversations** — every review conversation is resolved or explicitly dismissed by the
   user. Semantic review is optional, but conversations created by an invoked review still bind.
-- **(e) Applicable surface gates** — every UI, API, or other reachable-behavior gate required by
+- **(e) Applicable surface gates** — every UI, API, or other reachable-behaviour gate required by
   the changed surface has a passing terminal result. A genuinely unreachable surface carries an
   explicit exemption.
 

@@ -40,5 +40,5 @@ This practice eliminates both failure modes by inverting the default: parallel u
   builds, and validation run one repository at a time by default on the shared machine. Concurrent
   heavy work is an explicit exception requiring a recorded operational need and confirmed capacity
   and risk controls.
-- Intra-agent concurrency inside a subagent's own execution (governed by that agent's own behavior)
+- Intra-agent concurrency inside a subagent's own execution (governed by that agent's own behaviour)
 - Bash-level pipeline parallelism (e.g., `&` / `wait` in shell scripts)

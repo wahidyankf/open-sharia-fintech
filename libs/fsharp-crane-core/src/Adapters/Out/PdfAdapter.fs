@@ -3,6 +3,7 @@ module CraneCore.Adapters.Out.PdfAdapter
 open System.Diagnostics.CodeAnalysis
 open System.IO
 open UglyToad.PdfPig
+open UglyToad.PdfPig.DocumentLayoutAnalysis.TextExtractor
 open CraneCore.Domain.PdfMetadata
 open CraneCore.Ports
 
@@ -12,7 +13,15 @@ let private nullableToOption (s: string | null) =
     | "" -> None
     | value -> Some value
 
-[<ExcludeFromCodeCoverage(Justification = "Integration-tested against real PDF files")>]
+/// Preserves the layout separator between extracted pages. Keeping this pure makes the
+/// newline contract independently Unit-testable; PdfPig and filesystem behaviour are covered
+/// through the executable's process-boundary scenarios.
+let joinExtractedPages (pages: string seq) = pages |> String.concat "\n"
+
+let private extractPageText page =
+    ContentOrderTextExtractor.GetText(page, true)
+
+[<ExcludeFromCodeCoverage(Justification = "E2E-tested through the public Crane CLI with synthetic PDF files")>]
 type RealPdfAdapter() =
     interface IPdfPort with
         member _.GetMetadata(path) =
@@ -38,8 +47,8 @@ type RealPdfAdapter() =
                 let sampled =
                     doc.GetPages()
                     |> Seq.truncate pageCount
-                    |> Seq.collect (fun page -> page.GetWords() |> Seq.map (fun w -> w.Text))
-                    |> String.concat " "
+                    |> Seq.map extractPageText
+                    |> joinExtractedPages
 
                 Ok sampled
             with ex ->
@@ -56,8 +65,8 @@ type RealPdfAdapter() =
                     [ start..finish ]
                     |> List.map (fun pageNum ->
                         let page = doc.GetPage(pageNum)
-                        page.GetWords() |> Seq.map (fun w -> w.Text) |> String.concat " ")
-                    |> String.concat "\n"
+                        extractPageText page)
+                    |> joinExtractedPages
 
                 Ok text
             with ex ->

@@ -1,6 +1,6 @@
 ---
-title: "Picking the right level"
-description: How to pick the cheapest test level that meaningfully exercises a behavior, and why coverage should not duplicate across levels.
+title: "Applying the required test layers"
+description: How Unit proof and applicable higher-layer adapters participate in TDD.
 category: explanation
 subcategory: development
 tags:
@@ -10,19 +10,20 @@ tags:
   - testing
   - red-green-refactor
 created: 2026-05-02
-when_to_use: Use when unsure which test level a bug or behavior belongs at.
+when_to_use: Use when deciding which test adapters an observable behaviour change requires.
 ---
 
-# Picking the right level
+# Applying the required test layers
 
-When in doubt, prefer the cheapest test that meaningfully exercises the behavior:
+Every observable behaviour begins with a failing Unit proof. Add failing Integration and E2E
+bindings whenever the project's applicable boundaries can express the scenario:
 
-- A pure function bug → unit test (fastest feedback, deterministic).
-- A database query bug → integration test (real DB via docker-compose for `organiclever-be`,
-  in-process mocks otherwise).
-- A user-visible flow bug → E2E (Playwright) plus manual verification before merge.
-- A contract change → contract test on the OpenAPI spec round-trip; both producer and
-  consumer get failing tests first.
+- Unit isolates the production subject through injected dependencies.
+- Integration proves owned local files, databases, processes, environment state, or streams with
+  no network.
+- E2E proves a public browser, HTTP, or process boundary.
 
-Do not duplicate coverage across levels for the same behavior. One TDD-shaped check per
-behavior, at the right level, plus higher-level smoke coverage where flows cross boundaries.
+An inapplicable project-level adapter is omitted. A scenario-level higher-layer exemption is valid
+only for a genuine boundary mismatch and substantive alternative proof. Difficulty, runtime,
+flakiness, cost, or unfinished work cannot reduce the required adapters. See the
+[BDD standard](../../behaviour-driven-development.md).

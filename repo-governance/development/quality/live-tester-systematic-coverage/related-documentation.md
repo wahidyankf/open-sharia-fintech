@@ -18,13 +18,13 @@ when_to_use: "Use when you need a related convention on live testing."
 
 - [User-Facing Delivery Hardening Convention](.././user-facing-delivery-hardening.md) -- Rule 15
   (near-end three-tester retest before archival) that this practice makes thorough
-- [Manual Behavioral Verification Convention](.././manual-behavioral-verification.md) -- Per-locale,
+- [Manual Behavioural Verification Convention](.././manual-behavioural-verification.md) -- Per-locale,
   per-breakpoint discipline that this practice extends with element-level enumeration
 - [Evidence Capture Convention](.././evidence-capture.md) -- Where and how to record findings and
   matrices from each forcing-function
 - [Regression Test Mandate](.././regression-test-mandate.md) -- Every defect found by these testers
   must land with a reproducing test when fixed
-- [Three-Level Testing Standard](.././three-level-testing-standard.md) -- Automated testing
+- [Behaviour-Driven Development](../../behaviour-driven-development.md) -- Automated testing
   architecture that systematic live testing complements (not replaces)
 - [web-ux-test-fixing-planning workflow](../../../workflows/web/web-ux-test-fixing-planning.md) --
   The orchestration workflow that sequences all three testers against the same target

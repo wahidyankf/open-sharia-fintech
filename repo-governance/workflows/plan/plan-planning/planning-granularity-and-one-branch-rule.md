@@ -41,7 +41,7 @@ into separate delivery units is the default. Sequence is not dependency — and 
 licence to fold independent nodes together to reduce PR count.
 
 Each unit's exact resulting `main` state must be immediately production-deployable. Complete
-user-reachable behavior may be active; incomplete behavior must be complete-and-inert behind a
+user-reachable behaviour may be active; incomplete behaviour must be complete-and-inert behind a
 temporary production-disabled feature flag, with both paths tested and rollout, rollback, and
 removal recorded.
 

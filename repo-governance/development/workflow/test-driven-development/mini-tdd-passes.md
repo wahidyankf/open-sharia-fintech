@@ -22,7 +22,7 @@ Red→Green→Refactor cycles:
 - Pass it.
 - Write the next scenario (an edge case, an error condition, a boundary).
 - Pass it.
-- Continue until all required behavior is covered.
+- Continue until all required behaviour is covered.
 
 This keeps each cycle short, observable, and safe to commit. A delivery checklist item like
 "implement email validation" becomes a sequence of mini-cycles:

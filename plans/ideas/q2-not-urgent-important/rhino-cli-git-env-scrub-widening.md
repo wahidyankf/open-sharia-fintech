@@ -89,5 +89,5 @@ Out of scope: any other divergence between `beaver-nest`'s former `rhino-cli` fo
 Success: `find_root_from` (and any sibling call site with the same gap) scrubs all five ambient
 git-location variables, matching its own doc comment's stated intent, landed identically across
 `ose-public` and `ose-private`. Promotion signal: ripe for a small, self-contained
-`backlog/` plan (or a direct in-repo fix, since it is a narrow, low-risk, single-behavior change)
+`backlog/` plan (or a direct in-repo fix, since it is a narrow, low-risk, single-behaviour change)
 whenever a maintainer picks it up — no external dependency blocks it today.

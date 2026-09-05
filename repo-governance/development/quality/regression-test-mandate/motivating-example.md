@@ -21,7 +21,7 @@ found during that work -- the savings tab ignoring the geographic filter, inputs
 in the URL, a redundant UI panel, a hidden toggle that controlled visible output, a jargon label,
 and a USD-only currency input -- was converted into a Gherkin scenario so it could not return.
 Before that conversion, each bug was "fixed" but free to recur because no automated check
-asserted the corrected behavior.
+asserted the corrected behaviour.
 
 This mandate generalizes that practice into a standing rule: every bug found anywhere becomes
 a pinned scenario that cannot be silently broken again.

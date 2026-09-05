@@ -1,9 +1,1 @@
-export type {
-  JournalEntry,
-  EntryId,
-  EntryName,
-  EntryPayload,
-  IsoTimestamp,
-  NewEntryInput,
-  UpdateEntryInput,
-} from "./schema";
+export type { JournalEntry, EntryId, EntryName, EntryPayload, IsoTimestamp, NewEntryInput } from "./schema";

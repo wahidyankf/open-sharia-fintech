@@ -3,31 +3,60 @@ module OseBe.Tests.Unit.Tests.DatabaseTests
 open System
 open Xunit
 open OseBe.Infrastructure.Database
-
-/// Saves and restores DATABASE_URL around a test body so this module's
-/// mutations of process-wide environment state never leak into other tests.
-let private withDatabaseUrl (value: string option) (body: unit -> unit) =
-    let previous = Environment.GetEnvironmentVariable("DATABASE_URL")
-
-    try
-        Environment.SetEnvironmentVariable("DATABASE_URL", (defaultArg value null))
-        body ()
-    finally
-        Environment.SetEnvironmentVariable("DATABASE_URL", previous)
+open OseBe.Contexts.Db.Application
+open OseBe.Contexts.Db.Infrastructure
+open OseBe.Tests.Unit.Steps.BddState
 
 [<Fact>]
-let ``requireDatabaseUrl returns the configured connection string`` () =
-    withDatabaseUrl (Some "Host=localhost;Database=ose_be;Username=x;Password=x") (fun () ->
-        Assert.Equal("Host=localhost;Database=ose_be;Username=x;Password=x", requireDatabaseUrl ()))
+let ``requireDatabaseUrlWith returns the configured connection string`` () =
+    let value = "Host=fake;Database=ose_be"
+    Assert.Equal(value, requireDatabaseUrlWith (fun _ -> value))
 
 [<Fact>]
-let ``requireDatabaseUrl fails fast when DATABASE_URL is unset`` () =
-    withDatabaseUrl None (fun () ->
-        let ex = Assert.Throws<Exception>(fun () -> requireDatabaseUrl () |> ignore)
-        Assert.Contains("DATABASE_URL", ex.Message))
+let ``requireDatabaseUrlWith fails fast when DATABASE_URL is absent`` () =
+    let ex =
+        Assert.Throws<Exception>(fun () -> requireDatabaseUrlWith (fun _ -> null) |> ignore)
+
+    Assert.Contains("DATABASE_URL", ex.Message)
 
 [<Fact>]
-let ``requireDatabaseUrl fails fast when DATABASE_URL is blank`` () =
-    withDatabaseUrl (Some "") (fun () ->
-        let ex = Assert.Throws<Exception>(fun () -> requireDatabaseUrl () |> ignore)
-        Assert.Contains("DATABASE_URL", ex.Message))
+let ``runMigrationsWith invokes the upgrade adapter exactly once`` () =
+    let mutable calls = 0
+    let mutable observed = ""
+
+    runMigrationsWith
+        (fun connection ->
+            calls <- calls + 1
+            observed <- connection
+            Ok())
+        "in-memory://ose-be"
+
+    Assert.Equal(1, calls)
+    Assert.Equal("in-memory://ose-be", observed)
+
+[<Fact>]
+let ``runMigrationsWith fails with the upgrade adapter error`` () =
+    let ex =
+        Assert.Throws<Exception>(fun () -> runMigrationsWith (fun _ -> Error "broken script") "in-memory")
+
+    Assert.Contains("broken script", ex.Message)
+
+[<Fact>]
+let ``migration status transitions from pending to applied`` () =
+    let status = newMigrationStatus ()
+    Assert.Equal(Pending, status.Get())
+    Assert.Equal("pending", stateToString (status.Get()))
+
+    status.MarkApplied()
+
+    Assert.Equal(Applied, status.Get())
+    Assert.Equal("applied", stateToString (status.Get()))
+
+[<Fact>]
+let ``database status route reports an applied startup migration`` () =
+    let client = buildClient (OseBe.Contexts.Db.Api.routes (appliedMigrationStatus ()))
+    let response = client.GetAsync("/api/v1/system/status/database").Result
+    let body = response.Content.ReadAsStringAsync().Result
+
+    Assert.True(response.IsSuccessStatusCode)
+    Assert.Contains("\"migration_state\":\"applied\"", body)

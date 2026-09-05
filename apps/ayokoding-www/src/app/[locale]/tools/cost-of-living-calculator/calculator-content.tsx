@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { dataset } from "@/features/cost-of-living-calculator/core/data/cities";
 import { roleMatrix } from "@/features/cost-of-living-calculator/core/data/roles";
@@ -33,9 +33,27 @@ export function CostOfLivingCalculatorContent() {
   const pathname = usePathname();
   const locale = useLocale();
   const rawSearchParams = searchParams.toString();
+  const pendingScrollY = useRef<number | null>(null);
+  const [hydrated, setHydrated] = useState(false);
 
-  // URL is the single source of truth. Derive ALL state from decoded URL params.
-  const currentState = decodeState(new URLSearchParams(rawSearchParams), dataset);
+  // The URL remains the durable source of truth. Static exports do not reliably propagate native
+  // history writes back through useSearchParams, so keep a render replica that is updated with each
+  // production write and resynchronized whenever routing or browser history supplies a new URL.
+  const [currentState, setCurrentState] = useState(() => decodeState(new URLSearchParams(rawSearchParams), dataset));
+
+  useEffect(() => {
+    setCurrentState(decodeState(new URLSearchParams(rawSearchParams), dataset));
+  }, [rawSearchParams]);
+
+  useEffect(() => setHydrated(true), []);
+
+  useEffect(() => {
+    const syncFromBrowserHistory = () => {
+      setCurrentState(decodeState(new URLSearchParams(window.location.search), dataset));
+    };
+    window.addEventListener("popstate", syncFromBrowserHistory);
+    return () => window.removeEventListener("popstate", syncFromBrowserHistory);
+  }, []);
 
   // UWT-015 (A-3): capture, at mount, whether the region/country were auto-derived
   // solely from a city deep link (raw URL has `city` but no explicit
@@ -67,6 +85,22 @@ export function CostOfLivingCalculatorContent() {
     }
   }, [pathname, rawSearchParams, router]);
 
+  // `scroll: false` normally preserves the viewport for query-only App Router transitions,
+  // but statically exported routes can still reset to the document top when the query commits.
+  // Restore the exact pre-transition offset after the URL-driven render; the following animation
+  // frame also covers the export router's late scroll adjustment.
+  useEffect(() => {
+    const scrollY = pendingScrollY.current;
+    if (scrollY === null) return;
+    pendingScrollY.current = null;
+    if (scrollY <= 0) return;
+
+    const restore = () => window.scrollTo(window.scrollX, scrollY);
+    restore();
+    const frame = window.requestAnimationFrame(restore);
+    return () => window.cancelAnimationFrame(frame);
+  }, [rawSearchParams]);
+
   // Helper: encode new state and push to URL history.
   //
   // `scroll: false` is mandatory: this is in-page filter/view state, not a page change, so
@@ -76,7 +110,17 @@ export function CostOfLivingCalculatorContent() {
   function pushState(next: CalculatorState) {
     const params = encodeState(next);
     const qs = params.toString();
-    router.push(qs ? `?${qs}` : "?", { scroll: false });
+    pendingScrollY.current = window.scrollY;
+    if (process.env.NODE_ENV === "production") {
+      // Keep static-export navigation on one coherent history mechanism. Mixing a native replace
+      // (continuous fields) with a later App Router push leaves that push inert in the exported app.
+      // Next patches pushState into useSearchParams, so discrete changes remain reactive and retain
+      // their distinct Back entry.
+      setCurrentState(next);
+      window.history.pushState(window.history.state, "", qs ? `${pathname}?${qs}` : pathname);
+    } else {
+      router.push(qs ? `?${qs}` : "?", { scroll: false });
+    }
   }
 
   // Like pushState but replaces the current history entry — used for continuous inputs
@@ -85,7 +129,17 @@ export function CostOfLivingCalculatorContent() {
   function replaceState(next: CalculatorState) {
     const params = encodeState(next);
     const qs = params.toString();
-    router.replace(qs ? `?${qs}` : "?", { scroll: false });
+    pendingScrollY.current = window.scrollY;
+    if (process.env.NODE_ENV === "production") {
+      // On the statically exported route, App Router replace can leave the controlled field's
+      // local echo updated without committing its query value. Next patches the native history
+      // methods into useSearchParams, so this preserves replace/back-stack semantics and keeps
+      // the URL-driven state reactive at the same time.
+      setCurrentState(next);
+      window.history.replaceState(window.history.state, "", qs ? `${pathname}?${qs}` : pathname);
+    } else {
+      router.replace(qs ? `?${qs}` : "?", { scroll: false });
+    }
   }
 
   // Build scoped dataset for filtered table views.
@@ -239,7 +293,11 @@ export function CostOfLivingCalculatorContent() {
   );
 
   return (
-    <main data-testid="calc-page" className="mx-auto max-w-6xl space-y-4 px-4 py-6">
+    <main
+      data-testid="calc-page"
+      data-hydrated={hydrated ? "true" : undefined}
+      className="mx-auto max-w-6xl space-y-4 px-4 py-6"
+    >
       <CalculatorBreadcrumb />
       <h1 className="text-2xl font-bold tracking-tight">{t(locale, "calcTitle")}</h1>
       <p data-testid="calc-subtitle" className="text-sm text-muted-foreground">

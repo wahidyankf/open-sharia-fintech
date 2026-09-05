@@ -9,7 +9,7 @@ This corpus is the single source of truth for what a visitor sees at the domain 
 
 - [Architecture](./architecture.md) — the current as-built system: its context, the one container it
   deploys, its two feature contexts, and the constraints that bind them.
-- [Behaviors](./behaviors/README.md) — the recursive Gherkin corpus, split by the perspective a
+- [Behaviours](./behaviours/README.md) — the recursive Gherkin corpus, split by the perspective a
   scenario takes.
 
 ## Related

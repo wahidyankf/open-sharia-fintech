@@ -20,17 +20,16 @@ created: 2026-04-02
 
 ## Pre-push + CI gating surfaces
 
-Specs validation is declared in the `gates:` registry of `repo-config.yml`, never wired by hand.
-`specs-gherkin-cardinality` and `specs-structure` both carry `ci-group: specs` and run on every
-surface their entries declare:
+Specs structure validation remains registry-declared. Per-project BDD coverage runs through every
+affected `test:quick`; repeated primary keywords are valid for a continuous journey.
 
 - `.husky/pre-push` — `gate run --surface=pre-push` reads them from the registry
 - `.github/workflows/pr-quality-gate.yml` — the `specs-structure` job in `quality-gate.needs:`
 - `_reusable-www-test-local-deploy.yml` and `_reusable-app-test-local-deploy-stag.yml` — the
   `specs-gate` job in `deploy.needs:`, called by the www and app cron deploys
 
-**No specs command in `rhino-cli` is dead** — every specs module is reachable from a `SpecsCommands`
-variant, and every variant is invoked by an Nx target or registry gate.
+The retired Rhino testing-contract and keyword-cardinality commands are not part of this structural
+gate. Semantic binding substance belongs to the Gherkin implementation review.
 
 ## LLM Semantic Validation (specs-checker)
 
@@ -50,14 +49,14 @@ When reviewing changes to the `specs/` directory, verify:
 - [ ] Lib specs use package subdirectories under `gherkin/`
 - [ ] `README.md` index files exist at every directory level
 - [ ] New projects include only the folders their surface profile needs
-- [ ] Entry listing in a corpus README follows canonical order: `architecture.md`, `contracts/`, `behaviors/`
+- [ ] Entry listing in a corpus README follows canonical order: `architecture.md`, `contracts/`, `behaviours/`
 
 ## Related Documentation
 
 - [App README vs Specs Convention](../app-readme-vs-specs.md) — combined convention: content split rule, PM-readability contract, BDD/Contracts adoption
 - [Specs-Application Sync Convention](../../../development/quality/specs-application-sync.md) — bidirectional sync between specs and application code
-- [BDD Spec-Test Mapping](../../../development/infra/bdd-spec-test-mapping.md) — how specs map to test implementations
-- [Three-Level Testing Standard](../../../development/quality/three-level-testing-standard.md) — unit, integration, and E2E testing levels
+- [Behaviour-Driven Development](../../../development/behaviour-driven-development.md) — canonical corpus, adapters, coverage, and exemptions
+- [Behaviour-Driven Development](../../../development/behaviour-driven-development.md) — mandatory Unit proof and boundary-applicable Integration/E2E testing
 - [Acceptance Criteria Convention](../../../development/infra/acceptance-criteria.md) — Gherkin writing standards for feature files
 - [File Naming Convention](../file-naming.md) — general file naming patterns
 - [Plans Organization Convention](../plans.md) — similar convention for plans/ directory structure

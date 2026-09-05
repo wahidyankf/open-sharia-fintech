@@ -1,6 +1,6 @@
 ---
 title: "C# Testing Standards"
-description: Authoritative OSE Platform C# testing standards (xUnit, FluentAssertions, Moq, TestContainers.Net)
+description: Authoritative OSE Platform C# testing standards (xUnit, FluentAssertions, Unit doubles, zero-network Integration, and public-API E2E)
 category: explanation
 subcategory: prog-lang
 tags:
@@ -35,7 +35,7 @@ This document defines **authoritative testing standards** for C# development in 
 
 **Target Audience**: OSE Platform C# developers writing or reviewing tests
 
-**Scope**: xUnit patterns, assertion style, mocking, async tests, database integration, coverage requirements
+**Scope**: xUnit patterns, assertion style, Unit doubles, zero-network Integration, public-API E2E, coverage requirements
 
 ## Software Engineering Principles
 
@@ -355,38 +355,39 @@ var result = await _service.ProcessAsync(payerId, wealth, CancellationToken.None
 var result = await _service.ProcessAsync(payerId, wealth); // loses explicitness
 ```
 
-## TestContainers.Net for Database Tests
+## Real Local-Resource Integration Tests
 
-**MUST** use TestContainers.Net for repository-level integration tests. **MUST NOT** mock `DbContext` or `IZakatRepository` in repository tests.
+**MUST** keep Integration tests free of every network path, including loopback. Exercise a real,
+isolated same-machine resource such as a temporary SQLite database file. An in-memory repository or
+mocked `DbContext` is a Unit double, not Integration proof.
 
 ```csharp
 // ZakatRepositoryIntegrationTests.cs
-public class ZakatRepositoryIntegrationTests : IAsyncLifetime
+public sealed class ZakatRepositoryIntegrationTests : IDisposable
 {
-    private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder()
-        .WithImage("postgres:16-alpine")
-        .Build();
+    private readonly string _databasePath = Path.Combine(
+        Path.GetTempPath(), $"zakat-{Guid.NewGuid():N}.sqlite");
+    private readonly SqliteConnection _connection;
+    private readonly ZakatDbContext _dbContext;
+    private readonly ZakatRepository _repository;
 
-    private ZakatDbContext _dbContext = null!;
-    private ZakatRepository _repository = null!;
-
-    public async Task InitializeAsync()
+    public ZakatRepositoryIntegrationTests()
     {
-        await _postgres.StartAsync();
-
+        _connection = new SqliteConnection($"Data Source={_databasePath}");
+        _connection.Open();
         var options = new DbContextOptionsBuilder<ZakatDbContext>()
-            .UseNpgsql(_postgres.GetConnectionString())
+            .UseSqlite(_connection)
             .Options;
-
         _dbContext = new ZakatDbContext(options);
-        await _dbContext.Database.MigrateAsync();
+        _dbContext.Database.EnsureCreated();
         _repository = new ZakatRepository(_dbContext);
     }
 
-    public async Task DisposeAsync()
+    public void Dispose()
     {
-        await _dbContext.DisposeAsync();
-        await _postgres.DisposeAsync();
+        _dbContext.Dispose();
+        _connection.Dispose();
+        File.Delete(_databasePath);
     }
 
     [Fact]
@@ -414,16 +415,36 @@ public class ZakatRepositoryIntegrationTests : IAsyncLifetime
 }
 ```
 
-## WebApplicationFactory for API Integration Tests
+## WebApplicationFactory and TestContainers.Net for API E2E Tests
 
-**MUST** use WebApplicationFactory for ASP.NET Core endpoint integration tests.
+**MUST** classify a `WebApplicationFactory` client as E2E because it invokes the product through
+its public HTTP/API boundary. A TestContainers.Net database may support that E2E system, but tests
+MUST NOT call the networked database directly as Integration proof.
 
 ```csharp
-// ZakatApiIntegrationTests.cs
-public class ZakatApiIntegrationTests(WebApplicationFactory<Program> factory)
-    : IClassFixture<WebApplicationFactory<Program>>
+// ZakatApiE2ETests.cs
+public sealed class ZakatApiE2ETests : IAsyncLifetime
 {
-    private readonly HttpClient _client = factory.CreateClient();
+    private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder()
+        .WithImage("postgres:16-alpine")
+        .Build();
+    private WebApplicationFactory<Program> _factory = null!;
+    private HttpClient _client = null!;
+
+    public async Task InitializeAsync()
+    {
+        await _postgres.StartAsync();
+        _factory = new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
+            builder.UseSetting("ConnectionStrings:Zakat", _postgres.GetConnectionString()));
+        _client = _factory.CreateClient();
+    }
+
+    public async Task DisposeAsync()
+    {
+        _client.Dispose();
+        await _factory.DisposeAsync();
+        await _postgres.DisposeAsync();
+    }
 
     [Fact]
     public async Task PostZakat_ValidRequest_Returns201Created()
@@ -449,7 +470,8 @@ public class ZakatApiIntegrationTests(WebApplicationFactory<Program> factory)
 
 ## Code Coverage Requirements
 
-**MUST** achieve >=95% line coverage measured with Coverlet and enforced by the native `test:coverage` Nx target.
+**MUST** achieve >=99% line coverage measured with Coverlet and enforced during the native
+`test:unit` runtime. Static `test:coverage:*` targets never execute Coverlet or any test runner.
 
 ```xml
 <!-- OsePlatform.Zakat.Tests.csproj -->
@@ -463,7 +485,7 @@ public class ZakatApiIntegrationTests(WebApplicationFactory<Program> factory)
 ```bash
 # Collect coverage with threshold enforcement
 dotnet test --collect:"XPlat Code Coverage" --results-directory ./coverage \
-  /p:Threshold=95 /p:ThresholdType=line /p:ThresholdStat=Total
+  /p:Threshold=99 /p:ThresholdType=line /p:ThresholdStat=Total
 ```
 
 ## Enforcement
@@ -471,15 +493,17 @@ dotnet test --collect:"XPlat Code Coverage" --results-directory ./coverage \
 - **xUnit** - Test discovery and execution
 - **FluentAssertions** - Readable, maintainable assertions (mandatory)
 - **Coverlet** - Coverage measurement in CI/CD
-- **`test:coverage` Nx target** - Enforces >=95% threshold
+- **`test:unit` Nx target** - Runs Coverlet and enforces the >=99% threshold
+- **`test:coverage:*` Nx targets** - Statically validate scenario/adaptor coverage without running tests
 
 **Pre-commit checklist**:
 
 - [ ] All tests use `async Task` (not `async void`)
 - [ ] FluentAssertions used for all assertions
 - [ ] Arrange-Act-Assert structure with blank line separators
-- [ ] Repository tests use TestContainers.Net (not mocked DbContext)
-- [ ] API integration tests use WebApplicationFactory
+- [ ] Unit tests replace repositories, database clients, and network clients with injected doubles
+- [ ] Integration tests use a real isolated local resource and no network, including loopback
+- [ ] API E2E tests invoke the public HTTP boundary; networked backing services remain behind it
 - [ ] `CancellationToken.None` passed explicitly in test calls
 
 ## Related Standards

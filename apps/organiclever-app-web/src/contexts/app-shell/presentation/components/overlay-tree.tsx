@@ -32,7 +32,7 @@ export function OverlayTree() {
     } else if (kind === "reading" || kind === "learning" || kind === "meal" || kind === "focus") {
       send({ type: "OPEN_LOGGER", kind });
     } else {
-      send({ type: "OPEN_CUSTOM_LOGGER", name: kind });
+      send({ type: "OPEN_CUSTOM_LOGGER" });
     }
   }
 

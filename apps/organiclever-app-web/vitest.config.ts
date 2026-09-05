@@ -76,7 +76,7 @@ export default defineConfig({
       ],
       thresholds: {
         // Only line coverage is a repository-enforced floor (AC-COVERAGE-01);
-        // the `test:coverage` Nx target's `--coverage.thresholds.lines=99`
+        // the `test:unit` Nx target's `--coverage.thresholds.lines=99`
         // flag is the source of truth and overrides this value at
         // invocation time. Functions/branches/statements keep their
         // pre-migration bar — raising them isn't part of this contract.
@@ -98,14 +98,8 @@ export default defineConfig({
     // `waitFor` assertion failures across journal/settings/routine/
     // stats store and hook tests. Raise both budgets uniformly.
     //
-    // There is no separate "integration" tier here: the canonical registry
-    // (repo-config.yml testing.projects[organiclever-app-web].behavior.
-    // adapters.integration) declares that disposition `inapplicable` —
-    // PGlite is an in-process embedded engine, not an isolated local
-    // resource — so PGlite-backed suites (including the former
-    // journal-store.int.test.ts, folded into journal-store-batch.unit.test.ts)
-    // run as unit tests, same as this project's other PGlite-backed suites
-    // always have.
+    // PGlite is an in-process embedded engine, not an isolated local resource, so these suites
+    // remain Unit tests rather than defining a separate Integration tier.
     testTimeout: 30000,
     hookTimeout: 30000,
   },

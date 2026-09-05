@@ -1,27 +1,36 @@
 import path from "path";
 import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
 import { render, screen, cleanup } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { expect } from "vitest";
 
 import { HomeContent } from "@/features/home";
+import {
+  contrastRatio,
+  LANDING_ACCESSIBILITY_COLORS,
+  LANDING_FOCUS_RING_WIDTH_PX,
+} from "@/features/home/core/accessibility-style";
 
 const feature = await loadFeature(
   path.resolve(
     __dirname,
-    "../../../../../../specs/apps/organiclever/www/behaviors/frontend/accessibility/accessibility.feature",
+    "../../../../../../specs/apps/organiclever/www/behaviours/frontend/accessibility/accessibility.feature",
   ),
 );
 
 describeFeature(feature, ({ Scenario, Background }) => {
+  let renderedContainer: HTMLElement;
+
   Background(({ Given }) => {
     Given("the app is running", () => {
       cleanup();
+      expect(HomeContent).toBeTypeOf("function");
     });
   });
 
   Scenario("Pages have proper heading hierarchy", ({ When, Then, And }) => {
     When("I navigate to any page", () => {
-      render(<HomeContent />);
+      renderedContainer = render(<HomeContent />).container;
     });
 
     Then("each page should have exactly one h1 element", () => {
@@ -29,7 +38,6 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(h1Elements).toHaveLength(1);
     });
 
-    // @covers specs/apps/organiclever/www/behaviors/frontend/accessibility/accessibility.feature:Pages have proper heading hierarchy
     And("heading levels should not skip (no h1 followed by h3)", () => {
       const headings = screen.queryAllByRole("heading");
       const levels = headings.map((h) => parseInt(h.tagName.replace("H", ""), 10));
@@ -45,38 +53,47 @@ describeFeature(feature, ({ Scenario, Background }) => {
 
   Scenario("Keyboard navigation works throughout the app", ({ When, Then, And }) => {
     When("I navigate to the landing page", () => {
-      render(<HomeContent />);
+      renderedContainer = render(<HomeContent />).container;
     });
 
-    Then("I should be able to tab to all interactive elements", () => {
-      const links = screen.queryAllByRole("link");
-      links.forEach((link) => {
-        expect(link).toBeInTheDocument();
-      });
+    Then("I should be able to tab to all interactive elements", async () => {
+      const expected = [...renderedContainer.querySelectorAll<HTMLElement>("a[href], button:not([disabled])")];
+      const reached: HTMLElement[] = [];
+      const user = userEvent.setup();
+      for (let index = 0; index < expected.length; index += 1) {
+        await user.tab();
+        reached.push(document.activeElement as HTMLElement);
+      }
+      expect(expected.length).toBeGreaterThan(0);
+      expect(reached).toEqual(expected);
     });
 
-    // @covers specs/apps/organiclever/www/behaviors/frontend/accessibility/accessibility.feature:Keyboard navigation works throughout the app
     And("focus indicators should be visible", () => {
-      const buttons = screen.queryAllByRole("button");
-      expect(buttons.length).toBeGreaterThan(0);
+      expect(document.activeElement).not.toBe(document.body);
+      expect((document.activeElement as HTMLElement).matches(":focus")).toBe(true);
+      expect(screen.getByTestId("landing-surface")).toHaveClass("ol-focus-surface");
+      expect(LANDING_FOCUS_RING_WIDTH_PX).toBeGreaterThanOrEqual(2);
+      expect(
+        contrastRatio(LANDING_ACCESSIBILITY_COLORS.focusRing, LANDING_ACCESSIBILITY_COLORS.background),
+      ).toBeGreaterThanOrEqual(3);
     });
   });
 
   Scenario("Color contrast meets WCAG AA requirements", ({ When, Then, And }) => {
     When("I navigate to any page", () => {
-      render(<HomeContent />);
+      renderedContainer = render(<HomeContent />).container;
     });
 
     Then("all text should meet WCAG AA contrast ratio (4.5:1 for normal text)", () => {
-      expect(document.body.textContent?.length).toBeGreaterThan(0);
+      expect(
+        contrastRatio(LANDING_ACCESSIBILITY_COLORS.text, LANDING_ACCESSIBILITY_COLORS.background),
+      ).toBeGreaterThanOrEqual(4.5);
     });
 
-    // @covers specs/apps/organiclever/www/behaviors/frontend/accessibility/accessibility.feature:Color contrast meets WCAG AA requirements
     And("all interactive elements should have sufficient contrast", () => {
-      const buttons = screen.queryAllByRole("button");
-      buttons.forEach((button) => {
-        expect(button).toBeInTheDocument();
-      });
+      expect(
+        contrastRatio(LANDING_ACCESSIBILITY_COLORS.interactiveText, LANDING_ACCESSIBILITY_COLORS.interactiveBackground),
+      ).toBeGreaterThanOrEqual(4.5);
     });
   });
 
@@ -92,10 +109,8 @@ describeFeature(feature, ({ Scenario, Background }) => {
       });
     });
 
-    // @covers specs/apps/organiclever/www/behaviors/frontend/accessibility/accessibility.feature:ARIA attributes are properly used
     And("navigation landmarks should be properly labeled", () => {
-      const main = screen.getByRole("main");
-      expect(main).toBeInTheDocument();
+      expect(screen.getByRole("navigation", { name: "Primary navigation" })).toBeInTheDocument();
     });
   });
 });

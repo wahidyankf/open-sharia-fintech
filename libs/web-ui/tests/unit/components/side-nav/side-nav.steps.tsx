@@ -14,31 +14,35 @@ const tabs: TabItem[] = [
 const brand = { name: "OrganicLever", icon: "dumbbell", hue: "teal" as const };
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../specs/libs/web-ui/behaviors/side-nav/side-nav.feature"),
+  path.resolve(__dirname, "../../../../../../specs/libs/web-ui/behaviours/side-nav/side-nav.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {
   Scenario("Renders brand name", ({ When, Then }) => {
+    let brandName: HTMLElement;
+
     When('I render a SideNav with brand "OrganicLever" and tabs', () => {
-      // precondition noted
+      cleanup();
+      render(<SideNav brand={brand} tabs={tabs} current="home" onChange={vi.fn()} />);
+      brandName = screen.getByText("OrganicLever");
     });
 
     Then('the text "OrganicLever" should be visible', () => {
-      cleanup();
-      render(<SideNav brand={brand} tabs={tabs} current="home" onChange={() => {}} />);
-      expect(screen.getByText("OrganicLever")).toBeDefined();
+      expect(brandName.textContent).toBe("OrganicLever");
     });
   });
 
   Scenario("Renders tabs", ({ When, Then }) => {
+    let homeTab: HTMLElement;
+
     When('I render a SideNav with brand "OrganicLever" and tabs', () => {
-      // precondition noted
+      cleanup();
+      render(<SideNav brand={brand} tabs={tabs} current="home" onChange={vi.fn()} />);
+      homeTab = screen.getByText("Home");
     });
 
     Then('the tab "Home" should be visible', () => {
-      cleanup();
-      render(<SideNav brand={brand} tabs={tabs} current="home" onChange={() => {}} />);
-      expect(screen.getByText("Home")).toBeDefined();
+      expect(homeTab.textContent).toBe("Home");
     });
   });
 
@@ -46,7 +50,9 @@ describeFeature(feature, ({ Scenario }) => {
     const onChangeMock = vi.fn();
 
     Given('I render a SideNav with brand "OrganicLever" and tabs', () => {
-      // precondition noted; render happens in When step to persist mock state
+      cleanup();
+      render(<SideNav brand={brand} tabs={tabs} current="home" onChange={onChangeMock} />);
+      expect(screen.getByText("History")).toBeDefined();
     });
 
     When('the user clicks the "History" tab', () => {
@@ -61,14 +67,15 @@ describeFeature(feature, ({ Scenario }) => {
   });
 
   Scenario("Active tab has active background", ({ When, Then }) => {
+    let homeButton: HTMLButtonElement | null;
+
     When('I render a SideNav with brand "OrganicLever" current "home" and tabs', () => {
-      // precondition noted
+      cleanup();
+      render(<SideNav brand={brand} tabs={tabs} current="home" onChange={vi.fn()} />);
+      homeButton = screen.getByText("Home").closest("button");
     });
 
     Then('the "Home" button should have the active class', () => {
-      cleanup();
-      render(<SideNav brand={brand} tabs={tabs} current="home" onChange={() => {}} />);
-      const homeButton = screen.getByText("Home").closest("button");
       expect(homeButton?.className).toContain("bg-[var(--hue-teal-wash)]");
     });
   });
@@ -77,7 +84,9 @@ describeFeature(feature, ({ Scenario }) => {
     const onChangeMock = vi.fn();
 
     Given('I render a SideNav with brand "OrganicLever" current "history" and tabs', () => {
-      // precondition noted; render happens in When step to persist mock state
+      cleanup();
+      render(<SideNav brand={brand} tabs={tabs} current="history" onChange={onChangeMock} />);
+      expect(screen.getByText("OrganicLever")).toBeDefined();
     });
 
     When("the user clicks the brand row", () => {

@@ -12,7 +12,7 @@ sources.
 **Skip condition**: Skip if ALL hold:
 
 1. The prompt describes a purely internal governance or structural change with no external claims
-2. No library versions, API signatures, tool behavior, or third-party conventions need verification
+2. No library versions, API signatures, tool behaviour, or third-party conventions need verification
 3. The user confirmed in Step 1 that no research is needed
 
 If skipping: emit `Step 2 skipped — no external research needed (confirmed in Step 1).`
@@ -22,7 +22,7 @@ If skipping: emit `Step 2 skipped — no external research needed (confirmed in 
 Invoke `web-researcher` via the Agent tool. Provide a focused research prompt covering:
 
 - Best practices or authoritative sources for the proposed approach
-- Library or tool behavior referenced in the prompt (versions, API signatures, caveats)
+- Library or tool behaviour referenced in the prompt (versions, API signatures, caveats)
 - Prior art: has anyone formalized this pattern? Known failure modes?
 - Risks or caveats not mentioned in the prompt
 

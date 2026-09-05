@@ -52,4 +52,4 @@ plan`** to each tester; tester omission would default to `local-tmp`. Each teste
 > already in flight: invoke each tester directly with `output-mode: delivery` and the executing
 > plan's `plan-path` (see the
 > [Rule-15 three-tester retest in plan-execution](../../plan/plan-execution/finalization-pre-archival-gates.md#8-finalization-and-archival-sequential)).
-> This workflow's behavior is unchanged; the note clarifies which mode each path uses.
+> This workflow's behaviour is unchanged; the note clarifies which mode each path uses.

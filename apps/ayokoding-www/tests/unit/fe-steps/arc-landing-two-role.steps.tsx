@@ -42,7 +42,7 @@ const courseTitles = {
 const feature = await loadFeature(
   path.resolve(
     process.cwd(),
-    "../../specs/apps/ayokoding/www/behaviors/frontend/course-paths/arc-landing-two-role.feature",
+    "../../specs/apps/ayokoding/www/behaviours/frontend/course-paths/arc-landing-two-role.feature",
   ),
 );
 
@@ -51,7 +51,8 @@ describeFeature(feature, ({ Scenario }) => {
     "An arc landing with two paths renders both role cards without a placeholder",
     ({ Given, When, Then, And }) => {
       Given("the fixture immediately-effective arc manifest lists two roles", () => {
-        // Fixture: `roleA`/`roleB` above.
+        expect([roleA, roleB]).toHaveLength(2);
+        expect(new Set([roleA.arc, roleB.arc])).toEqual(new Set(["immediately-effective"]));
       });
 
       When("a reader opens the arc landing at /en/learn/paths/careers/immediately-effective/", () => {
@@ -66,7 +67,6 @@ describeFeature(feature, ({ Scenario }) => {
         expect(nav.getAllByRole("link").length).toBe(2);
       });
 
-      // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/arc-landing-two-role.feature:An arc landing with two paths renders both role cards without a placeholder
       And("neither card is a placeholder or an empty grid cell", () => {
         const nav = screen.getByRole("navigation", { name: "immediately-effective paths" });
         expect(nav.querySelectorAll("li").length).toBe(2);

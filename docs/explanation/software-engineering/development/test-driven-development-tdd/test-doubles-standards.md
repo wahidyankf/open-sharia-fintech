@@ -71,7 +71,7 @@ fn should_save_and_retrieve_donation() {
 **Avoid** (excessive mocking):
 
 ```rust
-// DON'T wire up a full mock for simple state-holding behavior —
+// DON'T wire up a full mock for simple state-holding behaviour —
 // the in-memory struct above is simpler and more realistic.
 // mockall::mock! can replace a trait, but that's overkill here:
 mock! {
@@ -112,7 +112,7 @@ describe("DonationService", () => {
 
 ### Use Spies for Verification
 
-**OPTIONAL**: Use spies when verifying behavior matters.
+**OPTIONAL**: Use spies when verifying behaviour matters.
 
 ```rust
 use mockall::predicate::*;

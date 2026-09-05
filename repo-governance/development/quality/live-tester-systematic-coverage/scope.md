@@ -28,6 +28,6 @@ This practice applies to:
 
 It does not apply to:
 
-- Automated Playwright E2E tests (those follow the [Three-Level Testing Standard](.././three-level-testing-standard.md)).
-- API-only verification (covered by [Manual Behavioral Verification](.././manual-behavioral-verification.md)).
+- Automated Playwright E2E tests (those follow the [Behaviour-Driven Development](../../behaviour-driven-development.md)).
+- API-only verification (covered by [Manual Behavioural Verification](.././manual-behavioural-verification.md)).
 - Library-only changes with no UI surface.

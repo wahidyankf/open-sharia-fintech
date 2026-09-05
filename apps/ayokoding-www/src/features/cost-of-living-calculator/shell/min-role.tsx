@@ -51,7 +51,7 @@ type Props = {
   /** Shared generic filters, rendered after this tab's own baseline-source inputs. */
   filtersSlot?: ReactNode;
   /** Controlled baseline inputs. When provided with onInputsChange, the URL is the source of
-      truth; otherwise the component falls back to internal state (legacy/standalone behavior). */
+      truth; otherwise the component falls back to internal state (legacy/standalone behaviour). */
   inputs?: MinRoleInputs;
   onInputsChange?: (next: MinRoleInputs) => void;
 };
@@ -208,10 +208,27 @@ export function MinRoleTable({
   // baseline and renders the ladder/divider via the Phase-1 EWT-001 path above.
   const showEmptyState = baselineSource === "savings_target" && targetIsBlank;
 
-  function DualCell({ usdVal, cityCurrency, className }: { usdVal: number; cityCurrency: string; className?: string }) {
+  function DualCell({
+    usdVal,
+    cityCurrency,
+    column,
+    className,
+  }: {
+    usdVal: number;
+    cityCurrency: string;
+    column: string;
+    className?: string;
+  }) {
     const conv = toDisplayCurrencies(fx, usdVal, cityCurrency, displayCurrency);
     return (
-      <TableCell data-testid="dual-currency-cell" className={className}>
+      <TableCell
+        data-testid="dual-currency-cell"
+        data-money-column={column}
+        data-usd={usdVal}
+        data-display-currency={displayCurrency}
+        data-local-currency={cityCurrency}
+        className={className}
+      >
         <span data-line="display">{fmtCurrencyTrailing(conv.display, displayCurrency)}</span>
         <span data-line="local" className="block text-xs text-muted-foreground">
           {fmtCurrencyTrailing(conv.local, cityCurrency)}
@@ -223,15 +240,21 @@ export function MinRoleTable({
   function SavingsCell({ entry }: { entry: CityRoleEntry }) {
     const conv = toDisplayCurrencies(fx, entry.essentialSavingsUsd, entry.city.currency, displayCurrency);
     return (
-      <TableCell data-testid="savings-triple">
-        <span data-line="usd">{fmtCurrencyTrailing(entry.essentialSavingsUsd, "USD")}</span>
+      <TableCell
+        data-testid="savings-triple"
+        data-money-column="essential-savings"
+        data-usd={entry.essentialSavingsUsd}
+        data-display-currency={displayCurrency}
+        data-local-currency={entry.city.currency}
+      >
         {displayCurrency !== "USD" && (
-          <span data-line="display" className="block text-xs">
-            {fmtCurrencyTrailing(conv.display, displayCurrency)}
-          </span>
+          <span data-line="display">{fmtCurrencyTrailing(conv.display, displayCurrency)}</span>
         )}
         <span data-line="local" className="block text-xs text-muted-foreground">
           {fmtCurrencyTrailing(conv.local, entry.city.currency)}
+        </span>
+        <span data-line="usd" className="block text-xs">
+          {fmtCurrencyTrailing(entry.essentialSavingsUsd, "USD")}
         </span>
       </TableCell>
     );
@@ -240,7 +263,17 @@ export function MinRoleTable({
   function RoleRow({ entry, isMin, dimmed }: { entry: CityRoleEntry; isMin: boolean; dimmed: boolean }) {
     const rowLabel = matrix.ladder.find((r) => r.role === entry.role)?.label.en ?? entry.role;
     return (
-      <TableRow data-testid={dimmed ? "non-qualifying-row" : undefined} className={dimmed ? "opacity-50" : undefined}>
+      <TableRow
+        data-testid={dimmed ? "non-qualifying-row" : undefined}
+        data-candidate-row="true"
+        data-city-id={entry.city.id}
+        data-country-id={entry.country.id}
+        data-currency={entry.city.currency}
+        data-role={entry.role}
+        data-rank={entry.rank}
+        data-essential-savings-usd={entry.essentialSavingsUsd}
+        className={dimmed ? "opacity-50" : undefined}
+      >
         <TableCell>
           {rowLabel}
           {isMin && (
@@ -261,18 +294,29 @@ export function MinRoleTable({
         <DualCell
           usdVal={entry.distributionUsd.p25}
           cityCurrency={entry.city.currency}
+          column="p25"
           className="hidden lg:table-cell"
         />
-        <DualCell usdVal={entry.distributionUsd.median} cityCurrency={entry.city.currency} />
+        <DualCell usdVal={entry.distributionUsd.median} cityCurrency={entry.city.currency} column="median" />
         <DualCell
           usdVal={entry.distributionUsd.p75}
           cityCurrency={entry.city.currency}
+          column="p75"
           className="hidden lg:table-cell"
         />
         <SavingsCell entry={entry} />
-        <TableCell className="hidden text-right lg:table-cell">
-          {fmtCurrencyTrailing(entry.nonSalaryCompUsd, "USD")}
-        </TableCell>
+        <DualCell
+          usdVal={entry.nonSalaryCompUsd}
+          cityCurrency={entry.city.currency}
+          column="non-salary-comp"
+          className="hidden lg:table-cell"
+        />
+        <DualCell
+          usdVal={entry.totalCompUsd}
+          cityCurrency={entry.city.currency}
+          column="total-comp"
+          className="hidden lg:table-cell"
+        />
       </TableRow>
     );
   }
@@ -529,7 +573,12 @@ export function MinRoleTable({
 
       {/* Tablet + desktop (md+): table. Track / P25 / P75 / non-salary columns collapse on tablet. */}
       {baselineReady && (
-        <div className="hidden overflow-x-auto md:block">
+        <div
+          data-testid="min-role-table"
+          data-baseline-usd={baselineUsd}
+          data-min-rank={minRank ?? ""}
+          className="hidden overflow-x-auto md:block"
+        >
           <Table>
             <TableCaption data-testid="se-roles-caption">{t(locale, "seRolesCaption")}</TableCaption>
             <TableHeader>
@@ -555,6 +604,9 @@ export function MinRoleTable({
                 >
                   {t(locale, "colNonSalaryCompInfo")}
                 </TableHead>
+                <TableHead className="hidden w-40 whitespace-normal lg:table-cell">
+                  {t(locale, "colTotalComp")}
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -569,7 +621,7 @@ export function MinRoleTable({
 
               {showDivider && (
                 <TableRow data-testid="qualifying-divider">
-                  <TableCell colSpan={8} className="text-center text-xs text-muted-foreground">
+                  <TableCell colSpan={9} className="text-center text-xs text-muted-foreground">
                     {t(locale, "qualifyingDivider")}
                   </TableCell>
                 </TableRow>
@@ -581,7 +633,7 @@ export function MinRoleTable({
 
               {nonQualifyingHidden > 0 && (
                 <TableRow data-testid="non-qualifying-more">
-                  <TableCell colSpan={8} className="text-center text-xs text-muted-foreground">
+                  <TableCell colSpan={9} className="text-center text-xs text-muted-foreground">
                     +{nonQualifyingHidden} {t(locale, "moreBelowBar")}
                   </TableCell>
                 </TableRow>

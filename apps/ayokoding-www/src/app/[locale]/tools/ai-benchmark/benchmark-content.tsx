@@ -128,7 +128,7 @@ export function BenchmarkContent() {
         // aesthetically noisy (Heuristic 8) and could be misread as "the table is broken". AC-28's
         // Gherkin scenario was WIDENED in this same fix to fold in this table behaviour — its `But`
         // step now asserts the chart and the data table do not render in the empty state (see
-        // `specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature`), so
+        // `specs/apps/ayokoding/www/behaviours/frontend/tools/ai-benchmark.feature`), so
         // hiding the table here is the AC's own requirement, not an unconstrained extra.
         // `role="status"` — a filter change never moves focus or scrolls, so an emptied roster
         // must announce itself to assistive tech (WCAG 4.1.3, Rule-15 EWT-004 fix).

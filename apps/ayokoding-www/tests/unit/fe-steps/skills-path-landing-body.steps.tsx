@@ -39,7 +39,7 @@ const betaBody = "<p>Beta's own runway-justification paragraph, unique to beta.<
 const feature = await loadFeature(
   path.resolve(
     process.cwd(),
-    "../../specs/apps/ayokoding/www/behaviors/frontend/course-paths/skills-path-landing-body.feature",
+    "../../specs/apps/ayokoding/www/behaviours/frontend/course-paths/skills-path-landing-body.feature",
   ),
 );
 
@@ -50,25 +50,23 @@ describeFeature(feature, ({ Scenario }) => {
       Given(
         "two fixture skills paths whose landing bodies declare different runway-justification paragraphs for their differing first boundaries",
         () => {
-          // Fixture: `alpha`/`alphaBody` and `beta`/`betaBody` above — two distinct paragraphs.
+          expect(alpha.pathId).not.toBe(beta.pathId);
+          expect(alphaBody).not.toBe(betaBody);
         },
       );
 
       When("a reader opens either skills path's landing page", () => {
-        // No-op — each Then step below renders and checks both fixture paths itself, since this
-        // scenario compares one path's page against the other's.
+        cleanup();
+        render(<PathLanding locale="en" manifest={alpha} courseTitles={{}} bodyHtml={alphaBody} />);
       });
 
       Then(
         "that path's landing renders its own authored runway-justification paragraph between the title and the syllabus",
         () => {
-          cleanup();
-          render(<PathLanding locale="en" manifest={alpha} courseTitles={{}} bodyHtml={alphaBody} />);
           expect(screen.getByText(/unique to alpha/)).toBeTruthy();
         },
       );
 
-      // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/skills-path-landing-body.feature:A skills path's authored runway-justification content renders on its own landing
       And("the other path's justification paragraph never appears on this page", () => {
         // Still rendering alpha's page from the Then step above — beta's paragraph must be absent.
         expect(screen.queryByText(/unique to beta/)).toBeNull();

@@ -18,7 +18,7 @@ Quality-gate invocations may pass exact `delegated-gate-ids` under
 [Lifecycle Validation Ownership](../../../repo-governance/workflows/meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
 Checker and fixer omit only matching generic Markdown predicates. PDF/source fidelity remains
 authoritative. Accept `lifecycle-evidence`: checkers preserve it; fixers scope-intersect changed
-files and return `updated-lifecycle-evidence`. Omitted delegation preserves standalone full behavior.
+files and return `updated-lifecycle-evidence`. Omitted delegation preserves standalone full behaviour.
 
 ## Reference Modules
 

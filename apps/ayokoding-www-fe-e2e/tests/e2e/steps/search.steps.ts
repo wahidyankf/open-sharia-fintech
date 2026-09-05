@@ -1,7 +1,10 @@
 import { createBdd } from "playwright-bdd";
-import { expect } from "@playwright/test";
+import { expect, type Locator } from "@playwright/test";
 
 const { Given, When, Then } = createBdd();
+let initialResultTexts: string[] = [];
+let selectedResultSlug = "";
+let searchTrigger: Locator;
 
 When("a visitor presses Cmd+K on the page", async ({ page }) => {
   await page.goto("/en");
@@ -13,7 +16,6 @@ Then("the search dialog should open", async ({ page }) => {
   await expect(searchDialog).toBeVisible({ timeout: 5000 });
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/search/search.feature:Cmd+K keyboard shortcut opens the search dialog
 Then("the search input should have focus", async ({ page }) => {
   const searchDialog = page.getByRole("dialog");
   const searchInput = searchDialog.getByRole("combobox");
@@ -22,10 +24,9 @@ Then("the search input should have focus", async ({ page }) => {
 
 Given("the search dialog is open", async ({ page }) => {
   await page.goto("/en");
-  await page
-    .getByRole("button", { name: /search/i })
-    .first()
-    .click();
+  searchTrigger = page.getByRole("button", { name: /search/i }).first();
+  await searchTrigger.focus();
+  await searchTrigger.click();
   const searchDialog = page.getByRole("dialog");
   await expect(searchDialog).toBeVisible({ timeout: 5000 });
 });
@@ -43,15 +44,16 @@ Then("search results should appear after a debounce delay", async ({ page }) => 
   await expect(results.getByRole("option").first()).toBeVisible({
     timeout: 15000,
   });
+  initialResultTexts = await results.getByRole("option").allTextContents();
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/search/search.feature:Typing in the search input shows debounced results
 Then("results should update when the visitor changes the query", async ({ page }) => {
   const searchDialog = page.getByRole("dialog");
   const searchInput = searchDialog.getByRole("combobox");
   await searchInput.fill("golang");
   const results = searchDialog.getByRole("listbox");
-  await expect(results).toBeVisible({ timeout: 15000 });
+  await expect(results.getByRole("option").first()).toBeVisible({ timeout: 15000 });
+  await expect.poll(() => results.getByRole("option").allTextContents()).not.toEqual(initialResultTexts);
 });
 
 Given("the visitor has typed a query that returns at least one result", async ({ page }) => {
@@ -67,8 +69,10 @@ Given("the visitor has typed a query that returns at least one result", async ({
 When("the visitor clicks a search result", async ({ page }) => {
   const searchDialog = page.getByRole("dialog");
   const firstResult = searchDialog.getByRole("option").first();
+  selectedResultSlug = (await firstResult.getAttribute("data-result-slug")) ?? "";
+  expect(selectedResultSlug).not.toBe("");
   await firstResult.scrollIntoViewIfNeeded();
-  await firstResult.dispatchEvent("click");
+  await firstResult.click();
 });
 
 Then("the search dialog should close", async ({ page }) => {
@@ -76,23 +80,18 @@ Then("the search dialog should close", async ({ page }) => {
   await expect(searchDialog).toBeHidden({ timeout: 5000 });
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/search/search.feature:Clicking a search result navigates to that page
 Then("the visitor should be navigated to the page for that result", async ({ page }) => {
-  // After clicking a result the URL should have changed from /en
-  await page.waitForLoadState("domcontentloaded");
-  const currentUrl = page.url();
-  expect(currentUrl).toContain("localhost");
+  await expect(page).toHaveURL(
+    new RegExp(`/en/${selectedResultSlug.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&")}(?:[?#]|$)`),
+  );
 });
 
 When("the visitor presses Escape", async ({ page }) => {
   await page.keyboard.press("Escape");
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/search/search.feature:Escape key closes the search dialog
-Then("focus should return to the page behind the dialog", async ({ page }) => {
-  // After Escape, the dialog should be gone and the body/page should be focusable
-  const searchDialog = page.getByRole("dialog");
-  await expect(searchDialog).toBeHidden({ timeout: 3000 });
+Then("focus should return to the page behind the dialog", async () => {
+  await expect(searchTrigger).toBeFocused({ timeout: 3000 });
 });
 
 When("the visitor types a query that returns results", async ({ page }) => {
@@ -107,24 +106,25 @@ When("the visitor types a query that returns results", async ({ page }) => {
 
 Then("each result should display the page title", async ({ page }) => {
   const searchDialog = page.getByRole("dialog");
-  const firstOption = searchDialog.getByRole("option").first();
-  await expect(firstOption).toBeVisible();
-  const text = await firstOption.textContent();
-  expect(text?.trim().length).toBeGreaterThan(0);
+  const options = searchDialog.getByRole("option");
+  expect(await options.count()).toBeGreaterThan(0);
+  for (const option of await options.all()) {
+    await expect(option.getByTestId("search-result-title")).not.toHaveText("");
+  }
 });
 
 Then("each result should display the section path indicating where the page lives", async ({ page }) => {
   const searchDialog = page.getByRole("dialog");
-  const firstOption = searchDialog.getByRole("option").first();
-  // Section path is typically rendered as a secondary line or breadcrumb within the option
-  await expect(firstOption).toBeVisible();
+  for (const option of await searchDialog.getByRole("option").all()) {
+    await expect(option.getByTestId("search-result-path")).not.toHaveText("");
+  }
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/search/search.feature:Search results show title, section path, and excerpt
 Then("each result should display a text excerpt showing the matching content", async ({ page }) => {
   const searchDialog = page.getByRole("dialog");
-  const firstOption = searchDialog.getByRole("option").first();
-  await expect(firstOption).toBeVisible();
+  for (const option of await searchDialog.getByRole("option").all()) {
+    await expect(option.getByTestId("search-result-excerpt")).not.toHaveText("");
+  }
 });
 
 // USS-001 (Rule-15 fix): the search index used to be built entirely from markdown `content/`
@@ -138,7 +138,6 @@ When("the visitor types a query naming the AI Model Benchmark tool", async ({ pa
   await expect(results.getByRole("option").first()).toBeVisible({ timeout: 15000 });
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/search/search.feature:Global search surfaces the Tools pages
 Then("a result linking to the AI Model Benchmark tool page is shown", async ({ page }) => {
   const searchDialog = page.getByRole("dialog");
   const benchmarkResult = searchDialog.getByRole("option", { name: /AI Model Benchmark/i });

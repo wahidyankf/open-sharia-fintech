@@ -23,7 +23,7 @@ That is intentional: the tests need real page bodies as well as manifest metadat
 
 ## When changing a fixture
 
-Keep each manifest small and purposeful. Update or add a behavior scenario first when a new reader
+Keep each manifest small and purposeful. Update or add a behaviour scenario first when a new reader
 experience is needed, then run the browser suite from the workspace root:
 
 ```bash

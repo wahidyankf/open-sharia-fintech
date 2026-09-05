@@ -61,9 +61,9 @@ prerequisites, paths, commands, observations, recovery, or proof, flag the relev
   and risk controls. Missing or incomplete schedule/exception: **HIGH**. Live overlap and capacity
   are execution facts; this check validates only the repository-visible declaration. See
   [Delivery Checklists Express a DAG](../../../../repo-governance/conventions/structure/plans/delivery-checklists-express-a-dag.md#delivery-checklists-express-a-dag-hard-rule).
-- **Specs and Gherkin delivery (Two Paths)**: a plan changing observable behavior in `apps/`,
+- **Specs and Gherkin delivery (Two Paths)**: a plan changing observable behaviour in `apps/`,
   `libs/`, or `specs/` needs delivery steps adding/updating companion `specs/` `.feature` files and
-  running `specs:coverage`. Full detail in `reference/17-rules16-specs-gherkin-and-regression-test.md`
+  running `test:coverage:behaviour`. Full detail in `reference/17-rules16-specs-gherkin-and-regression-test.md`
   rule 16
   (Step 5j). See
   [Feature Change Completeness Convention §Two Paths](../../../../repo-governance/development/quality/feature-change-completeness.md).

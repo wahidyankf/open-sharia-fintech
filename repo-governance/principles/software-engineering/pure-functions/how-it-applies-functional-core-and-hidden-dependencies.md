@@ -114,7 +114,7 @@ function formatCurrency(amount: number): string {
   }).format(amount);
 }
 
-// Behavior changes if appConfig changes
+// Behaviour changes if appConfig changes
 // Hard to test different locales
 // Not deterministic
 ```

@@ -31,13 +31,12 @@ account.
 
 ## Components
 
-The app is organized as feature contexts under `src/features/`, each with a functional core and an
-imperative shell. Three state machines carry the flows that span screens:
+The app is organized as feature contexts under `src/contexts/`, each with a functional core and an
+imperative shell. Two state machines carry the flows that span screens:
 
 | Machine                 | What it owns                                                        |
 | ----------------------- | ------------------------------------------------------------------- |
 | `appMachine`            | the navigation shell — which screen is active and what the FAB does |
-| `journalMachine`        | event-log writes, so an entry is appended exactly once              |
 | `workoutSessionMachine` | an active workout: set logging, the rest timer, and finishing       |
 
 Effect TS sequences PGlite operations in the infrastructure layer, which is what keeps a multi-step
@@ -48,14 +47,14 @@ write from leaving the store half-updated.
 **No network write.** Nothing a user logs leaves the device. A feature that needs a server changes
 the product's privacy promise, not just its implementation.
 
-**Append-and-bump.** Every entry type — workout, reading, learning, meal, focus — appends to the
-event log and bumps a derived counter. A new entry type follows that pattern rather than adding a
-table.
+**Append-only journal.** Every entry type — workout, reading, learning, meal, focus, and custom —
+appends an immutable event to the shared log. Home, History, and Progress derive their views from
+that log. A new entry type follows the same pattern rather than adding a separate table.
 
 **Migrations run in the browser.** A schema change ships as a PGlite migration that must be
 idempotent against a store the developer has never seen.
 
 ## Related
 
-- [Behaviors](./behaviors/README.md) — the scenarios this system must satisfy.
+- [Behaviours](./behaviours/README.md) — the scenarios this system must satisfy.
 - [`apps/organiclever-app-web/README.md`](../../../../apps/organiclever-app-web/README.md) — the implementing project.

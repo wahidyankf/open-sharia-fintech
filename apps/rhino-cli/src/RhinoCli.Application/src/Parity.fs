@@ -4,7 +4,7 @@
 /// Scope note: the Rust port additionally hardens every file open against a
 /// TOCTOU symlink-swap race via descriptor-relative `openat`/`renameat`
 /// syscalls (Unix-only, no ergonomic managed equivalent). This port matches
-/// every *observable* behavior — git-reported symlink mode still rejected,
+/// every *observable* behaviour — git-reported symlink mode still rejected,
 /// atomic replace via same-directory temp file + rename — but does not
 /// reimplement that lookup-time race protection, since generate/validate
 /// only ever touch paths Git itself already tracks (not attacker-supplied
@@ -26,7 +26,7 @@ let private boundaryPaths =
     [ "apps/rhino-cli/src"
       "apps/rhino-cli/project.json"
       "apps/rhino-cli/LICENSE"
-      "specs/apps/rhino/cli/behaviors" ]
+      "specs/apps/rhino/cli/behaviours" ]
 
 /// Runs `git` isolated from ambient/hook-inherited state, pinned to
 /// `repoRoot`, and returns `(exitCode, stdoutBytes, stderrText)`.
@@ -216,6 +216,12 @@ let private renderManifest (hashes: Map<string, string>) : string =
     |> List.map (fun (path, hash) -> sprintf "%s  %s\n" hash path)
     |> String.concat ""
 
+/// Produces the canonical manifest for already-discovered boundary bytes.
+/// Resource adapters decide which paths are tracked; this pure core sorts,
+/// hashes, and renders the prospective manifest deterministically.
+let renderFromBoundaryFiles (files: Map<string, byte[]>) : string =
+    files |> Map.map (fun _ bytes -> sha256Hex bytes) |> renderManifest
+
 /// Parses the stable manifest format back into a path→hash map.
 let private parseManifest (manifest: string) : Result<Map<string, string>, string> =
     let lines = manifest.Split('\n') |> Array.toList |> List.filter (fun l -> l <> "")
@@ -246,6 +252,37 @@ let private parseManifest (manifest: string) : Result<Map<string, string>, strin
                     loop (lineNumber + 1) rest (Map.add path hash acc)
 
     loop 1 lines Map.empty
+
+/// Compares a declared manifest with already-discovered boundary bytes.
+/// This keeps Git/index discovery outside the Unit boundary while proving
+/// the same canonical-format and drift decisions used by [`validateAtRoot`].
+let validateBoundaryFiles (manifest: string) (files: Map<string, byte[]>) : Result<unit, string> =
+    match parseManifest manifest with
+    | Error message -> Error message
+    | Ok declared ->
+        let actual = files |> Map.map (fun _ bytes -> sha256Hex bytes)
+
+        let drifted =
+            actual
+            |> Map.toSeq
+            |> Seq.tryFind (fun (path, hash) -> Map.tryFind path declared <> Some hash)
+
+        match drifted with
+        | Some(path, _) -> Error(driftError path)
+        | None ->
+            match
+                declared
+                |> Map.toSeq
+                |> Seq.tryFind (fun (path, _) -> not (actual.ContainsKey path))
+            with
+            | Some(path, _) -> Error(driftError path)
+            | None when manifest <> renderManifest actual ->
+                Error(
+                    sprintf
+                        "%s is not the canonical sorted checksum manifest; run: rhino-cli parity manifest generate"
+                        ManifestPath
+                )
+            | None -> Ok()
 
 /// Replaces the manifest through a same-directory temporary file, then an
 /// atomic rename — `File.Move(..., overwrite = true)` uses `rename(2)` on

@@ -43,7 +43,7 @@ describe("Callout", () => {
       // aria-hidden="true" whenever no children/aria-*/role/title prop is supplied,
       // so the rendered DOM is already correctly hidden from assistive tech. No
       // source fix applied for Finding 4 — this test locks in that already-correct
-      // behavior so a future prop addition (e.g. an accidental aria-label) that
+      // behaviour so a future prop addition (e.g. an accidental aria-label) that
       // would silently disable the library default gets caught.
       const { container } = render(<Callout type={type}>Body text.</Callout>);
       const icon = container.querySelector("svg");

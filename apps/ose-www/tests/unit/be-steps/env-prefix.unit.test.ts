@@ -1,32 +1,19 @@
 /**
- * Tests that ose-www reads prefixed env vars (OSE_WEB_*) not bare names.
- * RED: fails before renaming process.env.SHOW_DRAFTS → process.env.OSE_WEB_SHOW_DRAFTS
- * GREEN: passes after the rename in service.ts
+ * Unit proof for the injected draft-visibility policy. The production composition root translates
+ * OSE_WEB_SHOW_DRAFTS into this boolean; Unit never mutates the real process environment.
  */
-import { vi, describe, it, expect, afterEach } from "vitest";
-
-// createEnv snapshots process.env at module load time; mock it with a live Proxy
-// so that per-test process.env mutations are visible to the service.
-vi.mock("@/env", () => ({
-  env: new Proxy({} as Record<string, string | undefined>, {
-    get: (_, key: string) => process.env[key],
-  }),
-}));
+import { describe, it, expect } from "vitest";
 import { InMemoryContentRepository } from "@/features/content/core/repository-memory";
 import { ContentService } from "@/features/content/shell/service";
 
-afterEach(() => {
-  delete process.env["OSE_WEB_SHOW_DRAFTS"];
-});
-
-describe("ose-www env var prefix: OSE_WEB_SHOW_DRAFTS", () => {
-  it("includes draft posts when OSE_WEB_SHOW_DRAFTS=true", async () => {
+describe("ose-www draft visibility policy", () => {
+  it("includes draft posts when the injected policy enables drafts", async () => {
     const repo = new InMemoryContentRepository([
       {
         meta: {
           title: "Draft Post",
           slug: "updates/draft-env-test",
-          date: new Date(),
+          date: new Date("2026-01-01T00:00:00Z"),
           draft: true,
           tags: [],
           summary: "Draft summary",
@@ -39,22 +26,19 @@ describe("ose-www env var prefix: OSE_WEB_SHOW_DRAFTS", () => {
         content: "## Draft\n\nDraft content.",
       },
     ]);
-    const service = new ContentService(repo);
-
-    // Set only the prefixed name (OSE_WEB_SHOW_DRAFTS) — bare names not read by source
-    process.env["OSE_WEB_SHOW_DRAFTS"] = "true";
+    const service = new ContentService(repo, undefined, { showDrafts: true });
 
     const updates = await service.listUpdates();
     expect(updates.some((u) => u.draft)).toBe(true);
   });
 
-  it("excludes draft posts when OSE_WEB_SHOW_DRAFTS is not set", async () => {
+  it("excludes draft posts when the injected policy disables drafts", async () => {
     const repo = new InMemoryContentRepository([
       {
         meta: {
           title: "Draft Post",
           slug: "updates/draft-env-test-2",
-          date: new Date(),
+          date: new Date("2026-01-01T00:00:00Z"),
           draft: true,
           tags: [],
           summary: "Draft summary",
@@ -67,9 +51,7 @@ describe("ose-www env var prefix: OSE_WEB_SHOW_DRAFTS", () => {
         content: "## Draft\n\nDraft content.",
       },
     ]);
-    const service = new ContentService(repo);
-
-    // Neither set
+    const service = new ContentService(repo, undefined, { showDrafts: false });
     const updates = await service.listUpdates();
     expect(updates.some((u) => u.draft)).toBe(false);
   });

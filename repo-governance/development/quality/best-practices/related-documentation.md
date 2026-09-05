@@ -11,7 +11,7 @@ when_to_use: "Use when you need a related quality convention."
 # Related Documentation
 
 - [Code Quality Convention](.././code.md) - Automated quality tools and git hooks
-- [Three-Level Testing Standard](.././three-level-testing-standard.md) - Mandatory unit/integration/E2E testing architecture and level boundaries for all projects
+- [Behaviour-Driven Development](../../behaviour-driven-development.md) - Mandatory Unit proof and boundary-applicable Integration/E2E architecture
 - [Criticality Levels Convention](.././criticality-levels.md) - Issue categorization
 - [Fixer Confidence Levels Convention](.././fixer-confidence-levels.md) - Confidence assessment
 - [Repository Validation Methodology](.././repository-validation.md) - Validation patterns

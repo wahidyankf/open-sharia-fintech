@@ -38,12 +38,12 @@ The library has two layers, and the split is the thing to understand before addi
 | `utils/`      | class composition and other cross-component helpers                                                         |
 
 A component is built with CVA variants over Radix primitives; `asChild` composition is preferred to
-a wrapper element so a consumer can render the same behavior on its own tag.
+a wrapper element so a consumer can render the same behaviour on its own tag.
 
 ## Constraints
 
 **Accessibility is part of the contract, not a later pass.** A component's Gherkin scenarios assert
-its role, its focus behavior, and its `aria-invalid` handling. Removing one of those assertions is a
+its role, its focus behaviour, and its `aria-invalid` handling. Removing one of those assertions is a
 contract change.
 
 **Brand differences live in tokens.** The OrganicLever surface is the same components with the warm
@@ -55,6 +55,6 @@ is a decision, not an accident of styling, and belongs in the scenario that asse
 
 ## Related
 
-- [Behaviors](./behaviors/README.md) — one directory per component.
+- [Behaviours](./behaviours/README.md) — one directory per component.
 - [`libs/web-ui/README.md`](../../../libs/web-ui/README.md) — the implementing package.
 - [`specs/libs/web-ui-token`](../web-ui-token/README.md) — the token layer this library reads.

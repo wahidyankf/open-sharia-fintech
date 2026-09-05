@@ -4,13 +4,13 @@ import { expect } from "vitest";
 import { testCaller } from "./helpers/test-caller";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ose/www/behaviors/backend/health/health.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ose/www/behaviours/backend/health/health.feature"),
 );
 
 describeFeature(feature, ({ Scenario, Background }) => {
   Background(({ Given }) => {
     Given("the API is running", () => {
-      // test caller is ready
+      expect(testCaller.health.check).toBeTypeOf("function");
     });
   });
 
@@ -21,7 +21,6 @@ describeFeature(feature, ({ Scenario, Background }) => {
       result = await testCaller.health.check();
     });
 
-    // @covers specs/apps/ose/www/behaviors/backend/health/health.feature:Health endpoint returns ok status
     Then('the response contains status "ok"', () => {
       expect(result.status).toBe("ok");
     });

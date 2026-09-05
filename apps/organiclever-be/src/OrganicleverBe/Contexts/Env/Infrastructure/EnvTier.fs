@@ -1,6 +1,7 @@
 namespace OrganicleverBe.Contexts.Env
 
 open System.IO
+open System.Diagnostics.CodeAnalysis
 
 /// Infrastructure layer for the env bounded context: thin wrapper around the
 /// shared `libs/fsharp-env-loader` tiered `.env.<APP_ENV>` loader, so
@@ -10,6 +11,13 @@ open System.IO
 /// missing-file tolerance) live in `FsharpEnvLoader.EnvTier`, shared with the
 /// sibling `ose-be` backend.
 module Infrastructure =
+
+    let private searchDirectories = [ Path.Combine("apps", "organiclever-be"); "." ]
+
+    /// Loads this app's fixed composition-root search order through injected
+    /// environment/filesystem ports for deterministic Unit proof.
+    let loadEnvTierWith (ports: FsharpEnvLoader.EnvTier.EnvTierPorts) : unit =
+        FsharpEnvLoader.EnvTier.loadEnvTierFromWith ports searchDirectories
 
     /// Loads `.env.<APP_ENV>` per the repo's tiered env-file convention.
     /// Call this as the first statement of `main`, before any required-config
@@ -23,5 +31,6 @@ module Infrastructure =
     /// has already `cd`'d into `apps/organiclever-be` gets CWD itself
     /// instead — both are searched, and only the first candidate whose file
     /// exists is loaded.
+    [<ExcludeFromCodeCoverage(Justification = "Real filesystem/environment adapter; covered by Integration tests")>]
     let loadEnvTier () : unit =
-        FsharpEnvLoader.EnvTier.loadEnvTierFrom [ Path.Combine("apps", "organiclever-be"); "." ]
+        FsharpEnvLoader.EnvTier.loadEnvTierFrom searchDirectories

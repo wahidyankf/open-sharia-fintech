@@ -12,7 +12,7 @@ when_to_use: Use when a formal plan adds, removes, renames, retypes, or reinterp
 
 ## Purpose
 
-Schema names and DDL types do not explain data ownership, meaning, transition behavior, or recovery.
+Schema names and DDL types do not explain data ownership, meaning, transition behaviour, or recovery.
 A schema-changing plan must make the resulting contract and safe migration executable.
 
 ## Standards
@@ -21,7 +21,7 @@ A schema-changing plan must make the resulting contract and safe migration execu
   keys, and relationships.
 - State the exact old and new contracts. Add a field-by-field guide covering purpose, owner,
   type/constraints, default and nullability, sensitivity, readers/writers, lifecycle and retention,
-  clearing behavior, and recovery implications where applicable.
+  clearing behaviour, and recovery implications where applicable.
 - Define compatibility boundaries for mixed-version readers, writers, APIs, jobs, and deployments.
 - Use `expand → migrate → verify → contract`, or explain why a step is inapplicable without
   weakening compatibility or data safety.
@@ -30,7 +30,7 @@ A schema-changing plan must make the resulting contract and safe migration execu
 
 ## Examples
 
-A column rename identifies the dual-read/dual-write interval, backfill batching and retry behavior,
+A column rename identifies the dual-read/dual-write interval, backfill batching and retry behaviour,
 old/new API fields, row-count and value reconciliation, rollback trigger, and the evidence required
 before dropping the old column.
 

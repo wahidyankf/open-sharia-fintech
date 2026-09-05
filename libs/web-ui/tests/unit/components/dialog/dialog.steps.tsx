@@ -14,44 +14,38 @@ import {
 } from "../../../../src/components/dialog/dialog";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../specs/libs/web-ui/behaviors/dialog/dialog.feature"),
+  path.resolve(__dirname, "../../../../../../specs/libs/web-ui/behaviours/dialog/dialog.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {
   Scenario("Renders dialog with trigger button", ({ When, Then, And }) => {
+    let trigger: HTMLElement;
+
     When('the Dialog is rendered with a trigger labeled "Open"', () => {
-      // precondition noted
+      cleanup();
+      render(
+        <Dialog>
+          <DialogTrigger>Open</DialogTrigger>
+        </Dialog>,
+      );
+      trigger = screen.getByText("Open");
     });
 
     Then('the dialog trigger element with label "Open" should be present', () => {
-      cleanup();
-      render(
-        <Dialog>
-          <DialogTrigger>Open</DialogTrigger>
-        </Dialog>,
-      );
-      expect(screen.getByText("Open")).toBeDefined();
+      expect(trigger.textContent).toBe("Open");
     });
 
     And('the trigger should have data-slot "dialog-trigger"', () => {
-      cleanup();
-      render(
-        <Dialog>
-          <DialogTrigger>Open</DialogTrigger>
-        </Dialog>,
-      );
-      expect(screen.getByText("Open").getAttribute("data-slot")).toBe("dialog-trigger");
+      expect(trigger.getAttribute("data-slot")).toBe("dialog-trigger");
     });
   });
 
   Scenario("Has no accessibility violations", ({ When, Then }) => {
-    When('the Dialog is rendered open with title "Test Dialog"', () => {
-      // precondition noted
-    });
+    let container: HTMLElement;
 
-    Then("the dialog should have no accessibility violations", async () => {
+    When('the Dialog is rendered open with title "Test Dialog"', () => {
       cleanup();
-      const { container } = render(
+      container = render(
         <Dialog open>
           <DialogContent showCloseButton={false}>
             <DialogHeader>
@@ -60,7 +54,10 @@ describeFeature(feature, ({ Scenario }) => {
             </DialogHeader>
           </DialogContent>
         </Dialog>,
-      );
+      ).container;
+    });
+
+    Then("the dialog should have no accessibility violations", async () => {
       const results = await axe(container);
       expect(results).toHaveNoViolations();
     });

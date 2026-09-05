@@ -24,7 +24,7 @@ The repository uses the MIT License throughout. All directories carry MIT LICENS
 ## Per-Directory LICENSE File Placement
 
 Every product application and shared library MUST contain an MIT `LICENSE` file at its directory
-root. This applies uniformly — product apps, behavioral specs, shared libraries, and CLI tools
+root. This applies uniformly — product apps, behavioural specs, shared libraries, and CLI tools
 all use the same MIT text.
 
 ### Current Directory LICENSE Inventory

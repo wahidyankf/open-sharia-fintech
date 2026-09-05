@@ -30,7 +30,7 @@ plans/in-progress/complex-feature/
   checkboxes. Opens with the executor legend; each phase ends with a
   `### Phase N Gate` followed by Pause Safety. Preserve natural cohesive delivery seams, keep all
   artifacts needed for internal consistency together, and make every resulting `main` state safe
-  to deploy to production immediately. Incomplete behavior uses a temporary production-disabled
+  to deploy to production immediately. Incomplete behaviour uses a temporary production-disabled
   flag with enabled/disabled tests and recorded rollout, rollback, and removal.
 
 **Benefits**: clear reader ownership, sharper agent validation (plan-checker asserts placement per

@@ -67,7 +67,7 @@ vi.mock("@/features/search/shell/use-search", () => ({
 import { Header } from "@/features/app-shell/shell/header";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ose/www/behaviors/frontend/app-shell/responsive.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ose/www/behaviours/frontend/app-shell/responsive.feature"),
 );
 
 describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
@@ -77,13 +77,15 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
 
   Background(({ Given }) => {
     Given("the app is running", () => {
-      // jsdom environment is ready
+      expect(Header).toBeTypeOf("function");
     });
   });
 
   Scenario("Mobile viewport shows hamburger navigation", ({ Given, When, Then, And }) => {
     Given("the viewport width is less than 640 pixels", () => {
-      // jsdom does not enforce CSS visibility but we test aria/class presence
+      Object.defineProperty(window, "innerWidth", { configurable: true, value: 375 });
+      window.dispatchEvent(new Event("resize"));
+      expect(window.innerWidth).toBeLessThan(640);
     });
 
     When("the header is rendered", () => {
@@ -95,7 +97,6 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
       expect(menuButton).toBeInTheDocument();
     });
 
-    // @covers specs/apps/ose/www/behaviors/frontend/app-shell/responsive.feature:Mobile viewport shows hamburger navigation
     And("the desktop navigation links are hidden", () => {
       // The desktop nav has class "hidden ... sm:flex" — hidden by default, only shows on sm+
       const nav = screen.getByRole("navigation", { name: /Main navigation/i });
@@ -106,7 +107,9 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
 
   Scenario("Desktop viewport shows full navigation", ({ Given, When, Then, And }) => {
     Given("the viewport width is greater than 1024 pixels", () => {
-      // jsdom does not enforce CSS breakpoints — test class presence
+      Object.defineProperty(window, "innerWidth", { configurable: true, value: 1280 });
+      window.dispatchEvent(new Event("resize"));
+      expect(window.innerWidth).toBeGreaterThan(1024);
     });
 
     When("the header is rendered", () => {
@@ -120,7 +123,6 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
       expect(nav.className).toContain("sm:flex");
     });
 
-    // @covers specs/apps/ose/www/behaviors/frontend/app-shell/responsive.feature:Desktop viewport shows full navigation
     And("the hamburger menu button is hidden", () => {
       const menuButton = screen.getByRole("button", { name: /Open navigation menu/i });
       // The hamburger button has "sm:hidden" meaning it's hidden on desktop

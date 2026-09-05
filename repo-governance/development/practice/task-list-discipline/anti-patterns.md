@@ -10,7 +10,7 @@ tags:
   - ai-agents
   - discipline
 created: 2026-06-23
-when_to_use: Use when reviewing your own task-list behavior for signs of one of these five failure patterns.
+when_to_use: Use when reviewing your own task-list behaviour for signs of one of these five failure patterns.
 ---
 
 # Anti-Patterns

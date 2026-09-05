@@ -29,9 +29,9 @@ when_to_use: "Use when mapping a plan's surface to its required tester gate, or 
     [plan-planning §Surface-Conditional Tester Gates](../../../workflows/plan/plan-planning/surface-conditional-tester-gates.md#surface-conditional-tester-gates),
     re-applied at execution, and enforced by the
     [PR Merge Protocol](../../workflow/pr-merge-protocol.md). A plan bearing neither
-    of those two surfaces is **not thereby exempt** — if it still changes behavior a user or caller
-    can reach (a CLI, a library, a hook, a CI workflow) it exercises that behavior through its own
-    interface and records what was run; only a plan with no reachable behavioral delta at all is
+    of those two surfaces is **not thereby exempt** — if it still changes behaviour a user or caller
+    can reach (a CLI, a library, a hook, a CI workflow) it exercises that behaviour through its own
+    interface and records what was run; only a plan with no reachable behavioural delta at all is
     exempt, and it states that exemption explicitly in the plan's chosen technical form. These surfaces are meant to
     agree — if this rule and the workflow mapping ever diverge, the workflow mapping is the one to
     fix.

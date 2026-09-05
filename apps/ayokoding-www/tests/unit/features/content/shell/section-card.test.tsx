@@ -39,7 +39,7 @@ describe("SectionCard", () => {
     // Icon primitive already defaults to aria-hidden="true" whenever no children/aria-*/
     // role/title prop is supplied, so the rendered DOM is already correctly hidden from
     // assistive tech. No source fix applied — this test locks in that already-correct
-    // behavior. Also fills a previously-uncovered code path: no prior test in this file
+    // behaviour. Also fills a previously-uncovered code path: no prior test in this file
     // rendered SectionCard with the `meta` prop supplied.
     const { container } = render(<SectionCard href="/en/learn" title="Learn" description="x" meta="12 topics" />);
     expect(screen.getByText("12 topics")).toBeTruthy();

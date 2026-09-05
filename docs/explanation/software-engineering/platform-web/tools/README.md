@@ -21,7 +21,7 @@ These pages explain the web tools that appear in this repository. Read an applic
 
 ## A useful rule of thumb
 
-Framework documentation can help you make a sound technical choice, but it does not decide product behavior. Start by naming the user outcome and the boundary that owns it. Then use the relevant framework page to implement it in a way that fits the repository.
+Framework documentation can help you make a sound technical choice, but it does not decide product behaviour. Start by naming the user outcome and the boundary that owns it. Then use the relevant framework page to implement it in a way that fits the repository.
 
 ## Related reading
 

@@ -12,19 +12,21 @@ const tabs: TabItem[] = [
 ];
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../specs/libs/web-ui/behaviors/tab-bar/tab-bar.feature"),
+  path.resolve(__dirname, "../../../../../../specs/libs/web-ui/behaviours/tab-bar/tab-bar.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {
   Scenario("Renders tabs", ({ When, Then }) => {
+    let renderedTabs: HTMLElement[];
+
     When('I render a TabBar with tabs "Home,History,Settings" and current "Home"', () => {
-      // precondition noted
+      cleanup();
+      render(<TabBar tabs={tabs} current="home" onChange={vi.fn()} />);
+      renderedTabs = screen.getAllByRole("tab");
     });
 
     Then("the tab bar should show 3 tabs", () => {
-      cleanup();
-      render(<TabBar tabs={tabs} current="home" onChange={() => {}} />);
-      expect(screen.getAllByRole("tab")).toHaveLength(3);
+      expect(renderedTabs).toHaveLength(3);
     });
   });
 
@@ -32,14 +34,15 @@ describeFeature(feature, ({ Scenario }) => {
     const onChangeMock = vi.fn();
 
     Given('I render a TabBar with tabs "Home,History,Settings" and current "Home"', () => {
-      // precondition noted; render happens in When step to persist mock state
+      cleanup();
+      render(<TabBar tabs={tabs} current="home" onChange={onChangeMock} />);
+      expect(screen.getByRole("tab", { name: /history/i })).toBeDefined();
     });
 
     When('the user clicks the "History" tab', () => {
       cleanup();
       render(<TabBar tabs={tabs} current="home" onChange={onChangeMock} />);
-      const historyTab = screen.getByText("History").closest("button");
-      if (historyTab) fireEvent.click(historyTab);
+      fireEvent.click(screen.getByRole("tab", { name: /history/i }));
     });
 
     Then('onChange should be called with "history"', () => {
@@ -48,27 +51,29 @@ describeFeature(feature, ({ Scenario }) => {
   });
 
   Scenario("Active tab has aria-selected true", ({ When, Then }) => {
+    let homeTab: HTMLElement;
+
     When('I render a TabBar with tabs "Home,History,Settings" and current "home"', () => {
-      // precondition noted
+      cleanup();
+      render(<TabBar tabs={tabs} current="home" onChange={vi.fn()} />);
+      homeTab = screen.getByRole("tab", { name: /home/i });
     });
 
     Then('the "Home" tab should have aria-selected "true"', () => {
-      cleanup();
-      render(<TabBar tabs={tabs} current="home" onChange={() => {}} />);
-      const homeTab = screen.getByText("Home").closest("button");
       expect(homeTab?.getAttribute("aria-selected")).toBe("true");
     });
   });
 
   Scenario("Inactive tab has aria-selected false", ({ When, Then }) => {
+    let historyTab: HTMLElement;
+
     When('I render a TabBar with tabs "Home,History,Settings" and current "home"', () => {
-      // precondition noted
+      cleanup();
+      render(<TabBar tabs={tabs} current="home" onChange={vi.fn()} />);
+      historyTab = screen.getByRole("tab", { name: /history/i });
     });
 
     Then('the "History" tab should have aria-selected "false"', () => {
-      cleanup();
-      render(<TabBar tabs={tabs} current="home" onChange={() => {}} />);
-      const historyTab = screen.getByText("History").closest("button");
       expect(historyTab?.getAttribute("aria-selected")).toBe("false");
     });
   });

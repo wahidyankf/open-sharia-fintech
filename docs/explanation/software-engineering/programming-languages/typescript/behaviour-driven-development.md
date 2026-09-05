@@ -1,13 +1,13 @@
 ---
 title: "TypeScript Behaviour-Driven Development"
-description: BDD practices with Cucumber and Playwright for TypeScript
+description: OSE TypeScript BDD with canonical Gherkin, Vitest Cucumber Unit bindings, and Playwright BDD E2E bindings
 category: explanation
 subcategory: prog-lang
 tags:
   - typescript
   - bdd
   - testing
-  - cucumber
+  - vitest-cucumber
   - gherkin
   - playwright
   - e2e-testing
@@ -21,16 +21,20 @@ principles:
 
 # TypeScript Behaviour-Driven Development
 
-**Quick Reference**: [Overview](#overview) | [Gherkin](#gherkin-syntax) | [Cucumber](#cucumber-with-typescript) | [Playwright](#playwright-e2e-testing) | [Component Testing](#component-testing) | [Visual Regression](#visual-regression-testing) | [Related Documentation](#related-documentation)
+**Quick Reference**: [Overview](#overview) | [Gherkin](#gherkin-syntax) | [Unit Bindings](#vitest-cucumber-unit-bindings) | [Playwright](#playwright-bdd-e2e-testing) | [Component Testing](#component-testing) | [Visual Regression](#visual-regression-testing) | [Related Documentation](#related-documentation)
 
 ## Overview
 
-Behaviour-Driven Development (BDD) uses natural language to describe system behavior. Gherkin syntax allows stakeholders to understand and validate requirements.
+Behaviour-Driven Development (BDD) uses natural language to describe system behaviour. Gherkin
+syntax allows stakeholders to understand and validate requirements. Every testable TypeScript
+owner stores that behaviour in its recursively discovered `specs/apps/**/behaviours/` or
+`specs/libs/**/behaviours/` corpus and follows the
+[canonical OSE BDD contract](../../../../../repo-governance/development/behaviour-driven-development.md).
 
 ### BDD Principles
 
 - **Shared Understanding**: Business, QA, Dev collaborate
-- **Living Documentation**: Tests document system behavior
+- **Living Documentation**: Tests document system behaviour
 - **Executable Specifications**: Gherkin scenarios are automated
 - **Outside-In**: Start from user perspective
 
@@ -42,7 +46,7 @@ graph TD
     A["Discover<br/>Collaborate on Features"]:::blue
     B["Write Gherkin<br/>Feature Scenarios"]:::purple
     C["Implement Steps<br/>TypeScript Code"]:::teal
-    D["Run Cucumber<br/>Execute Tests"]:::orange
+    D["Run Owner Nx Targets<br/>Execute Tests"]:::orange
     E{"Scenarios<br/>Pass?"}:::orange
     F["Deliver<br/>Living Docs"]:::teal
     G["Refine Steps<br/>Iterate"]:::purple
@@ -61,13 +65,13 @@ graph TD
     classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
-### Cucumber Execution
+### Owner-Local Adapter Execution
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["Feature Files<br/>donation.feature"]:::blue
-    B["Cucumber Runner<br/>Parse Gherkin"]:::orange
+    B["Owner Runtime Adapter<br/>Parse Gherkin"]:::orange
     C["Step Definitions<br/>TypeScript Functions"]:::purple
     D["Context State<br/>Test Data"]:::brown
     E["Execute Actions<br/>Service Calls"]:::teal
@@ -185,91 +189,66 @@ Feature: Donation Processing
       | GBP      | 1.27 | 1000   | 1270       |
 ```
 
-## Cucumber with TypeScript
+## Vitest Cucumber Unit Bindings
 
-### Setup
-
-```typescript
-// cucumber.js
-module.exports = {
-  default: {
-    require: ["features/step-definitions/**/*.ts"],
-    requireModule: ["ts-node/register"],
-    format: ["progress", "html:reports/cucumber-report.html"],
-    publishQuiet: true,
-  },
-};
-```
-
-### Step Definitions
+Use `@amiceli/vitest-cucumber` in the behaviour owner's `test:unit` suite. Unit setup replaces all
+filesystem, database, environment, clock, process, and network dependencies with injected doubles.
+The same native Unit runtime enforces the owner's minimum 99% line coverage.
 
 ```typescript
-// features/step-definitions/donation.steps.ts
-import { Given, When, Then } from "@cucumber/cucumber";
-import { expect } from "@playwright/test";
-import { DonationService } from "../../src/donation-service";
+// tests/unit/steps/donation.steps.ts
+import { describeFeature, loadFeature } from "@amiceli/vitest-cucumber";
+import { expect, vi } from "vitest";
+import { DonationService, type Donation } from "../../../src/donation-service";
 
-let donationService: DonationService;
-let lastDonation: any;
-let lastError: Error | null = null;
+const feature = await loadFeature("specs/apps/finance/donation/behaviours/donation/donation-processing.feature");
 
-Given("the donation platform is running", () => {
-  donationService = new DonationService();
-});
+describeFeature(feature, ({ Scenario }) => {
+  Scenario("Successful Zakat donation", ({ Given, When, Then, And }) => {
+    const email = { sendConfirmation: vi.fn() };
+    const service = new DonationService({ email });
+    let donation: Donation | undefined;
 
-Given("the donor {string} is registered", async (name: string) => {
-  await donationService.registerDonor({
-    name,
-    email: `${name.toLowerCase().replace(" ", ".")}@example.com`,
+    Given("the donor has wealth of 100000 USD", () => {
+      service.setWealth({ amount: 100000, currency: "USD" });
+    });
+    And("the nisab threshold is 3000 USD", () => {
+      service.setNisab({ amount: 3000, currency: "USD" });
+    });
+    When("the donor submits a Zakat donation of 2500 USD", async () => {
+      donation = await service.create({ amount: 2500, currency: "USD", category: "zakat" });
+    });
+    Then("the donation should be created successfully", () => {
+      expect(donation).toBeDefined();
+    });
+    And('the donation status should be "pending"', () => {
+      expect(donation?.status).toBe("pending");
+    });
+    And("a confirmation email should be sent", () => {
+      expect(email.sendConfirmation).toHaveBeenCalledOnce();
+    });
   });
 });
-
-Given("the donor has wealth of {int} {word}", (amount: number, currency: string) => {
-  // Set up test context
-});
-
-Given("the nisab threshold is {int} {word}", (amount: number, currency: string) => {
-  // Configure nisab threshold
-});
-
-When("the donor submits a Zakat donation of {int} {word}", async (amount: number, currency: string) => {
-  try {
-    lastDonation = await donationService.create({
-      donorId: "DNR-1234567890",
-      amount,
-      currency,
-      category: "zakat",
-    });
-    lastError = null;
-  } catch (error) {
-    lastError = error as Error;
-  }
-});
-
-Then("the donation should be created successfully", () => {
-  expect(lastDonation).toBeDefined();
-  expect(lastError).toBeNull();
-});
-
-Then("the donation status should be {string}", (status: string) => {
-  expect(lastDonation.status).toBe(status);
-});
-
-Then("a confirmation email should be sent", () => {
-  // Verify email was sent (mock check)
-});
 ```
 
-## Playwright E2E Testing
+## Playwright BDD E2E Testing
 
 ### Setup
 
 ```typescript
 // playwright.config.ts
 import { defineConfig, devices } from "@playwright/test";
+import { defineBddConfig } from "playwright-bdd";
+
+const testDir = defineBddConfig({
+  featuresRoot: "../../specs/apps/finance/donation/behaviours",
+  features: "../../specs/apps/finance/donation/behaviours/**/*.feature",
+  steps: ["./steps/**/*.steps.ts"],
+  tags: "not @e2e-exempt",
+});
 
 export default defineConfig({
-  testDir: "./e2e",
+  testDir,
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
@@ -296,64 +275,28 @@ export default defineConfig({
 });
 ```
 
-### E2E Test Example
+### E2E Step Binding Example
 
 ```typescript
-// e2e/donation-flow.spec.ts
-import { test, expect } from "@playwright/test";
+// steps/donation.steps.ts
+import { expect } from "@playwright/test";
+import { createBdd } from "playwright-bdd";
 
-test.describe("Donation Flow", () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto("/");
-  });
+const { Given, When, Then } = createBdd();
 
-  test("complete donation flow", async ({ page }) => {
-    // Navigate to donation page
-    await page.click('a[href="/donate"]');
-    await expect(page).toHaveURL("/donate");
+Given("an active donation campaign", async ({ page }) => {
+  await page.goto("/campaigns/active-campaign");
+});
 
-    // Fill donation form
-    await page.fill('input[name="amount"]', "1000");
-    await page.selectOption('select[name="currency"]', "USD");
-    await page.selectOption('select[name="category"]', "zakat");
-    await page.fill('textarea[name="message"]', "Monthly Zakat payment");
+When("the donor submits a donation of 1000 USD", async ({ page }) => {
+  await page.getByLabel("Amount").fill("1000");
+  await page.getByLabel("Currency").selectOption("USD");
+  await page.getByRole("button", { name: "Donate" }).click();
+});
 
-    // Submit form
-    await page.click('button[type="submit"]');
-
-    // Verify success
-    await expect(page.locator(".success-message")).toBeVisible();
-    await expect(page.locator(".donation-id")).toContainText("DON-");
-
-    // Verify confirmation email message
-    await expect(page.locator(".email-sent")).toBeVisible();
-  });
-
-  test("validates minimum amount", async ({ page }) => {
-    await page.goto("/donate");
-
-    await page.fill('input[name="amount"]', "5");
-    await page.selectOption('select[name="currency"]', "USD");
-    await page.click('button[type="submit"]');
-
-    await expect(page.locator(".error-message")).toContainText("Minimum donation is 10 USD");
-  });
-
-  test("handles API errors gracefully", async ({ page }) => {
-    // Mock API failure
-    await page.route("/api/donations", (route) =>
-      route.fulfill({
-        status: 500,
-        body: JSON.stringify({ error: "Server error" }),
-      }),
-    );
-
-    await page.goto("/donate");
-    await page.fill('input[name="amount"]', "1000");
-    await page.click('button[type="submit"]');
-
-    await expect(page.locator(".error-message")).toContainText("Unable to process donation");
-  });
+Then("the donation should be accepted", async ({ page }) => {
+  await expect(page.getByRole("status")).toContainText("Donation accepted");
+  await expect(page).toHaveURL(/\/donations\/DON-/);
 });
 ```
 
@@ -443,7 +386,7 @@ test("donation form on mobile", async ({ page }) => {
 
 - [ ] Scenarios written in plain language (non-technical stakeholders can read)
 - [ ] Given-When-Then structure followed consistently
-- [ ] Scenarios focus on behavior, not implementation details
+- [ ] Scenarios focus on behaviour, not implementation details
 - [ ] Scenario Outlines with Examples used for multiple inputs
 - [ ] Background section for common setup steps
 
@@ -467,15 +410,16 @@ test("donation form on mobile", async ({ page }) => {
 
 - [ ] Scenarios reviewed by business stakeholders
 - [ ] Ubiquitous language used consistently (domain terminology)
-- [ ] Scenarios executable and automated (Cucumber/Playwright)
+- [ ] Scenarios executable through `@amiceli/vitest-cucumber` Unit bindings and every applicable adapter
 - [ ] Living documentation kept up to date
 - [ ] Three Amigos conversation: BA, Dev, Tester
 
-### Cucumber/Playwright Best Practices
+### Vitest Cucumber/Playwright BDD Best Practices
 
-- [ ] Feature files organized by domain (features/donations/, features/campaigns/)
-- [ ] Step definitions modular and maintainable (features/step-definitions/)
-- [ ] Tags used for organizing scenarios (@smoke, @critical, @e2e)
+- [ ] Feature files organized by domain below the owner's canonical `specs/**/behaviours/` corpus
+- [ ] Unit bindings stay owner-local; E2E bindings stay in the dedicated E2E project
+- [ ] Non-layer tags used only where they add meaning (`@smoke`, `@critical`); never `@unit`,
+      `@integration`, `@e2e`, `@pending`, or `@wip`
 - [ ] Background steps minimized (only truly shared setup)
 - [ ] Page Object Model used for E2E tests (Playwright)
 
@@ -491,9 +435,10 @@ test("donation form on mobile", async ({ page }) => {
 
 - **[TypeScript TDD](test-driven-development.md)** - TDD patterns
 - **[TypeScript Best Practices](best-practices.md)** - Coding standards
+- **[Canonical OSE BDD Contract](../../../../../repo-governance/development/behaviour-driven-development.md)** - Required corpus, adapters, boundaries, coverage, and review
 
 ---
 
 **TypeScript Version**: 5.0+ (baseline), 5.4+ (milestone), 5.6+ (stable), 5.9.3+ (latest stable)
-**Testing Frameworks**: Cucumber 10.x, Playwright 1.57.0
+**Testing Frameworks**: `@amiceli/vitest-cucumber` 6.3.0, `playwright-bdd` 8.5.1, Playwright 1.57.0
 **Maintainers**: OSE Documentation Team

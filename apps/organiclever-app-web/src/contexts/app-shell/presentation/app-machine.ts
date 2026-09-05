@@ -27,7 +27,7 @@ type AppMachineEvent =
   | { type: "CLOSE_ADD_ENTRY" }
   | { type: "OPEN_LOGGER"; kind: ActiveLoggerKind }
   | { type: "CLOSE_LOGGER" }
-  | { type: "OPEN_CUSTOM_LOGGER"; name: string }
+  | { type: "OPEN_CUSTOM_LOGGER"; name?: string }
   | { type: "CLOSE_CUSTOM_LOGGER" }
   | { type: "TOGGLE_DARK_MODE" }
   | { type: "SET_DESKTOP"; isDesktop: boolean };
@@ -61,7 +61,7 @@ export const appMachine = createMachine({
         },
         OPEN_CUSTOM_LOGGER: {
           target: "customLoggerOpen",
-          actions: assign({ customLoggerName: ({ event }) => event.name }),
+          actions: assign({ customLoggerName: ({ event }) => event.name ?? null }),
         },
       },
     },
@@ -74,7 +74,7 @@ export const appMachine = createMachine({
         },
         OPEN_CUSTOM_LOGGER: {
           target: "customLoggerOpen",
-          actions: assign({ customLoggerName: ({ event }) => event.name }),
+          actions: assign({ customLoggerName: ({ event }) => event.name ?? null }),
         },
       },
     },

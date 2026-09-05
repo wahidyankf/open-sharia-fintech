@@ -4,63 +4,26 @@ import { expect } from "vitest";
 import type { ContentMeta } from "@/features/content/core/types";
 import { InMemoryContentRepository } from "@/features/content/core/repository-memory";
 import { ContentService } from "@/features/content/shell/service";
+import { buildRobots } from "@/features/seo/core/robots";
+import { buildSitemapEntries } from "@/features/seo/core/sitemap";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ose/www/behaviors/backend/seo/seo.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ose/www/behaviours/backend/seo/seo.feature"),
 );
 
+const FIXED_NOW = new Date("2026-01-01T00:00:00Z");
 const SITE_URL = "https://oseplatform.com";
-
-interface SitemapEntry {
-  url: string;
-  lastModified: Date;
-  changeFrequency: string;
-  priority: number;
-}
-
-function buildSitemap(updates: ContentMeta[]): SitemapEntry[] {
-  const staticPages: SitemapEntry[] = [
-    { url: SITE_URL, lastModified: new Date(), changeFrequency: "weekly", priority: 1 },
-    {
-      url: `${SITE_URL}/about/`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${SITE_URL}/updates/`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-  ];
-
-  const updatePages: SitemapEntry[] = updates.map((update) => ({
-    url: `${SITE_URL}/${update.slug}/`,
-    lastModified: update.date ?? new Date(),
-    changeFrequency: "monthly",
-    priority: 0.6,
-  }));
-
-  return [...staticPages, ...updatePages];
-}
-
-function buildRobots(): { rules: { userAgent: string; allow: string }[]; sitemap: string } {
-  return {
-    rules: [{ userAgent: "*", allow: "/" }],
-    sitemap: `${SITE_URL}/sitemap.xml`,
-  };
-}
 
 describeFeature(feature, ({ Scenario, Background }) => {
   Background(({ Given }) => {
     Given("the API is running", () => {
-      // service is ready
+      expect(buildRobots().sitemap).toContain("/sitemap.xml");
     });
   });
 
   Scenario("Sitemap contains all public pages", ({ Given, When, Then, And }) => {
-    let sitemap: SitemapEntry[];
+    let sitemap: ReturnType<typeof buildSitemapEntries>;
+    let updates: ContentMeta[];
 
     Given("the content repository contains public pages", async () => {
       const repo = new InMemoryContentRepository([
@@ -100,12 +63,12 @@ describeFeature(feature, ({ Scenario, Background }) => {
         },
       ]);
       const service = new ContentService(repo);
-      const updates = await service.listUpdates();
-      sitemap = buildSitemap(updates);
+      updates = await service.listUpdates();
+      expect(updates).toHaveLength(1);
     });
 
     When("the sitemap is generated", () => {
-      // already generated in Given
+      sitemap = buildSitemapEntries(updates, FIXED_NOW);
     });
 
     Then("the sitemap contains a URL for the landing page", () => {
@@ -116,7 +79,6 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(sitemap.some((entry) => entry.url === `${SITE_URL}/about/`)).toBe(true);
     });
 
-    // @covers specs/apps/ose/www/behaviors/backend/seo/seo.feature:Sitemap contains all public pages
     And("the sitemap contains URLs for all update pages", () => {
       expect(sitemap.some((entry) => entry.url.includes("updates/2026-02-08-phase-0-end"))).toBe(true);
     });
@@ -133,7 +95,6 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(robots.rules).toContainEqual(expect.objectContaining({ userAgent: "*", allow: "/" }));
     });
 
-    // @covers specs/apps/ose/www/behaviors/backend/seo/seo.feature:Robots.txt allows all crawlers
     And("it references the sitemap URL", () => {
       expect(robots.sitemap).toBe(`${SITE_URL}/sitemap.xml`);
     });

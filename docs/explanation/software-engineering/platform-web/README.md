@@ -132,7 +132,7 @@ All framework documentation follows the repository's core principles:
 
 **Explicit Over Implicit**:
 
-- Make framework behavior explicit
+- Make framework behaviour explicit
 - Avoid magic and hidden complexity
 - Document framework conventions clearly
 

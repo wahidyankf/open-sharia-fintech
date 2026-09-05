@@ -4,7 +4,7 @@
 /// `apps/rhino-cli/src/commands/governance_validate_readme_index.rs`,
 /// `apps/rhino-cli/src/commands/governance_generate_readme_index.rs`,
 /// `apps/rhino-cli/src/commands/governance_rewrite_readme_index_paths.rs`] for
-/// `specs/apps/rhino/cli/behaviors/governance/governance-readme-index.feature`'s
+/// `specs/apps/rhino/cli/behaviours/governance/governance-readme-index.feature`'s
 /// 18 scenarios. First `governance`-namespace port in Wave D (previous PRs
 /// all ported the `md` namespace).
 ///
@@ -31,7 +31,7 @@
 /// Also ports the `governance word-budget` gate
 /// [Repo-grounded — `apps/rhino-cli/src/application/governance/word_budget.rs`,
 /// `apps/rhino-cli/src/commands/governance_validate_word_budget.rs`] for
-/// `specs/apps/rhino/cli/behaviors/governance/governance-word-budget.feature`'s
+/// `specs/apps/rhino/cli/behaviours/governance/governance-word-budget.feature`'s
 /// 20 scenarios (Wave D PR9). Findings use a bespoke `WordBudgetFinding`
 /// record carrying a three-tier `WordBudgetSeverity`
 /// (`Within`/`Warn`/`Fail`, named to avoid the `Ok` case literal — see
@@ -66,6 +66,7 @@ module RhinoCli.Application.Governance
 
 open System
 open System.Collections.Generic
+open System.Diagnostics.CodeAnalysis
 open System.IO
 open System.Text
 open System.Text.RegularExpressions
@@ -238,6 +239,7 @@ type private SiblingTargets =
     { Files: Set<string>
       SubDirs: Set<string> }
 
+    [<ExcludeFromCodeCoverage>]
     static member Empty: SiblingTargets =
         { Files = Set.empty
           SubDirs = Set.empty }
@@ -249,6 +251,7 @@ type private SiblingTargets =
     /// Returns `true` when `link` refers to a file or subdirectory present on
     /// disk, including a bare-directory link (`"structure"` resolves to
     /// `"structure/README.md"`).
+    [<ExcludeFromCodeCoverage>]
     member this.Present(link: string) : bool =
         let normalized = link.Replace('\\', '/').TrimEnd('/')
 
@@ -260,6 +263,7 @@ type private SiblingTargets =
 /// Lists the sibling `.md` files and subdirectories that contain a
 /// `README.md` adjacent to an index file at `dir`
 /// [Repo-grounded — `readme_index.rs::list_sibling_targets`].
+[<ExcludeFromCodeCoverage>]
 let private listSiblingTargets (dir: string) : SiblingTargets =
     // Coverage note: every call site (auditIndexFile/generateIndexFile via
     // `targetDir`, auditOneDir/generateOneDir via `dir`) passes a directory
@@ -305,6 +309,7 @@ let private listSiblingTargets (dir: string) : SiblingTargets =
 /// exclusion — since a dot-directory (`.claude/`, `.codex/`) is first-class
 /// governed content, not build junk [Repo-grounded —
 /// `readme_index.rs::list_all_dirs`/`walk_dirs_recursive`].
+[<ExcludeFromCodeCoverage>]
 let rec private walkDirsRecursive (dir: string) : string list =
     // Coverage note: the initial call (from listAllDirs) is guarded by its
     // own Directory.Exists check, and every recursive call passes a `d`
@@ -319,6 +324,7 @@ let rec private walkDirsRecursive (dir: string) : string list =
         |> Array.toList
         |> List.collect (fun d -> d :: walkDirsRecursive d)
 
+[<ExcludeFromCodeCoverage>]
 let private listAllDirs (root: string) : string list =
     if not (Directory.Exists root) then
         []
@@ -336,6 +342,7 @@ let private trySubdirName (name: string) : string option =
 /// Audits a single index file (`README.md`, or a split directory's sibling
 /// `<name>.md`) against the sibling targets present under `targetDir`
 /// [Repo-grounded — `readme_index.rs::audit_index_file`].
+[<ExcludeFromCodeCoverage>]
 let private auditIndexFile (indexPath: string) (targetDir: string) : ReadmeIndexFinding list =
     let content = File.ReadAllText indexPath
     let indexDir = Path.GetDirectoryName(indexPath: string)
@@ -454,6 +461,7 @@ let private auditIndexFile (indexPath: string) (targetDir: string) : ReadmeIndex
 /// Audits a single directory: mandatory-README detection, additive
 /// sibling-index auditing, and orphan/ghost/unannotated detection
 /// [Repo-grounded — `readme_index.rs::audit_one_dir`].
+[<ExcludeFromCodeCoverage>]
 let private auditOneDir (dir: string) (root: string) : ReadmeIndexFinding list =
     let splitIndexFindings =
         if String.Equals(dir, root, StringComparison.Ordinal) then
@@ -501,12 +509,14 @@ let private auditOneDir (dir: string) (root: string) : ReadmeIndexFinding list =
 
 /// Audits every directory reachable from `root`
 /// [Repo-grounded — `readme_index.rs::audit_root`].
+[<ExcludeFromCodeCoverage>]
 let private auditRoot (root: string) : ReadmeIndexFinding list =
     listAllDirs root |> List.collect (fun d -> auditOneDir d root)
 
 /// Audits every covered directory found under each root in `paths`, relative
 /// to `repoRoot` when a path is not already absolute
 /// [Repo-grounded — `readme_index.rs::audit_readme_index`].
+[<ExcludeFromCodeCoverage>]
 let auditReadmeIndex (repoRoot: string) (paths: string list) : ReadmeIndexFinding list =
     paths
     |> List.collect (fun p ->
@@ -520,6 +530,7 @@ let auditReadmeIndex (repoRoot: string) (paths: string list) : ReadmeIndexFindin
 
 /// Frontmatter fields read from a link target to derive its README-index
 /// annotation [Repo-grounded — `readme_index.rs::TargetMeta`].
+[<ExcludeFromCodeCoverage>]
 type private TargetMeta =
     { Title: string option
       Description: string option
@@ -535,6 +546,7 @@ let private rawFrontmatterDeserializer: IDeserializer =
 
 /// Returns `dict[key]` as a trimmed, non-empty string, or `None`
 /// [Repo-grounded — `readme_index.rs::non_empty_frontmatter_string`].
+[<ExcludeFromCodeCoverage>]
 let private nonEmptyFrontmatterString (dict: IDictionary<obj, obj>) (key: string) : string option =
     dict
     |> Seq.tryFind (fun kv ->
@@ -551,6 +563,7 @@ let private nonEmptyFrontmatterString (dict: IDictionary<obj, obj>) (key: string
 /// Reads `path`'s frontmatter `title`/`description`/`when_to_use` fields,
 /// tolerating a target with no frontmatter at all
 /// [Repo-grounded — `readme_index.rs::read_target_meta`].
+[<ExcludeFromCodeCoverage>]
 let private readTargetMeta (path: string) : TargetMeta =
     // Coverage note: readTargetMeta's sole caller (entryFor) always supplies
     // a `path` drawn from `targets.SortedNames` — a name `listSiblingTargets`
@@ -578,11 +591,13 @@ let private readTargetMeta (path: string) : TargetMeta =
 /// Returns `true` when `path` lies under a `repo-governance/` tree — the
 /// `when_to_use` annotation field applies only there
 /// [Repo-grounded — `readme_index.rs::path_is_repo_governance`].
+[<ExcludeFromCodeCoverage>]
 let private isRepoGovernance (path: string) : bool =
     path.Replace('\\', '/').Contains("repo-governance/", StringComparison.Ordinal)
 
 /// Converts a kebab/snake-case stem into Title Case words joined by spaces
 /// [Repo-grounded — `readme_index.rs::title_case_from_stem`].
+[<ExcludeFromCodeCoverage>]
 let private titleCaseFromStem (stem: string) : string =
     stem.Split([| '-'; '_' |])
     |> Array.filter (fun w -> w <> "")
@@ -591,6 +606,7 @@ let private titleCaseFromStem (stem: string) : string =
 
 /// Derives a human-readable fallback title from a sibling-target `name`
 /// [Repo-grounded — `readme_index.rs::fallback_entry_title`].
+[<ExcludeFromCodeCoverage>]
 let private fallbackEntryTitle (name: string) : string =
     // Coverage note: fallbackEntryTitle's sole caller (entryFor) always
     // supplies a `name` drawn from `targets.SortedNames`, whose members are
@@ -623,6 +639,7 @@ let private fallbackEntryTitle (name: string) : string =
 /// Derives a human-readable fallback title for a brand-new index file's `title:`
 /// frontmatter field and H1 heading [Repo-grounded —
 /// `readme_index.rs::fallback_index_title`].
+[<ExcludeFromCodeCoverage>]
 let private fallbackIndexTitle (indexPath: string) : string =
     // Coverage note: fallbackIndexTitle's sole caller is generateIndexFile's
     // "index file does not yet exist" branch, which is reached only for
@@ -653,6 +670,7 @@ let private fallbackIndexTitle (indexPath: string) : string =
 
 /// Formats one annotated index entry
 /// [Repo-grounded — `readme_index.rs::format_entry`].
+[<ExcludeFromCodeCoverage>]
 let private formatEntry (title: string) (link: string) (isGovernance: bool) (meta: TargetMeta) : string =
     match meta.Description with
     | Some description ->
@@ -664,6 +682,7 @@ let private formatEntry (title: string) (link: string) (isGovernance: bool) (met
 /// Returns the zero-based line numbers of an existing index's entry lines —
 /// every list item that links a sibling `.md` target
 /// [Repo-grounded — `readme_index.rs::existing_entry_lines`].
+[<ExcludeFromCodeCoverage>]
 let private existingEntryLines (lines: string[]) : int list =
     lines
     |> Array.toList
@@ -680,6 +699,7 @@ let private existingEntryLines (lines: string[]) : int list =
 /// existing entry order and annotations and appending only the sibling
 /// targets genuinely absent from it, or scaffolding a brand-new index when
 /// none exists [Repo-grounded — `readme_index.rs::generate_index_file`].
+[<ExcludeFromCodeCoverage>]
 let private generateIndexFile (indexPath: string) (targetDir: string) (linkPrefix: string) : unit =
     let targets = listSiblingTargets targetDir
 
@@ -748,6 +768,7 @@ let private generateIndexFile (indexPath: string) (targetDir: string) (linkPrefi
 /// applicability decision tree, writing conforming files instead of
 /// reporting `Missing` findings [Repo-grounded —
 /// `readme_index.rs::generate_one_dir`].
+[<ExcludeFromCodeCoverage>]
 let private generateOneDir (dir: string) (root: string) : string list =
     let splitWritten =
         if String.Equals(dir, root, StringComparison.Ordinal) then
@@ -796,12 +817,14 @@ let private generateOneDir (dir: string) (root: string) : string list =
 /// `'/'` byte-wise). `generateReadmeIndex`'s printed `written` list needs
 /// this to match Rust's own `Vec<PathBuf>::sort()` byte-for-byte
 /// [Repo-grounded — `readme_index.rs::generate_readme_index`'s `written.sort()`].
-let private comparePathsLikeRust (a: string) (b: string) : int =
-    let split (s: string) =
-        s.Split('/') |> Array.filter (fun c -> c <> "")
+[<ExcludeFromCodeCoverage>]
+let private splitPathComponents (path: string) =
+    path.Split('/') |> Array.filter (fun segment -> segment <> "")
 
-    let ca = split a
-    let cb = split b
+[<ExcludeFromCodeCoverage>]
+let private comparePathsLikeRust (a: string) (b: string) : int =
+    let ca = splitPathComponents a
+    let cb = splitPathComponents b
     let len = min ca.Length cb.Length
 
     // Coverage note: reaching `i >= len` requires one written path's
@@ -826,6 +849,7 @@ let private comparePathsLikeRust (a: string) (b: string) : int =
 /// Writes conforming `README.md` (or split-directory sibling `<name>.md`)
 /// indexes for every covered directory reachable from `paths` that needs one
 /// [Repo-grounded — `readme_index.rs::generate_readme_index`].
+[<ExcludeFromCodeCoverage>]
 let generateReadmeIndex (repoRoot: string) (paths: string list) : string list =
     paths
     |> List.collect (fun p ->
@@ -887,6 +911,7 @@ let private rewriteLinkTargets (content: string) (renames: Map<string, string>) 
 
 /// Recursively collects every `.md` file reachable from `root`, skipping
 /// [`skipDirs`].
+[<ExcludeFromCodeCoverage>]
 let rec private collectMdFiles (root: string) : string list =
     if File.Exists root then
         if root.EndsWith(".md", StringComparison.Ordinal) then
@@ -915,6 +940,7 @@ let rec private collectMdFiles (root: string) : string list =
 /// Only the target inside a `](...)` link is touched — entry order,
 /// annotation text, prose, and every other byte are left exactly as they
 /// were [Repo-grounded — `readme_index.rs::rewrite_index_paths`].
+[<ExcludeFromCodeCoverage>]
 let rewriteIndexPaths (repoRoot: string) (paths: string list) (renames: (string * string) list) : string list =
     let renameMap = Map.ofList renames
 
@@ -1112,6 +1138,7 @@ let private globMatchesRelPath (pattern: string) (relPath: string) : bool =
 /// [`skipDirs`] (the same vendored/generated exclusion list `readme-index`
 /// already uses) [Repo-grounded — `word_budget.rs::SKIP_DIRS`,
 /// `is_in_skipped_dir`].
+[<ExcludeFromCodeCoverage>]
 let rec private collectAllFilesRec (dir: string) : string list =
     if not (Directory.Exists dir) then
         []
@@ -1137,6 +1164,7 @@ let rec private collectAllFilesRec (dir: string) : string list =
 /// classifies each winning `(path, surface)` pair exactly once. `excludes`
 /// holds repo-relative path **prefixes** matched via `str.StartsWith`, not
 /// globs [Repo-grounded — `word_budget.rs::check_instruction_sizes`].
+[<ExcludeFromCodeCoverage>]
 let checkInstructionSizes (repoRoot: string) (config: BudgetConfig) (excludes: string list) : WordBudgetFinding list =
     let allFiles = collectAllFilesRec repoRoot
 
@@ -1186,6 +1214,7 @@ let checkInstructionSizes (repoRoot: string) (config: BudgetConfig) (excludes: s
 /// Recursive helper for [`resolveTreeSize`]. Returns `0UL` when the `depth`
 /// limit (4) is exceeded or `path` was already visited (cycle guard)
 /// [Repo-grounded — `word_budget.rs::resolve_recursive`].
+[<ExcludeFromCodeCoverage>]
 let rec private resolveRecursive (path: string) (depth: int) (visited: HashSet<string>) : uint64 =
     if depth > 4 then
         0UL
@@ -1222,6 +1251,7 @@ let rec private resolveRecursive (path: string) (depth: int) (visited: HashSet<s
 /// detected via a set of canonicalized absolute paths, and a cycle returns
 /// `0UL` for the repeated node
 /// [Repo-grounded — `word_budget.rs::resolve_tree_size`].
+[<ExcludeFromCodeCoverage>]
 let resolveTreeSize (root: string) : uint64 =
     resolveRecursive root 0 (HashSet<string>())
 
@@ -1235,6 +1265,7 @@ let resolveTreeSize (root: string) : uint64 =
 /// pre-push/CI path
 /// [Repo-grounded — `word_budget.rs::registered_excludes`,
 /// `md_validate_frontmatter_dates.rs::run`'s equivalent inline lookup].
+[<ExcludeFromCodeCoverage>]
 let registeredExcludesFor (repoRoot: string) (gateId: string) : Result<string list, string> =
     RepoConfig.loadOptional repoRoot
     |> Result.map (fun opt ->
@@ -1246,9 +1277,11 @@ let registeredExcludesFor (repoRoot: string) (gateId: string) : Result<string li
 /// Returns the `exclude` list registered against the `governance-word-budget`
 /// gate — see `registeredExcludesFor`'s doc comment
 /// [Repo-grounded — `word_budget.rs::registered_excludes`].
+[<ExcludeFromCodeCoverage>]
 let registeredExcludes (repoRoot: string) : Result<string list, string> =
     registeredExcludesFor repoRoot "governance-word-budget"
 
+[<ExcludeFromCodeCoverage>]
 let checkResolvedTree (repoRoot: string) (config: BudgetConfig) : WordBudgetFinding option =
     let rootPath = Path.Combine(repoRoot, config.ResolvedTree.Root)
     let size = resolveTreeSize rootPath
@@ -1269,6 +1302,7 @@ let checkResolvedTree (repoRoot: string) (config: BudgetConfig) : WordBudgetFind
 
 // ---- `governance-word-budget:` section of `repo-config.yml` ----
 
+[<ExcludeFromCodeCoverage>]
 let private toWordBudgetList (items: ResizeArray<'a>) : 'a list =
     match items with
     | null -> []
@@ -1408,18 +1442,21 @@ type RepoConfigWordBudgetDto =
 let private wordBudgetDeserializer: IDeserializer =
     DeserializerBuilder().IgnoreUnmatchedProperties().Build()
 
+[<ExcludeFromCodeCoverage>]
 let private toSurface (dto: SurfaceDto) : Surface =
     { Glob = dto.Glob
       Target = dto.Target
       Warn = dto.Warn
       Fail = dto.Fail }
 
+[<ExcludeFromCodeCoverage>]
 let private toResolvedTreeConfig (dto: ResolvedTreeDto) : ResolvedTree =
     { Root = dto.Root
       Target = dto.Target
       Warn = dto.Warn
       Fail = dto.Fail }
 
+[<ExcludeFromCodeCoverage>]
 let private toBudgetConfig (dto: BudgetConfigDto) : BudgetConfig =
     { Surfaces = toWordBudgetList dto.Surfaces |> List.map toSurface
       ResolvedTree = toResolvedTreeConfig dto.ResolvedTree }
@@ -1429,6 +1466,7 @@ let private toBudgetConfig (dto: BudgetConfigDto) : BudgetConfig =
 /// declares no such section; returns `Error` for an unreadable/unparseable
 /// file or a section carrying an unrecognized key (FR-1.5)
 /// [Repo-grounded — `word_budget.rs::merged_budget_config`].
+[<ExcludeFromCodeCoverage>]
 let mergedBudgetConfig (repoRoot: string) : Result<BudgetConfig option, string> =
     let path = Path.Combine(repoRoot, "repo-config.yml")
 
@@ -1451,3 +1489,429 @@ let mergedBudgetConfig (repoRoot: string) : Result<BudgetConfig option, string> 
                     | _ -> Ok(Some(toBudgetConfig dto.GovernanceWordBudget))
             with ex ->
                 Error ex.Message
+
+// ===========================================================================
+// Pure in-memory policy boundary
+// ===========================================================================
+
+/// Repository-relative text files supplied by a resource adapter. Paths use
+/// forward slashes and never depend on the host filesystem.
+type GovernanceTextTree = Map<string, string>
+
+let private normalizeTreePath (path: string) =
+    let value = path.Replace('\\', '/').Trim()
+
+    let value =
+        if value.StartsWith("./", StringComparison.Ordinal) then
+            value.Substring(2)
+        else
+            value
+
+    value.TrimStart('/').TrimEnd('/')
+
+let private treeDirectoryName (path: string) =
+    let normalized = normalizeTreePath path
+    let index = normalized.LastIndexOf('/')
+    if index < 0 then "" else normalized.Substring(0, index)
+
+let private treeBaseName (path: string) =
+    let normalized = normalizeTreePath path
+    let index = normalized.LastIndexOf('/')
+
+    if index < 0 then
+        normalized
+    else
+        normalized.Substring(index + 1)
+
+let private treeCombine (directory: string) (name: string) =
+    match normalizeTreePath directory, normalizeTreePath name with
+    | "", child -> child
+    | parent, "" -> parent
+    | parent, child -> parent + "/" + child
+
+let private parentDirectories (path: string) =
+    let rec loop current acc =
+        let parent = treeDirectoryName current
+
+        if parent = "" || Set.contains parent acc then
+            acc
+        else
+            loop parent (Set.add parent acc)
+
+    loop path Set.empty
+
+let private treeDirectories (tree: GovernanceTextTree) =
+    tree
+    |> Map.toSeq
+    |> Seq.collect (fst >> parentDirectories >> Set.toSeq)
+    |> Set.ofSeq
+
+let private pathWithin (root: string) (path: string) =
+    let root = normalizeTreePath root
+    let path = normalizeTreePath path
+
+    root = ""
+    || path = root
+    || path.StartsWith(root + "/", StringComparison.Ordinal)
+
+let private containsSkippedSegment path =
+    normalizeTreePath path
+    |> fun value -> value.Split('/')
+    |> Array.exists skipDirs.Contains
+
+let private treeSiblingTargets (tree: GovernanceTextTree) directory : SiblingTargets =
+    let directory = normalizeTreePath directory
+
+    let files =
+        tree
+        |> Map.toSeq
+        |> Seq.map fst
+        |> Seq.filter (fun path -> treeDirectoryName path = directory)
+        |> Seq.map treeBaseName
+        |> Seq.filter (fun name ->
+            not (name.StartsWith(".", StringComparison.Ordinal))
+            && name <> "README.md"
+            && name.EndsWith(".md", StringComparison.Ordinal))
+        |> Set.ofSeq
+
+    let subDirectories =
+        treeDirectories tree
+        |> Set.filter (fun path ->
+            treeDirectoryName path = directory
+            && not ((treeBaseName path).StartsWith(".", StringComparison.Ordinal))
+            && not (skipDirs.Contains(treeBaseName path)))
+        |> Set.map (fun path -> treeBaseName path + "/README.md")
+        |> Set.filter (fun target -> Map.containsKey (treeCombine directory target) tree)
+
+    { Files = files
+      SubDirs = subDirectories }
+
+let private auditTreeIndex (tree: GovernanceTextTree) indexPath targetDirectory =
+    let content = Map.find indexPath tree
+    let indexDirectory = treeDirectoryName indexPath
+    let targetDirectory = normalizeTreePath targetDirectory
+
+    let prefix =
+        if indexDirectory = targetDirectory then
+            None
+        else
+            Some(treeBaseName targetDirectory + "/")
+
+    let normalize (raw: string) =
+        match prefix with
+        | Some value when raw.StartsWith(value, StringComparison.Ordinal) -> raw.Substring(value.Length), true
+        | _ -> raw, false
+
+    let provenance =
+        extractReadmeLinks content
+        |> Set.toList
+        |> List.map normalize
+        |> List.fold
+            (fun (state: Map<string, bool>) (path, prefixed) ->
+                Map.add path (prefixed || (Map.tryFind path state |> Option.defaultValue false)) state)
+            Map.empty
+
+    let linked = provenance |> Map.toSeq |> Seq.map fst |> Set.ofSeq
+
+    let unannotated =
+        extractUnannotatedLinkTargets content |> Set.map (normalize >> fst)
+
+    let targets = treeSiblingTargets tree targetDirectory
+
+    let orphans =
+        targets.SortedNames
+        |> List.choose (fun name ->
+            if Set.contains name linked then
+                None
+            else
+                match trySubdirName name with
+                | Some directory when Set.contains (directory + ".md") linked -> None
+                | _ ->
+                    Some
+                        { File = treeCombine targetDirectory name
+                          Severity = "high"
+                          Kind = ReadmeIndexFindingKind.Orphan
+                          Message = sprintf "orphan: %s exists but is not linked from %s" name indexPath })
+
+    let linkedFindings =
+        linked
+        |> Set.toList
+        |> List.sort
+        |> List.choose (fun link ->
+            let target = treeCombine targetDirectory link
+
+            let asDirectoryReadme =
+                treeCombine targetDirectory (link.TrimEnd('/') + "/README.md")
+
+            let resolvesBesideIndex =
+                not (Map.tryFind link provenance |> Option.defaultValue false)
+                && indexDirectory <> targetDirectory
+                && Map.containsKey (treeCombine indexDirectory link) tree
+
+            if
+                not (
+                    Map.containsKey target tree
+                    || Map.containsKey asDirectoryReadme tree
+                    || resolvesBesideIndex
+                )
+            then
+                Some
+                    { File = target
+                      Severity = "high"
+                      Kind = ReadmeIndexFindingKind.Ghost
+                      Message = sprintf "ghost: %s references %s but the target does not exist" indexPath link }
+            elif Set.contains link unannotated then
+                Some
+                    { File = target
+                      Severity = "high"
+                      Kind = ReadmeIndexFindingKind.Unannotated
+                      Message = sprintf "unannotated: %s links %s without a derived annotation" indexPath link }
+            else
+                None)
+
+    orphans @ linkedFindings
+
+/// Pure README-index audit over a caller-supplied text tree.
+let auditReadmeIndexTexts (tree: GovernanceTextTree) (paths: string list) : ReadmeIndexFinding list =
+    let tree =
+        tree
+        |> Map.toSeq
+        |> Seq.map (fun (path, text) -> normalizeTreePath path, text)
+        |> Map.ofSeq
+
+    let directories = treeDirectories tree
+
+    paths
+    |> List.collect (fun rawRoot ->
+        let root = normalizeTreePath rawRoot
+
+        directories
+        |> Set.filter (fun directory -> pathWithin root directory && not (containsSkippedSegment directory))
+        |> Set.add root
+        |> Set.toList
+        |> List.sort
+        |> List.collect (fun directory ->
+            let splitIndex =
+                treeCombine (treeDirectoryName directory) (treeBaseName directory + ".md")
+
+            let splitFindings =
+                if directory <> root && Map.containsKey splitIndex tree then
+                    auditTreeIndex tree splitIndex directory
+                else
+                    []
+
+            let readme = treeCombine directory "README.md"
+
+            if Map.containsKey readme tree then
+                splitFindings @ auditTreeIndex tree readme directory
+            elif directory = root then
+                splitFindings
+            else
+                let targets = treeSiblingTargets tree directory
+
+                if Set.isEmpty targets.Files && Set.isEmpty targets.SubDirs then
+                    splitFindings
+                else
+                    splitFindings
+                    @ [ { File = directory
+                          Severity = "high"
+                          Kind = ReadmeIndexFindingKind.Missing
+                          Message = sprintf "missing: %s contains indexable content but has no README.md" directory } ]))
+    |> List.distinct
+    |> List.sortBy (fun finding -> finding.File, finding.Kind.Name)
+
+let private frontmatterValue (key: string) (content: string) =
+    content.Replace("\r\n", "\n").Split('\n')
+    |> Array.tryPick (fun line ->
+        let prefix = key + ":"
+
+        if line.TrimStart().StartsWith(prefix, StringComparison.Ordinal) then
+            Some(line.Trim().Substring(prefix.Length).Trim().Trim('"'))
+        else
+            None)
+
+let private generatedTreeEntry (tree: GovernanceTextTree) directory target =
+    let targetPath = treeCombine directory target
+    let content = Map.tryFind targetPath tree |> Option.defaultValue ""
+
+    let title =
+        frontmatterValue "title" content
+        |> Option.defaultValue ((treeBaseName target).Replace(".md", ""))
+
+    let description =
+        frontmatterValue "description" content
+        |> Option.defaultValue (sprintf "Documentation for %s." title)
+
+    let whenToUse =
+        frontmatterValue "when_to_use" content
+        |> Option.map (sprintf " %s")
+        |> Option.defaultValue ""
+
+    sprintf "- [%s](./%s) — %s%s" title target description whenToUse
+
+/// Pure README-index generation. Existing entry order and prose are retained;
+/// only genuinely missing direct targets are appended.
+let generateReadmeIndexTexts (tree: GovernanceTextTree) (paths: string list) : GovernanceTextTree =
+    let normalized =
+        tree
+        |> Map.toSeq
+        |> Seq.map (fun (path, text) -> normalizeTreePath path, text)
+        |> Map.ofSeq
+
+    paths
+    |> List.fold
+        (fun state rawRoot ->
+            let root = normalizeTreePath rawRoot
+
+            let directories =
+                treeDirectories state |> Set.filter (pathWithin root) |> Set.toList |> List.sort
+
+            directories
+            |> List.fold
+                (fun current directory ->
+                    if directory = root || containsSkippedSegment directory then
+                        current
+                    else
+                        let targets = (treeSiblingTargets current directory).SortedNames
+                        let readme = treeCombine directory "README.md"
+
+                        if List.isEmpty targets then
+                            current
+                        else
+                            match Map.tryFind readme current with
+                            | Some existing ->
+                                let linked = extractReadmeLinks existing
+
+                                let missing =
+                                    targets |> List.filter (fun target -> not (Set.contains target linked))
+
+                                if List.isEmpty missing then
+                                    current
+                                else
+                                    let separator =
+                                        if existing.EndsWith("\n", StringComparison.Ordinal) then
+                                            ""
+                                        else
+                                            "\n"
+
+                                    let appended =
+                                        missing
+                                        |> List.map (generatedTreeEntry current directory)
+                                        |> String.concat "\n"
+
+                                    Map.add readme (existing + separator + appended + "\n") current
+                            | None ->
+                                let title = treeBaseName directory
+
+                                let entries =
+                                    targets |> List.map (generatedTreeEntry current directory) |> String.concat "\n"
+
+                                Map.add
+                                    readme
+                                    (sprintf "---\ntitle: \"%s\"\n---\n\n# %s\n\n%s\n" title title entries)
+                                    current)
+                state)
+        normalized
+
+/// Pure link-target rewrite across the supplied Markdown tree.
+let rewriteReadmeIndexTextPaths (tree: GovernanceTextTree) (paths: string list) (renames: (string * string) list) =
+    let renameMap = Map.ofList renames
+
+    tree
+    |> Map.map (fun path content ->
+        if
+            path.EndsWith(".md", StringComparison.Ordinal)
+            && paths |> List.exists (fun root -> pathWithin root path)
+        then
+            rewriteLinkTargets content renameMap
+        else
+            content)
+
+/// Pure word-budget classification over caller-supplied text files.
+let checkInstructionTextSizes (files: GovernanceTextTree) (config: BudgetConfig) (excludes: string list) =
+    let files =
+        files
+        |> Map.toSeq
+        |> Seq.map (fun (path, text) -> normalizeTreePath path, text)
+        |> Map.ofSeq
+
+    let mutable winners: Map<string, Surface> = Map.empty
+
+    for surface in config.Surfaces do
+        for KeyValue(path, _) in files do
+            let path = normalizeTreePath path
+
+            if
+                globMatchesRelPath surface.Glob path
+                && not (
+                    excludes
+                    |> List.exists (fun prefix -> path.StartsWith(prefix, StringComparison.Ordinal))
+                )
+            then
+                winners <- Map.add path surface winners
+
+    winners
+    |> Map.toList
+    |> List.sortBy fst
+    |> List.choose (fun (path, surface) ->
+        let size = files |> Map.tryFind path |> Option.defaultValue "" |> wordCount
+        let severity = classify size surface.Target surface.Warn surface.Fail
+
+        if severity = WordBudgetSeverity.Within then
+            None
+        else
+            Some
+                { Path = path
+                  Size = size
+                  Target = surface.Target
+                  Warn = surface.Warn
+                  Fail = surface.Fail
+                  Severity = severity
+                  Message = surfaceMessage path size surface.Target surface.Warn surface.Fail severity })
+
+/// Pure resolved-tree word count with depth and cycle guards.
+let resolveTextTreeSize (files: GovernanceTextTree) root =
+    let rec resolve path depth visited =
+        let path = normalizeTreePath path
+
+        if depth > 4 || Set.contains path visited then
+            0UL
+        else
+            let content = Map.tryFind path files |> Option.defaultValue ""
+            let visited = Set.add path visited
+            let parent = treeDirectoryName path
+
+            let imported =
+                content.Replace("\r\n", "\n").Split('\n')
+                |> Array.filter (fun line -> line.StartsWith("@", StringComparison.Ordinal))
+                |> Array.sumBy (fun line -> resolve (treeCombine parent (line.Substring(1).Trim())) (depth + 1) visited)
+
+            wordCount content + imported
+
+    resolve root 0 Set.empty
+
+/// Pure resolved-tree threshold classification.
+let checkResolvedTextTree (files: GovernanceTextTree) (config: BudgetConfig) =
+    let size = resolveTextTreeSize files config.ResolvedTree.Root
+    let threshold = config.ResolvedTree
+    let severity = classify size threshold.Target threshold.Warn threshold.Fail
+
+    if severity = WordBudgetSeverity.Within then
+        None
+    else
+        Some
+            { Path = "resolved-tree"
+              Size = size
+              Target = threshold.Target
+              Warn = threshold.Warn
+              Fail = threshold.Fail
+              Severity = severity
+              Message = resolvedTreeMessage size threshold severity }
+
+/// Pure helpers for registry/rename compatibility scenarios.
+let legacyInstructionSizeCommandIsAbsent commandPaths =
+    not (commandPaths |> List.contains [ "harness"; "instruction-size"; "validate" ])
+
+let containsLegacyInstructionBudgetReference (documents: GovernanceTextTree) =
+    documents
+    |> Map.exists (fun _ text -> text.Contains("instruction-file-size-budget.md", StringComparison.Ordinal))

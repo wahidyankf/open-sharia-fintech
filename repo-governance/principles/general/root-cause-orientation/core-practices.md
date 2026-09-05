@@ -63,7 +63,7 @@ See [Implementation Workflow - Surgical Changes](../../../development/workflow/i
 **Don't**: Ship the first solution that passes the test or satisfies the literal requirement.
 
 ```
-PASS: The fix handles the immediate case, all edge cases, does not break existing behavior,
+PASS: The fix handles the immediate case, all edge cases, does not break existing behaviour,
       and does not introduce unnecessary complexity.
 
 FAIL: The fix passes the test. Moving on.

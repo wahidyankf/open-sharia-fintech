@@ -33,6 +33,11 @@ Write repository-authored governance, contributor instructions, documentation, p
 specifications, source-code identifiers, comments and docstrings, logs, error messages, test names
 and descriptions, and other developer-facing text in English.
 
+Use British `behaviour`, `behavioural`, and `behaviour-driven` in repository-authored generic
+prose, locally owned identifiers, and paths. Preserve American `behavior` only when a third-party
+API or required identifier, exact quotation, proper name, URL, vendored/generated material, or an
+explicitly localized audience requires it.
+
 Use another natural language only when observable repository context identifies the text as one of
 the exceptions below.
 
@@ -56,8 +61,9 @@ not by itself an exception.
 ## Enforcement Disposition
 
 **Unenforced by decision.** Reviewers and rules-quality checks evaluate this convention. A
-deterministic language gate would misclassify code, names, quotations, and deliberately localized
-text, so no mechanical gate is declared. Non-English repository-authored text outside the
+deterministic language or dialect gate would misclassify code, names, quotations, required
+third-party identifiers, and deliberately localized text, so no mechanical gate is declared.
+Non-English repository-authored text or generic American `behavior` vocabulary outside the
 exceptions above is a violation.
 
 ## Related Documentation

@@ -155,7 +155,7 @@ graph LR
 ## Gherkin Coverage by Component
 
 Each component above is exercised by Gherkin features from
-[specs/apps/ose/www/behaviors/backend/`](./behaviors/backend/):
+[specs/apps/ose/www/behaviours/backend/`](./behaviours/backend/):
 
 | Component                            | Gherkin Domain    | Feature                   |
 | ------------------------------------ | ----------------- | ------------------------- |
@@ -168,14 +168,14 @@ Each component above is exercised by Gherkin features from
 
 ## Testing
 
-| Level       | What                                 | Coverage |
-| ----------- | ------------------------------------ | -------- |
-| `test:unit` | Service + procedure calls via Vitest | >= 80%   |
-| `test:e2e`  | Full tRPC HTTP via Playwright        | N/A      |
+| Level       | What                                 | Coverage     |
+| ----------- | ------------------------------------ | ------------ |
+| `test:unit` | Service + procedure calls via Vitest | >= 99% lines |
+| `test:e2e`  | Full tRPC HTTP via Playwright        | N/A          |
 
 ## Related
 
 - **Architecture**: [architecture.md](./architecture.md)
 - **web perspective components**: [frontend-components.md](./frontend-components.md)
-- **api perspective scenarios**: [behaviors/backend/](./behaviors/backend/README.md)
+- **api perspective scenarios**: [behaviours/backend/](./behaviours/backend/README.md)
 - **Parent**: [ose-www specs](./README.md)

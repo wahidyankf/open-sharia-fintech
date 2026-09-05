@@ -15,7 +15,7 @@ when_to_use: Use when checking whether a plan-maker-authored delivery checklist 
 
 # Examples — Plan-Maker Delivery-Mode Tagging
 
-## FAIL: Incorrect plan-maker behavior — assuming direct push without declaring the mode
+## FAIL: Incorrect plan-maker behaviour — assuming direct push without declaring the mode
 
 User prompt: "Plan a governance update for Y."
 
@@ -31,7 +31,7 @@ No `## Delivery Mode` field justifies skipping the `worktree-to-pr` default. `pl
 this. `plan-fixer` must either add a justified `## Delivery Mode` override or correct the checklist to
 the default PR-branch flow.
 
-## FAIL: Incorrect plan-maker behavior — `[HUMAN]` tag on a git-mechanical step
+## FAIL: Incorrect plan-maker behaviour — `[HUMAN]` tag on a git-mechanical step
 
 User prompt: "Plan a feature for Z." (default `worktree-to-pr` mode applies; no direct-push override)
 
@@ -49,7 +49,7 @@ where a plan's own step says so explicitly. These are mis-tags per
 [Plans Organization Convention §Executor Tagging](../../../conventions/structure/plans/executor-tagging-tags-and-bias.md#executor-tagging--ai-vs-human-hard-rule).
 `plan-checker` flags them; `plan-fixer` retags them `[AI]`.
 
-## PASS: Correct plan-maker behavior — git-mechanical steps and the merge both tagged `[AI]`
+## PASS: Correct plan-maker behaviour — git-mechanical steps and the merge both tagged `[AI]`
 
 ```markdown
 <!-- In delivery.md — RIGHT -->

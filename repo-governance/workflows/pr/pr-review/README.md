@@ -11,4 +11,4 @@ when_to_use: "Use to locate the normative mechanics of pr-review."
 - [Evidence and Outcomes](./evidence-and-outcomes.md) — Defines pass authentication, terminal
   states, and no-retry rules. Use when posting or consuming a pass result.
 - [Success Criteria](./success-criteria.md) — Defines clean, findings, and stale scenarios. Use when
-  validating the workflow's observable behavior.
+  validating the workflow's observable behaviour.

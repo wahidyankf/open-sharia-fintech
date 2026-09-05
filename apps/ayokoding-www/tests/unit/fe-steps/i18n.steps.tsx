@@ -1,68 +1,73 @@
-import path from "path";
-import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
+import path from "node:path";
+import { describeFeature, loadFeature } from "@amiceli/vitest-cucumber";
 import { expect } from "vitest";
-import "./helpers/test-setup";
-import { t } from "@/features/i18n/core/translations";
+import { DEFAULT_LOCALE_HREF, LOCALE_LABELS, SUPPORTED_LOCALES } from "../../../src/features/i18n/core/config";
+import { t } from "../../../src/features/i18n/core/translations";
+import { buildLocaleSwitchHref } from "../../../src/features/i18n/shell/language-switcher";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviors/frontend/i18n/i18n.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviours/frontend/i18n/i18n.feature"),
 );
 
 describeFeature(feature, ({ Scenario, Background }) => {
+  let locale = "";
+  let currentHref = "";
+
   Background(({ Given }) => {
-    Given("the app is running", () => {});
+    Given("the app is running", () => {
+      expect(SUPPORTED_LOCALES).toEqual(["en", "id"]);
+      locale = "";
+      currentHref = "";
+    });
   });
 
   Scenario("Language switcher displays the current locale", ({ When, Then }) => {
-    When("a visitor is on a page under the /en locale", () => {});
-
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/i18n/i18n.feature:Language switcher displays the current locale
+    When("a visitor is on a page under the /en locale", () => {
+      currentHref = "/en/learn";
+      locale = currentHref.split("/")[1] ?? "";
+    });
     Then('the language switcher should display "English" as the current language', () => {
-      // LanguageSwitcher is a client component depending on useLocale hook
-      // Verify translations module returns correct labels
-      const label = t("en", "language");
-      expect(label).toBeTruthy();
+      expect(LOCALE_LABELS[locale as keyof typeof LOCALE_LABELS]).toBe("English");
     });
   });
 
   Scenario("Switching language redirects to the locale-specific URL", ({ Given, When, Then }) => {
-    Given("a visitor is on the English version of a content page at /en/some-page", () => {});
-
-    When("the visitor selects Indonesian from the language switcher", () => {});
-
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/i18n/i18n.feature:Switching language redirects to the locale-specific URL
-    Then("the visitor should be redirected to the Indonesian version of that page at /id/some-page", () => {
-      // Language switching navigation is tested at E2E level
-      expect(true).toBe(true);
+    Given("a visitor is on the English AI benchmark page at /en/tools/ai-benchmark", () => {
+      currentHref = "/en/tools/ai-benchmark";
+    });
+    When("the visitor selects Indonesian from the language switcher", () => {
+      currentHref = buildLocaleSwitchHref(currentHref, new URLSearchParams(), "id");
+    });
+    Then("the visitor should be redirected to the Indonesian AI benchmark page at /id/tools/ai-benchmark", () => {
+      expect(currentHref).toBe("/id/tools/ai-benchmark");
     });
   });
 
   Scenario("UI labels change to the selected language", ({ When, Then, And }) => {
-    When("a visitor is on the Indonesian version of a page", () => {});
-
-    Then("navigation labels and UI text should be displayed in Indonesian", () => {
-      const idSearch = t("id", "search");
-      expect(idSearch).toBeTruthy();
-      expect(idSearch).not.toBe(t("en", "search"));
+    When("a visitor is on the Indonesian version of a page", () => {
+      locale = "id";
     });
-
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/i18n/i18n.feature:UI labels change to the selected language
+    Then("navigation labels and UI text should be displayed in Indonesian", () => {
+      expect(t("id", "search")).not.toBe(t("en", "search"));
+      expect(t("id", "breadcrumbHome")).not.toBe(t("en", "breadcrumbHome"));
+    });
     And("the page title and headings should reflect the Indonesian locale content", () => {
-      expect(true).toBe(true);
+      expect(t("id", "toolsPageTitle")).toBe("Alat");
+      expect(t("id", "toolsPageTitle")).not.toBe(t("en", "toolsPageTitle"));
     });
   });
 
   Scenario("Root URL redirects to the default locale", ({ When, Then, And }) => {
-    When("a visitor opens the root URL /", () => {});
-
-    Then("they should be redirected to /en", () => {
-      // Root redirect is handled by middleware — tested at E2E level
-      expect(true).toBe(true);
+    When("a visitor opens the root URL /", () => {
+      currentHref = DEFAULT_LOCALE_HREF;
+      locale = currentHref.slice(1);
     });
-
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/i18n/i18n.feature:Root URL redirects to the default locale
+    Then("they should be redirected to /en", () => {
+      expect(currentHref).toBe("/en");
+    });
     And("the English version of the home page should be displayed", () => {
-      expect(true).toBe(true);
+      expect(locale).toBe("en");
+      expect(t("en", "breadcrumbHome")).toBe("Home");
     });
   });
 });

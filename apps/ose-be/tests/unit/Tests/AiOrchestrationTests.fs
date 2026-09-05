@@ -8,7 +8,6 @@ open OseBe.Contexts.AiOrchestration.Api
 open OseBe.Contexts.AiOrchestration.Infrastructure
 open OseBe.Tests.Unit.Steps.BddState
 
-// @covers specs/apps/ose/be/behaviors/ai-orchestration/ai-orchestration.feature:AI orchestration context is declared
 [<Fact>]
 let ``ai-orchestration reports ready to wrap LLM calls via OpenRouter`` () =
     let readiness = initializeContext ()
@@ -27,7 +26,7 @@ let ``ai-orchestration status endpoint reports the context readiness`` () =
 // isLlmConfigured and completion read the ambient OSE_BE_OPENROUTER_API_KEY,
 // which the test process never sets (see apps/ose-be/.env.example, which
 // defaults it to blank); OpenRouterClientTests.fs owns direct mutation of that
-// variable, so this asserts the same not-configured behavior without touching
+// variable, so this asserts the same not-configured behaviour without touching
 // process-wide environment state itself.
 [<Fact>]
 let ``ai-orchestration reports the LLM integration is not configured by default`` () = Assert.False(isLlmConfigured ())

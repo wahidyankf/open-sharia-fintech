@@ -30,7 +30,7 @@ Read the created plan files and verify structural completeness before the qualit
    ([§PRs Open at Delivery Boundaries](../../../conventions/structure/plans/prs-open-at-delivery-boundaries-rules.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule))
    Verify each unit names a natural cohesive seam, keeps every artifact needed for build,
    verification, operation, rollback, and internal consistency together, and leaves an immediately
-   production-deployable `main` state. Incomplete behavior requires a temporary
+   production-deployable `main` state. Incomplete behaviour requires a temporary
    production-disabled flag, both path tests, and rollout/rollback/removal. Reject LOC- or
    file-count-derived boundaries.
 8. Verify `delivery.md` opens with the `[AI]`/`[HUMAN]` executor legend and that every step only a human can perform is tagged `[HUMAN]`

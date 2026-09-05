@@ -205,12 +205,12 @@ timeline
 
 ### Testing & Quality
 
-| Document                                                                           | Description         | Lines | Topics                               |
-| ---------------------------------------------------------------------------------- | ------------------- | ----- | ------------------------------------ |
-| [Testing](testing.md) — Testing foundations                                        | Testing foundations | N/A   | Testing pyramid, test types, tooling |
-| [Test-Driven Development](test-driven-development.md) — TDD practices              | TDD practices       | 1,800 | Jest, Vitest, Property testing       |
-| [Behaviour-Driven Development](behaviour-driven-development.md) — BDD with Gherkin | BDD with Gherkin    | 1,500 | Cucumber, Playwright, E2E            |
-| [Linting & Formatting](linting-and-formatting.md) — Code quality                   | Code quality        | 1,400 | ESLint 9.x/10.x, Prettier, Hooks     |
+| Document                                                                                     | Description         | Lines | Topics                               |
+| -------------------------------------------------------------------------------------------- | ------------------- | ----- | ------------------------------------ |
+| [Testing](testing.md) — Testing foundations                                                  | Testing foundations | N/A   | Testing pyramid, test types, tooling |
+| [Test-Driven Development](test-driven-development.md) — TDD practices                        | TDD practices       | 1,800 | Jest, Vitest, Property testing       |
+| [Behaviour-Driven Development](behaviour-driven-development.md) — canonical Gherkin adapters | BDD with Gherkin    | 1,500 | Vitest Cucumber, Playwright BDD, E2E |
+| [Linting & Formatting](linting-and-formatting.md) — Code quality                             | Code quality        | 1,400 | ESLint 9.x/10.x, Prettier, Hooks     |
 
 ## TypeScript in the Platform
 
@@ -1497,9 +1497,10 @@ async function processDonation(data: DonationInput): Promise<Result<Donation, Er
 
 - **Jest**: 30.2.0 (mature, feature-rich)
 - **Vitest**: 4.0.18 (fast, Vite-powered)
+- **@amiceli/vitest-cucumber**: 6.3.0 (canonical Gherkin Unit bindings)
+- **playwright-bdd**: 8.5.1 (canonical Gherkin E2E bindings)
 - **Playwright**: 1.57.0 (E2E, component testing)
 - **fast-check**: 3.x (property-based testing)
-- **Cucumber**: 10.x (BDD with Gherkin)
 
 ### Code Quality
 
@@ -1543,7 +1544,7 @@ async function processDonation(data: DonationInput): Promise<Result<Donation, Er
 - [C# Documentation](../c-sharp/README.md)
 - [TypeScript Documentation Templates](./templates/README.md) — Reusable templates for TypeScript development patterns in OSE Platform
 - [TypeScript Anti-Patterns](./anti-patterns.md) — Common TypeScript mistakes and how to avoid them
-- [TypeScript Behaviour-Driven Development](./behaviour-driven-development.md) — BDD practices with Cucumber and Playwright for TypeScript
+- [TypeScript Behaviour-Driven Development](./behaviour-driven-development.md) — Canonical Gherkin with Vitest Cucumber Unit bindings and Playwright BDD E2E bindings
 - [TypeScript Best Practices](./best-practices.md) — Modern TypeScript coding standards and proven approaches (TypeScript 5.0+)
 - [TypeScript Concurrency and Parallelism](./concurrency-and-parallelism.md) — Asynchronous and concurrent programming patterns in TypeScript
 - [TypeScript Domain-Driven Design](./domain-driven-design.md) — Domain-Driven Design patterns and practices in TypeScript
@@ -1558,7 +1559,7 @@ async function processDonation(data: DonationInput): Promise<Result<Donation, Er
 - [TypeScript Performance](./performance.md) — Performance optimization and profiling for TypeScript applications
 - [TypeScript Security](./security.md) — Defense-in-depth security for TypeScript applications including input validation, authentication, authorization, secure communication, and data protection for financial applications
 - [TypeScript Test-Driven Development](./test-driven-development.md) — TDD practices and testing frameworks for TypeScript
-- [TypeScript Testing](./testing.md) — OSE Platform TypeScript testing standards — unit tests with Vitest and vi.fn, integration tests with vitest-cucumber and MSW, E2E tests with Playwright
+- [TypeScript Testing](./testing.md) — OSE Platform TypeScript testing standards — Unit scenarios with Vitest, `@amiceli/vitest-cucumber`, and doubles such as MSW; zero-network local-resource Integration; E2E with `playwright-bdd` and Playwright
 - [TypeScript Type Safety](./type-safety.md) — Leveraging TypeScript's type system for safer financial code
 - [TypeScript Web Services](./web-services.md) — Building web services and APIs with TypeScript frameworks
 

@@ -1,62 +1,88 @@
 import path from "path";
 import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
 import { render, screen, cleanup, fireEvent } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { expect } from "vitest";
 
 import { Textarea } from "../../../../src/components/textarea/textarea";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../specs/libs/web-ui/behaviors/textarea/textarea.feature"),
+  path.resolve(__dirname, "../../../../../../specs/libs/web-ui/behaviours/textarea/textarea.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {
   Scenario("Renders with placeholder", ({ When, Then, And }) => {
-    When('I render a Textarea with placeholder "Write here…"', () => {});
+    let textarea: HTMLTextAreaElement;
 
-    Then("I see the textarea element", () => {
+    When('I render a Textarea with placeholder "Write here…"', () => {
       cleanup();
       render(<Textarea placeholder="Write here…" aria-label="notes" />);
-      expect(screen.getByRole("textbox")).toBeDefined();
+      textarea = screen.getByRole("textbox") as HTMLTextAreaElement;
+    });
+
+    Then("I see the textarea element", () => {
+      expect(textarea).toBeDefined();
     });
 
     And('the placeholder text is "Write here…"', () => {
-      cleanup();
-      render(<Textarea placeholder="Write here…" aria-label="notes" />);
-      expect(screen.getByRole("textbox").getAttribute("placeholder")).toBe("Write here…");
+      expect(textarea.getAttribute("placeholder")).toBe("Write here…");
     });
   });
 
   Scenario("Accepts input", ({ Given, When, Then }) => {
-    Given("I render a controlled Textarea", () => {});
-    When('I type "hello"', () => {});
+    let textarea: HTMLTextAreaElement;
 
-    Then('the textarea value is "hello"', () => {
+    Given("I render a controlled Textarea", () => {
       cleanup();
       render(<Textarea aria-label="notes" defaultValue="" />);
-      fireEvent.change(screen.getByRole("textbox"), { target: { value: "hello" } });
-      expect((screen.getByRole("textbox") as HTMLTextAreaElement).value).toBe("hello");
+      textarea = screen.getByRole("textbox") as HTMLTextAreaElement;
+    });
+
+    When('I type "hello"', () => {
+      fireEvent.change(textarea, { target: { value: "hello" } });
+    });
+
+    Then('the textarea value is "hello"', () => {
+      expect(textarea.value).toBe("hello");
     });
   });
 
   Scenario("Disabled state", ({ When, Then }) => {
-    When("I render a Textarea with disabled prop", () => {});
+    let textarea: HTMLTextAreaElement;
 
-    Then("the textarea is not interactive", () => {
+    When("I render a Textarea with disabled prop", () => {
       cleanup();
       render(<Textarea aria-label="notes" disabled />);
-      expect(screen.getByRole("textbox").hasAttribute("disabled")).toBe(true);
+      textarea = screen.getByRole("textbox") as HTMLTextAreaElement;
+    });
+
+    Then("the textarea is not interactive", () => {
+      expect(textarea.hasAttribute("disabled")).toBe(true);
     });
   });
 
   Scenario("Focus ring visible on keyboard focus", ({ Given, When, Then }) => {
-    Given("I render a Textarea", () => {});
-    When("I focus the textarea via keyboard", () => {});
+    let textarea: HTMLTextAreaElement;
+    let focusedThroughKeyboard = false;
 
-    Then("a focus ring is visible", () => {
+    Given("I render a Textarea", () => {
       cleanup();
       render(<Textarea aria-label="notes" />);
-      fireEvent.focus(screen.getByRole("textbox"));
-      expect(screen.getByRole("textbox").className).toContain("focus-visible:");
+      textarea = screen.getByRole("textbox") as HTMLTextAreaElement;
+    });
+
+    When("I focus the textarea via keyboard", async () => {
+      const user = userEvent.setup();
+      cleanup();
+      render(<Textarea aria-label="notes" />);
+      textarea = screen.getByRole("textbox") as HTMLTextAreaElement;
+      await user.tab();
+      focusedThroughKeyboard = document.activeElement === textarea;
+    });
+
+    Then("a focus ring is visible", () => {
+      expect(focusedThroughKeyboard).toBe(true);
+      expect(textarea.className).toContain("focus-visible:");
     });
   });
 });

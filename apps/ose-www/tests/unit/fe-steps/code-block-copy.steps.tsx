@@ -7,19 +7,18 @@ import { expect } from "vitest";
 import { MarkdownRenderer } from "@/features/content/shell/markdown-renderer";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ose/www/behaviors/frontend/content/code-block-copy.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ose/www/behaviours/frontend/content/code-block-copy.feature"),
 );
 
 const luaFigureHtml = `<figure data-rehype-pretty-code-figure><pre data-language="lua"><code><span>print("hi")</span></code></pre></figure>`;
 const mermaidFigureHtml = `<figure data-rehype-pretty-code-figure><pre data-language="mermaid"><code>graph TD; A-->B;</code></pre></figure>`;
 
-// Both scenarios are `@unit` (ose-www content rendering is verified at the renderer level; ose-www ships
-// no live non-mermaid fenced content, so there is nothing to exercise at the page/e2e tier — the wiring
-// is latent). This binder is the whole-feature consumer rhino's `specs:behavior:coverage` scans.
+// The content-rendering contract is verified at the renderer boundary.
 describeFeature(feature, ({ Scenario }) => {
   Scenario("The renderer wraps a non-mermaid code figure in a CodeBlock", ({ Given, When, Then }) => {
     Given("the ose-www markdown renderer receives HTML with a non-mermaid code figure", () => {
-      // render happens in the When step
+      expect(luaFigureHtml).toContain('data-language="lua"');
+      expect(luaFigureHtml).not.toContain('data-language="mermaid"');
     });
 
     When("the HTML is parsed to React", () => {
@@ -27,7 +26,6 @@ describeFeature(feature, ({ Scenario }) => {
       render(<MarkdownRenderer html={luaFigureHtml} />);
     });
 
-    // @covers specs/apps/ose/www/behaviors/frontend/content/code-block-copy.feature:The renderer wraps a non-mermaid code figure in a CodeBlock
     Then("the figure is wrapped in a CodeBlock exposing a copy button", () => {
       expect(document.querySelector('[data-slot="code-block"]')).toBeTruthy();
       expect(document.querySelector('[data-slot="code-block-copy"]')).toBeTruthy();
@@ -36,7 +34,7 @@ describeFeature(feature, ({ Scenario }) => {
 
   Scenario("The renderer leaves a mermaid figure as a diagram", ({ Given, When, Then }) => {
     Given("the ose-www markdown renderer receives HTML with a mermaid code figure", () => {
-      // render happens in the When step
+      expect(mermaidFigureHtml).toContain('data-language="mermaid"');
     });
 
     When("the HTML is parsed to React", () => {
@@ -44,7 +42,6 @@ describeFeature(feature, ({ Scenario }) => {
       render(<MarkdownRenderer html={mermaidFigureHtml} />);
     });
 
-    // @covers specs/apps/ose/www/behaviors/frontend/content/code-block-copy.feature:The renderer leaves a mermaid figure as a diagram
     Then("the figure renders as a mermaid diagram with no copy button", () => {
       // Real SVG rendering needs browser APIs jsdom lacks (see mermaid.tsx); before the async
       // `mermaid.render()` resolves, MermaidDiagram renders its <pre><code> fallback — asserting that

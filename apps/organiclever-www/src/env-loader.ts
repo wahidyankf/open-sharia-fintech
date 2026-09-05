@@ -7,8 +7,8 @@
  * that package for the full contract. This file's only job is the explicit call: a shared library
  * never loads its own tier file on import, so each app must call `loadTierEnv()` itself.
  */
-import { loadTierEnv } from "@open-sharia-enterprise/ts-env-loader";
+import { loadOrganicLeverWwwEnvironment } from "./environment-bootstrap";
 
 export { loadTierEnv, resolveTier, tierEnvFilePath } from "@open-sharia-enterprise/ts-env-loader";
 
-loadTierEnv();
+loadOrganicLeverWwwEnvironment();

@@ -1,6 +1,6 @@
 ---
 name: repo-practicing-trunk-based-development
-description: "Trunk Based Development workflow - all development on main branch with small frequent commits, minimal branching, and continuous integration. Covers when branches are justified (exceptional cases only), commit patterns, feature flag usage for incomplete work, environment branch rules (deployment only), and AI agent default behavior (the repo-wide default delivery mode is `worktree-to-pr` -- a short-lived plan branch in a disposable worktree pushed to a draft PR; direct push to main has no executable path in ose-public, main is branch-protected including for admins, and only ose-private retains `main-to-origin-main` in exactly two categories: stateful IaC needing the primary checkout's real secrets/local state, or CI-IaC changing its own pipeline, runner, or toolchain provisioning where PR self-validation is circular). Essential for understanding repository git workflow and keeping branches short-lived"
+description: "Trunk Based Development workflow - all development on main branch with small frequent commits, minimal branching, and continuous integration. Covers when branches are justified (exceptional cases only), commit patterns, feature flag usage for incomplete work, environment branch rules (deployment only), and AI agent default behaviour (the repo-wide default delivery mode is `worktree-to-pr` -- a short-lived plan branch in a disposable worktree pushed to a draft PR; direct push to main has no executable path in ose-public, main is branch-protected including for admins, and only ose-private retains `main-to-origin-main` in exactly two categories: stateful IaC needing the primary checkout's real secrets/local state, or CI-IaC changing its own pipeline, runner, or toolchain provisioning where PR self-validation is circular). Essential for understanding repository git workflow and keeping branches short-lived"
 ---
 
 # Trunk Based Development Skill
@@ -14,11 +14,11 @@ This Skill provides comprehensive guidance on **Trunk Based Development (TBD)** 
 - Planning git workflow, deciding whether to create a branch
 - Managing incomplete work via feature flags
 - Navigating environment branches (deployment only)
-- Creating plans with git workflow specs; implementing AI agent default behaviors
+- Creating plans with git workflow specs; implementing AI agent default behaviours
 
 PRs follow natural cohesive seams, never numeric LOC or file-count boundaries. Keep every artifact
 needed for internal consistency together, merge only an immediately production-deployable resulting
-`main` state, and integrate each ready unit promptly. Incomplete behavior must be
+`main` state, and integrate each ready unit promptly. Incomplete behaviour must be
 complete-and-inert behind a temporary production-disabled flag, with both paths tested and rollout,
 rollback, and removal recorded.
 
@@ -28,7 +28,7 @@ See [Core Concepts](./reference/core-concepts.md) for what TBD requires (converg
 
 ## Delivery Modes: How Work Reaches `main`
 
-See [Delivery Modes: Default Behavior](./reference/delivery-modes-default-behavior.md) for the standard `worktree-to-pr` workflow, and [Delivery Modes: Direct Push](./reference/delivery-modes-direct-push.md) for the surviving `ose-private` exception.
+See [Delivery Modes: Default Behaviour](./reference/delivery-modes-default-behaviour.md) for the standard `worktree-to-pr` workflow, and [Delivery Modes: Direct Push](./reference/delivery-modes-direct-push.md) for the surviving `ose-private` exception.
 
 ## Keeping Branches Short-Lived
 
@@ -38,9 +38,9 @@ See [Keeping Branches Short-Lived](./reference/keeping-branches-short-lived.md) 
 
 See [Feature Flags](./reference/feature-flags.md) for the basic pattern, the four-phase lifecycle, and DO/DON'T guidance.
 
-## Environment Branches and AI Agent Default Behavior
+## Environment Branches and AI Agent Default Behaviour
 
-See [Environment Branches and AI Agent Behavior](./reference/environment-branches-and-ai-agent-behavior.md) for deployment-branch rules and how AI agents resolve/declare the Delivery Mode in plans.
+See [Environment Branches and AI Agent Behaviour](./reference/environment-branches-and-ai-agent-behaviour.md) for deployment-branch rules and how AI agents resolve/declare the Delivery Mode in plans.
 
 ## Common Patterns
 

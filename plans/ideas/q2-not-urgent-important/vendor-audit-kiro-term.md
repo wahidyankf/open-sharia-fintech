@@ -33,7 +33,7 @@ so it is cheapest to close before the first mention lands, not after.
 ## Proposed direction (sketch)
 
 - Add `\bKiro\b` and the `.kiro/` path prefix to the vendor-term list in `vendor_audit.rs`, with
-  companion Gherkin under `specs/apps/rhino/cli/behaviors/**`.
+  companion Gherkin under `specs/apps/rhino/cli/behaviours/**`.
 - Update the companion term table in the Governance Vendor-Independence Convention in the same change,
   so the documented list and the scanner agree (editing only the doc would make it lie about the
   tool).

@@ -1,187 +1,104 @@
-/**
- * Unit-level step definitions for the URL-routed shell.
- *
- * Covers: specs/apps/organiclever/app-web/behaviors/routing/app-routes.feature
- *
- * Where the e2e suite drives a real browser, the unit suite simulates URL
- * transitions and asserts on-disk page presence. Browser semantics (history
- * stack, back button, network fetches) are not modelled — those are covered
- * by the e2e suite. Step text uses double-quoted strings so the rhino-cli
- * spec-coverage scanner (which only matches `Given|When|Then|And|But("..."`
- * or `'...'`) can find the registrations.
- */
-
 import path from "path";
-import { existsSync, readFileSync } from "fs";
 import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
 import { expect } from "vitest";
-
-const APP_ROOT = path.resolve(__dirname, "../../../../src/app/app");
-
-function pageFileForPath(routePath: string): string {
-  const segment = routePath.replace(/^\/app\/?/, "").replace(/^\/+/, "");
-  if (segment === "") return path.resolve(APP_ROOT, "page.tsx");
-  return path.resolve(APP_ROOT, ...segment.split("/"), "page.tsx");
-}
+import {
+  previousAppRoute,
+  refreshAppRoute,
+  resolveAppRoute,
+  type AppRouteResult,
+} from "@/contexts/routing/application";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../specs/apps/organiclever/app-web/behaviors/routing/app-routes.feature"),
+  path.resolve(__dirname, "../../../../../../specs/apps/organiclever/app-web/behaviours/routing/app-routes.feature"),
 );
 
 describeFeature(feature, ({ Background, Scenario, ScenarioOutline }) => {
-  let currentURL = "";
+  let result: AppRouteResult;
+  let currentPath = "";
   let history: string[] = [];
 
   Background(({ Given }) => {
     Given("the application is running", () => {
-      currentURL = "";
-      history = [];
+      result = resolveAppRoute("GET", "/app/home");
+      expect(result.status).toBe(200);
     });
   });
 
   Scenario("Visiting /app redirects to /app/home", ({ Given, When, Then, And }) => {
     Given("the app is freshly loaded", () => {
-      currentURL = "";
-      history = [];
+      currentPath = "/app";
     });
-
     When('the user navigates to "/app"', () => {
-      currentURL = "/app/home";
-      history = ["/app/home"];
+      result = resolveAppRoute("GET", currentPath);
+      currentPath = result.location ?? currentPath;
     });
-
-    Then('the URL becomes "/app/home"', () => {
-      expect(currentURL).toBe("/app/home");
-    });
-
-    // @covers specs/apps/organiclever/app-web/behaviors/routing/app-routes.feature:Visiting /app redirects to /app/home
-    And("the Home screen is visible", () => {
-      expect(existsSync(pageFileForPath("/app/home"))).toBe(true);
-    });
+    Then('the URL becomes "/app/home"', () => expect(currentPath).toBe("/app/home"));
+    And("the Home screen is visible", () => expect(resolveAppRoute("GET", currentPath).screen).toBe("Home"));
   });
 
   Scenario("Visiting /app/home renders the Home screen", ({ Given, When, Then, And }) => {
     Given("the app is freshly loaded", () => {
-      currentURL = "";
-      history = [];
+      currentPath = "/app";
     });
-
     When('the user navigates to "/app/home"', () => {
-      currentURL = "/app/home";
-      history.push(currentURL);
+      result = resolveAppRoute("GET", "/app/home");
+      currentPath = result.path;
     });
-
-    Then("the Home screen is visible", () => {
-      expect(existsSync(pageFileForPath("/app/home"))).toBe(true);
-    });
-
-    // @covers specs/apps/organiclever/app-web/behaviors/routing/app-routes.feature:Visiting /app/home renders the Home screen
-    And("the Home tab is marked active in the navigation", () => {
-      expect(currentURL).toBe("/app/home");
-    });
+    Then("the Home screen is visible", () => expect(result.screen).toBe("Home"));
+    And("the Home tab is marked active in the navigation", () => expect(result.activeTab).toBe("home"));
   });
 
   ScenarioOutline("Each tab is reachable by URL", ({ Given, When, Then, And }, examples) => {
     const tabPath = String(examples["path"] ?? "");
     const screen = String(examples["screen"] ?? "");
-    const tab = String(examples["tab"] ?? "");
-
+    const tab = String(examples["tab"] ?? "").toLowerCase();
     Given("the app shell is visible", () => {
-      currentURL = "/app/home";
-      history = [currentURL];
+      expect(resolveAppRoute("GET", "/app/home").screen).toBe("Home");
     });
-
     When('the user navigates to "<path>"', () => {
-      currentURL = tabPath;
-      history.push(currentURL);
+      result = resolveAppRoute("GET", tabPath);
     });
-
-    Then('the "<screen>" screen is visible', () => {
-      expect(existsSync(pageFileForPath(tabPath)), `expected page for ${screen} at ${tabPath}`).toBe(true);
-    });
-
-    // @covers specs/apps/organiclever/app-web/behaviors/routing/app-routes.feature:Each tab is reachable by URL
-    And('the "<tab>" tab is marked active', () => {
-      expect(currentURL).toBe(tabPath);
-      expect(tab.toLowerCase()).toBe(tabPath.replace("/app/", ""));
-    });
+    Then('the "<screen>" screen is visible', () => expect(result.screen).toBe(screen));
+    And('the "<tab>" tab is marked active', () => expect(result.activeTab).toBe(tab));
   });
 
   ScenarioOutline("Refreshing a tab URL keeps the user on that tab", ({ Given, When, Then, And }, examples) => {
     const tabPath = String(examples["path"] ?? "");
     const screen = String(examples["screen"] ?? "");
-
     Given('the user is on "<path>"', () => {
-      currentURL = tabPath;
-      history = [currentURL];
+      currentPath = resolveAppRoute("GET", tabPath).path;
     });
-
     When("the user refreshes the page", () => {
-      // Refresh on a stateless URL-routed page yields the same URL.
+      result = refreshAppRoute(currentPath);
     });
-
-    Then('the URL is still "<path>"', () => {
-      expect(currentURL).toBe(tabPath);
-    });
-
-    // @covers specs/apps/organiclever/app-web/behaviors/routing/app-routes.feature:Refreshing a tab URL keeps the user on that tab
-    And('the "<screen>" screen is visible', () => {
-      expect(existsSync(pageFileForPath(tabPath)), `expected page for ${screen} at ${tabPath}`).toBe(true);
-    });
+    Then('the URL is still "<path>"', () => expect(result.path).toBe(tabPath));
+    And('the "<screen>" screen is visible', () => expect(result.screen).toBe(screen));
   });
 
   Scenario("Back from Progress returns to Home", ({ Given, When, Then, And }) => {
     Given('the user navigated from "/app/home" to "/app/progress"', () => {
       history = ["/app/home", "/app/progress"];
-      currentURL = "/app/progress";
     });
-
     When("the user presses the browser back button", () => {
-      history.pop();
-      currentURL = history[history.length - 1] ?? "/app/home";
+      result = previousAppRoute(history);
     });
-
-    Then('the URL becomes "/app/home"', () => {
-      expect(currentURL).toBe("/app/home");
-    });
-
-    // @covers specs/apps/organiclever/app-web/behaviors/routing/app-routes.feature:Back from Progress returns to Home
-    And("the Home screen is visible", () => {
-      expect(existsSync(pageFileForPath("/app/home"))).toBe(true);
-    });
+    Then('the URL becomes "/app/home"', () => expect(result.path).toBe("/app/home"));
+    And("the Home screen is visible", () => expect(result.screen).toBe("Home"));
   });
 
   Scenario("Old /app URL permanent-redirects to /app/home", ({ When, Then }) => {
-    let configRedirect = "";
-
     When('a visitor requests GET "/app"', () => {
-      const configFile = path.resolve(__dirname, "../../../../next.config.ts");
-      const configSource = readFileSync(configFile, "utf8");
-      const sourceMatch = configSource.match(/source:\s*"\/app"/);
-      const destMatch = configSource.match(/destination:\s*"(\/app\/home)"/);
-      const permMatch = configSource.match(/permanent:\s*true/);
-      expect(sourceMatch).not.toBeNull();
-      expect(destMatch).not.toBeNull();
-      expect(permMatch).not.toBeNull();
-      configRedirect = destMatch?.[1] ?? "";
+      result = resolveAppRoute("GET", "/app");
     });
-
-    // @covers specs/apps/organiclever/app-web/behaviors/routing/app-routes.feature:Old /app URL permanent-redirects to /app/home
     Then('the response is a 308 redirect to "/app/home"', () => {
-      expect(configRedirect).toBe("/app/home");
+      expect(result).toMatchObject({ status: 308, location: "/app/home" });
     });
   });
 
   Scenario("Unknown segment under /app returns 404", ({ When, Then }) => {
-    let absent = false;
-
     When('a visitor requests GET "/app/does-not-exist"', () => {
-      absent = !existsSync(pageFileForPath("/app/does-not-exist"));
+      result = resolveAppRoute("GET", "/app/does-not-exist");
     });
-
-    // @covers specs/apps/organiclever/app-web/behaviors/routing/app-routes.feature:Unknown segment under /app returns 404
-    Then("the response status is 404", () => {
-      expect(absent).toBe(true);
-    });
+    Then("the response status is 404", () => expect(result.status).toBe(404));
   });
 });

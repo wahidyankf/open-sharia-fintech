@@ -15,7 +15,7 @@ when_to_use: Use when explaining fork-mode skill delegation.
 
 ## Fork agent skills (Task Delegation)
 
-**Delegation behavior** with `context: fork`:
+**Delegation behaviour** with `context: fork`:
 
 ```
 Delegation Flow (Fork):
@@ -47,7 +47,7 @@ Agent skills (context: fork) ──delegates to──> Isolated Agent Context
 
 | Aspect                | Governance Layers (L1-L5) | agent skills (Delivery)        |
 | --------------------- | ------------------------- | ------------------------------ |
-| **Authority**         | Govern behavior (MUST)    | Serve agents (provide support) |
+| **Authority**         | Govern behaviour (MUST)   | Serve agents (provide support) |
 | **Change Frequency**  | Stable, controlled        | Evolve with agent needs        |
 | **Traceability**      | Required sections         | Optional references            |
 | **Relationship**      | Hierarchical governance   | Service relationship           |

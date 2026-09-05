@@ -10,7 +10,7 @@ tags:
   - development
   - continuous-integration
 created: 2025-11-26
-when_to_use: Use when incomplete behavior must integrate safely behind a temporary production-disabled toggle, or when rolling back or retiring that flag.
+when_to_use: Use when incomplete behaviour must integrate safely behind a temporary production-disabled toggle, or when rolling back or retiring that flag.
 ---
 
 # Feature Flags for Incomplete Work

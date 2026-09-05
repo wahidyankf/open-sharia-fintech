@@ -37,14 +37,14 @@ specs/apps/<product>/
 │   │   ├── paths/
 │   │   ├── schemas/
 │   │   └── generated/
-│   └── behaviors/
+│   └── behaviours/
 │       ├── README.md
 │       └── <domain>/               # domain subdir, required for every surface
 │           └── <feature>.feature
 ```
 
-An owner's `behaviors/` may nest one level further when a single deployed surface carries two
-perspectives — `behaviors/frontend/` and `behaviors/backend/` for a site whose API runs inside the
+An owner's `behaviours/` may nest one level further when a single deployed surface carries two
+perspectives — `behaviours/frontend/` and `behaviours/backend/` for a site whose API runs inside the
 same process. Two perspectives on one deployable are one owner, not two.
 
 ## Entry Purposes
@@ -53,7 +53,7 @@ same process. Two perspectives on one deployable are one owner, not two.
 | ----------------- | ------------------------------------------------------- |
 | `README.md`       | "What is here, and where do I go next?"                 |
 | `architecture.md` | "What is the system as built, and what constrains it?"  |
-| `behaviors/`      | "Does the system do what the specs say?"                |
+| `behaviours/`     | "Does the system do what the specs say?"                |
 | `contracts/`      | "What exactly does this surface promise over the wire?" |
 
 `architecture.md` carries the C4 zoom levels as sections rather than folders: context, containers,

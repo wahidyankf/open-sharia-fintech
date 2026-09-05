@@ -14,7 +14,7 @@ Continues [UUID Chain Generation — Startup and Tracking](./uuid-chain-startup-
 
 ## Documented Limitation
 
-> **Edge case:** If the same workflow with the same scope runs concurrently (e.g., two ayokoding by-example validations simultaneously), parent tracking may be imperfect within that scope. This is expected behavior for concurrent operations on the same resource. The unique UUID still ensures no file collisions.
+> **Edge case:** If the same workflow with the same scope runs concurrently (e.g., two ayokoding by-example validations simultaneously), parent tracking may be imperfect within that scope. This is expected behaviour for concurrent operations on the same resource. The unique UUID still ensures no file collisions.
 
 ## Backward Compatibility
 

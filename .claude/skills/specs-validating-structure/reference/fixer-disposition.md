@@ -24,7 +24,7 @@ must not reconstruct them.
 **Requires Review (MEDIUM confidence)**: Category 1 missing user-story blocks (template
 generatable, content needs human review); Category 4 cross-folder coverage gaps, contradictions
 (needs domain decision), actor-name inconsistency (may cascade to implementations); Category 3
-Background step inconsistency (may change test behavior); Category 9 adoption gaps — always
+Background step inconsistency (may change test behaviour); Category 9 adoption gaps — always
 flagged and documented, **never auto-fixed**, adoption is a team decision; Category 8 tree-shape
 migrations at the subtree level — flagged and documented, **never auto-fixed**, migration is a
 plan-level operation requiring an atomic commit across rhino-cli path constants, Nx cache inputs,

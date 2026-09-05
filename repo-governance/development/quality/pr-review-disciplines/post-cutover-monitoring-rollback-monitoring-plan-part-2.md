@@ -32,5 +32,5 @@ when_to_use: "Use when tracking the split's post-cutover health metrics."
   for override before a measurable precision drop shows up in the fixer's triage data.
 
 None of these five families requires a pre-cutover monolith baseline — each is measured purely
-against the split's own post-cutover behavior over time. That property is what makes the rollback
+against the split's own post-cutover behaviour over time. That property is what makes the rollback
 trigger below workable without a baseline to compare against.

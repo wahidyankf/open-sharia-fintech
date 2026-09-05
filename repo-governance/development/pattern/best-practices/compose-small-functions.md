@@ -1,6 +1,6 @@
 ---
 title: "Practice 7: Compose Small Functions"
-description: "Build complex behavior from small, composable, reusable functions rather than one large function."
+description: "Build complex behaviour from small, composable, reusable functions rather than one large function."
 category: explanation
 subcategory: development
 tags: []
@@ -10,7 +10,7 @@ when_to_use: "Use when a function is growing large and could be decomposed into 
 
 # Practice 7: Compose Small Functions
 
-**Principle**: Build complex behavior from small, composable functions.
+**Principle**: Build complex behaviour from small, composable functions.
 
 **Good Example:**
 

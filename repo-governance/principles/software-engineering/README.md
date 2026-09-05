@@ -34,7 +34,7 @@ These principles define **WHY we value specific approaches to software developme
 ## Principles Implemented/Respected
 
 - [Automation Over Manual](./automation-over-manual.md) — Automate repetitive tasks to ensure consistency and reduce human error - humans for creative work, machines for repetition Use when deciding whether a repetitive task should be automated, or when looking for this repository's automation examples.
-- [Explicit Over Implicit](./explicit-over-implicit.md) — Choose explicit composition and configuration over magic, convenience, and hidden behavior Use when deciding whether code or configuration should rely on defaults, or when looking for explicit-vs-implicit examples.
+- [Explicit Over Implicit](./explicit-over-implicit.md) — Choose explicit composition and configuration over magic, convenience, and hidden behaviour Use when deciding whether code or configuration should rely on defaults, or when looking for explicit-vs-implicit examples.
 - [Immutability Over Mutability](./immutability.md) — Prefer immutable data structures over mutable state for safer, more predictable code Use when deciding whether to model data as mutable or immutable, or when reviewing code for accidental mutation.
 - [Pure Functions Over Side Effects](./pure-functions.md) — Prefer pure functions (deterministic, no side effects) for predictable, testable code Use when deciding whether logic belongs in a pure function or an impure boundary, or when reviewing code for hidden side effects.
 - [Reproducibility First](./reproducibility.md) — Development environments and builds should be reproducible from the start Use when setting up or auditing a project's development environment, build, or dependency-version reproducibility.

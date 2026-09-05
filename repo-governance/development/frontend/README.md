@@ -52,7 +52,7 @@ UI development conventions for the open-sharia-enterprise monorepo's frontend ap
 - [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) — WCAG AA color palette, contrast ratios, and color-blind friendly design (authoritative source for all color decisions)
 - [Accessibility First Principle](../../principles/content/accessibility-first.md) — Foundational principle governing all accessibility requirements
 - [Implementation Workflow](../workflow/implementation.md) — Three-stage development workflow applied when building UI features
-- [Three-Level Testing Standard](../quality/three-level-testing-standard.md) — Unit, integration, and E2E testing requirements for frontend apps
+- [Behaviour-Driven Development](../behaviour-driven-development.md) — Unit, integration, and E2E testing requirements for frontend apps
 
 ## ✅ Principles Implemented/Respected
 

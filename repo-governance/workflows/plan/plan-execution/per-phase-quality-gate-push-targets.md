@@ -35,7 +35,7 @@ when_to_use: Use when deciding where a phase's changes should push to under the 
      name the cohesive purpose; keep every artifact required to build, verify, operate, roll back,
      and remain internally consistent together; and exclude unrelated purposes. LOC and file counts
      never create, erase, or force the boundary. Confirm the exact resulting `main` state is safe to
-     deploy to production immediately. Incomplete behavior requires a temporary
+     deploy to production immediately. Incomplete behaviour requires a temporary
      production-disabled flag, enabled and disabled path tests, and recorded rollout, rollback, and
      removal. At an
      intermediate phase, push the unit branch for durability but open no PR, run no PR review,

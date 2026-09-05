@@ -1,7 +1,7 @@
 /**
  * Step definitions for the History Screen feature.
  *
- * Covers: specs/apps/organiclever/app-web/behaviors/stats/history-screen.feature
+ * Covers: specs/apps/organiclever/app-web/behaviours/stats/history-screen.feature
  *
  * Selector notes:
  * - History screen is shown when the "History" TabBar button is active (SPA routing via
@@ -13,67 +13,51 @@
  */
 import { createBdd } from "playwright-bdd";
 import { appPath } from "./_app-shell";
+import { clearJournalEntries, seedHomeJournalEntries } from "./_journal-db";
 import { expect } from "@playwright/test";
 
 const { Given, When, Then } = createBdd();
 
 Given("the history screen has entries", async ({ page }) => {
-  // Navigate to the app, then click the History tab
-  await page.goto(appPath("home"));
+  await page.goto(appPath("history"));
   await page.waitForLoadState("domcontentloaded");
-  const historyBtn = page.getByRole("link", { name: "History" }).first();
-  if (await historyBtn.isVisible()) {
-    await historyBtn.click();
-  }
+  await seedHomeJournalEntries(page);
+  await page.reload();
+  await expect(page.getByText("Atomic Habits")).toBeVisible({ timeout: 15000 });
+  await expect(page.getByText("Kettlebell day")).toBeVisible({ timeout: 15000 });
 });
 
-// @covers specs/apps/organiclever/app-web/behaviors/stats/history-screen.feature:History shows entries in reverse order
 Then("entries are shown newest first", async ({ page }) => {
-  // History screen always renders its <h1>History</h1> heading regardless of data.
-  await expect(page.getByRole("heading", { name: "History" })).toBeVisible({ timeout: 10000 });
+  const cards = await page.getByRole("button").allTextContents();
+  const workoutIndex = cards.findIndex((text) => text.includes("Kettlebell day"));
+  const readingIndex = cards.findIndex((text) => text.includes("Atomic Habits"));
+  expect(workoutIndex).toBeGreaterThanOrEqual(0);
+  expect(readingIndex).toBeGreaterThan(workoutIndex);
 });
 
 Given("the history screen has no entries", async ({ page }) => {
-  await page.goto(appPath("home"));
+  await page.goto(appPath("history"));
   await page.waitForLoadState("domcontentloaded");
-  const historyBtn = page.getByRole("link", { name: "History" }).first();
-  if (await historyBtn.isVisible()) {
-    await historyBtn.click();
-  }
+  await clearJournalEntries(page);
+  await page.reload();
 });
 
-// @covers specs/apps/organiclever/app-web/behaviors/stats/history-screen.feature:Empty history shows empty state
 Then("the empty state message is shown", async ({ page }) => {
-  // Empty state shows "No sessions yet." — but if entries exist, the heading still confirms screen loaded
-  await expect(page.getByRole("heading", { name: "History" })).toBeVisible({ timeout: 10000 });
+  await expect(page.getByText("No sessions yet.")).toBeVisible({ timeout: 10000 });
 });
 
 Given("the history screen shows a workout entry", async ({ page }) => {
-  await page.goto(appPath("home"));
+  await page.goto(appPath("history"));
   await page.waitForLoadState("domcontentloaded");
-  const historyBtn = page.getByRole("link", { name: "History" }).first();
-  if (await historyBtn.isVisible()) {
-    await historyBtn.click();
-  }
+  await seedHomeJournalEntries(page);
+  await page.reload();
+  await expect(page.getByText("Kettlebell day")).toBeVisible({ timeout: 15000 });
 });
 
 When("the user taps the session card", async ({ page }) => {
-  // SessionCard renders as a <button> inside a bordered div.
-  // Filter chips (Workout/Reading/…) also match the regex and may be visible before PGlite
-  // finishes loading, causing click() to hang under a loading overlay for the full 60 s
-  // default timeout. Use a short timeout so the step degrades gracefully when no actionable
-  // entry card is present; the Then step confirms the screen is still loaded either way.
-  const cards = page.getByRole("button").filter({ hasText: /workout|reading|learning|meal|focus/i });
-  try {
-    await cards.first().click({ timeout: 5000 });
-  } catch {
-    // no actionable card within 5 s — vacuous pass
-  }
+  await page.getByRole("button").filter({ hasText: "Kettlebell day" }).click();
 });
 
-// @covers specs/apps/organiclever/app-web/behaviors/stats/history-screen.feature:Session card expands on click
 Then("the card expands showing details", async ({ page }) => {
-  // After clicking a SessionCard button the expanded detail section appears.
-  // The History heading always confirms the screen is still loaded.
-  await expect(page.getByRole("heading", { name: "History" })).toBeVisible({ timeout: 10000 });
+  await expect(page.getByText("No exercises recorded.")).toBeVisible();
 });

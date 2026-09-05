@@ -33,7 +33,7 @@ including every artifact needed for internal consistency, until its exact result
 immediately safe to deploy to production; that point is the delivery boundary. **One delivery unit**
 reaches one mode-specific delivery opportunity. Under a `*-to-pr` mode, one unit maps to exactly
 one branch and one PR. Under a permitted direct-push mode, one unit maps to one direct integration
-checkpoint. Incomplete behavior must be complete-and-inert behind a temporary production-disabled
+checkpoint. Incomplete behaviour must be complete-and-inert behind a temporary production-disabled
 flag, with both paths tested and its rollout, rollback, and removal recorded.
 
 Phase 0 is always environment setup and baseline. It opens no PR, pushes no branch, and runs no

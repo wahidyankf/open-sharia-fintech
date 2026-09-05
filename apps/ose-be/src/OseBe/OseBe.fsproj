@@ -33,6 +33,8 @@
     <Compile Include="Contexts/Config/Infrastructure/EnvTier.fs" />
     <!-- db context (DbUp migration routine) -->
     <Compile Include="Contexts/Db/Infrastructure/DbMigrations.fs" />
+    <Compile Include="Contexts/Db/Application/MigrationStatus.fs" />
+    <Compile Include="Contexts/Db/Api/MigrationStatusApi.fs" />
     <!-- health context slice -->
     <Compile Include="Contexts/Health/Domain/HealthDomain.fs" />
     <Compile Include="Contexts/Health/Application/HealthService.fs" />

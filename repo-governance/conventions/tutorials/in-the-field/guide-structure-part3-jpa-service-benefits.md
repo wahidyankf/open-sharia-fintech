@@ -24,4 +24,4 @@ created: 2026-02-04
 - Dirty checking (automatic UPDATE on entity changes)
 - Lazy loading (load related entities on-demand)
 - Database portability (same code for PostgreSQL, MySQL, Oracle)
-- Trade-off: Learning curve, magic behavior, N+1 query risk
+- Trade-off: Learning curve, magic behaviour, N+1 query risk

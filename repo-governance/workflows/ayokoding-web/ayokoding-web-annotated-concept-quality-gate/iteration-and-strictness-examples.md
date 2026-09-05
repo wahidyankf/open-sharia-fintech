@@ -82,7 +82,7 @@ User: "Run ayokoding-web annotated-concept quality gate workflow for system-desi
 - 6 MEDIUM findings (missing annotations)
 - 9 LOW findings (style improvements)
 
-**Fixer behavior**:
+**Fixer behaviour**:
 
 - Fixes: 1 CRITICAL + 4 HIGH = 5 fixes applied
 - Skips: 6 MEDIUM + 9 LOW = 15 findings reported but not fixed

@@ -12,7 +12,7 @@ finding is postable:
    and its
    [seven grey-zone rulings](../../../../repo-governance/development/quality/pr-review-disciplines/seven-grey-zone-rulings.md#seven-grey-zone-rulings).
    This agent **explicitly owns the architecture-versus-correctness boundary** — the highest-risk
-   of the three tie-breaker outcomes, because a new structural decision and a domain-behavior
+   of the three tie-breaker outcomes, because a new structural decision and a domain-behaviour
    question can look identical in a raw finding. No specialist self-adjudicates its own
    tie-breaker verdict once this agent has reviewed it.
 3. **Reasonableness-filter** — drop speculative, nitpick, false-positive, or

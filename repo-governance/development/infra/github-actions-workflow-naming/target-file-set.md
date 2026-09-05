@@ -58,8 +58,8 @@ canonical set, organized by tier:
 
 ## Cross-cutting workflows
 
-| Filename                             | Domain       | Purpose                                                                  |
-| ------------------------------------ | ------------ | ------------------------------------------------------------------------ |
-| `dependency-vulnerability-audit.yml` | `dependency` | Scheduled dependency-vulnerability audit, outside registry gate surfaces |
-| `pr-quality-gate.yml`                | `pr`         | PR gate: typecheck, lint, test:quick, specs:coverage, lint jobs          |
-| `validate-env.yml`                   | `validate`   | `.env.example` contract + `env-injection:` manifest check                |
+| Filename                             | Domain       | Purpose                                                                        |
+| ------------------------------------ | ------------ | ------------------------------------------------------------------------------ |
+| `dependency-vulnerability-audit.yml` | `dependency` | Scheduled dependency-vulnerability audit, outside registry gate surfaces       |
+| `pr-quality-gate.yml`                | `pr`         | PR gate: typecheck, lint, and test:quick, which owns Unit plus static coverage |
+| `validate-env.yml`                   | `validate`   | `.env.example` contract + `env-injection:` manifest check                      |

@@ -267,7 +267,7 @@ graph LR
 - MUST enable `clippy::pedantic` lint group for stricter analysis
 - MUST use `cargo test` for all automated testing
 - SHOULD use `cargo-nextest` for faster parallel test execution
-- MUST achieve >=95% line coverage for domain logic (measured with `cargo-llvm-cov`)
+- MUST achieve >=99% Unit line coverage (measured with `cargo-llvm-cov` and enforced by `test:unit`)
 
 **Testing Automation (REQUIRED)**:
 
@@ -296,7 +296,7 @@ graph LR
 
 **Code Review Requirements**:
 
-- All Rust code MUST pass automated checks (`cargo clippy -- -D warnings`, `cargo test`, coverage >=95% for domain logic)
+- All Rust code MUST pass automated checks (`cargo clippy -- -D warnings`, `test:unit` with Unit line coverage >=99%, and applicable static coverage validators)
 - Code reviewers MUST verify compliance with standards in this index
 - Non-compliance with mandatory standards (Coding, Testing, Code Quality) blocks merge
 - `unsafe` blocks MUST include a `// SAFETY:` comment documenting invariants

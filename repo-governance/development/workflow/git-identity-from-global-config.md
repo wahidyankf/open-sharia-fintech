@@ -23,7 +23,7 @@ Git commit authorship must come exclusively from the developer's global git conf
 
 - [Principles and Conventions Implemented](./git-identity-from-global-config/principles-and-conventions-implemented.md) — Why this rule exists.
 - [Background](./git-identity-from-global-config/background.md) — The incident that motivated this convention.
-- [Standards](./git-identity-from-global-config/standards.md) — The three standards: no `[user]` section, global-config-only resolution, behavioral enforcement.
+- [Standards](./git-identity-from-global-config/standards.md) — The three standards: no `[user]` section, global-config-only resolution, behavioural enforcement.
 - [Examples](./git-identity-from-global-config/examples.md) — PASS and FAIL configuration examples.
 - [Remediation and Sibling Repos](./git-identity-from-global-config/remediation-and-sibling-repos.md) — How to remove an existing override and verify sibling repos.
 

@@ -2,14 +2,11 @@
 /// `RhinoCli.Application.RepoConfig`'s gate-registry schema and semantic
 /// findings, plus `RhinoCli.Cli.Gate`'s per-surface projection
 /// [Repo-grounded —
-/// `specs/apps/rhino/cli/behaviors/gate/gate-declaration.feature`,
+/// `specs/apps/rhino/cli/behaviours/gate/gate-declaration.feature`,
 /// `apps/rhino-cli/tests/gate_specs.rs`].
 ///
-/// Each scenario writes a self-contained `repo-config.yml` into a throwaway
-/// temp directory and calls the ported entry points in-process, mirroring
-/// `RepoConfigValidateSteps.fs`'s convention rather than shelling out — the
-/// Rust suite spawns the real binary only because Rust has no in-process
-/// equivalent that also exercises its CLI error rendering.
+/// Each scenario parses a self-contained `repo-config.yml` document in
+/// memory and invokes the production projection/validation core directly.
 ///
 /// Scope note: the feature file's last two scenarios ("lockfile-sync
 /// regenerates the lockfile and restages it" and "lockfile-sync is a no-op
@@ -18,6 +15,12 @@
 /// duplicated here.
 module RhinoCli.Tests.Unit.Steps.GateDeclarationSteps
 
+/// Explicit static-coverage ownership; the validator scopes this file's
+/// TickSpec bindings to these canonical features.
+let private behaviourFeatureOwnership =
+    [ "specs/apps/rhino/cli/behaviours/gate/gate-declaration.feature" ]
+
+
 open System
 open System.IO
 open TickSpec
@@ -25,10 +28,8 @@ open Xunit
 open RhinoCli.Domain.Types
 open RhinoCli.Application.RepoConfig
 
-let private repoRoot: string =
-    match RhinoCli.Infrastructure.GitRoot.findRoot () with
-    | Ok root -> root
-    | Error message -> failwithf "locate repository root: %s" message
+let private repoRoot =
+    Path.GetFullPath(Path.Combine(__SOURCE_DIRECTORY__, "..", "..", "..", "..", ".."))
 
 /// Mirrors `gate_specs.rs::config` — a registry-only document.
 let private config (gates: string) : string = "gates:\n" + gates
@@ -63,20 +64,20 @@ let private gate (id: string) (gateType: string) (command: string) (kind: string
 /// comment for why TickSpec's one-instance-per-scenario lifecycle makes
 /// instance-level mutable fields the idiomatic state-threading mechanism.
 type GateDeclarationSteps() =
-    let root =
-        let dir =
-            Path.Combine(Path.GetTempPath(), "rhino-cli-gate-declaration-" + Guid.NewGuid().ToString("N"))
-
-        Directory.CreateDirectory dir |> ignore
-        dir
-
+    let mutable configText = ""
     let mutable pendingGateType: string option = None
     let mutable succeeded: bool option = None
     let mutable output: string = ""
     let mutable jsonOutput: string option = None
 
     let write (relative: string) (contents: string) =
-        File.WriteAllText(Path.Combine(root, relative), contents)
+        Assert.Equal("repo-config.yml", relative)
+        configText <- contents
+
+    let parsed () =
+        match parse configText with
+        | Ok config -> config
+        | Error message -> failwithf "parse declaration fixture registry: %s" message
 
     let isSuccess () =
         match succeeded with
@@ -104,10 +105,7 @@ type GateDeclarationSteps() =
             | "ci" -> Ci
             | other -> failwithf "unsupported declaration fixture surface %s" other
 
-        let loaded =
-            match load root with
-            | Ok value -> value
-            | Error message -> failwithf "load declaration fixture registry: %s" message
+        let loaded = parsed ()
 
         let declaredScope =
             loaded.Gates
@@ -124,7 +122,7 @@ type GateDeclarationSteps() =
 
     [<When>]
     member _.``"rhino-cli gate list --surface=pre-push --format=json" runs``() =
-        match RhinoCli.Cli.Gate.listAtRoot root "pre-push" OutputFormat.Json false with
+        match RhinoCli.Cli.Gate.listFromConfig (parsed ()) "pre-push" OutputFormat.Json false with
         | Ok rendered ->
             succeeded <- Some true
             output <- rendered
@@ -241,7 +239,7 @@ type GateDeclarationSteps() =
 
     [<When>]
     member _.``"rhino-cli repo-config validate" runs``() =
-        let passed, text = validateAtRoot root
+        let passed, text = validateText configText
         succeeded <- Some passed
         output <- text
 
@@ -294,7 +292,7 @@ type GateDeclarationSteps() =
 module private FeatureRunner =
 
     let private featurePath: string =
-        Path.Combine(repoRoot, "specs", "apps", "rhino", "cli", "behaviors", "gate", "gate-declaration.feature")
+        Path.Combine(repoRoot, "specs", "apps", "rhino", "cli", "behaviours", "gate", "gate-declaration.feature")
 
     let private extractScenario (featureLines: string[]) (scenarioTitle: string) : string[] =
         let featureLine =
@@ -319,7 +317,9 @@ module private FeatureRunner =
         Array.append [| featureLine; "" |] featureLines.[startIdx .. endIdx - 1]
 
     let run (scenarioTitle: string) : unit =
-        let allLines = File.ReadAllLines featurePath
+        let allLines =
+            ConventionSteps.FeatureResource.readLines (Path.GetFileName featurePath)
+
         let snippet = extractScenario allLines scenarioTitle
         let definitions = StepDefinitions([| typeof<GateDeclarationSteps> |])
         let feature = definitions.GenerateFeature(featurePath, snippet)

@@ -27,8 +27,8 @@ Outside delegated quality-gate runs, shell out to `rhino-cli specs structure val
 JSONL. **HIGH**: top-level folder isn't
 one of the five canonical folders; a flat-root artifact exists (`be/`, `web/`, `cli/`, `c4/`,
 `contracts/` at app root); a BE/web/CLI feature file sits directly under
-`behavior/<surface>/gherkin/` without a domain subdirectory (all surfaces require domain subdirs —
-`behavior/<surface>/gherkin/<domain>/<feature>.feature`); a lib feature file sits directly under
+`behaviour/<surface>/gherkin/` without a domain subdirectory (all surfaces require domain subdirs —
+`behaviour/<surface>/gherkin/<domain>/<feature>.feature`); a lib feature file sits directly under
 `gherkin/` without a package subdirectory. **MEDIUM**: domain subdirectory not kebab-case. **LOW**:
 domain subdirectory contains only one feature file named differently than the directory.
 

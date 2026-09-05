@@ -16,7 +16,7 @@ to run locally. For a local first success, start from the
 | `setup-docker-cache` | Docker Buildx and its layer cache                        | A workflow needs an integration or E2E stack |
 
 Workflows reference an action with `uses: ./.github/actions/<name>`. Keep
-setup behavior in the relevant `action.yml`; this README explains intent so a
+setup behaviour in the relevant `action.yml`; this README explains intent so a
 reader can choose the right place to investigate.
 
 ## Safe maintenance boundary

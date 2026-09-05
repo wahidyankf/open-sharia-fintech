@@ -4,8 +4,8 @@
 /// `RhinoCli.Application.Md.validateDocsHeadingHierarchy`/
 /// `validateDocsHeadingHierarchyAllowlisted`
 /// [Repo-grounded —
-/// `specs/apps/rhino/cli/behaviors/md/docs-validate-frontmatter.feature`,
-/// `specs/apps/rhino/cli/behaviors/md/docs-validate-heading-hierarchy.feature`,
+/// `specs/apps/rhino/cli/behaviours/md/docs-validate-frontmatter.feature`,
+/// `specs/apps/rhino/cli/behaviours/md/docs-validate-heading-hierarchy.feature`,
 /// `apps/rhino-cli/src/application/docs/frontmatter.rs`,
 /// `apps/rhino-cli/src/commands/md_validate_frontmatter.rs`,
 /// `apps/rhino-cli/src/application/docs/heading_hierarchy.rs`,
@@ -30,10 +30,10 @@
 /// Also binds `docs-validate-mermaid.feature`'s 39 scenarios to
 /// `RhinoCli.Application.Md.validateMermaidDocs`/`parseMermaidDiagram`
 /// [Repo-grounded —
-/// `specs/apps/rhino/cli/behaviors/md/docs-validate-mermaid.feature`,
+/// `specs/apps/rhino/cli/behaviours/md/docs-validate-mermaid.feature`,
 /// `apps/rhino-cli/tests/docs.rs`'s `DocsWorld` mermaid step definitions].
 /// This feature's fixtures and assertions are ported directly from
-/// `docs.rs` (the Rust source's own cucumber-rs step definitions) rather
+/// `docs.rs` (the legacy Rust source's step definitions) rather
 /// than re-derived from `md_validate_mermaid.rs` in isolation — several
 /// scenario titles describe round thresholds ("4 nodes at one rank") that
 /// the actual fixtures deliberately overshoot ("5 parallel nodes") to clear
@@ -45,7 +45,7 @@
 /// Also binds `md-audit.feature`'s 1 scenario to
 /// `RhinoCli.Application.Md.runAudit`
 /// [Repo-grounded —
-/// `specs/apps/rhino/cli/behaviors/md/md-audit.feature`,
+/// `specs/apps/rhino/cli/behaviours/md/md-audit.feature`,
 /// `apps/rhino-cli/src/commands/md_audit.rs`]. `runAudit` only dispatches the
 /// five member validators this file has ported so far (`frontmatter-dates`
 /// and `readme-index` are not yet ported — see `runAudit`'s doc comment in
@@ -53,8 +53,21 @@
 /// every member trivially passes) does not need to distinguish.
 module RhinoCli.Tests.Unit.Steps.MdSteps
 
+/// Explicit static-coverage ownership; the validator scopes this file's
+/// TickSpec bindings to these canonical features.
+let private behaviourFeatureOwnership =
+    [ "specs/apps/rhino/cli/behaviours/md/docs-validate-frontmatter.feature"
+      "specs/apps/rhino/cli/behaviours/md/docs-validate-heading-hierarchy.feature"
+      "specs/apps/rhino/cli/behaviours/md/docs-validate-links.feature"
+      "specs/apps/rhino/cli/behaviours/md/docs-validate-mermaid.feature"
+      "specs/apps/rhino/cli/behaviours/md/docs-validate-naming.feature"
+      "specs/apps/rhino/cli/behaviours/md/md-audit.feature"
+      "specs/apps/rhino/cli/behaviours/md/repo-governance-frontmatter-audit.feature" ]
+
+
 open System
 open System.IO
+open System.Reflection
 open System.Text.Json
 open TickSpec
 open Xunit
@@ -66,7 +79,7 @@ open RhinoCli.Domain.Types
 /// instance-level mutable fields the idiomatic state-threading mechanism
 /// here.
 type MdSteps() =
-    let mutable rootDir: string option = None
+    let mutable documents: Map<string, string> = Map.empty
     let mutable outcome: Result<Finding list, string> option = None
     let mutable useAllowlist = false
     let mutable stagedFiles: string list = []
@@ -88,26 +101,7 @@ type MdSteps() =
     // ---- repo-governance-frontmatter-audit.feature state ----
     let mutable frontmatterDatesFileNeedle: string option = None
     let mutable frontmatterDatesTarget: string option = None
-
-    let root () =
-        match rootDir with
-        | Some dir -> dir
-        | None -> failwith "no repository root has been prepared by a Given step"
-
-    /// Returns the scenario's shared temp-dir root, creating it on first
-    /// use — lets a scenario with more than one `Given`/`And` fixture step
-    /// (e.g. heading-hierarchy's "exclude-flag-suppresses-tree") write into
-    /// the same tree instead of each step getting its own temp dir.
-    let ensureRoot () =
-        match rootDir with
-        | Some dir -> dir
-        | None ->
-            let dir =
-                Path.Combine(Path.GetTempPath(), "rhino-cli-md-" + Guid.NewGuid().ToString("N"))
-
-            Directory.CreateDirectory(dir) |> ignore
-            rootDir <- Some dir
-            dir
+    let mutable frontmatterDatesExcludedPrefixes: string list = []
 
     let theOutcome () : Result<Finding list, string> =
         outcome
@@ -118,12 +112,19 @@ type MdSteps() =
         | Ok findings -> findings
         | Error message -> failwith (sprintf "expected the md validator to produce findings, got error: %s" message)
 
-    let newTempDir () = ensureRoot ()
-
     let writeDoc (relativePath: string) (content: string) =
-        let full = Path.Combine(ensureRoot (), relativePath)
-        Directory.CreateDirectory(Path.GetDirectoryName(full)) |> ignore
-        File.WriteAllText(full, content)
+        documents <- documents |> Map.add (relativePath.Replace('\\', '/')) content
+
+    let documentList () : (string * string) list = documents |> Map.toList
+
+    let validateMermaid
+        (paths: string list)
+        (staged: string list option)
+        (changed: string list option)
+        (excluded: string list)
+        (options: MermaidValidateOptions)
+        : MermaidValidationResult =
+        validateMermaidDocuments (documentList ()) paths staged changed excluded options
 
     /// Wraps `body` in a single ` ```mermaid ` fenced code block inside a
     /// minimal markdown document — the mermaid scenarios' shared fixture
@@ -204,34 +205,11 @@ type MdSteps() =
                 (f.Path |> Option.defaultValue "").Replace('\\', '/').Contains(pathNeedle, StringComparison.Ordinal)
         )
 
-    /// Runs `validateFrontmatterDates` against the scenario's prepared root,
-    /// mirroring `md_validate_frontmatter_dates.rs::run`'s path- and
-    /// exclude-resolution logic at the level this file's own precedent
-    /// allows (`md` is not yet wired to CLI argv — see this file's module
-    /// doc comment): `frontmatterDatesTarget`, when a fixture sets it, is the
-    /// command's sole explicit path argument; otherwise the whole prepared
-    /// root stands in for the Rust command's five-directory default path
-    /// list (every fixture below writes under a subdirectory a real
-    /// invocation's defaults would already reach). The registry-driven
-    /// `md-frontmatter-dates` gate's `exclude` arg is read from
-    /// `repo-config.yml` at the root exactly as the real command reads it,
-    /// with no CLI `--exclude` flag to merge in since no scenario here
-    /// exercises one.
     let runFrontmatterDatesValidate () : Result<Finding list, string> =
-        let repoRoot = root ()
+        let selectedPrefixes = frontmatterDatesTarget |> Option.toList
 
-        let paths =
-            match frontmatterDatesTarget with
-            | Some target -> [ Path.Combine(repoRoot, target) ]
-            | None -> [ repoRoot ]
-
-        let excludedPrefixes =
-            (RhinoCli.Application.RepoConfig.loadOrDefault repoRoot).Gates
-            |> List.tryFind (fun gate -> gate.Id = "md-frontmatter-dates")
-            |> Option.bind (fun gate -> gate.Args |> Map.tryFind "exclude")
-            |> Option.defaultValue []
-
-        validateFrontmatterDates paths excludedPrefixes
+        validateFrontmatterDatesDocuments (documentList ()) selectedPrefixes frontmatterDatesExcludedPrefixes
+        |> Ok
 
     let frontmatterDatesFileNeedleValue () : string =
         frontmatterDatesFileNeedle
@@ -241,45 +219,34 @@ type MdSteps() =
 
     [<Given>]
     member _.``a software-engineering doc with title, description, category, subcategory, and tags frontmatter``() =
-        rootDir <- Some(newTempDir ())
-
         writeDoc
             "docs/explanation/software-engineering/foo.md"
             "---\ntitle: T\ndescription: D\ncategory: explanation\nsubcategory: S\ntags: [a]\n---\nbody\n"
 
     [<Given>]
     member _.``a software-engineering doc whose frontmatter omits the title field``() =
-        rootDir <- Some(newTempDir ())
-
         writeDoc
             "docs/explanation/software-engineering/foo.md"
             "---\ndescription: D\ncategory: explanation\nsubcategory: S\ntags: [a]\n---\nbody\n"
 
     [<Given>]
     member _.``a software-engineering doc whose frontmatter omits the category field``() =
-        rootDir <- Some(newTempDir ())
-
         writeDoc
             "docs/explanation/software-engineering/foo.md"
             "---\ntitle: T\ndescription: D\nsubcategory: S\ntags: [a]\n---\nbody\n"
 
     [<Given>]
     member _.``a software-engineering doc whose frontmatter declares category as something other than software``() =
-        rootDir <- Some(newTempDir ())
-
         writeDoc
             "docs/explanation/software-engineering/foo.md"
             "---\ntitle: T\ndescription: D\ncategory: random\nsubcategory: S\ntags: [a]\n---\nbody\n"
 
     [<Given>]
     member _.``a governance doc carrying only a title frontmatter field``() =
-        rootDir <- Some(newTempDir ())
         writeDoc "repo-governance/conventions/foo.md" "---\ntitle: T\n---\nbody\n"
 
     [<Given>]
     member _.``a governance doc with title, description, and when_to_use frontmatter``() =
-        rootDir <- Some(newTempDir ())
-
         writeDoc
             "repo-governance/conventions/foo.md"
             "---\ntitle: T\ndescription: D\nwhen_to_use: Use when W.\n---\nbody\n"
@@ -288,8 +255,6 @@ type MdSteps() =
     member _.``a software-engineering doc with title, description, category tutorial, subcategory, and tags frontmatter``
         ()
         =
-        rootDir <- Some(newTempDir ())
-
         writeDoc
             "docs/explanation/software-engineering/foo.md"
             "---\ntitle: T\ndescription: D\ncategory: tutorial\nsubcategory: S\ntags: [a]\n---\nbody\n"
@@ -298,8 +263,6 @@ type MdSteps() =
     member _.``a software-engineering doc with title, description, category how-to, subcategory, and tags frontmatter``
         ()
         =
-        rootDir <- Some(newTempDir ())
-
         writeDoc
             "docs/explanation/software-engineering/foo.md"
             "---\ntitle: T\ndescription: D\ncategory: how-to\nsubcategory: S\ntags: [a]\n---\nbody\n"
@@ -308,8 +271,6 @@ type MdSteps() =
     member _.``a software-engineering doc with title, description, category reference, subcategory, and tags frontmatter``
         ()
         =
-        rootDir <- Some(newTempDir ())
-
         writeDoc
             "docs/explanation/software-engineering/foo.md"
             "---\ntitle: T\ndescription: D\ncategory: reference\nsubcategory: S\ntags: [a]\n---\nbody\n"
@@ -318,8 +279,6 @@ type MdSteps() =
     member _.``a software-engineering doc with title, description, category explanation, subcategory, and tags frontmatter``
         ()
         =
-        rootDir <- Some(newTempDir ())
-
         writeDoc
             "docs/explanation/software-engineering/foo.md"
             "---\ntitle: T\ndescription: D\ncategory: explanation\nsubcategory: S\ntags: [a]\n---\nbody\n"
@@ -330,8 +289,6 @@ type MdSteps() =
     /// value, matching `frontmatter.rs::tests::software_deprecated_category_emits_warn`.
     [<Given>]
     member _.``a software-engineering doc with all required frontmatter fields``() =
-        rootDir <- Some(newTempDir ())
-
         writeDoc
             "docs/explanation/software-engineering/foo.md"
             "---\ntitle: T\ndescription: D\ncategory: software\nsubcategory: S\ntags: [a]\n---\nbody\n"
@@ -444,8 +401,8 @@ type MdSteps() =
     /// feature file): `a markdown file that links to the anchor
     /// "#snake_case" of a file whose heading is "snake_case"`. TickSpec's
     /// own Gherkin line-lexer treats `#` as a comment marker even inside a
-    /// quoted string — unlike `rhino-cli specs behavior-coverage validate`'s
-    /// Rust parser, which (correctly, per the Gherkin spec) only treats a
+    /// quoted string — unlike the static behaviour-coverage adapter's
+    /// parser, which (correctly, per the Gherkin spec) only treats a
     /// `#` that *starts* a trimmed line as a comment — so by the time
     /// TickSpec tries to match a step against this line, everything from the
     /// `#` onward has already been stripped, leaving only `a markdown file
@@ -454,13 +411,13 @@ type MdSteps() =
     /// `[FAIL] Missing step definition` message that truncated text produced
     /// before this method's pattern covered it.
     ///
-    /// Both `TickSpec` and `specs behavior-coverage validate` treat a
+    /// Both TickSpec and the static behaviour-coverage adapter treat a
     /// backtick-quoted step name as a raw (unescaped) regex rather than a
     /// literal string — the existing `` a git index with "(.*)" staged ``
     /// step elsewhere in this file already relies on that. This method's
     /// name below exploits the same mechanism, spelling out a
     /// `(?:full|truncated)` alternation so ONE step pattern satisfies both
-    /// checkers at once: `specs behavior-coverage validate` matches the
+    /// checkers at once: `scripts/behaviour-coverage.mjs` matches the
     /// first alternative against the frozen feature file's real,
     /// untruncated line (no "missing step" gap), while `TickSpec` matches
     /// the second alternative against the truncated text it actually
@@ -723,24 +680,21 @@ type MdSteps() =
 
     [<Given>]
     member _.``a documentation tree where every markdown file uses lowercase kebab-case``() =
-        rootDir <- Some(newTempDir ())
         writeDoc "docs/foo-bar.md" "# Foo Bar\n"
         writeDoc "docs/nested/another-file.md" "# Another File\n"
 
     [<Given>]
     member _.``a documentation tree containing a markdown file whose basename has uppercase characters``() =
-        rootDir <- Some(newTempDir ())
         writeDoc "docs/FooBar.md" "# Foo Bar\n"
 
     [<Given>]
     member _.``a documentation tree where a nested directory contains only a README.md file``() =
-        rootDir <- Some(newTempDir ())
         writeDoc "docs/nested/README.md" "# Nested\n"
 
     // ---- Given (md-audit.feature) ----
 
     [<Given>]
-    member _.``a repository containing no markdown files``() = rootDir <- Some(newTempDir ())
+    member _.``a repository containing no markdown files``() = documents <- Map.empty
 
     // ---- Given (repo-governance-frontmatter-audit.feature) ----
 
@@ -771,77 +725,42 @@ type MdSteps() =
     [<Given>]
     member _.``a markdown file with forbidden date metadata under a website app directory``() =
         writeDoc "apps/ayokoding-www/content/post.md" "---\nupdated: 2026-01-01\n---\n"
-
-        writeDoc
-            "repo-config.yml"
-            (String.concat
-                "\n"
-                [ "gates:"
-                  "  - id: md-frontmatter-dates"
-                  "    args:"
-                  "      exclude:"
-                  "        - apps/"
-                  "" ])
-
         frontmatterDatesTarget <- Some "apps/ayokoding-www"
+        frontmatterDatesExcludedPrefixes <- [ "apps/" ]
 
     // ---- When ----
 
     [<When>]
     member _.``the developer runs docs validate-frontmatter``() =
-        outcome <- Some(validateDocsFrontmatter [ root () ])
+        outcome <- Some(Ok(validateDocsFrontmatterDocuments (documentList ())))
 
     [<When>]
     member _.``the developer runs docs validate-heading-hierarchy``() =
         outcome <-
             Some(
                 if useAllowlist then
-                    Ok(validateDocsHeadingHierarchyAllowlisted (root ()) [])
+                    Ok(validateDocsHeadingHierarchyDocuments true [] (documentList ()))
                 else
-                    validateDocsHeadingHierarchy [ root () ]
+                    Ok(validateDocsHeadingHierarchyDocuments false [] (documentList ()))
             )
 
     [<When>]
     member _.``the developer runs docs validate-heading-hierarchy with --exclude docs``() =
-        outcome <- Some(Ok(validateDocsHeadingHierarchyAllowlisted (root ()) [ "docs" ]))
+        outcome <- Some(Ok(validateDocsHeadingHierarchyDocuments true [ "docs" ] (documentList ())))
 
     // ---- When (docs-validate-links.feature) ----
 
     [<When>]
     member _.``the developer runs docs validate-links``() =
-        outcome <-
-            Some(
-                Ok(
-                    validateDocsLinks
-                        { RepoRoot = root ()
-                          StagedFiles = None
-                          ExcludePrefixes = [] }
-                )
-            )
+        outcome <- Some(Ok(validateDocsLinksDocuments (documentList ()) None []))
 
     [<When>]
     member _.``the developer runs docs validate-links with the --staged-only flag``() =
-        outcome <-
-            Some(
-                Ok(
-                    validateDocsLinks
-                        { RepoRoot = root ()
-                          StagedFiles = Some stagedFiles
-                          ExcludePrefixes = [] }
-                )
-            )
+        outcome <- Some(Ok(validateDocsLinksDocuments (documentList ()) (Some stagedFiles) []))
 
     [<When>]
     member _.``the developer runs docs validate-links with --exclude plans/done``() =
-        outcome <-
-            Some(
-                Ok(
-                    validateDocsLinks
-                        { RepoRoot = root ()
-                          StagedFiles = None
-                          ExcludePrefixes = [ "plans/done" ] }
-                )
-            )
+        outcome <- Some(Ok(validateDocsLinksDocuments (documentList ()) None [ "plans/done" ]))
 
     // ---- When (docs-validate-mermaid.feature) ----
 
@@ -860,213 +779,123 @@ type MdSteps() =
                     MaxDepth = md }
             | None -> defaultMermaidValidateOptions
 
-        mermaidResult <-
-            Some(
-                validateMermaidDocs
-                    { RepoRoot = root ()
-                      Paths = [ "docs" ]
-                      StagedFiles = None
-                      ChangedFiles = None
-                      ExcludePrefixes = []
-                      Options = baseOptions }
-            )
+        mermaidResult <- Some(validateMermaid [ "docs" ] None None [] baseOptions)
 
     [<When>]
     member _.``the developer runs docs validate-mermaid with --max-label-len 40``() =
         mermaidResult <-
             Some(
-                validateMermaidDocs
-                    { RepoRoot = root ()
-                      Paths = [ "docs" ]
-                      StagedFiles = None
-                      ChangedFiles = None
-                      ExcludePrefixes = []
-                      Options =
-                        { defaultMermaidValidateOptions with
-                            MaxLabelLen = 40 } }
+                validateMermaid
+                    [ "docs" ]
+                    None
+                    None
+                    []
+                    { defaultMermaidValidateOptions with
+                        MaxLabelLen = 40 }
             )
 
     [<When>]
     member _.``the developer runs docs validate-mermaid with --max-width 5``() =
         mermaidResult <-
             Some(
-                validateMermaidDocs
-                    { RepoRoot = root ()
-                      Paths = [ "docs" ]
-                      StagedFiles = None
-                      ChangedFiles = None
-                      ExcludePrefixes = []
-                      Options =
-                        { defaultMermaidValidateOptions with
-                            MaxWidth = 5 } }
+                validateMermaid
+                    [ "docs" ]
+                    None
+                    None
+                    []
+                    { defaultMermaidValidateOptions with
+                        MaxWidth = 5 }
             )
 
     [<When>]
     member _.``the developer runs docs validate-mermaid with --max-depth 3``() =
         mermaidResult <-
             Some(
-                validateMermaidDocs
-                    { RepoRoot = root ()
-                      Paths = [ "docs" ]
-                      StagedFiles = None
-                      ChangedFiles = None
-                      ExcludePrefixes = []
-                      Options =
-                        { defaultMermaidValidateOptions with
-                            MaxWidth = 3
-                            MaxDepth = 3 } }
+                validateMermaid
+                    [ "docs" ]
+                    None
+                    None
+                    []
+                    { defaultMermaidValidateOptions with
+                        MaxWidth = 3
+                        MaxDepth = 3 }
             )
 
     [<When>]
     member _.``the developer runs docs validate-mermaid with the --staged-only flag``() =
-        mermaidResult <-
-            Some(
-                validateMermaidDocs
-                    { RepoRoot = root ()
-                      Paths = []
-                      StagedFiles = Some mermaidStagedFiles
-                      ChangedFiles = None
-                      ExcludePrefixes = []
-                      Options = defaultMermaidValidateOptions }
-            )
+        mermaidResult <- Some(validateMermaid [] (Some mermaidStagedFiles) None [] defaultMermaidValidateOptions)
 
     [<When>]
     member _.``the developer runs docs validate-mermaid with the --changed-only flag``() =
-        mermaidResult <-
-            Some(
-                validateMermaidDocs
-                    { RepoRoot = root ()
-                      Paths = []
-                      StagedFiles = None
-                      ChangedFiles = mermaidChangedFiles
-                      ExcludePrefixes = []
-                      Options = defaultMermaidValidateOptions }
-            )
+        mermaidResult <- Some(validateMermaid [] None mermaidChangedFiles [] defaultMermaidValidateOptions)
 
     [<When>]
     member _.``the developer runs docs validate-mermaid with -o json``() =
-        let result =
-            validateMermaidDocs
-                { RepoRoot = root ()
-                  Paths = [ "docs" ]
-                  StagedFiles = None
-                  ChangedFiles = None
-                  ExcludePrefixes = []
-                  Options = defaultMermaidValidateOptions }
+        let result = validateMermaid [ "docs" ] None None [] defaultMermaidValidateOptions
 
         mermaidResult <- Some result
         mermaidRendered <- Some(formatMermaidJson result)
 
     [<When>]
     member _.``the developer runs docs validate-mermaid with -o markdown``() =
-        let result =
-            validateMermaidDocs
-                { RepoRoot = root ()
-                  Paths = [ "docs" ]
-                  StagedFiles = None
-                  ChangedFiles = None
-                  ExcludePrefixes = []
-                  Options = defaultMermaidValidateOptions }
+        let result = validateMermaid [ "docs" ] None None [] defaultMermaidValidateOptions
 
         mermaidResult <- Some result
         mermaidRendered <- Some(formatMermaidMarkdown result)
 
     [<When>]
     member _.``the developer runs docs validate-mermaid with --verbose``() =
-        let result =
-            validateMermaidDocs
-                { RepoRoot = root ()
-                  Paths = [ "docs" ]
-                  StagedFiles = None
-                  ChangedFiles = None
-                  ExcludePrefixes = []
-                  Options = defaultMermaidValidateOptions }
+        let result = validateMermaid [ "docs" ] None None [] defaultMermaidValidateOptions
 
         mermaidResult <- Some result
         mermaidRendered <- Some(formatMermaidText result true false)
 
     [<When>]
     member _.``the developer runs docs validate-mermaid with --quiet``() =
-        let result =
-            validateMermaidDocs
-                { RepoRoot = root ()
-                  Paths = [ "docs" ]
-                  StagedFiles = None
-                  ChangedFiles = None
-                  ExcludePrefixes = []
-                  Options = defaultMermaidValidateOptions }
+        let result = validateMermaid [ "docs" ] None None [] defaultMermaidValidateOptions
 
         mermaidResult <- Some result
         mermaidRendered <- Some(formatMermaidText result false true)
 
     [<When>]
     member _.``the developer runs docs validate-mermaid without path arguments``() =
-        mermaidResult <-
-            Some(
-                validateMermaidDocs
-                    { RepoRoot = root ()
-                      Paths = []
-                      StagedFiles = None
-                      ChangedFiles = None
-                      ExcludePrefixes = []
-                      Options = defaultMermaidValidateOptions }
-            )
+        mermaidResult <- Some(validateMermaid [] None None [] defaultMermaidValidateOptions)
 
     [<When>]
     member _.``the developer runs docs validate-mermaid with --max-subgraph-nodes 4``() =
         mermaidResult <-
             Some(
-                validateMermaidDocs
-                    { RepoRoot = root ()
-                      Paths = [ "docs" ]
-                      StagedFiles = None
-                      ChangedFiles = None
-                      ExcludePrefixes = []
-                      Options =
-                        { defaultMermaidValidateOptions with
-                            MaxSubgraphNodes = 4 } }
+                validateMermaid
+                    [ "docs" ]
+                    None
+                    None
+                    []
+                    { defaultMermaidValidateOptions with
+                        MaxSubgraphNodes = 4 }
             )
 
     [<When>]
     member _.``the developer runs docs validate-mermaid with --exclude plans/done``() =
-        mermaidResult <-
-            Some(
-                validateMermaidDocs
-                    { RepoRoot = root ()
-                      Paths = []
-                      StagedFiles = None
-                      ChangedFiles = None
-                      ExcludePrefixes = [ "plans/done" ]
-                      Options = defaultMermaidValidateOptions }
-            )
+        mermaidResult <- Some(validateMermaid [] None None [ "plans/done" ] defaultMermaidValidateOptions)
 
     /// Cycle-4 F1/F5 regression fixture: `--exclude ""` must exclude
     /// nothing, not silently empty the scanned file set
     /// [Repo-grounded — `docs.rs::when_m_exclude_empty`].
     [<When>]
     member _.``the developer runs docs validate-mermaid with an empty --exclude value``() =
-        mermaidResult <-
-            Some(
-                validateMermaidDocs
-                    { RepoRoot = root ()
-                      Paths = []
-                      StagedFiles = None
-                      ChangedFiles = None
-                      ExcludePrefixes = [ "" ]
-                      Options = defaultMermaidValidateOptions }
-            )
+        mermaidResult <- Some(validateMermaid [] None None [ "" ] defaultMermaidValidateOptions)
 
     // ---- When (docs-validate-naming.feature) ----
 
     [<When>]
     member _.``the developer runs docs validate-naming``() =
-        outcome <- Some(validateDocsNaming [ root () ])
+        outcome <- Some(Ok(validateDocsNamingDocuments (documentList ()) []))
 
     // ---- When (md-audit.feature) ----
 
     [<When>]
     member _.``the developer runs "rhino-cli md audit"``() =
-        mdAuditResult <- Some(runAudit (root ()))
+        mdAuditResult <- Some(runAuditDocuments (documentList ()))
 
     // ---- When (repo-governance-frontmatter-audit.feature) ----
 
@@ -1080,7 +909,7 @@ type MdSteps() =
 
     [<When>]
     member _.``the parser processes the file``() =
-        let content = File.ReadAllText(Path.Combine(root (), "docs/parser.md"))
+        let content = documents.["docs/parser.md"]
         let blocks = extractMermaidBlocks "docs/parser.md" content
         let block = List.head blocks
         let diagram, _ = parseMermaidDiagram block
@@ -1170,18 +999,18 @@ type MdSteps() =
 
     [<Then>]
     member _.``the output identifies the duplicate H1 violation in the docs file``() =
-        assertHasBlockingFindingInPathWithMessage "/docs/" duplicateH1Needle
+        assertHasBlockingFindingInPathWithMessage "docs/" duplicateH1Needle
 
     [<Then>]
     member _.``the output does not mention the docs file``() = assertNoFindingInPath "/docs/"
 
     [<Then>]
     member _.``the output identifies the repo-governance file``() =
-        assertHasBlockingFindingInPath "/repo-governance/"
+        assertHasBlockingFindingInPath "repo-governance/"
 
     [<Then>]
     member _.``the output identifies the duplicate H1 violation in the specs file``() =
-        assertHasBlockingFindingInPathWithMessage "/specs/" duplicateH1Needle
+        assertHasBlockingFindingInPathWithMessage "specs/" duplicateH1Needle
 
     [<Then>]
     member _.``the output identifies the skipped heading level in the app README``() =
@@ -1189,7 +1018,7 @@ type MdSteps() =
 
     [<Then>]
     member _.``the output identifies the duplicate H1 violation in the lib docs file``() =
-        assertHasBlockingFindingInPathWithMessage "/libs/example/docs/" duplicateH1Needle
+        assertHasBlockingFindingInPathWithMessage "libs/example/docs/" duplicateH1Needle
 
     // ---- Then (docs-validate-links.feature) ----
 
@@ -1450,39 +1279,27 @@ type MdSteps() =
     member _.``the output identifies the forbidden inline annotation and its location``() =
         assertHasBlockingFindingInPathWithMessage (frontmatterDatesFileNeedleValue ()) "inline date annotation"
 
-    [<AfterScenario>]
-    member _.Cleanup() =
-        match rootDir with
-        | Some dir when Directory.Exists dir -> Directory.Delete(dir, true)
-        | _ -> ()
-
-/// Reads one named `Scenario:` block out of a real, frozen `*.feature` file
-/// under the `md` Gherkin directory (leaving the file itself untouched) and
-/// runs it through TickSpec bound only against `MdSteps` — see
+/// Reads one named `Scenario:` block from the canonical feature embedded in
+/// the Unit test assembly and runs it through TickSpec bound only against
+/// `MdSteps` — see
 /// `ConventionSteps.fs`'s `FeatureRunner` for why this is per-scenario
 /// rather than per-file. Parameterised over the feature file name (rather
 /// than one module per feature file) because `MdSteps` already binds more
 /// than one feature file's scenarios; splitting this module per file would
-/// duplicate `extractScenario`/`run` for no behavioral difference.
+/// duplicate `extractScenario`/`run` for no behavioural difference.
 module private FeatureRunner =
 
-    let private featureDir: string =
-        Path.GetFullPath(
-            Path.Combine(
-                __SOURCE_DIRECTORY__,
-                "..",
-                "..",
-                "..",
-                "..",
-                "..",
-                "specs",
-                "apps",
-                "rhino",
-                "cli",
-                "behaviors",
-                "md"
-            )
-        )
+    let private readEmbeddedFeature (featureFileName: string) : string[] =
+        let assembly = typeof<MdSteps>.Assembly
+
+        let resourceName =
+            assembly.GetManifestResourceNames()
+            |> Array.tryFind (fun name -> name.EndsWith(featureFileName, StringComparison.Ordinal))
+            |> Option.defaultWith (fun () -> failwithf "embedded Markdown feature not found: %s" featureFileName)
+
+        use stream = assembly.GetManifestResourceStream(resourceName)
+        use reader = new StreamReader(stream)
+        reader.ReadToEnd().Split('\n')
 
     let private extractScenario (featureLines: string[]) (scenarioTitle: string) : string[] =
         let featureLine =
@@ -1508,14 +1325,12 @@ module private FeatureRunner =
         Array.append [| featureLine; "" |] featureLines.[startIdx .. endIdx - 1]
 
     /// Runs the single scenario named `scenarioTitle` from `featureFileName`
-    /// (a `*.feature` file under the `md` Gherkin directory), bound against
-    /// `MdSteps`.
+    /// bound against `MdSteps`.
     let run (featureFileName: string) (scenarioTitle: string) : unit =
-        let featurePath = Path.Combine(featureDir, featureFileName)
-        let allLines = File.ReadAllLines featurePath
+        let allLines = readEmbeddedFeature featureFileName
         let snippet = extractScenario allLines scenarioTitle
         let definitions = StepDefinitions([| typeof<MdSteps> |])
-        let feature = definitions.GenerateFeature(featurePath, snippet)
+        let feature = definitions.GenerateFeature(featureFileName, snippet)
         let scenario = Seq.exactlyOne feature.Scenarios
         scenario.Action.Invoke()
 
@@ -1910,1040 +1725,3 @@ let ``File under website app directory is exempt and passes`` () =
     FeatureRunner.run
         "repo-governance-frontmatter-audit.feature"
         "File under website app directory is exempt and passes"
-
-// ---------------------------------------------------------------------------
-// Direct unit tests against RhinoCli.Application.Md's public functions.
-//
-// Unlike every `[<Fact>]` above (each a `FeatureRunner.run` wrapper around one
-// frozen Gherkin scenario), the tests below call `Md.fs`'s public validators
-// and pure helpers directly with hand-built inputs, following this file's own
-// documented convention (see the module doc comment above): "every scenario
-// calls one of `RhinoCli.Application.Md`'s validators directly with a path" —
-// these close coverage gaps Gherkin scenario slicing does not reach (edge-case
-// YAML shapes, malformed Mermaid syntax, unusual JSON value kinds), matching
-// the "the parser processes the file" mermaid-parser-only precedent already
-// established above.
-// ---------------------------------------------------------------------------
-
-module private DirectTestFixtures =
-
-    let newTempDir () : string =
-        let dir =
-            Path.Combine(Path.GetTempPath(), "rhino-cli-md-direct-" + Guid.NewGuid().ToString("N"))
-
-        Directory.CreateDirectory(dir) |> ignore
-        dir
-
-    let writeFile (root: string) (relativePath: string) (content: string) : string =
-        let full = Path.Combine(root, relativePath)
-        Directory.CreateDirectory(Path.GetDirectoryName(full: string)) |> ignore
-        File.WriteAllText(full, content)
-        full
-
-// ---- docs-validate-frontmatter.feature — direct edge cases ----
-
-[<Fact>]
-let ``validateDocsFrontmatter rejects an empty path list`` () =
-    match validateDocsFrontmatter [] with
-    | Error message -> Assert.Equal("at least one path is required", message)
-    | Ok _ -> Assert.Fail("expected an Error for an empty path list")
-
-[<Fact>]
-let ``An explicit YAML null value for a required frontmatter field is treated as missing`` () =
-    let dir = DirectTestFixtures.newTempDir ()
-
-    DirectTestFixtures.writeFile
-        dir
-        "docs/explanation/software-engineering/foo.md"
-        "---\ntitle: null\ndescription: D\ncategory: explanation\nsubcategory: S\ntags: [a]\n---\nbody\n"
-    |> ignore
-
-    match validateDocsFrontmatter [ dir ] with
-    | Ok findings ->
-        Assert.Contains(
-            findings,
-            fun (f: Finding) ->
-                f.Severity = Severity.Blocking
-                && f.Message.Contains("\"title\" is missing", StringComparison.Ordinal)
-        )
-    | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
-
-[<Fact>]
-let ``A boolean frontmatter value for category is rendered via its string form in the finding message`` () =
-    let dir = DirectTestFixtures.newTempDir ()
-
-    DirectTestFixtures.writeFile
-        dir
-        "docs/explanation/software-engineering/foo.md"
-        "---\ntitle: T\ndescription: D\ncategory: true\nsubcategory: S\ntags: [a]\n---\nbody\n"
-    |> ignore
-
-    match validateDocsFrontmatter [ dir ] with
-    | Ok findings ->
-        Assert.Contains(findings, fun (f: Finding) -> f.Message.Contains("found \"true\"", StringComparison.Ordinal))
-    | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
-
-[<Fact>]
-let ``A numeric frontmatter value for category is rendered via its string form in the finding message`` () =
-    let dir = DirectTestFixtures.newTempDir ()
-
-    DirectTestFixtures.writeFile
-        dir
-        "docs/explanation/software-engineering/foo.md"
-        "---\ntitle: T\ndescription: D\ncategory: 5\nsubcategory: S\ntags: [a]\n---\nbody\n"
-    |> ignore
-
-    match validateDocsFrontmatter [ dir ] with
-    | Ok findings ->
-        Assert.Contains(findings, fun (f: Finding) -> f.Message.Contains("found \"5\"", StringComparison.Ordinal))
-    | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
-
-[<Fact>]
-let ``A category value carrying an explicit YAML !!bool tag renders via stringValue's lowercase bool branch`` () =
-    // Unlike a plain (untagged) `category: true`, which YamlDotNet's default
-    // deserializer keeps as the literal string "true" (see the plain
-    // boolean-form test above), an explicit `!!bool` tag forces YamlDotNet
-    // to hand back a real boxed `System.Boolean`, exercising `stringValue`'s
-    // `Some(:? bool as b) -> if b then "true" else "false"` arm rather than
-    // its string arm.
-    let dir = DirectTestFixtures.newTempDir ()
-
-    DirectTestFixtures.writeFile
-        dir
-        "docs/explanation/software-engineering/foo.md"
-        "---\ntitle: T\ndescription: D\ncategory: !!bool true\nsubcategory: S\ntags: [a]\n---\nbody\n"
-    |> ignore
-
-    match validateDocsFrontmatter [ dir ] with
-    | Ok findings ->
-        Assert.Contains(findings, fun (f: Finding) -> f.Message.Contains("found \"true\"", StringComparison.Ordinal))
-    | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
-
-[<Fact>]
-let ``A category value carrying an explicit YAML !!int tag renders via stringValue's ToString fallback branch`` () =
-    // As above: unlike a plain (untagged) `category: 5`, which YamlDotNet
-    // keeps as the literal string "5", an explicit `!!int` tag forces a real
-    // boxed `System.Int32`, exercising `stringValue`'s `Some other ->
-    // other.ToString()` fallback arm.
-    let dir = DirectTestFixtures.newTempDir ()
-
-    DirectTestFixtures.writeFile
-        dir
-        "docs/explanation/software-engineering/foo.md"
-        "---\ntitle: T\ndescription: D\ncategory: !!int 5\nsubcategory: S\ntags: [a]\n---\nbody\n"
-    |> ignore
-
-    match validateDocsFrontmatter [ dir ] with
-    | Ok findings ->
-        Assert.Contains(findings, fun (f: Finding) -> f.Message.Contains("found \"5\"", StringComparison.Ordinal))
-    | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
-
-[<Fact>]
-let ``A tags field that is not a YAML sequence fails the non-empty-list requirement`` () =
-    let mappingDir = DirectTestFixtures.newTempDir ()
-
-    DirectTestFixtures.writeFile
-        mappingDir
-        "docs/explanation/software-engineering/foo.md"
-        "---\ntitle: T\ndescription: D\ncategory: explanation\nsubcategory: S\ntags: {a: b}\n---\nbody\n"
-    |> ignore
-
-    let scalarDir = DirectTestFixtures.newTempDir ()
-
-    DirectTestFixtures.writeFile
-        scalarDir
-        "docs/explanation/software-engineering/foo.md"
-        "---\ntitle: T\ndescription: D\ncategory: explanation\nsubcategory: S\ntags: 42\n---\nbody\n"
-    |> ignore
-
-    for dir in [ mappingDir; scalarDir ] do
-        match validateDocsFrontmatter [ dir ] with
-        | Ok findings ->
-            Assert.Contains(
-                findings,
-                fun (f: Finding) ->
-                    f.Severity = Severity.Blocking
-                    && f.Message.Contains("\"tags\" must be a non-empty list", StringComparison.Ordinal)
-            )
-        | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
-
-[<Fact>]
-let ``Software-engineering doc missing description fails`` () =
-    let dir = DirectTestFixtures.newTempDir ()
-
-    DirectTestFixtures.writeFile
-        dir
-        "docs/explanation/software-engineering/foo.md"
-        "---\ntitle: T\ncategory: explanation\nsubcategory: S\ntags: [a]\n---\nbody\n"
-    |> ignore
-
-    match validateDocsFrontmatter [ dir ] with
-    | Ok findings ->
-        Assert.Contains(
-            findings,
-            fun (f: Finding) ->
-                f.Severity = Severity.Blocking
-                && f.Message.Contains("\"description\" is missing", StringComparison.Ordinal)
-        )
-    | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
-
-[<Fact>]
-let ``Software-engineering doc missing subcategory fails`` () =
-    let dir = DirectTestFixtures.newTempDir ()
-
-    DirectTestFixtures.writeFile
-        dir
-        "docs/explanation/software-engineering/foo.md"
-        "---\ntitle: T\ndescription: D\ncategory: explanation\ntags: [a]\n---\nbody\n"
-    |> ignore
-
-    match validateDocsFrontmatter [ dir ] with
-    | Ok findings ->
-        Assert.Contains(
-            findings,
-            fun (f: Finding) ->
-                f.Severity = Severity.Blocking
-                && f.Message.Contains("\"subcategory\" is missing", StringComparison.Ordinal)
-        )
-    | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
-
-[<Fact>]
-let ``Governance doc missing title entirely fails`` () =
-    let dir = DirectTestFixtures.newTempDir ()
-
-    DirectTestFixtures.writeFile
-        dir
-        "repo-governance/conventions/foo.md"
-        "---\ndescription: D\nwhen_to_use: Use when W.\n---\nbody\n"
-    |> ignore
-
-    match validateDocsFrontmatter [ dir ] with
-    | Ok findings ->
-        Assert.Contains(
-            findings,
-            fun (f: Finding) ->
-                f.Severity = Severity.Blocking
-                && f.Message.Contains("\"title\" is missing", StringComparison.Ordinal)
-        )
-    | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
-
-[<Fact>]
-let ``A markdown file with no frontmatter fences at all fails`` () =
-    let dir = DirectTestFixtures.newTempDir ()
-
-    DirectTestFixtures.writeFile
-        dir
-        "docs/explanation/software-engineering/no-frontmatter.md"
-        "# Just a title\n\nNo frontmatter here.\n"
-    |> ignore
-
-    match validateDocsFrontmatter [ dir ] with
-    | Ok findings ->
-        Assert.Contains(
-            findings,
-            fun (f: Finding) -> f.Message.Contains("no YAML frontmatter", StringComparison.Ordinal)
-        )
-    | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
-
-[<Fact>]
-let ``A frontmatter block that is not valid YAML fails with a parse-error finding`` () =
-    let dir = DirectTestFixtures.newTempDir ()
-
-    DirectTestFixtures.writeFile
-        dir
-        "docs/explanation/software-engineering/bad-yaml.md"
-        "---\ntitle: [unterminated\n---\nbody\n"
-    |> ignore
-
-    match validateDocsFrontmatter [ dir ] with
-    | Ok findings ->
-        Assert.Contains(
-            findings,
-            fun (f: Finding) -> f.Message.Contains("frontmatter is not valid YAML", StringComparison.Ordinal)
-        )
-    | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
-
-[<Fact>]
-let ``A frontmatter block that parses as a YAML sequence rather than a mapping is treated as an empty frontmatter map``
-    ()
-    =
-    // Valid YAML, but not a mapping (`asRawMap`'s `_ -> None` arm) — falls
-    // back to an empty map rather than an `invalid-yaml` finding, so every
-    // required field is reported missing.
-    let dir = DirectTestFixtures.newTempDir ()
-
-    DirectTestFixtures.writeFile
-        dir
-        "docs/explanation/software-engineering/list-frontmatter.md"
-        "---\n- a\n- b\n---\nbody\n"
-    |> ignore
-
-    match validateDocsFrontmatter [ dir ] with
-    | Ok findings ->
-        Assert.Contains(
-            findings,
-            fun (f: Finding) ->
-                f.Severity = Severity.Blocking
-                && f.Message.Contains("\"title\" is missing", StringComparison.Ordinal)
-        )
-
-        Assert.Contains(
-            findings,
-            fun (f: Finding) ->
-                f.Severity = Severity.Blocking
-                && f.Message.Contains("\"category\" is missing", StringComparison.Ordinal)
-        )
-    | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
-
-[<Fact>]
-let ``validateDocsFrontmatter accepts a single markdown file path in place of a directory`` () =
-    let dir = DirectTestFixtures.newTempDir ()
-
-    let filePath =
-        DirectTestFixtures.writeFile
-            dir
-            "docs/explanation/software-engineering/single.md"
-            "---\ntitle: T\ndescription: D\ncategory: explanation\nsubcategory: S\ntags: [a]\n---\nbody\n"
-
-    match validateDocsFrontmatter [ filePath ] with
-    | Ok findings ->
-        Assert.False(
-            findings |> List.exists (fun f -> f.Severity = Severity.Blocking),
-            "expected no fail-level findings"
-        )
-    | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
-
-[<Fact>]
-let ``validateDocsFrontmatter skips files under a node_modules subdirectory`` () =
-    let dir = DirectTestFixtures.newTempDir ()
-
-    DirectTestFixtures.writeFile
-        dir
-        "node_modules/docs/explanation/software-engineering/bad.md"
-        "no frontmatter at all\n"
-    |> ignore
-
-    DirectTestFixtures.writeFile
-        dir
-        "docs/explanation/software-engineering/good.md"
-        "---\ntitle: T\ndescription: D\ncategory: explanation\nsubcategory: S\ntags: [a]\n---\nbody\n"
-    |> ignore
-
-    match validateDocsFrontmatter [ dir ] with
-    | Ok findings ->
-        Assert.DoesNotContain(
-            findings,
-            fun (f: Finding) ->
-                (f.Path |> Option.defaultValue "").Replace('\\', '/').Contains("node_modules", StringComparison.Ordinal)
-        )
-    | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
-
-// ---- docs-validate-heading-hierarchy.feature — direct edge cases ----
-
-[<Fact>]
-let ``A heading line with more than six hash characters is not treated as an ATX heading`` () =
-    let dir = DirectTestFixtures.newTempDir ()
-
-    DirectTestFixtures.writeFile dir "a.md" "# Title\n\n####### Too many hashes\n\n## Section\n"
-    |> ignore
-
-    match validateDocsHeadingHierarchy [ dir ] with
-    | Ok findings -> Assert.Empty(findings)
-    | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
-
-[<Fact>]
-let ``A line consisting only of hash characters with no following text is not treated as an ATX heading`` () =
-    let dir = DirectTestFixtures.newTempDir ()
-
-    DirectTestFixtures.writeFile dir "a.md" "# Title\n\n###\n\n## Section\n"
-    |> ignore
-
-    match validateDocsHeadingHierarchy [ dir ] with
-    | Ok findings -> Assert.Empty(findings)
-    | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
-
-[<Fact>]
-let ``validateDocsHeadingHierarchy rejects an empty path list`` () =
-    match validateDocsHeadingHierarchy [] with
-    | Error message -> Assert.Equal("at least one path is required", message)
-    | Ok _ -> Assert.Fail("expected an Error for an empty path list")
-
-[<Fact>]
-let ``A root-level markdown file is allowlisted by the heading-hierarchy prose allowlist`` () =
-    let dir = DirectTestFixtures.newTempDir ()
-    DirectTestFixtures.writeFile dir "TOPLEVEL.md" "## Not H1\n" |> ignore
-
-    let findings = validateDocsHeadingHierarchyAllowlisted dir []
-
-    Assert.Contains(
-        findings,
-        fun (f: Finding) ->
-            (f.Path |> Option.defaultValue "").Replace('\\', '/').EndsWith("TOPLEVEL.md", StringComparison.Ordinal)
-    )
-
-[<Fact>]
-let ``A markdown file placed directly under apps/ without a project subdirectory is default-denied`` () =
-    let dir = DirectTestFixtures.newTempDir ()
-    DirectTestFixtures.writeFile dir "apps/orphan.md" "## Not H1\n" |> ignore
-
-    let findings = validateDocsHeadingHierarchyAllowlisted dir []
-
-    Assert.DoesNotContain(
-        findings,
-        fun (f: Finding) ->
-            (f.Path |> Option.defaultValue "").Replace('\\', '/').Contains("apps/orphan.md", StringComparison.Ordinal)
-    )
-
-[<Fact>]
-let ``validateDocsHeadingHierarchyAllowlistedDetailed filters non-allowlisted and excluded paths and reports the detailed shape for the rest``
-    ()
-    =
-    let dir = DirectTestFixtures.newTempDir ()
-
-    DirectTestFixtures.writeFile dir "docs/page.md" "# First\n\n# Second\n"
-    |> ignore
-
-    DirectTestFixtures.writeFile dir ".claude/skills/foo/SKILL.md" "# First\n\n# Second\n"
-    |> ignore
-
-    DirectTestFixtures.writeFile dir "docs/excluded/page2.md" "# First\n\n# Second\n"
-    |> ignore
-
-    let findings =
-        validateDocsHeadingHierarchyAllowlistedDetailed dir [ "docs/excluded" ]
-
-    Assert.Contains(
-        findings,
-        fun (f: HeadingFinding) -> f.File.Replace('\\', '/').Contains("docs/page.md", StringComparison.Ordinal)
-    )
-
-    Assert.DoesNotContain(
-        findings,
-        fun (f: HeadingFinding) -> f.File.Replace('\\', '/').Contains(".claude/skills", StringComparison.Ordinal)
-    )
-
-    Assert.DoesNotContain(
-        findings,
-        fun (f: HeadingFinding) -> f.File.Replace('\\', '/').Contains("docs/excluded", StringComparison.Ordinal)
-    )
-
-[<Fact>]
-let ``validateDocsHeadingHierarchyForPaths validates only the allowlisted paths passed to it`` () =
-    let dir = DirectTestFixtures.newTempDir ()
-
-    DirectTestFixtures.writeFile dir "docs/page.md" "# First\n\n# Second\n"
-    |> ignore
-
-    let findings = validateDocsHeadingHierarchyForPaths dir [ "docs/page.md" ]
-
-    Assert.Contains(
-        findings,
-        fun (f: Finding) ->
-            (f.Path |> Option.defaultValue "").Replace('\\', '/').Contains("docs/page.md", StringComparison.Ordinal)
-    )
-
-// ---- docs-validate-links.feature — direct edge cases ----
-
-[<Fact>]
-let ``validateDocsLinks accepts a RepoRoot that points directly at a single markdown file`` () =
-    let dir = DirectTestFixtures.newTempDir ()
-
-    let filePath =
-        DirectTestFixtures.writeFile dir "note.md" "See [missing](./does-not-exist.md) for details.\n"
-
-    let findings =
-        validateDocsLinks
-            { RepoRoot = filePath
-              StagedFiles = None
-              ExcludePrefixes = [] }
-
-    Assert.Contains(findings, fun (f: Finding) -> f.Severity = Severity.Blocking)
-
-[<Fact>]
-let ``validateDocsLinks returns no findings when RepoRoot does not exist on the filesystem`` () =
-    let dir = DirectTestFixtures.newTempDir ()
-    let missing = Path.Combine(dir, "does-not-exist-subdir")
-
-    let findings =
-        validateDocsLinks
-            { RepoRoot = missing
-              StagedFiles = None
-              ExcludePrefixes = [] }
-
-    Assert.Empty(findings)
-
-[<Fact>]
-let ``A markdown file under a .claude/skills tree is exempt from link validation`` () =
-    let dir = DirectTestFixtures.newTempDir ()
-
-    DirectTestFixtures.writeFile dir ".claude/skills/foo/SKILL.md" "See [missing](./does-not-exist.md).\n"
-    |> ignore
-
-    let findings =
-        validateDocsLinks
-            { RepoRoot = dir
-              StagedFiles = None
-              ExcludePrefixes = [] }
-
-    Assert.Empty(findings)
-
-[<Fact>]
-let ``A same-file anchor link that matches an existing heading passes validation`` () =
-    let dir = DirectTestFixtures.newTempDir ()
-
-    DirectTestFixtures.writeFile dir "self-anchor.md" "# Title\n\n## Section\n\nSee [here](#section).\n"
-    |> ignore
-
-    let findings =
-        validateDocsLinks
-            { RepoRoot = dir
-              StagedFiles = None
-              ExcludePrefixes = [] }
-
-    Assert.Empty(findings)
-
-[<Fact>]
-let ``A markdown link whose URL is a bare hash with no anchor name is silently ignored`` () =
-    let dir = DirectTestFixtures.newTempDir ()
-
-    DirectTestFixtures.writeFile dir "bare-hash.md" "See [here](#) below.\n"
-    |> ignore
-
-    let findings =
-        validateDocsLinks
-            { RepoRoot = dir
-              StagedFiles = None
-              ExcludePrefixes = [] }
-
-    Assert.Empty(findings)
-
-[<Fact>]
-let ``shouldSkipLink recognizes Hugo shortcodes, bracket placeholders, and non-relative image paths`` () =
-    Assert.True(shouldSkipLink "{{< ref \"foo\" >}}")
-    Assert.True(shouldSkipLink "[my-placeholder]")
-    Assert.True(shouldSkipLink "assets/images/logo.png")
-    Assert.False(shouldSkipLink "../images/logo.png")
-
-[<Fact>]
-let ``categorizeBrokenLink maps a broken link's path to its report category`` () =
-    Assert.Equal("workflows/ paths", categorizeBrokenLink "some/workflows/doc.md")
-    Assert.Equal("vision/ paths", categorizeBrokenLink "some/vision/doc.md")
-    Assert.Equal("conventions README", categorizeBrokenLink "repo-governance/conventions/README.md")
-    Assert.Equal("Missing files", categorizeBrokenLink "CODE_OF_CONDUCT.md")
-    Assert.Equal("Missing files", categorizeBrokenLink "CHANGELOG.md")
-    Assert.Equal("General/other paths", categorizeBrokenLink "docs/reference/whatever.md")
-
-[<Fact>]
-let ``validateAllLinksDetailed reports broken links, broken anchors, and their categories`` () =
-    let dir = DirectTestFixtures.newTempDir ()
-
-    DirectTestFixtures.writeFile dir "broken.md" "See [missing](./workflows/gone.md) and [bare](#).\n"
-    |> ignore
-
-    let result =
-        validateAllLinksDetailed
-            { RepoRoot = dir
-              StagedFiles = None
-              ExcludePrefixes = [] }
-
-    Assert.Equal(1, result.TotalFiles)
-    Assert.Equal(2, result.TotalLinks)
-    Assert.Contains(result.BrokenLinks, fun (b: BrokenLink) -> b.Category = "workflows/ paths")
-    Assert.True(result.BrokenByCategory.ContainsKey "workflows/ paths")
-
-// ---- docs-validate-mermaid.feature — direct edge cases ----
-
-[<Fact>]
-let ``parseMermaidDiagram parses BT and RL flowchart directions`` () =
-    let btBlocks =
-        extractMermaidBlocks "bt.md" "```mermaid\nflowchart BT\n    A --> B\n```\n"
-
-    let btDiagram, btCount = parseMermaidDiagram (List.head btBlocks)
-    Assert.Equal(1, btCount)
-    Assert.Equal(MermaidBT, btDiagram.Direction)
-
-    let rlBlocks =
-        extractMermaidBlocks "rl.md" "```mermaid\nflowchart RL\n    A --> B\n```\n"
-
-    let rlDiagram, rlCount = parseMermaidDiagram (List.head rlBlocks)
-    Assert.Equal(1, rlCount)
-    Assert.Equal(MermaidRL, rlDiagram.Direction)
-
-[<Fact>]
-let ``mermaidViolationKindCode maps every violation kind to its stable code`` () =
-    Assert.Equal("width_exceeded", mermaidViolationKindCode MermaidWidthExceeded)
-    Assert.Equal("multiple_diagrams", mermaidViolationKindCode MermaidMultipleDiagrams)
-
-[<Fact>]
-let ``A mermaid block containing only comments is treated as OtherKind and produces no findings`` () =
-    let block: MermaidBlock =
-        { FilePath = "x.md"
-          BlockIndex = 0
-          Source = "%% nothing here"
-          StartLine = 1 }
-
-    let result = validateMermaidBlocks [ block ] defaultMermaidValidateOptions
-
-    Assert.Empty(result.Violations)
-    Assert.Empty(result.Warnings)
-    Assert.Equal(1, result.BlocksScanned)
-    Assert.Equal(1, result.FilesScanned)
-
-[<Fact>]
-let ``Quoted node labels have their surrounding quotes stripped, and single-character labels pass through unchanged``
-    ()
-    =
-    let blocks =
-        extractMermaidBlocks "d.md" "```mermaid\nflowchart TD\n    A[\"Hello World\"] --> B[x]\n```\n"
-
-    let diagram, _ = parseMermaidDiagram (List.head blocks)
-
-    let labelOf id =
-        (diagram.Nodes |> List.find (fun n -> n.Id = id)).Label
-
-    Assert.Equal("Hello World", labelOf "A")
-    Assert.Equal("x", labelOf "B")
-
-[<Fact>]
-let ``A node referenced bare in an edge and later declared with a label keeps the later label`` () =
-    let blocks =
-        extractMermaidBlocks "d.md" "```mermaid\nflowchart TD\n    A --> B\n    A[Node A Label]\n```\n"
-
-    let diagram, _ = parseMermaidDiagram (List.head blocks)
-    let nodeA = diagram.Nodes |> List.find (fun n -> n.Id = "A")
-    Assert.Equal("Node A Label", nodeA.Label)
-
-[<Fact>]
-let ``A standalone bare node identifier line declares a new node with an empty label`` () =
-    let blocks =
-        extractMermaidBlocks "d.md" "```mermaid\nflowchart TD\n    A --> B\n    C\n```\n"
-
-    let diagram, _ = parseMermaidDiagram (List.head blocks)
-    let ids = diagram.Nodes |> List.map (fun n -> n.Id)
-    Assert.Contains("C", ids)
-    let nodeC = diagram.Nodes |> List.find (fun n -> n.Id = "C")
-    Assert.Equal("", nodeC.Label)
-
-[<Fact>]
-let ``An unrecognized node-shape segment on an edge line contributes no node and no edge`` () =
-    let blocks =
-        extractMermaidBlocks "d.md" "```mermaid\nflowchart TD\n    A --> foo-bar\n```\n"
-
-    let diagram, _ = parseMermaidDiagram (List.head blocks)
-    Assert.Contains("A", diagram.Nodes |> List.map (fun n -> n.Id))
-    Assert.Empty(diagram.Edges)
-
-[<Fact>]
-let ``A double-ampersand separator in an edge group is ignored rather than producing a phantom node`` () =
-    let blocks =
-        extractMermaidBlocks "d.md" "```mermaid\nflowchart TD\n    A && B --> C\n```\n"
-
-    let diagram, _ = parseMermaidDiagram (List.head blocks)
-    let ids = diagram.Nodes |> List.map (fun n -> n.Id) |> List.sort
-    Assert.Equal<string list>([ "A"; "B"; "C" ], ids)
-    let edgePairs = diagram.Edges |> List.map (fun e -> e.From, e.To) |> List.sort
-    Assert.Equal<(string * string) list>([ "A", "C"; "B", "C" ], edgePairs)
-
-[<Fact>]
-let ``A subgraph header that does not match the strict grammar falls back to a plain-text label`` () =
-    let blocks =
-        extractMermaidBlocks
-            "d.md"
-            "```mermaid\nflowchart TD\n    subgraph My Custom Group\n    A --> B\n    end\n```\n"
-
-    let diagram, _ = parseMermaidDiagram (List.head blocks)
-    Assert.Equal(1, diagram.Subgraphs.Length)
-    let sg = List.head diagram.Subgraphs
-    Assert.Equal("", sg.Id)
-    Assert.Equal("My Custom Group", sg.Label)
-
-[<Fact>]
-let ``parseMermaidDiagram reports a zero header count and an empty diagram for a block with no flowchart header`` () =
-    let block: MermaidBlock =
-        { FilePath = "x.md"
-          BlockIndex = 0
-          Source = "A --> B"
-          StartLine = 1 }
-
-    let diagram, count = parseMermaidDiagram block
-
-    Assert.Equal(0, count)
-    Assert.Equal(MermaidTB, diagram.Direction)
-    Assert.Empty(diagram.Nodes)
-    Assert.Empty(diagram.Edges)
-
-[<Fact>]
-let ``A bare "flowchart" header with no direction suffix defaults to top-to-bottom`` () =
-    let blocks = extractMermaidBlocks "d.md" "```mermaid\nflowchart\n    A --> B\n```\n"
-    let diagram, count = parseMermaidDiagram (List.head blocks)
-    Assert.Equal(1, count)
-    Assert.Equal(MermaidTB, diagram.Direction)
-
-[<Fact>]
-let ``A subgraph left unclosed at end of block is still recorded when the block ends`` () =
-    let blocks =
-        extractMermaidBlocks "d.md" "```mermaid\nflowchart TD\n    subgraph WF [Group]\n    A --> B\n```\n"
-
-    let diagram, _ = parseMermaidDiagram (List.head blocks)
-    Assert.Equal(1, diagram.Subgraphs.Length)
-    let sg = List.head diagram.Subgraphs
-    Assert.Equal("Group", sg.Label)
-    Assert.Equal<string list>([ "A"; "B" ], sg.NodeIds)
-
-[<Fact>]
-let ``mermaidMaxWidth and mermaidDepth return zero for an empty diagram`` () =
-    Assert.Equal(0, mermaidMaxWidth [] [])
-    Assert.Equal(0, mermaidDepth [] [])
-
-[<Fact>]
-let ``A state-diagram edge label written as "b: label" without a leading space before the colon is parsed`` () =
-    let longLabel = String.replicate 35 "z"
-
-    let block: MermaidBlock =
-        { FilePath = "state.md"
-          BlockIndex = 0
-          Source = sprintf "stateDiagram-v2\n    a --> b: %s" longLabel
-          StartLine = 1 }
-
-    let result = validateMermaidBlocks [ block ] defaultMermaidValidateOptions
-
-    Assert.Contains(
-        result.Violations,
-        fun (v: MermaidViolation) -> v.Kind = MermaidLabelTooLong && v.NodeId = "a-->b" && v.LabelText = longLabel
-    )
-
-[<Fact>]
-let ``A state-diagram arrow line with an empty source is ignored without crashing the parser`` () =
-    let block: MermaidBlock =
-        { FilePath = "state.md"
-          BlockIndex = 0
-          Source = "stateDiagram-v2\n    --> orphan\n    a --> b\n"
-          StartLine = 1 }
-
-    let result = validateMermaidBlocks [ block ] defaultMermaidValidateOptions
-
-    Assert.Empty(result.Violations)
-    Assert.Empty(result.Warnings)
-    Assert.Equal(1, result.BlocksScanned)
-
-[<Fact>]
-let ``A lone "--" separator line in a state diagram is ignored`` () =
-    let block: MermaidBlock =
-        { FilePath = "state.md"
-          BlockIndex = 0
-          Source = "stateDiagram-v2\n    [*] --> a\n    --\n    a --> b\n"
-          StartLine = 1 }
-
-    let result = validateMermaidBlocks [ block ] defaultMermaidValidateOptions
-
-    Assert.Empty(result.Violations)
-    Assert.Empty(result.Warnings)
-
-[<Fact>]
-let ``LR and RL directions swap width and depth for state diagrams`` () =
-    let fanOut direction =
-        sprintf
-            "stateDiagram-v2\n    direction %s\n    root --> a\n    root --> b\n    root --> c\n    root --> d\n    root --> e"
-            direction
-
-    for direction in [ "LR"; "RL" ] do
-        let block: MermaidBlock =
-            { FilePath = "state.md"
-              BlockIndex = 0
-              Source = fanOut direction
-              StartLine = 1 }
-
-        let result = validateMermaidBlocks [ block ] defaultMermaidValidateOptions
-
-        Assert.True(
-            List.isEmpty result.Violations,
-            sprintf
-                "expected direction %s to swap width/depth and avoid a width violation, got %A"
-                direction
-                result.Violations
-        )
-
-[<Fact>]
-let ``BT and an unrecognized direction word do not swap width and depth for state diagrams`` () =
-    let fanOut direction =
-        sprintf
-            "stateDiagram-v2\n    direction %s\n    root --> a\n    root --> b\n    root --> c\n    root --> d\n    root --> e"
-            direction
-
-    for direction in [ "BT"; "SIDEWAYS" ] do
-        let block: MermaidBlock =
-            { FilePath = "state.md"
-              BlockIndex = 0
-              Source = fanOut direction
-              StartLine = 1 }
-
-        let result = validateMermaidBlocks [ block ] defaultMermaidValidateOptions
-
-        Assert.Contains(result.Violations, fun (v: MermaidViolation) -> v.Kind = MermaidWidthExceeded)
-
-[<Fact>]
-let ``A state "label" as ID declaration with an oversized label reports a label-too-long violation for that node`` () =
-    // `state "..." as N` must precede any bare reference to N: `ensureNode` is
-    // first-write-wins, so a later `[*] --> N` edge line would otherwise
-    // register N's label as the plain id "N" first and silently keep it.
-    let longLabel = String.replicate 35 "q"
-
-    let block: MermaidBlock =
-        { FilePath = "state.md"
-          BlockIndex = 0
-          Source = sprintf "stateDiagram-v2\n    state \"%s\" as N\n    [*] --> N" longLabel
-          StartLine = 1 }
-
-    let result = validateMermaidBlocks [ block ] defaultMermaidValidateOptions
-
-    Assert.Contains(
-        result.Violations,
-        fun (v: MermaidViolation) -> v.Kind = MermaidLabelTooLong && v.NodeId = "N" && v.LabelText = longLabel
-    )
-
-[<Fact>]
-let ``Malformed state declarations are silently ignored without crashing the parser`` () =
-    let block: MermaidBlock =
-        { FilePath = "state.md"
-          BlockIndex = 0
-          Source =
-            "stateDiagram-v2\n    [*] --> a\n    state \"Unterminated label as X\n    state \"Label\" alias Y\n    a --> b"
-          StartLine = 1 }
-
-    let result = validateMermaidBlocks [ block ] defaultMermaidValidateOptions
-
-    Assert.Empty(result.Violations)
-    Assert.Empty(result.Warnings)
-
-[<Fact>]
-let ``A flowchart-looking header that does not cleanly match the direction grammar produces no findings`` () =
-    let block: MermaidBlock =
-        { FilePath = "d.md"
-          BlockIndex = 0
-          Source = "flowchart TD extra-junk\n    A --> B"
-          StartLine = 1 }
-
-    let result = validateMermaidBlocks [ block ] defaultMermaidValidateOptions
-
-    Assert.Empty(result.Violations)
-    Assert.Empty(result.Warnings)
-    Assert.Equal(1, result.FilesScanned)
-    Assert.Equal(1, result.BlocksScanned)
-
-[<Fact>]
-let ``A MaxSubgraphNodes of zero disables the subgraph density check entirely`` () =
-    let block: MermaidBlock =
-        { FilePath = "d.md"
-          BlockIndex = 0
-          Source =
-            "flowchart TD\n    subgraph WF [Group]\n    A --> B\n    B --> C\n    C --> D\n    D --> E\n    E --> F\n    F --> G\n    end"
-          StartLine = 1 }
-
-    let opts =
-        { defaultMermaidValidateOptions with
-            MaxSubgraphNodes = 0 }
-
-    let result = validateMermaidBlocks [ block ] opts
-
-    Assert.DoesNotContain(result.Warnings, fun (w: MermaidWarning) -> w.Kind = MermaidSubgraphDense)
-
-[<Fact>]
-let ``validateMermaidDocs accepts an absolute path entry in opts.Paths`` () =
-    let dir = DirectTestFixtures.newTempDir ()
-
-    DirectTestFixtures.writeFile
-        dir
-        "sub/d.md"
-        "# Diagram\n\n```mermaid\nflowchart TD\n    A[This label is definitely longer than thirty characters total]\n```\n"
-    |> ignore
-
-    let result =
-        validateMermaidDocs
-            { RepoRoot = dir
-              Paths = [ Path.Combine(dir, "sub") ]
-              StagedFiles = None
-              ChangedFiles = None
-              ExcludePrefixes = []
-              Options = defaultMermaidValidateOptions }
-
-    Assert.Contains(result.Violations, fun (v: MermaidViolation) -> v.Kind = MermaidLabelTooLong)
-
-[<Fact>]
-let ``formatMermaidText renders width-exceeded and multiple-diagrams violation detail lines`` () =
-    let violations: MermaidViolation list =
-        [ { Kind = MermaidWidthExceeded
-            FilePath = "w.md"
-            BlockIndex = 0
-            StartLine = 1
-            NodeId = ""
-            LabelText = ""
-            LabelLen = 0
-            MaxLabelLen = 0
-            ActualWidth = 5
-            MaxWidth = 4 }
-          { Kind = MermaidMultipleDiagrams
-            FilePath = "w.md"
-            BlockIndex = 1
-            StartLine = 5
-            NodeId = ""
-            LabelText = ""
-            LabelLen = 0
-            MaxLabelLen = 0
-            ActualWidth = 0
-            MaxWidth = 0 } ]
-
-    let result: MermaidValidationResult =
-        { FilesScanned = 1
-          BlocksScanned = 2
-          Violations = violations
-          Warnings = [] }
-
-    let text = formatMermaidText result true false
-
-    Assert.Contains("[FAIL] w.md", text)
-    Assert.Contains("exceeds max-width", text)
-    Assert.Contains("multiple flowchart/graph headers", text)
-
-[<Fact>]
-let ``formatMermaidJson includes actualWidth and maxWidth for a width-exceeded violation`` () =
-    let violation: MermaidViolation =
-        { Kind = MermaidWidthExceeded
-          FilePath = "w.md"
-          BlockIndex = 0
-          StartLine = 1
-          NodeId = ""
-          LabelText = ""
-          LabelLen = 0
-          MaxLabelLen = 0
-          ActualWidth = 5
-          MaxWidth = 4 }
-
-    let result: MermaidValidationResult =
-        { FilesScanned = 1
-          BlocksScanned = 1
-          Violations = [ violation ]
-          Warnings = [] }
-
-    let text = formatMermaidJson result
-
-    use doc = JsonDocument.Parse(text)
-    let v = doc.RootElement.GetProperty("violations").[0]
-    Assert.Equal(5, v.GetProperty("actualWidth").GetInt32())
-    Assert.Equal(4, v.GetProperty("maxWidth").GetInt32())
-
-// ---- docs-validate-naming.feature — direct edge cases ----
-
-[<Fact>]
-let ``validateDocsNamingExempt honors * and ? wildcards in exempt glob patterns`` () =
-    let dir = DirectTestFixtures.newTempDir ()
-
-    DirectTestFixtures.writeFile dir "FooBar__linkedin__profile.md" "# X\n"
-    |> ignore
-
-    DirectTestFixtures.writeFile dir "XY.md" "# X\n" |> ignore
-    DirectTestFixtures.writeFile dir "BadName.md" "# X\n" |> ignore
-
-    match validateDocsNamingExempt [ dir ] [ "*__linkedin__*.md"; "X?.md" ] with
-    | Ok findings ->
-        Assert.DoesNotContain(
-            findings,
-            fun (f: Finding) ->
-                (f.Path |> Option.defaultValue "")
-                    .Replace('\\', '/')
-                    .EndsWith("FooBar__linkedin__profile.md", StringComparison.Ordinal)
-        )
-
-        Assert.DoesNotContain(
-            findings,
-            fun (f: Finding) ->
-                (f.Path |> Option.defaultValue "").Replace('\\', '/').EndsWith("XY.md", StringComparison.Ordinal)
-        )
-
-        Assert.Contains(
-            findings,
-            fun (f: Finding) ->
-                (f.Path |> Option.defaultValue "").Replace('\\', '/').EndsWith("BadName.md", StringComparison.Ordinal)
-        )
-    | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
-
-[<Fact>]
-let ``validateDocsNamingExempt rejects an empty path list`` () =
-    match validateDocsNamingExempt [] [] with
-    | Error message -> Assert.Equal("at least one path is required", message)
-    | Ok _ -> Assert.Fail("expected an Error for an empty path list")
-
-// ---- repo-governance-frontmatter-audit.feature — direct edge cases ----
-
-[<Fact>]
-let ``An unclosed frontmatter fence is treated as no frontmatter, and the whole file is scanned as body`` () =
-    let dir = DirectTestFixtures.newTempDir ()
-
-    DirectTestFixtures.writeFile dir "unclosed.md" "---\ntitle: T\n\nNo closing fence, just prose.\n"
-    |> ignore
-
-    match validateFrontmatterDates [ dir ] [] with
-    | Ok findings -> Assert.Empty(findings)
-    | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
-
-[<Fact>]
-let ``A frontmatter block whose closing fence is the file's last line leaves an empty body`` () =
-    let dir = DirectTestFixtures.newTempDir ()
-    DirectTestFixtures.writeFile dir "no-body.md" "---\ntitle: T\n---" |> ignore
-
-    match validateFrontmatterDates [ dir ] [] with
-    | Ok findings -> Assert.Empty(findings)
-    | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
-
-[<Fact>]
-let ``validateFrontmatterDates rejects an empty path list`` () =
-    match validateFrontmatterDates [] [] with
-    | Error message -> Assert.Equal("at least one path is required", message)
-    | Ok _ -> Assert.Fail("expected an Error for an empty path list")
-
-[<Fact>]
-let ``validateFrontmatterDatesDetailed rejects an empty path list and reports line numbers on a real violation`` () =
-    match validateFrontmatterDatesDetailed [] [] with
-    | Error message -> Assert.Equal("at least one path is required", message)
-    | Ok _ -> Assert.Fail("expected an Error for an empty path list")
-
-    let dir = DirectTestFixtures.newTempDir ()
-
-    DirectTestFixtures.writeFile dir "dated.md" "---\ntitle: T\nupdated: 2026-01-01\n---\n\nbody\n"
-    |> ignore
-
-    match validateFrontmatterDatesDetailed [ dir ] [] with
-    | Ok findings ->
-        Assert.Contains(
-            findings,
-            fun (f: FrontmatterDatesFinding) ->
-                f.File.Replace('\\', '/').EndsWith("dated.md", StringComparison.Ordinal)
-                && f.Line = 3
-        )
-    | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
-
-// ---- md-audit.feature — direct edge cases ----
-
-[<Fact>]
-let ``runAudit fails when the naming validator reports a violation`` () =
-    let dir = DirectTestFixtures.newTempDir ()
-    DirectTestFixtures.writeFile dir "BadName.md" "# X\n" |> ignore
-
-    let result = runAudit dir
-
-    Assert.False(List.isEmpty result.Failures)
-    Assert.Contains("MD AUDIT FAILED", result.Report)
-
-[<Fact>]
-let ``runAudit fails when the mermaid validator reports a violation`` () =
-    let dir = DirectTestFixtures.newTempDir ()
-
-    DirectTestFixtures.writeFile
-        dir
-        "doc.md"
-        "# Title\n\n```mermaid\nflowchart TD\n    A[This label is definitely longer than thirty characters total]\n```\n"
-    |> ignore
-
-    let result = runAudit dir
-
-    Assert.Contains(result.Failures, fun (f: string) -> f.StartsWith("validate-mermaid", StringComparison.Ordinal))
-    Assert.Contains("MD AUDIT FAILED", result.Report)

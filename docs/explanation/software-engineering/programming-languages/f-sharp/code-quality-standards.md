@@ -296,7 +296,7 @@ indent_size = 2
 - **JetBrains Rider**: Built-in F# support
 - **Visual Studio**: Built-in F# support
 
-**MUST** configure the editor to use the local Fantomas tool (not a globally installed version) to match CI behavior.
+**MUST** configure the editor to use the local Fantomas tool (not a globally installed version) to match CI behaviour.
 
 ## Enforcement
 

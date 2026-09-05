@@ -19,8 +19,9 @@ when_to_use: Use as the step-by-step checklist while executing a bare-repo or si
 2. `git fetch origin` — refresh remote-tracking refs before creating anything from them.
 3. `git worktree add <path> origin/main` — create a linked worktree at the verified, up-to-date tip.
 4. **Re-apply the delta and commit** inside that worktree, exactly as any other worktree-based change.
-5. **Run local quality gates** in the worktree — typecheck, lint, `test:quick`, `specs:coverage`, and
-   the markdown gates where the change touches markdown.
+5. **Run local quality gates** in the worktree — typecheck, lint, `test:quick` (Unit runtime plus
+   every applicable static `test:coverage:*` validator), and the Markdown gates where the change
+   touches Markdown.
 6. `git push origin HEAD:main` — push the worktree's branch tip directly onto the remote `main` ref.
    This is the **direct-push** landing path. When the unit of work instead lands through a branch and
    a pull request, this step becomes the PR's own push-and-merge, and step 7 needs the branch cleanup

@@ -1,3 +1,5 @@
+import { LANDING_ACCESSIBILITY_COLORS } from "../core/accessibility-style";
+
 interface LandingHeroProps {
   onGoApp: () => void;
 }
@@ -119,8 +121,8 @@ export function LandingHero({ onGoApp }: LandingHeroProps) {
               gap: 10,
               padding: "16px 32px",
               borderRadius: 14,
-              backgroundColor: "#1a7474",
-              color: "#ffffff",
+              backgroundColor: LANDING_ACCESSIBILITY_COLORS.interactiveBackground,
+              color: LANDING_ACCESSIBILITY_COLORS.interactiveText,
               fontFamily: "inherit",
               fontSize: 17,
               fontWeight: 800,

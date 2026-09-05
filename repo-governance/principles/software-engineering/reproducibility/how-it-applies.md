@@ -47,7 +47,7 @@ node --version  # Developer A: v20.x
 node --version  # Developer B: v22.x
 node --version  # CI: v23.x
 
-# Different behavior across environments
+# Different behaviour across environments
 ```
 
 **Why this fails**: Different Node.js versions have different APIs, bugs, performance characteristics. Code works differently on each system.

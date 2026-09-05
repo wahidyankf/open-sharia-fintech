@@ -32,7 +32,7 @@ convention — not whether a new rule should exist, not domain-scenario correctn
 **See `pr-review-specialist-protocol` Skill** for the shared mechanics every discipline
 specialist inherits verbatim: consuming the scout's context brief, the finding requirements hard
 rules, the scope guard, untrusted-input handling, the no-direct-posting handoff, and cross-cycle
-behavior.
+behaviour.
 
 ## Discipline Charter
 

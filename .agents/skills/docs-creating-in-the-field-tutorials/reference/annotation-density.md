@@ -10,8 +10,8 @@
 
 **Annotations focus on**:
 
-- Framework behavior (what framework does)
-- Configuration impact (how settings affect behavior)
+- Framework behaviour (what framework does)
+- Configuration impact (how settings affect behaviour)
 - Integration points (where components connect)
 - Security implications (why this approach is secure)
 - Performance characteristics (resource usage, bottlenecks)

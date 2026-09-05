@@ -28,21 +28,21 @@ is a bug.
 
 ## Canonical Governance and Validation Targets
 
-All defined on `rhino-cli`. Other projects expose `specs:coverage` only.
+Repository-wide validators remain on the project that owns their implementation. Behaviour
+coverage is project-local: every owner and dedicated E2E project exposes the applicable static
+`test:coverage:*` targets instead of calling a central Rhino registry.
 
-| Target                                 | Subject                   | Operation                                                     |
-| -------------------------------------- | ------------------------- | ------------------------------------------------------------- |
-| `specs:coverage`                       | Gherkin specs             | Validate every step has a step definition                     |
-| `specs:tree-validation`                | Specs directory tree      | Validate structure matches app registrations                  |
-| `specs:counts-validation`              | Spec scenario/step counts | Validate counts meet thresholds                               |
-| `specs:adoption-validation`            | App registrations         | Validate every app has a spec directory                       |
-| `specs:gherkin-cardinality-validation` | Gherkin keyword usage     | Validate keyword cardinality within bounds                    |
-| `links:validation`                     | All `.md` files           | Validate internal + anchor links                              |
-| `mermaid:validation`                   | Mermaid diagrams          | Validate width, label length, syntax (flowchart + state)      |
-| `headings:hierarchy-validation`        | Prose `.md` files         | Validate heading nesting on allowlist paths                   |
-| `env:validation`                       | `.env.example` files      | Validate against `env-contract:` section in `repo-config.yml` |
-| `governance:vendor-audit-validation`   | `repo-governance/` docs   | Validate no vendor-specific content leakage                   |
-| `cross-vendor:parity-validation`       | All binding trees         | Validate cross-vendor behavioral parity                       |
-| `harness:bindings-validation`          | Binding artifacts         | Validate `.claude/` ↔ `.opencode/` ↔ `.codex/` parity         |
-| `format:check`                         | Rust source               | `rustfmt --check`                                             |
-| `compat:min-version`                   | Rust toolchain            | Minimum Supported Rust Version compatibility                  |
+| Target                               | Subject                   | Operation                                                     |
+| ------------------------------------ | ------------------------- | ------------------------------------------------------------- |
+| `specs:tree-validation`              | Specs directory tree      | Validate structure matches app registrations                  |
+| `specs:counts-validation`            | Spec scenario/step counts | Validate counts meet thresholds                               |
+| `specs:adoption-validation`          | App registrations         | Validate every app has a spec directory                       |
+| `links:validation`                   | All `.md` files           | Validate internal + anchor links                              |
+| `mermaid:validation`                 | Mermaid diagrams          | Validate width, label length, syntax (flowchart + state)      |
+| `headings:hierarchy-validation`      | Prose `.md` files         | Validate heading nesting on allowlist paths                   |
+| `env:validation`                     | `.env.example` files      | Validate against `env-contract:` section in `repo-config.yml` |
+| `governance:vendor-audit-validation` | `repo-governance/` docs   | Validate no vendor-specific content leakage                   |
+| `cross-vendor:parity-validation`     | All binding trees         | Validate cross-vendor behavioural parity                      |
+| `harness:bindings-validation`        | Binding artifacts         | Validate `.claude/` ↔ `.opencode/` ↔ `.codex/` parity         |
+| `format:check`                       | Project source            | Verify the project language's canonical formatter             |
+| `compat:min-version`                 | Project toolchain         | Verify the declared minimum supported toolchain version       |

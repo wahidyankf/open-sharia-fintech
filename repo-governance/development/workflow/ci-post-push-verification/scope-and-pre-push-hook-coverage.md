@@ -22,31 +22,32 @@ This convention applies after **any** push that touches the following, regardles
 - Library source code under `libs/`
 - CI workflow files under `.github/workflows/`
 - Contract specs under `specs/` (blast radius extends to all apps consuming the contract)
-- Configuration files that affect build or test behavior (`nx.json`, `tsconfig.base.json`, `package.json`, etc.)
+- Configuration files that affect build or test behaviour (`nx.json`, `tsconfig.base.json`, `package.json`, etc.)
 
 ## When This Convention Does NOT Apply
 
 This convention does not apply to pushes that exclusively touch:
 
-- `docs/` — documentation only, no app behavior impact
-- `repo-governance/` — governance only, no app behavior impact
+- `docs/` — documentation only, no app behaviour impact
+- `repo-governance/` — governance only, no app behaviour impact
 - `plans/` — planning documents only
 - `generated-reports/` — human-requested artifacts only
 - `social-media-posts/` — social content only
 - `.claude/agents/`, `.claude/skills/` — agent/skill definitions only, no app code impact
 
-The pre-push hook (typecheck, lint, test:quick, specs:coverage) already validates these changes sufficiently.
+The pre-push hook runs the registry-defined gates, including affected `test:quick`; quick owns Unit
+runtime and every applicable static `test:coverage:*` validator.
 
 ## What the Pre-Push Hook Covers vs. What This Convention Covers
 
-| Quality Gate              | Pre-Push Hook | CI Post-Push Verification |
-| ------------------------- | ------------- | ------------------------- |
-| Typecheck                 | Yes           | Yes (as part of CI)       |
-| Lint                      | Yes           | Yes (as part of CI)       |
-| Unit tests (`test:quick`) | Yes           | Yes (as part of CI)       |
-| Integration tests         | No            | Yes                       |
-| E2E tests                 | No            | Yes                       |
-| Deployment workflows      | No            | Yes                       |
-| Spec coverage             | Yes           | Yes (as part of CI)       |
+| Quality Gate              | Pre-Push Hook             | CI Post-Push Verification |
+| ------------------------- | ------------------------- | ------------------------- |
+| Typecheck                 | Yes                       | Yes (as part of CI)       |
+| Lint                      | Yes                       | Yes (as part of CI)       |
+| Unit tests (`test:quick`) | Yes                       | Yes (as part of CI)       |
+| Integration tests         | No                        | Yes                       |
+| E2E tests                 | No                        | Yes                       |
+| Deployment workflows      | No                        | Yes                       |
+| Static test coverage      | Yes, through `test:quick` | Yes, through `test:quick` |
 
 The pre-push hook is fast and local. CI workflows are comprehensive and environment-representative. Both are required.

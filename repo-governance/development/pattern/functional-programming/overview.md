@@ -19,7 +19,7 @@ Functional programming in TypeScript/JavaScript emphasizes:
 
 - **Immutable data**: Prefer `const`, spread operators, and immutable methods
 - **Pure functions**: Deterministic functions without side effects
-- **Function composition**: Build complex behavior from simple functions
+- **Function composition**: Build complex behaviour from simple functions
 - **Functional Core, Imperative Shell**: Pure logic in core, side effects at boundaries
 
 This approach makes code more predictable, testable, and maintainable - especially important for Shariah-compliant business logic that must be verifiable and auditable.

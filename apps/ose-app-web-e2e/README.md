@@ -10,7 +10,7 @@ the app’s Gherkin examples into Playwright-BDD scenarios. 🚦
 npm exec nx -- run ose-app-web-e2e:install
 
 # Playwright starts the web app automatically. Start the API only for
-# scenarios that require local full-stack behavior.
+# scenarios that require local full-stack behaviour.
 npm exec nx -- run ose-be:dev
 
 # Run the browser scenarios
@@ -30,8 +30,14 @@ Keep credentials and deployment-access tokens in uncommitted local configuration
 
 ```bash
 npm exec nx -- run ose-app-web-e2e:test:quick
-npm exec nx -- run ose-app-web-e2e:test:specs
+npm exec nx -- run ose-app-web-e2e:test:coverage
+npm exec nx -- run ose-app-web-e2e:test:e2e
 ```
 
-The product behavior source of truth is
-[the OSE app-web Gherkin suite](../../specs/apps/ose/app-web/behaviors/README.md).
+The product behaviour source of truth is
+[the OSE app-web Gherkin suite](../../specs/apps/ose/app-web/behaviours/README.md).
+
+This dedicated E2E project owns no independent corpus. Its `test:e2e` adapter observes the owner
+application's public browser boundary; `test:coverage:e2e`, `test:coverage:behaviour`, and
+aggregate `test:coverage` validate it statically. Unit and Integration are omitted because their
+in-process and local-resource boundaries belong to the owner application.

@@ -2,13 +2,14 @@ import path from "path";
 import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
 import { expect } from "vitest";
 import type { ContentMeta } from "@/features/content/core/types";
+import { ContentService } from "@/features/content/shell/service";
 import { createCallerFactory } from "@/lib/trpc/init";
 import type { TRPCContext } from "@/lib/trpc/init";
 import { appRouter } from "@/features/app-shell/shell/root-router";
-import { testContentService, testContentServiceWithDraft } from "./helpers/test-service";
+import { testContentService, testRepositoryWithDraft } from "./helpers/test-service";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ose/www/behaviors/backend/content/content-retrieval.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ose/www/behaviours/backend/content/content-retrieval.feature"),
 );
 
 const createCaller = createCallerFactory(appRouter);
@@ -16,15 +17,15 @@ const createCaller = createCallerFactory(appRouter);
 describeFeature(feature, ({ Scenario, Background }) => {
   Background(({ Given }) => {
     Given("the API is running", () => {
-      // test caller is ready
+      expect(createCaller).toBeTypeOf("function");
     });
   });
 
   Scenario("Retrieve a page by slug", ({ Given, When, Then, And }) => {
     let result: Awaited<ReturnType<typeof testContentService.getBySlug>>;
 
-    Given('the content repository contains a page with slug "about"', () => {
-      // testContentService has "about" page in its repository
+    Given('the content repository contains a page with slug "about"', async () => {
+      expect(await testContentService.getBySlug("about")).not.toBeNull();
     });
 
     When('the content service retrieves the page by slug "about"', async () => {
@@ -41,7 +42,6 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(result?.html).toBeTruthy();
     });
 
-    // @covers specs/apps/ose/www/behaviors/backend/content/content-retrieval.feature:Retrieve a page by slug
     And("the response contains extracted headings", () => {
       expect(result?.headings).toBeDefined();
       expect(Array.isArray(result?.headings)).toBe(true);
@@ -51,8 +51,8 @@ describeFeature(feature, ({ Scenario, Background }) => {
   Scenario("List all update posts sorted by date", ({ Given, When, Then, And }) => {
     let results: ContentMeta[];
 
-    Given("the content repository contains multiple update posts", () => {
-      // testContentService has multiple update posts
+    Given("the content repository contains multiple update posts", async () => {
+      expect((await testContentService.listUpdates()).length).toBeGreaterThan(1);
     });
 
     When("the content service lists all updates", async () => {
@@ -69,7 +69,6 @@ describeFeature(feature, ({ Scenario, Background }) => {
       }
     });
 
-    // @covers specs/apps/ose/www/behaviors/backend/content/content-retrieval.feature:List all update posts sorted by date
     And("each update contains title, date, summary, and tags", () => {
       for (const update of results) {
         expect(update.title).toBeTruthy();
@@ -82,21 +81,21 @@ describeFeature(feature, ({ Scenario, Background }) => {
 
   Scenario("Draft pages are excluded from listings", ({ Given, When, Then, And }) => {
     let results: ContentMeta[];
+    let service: ContentService;
 
-    Given("the content repository contains a draft page", () => {
-      // testContentServiceWithDraft has a draft page included
+    Given("the content repository contains a draft page", async () => {
+      expect((await testRepositoryWithDraft.readAllContent()).some((entry) => entry.draft === true)).toBe(true);
     });
 
     And("the OSE_WEB_SHOW_DRAFTS environment variable is not set", () => {
-      delete process.env["OSE_WEB_SHOW_DRAFTS"];
+      service = new ContentService(testRepositoryWithDraft, undefined, { showDrafts: false });
     });
 
     When("the content service lists all updates", async () => {
-      const caller = createCaller({ contentService: testContentServiceWithDraft } as TRPCContext);
+      const caller = createCaller({ contentService: service } as TRPCContext);
       results = await caller.content.listUpdates();
     });
 
-    // @covers specs/apps/ose/www/behaviors/backend/content/content-retrieval.feature:Draft pages are excluded from listings
     Then("the draft page is not included in the results", () => {
       const hasDraft = results.some((r) => r.draft === true);
       expect(hasDraft).toBe(false);
@@ -106,8 +105,8 @@ describeFeature(feature, ({ Scenario, Background }) => {
   Scenario("Non-existent slug returns null", ({ Given, When, Then }) => {
     let result: Awaited<ReturnType<typeof testContentService.getBySlug>>;
 
-    Given('the content repository contains no page with slug "nonexistent"', () => {
-      // testContentService has no page with slug "nonexistent"
+    Given('the content repository contains no page with slug "nonexistent"', async () => {
+      expect(await testContentService.getBySlug("nonexistent")).toBeNull();
     });
 
     When('the content service retrieves the page by slug "nonexistent"', async () => {
@@ -115,7 +114,6 @@ describeFeature(feature, ({ Scenario, Background }) => {
       result = await caller.content.getBySlug({ slug: "nonexistent" });
     });
 
-    // @covers specs/apps/ose/www/behaviors/backend/content/content-retrieval.feature:Non-existent slug returns null
     Then("the response is null", () => {
       expect(result).toBeNull();
     });

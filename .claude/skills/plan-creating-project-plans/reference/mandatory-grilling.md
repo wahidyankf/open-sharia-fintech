@@ -34,7 +34,7 @@ status quo when viable, with their trade-offs. If fewer exist, record the search
 constraints instead of inventing choices. The plan preserves the final selection, evidence,
 rejection reasons, consequences, and revisit triggers. A material decision changes the delivered
 product, architecture, implementation contract, delivery, rollout, testing, operation, or recovery
-behavior. Do not grill or preserve wording changes, section moves, checker/fixer iterations, or
+behaviour. Do not grill or preserve wording changes, section moves, checker/fixer iterations, or
 other editorial plan history unless they change that delivered contract.
 
 **Pre-write grill covers** (each as a structured multiple-choice question):

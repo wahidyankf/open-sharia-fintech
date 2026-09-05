@@ -27,10 +27,10 @@ validation rules layered on top of the base five validation-scope sections.
   re-validation mode, codebase inspection).
 - `reference/08-factual-accuracy-validation.md` — Factual Accuracy Validation (Step 4b).
 - `reference/09-rule8-operational-readiness-validation.md`,
-  `reference/10-rule9-manual-behavioral-assertion-validation.md`,
+  `reference/10-rule9-manual-behavioural-assertion-validation.md`,
   `reference/11-rule10-worktree-specification-validation.md`, and
   `reference/12-rule11-execution-grade-clarity-validation.md` — rules 8-11: Operational Readiness
-  (5b), Manual Behavioral Assertion (5c), Worktree Specification (5d), Execution-Grade Clarity (5e).
+  (5b), Manual Behavioural Assertion (5c), Worktree Specification (5d), Execution-Grade Clarity (5e).
 - `reference/13-rule12-anti-hallucination-scan.md`,
   `reference/14-rule13-harness-neutrality-scan.md`,
   `reference/15-rule14-executor-tag-validation.md`, and
@@ -65,15 +65,17 @@ safeguards omitted in the name of minimalism is a finding.
 
 **Delivery boundaries are contextual**: LOC and file counts never create, erase, or force them.
 Validate one natural cohesive seam per unit, every artifact needed for internal consistency, and an
-immediately production-deployable resulting `main` state. Incomplete behavior requires a temporary
+immediately production-deployable resulting `main` state. Incomplete behaviour requires a temporary
 production-disabled flag, tests for both paths, and rollout/rollback/removal.
 
 ## Quality-Gate Lifecycle Handoff
 
 When the plan quality gate provides `delegated-gate-ids` and an evidence ledger, omit only exact
 registry IDs or predicates connected through `verifies`. Deterministic gates own links, maps, word
-budgets, formatting, Mermaid mechanics, and Gherkin cardinality. Preserve pending state; never rerun
-or infer delegated work. Plan structure, semantics, evidence, and executability remain in scope. See the
+budgets, formatting, and Mermaid mechanics. Project-local `test:coverage:behaviour` owns static
+Gherkin corpus, adapter, exemption, and journey-shape evidence; semantic journey quality remains in
+scope. Preserve pending state; never rerun or infer delegated work. Plan structure, semantics,
+evidence, and executability remain in scope. See the
 [lifecycle ownership policy](../../../repo-governance/workflows/meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
 
 ## Related

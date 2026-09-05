@@ -69,7 +69,7 @@ Rule 3 is what makes rule 4 safe: because a file value can never overwrite a pro
 CI can inject real secrets as process environment variables with no tier file on disk at all, and
 a developer's `.env.local` values are never silently clobbered by a stray tier file.
 
-## Per-language loader behavior
+## Per-language loader behaviour
 
 ### Next.js
 

@@ -11,7 +11,7 @@ route's status code, its response body, and the conditions under which it fails.
 - [Architecture](./architecture.md) — the current as-built system: its context, the one process it
   deploys, its handler layer, and the constraints that bind them.
 - [API reference](./api.md) — every route the service exposes, with its status codes and bodies.
-- [Behaviors](./behaviors/README.md) — the recursive Gherkin corpus, grouped by route domain.
+- [Behaviours](./behaviours/README.md) — the recursive Gherkin corpus, grouped by route domain.
 - [Contracts](./contracts/README.md) — the OpenAPI 3.1 specification both this service and its
   callers generate from.
 

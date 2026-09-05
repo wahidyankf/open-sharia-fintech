@@ -1,31 +1,28 @@
 ---
-title: "Target Anti-Patterns"
-description: The catalog of Nx target anti-patterns to avoid -- non-standard names, omitted mandatory targets, heavy test:quick, and more.
+title: "Nx Target Anti-Patterns"
+description: "Testing and lifecycle target definitions that falsely satisfy or weaken project gates"
 category: explanation
 subcategory: development
-tags:
-  - nx
-  - targets
-  - project-json
-  - build
-  - scripts
+tags: [nx, targets, testing]
 created: 2026-02-23
-when_to_use: Use when reviewing a project.json for target-definition mistakes before merging.
+when_to_use: "Use when reviewing project.json target definitions."
 ---
 
-# Target Anti-Patterns
+# Nx Target Anti-Patterns
 
-- **Non-standard target names**: `serve` instead of `dev`/`start`, `unit-test` instead of `test:unit`, `integration-test` instead of `test:integration`, `check` instead of `lint` or `typecheck`, bare `test` or `test:full` instead of a specific `test:*` variant
-- **Omitting mandatory-six targets**: Every project must declare all six mandatory targets (`test:unit`, `test:integration`, `test:e2e`, `test:quick`, `lint`, `typecheck`); omitting any one silently breaks `nx affected -t <target>` workspace-wide — use echo placeholders instead
-- **Missing `test:quick`**: Omitting the pre-push gate target silently excludes the project from `nx affected -t test:quick` — this breaks the workspace-wide hook
-- **Missing `lint`**: Projects without `lint` cannot participate in workspace-wide lint runs or the pre-push hook lint gate
-- **Heavy `test:quick`**: Including slow integration tests or E2E in `test:quick` defeats its purpose — `test:quick` composes `typecheck` → `lint` → `test:unit` → `test:coverage` → `test:specs`, all of which must stay fast; `test:integration` and `test:e2e` are CRON-only
-- **Mixing concerns in `test:unit`**: `test:unit` must not spin up databases, external APIs, or network services — those belong in `test:integration`
-- **Using a real database in unit tests**: Unit tests must use mocked repositories or in-memory implementations — never a real database. Real databases belong in integration tests (API backends via docker-compose) or E2E tests
-- **Using HTTP dispatch in integration tests**: Integration tests for API backends must call service/repository functions directly — not through HTTP dispatch mechanisms. HTTP contract verification belongs in E2E tests. See [Three-Level Testing Standard](../../quality/three-level-testing-standard.md) for the full level boundaries
-- **Enabling cache on `test:integration` with Docker**: Integration tests that use real PostgreSQL via docker-compose must have `cache: false` — stale results when database state matters. Only in-process-mocking integration tests (MSW, Godog) may enable caching
-- **`build` on interpreted-language projects**: Adding a no-op `build` to plain Node.js scripts just to appear consistent — if there is no compile step, there is no `build` target
-- **`typecheck` on compile-enforced languages without additional analysis**: Rust enforces types through `build`; a separate `typecheck` that only re-runs the compiler may be redundant for simple projects
-- **Undeclared outputs**: Omitting `outputs` on `build` disables caching and forces full rebuilds on every run
-- **Apps-only targets on libs**: Libs do not expose `dev` or `start`; those are app-specific concepts
-- **Creating a `test:full` wrapper**: Adding a `test:full` that just chains other targets adds indirection without value — `test:integration` and `test:e2e` run directly in scheduled CI matrix steps, not through a wrapper
+- Non-canonical aliases such as `unit-test`, `integration-test`, `test:full`, or
+  `specs:behaviour:coverage`.
+- Echo/no-op/success-sentinel targets or runtime aliases used to claim an inapplicable layer.
+- Unit tests whose setup, subject, or assertions touch real filesystem, database, environment,
+  clock, randomness, process, network, or other OS-facing dependencies.
+- Integration tests that use mocks instead of an owned local boundary, or any network path,
+  including loopback and a local HTTP server.
+- E2E tests that permit network use but do not observe a public boundary.
+- Any `test:coverage:*` target that executes or depends on a runtime test target.
+- A `test:quick` that omits an applicable static coverage validator or reaches Integration/E2E.
+- Integration/E2E runtime wired into pre-commit, pre-push, or PR/main quality gates.
+- Inputs that omit the owning recursively discovered Gherkin corpus.
+- Cached targets whose real mutable resource cannot be isolated deterministically.
+
+The [BDD standard](../../behaviour-driven-development.md) defines the canonical boundaries and
+applicability rules.

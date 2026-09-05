@@ -48,7 +48,7 @@ These guides introduce the engineering ideas used across the project. They are u
 Decision logs record the context, options, and conclusions behind changes that affect multiple OSE repositories. Read them when a rule feels surprising or when you need the rationale before extending related work.
 
 - [Plan Domain Parity — Design Decisions (2026-06-06)](./plan-domain-parity-decisions.md) — Decisions from the cross-repository parity effort, including resolved and rejected approaches.
-- [Gherkin Step-Keyword Cardinality — Parity Decisions (2026-06-07)](./gherkin-step-keyword-cardinality-parity-decisions.md) — The canonical rule, deliberate repository differences, and aligned decisions for Gherkin step keywords.
+- [Gherkin Step-Keyword Cardinality — Parity Decisions (2026-06-07)](./gherkin-step-keyword-cardinality-parity-decisions.md) — Historical record of the superseded one-primary-keyword decision.
 - [Standardize App Spec Trees — Parity Decisions (2026-06-11)](./standardize-app-spec-trees-parity-decisions.md) — Decisions on app-spec naming, merges, renames, and backend suffixes.
 - [Lint & Safety Parity — Decisions (2026-06-12)](./lint-safety-parity-decisions.md) — Decisions on cross-language quality gates, configuration cleanup, and intentional exemptions.
 

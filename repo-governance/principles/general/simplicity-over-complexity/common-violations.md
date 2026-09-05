@@ -8,7 +8,7 @@ tags:
   - simplicity
   - over-engineering
 created: 2025-12-15
-when_to_use: Use when identifying whether a behavior violates this principle.
+when_to_use: Use when identifying whether a behaviour violates this principle.
 ---
 
 # Common Violations
@@ -16,7 +16,7 @@ when_to_use: Use when identifying whether a behavior violates this principle.
 ## Violation 1: Anticipating Future Requirements
 
 ```
-FAIL: "I'll make this configurable in case you need different behavior later"
+FAIL: "I'll make this configurable in case you need different behaviour later"
 PASS: "Here's the solution for your current requirement. We can make it configurable if needed."
 ```
 

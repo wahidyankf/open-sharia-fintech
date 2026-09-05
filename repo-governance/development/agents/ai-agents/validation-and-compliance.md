@@ -36,6 +36,6 @@ Before committing a new agent:
 
 1. **Read this entire convention** - Understand all requirements
 2. **Use the agent creation checklist** - Verify all items
-3. **Test the agent** - Invoke it and verify behavior
+3. **Test the agent** - Invoke it and verify behaviour
 4. **Review existing agents** - Ensure consistency
 5. **Run repo-rules-checker** - Validate compliance

@@ -25,8 +25,8 @@ when_to_use: Use when looking up which agent validates this convention, finding 
 **Related Development Standards:**
 
 - [Vercel Deployment Convention](../vercel-deployment.md) - How Vercel builds are configured
-- [Manual Behavioral Verification](../../quality/manual-behavioral-verification.md) - Verifying real
-  running behavior rather than asserting from source
+- [Manual Behavioural Verification](../../quality/manual-behavioural-verification.md) - Verifying real
+  running behaviour rather than asserting from source
 - [CI Post-Push Verification](../../workflow/ci-post-push-verification.md) - The CI-side counterpart
 
 **Related Workflows:**

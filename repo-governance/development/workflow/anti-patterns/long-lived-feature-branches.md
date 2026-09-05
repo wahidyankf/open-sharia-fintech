@@ -47,7 +47,7 @@ gh pr create --draft --base main
 
 Under a declared direct-push mode the same shape applies without the branch and PR — commit and
 `git push origin main` daily. Either way the fix is the same: **integrate internally complete,
-production-deployable increments frequently**. Incomplete behavior stays inert behind a temporary
+production-deployable increments frequently**. Incomplete behaviour stays inert behind a temporary
 production-disabled flag; both paths pass and rollout, rollback, and removal are recorded.
 
 **Rationale:**

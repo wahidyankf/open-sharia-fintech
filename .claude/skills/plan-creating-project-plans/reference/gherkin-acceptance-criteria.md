@@ -18,12 +18,15 @@ Then they are redirected to the dashboard
 And their session is created with correct permissions
 ```
 
-**Step-Keyword Cardinality (HARD Rule)**: Every `Scenario` MUST use exactly one primary `Given` line, exactly one primary `When` line, and exactly one primary `Then` line — chain every additional precondition, action, or outcome with `And`/`But`, never a repeated primary keyword. `Background` blocks and `Scenario Outline` `Examples` tables are exempt. See [Acceptance Criteria Convention §Step-Keyword Cardinality (HARD Rule)](../../../../repo-governance/development/infra/acceptance-criteria.md#step-keyword-cardinality-hard-rule).
+**Journey coherence**: Every scenario requires explicit `When` and `Then`. Prefer `And`/`But` for
+continuation, but allow repeated primary keywords for one continuous journey. Split only
+independently meaningful actions/outcomes. See the
+[acceptance-criteria convention](../../../../repo-governance/development/infra/acceptance-criteria/gherkin-format-and-step-keyword-cardinality.md).
 
 **Best Practices**:
 
 - Use concrete, testable conditions
-- Focus on behavior, not implementation
+- Focus on behaviour, not implementation
 - One scenario per user story
 - Make scenarios independent
 - Use consistent language

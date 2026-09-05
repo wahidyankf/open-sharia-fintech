@@ -44,7 +44,7 @@ import { Button, Card, CardHeader, CardTitle, cn } from "@open-sharia-enterprise
 ```bash
 nx run web-ui:typecheck        # Type checking
 nx run web-ui:test:unit        # Unit tests with vitest-axe
-nx run web-ui:test:quick       # Tests + coverage validation (>=70%)
+nx run web-ui:test:quick       # Unit + static coverage (Unit lines >=99%)
 ```
 
 ## Storybook
@@ -77,3 +77,11 @@ All components follow the patterns in [Component Patterns Convention](../../repo
 - `data-slot` attribute on every root element
 - `cn()` utility for class merging
 - Semantic tokens only (no hardcoded colors)
+
+## BDD and Testing
+
+The canonical corpus is `specs/libs/web-ui/behaviours/`. `test:unit` runs component adapters in
+process, while `test:e2e` drives Chromium against Storybook as the library's genuine public browser
+boundary. Matching `test:coverage:unit`, `test:coverage:e2e`, `test:coverage:behaviour`, and
+aggregate `test:coverage` validate both adapters statically. Integration is omitted because the
+library owns no non-networked local-resource boundary.

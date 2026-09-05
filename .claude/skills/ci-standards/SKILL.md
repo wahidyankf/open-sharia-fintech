@@ -1,76 +1,60 @@
 ---
 name: ci-standards
-description: CI/CD standards knowledge for validating project compliance with CI conventions
+description: CI/CD standards knowledge for project-role targets, static BDD coverage, runtime boundaries, hooks, and scheduled tests
 context: inline
 ---
 
 # CI Standards
 
-Inline skill providing CI/CD standards knowledge from the governance documentation. Used by `ci-checker` and `ci-fixer` agents to validate compliance.
+Use the [BDD standard](../../../repo-governance/development/behaviour-driven-development.md),
+[Nx targets](../../../repo-governance/development/infra/nx-targets.md), and
+[CI conventions](../../../repo-governance/development/infra/ci-conventions.md) as canonical sources.
 
-## Reference Documents
+## Project-Role Target Contract
 
-- [CI/CD Conventions](../../../repo-governance/development/infra/ci-conventions.md) — Central CI conventions reference
-- [Three-Level Testing Standard](../../../repo-governance/development/quality/three-level-testing-standard.md) — Test level definitions
-- [Nx Target Standards](../../../repo-governance/development/infra/nx-targets.md) — Mandatory targets per project type
-- [Specs Directory Structure Convention](../../../repo-governance/conventions/structure/specs-directory-structure.md) — Canonical path patterns for specs/ directory
+- Every behaviour owner has real `test:unit`, `test:coverage:unit`,
+  `test:coverage:behaviour`, and `test:quick` targets.
+- `test:unit` collects native line coverage and hard-fails below 99%; dedicated E2E projects do not
+  own Unit and never waive their source owner's threshold.
+- Add `test:integration` plus `test:coverage:integration` only for an owned real local-resource
+  boundary.
+- Add E2E runtime/static coverage only for a public boundary. A dedicated E2E project implements its
+  owner's corpus and does not invent Unit/Integration targets.
+- Omit inapplicable targets. Echo/no-op/sentinel targets and compatibility aliases are violations.
+- `test:coverage` aggregates applicable static coverage validators. Every applicable validator is
+  mandatory in `test:quick`.
 
-## Mandatory Nx Targets Per App Type
+## Boundary and Execution Contract
 
-| App Type         | Required Targets                                                                                  |
-| ---------------- | ------------------------------------------------------------------------------------------------- |
-| Demo-be backend  | codegen, typecheck, lint, build, test:unit, test:quick, test:integration, specs:behavior:coverage |
-| Demo-fe frontend | codegen, typecheck, lint, build, test:unit, test:quick, specs:behavior:coverage                   |
-| Fullstack app    | codegen, typecheck, lint, build, test:unit, test:quick, test:integration, specs:behavior:coverage |
-| CLI app (F#)     | typecheck, lint, build, test:unit, test:quick, test:integration, specs:behavior:coverage          |
-| Content platform | typecheck, lint, build, test:unit, test:quick, test:integration, specs:behavior:coverage          |
-| Library          | lint, build, test:unit, test:quick                                                                |
-| E2E runner       | lint, test:e2e, test:e2e:ui, specs:behavior:coverage                                              |
+Unit replaces every OS-facing dependency through injection. Integration may use isolated local
+resources/processes but no network, including loopback or a local server. E2E observes a real
+public browser, HTTP, or process boundary with synthetic isolated data.
 
-Required-target lists name Nx targets that must exist, not necessarily distinct test scopes: for
-`rhino-cli`, `test:unit` and `test:integration` both exist as required, but
-`test:integration` — a single-scenario F# suite (`Steps/PreCommitHookSteps.fs`) — is not wired
-into any CI job for this app, so it never runs outside a local
-`nx run rhino-cli:test:integration` invocation. See [Per-Backend and CLI App Implementation
-Patterns](../../../repo-governance/development/quality/three-level-testing-standard/per-backend-and-cli-app-implementation-patterns.md).
+Runtime `test:*` targets execute tests. Static `test:coverage:*` targets never execute or depend on
+runtime tests. Pre-commit runs staged deterministic checks only. Pre-push runs affected quick
+targets with `--parallel=1`; PR/main may use explicitly bounded shard parallelism. Neither runs
+Integration/E2E runtime. Development/review runs impacted higher-layer scenarios manually;
+scheduled or manually dispatched full-quality CI runs all static validators, complete Integration,
+then complete unfiltered E2E.
 
-## Coverage Thresholds
+An explicitly enumerated boundary adapter may leave the Unit denominator only when it is wholly a
+resource, process, generated-code, or static-data boundary and named Integration or E2E runtime
+proof exercises it. Keep exclusions to named files or narrow functions. Broad path globs, mixed
+core-logic exclusions, and boundary code without higher-layer proof are coverage gaming.
 
-| Threshold | Projects                                   |
-| --------- | ------------------------------------------ |
-| 90%       | organiclever-be, CLI apps                  |
-| 80%       | Content platforms (ayokoding-www, ose-www) |
-| 70%       | organiclever-app-web                       |
+## Gherkin Contract
 
-## Docker Setup Requirements
+All owners use one recursively discovered `behaviours/` corpus. Every active scenario has Unit
+proof. Applicable Integration/E2E requires implementation or an independently valid
+boundary-mismatch exemption. Both exemptions may coexist. Each tag has its own immediately
+preceding `# Exemption(layer): <boundary mismatch>; alternative-proof: <Nx target> / <scenario>`
+comment and names substantive proof in an unexempted layer; Unit remains mandatory. Difficulty,
+runtime/speed, flakiness, cost/expense, `TODO`, missing implementation, and unfinished work are
+invalid reasons. `@wip` and positive layer-selection tags are forbidden. Static coverage never replaces the
+[semantic implementation review](../../../repo-governance/workflows/gherkin-implementation-review.md).
 
-Every app with a `dev` or `test:integration` target must have:
+## Lifecycle Handoff
 
-- `infra/dev/{app}/docker-compose.yml` — Dev environment
-- `infra/dev/{app}/docker-compose.ci.yml` — CI overlay (backends only)
-- `infra/dev/{app}/.env.example` — Environment variable template
-- `apps/{app}/docker-compose.integration.yml` — Integration tests (backends only)
-
-## E2E Pairing Rules
-
-| Variant Type | Pairs With                      |
-| ------------ | ------------------------------- |
-| Backend      | Corresponding frontend via E2E  |
-| Frontend     | Corresponding backend via E2E   |
-| Fullstack    | Self-contained (own API routes) |
-
-## Gherkin Consumption Mandate
-
-All testable projects must consume Gherkin specs at ALL test levels. Unit tests are a superset of Gherkin — they MUST implement ALL Gherkin scenarios plus additional non-Gherkin tests.
-
-## Workflow Requirements
-
-Each demo backend/frontend must have a per-variant test workflow (`test-{app-name}.yml`) calling reusable workflows with CRON schedule (2x daily at WIB 06:00 and 18:00).
-
-## Quality-Gate Lifecycle Handoff
-
-When the CI quality gate provides `delegated-gate-ids` and an evidence ledger, audit the standards
-and declarations but omit exact registry-owned predicates or those connected through `verifies`.
-Preserve pending state; never execute, imitate, revalidate, or fix delegated work. See the
-[lifecycle ownership policy](../../../repo-governance/workflows/meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
-Fixers invalidate evidence whose registered scope intersects their changed files.
+When a CI quality gate supplies `delegated-gate-ids` and evidence, omit only exact delegated
+predicates. Preserve pending evidence and invalidate only entries whose registered scope intersects
+fixer changes.

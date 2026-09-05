@@ -46,7 +46,7 @@ normalization but never word changes.
 
 ## Graceful Degradation
 
-| Tool Missing                      | Behavior                                                                                  |
+| Tool Missing                      | Behaviour                                                                                 |
 | --------------------------------- | ----------------------------------------------------------------------------------------- |
 | `crane` not found                 | Prefix with `cargo run --manifest-path apps/crane-cli/Cargo.toml --`                      |
 | `tesseract` not found (image PDF) | Fail: `ERROR: tesseract required for image-only PDFs. Install: brew install tesseract`    |

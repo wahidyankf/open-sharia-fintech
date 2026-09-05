@@ -18,6 +18,8 @@
     <Compile Include="Steps/JournalSteps.fs" />
     <Compile Include="Steps/EnvTierSteps.fs" />
     <Compile Include="Steps/MessagingSteps.fs" />
+    <Compile Include="Steps/DbMigrationSteps.fs" />
+    <Compile Include="Steps/LiveMessagingSteps.fs" />
     <Compile Include="Tests/HealthHandlerTests.fs" />
     <Compile Include="Tests/HealthContextTests.fs" />
     <Compile Include="Tests/JournalDomainTests.fs" />

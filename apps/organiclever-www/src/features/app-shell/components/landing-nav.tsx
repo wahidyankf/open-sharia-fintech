@@ -25,6 +25,7 @@ function LeverIcon() {
 export function LandingNav({ onGoApp }: LandingNavProps) {
   return (
     <nav
+      aria-label="Primary navigation"
       style={{
         display: "flex",
         alignItems: "center",

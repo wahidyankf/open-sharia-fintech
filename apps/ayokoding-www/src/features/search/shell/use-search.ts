@@ -4,7 +4,7 @@ import { createContext, useContext } from "react";
 
 interface SearchState {
   open: boolean;
-  setOpen: (open: boolean) => void;
+  setOpen: (open: boolean, opener?: HTMLElement) => void;
 }
 
 export const SearchContext = createContext<SearchState>({

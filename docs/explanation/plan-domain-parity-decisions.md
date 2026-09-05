@@ -85,7 +85,7 @@ research runs.
 ### Row 3 — plan-planning Merge; Worktree Default; target-stage
 
 **Decision**: perform a best-of merge across both repos. The merged version
-also adds a **new default behavior**: plans are authored inside a
+also adds a **new default behaviour**: plans are authored inside a
 dedicated worktree (`worktrees/<identifier>/`), provisioned if absent via
 `git worktree add -b <identifier> worktrees/<identifier> main` followed by
 `npm install` and `npm run doctor -- --fix`. After delivery the worktree is

@@ -1,0 +1,38 @@
+[
+  {
+    "id": "about",
+    "title": "Enterprise Compliance Fixture",
+    "content": "Synthetic enterprise and compliance evidence for isolated search tests.",
+    "slug": "about"
+  },
+  {
+    "id": "updates/phase-0",
+    "title": "Phase 0 End",
+    "content": "Phase enterprise compliance milestone.",
+    "slug": "updates/2026-02-08-phase-0-end"
+  },
+  {
+    "id": "updates/phase-1",
+    "title": "Phase 1 Fixture",
+    "content": "Phase enterprise delivery.",
+    "slug": "updates/2026-02-07-phase-1"
+  },
+  {
+    "id": "updates/phase-2",
+    "title": "Phase 2 Fixture",
+    "content": "Phase compliance verification.",
+    "slug": "updates/2026-02-06-phase-2"
+  },
+  {
+    "id": "updates/phase-3",
+    "title": "Phase 3 Fixture",
+    "content": "Phase controls review.",
+    "slug": "updates/2026-02-05-phase-3"
+  },
+  {
+    "id": "updates/phase-4",
+    "title": "Phase 4 Fixture",
+    "content": "Phase evidence closure.",
+    "slug": "updates/2026-02-04-phase-4"
+  }
+]

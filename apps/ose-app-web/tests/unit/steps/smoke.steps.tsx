@@ -1,0 +1,31 @@
+import path from "node:path";
+import { cleanup, render, screen } from "@testing-library/react";
+import { describeFeature, loadFeature } from "@amiceli/vitest-cucumber";
+import { expect } from "vitest";
+import Home from "../../../src/app/page";
+
+const feature = await loadFeature(
+  path.resolve(process.cwd(), "../../specs/apps/ose/app-web/behaviours/smoke/smoke.feature"),
+);
+
+describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
+  AfterEachScenario(cleanup);
+
+  Scenario("Home page loads", ({ Given, When, Then }) => {
+    let routeComponent: typeof Home;
+
+    Given("the ose-app-web dev server is running", () => {
+      // The Unit adapter replaces the HTTP/process boundary with the configured route component.
+      routeComponent = Home;
+      expect(routeComponent).toBeTypeOf("function");
+    });
+
+    When('I navigate to "/"', () => {
+      render(routeComponent());
+    });
+
+    Then('I see the heading "OSE Application"', () => {
+      expect(screen.getByRole("heading", { level: 1, name: "OSE Application" })).toBeVisible();
+    });
+  });
+});

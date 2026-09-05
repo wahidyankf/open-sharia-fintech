@@ -33,21 +33,21 @@ specs/
 │           ├── README.md
 │           ├── architecture.md
 │           ├── contracts/    # optional: in the owner that serves the contract
-│           └── behaviors/
+│           └── behaviours/
 │               └── <domain>/
 │                   └── <feature>.feature
 └── libs/
     └── <lib-name>/
         ├── README.md
         ├── architecture.md
-        └── behaviors/
+        └── behaviours/
             └── <domain>/
                 └── <feature>.feature
 ```
 
 ### Which Entries Each Project Populates
 
-`README.md`, `architecture.md`, and a non-empty `behaviors/` are required of every corpus. What
+`README.md`, `architecture.md`, and a non-empty `behaviours/` are required of every corpus. What
 varies is how many corpora a product holds and whether the optional entries appear:
 
 - **`<owner>/contracts/`**: Present for a surface that publishes an OpenAPI contract, inside the
@@ -60,4 +60,4 @@ varies is how many corpora a product holds and whether the optional entries appe
 
 Every directory within a spec area must contain a `README.md` index file. README files serve as entry points when browsing on GitHub, providing context about what specifications exist at each level. This follows the same pattern used throughout the repository — see [File Naming Convention](../file-naming.md).
 
-The order of entries in any corpus README listing follows the canonical order: `architecture.md`, `contracts/`, `behaviors/`.
+The order of entries in any corpus README listing follows the canonical order: `architecture.md`, `contracts/`, `behaviours/`.

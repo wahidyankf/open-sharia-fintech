@@ -29,7 +29,7 @@ is a coarser, per-repository unit: each repo's plan is capped at one worktree, r
 delivery unit it lands in that repo — see
 [Plans Organization Convention §Worktree Cap](../../../conventions/structure/plans/worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).
 Each unit follows one natural cohesive seam, never a LOC or file-count boundary, and its resulting
-`main` state is immediately safe to deploy to production. Incomplete behavior reaches `main` only
+`main` state is immediately safe to deploy to production. Incomplete behaviour reaches `main` only
 as a complete-and-inert increment behind a temporary production-disabled **feature flag**, with
 both paths tested and rollout, rollback, and removal recorded. A phase lands unflagged only when it
 ships no user-reachable behaviour change and the step names that exemption. See

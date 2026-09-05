@@ -12,6 +12,6 @@ title: "Reference"
 - [Independence Coupling And Style](./independence-coupling-and-style.md) — scenario independence, UI coupling, and style guidance
 - [Integration With Plans](./integration-with-plans.md) — the plan acceptance-criteria format for integrating Gherkin into plans
 - [Phase Gate Acceptance Checks](./phase-gate-acceptance-checks.md) — phase-gate checklist items inside Phase N Gate blocks in delivery.md
-- [Step Keyword Cardinality](./step-keyword-cardinality.md) — the hard rule that every scenario uses exactly one primary Given/When/Then
+- [Journey Coherence](./step-keyword-cardinality.md) — explicit When/Then with repeated primary steps allowed for one continuous journey
 - [Writing Clear Scenarios](./writing-clear-scenarios.md) — do's and don'ts for writing clear, testable scenarios
   </content>

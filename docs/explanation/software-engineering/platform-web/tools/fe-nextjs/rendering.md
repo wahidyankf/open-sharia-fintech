@@ -89,7 +89,7 @@ graph TD
 
 ## Static Rendering (SSG)
 
-### Default Behavior
+### Default Behaviour
 
 All routes are **statically rendered by default** at build time:
 

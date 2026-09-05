@@ -23,7 +23,7 @@ grammar, allowed tokens, and the rule that the workflow `name:` field must mirro
 | Frontend app              | `{domain}-app-web`                                                                           | `organiclever-app-web`                        |
 | www site app              | `{domain}-www`                                                                               | `organiclever-www`                            |
 | Infra dev directory       | `infra/dev/{app-name}/`                                                                      | `infra/dev/organiclever-be/`                  |
-| Specs directory           | See [Specs Directory Structure](../../../conventions/structure/specs-directory-structure.md) | `specs/apps/organiclever/be/behaviors/`       |
+| Specs directory           | See [Specs Directory Structure](../../../conventions/structure/specs-directory-structure.md) | `specs/apps/organiclever/be/behaviours/`      |
 | Reusable workflow         | `_reusable-{purpose}.yml`                                                                    | `_reusable-app-test-local-deploy-stag.yml`    |
 | www deploy workflow       | `{domain}-www-test-local-deploy-prod.yml`                                                    | `organiclever-www-test-local-deploy-prod.yml` |
 | App staging workflow      | `{domain}-app-test-local-deploy-stag.yml`                                                    | `organiclever-app-test-local-deploy-stag.yml` |

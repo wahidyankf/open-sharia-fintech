@@ -33,7 +33,7 @@ When the probe says absent, the plan does not stall. Each observation falls back
 | Wanted                          | Fallback                                                                |
 | ------------------------------- | ----------------------------------------------------------------------- |
 | Deployment state and provenance | The deploy branch's git log, plus the CI run that pushed it             |
-| Cache and header behavior       | An HTTP request against the live URL, recording response headers        |
+| Cache and header behaviour      | An HTTP request against the live URL, recording response headers        |
 | Per-route invocation volume     | **No fallback.** Mark the step `[HUMAN]` (dashboard) or drop the claim. |
 | Build failure diagnosis         | The CI job log                                                          |
 

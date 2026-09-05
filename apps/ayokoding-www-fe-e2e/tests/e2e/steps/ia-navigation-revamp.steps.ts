@@ -1,8 +1,10 @@
 import { createBdd } from "playwright-bdd";
-import { expect } from "@playwright/test";
+import { expect, type Locator } from "@playwright/test";
 import { getResilient } from "../support/resilient-request";
 
 const { Given, When, Then } = createBdd();
+let internalHrefsBySurface: Record<"sidebar" | "breadcrumb" | "prevNext" | "search", string[]>;
+let internalLinkStatuses: Array<{ href: string; status: number }> = [];
 
 // ---------------------------------------------------------------------------
 // Scenario: Breadcrumb segments link to their bare content URLs (DD-48)
@@ -18,7 +20,6 @@ When("the breadcrumb renders its ancestor segments", async ({ page }) => {
   await expect(breadcrumb).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/ia-navigation-revamp.feature:Breadcrumb segments link to their bare content URLs
 Then("each ancestor crumb links to its bare content URL", async ({ page }) => {
   const breadcrumb = page.getByRole("navigation", { name: /breadcrumb/i });
   const links = breadcrumb.getByRole("link");
@@ -44,70 +45,60 @@ Then("each ancestor crumb links to its bare content URL", async ({ page }) => {
 Given("the sidebar tree, breadcrumb, prev-next, and search results render content links", async ({ page }) => {
   // Navigate directly to the content's current bare/legacy resting place (DD-42),
   // a page with sidebar, breadcrumb, and prev/next chrome.
-  await page.goto("/en/learn/legacy/software-engineering/algorithms-and-data-structures");
+  await page.goto("/en/learn/courses/just-enough-python/learning/beginner");
   await page.waitForLoadState("networkidle");
+  await expect(page.getByRole("navigation", { name: "Sidebar navigation" })).toBeAttached();
+  await expect(page.getByRole("navigation", { name: "Breadcrumb" })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Page navigation" })).toBeVisible();
+  await page
+    .getByRole("button", { name: /search/iu })
+    .first()
+    .click();
+  const searchDialog = page.getByRole("dialog");
+  await searchDialog.getByRole("combobox").fill("programming");
+  await expect(searchDialog.getByRole("option").first()).toBeVisible({ timeout: 15000 });
 });
 
 When("their hrefs are computed via the central content URL helper", async ({ page }) => {
-  // All link-emitting components (sidebar-tree, breadcrumb, prev-next) are rendered;
-  // gathering hrefs is done in the Then steps below.
-  await expect(page.getByRole("article")).toBeVisible();
-});
+  const hrefs = async (locator: Locator): Promise<string[]> =>
+    (await locator.evaluateAll((links) => links.map((link) => link.getAttribute("href") ?? ""))).filter((href) =>
+      /^\/(en|id)\/.+/u.test(href),
+    );
+  const searchSlugs = await page
+    .getByRole("dialog")
+    .getByRole("option")
+    .evaluateAll((options) => options.map((option) => option.getAttribute("data-result-slug") ?? ""));
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog")).toBeHidden();
 
-Then("every content link resolves directly to its bare URL with status 200", async ({ page }) => {
-  // Collect hrefs from the navigation chrome (sidebar + breadcrumb).
-  const navLinks = page.locator("nav a[href]");
-  const count = await navLinks.count();
-  expect(count).toBeGreaterThan(0);
+  internalHrefsBySurface = {
+    sidebar: await hrefs(page.getByRole("navigation", { name: "Sidebar navigation" }).locator("a[href]")),
+    breadcrumb: await hrefs(page.getByRole("navigation", { name: "Breadcrumb" }).locator("a[href]")),
+    prevNext: await hrefs(page.getByRole("navigation", { name: "Page navigation" }).locator("a[href]")),
+    search: searchSlugs.filter(Boolean).map((slug) => `/en/${slug}`),
+  };
 
-  // Collect unique internal content hrefs (locale-scoped, not the root/locale-root
-  // itself), then check in parallel to avoid sequential timeout.
-  const hrefs: string[] = [];
-  const seen = new Set<string>();
-  for (let i = 0; i < count; i++) {
-    const href = await navLinks.nth(i).getAttribute("href");
-    if (!href || seen.has(href)) continue;
-    if (!href.match(/^\/(en|id)\/.+/)) continue;
-    seen.add(href);
-    hrefs.push(href);
-  }
-  expect(hrefs.length).toBeGreaterThan(0);
-
-  // See `getResilient` — retries once on a load-induced ECONNRESET; 30s (vs. the 10s
-  // default) additionally tolerates slow-but-successful responses under full-suite
-  // parallel contention on the single local server instance.
-  await Promise.all(
-    hrefs.map(async (href) => {
-      const response = await getResilient(page, href, { maxRedirects: 0, timeout: 30000 });
-      expect(response.status(), `${href} should resolve directly, not 404`).not.toBe(404);
-    }),
+  const uniqueHrefs = [...new Set(Object.values(internalHrefsBySurface).flat())];
+  internalLinkStatuses = await Promise.all(
+    uniqueHrefs.map(async (href) => ({
+      href,
+      status: (await getResilient(page, href, { maxRedirects: 0, timeout: 30000 })).status(),
+    })),
   );
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/ia-navigation-revamp.feature:Internal content links emit bare URLs directly without relying on redirects
-Then("no internal content link resolves through a 308 redirect", async ({ page }) => {
-  const navLinks = page.locator("nav a[href]");
-  const count = await navLinks.count();
-
-  // Collect unique internal hrefs, then check in parallel to avoid sequential timeout.
-  const hrefs: string[] = [];
-  const seen = new Set<string>();
-  for (let i = 0; i < count; i++) {
-    const href = await navLinks.nth(i).getAttribute("href");
-    if (!href || !href.startsWith("/") || seen.has(href)) continue;
-    seen.add(href);
-    hrefs.push(href);
+Then("every content link resolves directly to its bare URL with status 200", async () => {
+  for (const [surface, hrefs] of Object.entries(internalHrefsBySurface)) {
+    expect(hrefs.length, `${surface} must contribute at least one content destination`).toBeGreaterThan(0);
+    expect(hrefs.every((href) => /^\/(en|id)\/(?!c\/).+/u.test(href))).toBe(true);
   }
+  for (const { href, status } of internalLinkStatuses) {
+    expect(status, `${href} should resolve directly with HTTP 200`).toBe(200);
+  }
+});
 
-  // See `getResilient` — retries once on a load-induced ECONNRESET; 30s (vs. the 10s
-  // default) additionally tolerates slow-but-successful responses under full-suite
-  // parallel contention on the single local server instance.
-  await Promise.all(
-    hrefs.map(async (href) => {
-      const response = await getResilient(page, href, { maxRedirects: 0, timeout: 30000 });
-      expect(response.status(), `Link ${href} should not be a 308 redirect`).not.toBe(308);
-    }),
-  );
+Then("no internal content link resolves through a 308 redirect", async () => {
+  expect(internalLinkStatuses.every(({ status }) => status !== 308)).toBe(true);
 });
 
 // ---------------------------------------------------------------------------
@@ -124,7 +115,6 @@ When("the sitemap entries are produced", async ({ page }) => {
   expect(body).toBeTruthy();
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/ia-navigation-revamp.feature:Sitemap lists every content URL bare, with no distinct content namespace
 Then("every moved-content entry uses a bare URL", async ({ page }) => {
   const body = await page.content();
   // A relocated legacy domain's URL is present, and no entry anywhere carries
@@ -175,7 +165,6 @@ When("the feed items are produced", async () => {
   expect(feedBody.length).toBeGreaterThan(0);
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/ia-navigation-revamp.feature:RSS feed item links use bare content URLs
 Then("every content item link uses a bare URL", async () => {
   // At least one real content link is present, and no item link anywhere
   // carries a /c/ segment (the retired content namespace, DD-48).
@@ -202,7 +191,6 @@ Then("the canonical alternate is {string}", async ({ page }, expectedCanonical: 
   expect(canonical).toContain(expectedCanonical);
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/ia-navigation-revamp.feature:Canonical link for moved content points to its bare URL
 Then("the language alternates include en and x-default", async ({ page }) => {
   const enAlternate = await page.locator("link[hreflang='en']").getAttribute("href");
   const xDefaultAlternate = await page.locator("link[hreflang='x-default']").getAttribute("href");

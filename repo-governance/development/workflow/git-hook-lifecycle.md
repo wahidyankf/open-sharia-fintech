@@ -73,10 +73,14 @@ Do not hand-edit the generated block; regenerate, then `gate validate`.
 
 ## CI relationship
 
-The composition rule is `(pre-commit ∪ pre-push) == PR gate`: the same declared check set reaches
-CI, with scope appropriate to the surface. CI derives matrix-wired entries from
-`gate list --surface=ci --format=json`. Jobs needing language-specific setup remain declared as
-`wiring: hand-wired`; validation requires each to invoke its declared command.
+Pre-commit runs deterministic staged checks only. Pre-push and PR/main quality gates run affected
+`test:quick` targets serially plus their declared repository validation. Quick includes Unit runtime
+for every behaviour owner and all applicable static `test:coverage:*` validators. Neither hook nor
+PR/main may invoke Integration or E2E runtime directly or transitively.
+
+CI derives registry-managed entries from `gate list --surface=ci --format=json`. Jobs needing
+language-specific setup remain `wiring: hand-wired`; validation requires each declared command.
+Scheduled/manual full-quality workflows own complete Integration and E2E execution.
 
 Formatting mutations run locally and the PR formatter can commit fixes. Every formatter also has one
 CI-only `format-verify-*` check linked by `verifies`, so pushed code is independently verified.

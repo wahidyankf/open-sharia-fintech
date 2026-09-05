@@ -1,6 +1,6 @@
 ---
-title: "Information Accuracy and Verification — Git Worktree Awareness: Default Push Behavior and Example"
-description: "Continues Git Worktree Awareness with the default-push-behavior rule, a worked example, and the consequence of violating the rules."
+title: "Information Accuracy and Verification — Git Worktree Awareness: Default Push Behaviour and Example"
+description: "Continues Git Worktree Awareness with the default-push-behaviour rule, a worked example, and the consequence of violating the rules."
 category: explanation
 subcategory: development
 tags:
@@ -9,12 +9,12 @@ tags:
   - development
   - standards
 created: 2025-11-23
-when_to_use: Use when an agent running inside a worktree needs to know its default push/PR behavior or wants a worked pass/fail path example.
+when_to_use: Use when an agent running inside a worktree needs to know its default push/PR behaviour or wants a worked pass/fail path example.
 ---
 
-# Information Accuracy and Verification — Git Worktree Awareness: Default Push Behavior and Example
+# Information Accuracy and Verification — Git Worktree Awareness: Default Push Behaviour and Example
 
-1. **Default push behavior applies in worktrees — `worktree-to-pr` is the default; direct push is the explicit selection** — Running inside a `.claude/worktrees/` path (or any other `git worktree add` target) resolves, absent an explicit override, to the repo-wide default delivery mode: `worktree-to-pr` — a short-lived plan branch pushed to a draft PR opened against `main`. Direct push to `origin main` (the `worktree-to-origin-main` mode) applies only when explicitly selected via an invocation argument or a plan's `## Delivery Mode` field — never inferred from execution context. By default the agent pushes to a feature branch and opens a draft PR (`gh pr create --draft --base main ...`); the [PR Merge Protocol](../../workflow/pr-merge-protocol.md) preconditions gate the merge once the draft is flipped to ready-for-review. See the [Default Push and Worktree Execution](../../workflow/trunk-based-development/default-push-and-worktree-execution.md#default-push-and-worktree-execution) section of the Trunk Based Development Convention and the [Plans Organization Convention — Delivery Mode](../../../conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode) for the full three-tier precedence (invocation argument > plan field > default).
+1. **Default push behaviour applies in worktrees — `worktree-to-pr` is the default; direct push is the explicit selection** — Running inside a `.claude/worktrees/` path (or any other `git worktree add` target) resolves, absent an explicit override, to the repo-wide default delivery mode: `worktree-to-pr` — a short-lived plan branch pushed to a draft PR opened against `main`. Direct push to `origin main` (the `worktree-to-origin-main` mode) applies only when explicitly selected via an invocation argument or a plan's `## Delivery Mode` field — never inferred from execution context. By default the agent pushes to a feature branch and opens a draft PR (`gh pr create --draft --base main ...`); the [PR Merge Protocol](../../workflow/pr-merge-protocol.md) preconditions gate the merge once the draft is flipped to ready-for-review. See the [Default Push and Worktree Execution](../../workflow/trunk-based-development/default-push-and-worktree-execution.md#default-push-and-worktree-execution) section of the Trunk Based Development Convention and the [Plans Organization Convention — Delivery Mode](../../../conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode) for the full three-tier precedence (invocation argument > plan field > default).
 
 **Example**:
 

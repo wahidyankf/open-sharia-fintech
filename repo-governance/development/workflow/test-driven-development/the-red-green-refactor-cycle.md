@@ -17,15 +17,15 @@ when_to_use: Use as the canonical definition of the Red-Green-Refactor loop befo
 
 Every code change follows this loop:
 
-1. **Red** — Write a failing test that captures the desired behavior. Run it and confirm it fails
+1. **Red** — Write a failing test that captures the desired behaviour. Run it and confirm it fails
    for the right reason (not due to a syntax error, missing import, or wrong test setup). A test
    that fails for the wrong reason is not a useful test.
-2. **Green** — Write the minimum amount of code to make the failing test pass. Do not add behavior
-   beyond what the test requires. Hard-code return values if that is the fastest path to green —
-   the refactor step is for cleaning that up.
+2. **Green** — Write the minimum production code that makes the failing test pass without a
+   hardcoded outcome, literal-success sentinel, or production bypass. Do not add behaviour beyond
+   what the scenario requires.
 3. **Refactor** — With all tests green, improve the implementation: remove duplication, improve
    names, extract functions, apply clean-code principles. Tests must remain green after every
    refactor step. If they go red during refactoring, that is a bug introduced by the refactor, not
    a deliberate failure.
 
-Repeat the cycle for the next behavior.
+Repeat the cycle for the next behaviour and applicable adapter.

@@ -10,7 +10,7 @@ tags:
   - trunk-based-development
   - ai-agents
 created: 2026-04-25
-when_to_use: Use when confirming the default push behavior for a delivery, or when checking whether Phase 0 of a plan should push or open a PR.
+when_to_use: Use when confirming the default push behaviour for a delivery, or when checking whether Phase 0 of a plan should push or open a PR.
 ---
 
 # Standard 1: Default Integration Target Is a PR Branch
@@ -28,7 +28,7 @@ git push origin <plan-id>
 gh pr create --draft --base main --title "feat(scope): description"
 ```
 
-This is the correct behavior in all of the following situations, absent an explicit mode override:
+This is the correct behaviour in all of the following situations, absent an explicit mode override:
 
 - General development work.
 - Plan creation, plan quality-gate runs, and plan archival.

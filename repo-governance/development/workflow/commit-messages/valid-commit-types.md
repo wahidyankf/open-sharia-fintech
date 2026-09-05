@@ -22,7 +22,7 @@ The project uses the following types based on [Angular's commit convention](http
 | `fix`      | Bug fix                                        | `fix: prevent race condition on startup`               |
 | `docs`     | Documentation changes                          | `docs: update API reference`                           |
 | `style`    | Code style changes (formatting, whitespace)    | `style: remove unused imports`                         |
-| `refactor` | Code refactoring (no behavior change)          | `refactor(parser): extract common logic`               |
+| `refactor` | Code refactoring (no behaviour change)         | `refactor(parser): extract common logic`               |
 | `perf`     | Performance improvement                        | `perf: optimize database query`                        |
 | `test`     | Test changes                                   | `test: add unit tests for auth module`                 |
 | `build`    | Build, packaging, or compiler configuration    | `build(nx): wire namedInputs for cache invalidation`   |
@@ -40,7 +40,7 @@ The project uses the following types based on [Angular's commit convention](http
 
 **`fix`** - A bug fix for the user (not a fix to a build script)
 
-- Resolves incorrect behavior
+- Resolves incorrect behaviour
 - Patches security vulnerabilities
 - Fixes regression issues
 
@@ -58,7 +58,7 @@ The project uses the following types based on [Angular's commit convention](http
 - Code style adjustments
 - Not CSS changes (those are `feat` or `fix`)
 
-**`refactor`** - Code restructuring without behavior change
+**`refactor`** - Code restructuring without behaviour change
 
 - Improving code structure
 - Extracting functions

@@ -5,6 +5,7 @@ import { buildTrees } from "../core/tree-builder";
 import type { TreeNode } from "../core/types";
 import { contentUrl } from "../core/content-url";
 import type { Locale } from "../../i18n/core/config";
+import type { ContentRepository } from "../core/repository";
 
 export function generateChildList(locale: string, children: TreeNode[], knownSlugs: Set<string>): string {
   const lines: string[] = [];
@@ -36,13 +37,13 @@ export function rebuildIndexFile(rawContent: string, newChildList: string): stri
   return frontmatterBlock + "\n\n" + newChildList + "\n";
 }
 
-export function ensureFrontmatterFields(rawContent: string): string {
+export function ensureFrontmatterFields(rawContent: string, now: Date = new Date()): string {
   const { data } = matter(rawContent);
   const rawFm = extractRawFrontmatter(rawContent);
   const lines: string[] = [];
 
   if (data.date === undefined) {
-    lines.push(`date: ${new Date().toISOString()}`);
+    lines.push(`date: ${now.toISOString()}`);
   }
 
   if (data.draft === undefined) {
@@ -64,8 +65,34 @@ export interface ProcessResult {
   errors: string[];
 }
 
-export async function processAllIndexFiles(contentDir: string, mode: "generate" | "validate"): Promise<ProcessResult> {
-  const repository = new FileSystemContentRepository(contentDir);
+export interface IndexGeneratorPort {
+  repository: ContentRepository;
+  readText(filePath: string): Promise<string>;
+  writeText(filePath: string, content: string): Promise<void>;
+  now(): Date;
+}
+
+function nodeIndexGeneratorPort(contentDir: string): IndexGeneratorPort {
+  return {
+    repository: new FileSystemContentRepository(contentDir),
+    readText(filePath) {
+      return fs.readFile(filePath, "utf-8");
+    },
+    async writeText(filePath, content) {
+      await fs.writeFile(filePath, content, "utf-8");
+    },
+    now() {
+      return new Date();
+    },
+  };
+}
+
+export async function processAllIndexFiles(
+  contentDir: string,
+  mode: "generate" | "validate",
+  port: IndexGeneratorPort = nodeIndexGeneratorPort(contentDir),
+): Promise<ProcessResult> {
+  const repository = port.repository;
   const allContent = await repository.readAllContent();
   const trees = buildTrees(allContent);
 
@@ -82,8 +109,8 @@ export async function processAllIndexFiles(contentDir: string, mode: "generate" 
       const children = section.slug === "" ? localeTree : (findNodeBySlug(localeTree, section.slug)?.children ?? null);
       if (!children) continue;
 
-      const rawContent = await fs.readFile(section.filePath, "utf-8");
-      const withFields = ensureFrontmatterFields(rawContent);
+      const rawContent = await port.readText(section.filePath);
+      const withFields = ensureFrontmatterFields(rawContent, port.now());
 
       // A childless section (e.g. a course-paths plan path-landing `_index.md` carrying its own
       // hand-authored runway-justification body, or a not-yet-populated arc/category root) has no
@@ -96,7 +123,7 @@ export async function processAllIndexFiles(contentDir: string, mode: "generate" 
         if (rawContent !== withFields) {
           changed.push(section.filePath);
           if (mode === "generate") {
-            await fs.writeFile(section.filePath, withFields, "utf-8");
+            await port.writeText(section.filePath, withFields);
           }
         }
         continue;
@@ -108,7 +135,7 @@ export async function processAllIndexFiles(contentDir: string, mode: "generate" 
       if (rawContent !== expected) {
         changed.push(section.filePath);
         if (mode === "generate") {
-          await fs.writeFile(section.filePath, expected, "utf-8");
+          await port.writeText(section.filePath, expected);
         }
       }
     } catch (err) {

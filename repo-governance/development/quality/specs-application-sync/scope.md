@@ -26,5 +26,5 @@ It does not apply to:
 
 - `docs/` — documentation follows its own conventions; spec synchronization is a code-and-architecture concern
 - `repo-governance/` — governance documents are not application code or acceptance specs
-- `plans/` — planning documents describe intentions, not observable system behavior
+- `plans/` — planning documents describe intentions, not observable system behaviour
 - `generated-contracts/` — auto-generated code is not maintained manually; update the source spec instead

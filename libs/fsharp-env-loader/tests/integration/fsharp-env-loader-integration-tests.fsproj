@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>FsharpEnvLoader.Tests.Integration</RootNamespace>
+    <IsPackable>false</IsPackable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <OtherFlags>--nowarn:3261 --nowarn:3264</OtherFlags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Behaviour/EnvTierIntegrationBehaviourDriver.fs" />
+    <Compile Include="Tests/EnvTierIntegrationTests.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="10.1.302" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
+    <PackageReference Include="TickSpec" Version="2.0.4" />
+    <PackageReference Include="xunit.v3" Version="3.2.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../fsharp-env-loader.fsproj" />
+  </ItemGroup>
+
+  <Target Name="CopyGherkinSpecs" BeforeTargets="Build">
+    <ItemGroup>
+      <GherkinFiles Include="$(ProjectDir)..\..\..\..\specs\libs\fsharp-env-loader\behaviours\**\*.feature" />
+    </ItemGroup>
+    <Copy SourceFiles="@(GherkinFiles)" DestinationFolder="$(OutputPath)specs\%(RecursiveDir)" />
+  </Target>
+</Project>

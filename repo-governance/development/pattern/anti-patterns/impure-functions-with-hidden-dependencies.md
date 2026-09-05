@@ -41,7 +41,7 @@ calculateTotal(items, 0.2);
 
 **Rationale:**
 
-- Deterministic behavior
+- Deterministic behaviour
 - Easier to test
 - No hidden dependencies
 - Supports memoization

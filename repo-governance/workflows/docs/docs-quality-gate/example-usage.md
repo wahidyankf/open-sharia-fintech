@@ -53,7 +53,7 @@ The AI will invoke agents with zero-tolerance criteria:
 
 - Fix ALL findings (CRITICAL, HIGH, MEDIUM, LOW)
 - Iterate until zero findings at all levels
-- Equivalent to pre-mode parameter behavior
+- Equivalent to pre-mode parameter behaviour
 
 ## Validate Specific Scope
 

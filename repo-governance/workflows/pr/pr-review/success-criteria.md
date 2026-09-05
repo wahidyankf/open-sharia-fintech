@@ -1,7 +1,7 @@
 ---
 title: "Success Criteria"
 description: "Defines clean, findings, and stale scenarios."
-when_to_use: "Use when validating the workflow's observable behavior."
+when_to_use: "Use when validating the workflow's observable behaviour."
 ---
 
 # Success Criteria

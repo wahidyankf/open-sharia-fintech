@@ -21,7 +21,7 @@ Continued from [Decision Guide: Architecture Change vs. Minor Change](./decision
 | Change Type                                                    | Spec Update Required?                                | Reasoning                                           |
 | -------------------------------------------------------------- | ---------------------------------------------------- | --------------------------------------------------- |
 | Replace one HTTP client library with another                   | No                                                   | Internal implementation detail, interface unchanged |
-| Add a new Next.js page                                         | Yes — Gherkin scenario for user-facing behavior      | New observable behavior                             |
+| Add a new Next.js page                                         | Yes — Gherkin scenario for user-facing behaviour     | New observable behaviour                            |
 | Add a new internal React component                             | No                                                   | Internal implementation detail                      |
 | Change a validation rule that clients can observe              | Yes — update Gherkin scenario                        | Contract change                                     |
 | Change an internal validation rule that clients cannot observe | No                                                   | Internal implementation detail                      |

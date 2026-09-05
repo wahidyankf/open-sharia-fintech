@@ -21,7 +21,7 @@ is promoted to `in-progress/` (a pure move — neither stage carries a date pref
 
 **When to use**:
 
-- When the user describes a new behavior, pattern, or convention to adopt in the repository
+- When the user describes a new behaviour, pattern, or convention to adopt in the repository
 - When a vague idea needs to become a structured, executable plan
 - When research is needed before writing a plan (library versions, best practices, prior art)
 - When the user wants the full plan-creation lifecycle orchestrated automatically

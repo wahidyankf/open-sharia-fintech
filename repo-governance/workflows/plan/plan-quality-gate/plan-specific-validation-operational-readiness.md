@@ -22,7 +22,7 @@ when_to_use: Use when checking what plan-checker requires for operational readin
   - **Thematic commit guidance**: Preserves explicit authorization of the named change set, then
     requires the fewest build-valid, independently reviewable/revertible Conventional Commits;
     required completion artifacts stay together and independent concerns split
-  - **Manual behavioral assertions**: Steps to use Playwright MCP for web UI verification (navigate, snapshot, click, check console errors) and curl for API verification (hit endpoints, check responses, test error cases) — applicable when the plan touches UI or API code
+  - **Manual behavioural assertions**: Steps to use Playwright MCP for web UI verification (navigate, snapshot, click, check console errors) and curl for API verification (hit endpoints, check responses, test error cases) — applicable when the plan touches UI or API code
 - **Knowledge Capture presence**: For substantive plans, `delivery.md` contains a Knowledge
   Capture phase (or an explicit "none" record) and the plan folder carries a `learnings.md`
   scaffold. Silent absence is flagged at MEDIUM. See the

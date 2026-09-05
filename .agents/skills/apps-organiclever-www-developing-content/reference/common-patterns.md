@@ -3,7 +3,7 @@
 ## Adding a Feature to an Existing Feature Context
 
 ```typescript
-// 1. Add Gherkin scenario in specs/apps/organiclever/www/behaviors/frontend/<bc>/<file>.feature
+// 1. Add Gherkin scenario in specs/apps/organiclever/www/behaviours/frontend/<bc>/<file>.feature
 
 // 2. Add step implementation in test/unit/steps/<bc>/<file>.steps.tsx
 

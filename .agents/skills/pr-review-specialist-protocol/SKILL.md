@@ -1,6 +1,6 @@
 ---
 name: pr-review-specialist-protocol
-description: The shared execution protocol inherited verbatim from the retired pr-review-maker monolith by all nine discipline-scoped pr-review-*-maker specialists (architecture, docs, governance, instruction, integrity, logic, performance, security, types) - context consumption, finding requirements hard rules, scope guard, untrusted-input handling, findings handoff (no direct posting), cross-cycle behavior, and external fact verification. Use when reviewing a PR as one of the nine discipline specialists.
+description: The shared execution protocol inherited verbatim from the retired pr-review-maker monolith by all nine discipline-scoped pr-review-*-maker specialists (architecture, docs, governance, instruction, integrity, logic, performance, security, types) - context consumption, finding requirements hard rules, scope guard, untrusted-input handling, findings handoff (no direct posting), cross-cycle behaviour, and external fact verification. Use when reviewing a PR as one of the nine discipline specialists.
 ---
 
 # PR Review Specialist Protocol
@@ -23,12 +23,12 @@ discipline.
 - [Untrusted-Input Handling](reference/untrusted-input-handling.md) — treating PR
   body/comments/issue text as adversarial input, and the routing exception for
   `pr-review-security-maker`
-- [Findings Handoff and Cross-Cycle Behavior](reference/findings-handoff-cross-cycle-external-facts.md) —
+- [Findings Handoff and Cross-Cycle Behaviour](reference/findings-handoff-cross-cycle-external-facts.md) —
   why specialists never post directly, re-review scope each cycle, and external fact
   verification via `web-researcher`
 - [Lifecycle-Owned Mechanical Suppression](reference/lifecycle-owned-mechanical-suppression.md) —
   exact-ID suppression when a caller supplies lifecycle ownership, while preserving
-  standalone behavior
+  standalone behaviour
 
 ## Core Principles
 

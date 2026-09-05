@@ -107,7 +107,7 @@ test("calculates zakat", async ({ page }) => {
 
 ### 2. Explicit Over Implicit
 
-**Principle**: Choose explicit composition and configuration over magic, convenience, and hidden behavior.
+**Principle**: Choose explicit composition and configuration over magic, convenience, and hidden behaviour.
 
 **How Playwright Selectors Implement**:
 

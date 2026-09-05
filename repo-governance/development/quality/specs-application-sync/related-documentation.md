@@ -16,7 +16,7 @@ when_to_use: "Use when you need a related convention on specs structure or testi
 
 # Related Documentation
 
-- [Three-Level Testing Standard](.././three-level-testing-standard.md) - How all three test levels consume shared Gherkin specs
-- [BDD Spec-to-Test Mapping](../../infra/bdd-spec-test-mapping.md) - Mandatory 1:1 mapping for CLI apps; three-level consumption for demo-be backends
+- [Behaviour-Driven Development](../../behaviour-driven-development.md) - How mandatory Unit and boundary-applicable Integration/E2E adapters consume shared Gherkin specs
+- [Behaviour-Driven Development](../../behaviour-driven-development.md) - Mandatory 1:1 mapping for CLI apps; three-level consumption for demo-be backends
 - [Nx Target Standards](../infra/nx-targets.md) - Cache input declarations that include Gherkin specs
 - [specs/README.md](../../../../specs/README.md) - Spec directory organization and per-app spec structure

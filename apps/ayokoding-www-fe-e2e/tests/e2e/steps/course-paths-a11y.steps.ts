@@ -18,14 +18,21 @@ Given("a reader uses a keyboard and a screen reader on a course in path context"
   await page.waitForLoadState("networkidle");
 });
 
-When("they navigate the path rail, banner, breadcrumb, prerequisite list, and prev\\/next", async () => {
-  // No-op — each landmark is located and exercised directly in the Then step below. The site-wide
-  // "every interactive element is keyboard-reachable" contract is already proven generically by
-  // `accessibility.steps.ts`; this scenario proves the course-paths-specific landmarks additionally
-  // carry an accessible label, a keyboard-operable control, and (for the current item) `aria-current`.
+When("they navigate the path rail, banner, breadcrumb, prerequisite list, and prev\\/next", async ({ page }) => {
+  const landmarks = [
+    page.getByRole("navigation", { name: FIXTURE_RAIL_LABEL }),
+    page.getByRole("navigation", { name: "Breadcrumb" }),
+    page.getByRole("navigation", { name: "Prerequisites" }),
+    page.getByRole("navigation", { name: "Page navigation" }),
+  ];
+  for (const landmark of landmarks) {
+    await expect(landmark).toBeVisible();
+    const firstLink = landmark.getByRole("link").first();
+    await firstLink.focus();
+    await expect(firstLink).toBeFocused();
+  }
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/accessibility.feature:The navigation feature meets accessibility requirements
 Then("each is a labelled landmark reachable and operable by keyboard with visible focus", async ({ page }) => {
   // Path rail — desktop viewport (Playwright's default project runs at >= md width).
   const rail = page.getByRole("navigation", { name: FIXTURE_RAIL_LABEL });

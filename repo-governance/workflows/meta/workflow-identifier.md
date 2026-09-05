@@ -34,7 +34,7 @@ and body structure, step execution patterns, state/error handling, composability
 - [Step Execution Patterns](./workflow-identifier/step-execution-patterns.md) — sequential/parallel/conditional.
 - [State Management](./workflow-identifier/state-management.md) — passing data between steps.
 - [Human Checkpoints](./workflow-identifier/human-checkpoints.md) — pausing for approval.
-- [Error Handling](./workflow-identifier/error-handling.md) — per-step failure behavior.
+- [Error Handling](./workflow-identifier/error-handling.md) — per-step failure behaviour.
 - [Validation](./workflow-identifier/validation.md) — pre-execution checks.
 - [Relationship to Other Layers](./workflow-identifier/relationship-to-other-layers.md) — principles through plans.
 - [Composability](./workflow-identifier/composability.md) — nesting workflows/agents/procedures.

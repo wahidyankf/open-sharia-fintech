@@ -1,24 +1,37 @@
 import path from "path";
 import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
-import { render, screen } from "@testing-library/react";
-import { expect } from "vitest";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { expect, vi } from "vitest";
 import "./helpers/test-setup";
-import { MarkdownRenderer } from "@/features/content/shell/markdown-renderer";
+import { MARKDOWN_PROSE_CLASS, MarkdownRenderer } from "@/features/content/shell/markdown-renderer";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviours/frontend/content/content-rendering.feature"),
 );
 
 const sampleHtml = `<h2 id="intro">Introduction</h2><p>Body text paragraph.</p><h3 id="sub">Subsection</h3><p>More text.</p>`;
-const codeHtml = `<figure data-rehype-pretty-code-figure><pre data-language="go"><code><span>package main</span></code></pre></figure>`;
+vi.mock("mermaid", () => ({
+  default: {
+    initialize: vi.fn(),
+    render: vi.fn(async (_id: string, chart: string) => ({
+      svg: `<svg role="img" aria-label="${chart}"><text>diagram</text></svg>`,
+    })),
+  },
+}));
+
+const codeHtml = `<figure data-rehype-pretty-code-figure><pre data-language="go"><code><span style="color:#fff">package main</span></code></pre></figure>`;
 const calloutHtml = `<div data-callout="warning"><p>Watch out!</p></div>`;
 const tabsHtml = `<div data-tabs="Tab1,Tab2"><div data-tab><p>Panel 1</p></div><div data-tab><p>Panel 2</p></div></div>`;
 const youtubeHtml = `<div data-youtube="dQw4w9WgXcQ"></div>`;
 const stepsHtml = `<div data-steps><ol><li>Step one</li><li>Step two</li></ol></div>`;
 
-describeFeature(feature, ({ Scenario, Background }) => {
+describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
+  AfterEachScenario(cleanup);
+
   Background(({ Given }) => {
-    Given("the app is running", () => {});
+    Given("the app is running", () => {
+      expect(MarkdownRenderer).toBeTypeOf("function");
+    });
   });
 
   Scenario("Markdown prose renders with proper formatting classes", ({ When, Then, And }) => {
@@ -28,17 +41,25 @@ describeFeature(feature, ({ Scenario, Background }) => {
 
     Then("the body text should have prose typography classes applied", () => {
       const container = document.querySelector(".prose");
-      expect(container).toBeTruthy();
+      expect(container?.className).toBe(MARKDOWN_PROSE_CLASS);
+      expect(container).toHaveClass("prose", "prose-neutral", "dark:prose-invert", "prose-p:leading-7");
     });
 
     And("headings should be visually distinct from body text", () => {
-      expect(screen.getByText("Introduction")).toBeTruthy();
+      const container = document.querySelector(".prose");
+      expect(container).toHaveClass("prose-headings:font-semibold", "prose-headings:text-foreground");
+      expect(screen.getByRole("heading", { level: 2, name: "Introduction" }).nextElementSibling).toBe(
+        screen.getByText("Body text paragraph."),
+      );
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Markdown prose renders with proper formatting classes
     And("paragraph spacing should be consistent", () => {
-      const paragraphs = document.querySelectorAll("p");
-      expect(paragraphs.length).toBeGreaterThan(0);
+      const container = document.querySelector(".prose");
+      expect(container).toHaveClass("prose-p:my-4");
+      expect([...document.querySelectorAll(".prose > p")].map((paragraph) => paragraph.textContent)).toEqual([
+        "Body text paragraph.",
+        "More text.",
+      ]);
     });
   });
 
@@ -48,19 +69,15 @@ describeFeature(feature, ({ Scenario, Background }) => {
     });
 
     Then("the code block should display with syntax-highlighted tokens", () => {
-      const code = document.querySelector("code");
-      expect(code).toBeTruthy();
+      expect(document.querySelector('code span[style*="color"]')?.textContent).toBe("package main");
     });
 
     And("the language label should be shown above the code block", () => {
-      const figure = document.querySelector("figure");
-      expect(figure).toBeTruthy();
+      expect(screen.getByText("go").getAttribute("data-code-language-label")).not.toBeNull();
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Code blocks render with syntax highlighting via Shiki
     And("the block should use a monospace font", () => {
-      const pre = document.querySelector("pre");
-      expect(pre).toBeTruthy();
+      expect(document.querySelector("pre")?.closest("[data-slot='code-block']")).toBeTruthy();
     });
   });
 
@@ -74,10 +91,11 @@ describeFeature(feature, ({ Scenario, Background }) => {
     });
 
     And("the admonition should display the appropriate icon and label for its type", () => {
-      expect(screen.getByRole("alert")).toBeTruthy();
+      const alert = screen.getByRole("alert");
+      expect(alert.getAttribute("data-variant")).toBe("warning");
+      expect(alert.querySelector("svg")).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Callout shortcode renders as an Alert admonition
     And("the callout body text should be visible inside the admonition", () => {
       expect(screen.getByText("Watch out!")).toBeTruthy();
     });
@@ -93,17 +111,16 @@ describeFeature(feature, ({ Scenario, Background }) => {
     });
 
     And("the visitor clicks a tab label", () => {
-      // Tab interaction is tested at E2E level
+      fireEvent.mouseDown(screen.getByRole("tab", { name: "Tab2" }), { button: 0, ctrlKey: false });
+      fireEvent.click(screen.getByRole("tab", { name: "Tab2" }));
     });
 
     And("the corresponding panel content should become visible", () => {
-      expect(screen.getByText("Panel 1")).toBeTruthy();
+      expect(screen.getByRole("tabpanel").textContent).toContain("Panel 2");
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Tabs shortcode renders as tabbed panels
     And("the other panels should be hidden", () => {
-      // Panel visibility toggle is tested at E2E level
-      expect(true).toBe(true);
+      expect(screen.queryByText("Panel 1")).toBeNull();
     });
   });
 
@@ -122,10 +139,8 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(iframe?.getAttribute("src")).toContain("youtube.com/embed/dQw4w9WgXcQ");
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:YouTube shortcode renders as a responsive iframe embed
     And("the embed should maintain a 16:9 aspect ratio", () => {
-      const iframe = document.querySelector("iframe");
-      expect(iframe).toBeTruthy();
+      expect(document.querySelector("iframe")?.parentElement?.className).toMatch(/aspect-video/);
     });
   });
 
@@ -142,9 +157,9 @@ describeFeature(feature, ({ Scenario, Background }) => {
     And("each step should display its number prominently", () => {
       const items = document.querySelectorAll("li");
       expect(items.length).toBe(2);
+      expect(document.querySelector("ol")?.parentElement?.className).toMatch(/counter-reset:step/);
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Steps shortcode renders as a numbered step list
     And("the step content should be indented beneath its number", () => {
       expect(screen.getByText("Step one")).toBeTruthy();
     });
@@ -152,72 +167,78 @@ describeFeature(feature, ({ Scenario, Background }) => {
 
   Scenario("Inline math expression renders via KaTeX", ({ When, Then, And }) => {
     When("a visitor opens a content page containing an inline math expression delimited by $...$", () => {
-      // KaTeX rendering requires full pipeline; verify parse doesn't crash
-      render(
-        <MarkdownRenderer html="<p>The formula <span class='math-inline'>E=mc^2</span> is famous.</p>" locale="en" />,
-      );
-    });
-
-    Then("the expression should render as formatted math notation inline with surrounding text", () => {
-      expect(screen.getByText(/formula/)).toBeTruthy();
-    });
-
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Inline math expression renders via KaTeX
-    And("the rendered math should not display raw LaTeX source", () => {
-      expect(true).toBe(true);
-    });
-  });
-
-  Scenario("Block math expression renders via KaTeX", ({ When, Then, And }) => {
-    When("a visitor opens a content page containing a block math expression delimited by $$...$$", () => {
-      render(<MarkdownRenderer html="<div class='math-display'>\\sum_{i=1}^n</div>" locale="en" />);
-    });
-
-    Then("the expression should render as a centered display math block", () => {
-      const math = document.querySelector(".math-display");
-      expect(math).toBeTruthy();
-    });
-
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Block math expression renders via KaTeX
-    And("the rendered math should not display raw LaTeX source", () => {
-      expect(true).toBe(true);
-    });
-  });
-
-  Scenario("Mermaid diagram renders as an SVG", ({ When, Then, And }) => {
-    When("a visitor opens a content page containing a Mermaid code block", () => {
-      // Mermaid rendering happens client-side; verify the component mounts
-      render(<MarkdownRenderer html='<pre data-language="mermaid"><code>graph TD; A-->B;</code></pre>' locale="en" />);
-    });
-
-    Then("the diagram should render as an inline SVG element", () => {
-      // Mermaid SVG rendering requires browser APIs not available in jsdom
-      expect(true).toBe(true);
-    });
-
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Mermaid diagram renders as an SVG
-    And("the raw Mermaid source should not be visible to the visitor", () => {
-      expect(true).toBe(true);
-    });
-  });
-
-  Scenario("Raw HTML inline elements render correctly", ({ When, Then, And }) => {
-    When("a visitor opens a content page containing raw HTML such as inline div, table, and details elements", () => {
       render(
         <MarkdownRenderer
-          html="<table><tr><td>Cell</td></tr></table><details><summary>More</summary>Content</details>"
+          html="<p>The formula <span class='katex' aria-label='E equals m c squared'><span class='katex-html'>E=mc²</span></span> is famous.</p>"
           locale="en"
         />,
       );
     });
 
-    Then("the HTML elements should render in the browser as expected", () => {
-      expect(screen.getByText("Cell")).toBeTruthy();
+    Then("the expression should render as formatted math notation inline with surrounding text", () => {
+      expect(document.querySelector(".katex")?.getAttribute("aria-label")).toBe("E equals m c squared");
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Raw HTML inline elements render correctly
-    And("the elements should be visible and styled appropriately", () => {
-      expect(screen.getByText("More")).toBeTruthy();
+    And("the rendered math should not display raw LaTeX source", () => {
+      expect(document.body.textContent).not.toContain("$E=mc^2$");
+    });
+  });
+
+  Scenario("Block math expression renders via KaTeX", ({ When, Then, And }) => {
+    When("a visitor opens a content page containing a block math expression delimited by $$...$$", () => {
+      render(
+        <MarkdownRenderer
+          html="<div class='katex-display'><span class='katex' aria-label='sum from i equals one to n'>∑ᵢ₌₁ⁿ</span></div>"
+          locale="en"
+        />,
+      );
+    });
+
+    Then("the expression should render as a centered display math block", () => {
+      const math = document.querySelector(".katex-display");
+      expect(math).toBeTruthy();
+    });
+
+    And("the rendered math should not display raw LaTeX source", () => {
+      expect(document.body.textContent).not.toContain("$$\\sum_{i=1}^n$$");
+    });
+  });
+
+  Scenario("Mermaid diagram renders as an SVG", ({ When, Then, And }) => {
+    When("a visitor opens a content page containing a Mermaid code block", () => {
+      render(
+        <MarkdownRenderer
+          html='<figure data-rehype-pretty-code-figure><pre data-language="mermaid"><code>graph TD; A--&gt;B;</code></pre></figure>'
+          locale="en"
+        />,
+      );
+    });
+
+    Then("the diagram should render as an inline SVG element", async () => {
+      await waitFor(() => expect(document.querySelector("svg[role='img']")).toBeTruthy());
+    });
+
+    And("the raw Mermaid source should not be visible to the visitor", async () => {
+      await waitFor(() => expect(document.querySelector("pre code")).toBeNull());
+    });
+  });
+
+  Scenario("Raw HTML details disclosure renders correctly", ({ When, Then, And }) => {
+    When("a visitor opens a content page containing a raw HTML details disclosure", () => {
+      render(
+        <MarkdownRenderer html="<details><summary>Answer</summary><p>Authored answer</p></details>" locale="en" />,
+      );
+    });
+
+    Then("the HTML elements should render in the browser as expected", () => {
+      expect(screen.getByText("Answer").closest("details")).toBeTruthy();
+    });
+
+    And("the disclosure should reveal its authored answer when opened", () => {
+      const details = screen.getByText("Answer").closest("details")!;
+      fireEvent.click(screen.getByText("Answer"));
+      expect(details.open).toBe(true);
+      expect(screen.getByText("Authored answer")).toBeTruthy();
     });
   });
 });

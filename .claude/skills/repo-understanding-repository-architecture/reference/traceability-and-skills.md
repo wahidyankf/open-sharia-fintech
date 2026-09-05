@@ -42,7 +42,7 @@ Skills sit alongside CLAUDE.md, AGENTS.md and direct references as delivery mech
 
 ### Inline Skills (Knowledge Delivery)
 
-**Default behavior** - Progressive knowledge injection:
+**Default behaviour** - Progressive knowledge injection:
 
 ```
 Knowledge Flow (Inline):
@@ -64,7 +64,7 @@ L3: Development ──┬── CLAUDE.md/AGENTS.md (startup) ──> Claude/Ope
 
 ### Fork Skills (Task Delegation)
 
-**Delegation behavior** with `context: fork`:
+**Delegation behaviour** with `context: fork`:
 
 ```
 Delegation Flow (Fork):

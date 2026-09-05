@@ -50,7 +50,7 @@ In a quality-gate invocation, neither run nor AI-rederive these `delegated-gate-
 
 - `governance-readme-index`: README existence/index membership
 - `md-links`: internal path and fragment resolution
-- `specs-gherkin-cardinality`: repeated primary Given/When/Then cardinality
+- `test:coverage:behaviour`: canonical corpus structure and explicit When/Then
 - `specs-structure`: adoption, tree shape, and registered counts
 
 Retain narrative/domain, README, cross-folder, diagram, and implementation judgment. Preserve
@@ -73,8 +73,7 @@ all apply as written.
 ## What This Agent Does NOT Do
 
 Does not modify any files (read-only + report generation); does not validate folders outside the
-explicit list; does not validate test code/step definitions (`rhino-cli specs behavior-coverage
-validate`); does not
+explicit list; does not validate test binding substance (use `gherkin-implementation-review`); does not
 validate governance docs (`repo-rules-checker`); does not run tests (CI).
 
 ## Principles Implemented

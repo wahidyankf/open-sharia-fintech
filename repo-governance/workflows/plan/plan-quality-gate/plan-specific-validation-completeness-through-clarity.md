@@ -38,7 +38,7 @@ The plan-checker validates:
   [governance-vendor-independence.md](../../../conventions/structure/governance-vendor-independence.md).
   Reports CRITICAL if a plan skips this check when in scope. Skip entirely when plan touches only
   application code and tests.
-- **Automatic Rules-Propagation Coverage**: Classify rule impact from the promised behavior and
+- **Automatic Rules-Propagation Coverage**: Classify rule impact from the promised behaviour and
   file-impact tree, not merely from paths named `repo-governance/`. For each affected repository,
   require a detailed repository-local `delivery.md` outcome invoking the canonical
   `rules-propagation` workflow in the rule-changing delivery unit. It must separately cover subject
@@ -56,7 +56,7 @@ The plan-checker validates:
   files and is referenced, not copied. Packet, LOC, and file counts never create, erase, or force a
   delivery boundary. Validate natural cohesive seams, atomic consistency, every artifact required
   to build/verify/operate/roll back the unit, and an immediately production-deployable resulting
-  `main` state. Incomplete behavior requires a temporary production-disabled flag, tests for both
+  `main` state. Incomplete behaviour requires a temporary production-disabled flag, tests for both
   paths, and recorded rollout, rollback, and removal.
 
 **Continued in** [Plan-Specific Validation — Operational Readiness and Knowledge Capture](./plan-specific-validation-operational-readiness.md) for the remaining checks (implementation readiness through knowledge capture).

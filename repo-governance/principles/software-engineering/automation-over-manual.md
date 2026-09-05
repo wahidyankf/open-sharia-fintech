@@ -18,7 +18,7 @@ when_to_use: Use when deciding whether a repetitive task should be automated, or
 **Automate repetitive tasks** to ensure consistency and reduce human error. Humans should focus on creative and strategic work, machines should handle repetitive, mechanical tasks.
 
 - [Vision Supported](./automation-over-manual/vision-supported.md) — How this principle serves the Open Sharia Enterprise Vision. Use when explaining why an automation matters to the project's mission.
-- [What](./automation-over-manual/what.md) — Contrasts automation and manual processes. Use for a quick working definition of automated vs. manual behavior.
+- [What](./automation-over-manual/what.md) — Contrasts automation and manual processes. Use for a quick working definition of automated vs. manual behaviour.
 - [Why](./automation-over-manual/why.md) — Benefits of automation, problems with manual work, and when to automate. Use when deciding whether a repetitive task is worth automating.
 - [How It Applies](./automation-over-manual/how-it-applies.md) — Pre-commit hook and commit message validation examples, with manual alternatives. Use when implementing or reviewing a pre-commit hook or commit message check.
 - [How It Applies — AI Agents, Link Caching, and Code Formatting](./automation-over-manual/how-it-applies-ai-agents-link-caching-and-code-formatting.md) — AI agent validation, cached link verification, and Prettier formatting examples. Use when implementing an AI validation agent, link cache, or code formatter.

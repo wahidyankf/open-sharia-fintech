@@ -19,7 +19,7 @@ governance layers, agent/Skill duplication, and software-engineering documentati
    and [rules-governance-licensing-and-dependency-policy.md](reference/rules-governance-licensing-and-dependency-policy.md) —
    governance word-budget delegation, contradictions/inaccuracies/inconsistencies, traceability,
    layer coherence, licensing compliance, dependency-bump policy compliance, Gherkin
-   step-keyword cardinality.
+   Gherkin journey coherence.
 3. [software-docs-validation-8-1-to-8-4.md](reference/software-docs-validation-8-1-to-8-4.md)
    and [software-docs-validation-8-5-to-8-8.md](reference/software-docs-validation-8-5-to-8-8.md) —
    the eight `docs/explanation/software-engineering/` sub-checks (principle alignment,
@@ -33,7 +33,7 @@ governance layers, agent/Skill duplication, and software-engineering documentati
 
 **Lifecycle ownership**: in `rules-quality-gate`, exact `delegated-gate-ids` are omitted from the
 domain scan. Missing/stale evidence is `pending`, never a local rerun or AI imitation. Retained
-layer-coherence and traceability checks remain domain findings. Standalone behavior is unchanged.
+layer-coherence and traceability checks remain domain findings. Standalone behaviour is unchanged.
 **Progressive writing**: every finding is written immediately, never buffered — Step 8
 (~265 files) is the step most likely to be interrupted by compaction. **Conservative
 consolidation**: when uncertain whether Skills should merge, recommend KEEP SEPARATE.

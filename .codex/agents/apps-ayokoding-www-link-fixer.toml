@@ -40,7 +40,7 @@ You validate link-checker findings before applying fixes.
 ## Input Parameters
 
 - Optional lifecycle handoff: with `md-links`, skip internal path/fragment fixes; after edits return
-  scope-intersected `updated-lifecycle-evidence`. Omission preserves standalone behavior.
+  scope-intersected `updated-lifecycle-evidence`. Omission preserves standalone behaviour.
 
 ## Web Research Delegation
 

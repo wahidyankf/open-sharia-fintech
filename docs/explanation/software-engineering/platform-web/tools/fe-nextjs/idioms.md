@@ -479,7 +479,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
 ## Route Segment Config
 
-Configure route behavior with exported constants:
+Configure route behaviour with exported constants:
 
 ```typescript
 // app/api/nisab/route.ts

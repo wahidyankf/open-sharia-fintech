@@ -42,7 +42,7 @@ pre-commit`, or any git hook logic that is _supposed_ to read/write the checkout
   This convention governs test fixtures building **throwaway** repositories, not application code
   whose job is to touch the real one.
 - **Which test level a git-fixture test belongs to** (unit vs. integration) -- that classification
-  is governed by the [Three-Level Testing Standard](.././three-level-testing-standard.md); this
+  is governed by the [Behaviour-Driven Development](../../behaviour-driven-development.md); this
   convention only governs how such a fixture must isolate itself once its level is decided.
 - **General process-global mutable-state hazards unrelated to git** (e.g. environment variable
   leakage between unrelated tests) -- out of scope here; this convention is specific to git

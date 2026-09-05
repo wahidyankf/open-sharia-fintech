@@ -1,6 +1,6 @@
 ---
 title: "Remediation and Sibling Repos"
-description: The commands to remove an existing per-repo [user] override, and how the behavioral guardrail applies across the sibling repositories.
+description: The commands to remove an existing per-repo [user] override, and how the behavioural guardrail applies across the sibling repositories.
 category: explanation
 subcategory: development
 tags:
@@ -44,8 +44,8 @@ Then retry the commit. The global `~/.gitconfig` takes effect immediately.
 
 The automated `scripts/git-identity-check.sh` guard was removed in `ose-public`, not merely
 never propagated to siblings — so there is no script-based mechanism left to propagate. The
-behavioral Git Identity Guardrail
-([Standard 3](./standards.md#standard-3-enforcement-is-a-behavioral-guardrail-not-a-pre-commit-script))
+behavioural Git Identity Guardrail
+([Standard 3](./standards.md#standard-3-enforcement-is-a-behavioural-guardrail-not-a-pre-commit-script))
 is a shared `AGENTS.md` guardrail and
 applies identically wherever each sibling's own `AGENTS.md` copy is loaded. Human developers in
 either repo should periodically verify that no `[user]` section exists in that repo's

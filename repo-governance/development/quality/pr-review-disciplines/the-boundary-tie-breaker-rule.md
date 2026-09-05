@@ -30,7 +30,7 @@ this **tie-breaker**, in order:
    (owned by `pr-review-logic-maker`).
 
 The **architecture↔correctness boundary is the highest-risk of the three** — a new structural
-decision and a domain-behavior question can look identical in a raw finding. The coordinator
+decision and a domain-behaviour question can look identical in a raw finding. The coordinator
 (`pr-review-synthesis-maker`) **owns re-categorizing a misfiled finding across this specific
 boundary** as part of its re-categorize function; no specialist self-adjudicates its own
 tie-breaker verdict once the coordinator has reviewed it. This is the same tie-breaker every

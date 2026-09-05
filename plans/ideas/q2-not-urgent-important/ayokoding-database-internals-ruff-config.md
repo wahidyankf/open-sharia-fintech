@@ -97,7 +97,7 @@ verification command for the course's Python corpus; a decision on course-root v
 Explicitly out of scope, carried forward from the original plan:
 
 - Reformatting any existing Python file in the course.
-- Changing instructional prose, course lessons, drill content, capstone behavior, Python logic, or
+- Changing instructional prose, course lessons, drill content, capstone behaviour, Python logic, or
   test expectations.
 - Any file under `apps/ayokoding-www/src/features/course-paths/manifests/`, and any route change.
 - Establishing a repository-wide or repo-root Ruff policy, or editing shared lint configuration.

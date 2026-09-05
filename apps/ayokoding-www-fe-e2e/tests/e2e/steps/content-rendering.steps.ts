@@ -10,21 +10,56 @@ When("a visitor opens a content page with prose body text", async ({ page }) => 
 Then("the body text should have prose typography classes applied", async ({ page }) => {
   const prose = page.locator(".prose, [class*='prose']").first();
   await expect(prose).toBeVisible();
+  const paragraph = prose.locator("p").first();
+  const typography = await paragraph.evaluate((element) => {
+    const style = getComputedStyle(element);
+    return {
+      fontFamily: style.fontFamily,
+      fontSize: Number.parseFloat(style.fontSize),
+      lineHeight: Number.parseFloat(style.lineHeight),
+    };
+  });
+  expect(typography.fontFamily).not.toBe("");
+  expect(typography.fontSize).toBeGreaterThanOrEqual(16);
+  expect(typography.lineHeight).toBeGreaterThan(typography.fontSize);
 });
 
 Then("headings should be visually distinct from body text", async ({ page }) => {
   const heading = page.getByRole("heading", { level: 2 }).first();
   await expect(heading).toBeVisible();
+  const paragraph = page.locator("article .prose p").first();
+  const [headingStyle, paragraphStyle] = await Promise.all([
+    heading.evaluate((element) => ({
+      size: Number.parseFloat(getComputedStyle(element).fontSize),
+      weight: Number.parseInt(getComputedStyle(element).fontWeight, 10),
+    })),
+    paragraph.evaluate((element) => ({
+      size: Number.parseFloat(getComputedStyle(element).fontSize),
+      weight: Number.parseInt(getComputedStyle(element).fontWeight, 10),
+    })),
+  ]);
+  expect(headingStyle.size).toBeGreaterThan(paragraphStyle.size);
+  expect(headingStyle.weight).toBeGreaterThan(paragraphStyle.weight);
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Markdown prose renders with proper formatting classes
 Then("paragraph spacing should be consistent", async ({ page }) => {
-  const paragraph = page.locator("article p").first();
-  await expect(paragraph).toBeVisible();
+  const paragraphs = page.locator("article .prose p");
+  expect(await paragraphs.count()).toBeGreaterThan(1);
+  const spacings = await paragraphs.evaluateAll((elements) =>
+    elements.slice(0, 3).map((element) => {
+      const style = getComputedStyle(element);
+      return { marginTop: style.marginTop, marginBottom: style.marginBottom, lineHeight: style.lineHeight };
+    }),
+  );
+  expect(
+    new Set(spacings.map(({ marginTop, marginBottom, lineHeight }) => `${marginTop}|${marginBottom}|${lineHeight}`))
+      .size,
+  ).toBe(1);
+  expect(Number.parseFloat(spacings[0]!.marginBottom)).toBeGreaterThan(0);
 });
 
 When("a visitor opens a content page containing a fenced code block", async ({ page }) => {
-  await page.goto("/en/learn/software-engineering/programming-languages/golang/by-example/beginner");
+  await page.goto("/en/learn/legacy/software-engineering/programming-languages/golang/by-example/beginner");
 });
 
 Then("the code block should display with syntax-highlighted tokens", async ({ page }) => {
@@ -36,11 +71,19 @@ Then("the code block should display with syntax-highlighted tokens", async ({ pa
 });
 
 Then("the language label should be shown above the code block", async ({ page }) => {
-  const langLabel = page.locator("[data-rehype-pretty-code-title], figcaption, [data-language]").first();
-  await expect(langLabel).toBeAttached();
+  const figure = page
+    .locator("figure[data-rehype-pretty-code-figure]")
+    .filter({ has: page.locator('pre[data-language="go"]') })
+    .first();
+  const langLabel = figure.locator("xpath=preceding-sibling::*[@data-code-language-label][1]");
+  await expect(langLabel).toBeVisible();
+  await expect(langLabel).toHaveText("go");
+  const [labelBox, figureBox] = await Promise.all([langLabel.boundingBox(), figure.boundingBox()]);
+  expect(labelBox).not.toBeNull();
+  expect(figureBox).not.toBeNull();
+  expect(labelBox!.y + labelBox!.height).toBeLessThanOrEqual(figureBox!.y);
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Code blocks render with syntax highlighting via Shiki
 Then("the block should use a monospace font", async ({ page }) => {
   const codeEl = page.locator("figure[data-rehype-pretty-code-figure] code").first();
   await expect(codeEl).toBeVisible();
@@ -49,136 +92,128 @@ Then("the block should use a monospace font", async ({ page }) => {
 });
 
 When("a visitor opens a content page containing a callout shortcode", async ({ page }) => {
-  await page.goto("/en/learn/overview");
+  await page.goto("/en/learn/legacy/information-security/tools/gobuster/beginner");
 });
 
 Then("the callout should render as an admonition block", async ({ page }) => {
-  // Callout may not exist on every page — verify page loaded successfully
-  await expect(page.getByRole("article")).toBeVisible();
+  await expect(page.locator('[data-slot="alert"][data-variant="warning"]').first()).toBeVisible();
 });
 
 Then("the admonition should display the appropriate icon and label for its type", async ({ page }) => {
-  await expect(page.getByRole("article")).toBeVisible();
+  const warning = page.locator('[data-slot="alert"][data-variant="warning"]').first();
+  await expect(warning.locator("svg")).toBeVisible();
+  await expect(warning).toContainText("Legal and Ethical Notice");
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Callout shortcode renders as an Alert admonition
 Then("the callout body text should be visible inside the admonition", async ({ page }) => {
-  await expect(page.getByRole("article")).toBeVisible();
+  await expect(page.locator('[data-slot="alert-description"]').first()).toContainText(
+    "Only use Gobuster on systems you own or have explicit written permission",
+  );
 });
 
 When("a visitor opens a content page containing a tabs shortcode", async ({ page }) => {
-  await page.goto("/en/learn/overview");
+  await page.goto("/en/learn/legacy/software-engineering/system-design/by-example/beginner");
 });
 
 Then("the tabs should render as a tab bar with clickable tab labels", async ({ page }) => {
-  // Tabs may not exist on every page — verify page loaded
-  await expect(page.getByRole("article")).toBeVisible();
+  await expect(page.getByRole("tablist").first()).toBeVisible();
+  await expect(page.getByRole("tab", { name: "Go", exact: true }).first()).toBeVisible();
+  await expect(page.getByRole("tab", { name: "Python", exact: true }).first()).toBeVisible();
 });
 
 When("the visitor clicks a tab label", async ({ page }) => {
-  // Tab interaction deferred — page may not have tabs
-  await expect(page.getByRole("article")).toBeVisible();
+  await page.getByRole("tab", { name: "Python", exact: true }).first().click();
 });
 
 Then("the corresponding panel content should become visible", async ({ page }) => {
-  await expect(page.getByRole("article")).toBeVisible();
+  await expect(page.getByRole("tab", { name: "Python", exact: true }).first()).toHaveAttribute("aria-selected", "true");
+  await expect(page.getByRole("tabpanel").filter({ visible: true }).first()).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Tabs shortcode renders as tabbed panels
 Then("the other panels should be hidden", async ({ page }) => {
-  await expect(page.getByRole("article")).toBeVisible();
-});
-
-When("a visitor opens a content page containing a YouTube shortcode", async ({ page }) => {
-  await page.goto("/en/learn/overview");
-});
-
-Then("a responsive iframe embed should be visible", async ({ page }) => {
-  // YouTube embed may not exist on every page
-  await expect(page.getByRole("article")).toBeVisible();
-});
-
-Then("the iframe src should point to the YouTube embed URL", async ({ page }) => {
-  await expect(page.getByRole("article")).toBeVisible();
-});
-
-// @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:YouTube shortcode renders as a responsive iframe embed
-Then("the embed should maintain a 16:9 aspect ratio", async ({ page }) => {
-  await expect(page.getByRole("article")).toBeVisible();
+  const goTab = page.getByRole("tab", { name: "Go", exact: true }).first();
+  await expect(goTab).toHaveAttribute("aria-selected", "false");
+  const goPanelId = await goTab.getAttribute("aria-controls");
+  expect(goPanelId).not.toBeNull();
+  await expect(page.locator(`#${goPanelId}`)).toBeHidden();
 });
 
 When("a visitor opens a content page containing a steps shortcode", async ({ page }) => {
-  await page.goto("/en/learn/overview");
+  await page.goto("/en/learn/legacy/information-security/tools/gobuster/quick-start");
 });
 
 Then("the steps should render as an ordered list of numbered items", async ({ page }) => {
-  // Steps shortcode may not exist on every page
-  await expect(page.getByRole("article")).toBeVisible();
+  const steps = page.locator(".\\[counter-reset\\:step\\]").first();
+  await expect(steps).toBeVisible();
+  await expect(steps.getByRole("heading", { name: /^Step 1:/ })).toBeVisible();
+  await expect(steps.getByRole("heading", { name: /^Step 2:/ })).toBeVisible();
 });
 
 Then("each step should display its number prominently", async ({ page }) => {
-  await expect(page.getByRole("article")).toBeVisible();
+  const firstStep = page.getByRole("heading", { name: /^Step 1:/ });
+  await expect(firstStep).toBeVisible();
+  expect(
+    Number.parseInt(await firstStep.evaluate((element) => getComputedStyle(element).fontWeight), 10),
+  ).toBeGreaterThanOrEqual(600);
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Steps shortcode renders as a numbered step list
 Then("the step content should be indented beneath its number", async ({ page }) => {
-  await expect(page.getByRole("article")).toBeVisible();
+  const steps = page.locator(".\\[counter-reset\\:step\\]").first();
+  const paddingLeft = await steps.evaluate((element) => Number.parseFloat(getComputedStyle(element).paddingLeft));
+  expect(paddingLeft).toBeGreaterThan(0);
 });
 
 When("a visitor opens a content page containing an inline math expression delimited by $...$", async ({ page }) => {
-  await page.goto("/en/learn/overview");
+  await page.goto("/en/learn/legacy/business/corporate-finance");
 });
 
 Then("the expression should render as formatted math notation inline with surrounding text", async ({ page }) => {
-  // KaTeX math may not exist on every page
-  await expect(page.getByRole("article")).toBeVisible();
+  await expect
+    .poll(() =>
+      page.locator(".katex").evaluateAll((elements) => elements.some((element) => !element.closest(".katex-display"))),
+    )
+    .toBe(true);
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Inline math expression renders via KaTeX
-// @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Block math expression renders via KaTeX
 Then("the rendered math should not display raw LaTeX source", async ({ page }) => {
-  await expect(page.getByRole("article")).toBeVisible();
+  await expect(page.getByRole("article")).not.toContainText("$\\beta$");
 });
 
 When("a visitor opens a content page containing a block math expression delimited by $$...$$", async ({ page }) => {
-  await page.goto("/en/learn/overview");
+  await page.goto("/en/learn/legacy/business/accounting");
 });
 
 Then("the expression should render as a centered display math block", async ({ page }) => {
-  await expect(page.getByRole("article")).toBeVisible();
+  const displayMath = page.locator(".katex-display").first();
+  await expect(displayMath).toBeVisible();
+  expect(await displayMath.evaluate((element) => getComputedStyle(element).textAlign)).toBe("center");
 });
 
 When("a visitor opens a content page containing a Mermaid code block", async ({ page }) => {
-  await page.goto("/en/learn/artificial-intelligence/chat-with-pdf");
-  await page.waitForLoadState("networkidle");
+  await page.goto("/en/learn/courses/project-management/learning/beginner");
 });
 
 Then("the diagram should render as an inline SVG element", async ({ page }) => {
-  // Mermaid diagrams may not exist on every page
-  await expect(page.getByRole("article")).toBeVisible();
+  await expect(page.getByRole("article").locator('svg[id^="mermaid-"]').first()).toBeVisible({ timeout: 15_000 });
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Mermaid diagram renders as an SVG
 Then("the raw Mermaid source should not be visible to the visitor", async ({ page }) => {
-  await expect(page.getByRole("article")).toBeVisible();
+  await expect(page.locator('pre code[data-language="mermaid"]')).toHaveCount(0);
 });
 
-When(
-  "a visitor opens a content page containing raw HTML such as inline div, table, and details elements",
-  async ({ page }) => {
-    await page.goto("/en/learn/overview");
-  },
-);
+When("a visitor opens a content page containing a raw HTML details disclosure", async ({ page }) => {
+  await page.goto("/en/learn/courses/graph-databases/drilling/overview");
+});
 
 Then("the HTML elements should render in the browser as expected", async ({ page }) => {
-  const article = page.getByRole("article");
-  await expect(article).toBeVisible();
-  await expect(article).not.toBeEmpty();
+  const details = page.getByRole("article").locator("details").first();
+  await expect(details).toBeVisible();
+  await expect(details.locator("summary")).toHaveText("Answer");
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/content/content-rendering.feature:Raw HTML inline elements render correctly
-Then("the elements should be visible and styled appropriately", async ({ page }) => {
-  const article = page.getByRole("article");
-  const hasContent = await article.evaluate((el) => el.children.length > 0);
-  expect(hasContent).toBe(true);
+Then("the disclosure should reveal its authored answer when opened", async ({ page }) => {
+  const details = page.getByRole("article").locator("details").first();
+  await details.locator("summary").click();
+  await expect(details).toHaveAttribute("open", "");
+  await expect(details).toContainText("A property graph is built from nodes");
 });

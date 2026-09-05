@@ -21,94 +21,50 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "npx vitest run",
-          "! grep -rnE '\\.(skip|todo)\\(' --include='*.test.*' --include='*.steps.*' src"
+          {
+            "command": "npx vitest run --coverage --coverage.thresholds.lines=99",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "! grep -rnE '\\.(skip|todo)\\(' --include='*.test.*' --include='*.steps.*' src",
+            "forwardAllArgs": false
+          }
         ],
         "parallel": false,
-        "cwd": "libs/ts-env-loader"
-      },
-      "cache": true
-    },
-    "test:coverage": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "npx vitest run --coverage --coverage.thresholds.lines=99",
-        "cwd": "libs/ts-env-loader"
+        "cwd": "libs/ts-env-loader",
+        "forwardAllArgs": false
       },
       "cache": true,
-      "outputs": ["{projectRoot}/coverage"],
-      "inputs": ["{projectRoot}/src/**/*"]
+      "inputs": ["{projectRoot}/src/**/*", "{projectRoot}/tests/unit/**/*"],
+      "outputs": ["{projectRoot}/coverage"]
     },
     "test:integration": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "echo 'no-op: target not applicable for this project'"
+        "command": "npx vitest run --config vitest.integration.config.ts --coverage --coverage.thresholds.lines=99",
+        "cwd": "libs/ts-env-loader"
       },
-      "cache": true
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/tests/integration/**/*",
+        "{projectRoot}/vitest.integration.config.ts"
+      ],
+      "outputs": ["{projectRoot}/coverage"]
     },
     "test:e2e": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "echo 'no-op: target not applicable for this project'"
-      },
-      "cache": true
-    },
-    "specs:behavior:coverage": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps specs/libs/ts-env-loader/behaviors libs/ts-env-loader"
-      },
-      "cache": true,
-      "inputs": ["{workspaceRoot}/specs/libs/ts-env-loader/behaviors/**/*.feature", "{projectRoot}/src/**/*"]
-    },
-    "test:behavior:coverage:unit": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract bdd validate --project ts-env-loader --adapter unit"
+        "command": "npx vitest run --config vitest.e2e.config.ts",
+        "cwd": "libs/ts-env-loader"
       },
       "cache": true,
       "inputs": [
-        "{workspaceRoot}/specs/libs/ts-env-loader/behaviors/**/*.feature",
-        "{workspaceRoot}/repo-config.yml",
-        "default"
+        "{workspaceRoot}/scripts/next-with-port.mjs",
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/tests/e2e/**/*",
+        "{projectRoot}/vitest.e2e.config.ts"
       ]
-    },
-    "test:behavior:coverage:integration": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract bdd validate --project ts-env-loader --adapter integration"
-      },
-      "cache": true,
-      "inputs": [
-        "{workspaceRoot}/specs/libs/ts-env-loader/behaviors/**/*.feature",
-        "{workspaceRoot}/repo-config.yml",
-        "default"
-      ]
-    },
-    "test:behavior:coverage:e2e": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract bdd validate --project ts-env-loader --adapter e2e"
-      },
-      "cache": true,
-      "inputs": [
-        "{workspaceRoot}/specs/libs/ts-env-loader/behaviors/**/*.feature",
-        "{workspaceRoot}/repo-config.yml",
-        "default"
-      ]
-    },
-    "test:behavior:coverage": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "npx nx run ts-env-loader:test:behavior:coverage:unit",
-          "npx nx run ts-env-loader:test:behavior:coverage:integration",
-          "npx nx run ts-env-loader:test:behavior:coverage:e2e"
-        ],
-        "parallel": false
-      },
-      "dependsOn": ["test:behavior:coverage:unit", "test:behavior:coverage:integration", "test:behavior:coverage:e2e"],
-      "cache": true
     },
     "specs:structure-validation": {
       "executor": "nx:run-commands",
@@ -118,35 +74,48 @@
       "cache": true,
       "inputs": ["{workspaceRoot}/specs/libs/ts-env-loader/**/*"]
     },
-    "test:specs": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "npx nx run ts-env-loader:specs:structure-validation",
-          "npx nx run ts-env-loader:specs:behavior:coverage"
-        ],
-        "parallel": false
-      },
-      "cache": true,
-      "inputs": ["{workspaceRoot}/specs/libs/ts-env-loader/**/*", "{projectRoot}/src/**/*", "specs"]
-    },
     "test:quick": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "npx nx run ts-env-loader:typecheck",
-          "npx nx run ts-env-loader:lint",
-          "npx nx run ts-env-loader:test:unit",
-          "npx nx run ts-env-loader:test:coverage",
-          "npx nx run ts-env-loader:test:specs",
-          "npx nx run ts-env-loader:test:layout:validation",
-          "npx nx run ts-env-loader:coverage:policy:validation",
-          "npx nx run ts-env-loader:package-manifest:policy:validation"
+          {
+            "command": "npm exec -- nx run ts-env-loader:typecheck",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run ts-env-loader:lint",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run ts-env-loader:test:unit",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run ts-env-loader:specs:structure-validation",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run ts-env-loader:test:coverage",
+            "forwardAllArgs": false
+          }
         ],
-        "parallel": false
+        "parallel": false,
+        "forwardAllArgs": false
       },
       "cache": true,
-      "inputs": ["default", "specs"]
+      "inputs": [
+        "default",
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/libs/ts-env-loader/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/libs/ts-env-loader/behaviours/**/*.feature",
+        "{workspaceRoot}/libs/ts-env-loader/tests/unit/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/ts-env-loader/vitest.config.ts",
+        "{workspaceRoot}/libs/ts-env-loader/tests/integration/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/ts-env-loader/vitest.integration.config.ts",
+        "{workspaceRoot}/libs/ts-env-loader/tests/e2e/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/ts-env-loader/vitest.e2e.config.ts"
+      ]
     },
     "deps:audit": {
       "executor": "nx:run-commands",
@@ -162,33 +131,115 @@
       },
       "cache": true
     },
-    "test:layout:validation": {
+    "test:coverage:unit": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract layout validate --project ts-env-loader"
+        "command": "node scripts/behaviour-coverage.mjs --config libs/ts-env-loader/behaviour-coverage.json --adapter unit"
       },
       "cache": true,
-      "inputs": ["default", "{projectRoot}/project.json"]
+      "inputs": [
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/libs/ts-env-loader/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/libs/ts-env-loader/behaviours/**/*.feature",
+        "{workspaceRoot}/libs/ts-env-loader/tests/unit/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/ts-env-loader/tests/integration/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/ts-env-loader/tests/e2e/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/ts-env-loader/vitest.config.ts",
+        "{workspaceRoot}/libs/ts-env-loader/vitest.integration.config.ts",
+        "{workspaceRoot}/libs/ts-env-loader/vitest.e2e.config.ts"
+      ]
     },
-    "coverage:policy:validation": {
+    "test:coverage:behaviour": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract coverage validate --project ts-env-loader"
+        "command": "node scripts/behaviour-coverage.mjs --config libs/ts-env-loader/behaviour-coverage.json --adapter behaviour"
       },
       "cache": true,
-      "inputs": ["default", "{projectRoot}/project.json"]
+      "inputs": [
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/libs/ts-env-loader/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/libs/ts-env-loader/behaviours/**/*.feature",
+        "{workspaceRoot}/libs/ts-env-loader/tests/unit/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/ts-env-loader/tests/integration/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/ts-env-loader/tests/e2e/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/ts-env-loader/vitest.config.ts",
+        "{workspaceRoot}/libs/ts-env-loader/vitest.integration.config.ts",
+        "{workspaceRoot}/libs/ts-env-loader/vitest.e2e.config.ts"
+      ]
     },
-    "package-manifest:policy:validation": {
+    "test:coverage:integration": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract manifest validate --project ts-env-loader"
+        "command": "node scripts/behaviour-coverage.mjs --config libs/ts-env-loader/behaviour-coverage.json --adapter integration"
       },
       "cache": true,
-      "inputs": ["default", "{projectRoot}/project.json"]
+      "inputs": [
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/libs/ts-env-loader/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/libs/ts-env-loader/behaviours/**/*.feature",
+        "{workspaceRoot}/libs/ts-env-loader/tests/integration/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/ts-env-loader/vitest.integration.config.ts"
+      ]
+    },
+    "test:coverage:e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node scripts/behaviour-coverage.mjs --config libs/ts-env-loader/behaviour-coverage.json --adapter e2e"
+      },
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/libs/ts-env-loader/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/libs/ts-env-loader/behaviours/**/*.feature",
+        "{workspaceRoot}/libs/ts-env-loader/tests/e2e/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/ts-env-loader/vitest.e2e.config.ts"
+      ]
+    },
+    "test:coverage": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "npm exec -- nx run ts-env-loader:test:coverage:unit",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run ts-env-loader:test:coverage:integration",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run ts-env-loader:test:coverage:e2e",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run ts-env-loader:test:coverage:behaviour",
+            "forwardAllArgs": false
+          }
+        ],
+        "parallel": false,
+        "forwardAllArgs": false
+      },
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/libs/ts-env-loader/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/libs/ts-env-loader/behaviours/**/*.feature",
+        "{workspaceRoot}/libs/ts-env-loader/tests/unit/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/ts-env-loader/tests/integration/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/ts-env-loader/tests/e2e/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/ts-env-loader/vitest.config.ts",
+        "{workspaceRoot}/libs/ts-env-loader/vitest.integration.config.ts",
+        "{workspaceRoot}/libs/ts-env-loader/vitest.e2e.config.ts"
+      ]
     }
   },
   "namedInputs": {
-    "specs": ["{workspaceRoot}/specs/libs/ts-env-loader/behaviors/**/*.feature"]
+    "specs": ["{workspaceRoot}/specs/libs/ts-env-loader/behaviours/**/*.feature"]
   },
   "tags": ["type:lib", "lang:ts", "domain:config"]
 }

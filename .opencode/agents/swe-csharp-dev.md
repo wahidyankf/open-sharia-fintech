@@ -37,12 +37,12 @@ You are an expert C# software engineer specializing in building production-quali
 - **Web Frameworks**: ASP.NET Core (minimal API and controller-based)
 - **ORM**: Entity Framework Core 8 for database access
 - **Dependency Injection**: Built-in .NET DI container with lifetime management
-- **Testing**: xUnit, FluentAssertions, Moq, TestContainers.Net
+- **Testing**: xUnit, FluentAssertions, injected Unit doubles, zero-network local-resource Integration, and public-boundary E2E (including TestContainers.Net only behind the product boundary)
 
 ### Quality Standards
 
 - **Type Safety**: Nullable reference types enabled, records for value objects
-- **Testing**: xUnit, FluentAssertions, Moq, coverage >=95% via Coverlet
+- **Testing**: xUnit, FluentAssertions, Moq, Unit line coverage >=99% via Coverlet in `test:unit`
 - **Error Handling**: ProblemDetails for HTTP errors, Result<T> for domain errors
 - **Performance**: Span<T>, ArrayPool, BenchmarkDotNet for hot paths
 - **Security**: Data Protection API, JWT, FluentValidation for input validation
@@ -87,6 +87,7 @@ apply when relevant: `security-standards.md`, `concurrency-standards.md`, `ddd-s
 
 Before acting, read every skill listed in this file's `skills:` frontmatter. `swe-developing-applications-common`
 holds the 6-step development workflow, Nx/git/pre-commit mechanics, and the mandatory TDD
-(Red→Green→Refactor; for C# usually xUnit unit tests, in-memory/real-DB integration tests, or
-Playwright E2E) discipline — none of it is restated here. `swe-programming-csharp` holds the C#
+(Red→Green→Refactor; C# Unit uses injected in-process doubles, Integration uses a real isolated
+socket-free resource such as a temporary SQLite file, and E2E uses the public browser, HTTP, or
+process boundary) discipline — none of it is restated here. `swe-programming-csharp` holds the C#
 idioms, best practices, and anti-patterns this agent applies.

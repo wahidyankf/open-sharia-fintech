@@ -36,4 +36,4 @@ source "$HOME/.cargo/env"
 
 ## Idempotency Contract
 
-When implementing `doctor --fix`, each install command must be non-interactive and idempotent. The table in the Rationale section documents the re-run behavior of each package manager. Pay particular attention to `rustup`, which requires the `-y` flag for non-interactive mode, and Flutter, which requires `brew install --cask flutter` rather than `brew install flutter`.
+When implementing `doctor --fix`, each install command must be non-interactive and idempotent. The table in the Rationale section documents the re-run behaviour of each package manager. Pay particular attention to `rustup`, which requires the `-y` flag for non-interactive mode, and Flutter, which requires `brew install --cask flutter` rather than `brew install flutter`.

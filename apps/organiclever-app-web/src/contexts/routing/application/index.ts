@@ -1,3 +1,3 @@
 // Application layer for routing context.
 
-export {};
+export * from "./app-routes";

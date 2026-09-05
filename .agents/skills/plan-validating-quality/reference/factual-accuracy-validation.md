@@ -3,12 +3,12 @@
 After Step 4 (Technical Documentation), verify factual claims with web tools.
 
 **What to verify**: dependency versions (existence, deprecation); API compatibility (e.g. tRPC v11
-plus Zod v3 working together); command syntax currency; platform behavior claims (e.g. "Next.js
+plus Zod v3 working together); command syntax currency; platform behaviour claims (e.g. "Next.js
 serves `app/robots.ts` over `public/robots.txt`"); configuration option validity for the specified
 version.
 
 **How to verify**: use `docs-validating-factual-accuracy` Skill methodology — WebSearch for version
-compatibility/deprecation/breaking changes; WebFetch official docs for API signatures/config/behavior
+compatibility/deprecation/breaking changes; WebFetch official docs for API signatures/config/behaviour
 claims; classify each claim `[Verified]`, `[Error]`, `[Outdated]`, `[Unverified]`; report unverified
 claims as MEDIUM (may be correct but unconfirmed).
 

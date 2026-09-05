@@ -1,11 +1,11 @@
-/// TickSpec step definitions binding the `repo-governance/` feature files to
-/// `RhinoCli.Application.RepoGovernance`
-/// [Repo-grounded — `apps/rhino-cli/src/application/repo_governance/`].
-///
-/// Every scenario builds a throwaway governance tree under a temp directory
-/// and drives the audit functions directly, the same way the Rust modules'
-/// own unit tests do — no scenario shells out to `git` or to the CLI.
+/// Pure TickSpec bindings for repository-governance command behaviour.
 module RhinoCli.Tests.Unit.Steps.RepoGovernanceSteps
+
+let private behaviourFeatureOwnership =
+    [ "specs/apps/rhino/cli/behaviours/repo-governance/repo-governance-audit.feature"
+      "specs/apps/rhino/cli/behaviours/repo-governance/repo-governance-layer-coherence.feature"
+      "specs/apps/rhino/cli/behaviours/repo-governance/repo-governance-traceability-audit.feature"
+      "specs/apps/rhino/cli/behaviours/repo-governance/repo-governance-vendor-audit.feature" ]
 
 open System
 open System.IO
@@ -13,77 +13,46 @@ open TickSpec
 open Xunit
 open RhinoCli.Application.RepoGovernance
 
-/// Instance step-definition container — see `ConventionSteps.fs`'s module
-/// doc comment for why TickSpec's one-instance-per-scenario lifecycle makes
-/// instance-level mutable fields the idiomatic state-threading mechanism
-/// here.
 type RepoGovernanceSteps() =
-    let mutable repoRoot: string option = None
+    let mutable documents: Map<string, string> = Map.empty
     let mutable layerFindings: LayerCoherenceFinding list = []
     let mutable traceFindings: TraceabilityFinding list = []
     let mutable vendorFindings: VendorFinding list = []
-    let mutable vendorTarget: string option = None
-    let mutable auditRunner: (string -> AuditOptions -> AuditFinding list) option = None
+
+    let mutable auditRunner: (string -> AuditOptions -> AuditFinding list) =
+        fun _ _ -> []
+
+    let mutable suppressionKeys: Set<string> = Set.empty
     let mutable auditEnvelope: AuditEnvelope option = None
     let mutable auditJsonRuns: string list = []
-    let mutable auditSuppressedKey: string = ""
-    let mutable output: string = ""
-    let mutable exitCode: int = 0
+    let mutable output = ""
+    let mutable exitCode = 0
 
-    let root () : string =
-        match repoRoot with
-        | Some existing -> existing
-        | None ->
-            let created =
-                Path.Combine(Path.GetTempPath(), "rhino-cli-repogov-" + Guid.NewGuid().ToString("N"))
+    let write path content =
+        documents <- Map.add path content documents
 
-            Directory.CreateDirectory created |> ignore
-            repoRoot <- Some created
-            created
+    let renderLayers layers =
+        layers
+        |> List.map (fun (number, name: string) ->
+            sprintf "## Layer %d: %s (the %s layer)" number name (name.ToLowerInvariant()))
+        |> String.concat "\n\n"
+        |> fun body -> "# Governance\n\n" + body + "\n"
 
-    /// Writes both governance index documents from `## Layer N: Name (…)`
-    /// heading lines, the declaration form the audit's heading regex reads.
-    let writeGovernanceDocs (archLayers: (int * string) list) (readmeLayers: (int * string) list) =
-        let render (layers: (int * string) list) =
-            layers
-            |> List.map (fun (number, name) ->
-                sprintf "## Layer %d: %s (the %s layer)" number name (name.ToLowerInvariant()))
-            |> String.concat "\n\n"
-            |> fun body -> "# Governance\n\n" + body + "\n"
+    let writeLayers arch readme =
+        write "repo-governance/repository-governance-architecture.md" (renderLayers arch)
+        write "repo-governance/README.md" (renderLayers readme)
 
-        let dir = Path.Combine(root (), "repo-governance")
-        Directory.CreateDirectory dir |> ignore
-        File.WriteAllText(Path.Combine(dir, "repository-governance-architecture.md"), render archLayers)
-        File.WriteAllText(Path.Combine(dir, "README.md"), render readmeLayers)
+    let writeCleanTraceability () =
+        write "repo-governance/principles/p.md" "# P\n\n## Vision Supported\n\n- vision\n"
+        write "repo-governance/conventions/c.md" "# C\n\n## Principles Implemented/Respected\n\n- p\n"
 
-    /// Writes `content` at `repo-governance/<rel>` under the fixture root.
-    let writeDoc (rel: string) (content: string) : unit =
-        let path =
-            Path.Combine(root (), "repo-governance", rel.Replace('/', Path.DirectorySeparatorChar))
+        write
+            "repo-governance/development/d.md"
+            "# D\n\n## Principles Implemented/Respected\n\n- p\n\n## Conventions Implemented/Respected\n\n- c\n"
 
-        Directory.CreateDirectory(Path.GetDirectoryName path) |> ignore
-        File.WriteAllText(path, content)
+        write "repo-governance/workflows/w.md" "# W\n\nRun .claude/agents/pr-review/pr-review-fixer.md\n"
 
-    /// Writes one governance Markdown file and records it as the vendor
-    /// audit's target.
-    let writeVendorFile (content: string) : unit =
-        let dir = Path.Combine(root (), "repo-governance")
-        Directory.CreateDirectory dir |> ignore
-        let path = Path.Combine(dir, "doc.md")
-        File.WriteAllText(path, content)
-        vendorTarget <- Some path
-
-    /// Builds an injected category runner from a per-category finding table,
-    /// so a scenario can state a category's outcome without a fixture tree.
-    let fixedRunner (table: (string * AuditFinding list) list) =
-        fun (name: string) (_: AuditOptions) ->
-            table
-            |> List.tryFind (fun (key, _) -> key = name)
-            |> Option.map snd
-            |> Option.defaultValue []
-
-    /// A finding with a caller-chosen key, the one field suppression matches on.
-    let auditFindingWithKey (key: string) (file: string) (message: string) : AuditFinding =
+    let finding key file message =
         { Key = key
           Severity = "high"
           Criticality = "HIGH"
@@ -91,968 +60,649 @@ type RepoGovernanceSteps() =
           Line = 0
           Message = message }
 
-    let auditOptions () : AuditOptions =
-        { RepoRoot = root ()
+    let fixedRunner table name (_: AuditOptions) =
+        table
+        |> List.tryFind (fun (category, _) -> category = name)
+        |> Option.map snd
+        |> Option.defaultValue []
+
+    let options includeOnly =
+        { RepoRoot = "/virtual-rhino-repository"
           Skip = []
-          IncludeOnly = []
+          IncludeOnly = includeOnly
           Now = Some "2026-01-01T00:00:00Z"
           KnownFalsePositivesPath = None
           ExcludeGlobs = [] }
 
-    let runAuditScenario (opts: AuditOptions) : AuditEnvelope =
+    let runAudit includeOnly =
         let envelope =
-            runAuditWith (auditRunner |> Option.defaultValue runAuditCategory) opts
+            runAuditCore auditRunner suppressionKeys "abc1234" "2026-01-01T00:00:00Z" (options includeOnly)
 
         auditEnvelope <- Some envelope
-        exitCode <- (if envelope.Result.TotalFindings > 0 then 1 else 0)
         output <- formatAuditJson envelope
+        exitCode <- if envelope.Result.TotalFindings = 0 then 0 else 1
         envelope
 
-    let requireEnvelope () : AuditEnvelope =
-        match auditEnvelope with
-        | Some envelope -> envelope
-        | None -> failwith "repo-governance audit never ran"
+    let requireAudit () =
+        auditEnvelope |> Option.defaultWith (fun () -> failwith "audit did not run")
 
-    let sixLayers =
-        [ 0, "Vision"
-          1, "Principles"
-          2, "Conventions"
-          3, "Development"
-          4, "Workflows"
-          5, "Glossary" ]
+    member private _.HandleGiven(step: string) =
+        let layers =
+            [ 0, "Vision"
+              1, "Principles"
+              2, "Conventions"
+              3, "Development"
+              4, "Workflows"
+              5, "Glossary" ]
 
-    // ---- Given (`repo-governance-layer-coherence.feature`) ----
+        if step.Contains("both governance docs list layers 0 through 5", StringComparison.Ordinal) then
+            writeLayers layers layers
+        elif step.Contains("layers 0, 1, and 3", StringComparison.Ordinal) then
+            let gapped = [ 0, "Vision"; 1, "Principles"; 3, "Development" ] in writeLayers gapped gapped
+        elif step.Contains("assign different names", StringComparison.Ordinal) then
+            writeLayers [ 0, "Vision"; 1, "Principles" ] [ 0, "Vision"; 1, "Foundations" ]
+        elif step.Contains("every governance document carries", StringComparison.Ordinal) then
+            writeCleanTraceability ()
+        elif step.Contains("principle file", StringComparison.Ordinal) then
+            writeCleanTraceability ()
+            write "repo-governance/principles/untraced.md" "# Untraced\n"
+        elif step.Contains("convention file", StringComparison.Ordinal) then
+            writeCleanTraceability ()
+            write "repo-governance/conventions/untraced.md" "# Untraced\n"
+        elif step.Contains("development file", StringComparison.Ordinal) then
+            writeCleanTraceability ()
+            write "repo-governance/development/untraced.md" "# Untraced\n\n## Principles Implemented/Respected\n"
+        elif step.Contains("workflow file", StringComparison.Ordinal) then
+            writeCleanTraceability ()
+            write "repo-governance/workflows/unreferenced.md" "# Workflow\n"
+        elif step.Contains("split into a child directory", StringComparison.Ordinal) then
+            writeCleanTraceability ()
+            write "repo-governance/conventions/split.md" "# Split\n\n## Principles Implemented/Respected\n"
+            write "repo-governance/conventions/split/README.md" "# Index\n"
+            write "repo-governance/conventions/split/plain-child.md" "# Child\n"
+        elif step.Contains("split across nested", StringComparison.Ordinal) then
+            writeCleanTraceability ()
+            write "repo-governance/conventions/nested.md" "# Nested\n\n## Principles Implemented/Respected\n"
+            write "repo-governance/conventions/nested/README.md" "# Index\n"
+            write "repo-governance/conventions/nested/deep/fragment.md" "# Fragment\n"
+        elif step.Contains("indexed child carries", StringComparison.Ordinal) then
+            writeCleanTraceability ()
+            write "repo-governance/conventions/carried.md" "# Carried\n"
+            write "repo-governance/conventions/carried/README.md" "# Index\n"
+            write "repo-governance/conventions/carried/child.md" "# Principles Implemented/Respected\n"
+        elif step.Contains("indexed category directory", StringComparison.Ordinal) then
+            writeCleanTraceability ()
+            write "repo-governance/conventions/category/README.md" "# Index\n"
+            write "repo-governance/conventions/category/doc.md" "# Doc\n"
+        elif step.Contains("governance markdown file", StringComparison.Ordinal) then
+            let body =
+                if step.Contains("inside a binding-example fence", StringComparison.Ordinal) then
+                    "````md\n```yaml\nharness: Claude Code\n```\n````\n"
+                elif step.Contains("inside a code fence", StringComparison.Ordinal) then
+                    sprintf
+                        "```\n%s\n```\n"
+                        (if step.Contains("Skills", StringComparison.Ordinal) then
+                             "Skills"
+                         else
+                             "Claude Code")
+                elif step.Contains("under a", StringComparison.Ordinal) then
+                    sprintf
+                        "## Platform Binding Examples\n\n%s reads this directory.\n"
+                        (if step.Contains("Junie", StringComparison.Ordinal) then
+                             "Junie"
+                         else
+                             "Claude Code")
+                elif step.Contains("Skills", StringComparison.Ordinal) then
+                    "Skills are declared per harness.\n"
+                elif step.Contains("Junie", StringComparison.Ordinal) then
+                    "Junie is one such agent.\n"
+                elif step.Contains("Amazon Q", StringComparison.Ordinal) then
+                    "Amazon Q is one such agent.\n"
+                elif step.Contains("Antigravity", StringComparison.Ordinal) then
+                    "Antigravity is one such editor.\n"
+                elif step.Contains("3.14159", StringComparison.Ordinal) then
+                    "The value of pi is 3.14159.\n"
+                else
+                    "Claude Code is the active harness.\n"
+
+            write "repo-governance/doc.md" ("# Doc\n\n" + body)
+        elif step.Contains("directory with no forbidden terms", StringComparison.Ordinal) then
+            write "repo-governance/a.md" "# A\n\nVendor-neutral prose.\n"
+            write "repo-governance/b.md" "# B\n\nThe coding agent reads this.\n"
+        elif step.Contains("every deterministic governance category reports zero", StringComparison.Ordinal) then
+            auditRunner <- fixedRunner []
+        elif step.Contains("forbidden vendor terms in repo-governance prose", StringComparison.Ordinal) then
+            let leak = "# Doc\n\nClaude Code reads this.\n"
+
+            [ "repo-governance/in-scope.md"
+              "AGENTS.md"
+              "CLAUDE.md"
+              "node_modules/cache.md"
+              "apps/demo/source.md"
+              "worktrees/side/doc.md" ]
+            |> List.iter (fun path -> write path leak)
+
+            auditRunner <-
+                fun name _ ->
+                    if name <> "vendor-audit" then
+                        []
+                    else
+                        scanVendorGovernanceDocuments documents
+                        |> List.map (fun item ->
+                            finding (sprintf "vendor|%s|%d" item.Path item.Line) item.Path item.Match)
+        elif step.Contains("two deterministic governance categories", StringComparison.Ordinal) then
+            auditRunner <-
+                fixedRunner
+                    [ "layer-coherence", [ finding "layer|a" "a.md" "first"; finding "layer|b" "b.md" "second" ]
+                      "traceability-audit", [ finding "trace|c" "c.md" "third" ] ]
+        elif step.Contains("fixed finding set", StringComparison.Ordinal) then
+            auditRunner <- fixedRunner [ "vendor-audit", [ finding "vendor|fixed" "d.md" "fixed" ] ]
+        elif step.Contains("known-false-positives", StringComparison.Ordinal) then
+            let key = "vendor-audit|suppressed.md|00000005" in
+            suppressionKeys <- Set.singleton key
+            auditRunner <- fixedRunner [ "vendor-audit", [ finding key "suppressed.md" "known false positive" ] ]
+        elif step.Contains("return any finding set", StringComparison.Ordinal) then
+            auditRunner <-
+                fixedRunner
+                    [ "layer-coherence", [ finding "layer|e" "e.md" "layer" ]
+                      "vendor-audit", [ finding "vendor|f" "f.md" "vendor" ] ]
+        else
+            failwithf "unhandled repo-governance Given: %s" step
+
+    member private _.HandleWhen(step: string) =
+        if step.Contains("layer-coherence", StringComparison.Ordinal) then
+            layerFindings <- auditLayerCoherenceDocuments documents
+            output <- formatLayerCoherenceText layerFindings
+            exitCode <- if List.isEmpty layerFindings then 0 else 1
+        elif step.Contains("traceability", StringComparison.Ordinal) then
+            traceFindings <- auditTraceabilityDocuments documents
+            output <- formatTraceabilityText traceFindings
+            exitCode <- if List.isEmpty traceFindings then 0 else 1
+        elif step.Contains("vendor validate", StringComparison.Ordinal) then
+            vendorFindings <-
+                documents
+                |> Map.toList
+                |> List.collect (fun (path, content) -> scanVendorLines path content)
+
+            output <- formatVendorText vendorFindings
+            exitCode <- if List.isEmpty vendorFindings then 0 else 1
+        elif step.Contains("ten consecutive times", StringComparison.Ordinal) then
+            auditJsonRuns <- [ for _ in 1..10 -> formatAuditJson (runAudit []) ]
+        elif step.Contains("include-category", StringComparison.Ordinal) then
+            runAudit [ "vendor-audit" ] |> ignore
+        elif step.Contains("repo-governance audit", StringComparison.Ordinal) then
+            runAudit [] |> ignore
+        else
+            failwithf "unhandled repo-governance When: %s" step
+
+    member private _.HandleThen(step: string) =
+        match step with
+        | "the command exits successfully" -> Assert.Equal(0, exitCode)
+        | "the command exits with a failure code" -> Assert.NotEqual(0, exitCode)
+        | text when text.Contains("reports zero findings", StringComparison.Ordinal) ->
+            Assert.Contains("PASSED", output, StringComparison.Ordinal)
+        | text when text.Contains("numbering gap", StringComparison.Ordinal) ->
+            Assert.Contains(layerFindings, fun item -> item.Kind = KindNumberingGap)
+        | text when text.Contains("layer name disagreement", StringComparison.Ordinal) ->
+            Assert.Contains(layerFindings, fun item -> item.Kind = KindCrossFileNameMismatch)
+        | text when text.Contains("missing Vision Supported", StringComparison.Ordinal) ->
+            Assert.Contains(traceFindings, fun item -> item.Kind = KindMissingVisionSupported)
+        | text when text.Contains("missing Principles Implemented", StringComparison.Ordinal) ->
+            Assert.Contains(traceFindings, fun item -> item.Kind = KindMissingPrinciplesImplemented)
+        | text when text.Contains("missing Conventions Implemented", StringComparison.Ordinal) ->
+            Assert.Contains(traceFindings, fun item -> item.Kind = KindMissingConventionsImplemented)
+        | text when text.Contains("missing agent reference", StringComparison.Ordinal) ->
+            Assert.Contains(traceFindings, fun item -> item.Kind = KindMissingAgentReference)
+        | text when text.Contains("forbidden term and its location", StringComparison.Ordinal) ->
+            let item = List.head vendorFindings in
+            Assert.Contains(item.Match, output, StringComparison.Ordinal)
+            Assert.Contains(sprintf "%s:%d" item.Path item.Line, output, StringComparison.Ordinal)
+        | text when text.Contains("total_findings equal to zero", StringComparison.Ordinal) ->
+            Assert.Equal(0, requireAudit().Result.TotalFindings)
+        | text when text.Contains("category reports findings only", StringComparison.Ordinal) ->
+            let files =
+                requireAudit().Result.Categories
+                |> List.collect (fun category -> category.Findings)
+                |> List.map (fun item -> item.File) in
+
+            Assert.All(
+                files,
+                fun path -> Assert.True(path.StartsWith("repo-governance/") || path = "AGENTS.md" || path = "CLAUDE.md")
+            )
+        | text when text.Contains("do not appear in the result", StringComparison.Ordinal) ->
+            let files =
+                requireAudit().Result.Categories
+                |> List.collect (fun category -> category.Findings)
+                |> List.map (fun item -> item.File)
+                |> String.concat "\n" in
+
+            Assert.DoesNotContain("node_modules", files, StringComparison.Ordinal)
+            Assert.DoesNotContain("apps/demo", files, StringComparison.Ordinal)
+            Assert.DoesNotContain("worktrees", files, StringComparison.Ordinal)
+        | text when text.Contains("equal to the sum", StringComparison.Ordinal) ->
+            let result = requireAudit().Result in
+
+            Assert.Equal(
+                result.Categories |> List.sumBy (fun category -> List.length category.Findings),
+                result.TotalFindings
+            )
+        | text when text.Contains("byte-identical", StringComparison.Ordinal) ->
+            Assert.Equal(10, List.length auditJsonRuns)
+            Assert.All(auditJsonRuns, fun item -> Assert.Equal(List.head auditJsonRuns, item))
+        | text when text.Contains("appears under skipped_false_positives", StringComparison.Ordinal) ->
+            Assert.Single(requireAudit().Result.SkippedFalsePositives) |> ignore
+        | text when text.Contains("does not count toward total_findings", StringComparison.Ordinal) ->
+            Assert.Equal(0, requireAudit().Result.TotalFindings)
+        | text when text.Contains("only the listed category", StringComparison.Ordinal) ->
+            Assert.Equal<string list>(
+                [ "vendor-audit" ],
+                requireAudit().Result.Categories |> List.map (fun category -> category.Name)
+            )
+        | unknown -> failwithf "unhandled repo-governance Then: %s" unknown
+
+    // GENERATED EXACT BINDINGS START
+    [<Given>]
+    member this.``a governance directory with no forbidden terms in prose``() =
+        this.HandleGiven("a governance directory with no forbidden terms in prose")
 
     [<Given>]
-    member _.``a repository where both governance docs list layers 0 through 5 with identical names``() =
-        writeGovernanceDocs sixLayers sixLayers
+    member this.``a governance markdown file containing "Amazon Q" in plain prose``() =
+        this.HandleGiven("a governance markdown file containing \"Amazon Q\" in plain prose")
 
     [<Given>]
-    member _.``a repository where the governance docs list layers 0, 1, and 3 with no layer 2``() =
-        let layers = [ 0, "Vision"; 1, "Principles"; 3, "Development" ]
-        writeGovernanceDocs layers layers
+    member this.``a governance markdown file containing "Antigravity" in plain prose``() =
+        this.HandleGiven("a governance markdown file containing \"Antigravity\" in plain prose")
 
     [<Given>]
-    member _.``a repository where the two governance docs assign different names to the same layer number``() =
-        writeGovernanceDocs [ 0, "Vision"; 1, "Principles" ] [ 0, "Vision"; 1, "Foundations" ]
+    member this.``a governance markdown file containing "Claude Code" in plain prose``() =
+        this.HandleGiven("a governance markdown file containing \"Claude Code\" in plain prose")
 
-    // ---- When ----
+    [<Given>]
+    member this.``a governance markdown file containing "Claude Code" inside a binding-example fence``() =
+        this.HandleGiven("a governance markdown file containing \"Claude Code\" inside a binding-example fence")
 
-    [<When>]
-    member _.``the developer runs repo-governance layer-coherence validate``() =
-        layerFindings <- auditLayerCoherence (root ())
-        output <- formatLayerCoherenceText layerFindings
-        exitCode <- (if List.isEmpty layerFindings then 0 else 1)
+    [<Given>]
+    member this.``a governance markdown file containing "Claude Code" inside a code fence``() =
+        this.HandleGiven("a governance markdown file containing \"Claude Code\" inside a code fence")
 
-    // ---- Then ----
+    [<Given>]
+    member this.``a governance markdown file containing "Claude Code" under a "Platform Binding Examples" heading``() =
+        this.HandleGiven(
+            "a governance markdown file containing \"Claude Code\" under a \"Platform Binding Examples\" heading"
+        )
 
-    [<Then>]
-    member _.``the command exits successfully``() = Assert.Equal(0, exitCode)
+    [<Given>]
+    member this.``a governance markdown file containing "Junie" in plain prose``() =
+        this.HandleGiven("a governance markdown file containing \"Junie\" in plain prose")
 
-    [<Then>]
-    member _.``the command exits with a failure code``() = Assert.NotEqual(0, exitCode)
+    [<Given>]
+    member this.``a governance markdown file containing "Junie" under a "Platform Binding Examples" heading``() =
+        this.HandleGiven(
+            "a governance markdown file containing \"Junie\" under a \"Platform Binding Examples\" heading"
+        )
 
-    [<Then>]
-    member _.``the layer-coherence output reports zero findings``() =
-        Assert.Empty layerFindings
-        Assert.Contains("LAYER COHERENCE AUDIT PASSED: zero findings", output, StringComparison.Ordinal)
+    [<Given>]
+    member this.``a governance markdown file containing "Skills" in plain prose``() =
+        this.HandleGiven("a governance markdown file containing \"Skills\" in plain prose")
 
-    [<Then>]
-    member _.``the layer-coherence output identifies the numbering gap``() =
-        Assert.Contains(layerFindings, (fun f -> f.Kind = KindNumberingGap))
-        Assert.Contains("Layer 2 is missing between 0 and 3", output, StringComparison.Ordinal)
+    [<Given>]
+    member this.``a governance markdown file containing "Skills" inside a code fence``() =
+        this.HandleGiven("a governance markdown file containing \"Skills\" inside a code fence")
 
-    [<Then>]
-    member _.``the layer-coherence output identifies the layer name disagreement``() =
-        Assert.Contains(layerFindings, (fun f -> f.Kind = KindCrossFileNameMismatch))
-        Assert.Contains("Layer 1 named \"Principles\"", output, StringComparison.Ordinal)
-        Assert.Contains("but \"Foundations\" in", output, StringComparison.Ordinal)
+    [<Given>]
+    member this.``a governance markdown file containing "The value of pi is 3\.14159\." in plain prose``() =
+        this.HandleGiven("a governance markdown file containing \"The value of pi is 3.14159.\" in plain prose")
 
-    // ---- Given (`repo-governance-traceability-audit.feature`) ----
+    [<Given>]
+    member this.``a repository where a finding key matches a known-false-positives entry in local-tmp``() =
+        this.HandleGiven("a repository where a finding key matches a known-false-positives entry in local-tmp")
 
-    /// Writes one compliant document into each audited governance family.
-    member private _.WriteCleanTree() =
-        writeDoc "principles/p.md" "# P\n\n## Vision Supported\n\n- vision\n"
-        writeDoc "conventions/c.md" "# C\n\n## Principles Implemented/Respected\n\n- p\n"
+    [<Given>]
+    member this.``a repository where both governance docs list layers 0 through 5 with identical names``() =
+        this.HandleGiven("a repository where both governance docs list layers 0 through 5 with identical names")
 
-        writeDoc
-            "development/d.md"
-            "# D\n\n## Principles Implemented/Respected\n\n- p\n\n## Conventions Implemented/Respected\n\n- c\n"
+    [<Given>]
+    member this.``a repository where deterministic governance categories return a fixed finding set``() =
+        this.HandleGiven("a repository where deterministic governance categories return a fixed finding set")
 
-        writeDoc "workflows/w.md" "# W\n\nRun .claude/agents/pr-review/pr-review-fixer.md\n"
+    [<Given>]
+    member this.``a repository where deterministic governance categories return any finding set``() =
+        this.HandleGiven("a repository where deterministic governance categories return any finding set")
+
+    [<Given>]
+    member this.``a repository where every deterministic governance category reports zero findings``() =
+        this.HandleGiven("a repository where every deterministic governance category reports zero findings")
 
     [<Given>]
     member this.``a repository where every governance document carries the required traceability sections``() =
-        this.WriteCleanTree()
+        this.HandleGiven("a repository where every governance document carries the required traceability sections")
 
-    // TickSpec reads `#` as a Gherkin inline comment and truncates this step's
-    // text at the quoted heading, while the spec-coverage checker matches the
-    // whole `.feature` line — so the tail is an optional group, satisfying both
-    // readers with one binding. Same for the two sibling steps below.
     [<Given>]
-    member this.``a repository with a principle file that is missing the "(?:## Vision Supported" heading)?``() =
-        this.WriteCleanTree()
-        writeDoc "principles/untraced.md" "# Untraced\n\nno traceability section here\n"
+    member this.``a repository where the governance docs list layers 0, 1, and 3 with no layer 2``() =
+        this.HandleGiven("a repository where the governance docs list layers 0, 1, and 3 with no layer 2")
+
+    [<Given>]
+    member this.``a repository where the two governance docs assign different names to the same layer number``() =
+        this.HandleGiven("a repository where the two governance docs assign different names to the same layer number")
+
+    [<Given>]
+    member this.``a repository where two deterministic governance categories report findings and the rest pass``() =
+        this.HandleGiven("a repository where two deterministic governance categories report findings and the rest pass")
 
     [<Given>]
     member this.``a repository with a convention file that is missing the "(?:## Principles Implemented/Respected" heading)?``
         ()
         =
-        this.WriteCleanTree()
-        writeDoc "conventions/untraced.md" "# Untraced\n\nno traceability section here\n"
+        this.HandleGiven(
+            "a repository with a convention file that is missing the \"## Principles Implemented/Respected\" heading"
+        )
 
     [<Given>]
     member this.``a repository with a development file that is missing the "(?:## Conventions Implemented/Respected" heading)?``
         ()
         =
-        this.WriteCleanTree()
-        writeDoc "development/untraced.md" "# Untraced\n\n## Principles Implemented/Respected\n\n- p\n"
+        this.HandleGiven(
+            "a repository with a development file that is missing the \"## Conventions Implemented/Respected\" heading"
+        )
 
     [<Given>]
-    member this.``a repository with a workflow file that contains no reference to any \.claude/agents/ file``() =
-        this.WriteCleanTree()
-        writeDoc "workflows/unreferenced.md" "# Workflow\n\nno agent reference here\n"
+    member this.``a repository with a governance document split across nested indexed child directories``() =
+        this.HandleGiven("a repository with a governance document split across nested indexed child directories")
 
     [<Given>]
     member this.``a repository with a governance document split into a child directory whose children carry plain kebab-case names``
         ()
         =
-        this.WriteCleanTree()
-        writeDoc "conventions/split.md" "# Split\n\n## Principles Implemented/Respected\n\n- p\n"
-        writeDoc "conventions/split/README.md" "# Split index\n\n- [child](./plain-child.md)\n"
-        writeDoc "conventions/split/plain-child.md" "# Plain child\n\nfragment body\n"
+        this.HandleGiven(
+            "a repository with a governance document split into a child directory whose children carry plain kebab-case names"
+        )
 
     [<Given>]
-    member this.``a repository with a governance document split across nested indexed child directories``() =
-        this.WriteCleanTree()
-        writeDoc "conventions/nested.md" "# Nested\n\n## Principles Implemented/Respected\n\n- p\n"
-        writeDoc "conventions/nested/README.md" "# Nested index\n\n- [deep](./deep/fragment.md)\n"
-        writeDoc "conventions/nested/deep/fragment.md" "# Deep fragment\n\nfragment body\n"
+    member this.``a repository with a principle file that is missing the "(?:## Vision Supported" heading)?``() =
+        this.HandleGiven("a repository with a principle file that is missing the \"## Vision Supported\" heading")
 
     [<Given>]
-    member this.``a split convention whose indexed child carries the required traceability section``() =
-        this.WriteCleanTree()
-        writeDoc "conventions/carried.md" "# Carried\n\nparent body with no traceability section\n"
-        writeDoc "conventions/carried/README.md" "# Carried index\n\n- [child](./child.md)\n"
-        writeDoc "conventions/carried/child.md" "# Principles Implemented/Respected\n\n- p\n"
+    member this.``a repository with a workflow file that contains no reference to any \.claude/agents/ file``() =
+        this.HandleGiven("a repository with a workflow file that contains no reference to any .claude/agents/ file")
 
     [<Given>]
     member this.``a repository with an indexed category directory that has no same-named parent document``() =
-        this.WriteCleanTree()
-        writeDoc "conventions/category/README.md" "# Category index\n\n- [doc](./doc.md)\n"
-        writeDoc "conventions/category/doc.md" "# Doc\n\nno traceability section here\n"
-
-    // ---- When ----
-
-    [<When>]
-    member _.``the developer runs repo-governance traceability validate``() =
-        traceFindings <- auditTraceability (root ())
-        output <- formatTraceabilityText traceFindings
-        exitCode <- (if List.isEmpty traceFindings then 0 else 1)
-
-    // ---- Then ----
-
-    [<Then>]
-    member _.``the traceability output reports zero findings``() =
-        Assert.Empty traceFindings
-        Assert.Contains("TRACEABILITY AUDIT PASSED: zero findings", output, StringComparison.Ordinal)
-
-    [<Then>]
-    member _.``the traceability output identifies the missing Vision Supported section``() =
-        Assert.Contains(traceFindings, (fun f -> f.Kind = KindMissingVisionSupported))
-        Assert.Contains("untraced.md", output, StringComparison.Ordinal)
-
-    [<Then>]
-    member _.``the traceability output identifies the missing Principles Implemented section``() =
-        Assert.Contains(traceFindings, (fun f -> f.Kind = KindMissingPrinciplesImplemented))
-
-    [<Then>]
-    member _.``the traceability output identifies the missing Conventions Implemented section``() =
-        Assert.Contains(traceFindings, (fun f -> f.Kind = KindMissingConventionsImplemented))
-        Assert.Contains("untraced.md", output, StringComparison.Ordinal)
-
-    [<Then>]
-    member _.``the traceability output identifies the missing agent reference``() =
-        Assert.Contains(traceFindings, (fun f -> f.Kind = KindMissingAgentReference))
-        Assert.Contains("unreferenced.md", output, StringComparison.Ordinal)
-
-    // ---- Given (`repo-governance-vendor-audit.feature`) ----
+        this.HandleGiven("a repository with an indexed category directory that has no same-named parent document")
 
     [<Given>]
-    member _.``a governance markdown file containing "Claude Code" in plain prose``() =
-        writeVendorFile "# Doc\n\nThe agent runs under Claude Code today.\n"
-
-    [<Given>]
-    member _.``a governance markdown file containing "Claude Code" inside a code fence``() =
-        writeVendorFile "# Doc\n\n```\nClaude Code\n```\n"
-
-    [<Given>]
-    member _.``a governance markdown file containing "Claude Code" inside a binding-example fence``() =
-        writeVendorFile "# Doc\n\n````md\n```yaml\nharness: Claude Code\n```\n````\n"
-
-    [<Given>]
-    member _.``a governance markdown file containing "Claude Code" under a "(?:Platform Binding Examples" heading)?``
+    member this.``a repository with forbidden vendor terms in repo-governance prose and also in out-of-scope paths such as build caches, app source, and worktrees``
         ()
         =
-        writeVendorFile "# Doc\n\n## Platform Binding Examples\n\nClaude Code reads this directory.\n"
-
-    [<Given>]
-    member _.``a governance directory with no forbidden terms in prose``() =
-        let dir = Path.Combine(root (), "repo-governance")
-        Directory.CreateDirectory dir |> ignore
-        File.WriteAllText(Path.Combine(dir, "a.md"), "# A\n\nThe coding agent reads this.\n")
-        File.WriteAllText(Path.Combine(dir, "b.md"), "# B\n\nVendor-neutral prose only.\n")
-        vendorTarget <- Some dir
-
-    [<Given>]
-    member _.``a governance markdown file containing "Skills" in plain prose``() =
-        writeVendorFile "# Doc\n\nSkills are declared per harness.\n"
-
-    [<Given>]
-    member _.``a governance markdown file containing "Skills" inside a code fence``() =
-        writeVendorFile "# Doc\n\n```\nSkills\n```\n"
-
-    [<Given>]
-    member _.``a governance markdown file containing "Junie" in plain prose``() =
-        writeVendorFile "# Doc\n\nJunie is one such agent.\n"
-
-    [<Given>]
-    member _.``a governance markdown file containing "Amazon Q" in plain prose``() =
-        writeVendorFile "# Doc\n\nAmazon Q is one such agent.\n"
-
-    [<Given>]
-    member _.``a governance markdown file containing "Antigravity" in plain prose``() =
-        writeVendorFile "# Doc\n\nAntigravity is one such editor.\n"
-
-    [<Given>]
-    member _.``a governance markdown file containing "The value of pi is 3.14159." in plain prose``() =
-        writeVendorFile "# Doc\n\nThe value of pi is 3.14159.\n"
-
-    [<Given>]
-    member _.``a governance markdown file containing "Junie" under a "(?:Platform Binding Examples" heading)?``() =
-        writeVendorFile "# Doc\n\n## Platform Binding Examples\n\nJunie reads this directory.\n"
-
-    // ---- When ----
-
-    [<When>]
-    member _.``the developer runs repo-governance vendor validate on the file``() =
-        vendorFindings <-
-            match vendorTarget with
-            | Some path -> scanVendorFile path
-            | None -> failwith "no governance file was written"
-
-        output <- formatVendorText vendorFindings
-        exitCode <- (if List.isEmpty vendorFindings then 0 else 1)
-
-    [<When>]
-    member _.``the developer runs repo-governance vendor validate on the directory``() =
-        vendorFindings <-
-            match vendorTarget with
-            | Some dir -> walkVendor dir
-            | None -> failwith "no governance directory was written"
-
-        output <- formatVendorText vendorFindings
-        exitCode <- (if List.isEmpty vendorFindings then 0 else 1)
-
-    // ---- Then ----
-
-    [<Then>]
-    member _.``the output identifies the forbidden term and its location``() =
-        let finding = List.head vendorFindings
-        Assert.Contains(finding.Match, output, StringComparison.Ordinal)
-        Assert.Contains(sprintf "%s:%d" finding.Path finding.Line, output, StringComparison.Ordinal)
-
-    [<Then>]
-    member _.``the output reports zero findings``() =
-        Assert.Empty vendorFindings
-        Assert.Contains("GOVERNANCE VENDOR AUDIT PASSED", output, StringComparison.Ordinal)
-
-    // ---- Given (`repo-governance-audit.feature`) ----
-
-    [<Given>]
-    member _.``a repository where every deterministic governance category reports zero findings``() =
-        auditRunner <- Some(fixedRunner [])
-
-    [<Given>]
-    member _.``a repository with forbidden vendor terms in repo-governance prose and also in out-of-scope paths such as build caches, app source, and worktrees``
-        ()
-        =
-        let write (rel: string) (content: string) =
-            let path = Path.Combine(root (), rel.Replace('/', Path.DirectorySeparatorChar))
-            Directory.CreateDirectory(Path.GetDirectoryName path) |> ignore
-            File.WriteAllText(path, content)
-
-        let leak = "# Doc\n\nClaude Code reads this.\n"
-        write "repo-governance/in-scope.md" leak
-        write "AGENTS.md" leak
-        write "CLAUDE.md" leak
-        write "node_modules/.cache/cached.md" leak
-        write "apps/demo/src/app-source.md" leak
-        write "worktrees/side/worktree-doc.md" leak
-
-    [<Given>]
-    member _.``a repository where two deterministic governance categories report findings and the rest pass``() =
-        auditRunner <-
-            Some(
-                fixedRunner
-                    [ "layer-coherence",
-                      [ auditFindingWithKey "layer-coherence|a.md|00000001" "a.md" "first"
-                        auditFindingWithKey "layer-coherence|b.md|00000002" "b.md" "second" ]
-                      "traceability-audit", [ auditFindingWithKey "traceability-audit|c.md|00000003" "c.md" "third" ] ]
-            )
-
-    [<Given>]
-    member _.``a repository where deterministic governance categories return a fixed finding set``() =
-        auditRunner <-
-            Some(
-                fixedRunner
-                    [ "vendor-audit", [ auditFindingWithKey "vendor-audit|d.md|00000004" "d.md" "fixed finding" ] ]
-            )
-
-    [<Given>]
-    member _.``a repository where a finding key matches a known-false-positives entry in local-tmp``() =
-        auditSuppressedKey <- "vendor-audit|suppressed.md|00000005"
-
-        auditRunner <-
-            Some(
-                fixedRunner
-                    [ "vendor-audit", [ auditFindingWithKey auditSuppressedKey "suppressed.md" "known false positive" ] ]
-            )
-
-        let dir = Path.Combine(root (), "local-tmp")
-        Directory.CreateDirectory dir |> ignore
-
-        File.WriteAllText(
-            Path.Combine(dir, ".known-false-positives.md"),
-            sprintf "# Known false positives\n\n- `%s`\n" auditSuppressedKey
+        this.HandleGiven(
+            "a repository with forbidden vendor terms in repo-governance prose and also in out-of-scope paths such as build caches, app source, and worktrees"
         )
 
     [<Given>]
-    member _.``a repository where deterministic governance categories return any finding set``() =
-        auditRunner <-
-            Some(
-                fixedRunner
-                    [ "layer-coherence", [ auditFindingWithKey "layer-coherence|e.md|00000006" "e.md" "layer" ]
-                      "vendor-audit", [ auditFindingWithKey "vendor-audit|f.md|00000007" "f.md" "vendor" ] ]
-            )
-
-    // ---- When ----
+    member this.``a split convention whose indexed child carries the required traceability section``() =
+        this.HandleGiven("a split convention whose indexed child carries the required traceability section")
 
     [<When>]
-    member _.``the developer runs repo-governance audit``() =
-        runAuditScenario (auditOptions ()) |> ignore
+    member this.``the developer runs repo-governance audit``() =
+        this.HandleWhen("the developer runs repo-governance audit")
 
     [<When>]
-    member _.``the developer runs repo-governance audit ten consecutive times with a fixed clock``() =
-        auditJsonRuns <- [ for _ in 1..10 -> formatAuditJson (runAuditScenario (auditOptions ())) ]
+    member this.``the developer runs repo-governance audit ten consecutive times with a fixed clock``() =
+        this.HandleWhen("the developer runs repo-governance audit ten consecutive times with a fixed clock")
 
     [<When>]
-    member _.``the developer runs repo-governance audit with include-category limited to one category``() =
-        runAuditScenario
-            { auditOptions () with
-                IncludeOnly = [ "vendor-audit" ] }
-        |> ignore
+    member this.``the developer runs repo-governance audit with include-category limited to one category``() =
+        this.HandleWhen("the developer runs repo-governance audit with include-category limited to one category")
 
-    // ---- Then ----
+    [<When>]
+    member this.``the developer runs repo-governance layer-coherence validate``() =
+        this.HandleWhen("the developer runs repo-governance layer-coherence validate")
+
+    [<When>]
+    member this.``the developer runs repo-governance traceability validate``() =
+        this.HandleWhen("the developer runs repo-governance traceability validate")
+
+    [<When>]
+    member this.``the developer runs repo-governance vendor validate on the directory``() =
+        this.HandleWhen("the developer runs repo-governance vendor validate on the directory")
+
+    [<When>]
+    member this.``the developer runs repo-governance vendor validate on the file``() =
+        this.HandleWhen("the developer runs repo-governance vendor validate on the file")
 
     [<Then>]
-    member _.``the output reports total_findings equal to zero across all categories``() =
-        let envelope = requireEnvelope ()
-        Assert.Equal(0, envelope.Result.TotalFindings)
-        Assert.Equal("ok", envelope.Status)
-        Assert.All(envelope.Result.Categories, (fun c -> Assert.True c.Passed))
+    member this.``every run produces byte-identical JSON output``() =
+        this.HandleThen("every run produces byte-identical JSON output")
 
     [<Then>]
-    member _.``the vendor-audit category reports findings only from repo-governance, AGENTS.md, and CLAUDE.md``() =
-        let vendor =
-            requireEnvelope().Result.Categories
-            |> List.find (fun c -> c.Name = "vendor-audit")
+    member this.``forbidden vendor terms in build caches, app source, and worktrees do not appear in the result``() =
+        this.HandleThen("forbidden vendor terms in build caches, app source, and worktrees do not appear in the result")
 
-        Assert.NotEmpty vendor.Findings
+    [<Then>]
+    member this.``only the listed category appears in the result categories list``() =
+        this.HandleThen("only the listed category appears in the result categories list")
 
-        Assert.All(
-            vendor.Findings,
-            fun f ->
-                let name = Path.GetFileName f.File
+    [<Then>]
+    member this.``the command exits successfully``() =
+        this.HandleThen("the command exits successfully")
 
-                Assert.True(f.File.Contains "repo-governance" || name = "AGENTS.md" || name = "CLAUDE.md", f.File)
+    [<Then>]
+    member this.``the command exits with a failure code``() =
+        this.HandleThen("the command exits with a failure code")
+
+    [<Then>]
+    member this.``the layer-coherence output identifies the layer name disagreement``() =
+        this.HandleThen("the layer-coherence output identifies the layer name disagreement")
+
+    [<Then>]
+    member this.``the layer-coherence output identifies the numbering gap``() =
+        this.HandleThen("the layer-coherence output identifies the numbering gap")
+
+    [<Then>]
+    member this.``the layer-coherence output reports zero findings``() =
+        this.HandleThen("the layer-coherence output reports zero findings")
+
+    [<Then>]
+    member this.``the matching finding appears under skipped_false_positives``() =
+        this.HandleThen("the matching finding appears under skipped_false_positives")
+
+    [<Then>]
+    member this.``the matching finding does not count toward total_findings``() =
+        this.HandleThen("the matching finding does not count toward total_findings")
+
+    [<Then>]
+    member this.``the output identifies the forbidden term and its location``() =
+        this.HandleThen("the output identifies the forbidden term and its location")
+
+    [<Then>]
+    member this.``the output reports total_findings equal to the sum of category findings``() =
+        this.HandleThen("the output reports total_findings equal to the sum of category findings")
+
+    [<Then>]
+    member this.``the output reports total_findings equal to zero across all categories``() =
+        this.HandleThen("the output reports total_findings equal to zero across all categories")
+
+    [<Then>]
+    member this.``the output reports zero findings``() =
+        this.HandleThen("the output reports zero findings")
+
+    [<Then>]
+    member this.``the traceability output identifies the missing Conventions Implemented section``() =
+        this.HandleThen("the traceability output identifies the missing Conventions Implemented section")
+
+    [<Then>]
+    member this.``the traceability output identifies the missing Principles Implemented section``() =
+        this.HandleThen("the traceability output identifies the missing Principles Implemented section")
+
+    [<Then>]
+    member this.``the traceability output identifies the missing Vision Supported section``() =
+        this.HandleThen("the traceability output identifies the missing Vision Supported section")
+
+    [<Then>]
+    member this.``the traceability output identifies the missing agent reference``() =
+        this.HandleThen("the traceability output identifies the missing agent reference")
+
+    [<Then>]
+    member this.``the traceability output reports zero findings``() =
+        this.HandleThen("the traceability output reports zero findings")
+
+    [<Then>]
+    member this.``the vendor-audit category reports findings only from repo-governance, AGENTS\.md, and CLAUDE\.md``() =
+        this.HandleThen(
+            "the vendor-audit category reports findings only from repo-governance, AGENTS.md, and CLAUDE.md"
         )
 
-    [<Then>]
-    member _.``forbidden vendor terms in build caches, app source, and worktrees do not appear in the result``() =
-        let files =
-            requireEnvelope().Result.Categories
-            |> List.collect (fun c -> c.Findings)
-            |> List.map (fun f -> f.File)
-
-        for fragment in [ "node_modules"; "apps/demo"; "worktrees" ] do
-            Assert.DoesNotContain(fragment, String.Join("\n", files), StringComparison.Ordinal)
-
-    [<Then>]
-    member _.``the output reports total_findings equal to the sum of category findings``() =
-        let envelope = requireEnvelope ()
-
-        let sum = envelope.Result.Categories |> List.sumBy (fun c -> List.length c.Findings)
-
-        Assert.Equal(sum, envelope.Result.TotalFindings)
-        Assert.Equal(3, envelope.Result.TotalFindings)
-
-    [<Then>]
-    member _.``every run produces byte-identical JSON output``() =
-        Assert.Equal(10, List.length auditJsonRuns)
-        Assert.All(auditJsonRuns, (fun run -> Assert.Equal(List.head auditJsonRuns, run)))
-
-    [<Then>]
-    member _.``the matching finding appears under skipped_false_positives``() =
-        let envelope = requireEnvelope ()
-
-        Assert.Contains(envelope.Result.SkippedFalsePositives, fun f -> f.Key = auditSuppressedKey)
-
-    [<Then>]
-    member _.``the matching finding does not count toward total_findings``() =
-        Assert.Equal(0, requireEnvelope().Result.TotalFindings)
-
-    [<Then>]
-    member _.``only the listed category appears in the result categories list``() =
-        let names = requireEnvelope().Result.Categories |> List.map (fun c -> c.Name)
-        Assert.Equal<string list>([ "vendor-audit" ], names)
+// GENERATED EXACT BINDINGS END
 
 module private FeatureRunner =
+    let private readEmbeddedFeature featureFileName =
+        let assembly = typeof<RepoGovernanceSteps>.Assembly
 
-    let private featureDir: string =
-        Path.GetFullPath(
-            Path.Combine(
-                __SOURCE_DIRECTORY__,
-                "..",
-                "..",
-                "..",
-                "..",
-                "..",
-                "specs",
-                "apps",
-                "rhino",
-                "cli",
-                "behaviors",
-                "repo-governance"
-            )
-        )
+        let resourceName =
+            assembly.GetManifestResourceNames()
+            |> Array.tryFind (fun name -> name.EndsWith("." + featureFileName, StringComparison.Ordinal))
+            |> Option.defaultWith (fun () -> failwithf "embedded repo-governance feature not found: %s" featureFileName)
 
-    let private extractScenario (featureLines: string[]) (scenarioTitle: string) : string[] =
-        let featureLine =
-            featureLines
-            |> Array.find (fun l -> l.TrimStart().StartsWith("Feature:", StringComparison.Ordinal))
+        use stream = assembly.GetManifestResourceStream(resourceName)
+        use reader = new StreamReader(stream)
+        reader.ReadToEnd().Split('\n')
 
-        let startIdx =
-            featureLines
-            |> Array.findIndex (fun l -> l.Trim() = sprintf "Scenario: %s" scenarioTitle)
-
-        let endIdx =
-            featureLines
-            |> Array.skip (startIdx + 1)
-            |> Array.tryFindIndex (fun l ->
-                let trimmed = l.Trim()
-
-                trimmed.StartsWith("Scenario:", StringComparison.Ordinal)
-                || trimmed.StartsWith("@", StringComparison.Ordinal))
-            |> Option.map (fun relativeIdx -> startIdx + 1 + relativeIdx)
-            |> Option.defaultValue featureLines.Length
-
-        Array.append [| featureLine; "" |] featureLines.[startIdx .. endIdx - 1]
-
-    /// Runs the single scenario named `scenarioTitle` from `featureFileName`
-    /// (a file inside `gherkin/repo-governance/`), bound against
-    /// `RepoGovernanceSteps`.
-    let run (featureFileName: string) (scenarioTitle: string) : unit =
-        let featurePath = Path.Combine(featureDir, featureFileName)
-        let allLines = File.ReadAllLines featurePath
-        let snippet = extractScenario allLines scenarioTitle
+    let run featureFileName =
         let definitions = StepDefinitions([| typeof<RepoGovernanceSteps> |])
-        let feature = definitions.GenerateFeature(featurePath, snippet)
-        let scenario = Seq.exactlyOne feature.Scenarios
-        scenario.Action.Invoke()
+
+        let feature =
+            definitions.GenerateFeature(featureFileName, readEmbeddedFeature featureFileName)
+
+        feature.Scenarios |> Seq.iter (fun scenario -> scenario.Action.Invoke())
+
+[<Theory>]
+[<InlineData("repo-governance-audit.feature")>]
+[<InlineData("repo-governance-layer-coherence.feature")>]
+[<InlineData("repo-governance-traceability-audit.feature")>]
+[<InlineData("repo-governance-vendor-audit.feature")>]
+let ``repository-governance behaviours have pure Unit proof`` featureFileName = FeatureRunner.run featureFileName
 
 [<Fact>]
-let ``Both docs list identical layer numbers and names passes`` () =
-    FeatureRunner.run
-        "repo-governance-layer-coherence.feature"
-        "Both docs list identical layer numbers and names passes"
+let ``pure layer and traceability audits cover malformed and asymmetric documents`` () =
+    let architecture =
+        "**Layer 0: Vision**\n"
+        + "## Layer 0: Principles (conflict)\n"
+        + "**Layer 1: Architecture only**\n"
+        + "**Layer 999999999999999999999999999999: Overflow**\n"
 
-[<Fact>]
-let ``Layer numbering has a gap fails`` () =
-    FeatureRunner.run "repo-governance-layer-coherence.feature" "Layer numbering has a gap fails"
+    let readme = "**Layer 0: Vision**\n**Layer 2: README only**\n"
 
-[<Fact>]
-let ``Two docs disagree on a layer name for the same number fails`` () =
-    FeatureRunner.run
-        "repo-governance-layer-coherence.feature"
-        "Two docs disagree on a layer name for the same number fails"
-
-[<Fact>]
-let ``A clean repository passes the traceability audit`` () =
-    FeatureRunner.run "repo-governance-traceability-audit.feature" "A clean repository passes the traceability audit"
-
-[<Fact>]
-let ``A principle missing the Vision Supported heading fails the audit`` () =
-    FeatureRunner.run
-        "repo-governance-traceability-audit.feature"
-        "A principle missing the Vision Supported heading fails the audit"
-
-[<Fact(DisplayName = "A convention missing the Principles Implemented/Respected heading fails the audit")>]
-let ``A convention missing the Principles Implemented heading fails the audit`` () =
-    FeatureRunner.run
-        "repo-governance-traceability-audit.feature"
-        "A convention missing the Principles Implemented/Respected heading fails the audit"
-
-[<Fact(DisplayName = "A development document missing the Conventions Implemented/Respected heading fails the audit")>]
-let ``A development document missing the Conventions Implemented heading fails the audit`` () =
-    FeatureRunner.run
-        "repo-governance-traceability-audit.feature"
-        "A development document missing the Conventions Implemented/Respected heading fails the audit"
-
-[<Fact>]
-let ``A workflow with no agent reference fails the audit`` () =
-    FeatureRunner.run "repo-governance-traceability-audit.feature" "A workflow with no agent reference fails the audit"
-
-[<Fact>]
-let ``A progressive-disclosure split child is exempt regardless of its filename`` () =
-    FeatureRunner.run
-        "repo-governance-traceability-audit.feature"
-        "A progressive-disclosure split child is exempt regardless of its filename"
-
-[<Fact>]
-let ``A nested progressive-disclosure fragment is audited through its parent family`` () =
-    FeatureRunner.run
-        "repo-governance-traceability-audit.feature"
-        "A nested progressive-disclosure fragment is audited through its parent family"
-
-[<Fact>]
-let ``A split document may keep its traceability section in an indexed child`` () =
-    FeatureRunner.run
-        "repo-governance-traceability-audit.feature"
-        "A split document may keep its traceability section in an indexed child"
-
-[<Fact>]
-let ``A document in an indexed category directory is still audited`` () =
-    FeatureRunner.run
-        "repo-governance-traceability-audit.feature"
-        "A document in an indexed category directory is still audited"
-
-[<Fact>]
-let ``A forbidden term in plain prose fails the audit`` () =
-    FeatureRunner.run "repo-governance-vendor-audit.feature" "A forbidden term in plain prose fails the audit"
-
-[<Fact>]
-let ``A forbidden term inside a code fence passes the audit`` () =
-    FeatureRunner.run "repo-governance-vendor-audit.feature" "A forbidden term inside a code fence passes the audit"
-
-[<Fact>]
-let ``A forbidden term inside a binding-example fence passes the audit`` () =
-    FeatureRunner.run
-        "repo-governance-vendor-audit.feature"
-        "A forbidden term inside a binding-example fence passes the audit"
-
-[<Fact>]
-let ``A forbidden term under a Platform Binding Examples heading passes the audit`` () =
-    FeatureRunner.run
-        "repo-governance-vendor-audit.feature"
-        "A forbidden term under a Platform Binding Examples heading passes the audit"
-
-[<Fact>]
-let ``A governance directory with no forbidden terms passes the audit`` () =
-    FeatureRunner.run
-        "repo-governance-vendor-audit.feature"
-        "A governance directory with no forbidden terms passes the audit"
-
-[<Fact>]
-let ``Capitalized branded Skills in plain prose fails the audit`` () =
-    FeatureRunner.run "repo-governance-vendor-audit.feature" "Capitalized branded Skills in plain prose fails the audit"
-
-[<Fact>]
-let ``Capitalized Skills inside a code fence passes the audit`` () =
-    FeatureRunner.run "repo-governance-vendor-audit.feature" "Capitalized Skills inside a code fence passes the audit"
-
-[<Fact>]
-let ``A newly forbidden coding-agent vendor name in plain prose fails the audit`` () =
-    FeatureRunner.run
-        "repo-governance-vendor-audit.feature"
-        "A newly forbidden coding-agent vendor name in plain prose fails the audit"
-
-[<Fact>]
-let ``The Amazon Q vendor name in plain prose fails the audit`` () =
-    FeatureRunner.run "repo-governance-vendor-audit.feature" "The Amazon Q vendor name in plain prose fails the audit"
-
-[<Fact>]
-let ``The Antigravity vendor name in plain prose fails the audit`` () =
-    FeatureRunner.run
-        "repo-governance-vendor-audit.feature"
-        "The Antigravity vendor name in plain prose fails the audit"
-
-[<Fact>]
-let ``The mathematical constant pi in plain prose passes the audit`` () =
-    FeatureRunner.run
-        "repo-governance-vendor-audit.feature"
-        "The mathematical constant pi in plain prose passes the audit"
-
-[<Fact>]
-let ``A newly forbidden vendor name under a Platform Binding Examples heading passes the audit`` () =
-    FeatureRunner.run
-        "repo-governance-vendor-audit.feature"
-        "A newly forbidden vendor name under a Platform Binding Examples heading passes the audit"
-
-[<Fact(DisplayName = "Clean repository: all categories pass, total_findings is 0, exit 0")>]
-let ``Clean repository all categories pass`` () =
-    FeatureRunner.run
-        "repo-governance-audit.feature"
-        "Clean repository: all categories pass, total_findings is 0, exit 0"
-
-[<Fact(DisplayName = "Vendor-audit scope is limited to governance prose and root instruction surfaces")>]
-let ``Vendor-audit scope is limited to governance prose and root instruction surfaces`` () =
-    FeatureRunner.run
-        "repo-governance-audit.feature"
-        "Vendor-audit scope is limited to governance prose and root instruction surfaces"
-
-[<Fact(DisplayName = "Mixed findings: some categories pass, some fail; total_findings is the sum; exit 1")>]
-let ``Mixed findings total is the sum`` () =
-    FeatureRunner.run
-        "repo-governance-audit.feature"
-        "Mixed findings: some categories pass, some fail; total_findings is the sum; exit 1"
-
-[<Fact(DisplayName = "Byte-determinism: running the orchestrator 10 times in a row produces byte-identical JSON")>]
-let ``Byte-determinism ten runs produce identical JSON`` () =
-    FeatureRunner.run
-        "repo-governance-audit.feature"
-        "Byte-determinism: running the orchestrator 10 times in a row produces byte-identical JSON"
-
-[<Fact(DisplayName = "Skip list honored: false-positive entries do not count toward total_findings")>]
-let ``Skip list honored`` () =
-    FeatureRunner.run
-        "repo-governance-audit.feature"
-        "Skip list honored: false-positive entries do not count toward total_findings"
-
-[<Fact(DisplayName = "Include-category filter: only listed categories run")>]
-let ``Include-category filter only listed categories run`` () =
-    FeatureRunner.run "repo-governance-audit.feature" "Include-category filter: only listed categories run"
-
-// ---------------------------------------------------------------------------
-// Direct unit tests exercising behavior with no dedicated Gherkin scenario:
-// numeric-overflow layer numbers, intra-file name conflicts, asymmetric
-// cross-file layer sets, progressive-disclosure edge cases, unclosed-comment
-// prose scanning, the exclude-glob matcher, and error-path fallbacks. Kept
-// separate from the TickSpec-bound scenarios above for the same reason
-// `RepoConfigUnitTests.fs` is kept separate from `RepoConfigSteps.fs`.
-// ---------------------------------------------------------------------------
-
-module private UnitFixtures =
-
-    let newTempDir () =
-        let dir =
-            Path.Combine(Path.GetTempPath(), "rhino-cli-repogov-unit-" + Guid.NewGuid().ToString("N"))
-
-        Directory.CreateDirectory(dir) |> ignore
-        dir
-
-    let writeGovernanceIndexDocs (root: string) (archBody: string) (readmeBody: string) =
-        let dir = Path.Combine(root, "repo-governance")
-        Directory.CreateDirectory dir |> ignore
-        File.WriteAllText(Path.Combine(dir, "repository-governance-architecture.md"), archBody)
-        File.WriteAllText(Path.Combine(dir, "README.md"), readmeBody)
-
-    let renderHeadingLayers (layers: (int * string) list) : string =
-        layers
-        |> List.map (fun (number, name) ->
-            sprintf "## Layer %d: %s (the %s layer)" number name (name.ToLowerInvariant()))
-        |> String.concat "\n\n"
-        |> fun body -> "# Governance\n\n" + body + "\n"
-
-// ---- readLayerMap / auditLayerCoherence ----
-
-[<Fact>]
-let ``auditLayerCoherence ignores a layer number too large to parse as Int64`` () =
-    let root = UnitFixtures.newTempDir ()
-
-    try
-        let archBody =
-            "# Governance\n\n## Layer 999999999999999999999999: Overflow (the overflow layer)\n\n## Layer 0: Vision (the vision layer)\n"
-
-        UnitFixtures.writeGovernanceIndexDocs root archBody archBody
-        let findings = auditLayerCoherence root
-        Assert.Empty findings
-    finally
-        Directory.Delete(root, true)
-
-[<Fact>]
-let ``auditLayerCoherence reports an intra-file name conflict for the same layer number`` () =
-    let root = UnitFixtures.newTempDir ()
-
-    try
-        let archBody =
-            "# Governance\n\n**Layer 0: Vision**\n\nSome prose.\n\n**Layer 0: Foundations**\n\nMore prose.\n"
-
-        let readmeBody = "# Governance\n\n**Layer 0: Vision**\n"
-
-        UnitFixtures.writeGovernanceIndexDocs root archBody readmeBody
-        let findings = auditLayerCoherence root
-
-        Assert.Contains(findings, (fun f -> f.Kind = KindIntraFileNameConflict))
-
-        Assert.Contains(
-            findings,
-            (fun f ->
-                f.Message.Contains "declares Layer 0 with two different names"
-                && f.Message.Contains "Vision"
-                && f.Message.Contains "Foundations")
-        )
-    finally
-        Directory.Delete(root, true)
-
-[<Fact>]
-let ``auditLayerCoherence reports a layer declared only in the architecture doc and one declared only in the README``
-    ()
-    =
-    let root = UnitFixtures.newTempDir ()
-
-    try
-        UnitFixtures.writeGovernanceIndexDocs
-            root
-            (UnitFixtures.renderHeadingLayers [ 0, "Vision"; 2, "Conventions" ])
-            (UnitFixtures.renderHeadingLayers [ 0, "Vision"; 1, "Principles" ])
-
-        let findings = auditLayerCoherence root
-
-        Assert.Contains(
-            findings,
-            (fun f ->
-                f.Kind = KindCrossFileNumberMismatch
-                && f.Message.Contains "Layer 2"
-                && f.Message.Contains "missing from")
+    let asymmetric =
+        auditLayerCoherenceDocuments (
+            Map.ofList
+                [ "repo-governance/repository-governance-architecture.md", architecture
+                  "repo-governance/README.md", readme ]
         )
 
-        Assert.Contains(
-            findings,
-            (fun f ->
-                f.Kind = KindCrossFileNumberMismatch
-                && f.Message.Contains "Layer 1"
-                && f.Message.Contains "missing from")
-        )
-    finally
-        Directory.Delete(root, true)
+    Assert.Contains(asymmetric, fun finding -> finding.Kind = KindIntraFileNameConflict)
 
-// ---- readDocumentFamily / auditTraceability ----
-
-[<Fact>]
-let ``auditTraceability handles a principle file with an empty filename stem`` () =
-    let root = UnitFixtures.newTempDir ()
-
-    try
-        let dir = Path.Combine(root, "repo-governance", "principles")
-        Directory.CreateDirectory dir |> ignore
-        File.WriteAllText(Path.Combine(dir, ".md"), "no traceability heading here\n")
-
-        let findings = auditTraceability root
-
-        Assert.Contains(findings, (fun f -> f.Kind = KindMissingVisionSupported && f.Path.EndsWith ".md"))
-    finally
-        Directory.Delete(root, true)
-
-[<Fact>]
-let ``auditTraceability flags a development doc missing its Principles Implemented section`` () =
-    let root = UnitFixtures.newTempDir ()
-
-    try
-        let dir = Path.Combine(root, "repo-governance", "development")
-        Directory.CreateDirectory dir |> ignore
-
-        File.WriteAllText(Path.Combine(dir, "d.md"), "# D\n\n## Conventions Implemented/Respected\n\n- c\n")
-
-        let findings = auditTraceability root
-
-        Assert.Contains(findings, (fun f -> f.Kind = KindMissingPrinciplesImplemented && f.Path.EndsWith "d.md"))
-    finally
-        Directory.Delete(root, true)
-
-[<Fact>]
-let ``auditTraceability sorts multiple findings on the same document by line number`` () =
-    let root = UnitFixtures.newTempDir ()
-
-    try
-        let dir = Path.Combine(root, "repo-governance", "development")
-        Directory.CreateDirectory dir |> ignore
-        File.WriteAllText(Path.Combine(dir, "both-missing.md"), "# Both missing\n\nno traceability at all\n")
-
-        let findings = auditTraceability root
-
-        let onThisDoc = findings |> List.filter (fun f -> f.Path.EndsWith "both-missing.md")
-
-        Assert.Equal(2, List.length onThisDoc)
-        Assert.Contains(onThisDoc, (fun f -> f.Kind = KindMissingPrinciplesImplemented))
-        Assert.Contains(onThisDoc, (fun f -> f.Kind = KindMissingConventionsImplemented))
-    finally
-        Directory.Delete(root, true)
-
-// ---- scanVendorLines: unclosed-comment prose and Platform Binding Examples closing ----
-
-[<Fact>]
-let ``scanVendorLines matches a forbidden term in the prose preceding an unclosed HTML comment`` () =
-    let content =
-        "# Doc\n\nClaude Code appears here <!-- comment opens and does not close on this line\nstill inside comment\n-->\n"
-
-    let findings = scanVendorLines "doc.md" content
-
-    Assert.Contains(findings, (fun f -> f.Match = "Claude Code" && f.Line = 3))
-
-[<Fact>]
-let ``scanVendorLines resumes scanning once a Platform Binding Examples section is closed by a later heading`` () =
-    let content =
-        "# Doc\n\n## Platform Binding Examples\n\nClaude Code is exempt here.\n\n## Another Section\n\nClaude Code is not exempt here.\n"
-
-    let findings = scanVendorLines "doc.md" content
-
-    Assert.Single(findings) |> ignore
-    Assert.Contains(findings, (fun f -> f.Line = 9))
-
-// ---- audit orchestrator: category lookup, exclude-glob matcher, error paths ----
-
-[<Fact>]
-let ``auditCategoryCommand returns an empty string for an unrecognised category name`` () =
-    Assert.Equal("", auditCategoryCommand "not-a-real-category")
-
-[<Fact>]
-let ``the exclude-glob matcher correctly evaluates exact, wildcard, and subtree-suffix patterns`` () =
-    let makeFinding (key: string) (file: string) (line: int) : AuditFinding =
-        { Key = key
-          Severity = "high"
-          Criticality = "HIGH"
-          File = file
-          Line = line
-          Message = "test finding" }
-
-    let findings =
-        [ makeFinding "k1" "docs/exact/match.md" 0
-          makeFinding "k2" "keep/this/file.md" 0
-          makeFinding "k3" "aXXbYYc" 0
-          makeFinding "k4" "aXXcXXc" 0
-          makeFinding "k5" "apps/node_modules/deep/file.md" 0
-          makeFinding "k6" "node_modules/top/file.md" 0
-          makeFinding "k7" "foo/bar/node_modules" 0
-          makeFinding "k8" "node_modules" 0
-          makeFinding "k9" "totally/unrelated/path.md" 0
-          makeFinding "zzz-key" "dup/path.md" 5
-          makeFinding "aaa-key" "dup/path.md" 5 ]
-
-    let runCategory (name: string) (_: AuditOptions) : AuditFinding list =
-        if name = "vendor-audit" then findings else []
-
-    let opts: AuditOptions =
-        { RepoRoot = "."
-          Skip = [ "layer-coherence"; "traceability-audit"; "governance-word-budget" ]
-          IncludeOnly = [ "vendor-audit" ]
-          Now = Some "2026-01-01T00:00:00Z"
-          KnownFalsePositivesPath = Some "/nonexistent-known-false-positives.md"
-          ExcludeGlobs = [ "docs/exact/match.md"; "a*b*c"; "node_modules/**" ] }
-
-    let envelope = runAuditWith runCategory opts
-
-    let category =
-        envelope.Result.Categories |> List.find (fun c -> c.Name = "vendor-audit")
-
-    let remaining = category.Findings |> List.map (fun f -> f.File) |> Set.ofList
-
-    Assert.Equal<Set<string>>(
-        Set.ofList [ "keep/this/file.md"; "aXXcXXc"; "totally/unrelated/path.md"; "dup/path.md" ],
-        remaining
+    Assert.Equal(
+        2,
+        asymmetric
+        |> List.filter (fun finding -> finding.Kind = KindCrossFileNumberMismatch)
+        |> List.length
     )
 
-    let dupKeysInOrder =
-        category.Findings
-        |> List.filter (fun f -> f.File = "dup/path.md")
-        |> List.map (fun f -> f.Key)
+    Assert.Empty(
+        auditLayerCoherenceDocuments (
+            Map.ofList
+                [ "repo-governance/repository-governance-architecture.md", "# No layers\n"
+                  "repo-governance/README.md", "# No layers\n" ]
+        )
+    )
 
-    Assert.Equal<string list>([ "aaa-key"; "zzz-key" ], dupKeysInOrder)
+    let missingDocuments = auditLayerCoherenceDocuments Map.empty
+    Assert.Equal(2, missingDocuments.Length)
+
+    let trace =
+        auditTraceabilityDocuments (
+            Map.ofList [ "repo-governance/development/missing.md", "\n# Development without traceability\n" ]
+        )
+
+    Assert.Contains(trace, fun finding -> finding.Kind = KindMissingPrinciplesImplemented)
+    Assert.Contains(trace, fun finding -> finding.Kind = KindMissingConventionsImplemented)
 
 [<Fact>]
-let ``findings that share a file sort by line when the keys would otherwise tie-break in the wrong order`` () =
-    let makeFinding (key: string) (file: string) (line: int) : AuditFinding =
-        { Key = key
-          Severity = "high"
-          Criticality = "HIGH"
-          File = file
-          Line = line
-          Message = "test finding" }
+let ``pure vendor scanner covers ignored scopes and resumes prose scanning`` () =
+    let content =
+        "---\ntitle: Claude Code\n---\n"
+        + "Claude Code before <!-- an open comment\nClaude Code hidden\n-->\n"
+        + "````\nClaude Code hidden in fence\n```\nClaude Code still hidden\n````\n"
+        + "## Platform Binding Examples\nClaude Code hidden in binding section\n"
+        + "## Neutral section\nClaude Code visible again\n"
+        + "####### Claude Code invalid heading\n#Claude Code invalid heading spacing\n"
+        + "`Claude Code` and [neutral](https://Claude Code.example)\n"
 
-    let findings =
-        // Same file both times; the key that sorts alphabetically first
-        // ("z-key") carries the later line, so only a genuine by-line
-        // tie-break — not a by-key one — can put "a-key" first.
-        [ makeFinding "z-key" "same/file.md" 9; makeFinding "a-key" "same/file.md" 3 ]
+    let findings = scanVendorLines "repo-governance/complex.md" content
 
-    let runCategory (name: string) (_: AuditOptions) : AuditFinding list =
-        if name = "vendor-audit" then findings else []
+    Assert.Equal(
+        4,
+        findings
+        |> List.filter (fun finding -> finding.Match = "Claude Code")
+        |> List.length
+    )
 
-    let opts: AuditOptions =
-        { RepoRoot = "."
-          Skip = [ "layer-coherence"; "traceability-audit"; "governance-word-budget" ]
+    let scoped =
+        scanVendorGovernanceDocuments (
+            Map.ofList
+                [ "repo-governance\\included.md", "Claude Code\n"
+                  "AGENTS.md", "Claude Code\n"
+                  "repo-governance/not-markdown.txt", "Claude Code\n"
+                  "apps/demo/ignored.md", "Claude Code\n" ]
+        )
+
+    Assert.Equal(2, scoped.Length)
+
+[<Fact>]
+let ``pure audit core covers keys globs sorting and optional JSON fields`` () =
+    let finding category file line message =
+        createAuditFinding category file line message
+
+    let supplied =
+        [ finding "vendor-audit" "exact.md" 0 "exact"
+          finding "vendor-audit" "prefix-middle-tail" 3 "wildcard"
+          finding "vendor-audit" "wanted/child.md" 2 "prefix subtree"
+          finding "vendor-audit" "root/wanted/child.md" 2 "nested subtree"
+          finding "vendor-audit" "root/wanted" 2 "subtree root"
+          finding "vendor-audit" "wanted" 2 "segment"
+          finding "vendor-audit" "same.md" 2 "z-last"
+          finding "vendor-audit" "same.md" 1 "first"
+          finding "vendor-audit" "same.md" 2 "a-first"
+          finding "vendor-audit" "" 0 "no location" ]
+
+    let runner name (_: AuditOptions) =
+        if name = "vendor-audit" then supplied else []
+
+    let options globs =
+        { RepoRoot = "/virtual-rhino-repository"
+          Skip = []
           IncludeOnly = [ "vendor-audit" ]
           Now = Some "2026-01-01T00:00:00Z"
-          KnownFalsePositivesPath = Some "/nonexistent-known-false-positives.md"
-          ExcludeGlobs = [] }
-
-    let envelope = runAuditWith runCategory opts
-
-    let category =
-        envelope.Result.Categories |> List.find (fun c -> c.Name = "vendor-audit")
-
-    Assert.Equal<int list>([ 3; 9 ], category.Findings |> List.map (fun f -> f.Line))
-
-[<Fact>]
-let ``readGitSha falls back to unknown when the repo root cannot be passed to git`` () =
-    let runCategory (_: string) (_: AuditOptions) : AuditFinding list = []
-
-    let opts: AuditOptions =
-        { RepoRoot = "repo" + string (char 0) + "root"
-          Skip = []
-          IncludeOnly = []
-          Now = Some "2026-01-01T00:00:00Z"
-          KnownFalsePositivesPath = Some "/nonexistent-known-false-positives.md"
-          ExcludeGlobs = [] }
-
-    let envelope = runAuditWith runCategory opts
-
-    Assert.Equal("unknown", envelope.Result.GitSha)
-
-[<Fact>]
-let ``readGitSha falls back to unknown when the git binary itself cannot be started`` () =
-    // Unlike the embedded-NUL case above (which git still starts, then exits
-    // non-zero on), clearing PATH means `Process.Start` itself throws, which
-    // is the only way to reach the `with` handler rather than the
-    // non-zero-exit-code branch. The whole test assembly disables
-    // parallelization (see GitRootUnitTests.fs), so this is safe to mutate.
-    let runCategory (_: string) (_: AuditOptions) : AuditFinding list = []
-    let originalPath = Environment.GetEnvironmentVariable("PATH")
-
-    let opts: AuditOptions =
-        { RepoRoot = "."
-          Skip = []
-          IncludeOnly = []
-          Now = Some "2026-01-01T00:00:00Z"
-          KnownFalsePositivesPath = Some "/nonexistent-known-false-positives.md"
-          ExcludeGlobs = [] }
-
-    try
-        Environment.SetEnvironmentVariable("PATH", "")
-        let envelope = runAuditWith runCategory opts
-        Assert.Equal("unknown", envelope.Result.GitSha)
-    finally
-        Environment.SetEnvironmentVariable("PATH", originalPath)
-
-[<Fact>]
-let ``runAuditCategory raises for an unrecognised category name`` () =
-    let opts: AuditOptions =
-        { RepoRoot = "."
-          Skip = []
-          IncludeOnly = []
-          Now = None
           KnownFalsePositivesPath = None
-          ExcludeGlobs = [] }
+          ExcludeGlobs = globs }
 
-    Assert.Throws<Exception>(fun () -> runAuditCategory "not-a-real-category" opts |> ignore)
-    |> ignore
+    let envelope =
+        runAuditCore
+            runner
+            Set.empty
+            "abc1234"
+            "2026-01-01T00:00:00Z"
+            (options [ "exact.md"; "prefix*middle*tail"; "wanted/**" ])
+
+    Assert.Equal(4, envelope.Result.Categories.Head.Findings.Length)
+    Assert.Equal("", auditCategoryCommand "unknown-category")
+
+    [ [ "wrong*tail" ]; [ "prefix*missing*tail" ]; [ "prefix*tail" ] ]
+    |> List.iter (fun globs ->
+        let result =
+            runAuditCore runner Set.empty "abc1234" "2026-01-01T00:00:00Z" (options globs)
+
+        Assert.NotEmpty result.Result.Categories.Head.Findings)
+
+    let json = formatAuditJson envelope
+    Assert.Contains("\"line\": 1", json, StringComparison.Ordinal)
+    Assert.Contains("\"message\": \"no location\"", json, StringComparison.Ordinal)

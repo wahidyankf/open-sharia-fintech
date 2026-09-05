@@ -38,7 +38,7 @@ Concretely:
 | Situation                                                                              | Action                           |
 | -------------------------------------------------------------------------------------- | -------------------------------- |
 | Claim about a library version is already in `package.json` / lockfile                  | `Grep`, no web call needed       |
-| Claim about Nx behavior already in `repo-governance/development/infra/nx-targets.md`   | `Read`, no web call needed       |
+| Claim about Nx behaviour already in `repo-governance/development/infra/nx-targets.md`  | `Read`, no web call needed       |
 | Single `WebFetch` against a known URL (e.g., a specific Next.js docs page) confirms it | In-context `WebFetch` permitted  |
 | Two or more searches/fetches needed to find the right source                           | **Delegate to `web-researcher`** |
 | Open-ended "current best practice" question                                            | **Delegate to `web-researcher`** |

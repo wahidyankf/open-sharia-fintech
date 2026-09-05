@@ -1,7 +1,7 @@
 /// TickSpec step definitions binding `specs/env-staged-guard.feature`'s 3
 /// scenarios (the third a `Scenario Outline` with 6 `Examples` rows) to
 /// `RhinoCli.Application.Env`'s `env staged-guard validate` port
-/// [Repo-grounded — `specs/apps/rhino/cli/behaviors/specs/env-staged-guard.feature`,
+/// [Repo-grounded — `specs/apps/rhino/cli/behaviours/specs/env-staged-guard.feature`,
 /// `apps/rhino-cli/src/commands/env_staged_guard.rs`]. Relocated into Wave B
 /// from a mis-scheduled Wave E slot — see `Env.fs`'s module doc comment.
 ///
@@ -14,8 +14,15 @@
 /// otherwise requires does not apply to this file.
 module RhinoCli.Tests.Unit.Steps.EnvStagedGuardSteps
 
+/// Explicit static-coverage ownership; the validator scopes this file's
+/// TickSpec bindings to these canonical features.
+let private behaviourFeatureOwnership =
+    [ "specs/apps/rhino/cli/behaviours/specs/env-staged-guard.feature" ]
+
+
 open System
 open System.IO
+open System.Reflection
 open TickSpec
 open Xunit
 open RhinoCli.Application.Env
@@ -82,24 +89,19 @@ type EnvStagedGuardSteps() =
 /// is per-scenario rather than per-file.
 module private FeatureRunner =
 
-    let private featurePath: string =
-        Path.GetFullPath(
-            Path.Combine(
-                __SOURCE_DIRECTORY__,
-                "..",
-                "..",
-                "..",
-                "..",
-                "..",
-                "specs",
-                "apps",
-                "rhino",
-                "cli",
-                "behaviors",
-                "specs",
-                "env-staged-guard.feature"
-            )
-        )
+    let private featurePath = "env-staged-guard.feature"
+
+    let private readFeature () =
+        let assembly = Assembly.GetExecutingAssembly()
+
+        let resourceName =
+            assembly.GetManifestResourceNames()
+            |> Array.filter (fun name -> name.EndsWith(featurePath, StringComparison.Ordinal))
+            |> Array.exactlyOne
+
+        use stream = assembly.GetManifestResourceStream(resourceName)
+        use reader = new StreamReader(stream)
+        reader.ReadToEnd().Replace("\r\n", "\n").Split('\n')
 
     let private extractScenario (featureLines: string[]) (scenarioTitle: string) : string[] =
         let featureLine =
@@ -132,10 +134,10 @@ module private FeatureRunner =
     /// `specs/env-staged-guard.feature`, bound against `EnvStagedGuardSteps`.
     /// A plain `Scenario:` generates exactly one; a `Scenario Outline:`
     /// generates one per `Examples:` row — this runs all of them, since the
-    /// plan's "one Gherkin scenario per behavior cycle" counting treats a
+    /// plan's "one Gherkin scenario per behaviour cycle" counting treats a
     /// whole outline as a single scenario.
     let run (scenarioTitle: string) : unit =
-        let allLines = File.ReadAllLines featurePath
+        let allLines = readFeature ()
         let snippet = extractScenario allLines scenarioTitle
         let definitions = StepDefinitions([| typeof<EnvStagedGuardSteps> |])
         let feature = definitions.GenerateFeature(featurePath, snippet)

@@ -5,6 +5,7 @@
 module RhinoCli.Application.Git
 
 open System
+open System.Diagnostics.CodeAnalysis
 open System.Diagnostics
 open System.IO
 open System.Text.Json
@@ -63,10 +64,10 @@ let rec private jsonValueEquals (a: JsonElement) (b: JsonElement) : bool =
 /// top level otherwise) agrees with `packageJson` on every
 /// `lockfileRootFields` field, a field present in neither counting as
 /// agreement [Repo-grounded — `commands/git/lockfile.rs::lockfile_is_current`].
-let private lockfileIsCurrent (packageJson: string) (packageLock: string) : Result<bool, string> =
+let lockfileIsCurrentContent (packageJson: string) (packageLock: string) : Result<bool, string> =
     try
-        use packageDoc = JsonDocument.Parse(File.ReadAllText packageJson)
-        use lockDoc = JsonDocument.Parse(File.ReadAllText packageLock)
+        use packageDoc = JsonDocument.Parse(packageJson)
+        use lockDoc = JsonDocument.Parse(packageLock)
         let packageRoot = packageDoc.RootElement
 
         let lockRoot =
@@ -87,9 +88,56 @@ let private lockfileIsCurrent (packageJson: string) (packageLock: string) : Resu
     with ex ->
         Error(sprintf "failed to read lockfile fields: %s" ex.Message)
 
+type LockfileSyncPorts =
+    { StagedPaths: unit -> Result<string list, string>
+      FileExists: string -> bool
+      ReadAllText: string -> string
+      RegenerateLockfile: string -> Result<unit, string>
+      Stage: string -> Result<unit, string> }
+
+/// Pure lockfile synchronization policy. Paths are repository-relative and
+/// every resource operation is supplied by the caller, keeping selection,
+/// comparison, ordering, reporting, and error propagation Unit-testable.
+let syncWith (ports: LockfileSyncPorts) (writer: TextWriter) : Result<unit, string> =
+    match ports.StagedPaths() with
+    | Error message -> Error message
+    | Ok staged ->
+        let manifests =
+            staged
+            |> List.filter (fun path ->
+                path.StartsWith("apps/", StringComparison.Ordinal)
+                && path.EndsWith("/package.json", StringComparison.Ordinal))
+
+        let rec loop remaining =
+            match remaining with
+            | [] -> Ok()
+            | packagePath :: rest ->
+                let appDir = Path.GetDirectoryName(packagePath: string).Replace('\\', '/')
+                let lockfilePath = appDir + "/package-lock.json"
+
+                if not (ports.FileExists lockfilePath) then
+                    loop rest
+                else
+                    match lockfileIsCurrentContent (ports.ReadAllText packagePath) (ports.ReadAllText lockfilePath) with
+                    | Error message -> Error message
+                    | Ok true -> loop rest
+                    | Ok false ->
+                        writer.Write(sprintf "Syncing %s...\n" lockfilePath)
+
+                        match ports.RegenerateLockfile appDir with
+                        | Error message -> Error message
+                        | Ok() ->
+                            match ports.Stage lockfilePath with
+                            | Error message -> Error message
+                            | Ok() -> loop rest
+
+        loop manifests
+
 /// Creates a `git` `Process` rooted explicitly at `repoRoot`, isolated from
 /// ambient discovery and identity the same way the Rust command is
 /// [Repo-grounded — `commands/git/lockfile.rs::git_command`].
+// Coverage boundary: exercised by Git Integration and published-process E2E proof.
+[<ExcludeFromCodeCoverage>]
 let private gitProcess (repoRoot: string) (args: string list) : Process =
     let proc = new Process()
     proc.StartInfo.FileName <- "git"
@@ -107,6 +155,8 @@ let private gitProcess (repoRoot: string) (args: string list) : Process =
 /// Runs `git diff --cached --name-only --diff-filter=ACM` from `repoRoot`
 /// and returns the staged paths, blank lines dropped
 /// [Repo-grounded — `commands/git/lockfile.rs::sync_at_root`].
+// Coverage boundary: real Git index access is exercised by Git Integration and published-process E2E proof.
+[<ExcludeFromCodeCoverage>]
 let private stagedPaths (repoRoot: string) : Result<string list, string> =
     use proc =
         gitProcess repoRoot [ "diff"; "--cached"; "--name-only"; "--diff-filter=ACM" ]
@@ -129,6 +179,8 @@ let private stagedPaths (repoRoot: string) : Result<string list, string> =
 
 /// Stages `pathRelativeToRoot` with `git add`
 /// [Repo-grounded — `commands/git/lockfile.rs::sync_at_root`].
+// Coverage boundary: real Git staging is exercised by Git Integration and published-process E2E proof.
+[<ExcludeFromCodeCoverage>]
 let private gitAdd (repoRoot: string) (pathRelativeToRoot: string) : Result<unit, string> =
     use proc = gitProcess repoRoot [ "add"; pathRelativeToRoot ]
 
@@ -148,6 +200,8 @@ let private gitAdd (repoRoot: string) (pathRelativeToRoot: string) : Result<unit
 /// Regenerates `appDirRelativeToRoot`'s lockfile via
 /// `npm install --package-lock-only --prefix <appDir> --silent`
 /// [Repo-grounded — `commands/git/lockfile.rs::sync_at_root`].
+// Coverage boundary: real npm process execution is exercised by Git Integration and published-process E2E proof.
+[<ExcludeFromCodeCoverage>]
 let private npmRegenerateLockfile (repoRoot: string) (appDirRelativeToRoot: string) : Result<unit, string> =
     use proc = new Process()
     proc.StartInfo.FileName <- "npm"
@@ -181,38 +235,13 @@ let private npmRegenerateLockfile (repoRoot: string) (appDirRelativeToRoot: stri
 /// lockfile already agrees, is left untouched. Writes one
 /// `Syncing <path>...` line to `writer` per regenerated lockfile
 /// [Repo-grounded — `commands/git/lockfile.rs::sync_at_root`].
+// Coverage boundary: the filesystem/process composition root is exercised by Git Integration and published-process E2E proof.
+[<ExcludeFromCodeCoverage>]
 let syncAtRoot (repoRoot: string) (writer: TextWriter) : Result<unit, string> =
-    match stagedPaths repoRoot with
-    | Error message -> Error message
-    | Ok staged ->
-        let stagedPackageManifests =
-            staged
-            |> List.filter (fun path ->
-                path.StartsWith("apps/", StringComparison.Ordinal)
-                && path.EndsWith("/package.json", StringComparison.Ordinal))
-
-        let rec loop (remaining: string list) : Result<unit, string> =
-            match remaining with
-            | [] -> Ok()
-            | packagePath :: rest ->
-                let appDir = Path.GetDirectoryName(packagePath: string)
-                let lockfileRelative = appDir + "/package-lock.json"
-                let lockfileAbsolute = Path.Combine(repoRoot, appDir, "package-lock.json")
-
-                if not (File.Exists lockfileAbsolute) then
-                    loop rest
-                else
-                    match lockfileIsCurrent (Path.Combine(repoRoot, packagePath)) lockfileAbsolute with
-                    | Error message -> Error message
-                    | Ok true -> loop rest
-                    | Ok false ->
-                        writer.Write(sprintf "Syncing %s...\n" lockfileRelative)
-
-                        match npmRegenerateLockfile repoRoot appDir with
-                        | Error message -> Error message
-                        | Ok() ->
-                            match gitAdd repoRoot lockfileRelative with
-                            | Error message -> Error message
-                            | Ok() -> loop rest
-
-        loop stagedPackageManifests
+    syncWith
+        { StagedPaths = fun () -> stagedPaths repoRoot
+          FileExists = fun relative -> File.Exists(Path.Combine(repoRoot, relative))
+          ReadAllText = fun relative -> File.ReadAllText(Path.Combine(repoRoot, relative))
+          RegenerateLockfile = npmRegenerateLockfile repoRoot
+          Stage = gitAdd repoRoot }
+        writer

@@ -42,7 +42,7 @@ reach the other parity repo.
 Under `*-to-pr`, one branch → one PR → one unit, opened and merged at its boundary. Under a
 permitted direct mode, one unit reaches one direct integration checkpoint. Never integrate at every
 phase or batch ready units at composite end. Each unit leaves `main` immediately safe to deploy;
-incomplete behavior is complete-and-inert behind a temporary production-disabled **feature flag**,
+incomplete behaviour is complete-and-inert behind a temporary production-disabled **feature flag**,
 with both paths tested and rollout, rollback, and removal recorded. Worktree modes reuse at most one
 worktree per repo; main modes use the primary checkout and provision none — see
 [Plans Organization Convention §Worktree Cap](../../../conventions/structure/plans/worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).

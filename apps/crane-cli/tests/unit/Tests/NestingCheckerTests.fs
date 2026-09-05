@@ -14,7 +14,6 @@ let ``extractNestingLevels extracts level-1 bullets`` () =
     Assert.Equal(2, result.Length)
     Assert.Equal(1, result.[0].Level)
 
-// @covers specs/apps/crane/cli/behaviors/content/nesting-check.feature:Correct single-level list produces no finding
 [<Fact>]
 let ``checkNesting returns empty for matching single-level lists`` () =
     let pdfText = "- item one\n- item two"
@@ -22,7 +21,6 @@ let ``checkNesting returns empty for matching single-level lists`` () =
     let result = checkNesting pdfText mdText
     Assert.Empty(result)
 
-// @covers specs/apps/crane/cli/behaviors/content/nesting-check.feature:Inverted nesting detected as HIGH finding
 [<Fact>]
 let ``checkNesting detects inverted nesting as HIGH`` () =
     let pdfText = "- parent\n  - child"
@@ -32,7 +30,6 @@ let ``checkNesting detects inverted nesting as HIGH`` () =
     let finding = result |> List.head
     Assert.Equal("HIGH", finding.Criticality)
 
-// @covers specs/apps/crane/cli/behaviors/content/nesting-check.feature:Off-by-one nesting detected as MEDIUM finding
 [<Fact>]
 let ``checkNesting returns MEDIUM finding for off-by-one deeper nesting`` () =
     // PDF has two-level nesting (parent at level 1, child at level 2);

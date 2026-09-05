@@ -54,14 +54,14 @@ scenarios together.
 | `i18n`          | locale middleware, language switcher, `meta.languages`                     |
 | `health`        | `meta.health`                                                              |
 
-## Behavior Perspectives
+## Behaviour Perspectives
 
-`behaviors/` splits by the perspective a scenario takes, not by deployable — there is only one
+`behaviours/` splits by the perspective a scenario takes, not by deployable — there is only one
 deployable to split on:
 
-- `behaviors/frontend/` asserts what a learner sees in the DOM.
-- `behaviors/backend/` asserts what a tRPC procedure returns, including its error codes.
-- `behaviors/build-tools/` asserts what the build-time index generators produce. These scripts run
+- `behaviours/frontend/` asserts what a learner sees in the DOM.
+- `behaviours/backend/` asserts what a tRPC procedure returns, including its error codes.
+- `behaviours/build-tools/` asserts what the build-time index generators produce. These scripts run
   before the container is built and are never deployed, which is why their scenarios sit beside the
   site's rather than in a corpus of their own.
 
@@ -69,7 +69,7 @@ deployable to split on:
 
 **Static generation is the default.** Every content route is generated at build time via
 `generateStaticParams`. A feature that requires per-request rendering changes the deployment's cost
-and cache behavior, so it is an architectural decision rather than an implementation detail.
+and cache behaviour, so it is an architectural decision rather than an implementation detail.
 
 **Locale is carried in the URL.** Middleware rewrites `/` to a locale-prefixed path, and the same
 slug must resolve to the equivalent page under either locale. A content file that exists in one
@@ -80,5 +80,5 @@ rings, contrast — is asserted by scenarios rather than reviewed by eye.
 
 ## Related
 
-- [Behaviors](./behaviors/README.md) — the scenarios this system must satisfy.
+- [Behaviours](./behaviours/README.md) — the scenarios this system must satisfy.
 - [`apps/ayokoding-www/README.md`](../../../../apps/ayokoding-www/README.md) — the implementing project.

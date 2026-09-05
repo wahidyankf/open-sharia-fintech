@@ -54,7 +54,7 @@ function buildCompletedSession(context: {
 /**
  * Active workout screen. Driven entirely by workoutSessionMachine.
  *
- * Key behaviors:
+ * Key behaviours:
  * - Mounts workoutSessionMachine with routine + settings + runtime
  * - Auto-sends START on mount
  * - setInterval in useRef sends TICK every second while state is active
@@ -77,7 +77,7 @@ export function WorkoutScreen({ routine, settings, runtime, onFinishWorkout, onB
   // Auto-start the workout on mount
   useEffect(() => {
     send({ type: "START" });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   // setInterval for TICK — only fires while in an active sub-state
   useEffect(() => {
@@ -214,6 +214,9 @@ export function WorkoutScreen({ routine, settings, runtime, onFinishWorkout, onB
 
   return (
     <div
+      data-workout-state={
+        isExercising ? "active.exercising" : isResting ? "active.resting" : isConfirming ? "active.confirming" : "idle"
+      }
       style={{
         flex: 1,
         display: "flex",

@@ -20,7 +20,6 @@ const formerSubjectDomains = [
 
 let structuralBuckets: string[] = [];
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/learn-three-bucket.feature:The learn section exposes exactly three structural buckets
 When("the content tree under the en learn section is inspected", async () => {
   // A real filesystem read of the build-time content tree (DD-40/DD-45's own invariant), the same
   // workspaceRoot-relative `fs.readdirSync` convention this project's own
@@ -47,10 +46,6 @@ Then("no former subject domain remains as a direct child of the learn section", 
   }
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/learn-three-bucket.feature:A relocated legacy domain URL redirects to its legacy address in one hop
-// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/learn-three-bucket.feature:A stale /c-bookmarked legacy domain URL redirects to its legacy address in two hops
-// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/learn-three-bucket.feature:A historical learn-reorg source chains through to its legacy address
-// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/learn-three-bucket.feature:A deep legacy path keeps its sub-taxonomy verbatim
 Then("the response status should not be a client or server error", async ({ page }) => {
   // Re-fetch whatever URL the browser landed on after following every redirect hop, so this
   // check is independent of how many hops the prior "a visitor navigates to" step's own

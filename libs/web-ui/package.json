@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@amiceli/vitest-cucumber": "6.3.0",
+    "@axe-core/playwright": "4.10.1",
     "@playwright/test": "^1.58.2",
     "@storybook/addon-a11y": "10.2.10",
     "@storybook/addon-docs": "10.2.10",
@@ -37,6 +38,7 @@
     "@vitejs/plugin-react": "^5.1.4",
     "@vitest/coverage-v8": "4.1.0",
     "jsdom": "29.0.0",
+    "playwright-bdd": "8.5.1",
     "storybook": "10.2.10",
     "vitest": "4.1.0",
     "vitest-axe": "^0.1.0"

@@ -55,7 +55,7 @@ Response response = client.get(url);
 
 **Library B Trade-offs**: Prioritizes developer experience with automatic configuration and fluent API. Limited customization options but handles 80% of use cases. Best for rapid prototyping and simple integrations.
 
-**Comparison Summary**: Use Library A when you need complete control over HTTP behavior (custom protocols, advanced retry logic, connection management). Use Library B for standard REST API consumption where defaults suffice. Library A has steeper learning curve but scales to complex requirements.
+**Comparison Summary**: Use Library A when you need complete control over HTTP behaviour (custom protocols, advanced retry logic, connection management). Use Library B for standard REST API consumption where defaults suffice. Library A has steeper learning curve but scales to complex requirements.
 
 **Benefits of this approach**:
 

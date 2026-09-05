@@ -38,7 +38,7 @@ This document defines how AI agents plan, execute, verify, and improve their wor
 ## Verification and Bug Fixing
 
 - [Verification Before Done](./agent-workflow-orchestration/verification-before-done.md) — pre-completion checks.
-- [Autonomous Bug Fixing](./agent-workflow-orchestration/autonomous-bug-fixing.md) — expected behavior, CI failures.
+- [Autonomous Bug Fixing](./agent-workflow-orchestration/autonomous-bug-fixing.md) — expected behaviour, CI failures.
 - [Demand Elegance (Balanced)](./agent-workflow-orchestration/demand-elegance-balanced.md) — polish standard.
 
 ## Self-Improvement and Task Management

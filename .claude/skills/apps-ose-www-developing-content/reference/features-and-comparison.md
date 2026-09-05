@@ -6,7 +6,7 @@ Next.js 16 provides:
 
 - **Breadcrumbs**: Automatic breadcrumb navigation
 - **Archive**: Chronological post listing
-- **Smooth scrolling**: Anchor link behavior
+- **Smooth scrolling**: Anchor link behaviour
 - **Table of contents**: Per-page ToC (configurable)
 
 ## Theme Toggle

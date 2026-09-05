@@ -113,3 +113,24 @@ export const courseRehomeRedirects: Array<{
   destination: string;
   permanent: boolean;
 }> = [...perCourseRedirects, ...fundamentallyStrongRootRedirects];
+
+/**
+ * Resolve the redirect destination for a concrete pathname using the same
+ * source-of-truth rows exported to Next.js. This pure seam gives Unit tests a
+ * faithful way to prove exact and `:path*` behaviour without starting a server.
+ */
+export function resolveCourseRehomeRedirect(pathname: string): string | null {
+  for (const redirect of courseRehomeRedirects) {
+    if (!redirect.source.endsWith("/:path*")) {
+      if (pathname === redirect.source) return redirect.destination;
+      continue;
+    }
+
+    const sourceRoot = redirect.source.slice(0, -"/:path*".length);
+    if (pathname !== sourceRoot && !pathname.startsWith(`${sourceRoot}/`)) continue;
+
+    const destinationRoot = redirect.destination.slice(0, -"/:path*".length);
+    return `${destinationRoot}${pathname.slice(sourceRoot.length)}`;
+  }
+  return null;
+}

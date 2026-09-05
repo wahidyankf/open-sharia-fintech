@@ -25,7 +25,7 @@ Repository Validation (naming/linking/emoji, including ordinal-prefix judgement 
 Skill-to-Skill Consolidation Analysis, Skills Coverage Gap Analysis, Governance Word Budget
 (delegated to the deterministic gate), Rules Governance Validation (contradictions, inaccuracies,
 inconsistencies, traceability, layer coherence, licensing, dependency-bump policy, Gherkin
-step-keyword cardinality), and Software Documentation Validation (~265 files across eight
+Gherkin journey coherence), and Software Documentation Validation (~265 files across eight
 sub-checks). The skill's `reference/07-preflight-consumption.md` and
 `reference/08-execution-sequence-and-report-structure.md` cover consuming the
 deterministic `rhino-cli repo-governance audit` preflight JSON (which pre-populates several steps'

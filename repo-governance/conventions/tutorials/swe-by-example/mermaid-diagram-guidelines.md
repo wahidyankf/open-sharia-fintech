@@ -23,7 +23,7 @@ when_to_use: "Read when deciding whether an example needs a diagram, which diagr
 - **State machines** have multiple states and transitions
 - **Concurrency** involves multiple goroutines/processes/actors
 - **Request flow** traverses multiple layers (HTTP → router → controller → model)
-- **Memory layout** clarifies pointer behavior or data structures
+- **Memory layout** clarifies pointer behaviour or data structures
 - **Pipeline patterns** show data transformation stages
 - **Error propagation** shows error handling across function calls
 

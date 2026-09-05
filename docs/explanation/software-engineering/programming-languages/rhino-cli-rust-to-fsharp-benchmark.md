@@ -58,7 +58,7 @@ would have predicted the wrong outcome here.
 **Fewer lines, once the code is real.** An early spike prototype (3,770 lines) badly under-predicted
 the real port's size (19,710 lines) — a prototype is not a substitute for measuring the finished
 thing. But even the real port needed roughly 60% fewer non-blank, non-comment lines than the Rust
-original for equivalent behavior.
+original for equivalent behaviour.
 
 ## For the next language-change proposal
 

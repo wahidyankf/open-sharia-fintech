@@ -274,7 +274,7 @@ All language documentation follows the repository's core principles:
 
 **Explicit Over Implicit**:
 
-- Make dependencies and behavior explicit
+- Make dependencies and behaviour explicit
 - Avoid magic and hidden complexity
 - Use clear, descriptive naming
 

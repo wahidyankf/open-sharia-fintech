@@ -18,7 +18,7 @@ or silently ignore known drift.
 
 `docs/reference/sdlc-gate-standard.md` §"rhino-cli Byte-Identity Boundary" states the target for the
 whole `apps/rhino-cli/src` tree (plus `tests/`, `Cargo.toml`, `Cargo.lock`, `project.json`, `LICENSE`,
-and the Gherkin behavior tree) is **zero carve-outs** — byte-identical across every bound repo. The
+and the Gherkin behaviour tree) is **zero carve-outs** — byte-identical across every bound repo. The
 plan's own Phase 4 work (registry authoring for `ose-private`) already assumed the opposite for tool
 provisioning: `ose-private` needs infra-only IaC tooling (`terraform`, `ansible-lint`, `yamllint` —
 already documented as [Allowed Divergence](../../../docs/reference/sdlc-gate-standard.md#allowed-divergence)

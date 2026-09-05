@@ -18,16 +18,18 @@ when_to_use: "Use when unsure which companion artifact a feature change must als
 
 ## 1. Specs (Gherkin Feature Files)
 
-**Location**: `specs/apps/<product>/<owner>/behaviors/` and `specs/libs/<library>/behaviors/` — the [logical owner corpus](../../../conventions/structure/specs-directory-structure/logical-owner-corpus.md) is the only shape
+**Location**: `specs/apps/<product>/<owner>/behaviours/` and `specs/libs/<library>/behaviours/` — the [logical owner corpus](../../../conventions/structure/specs-directory-structure/logical-owner-corpus.md) is the only shape
 
 **Update when:**
 
-- Adding a new endpoint, procedure, command, or user-facing behavior -- add scenarios
+- Adding a new endpoint, procedure, command, or user-facing behaviour -- add scenarios
 - Modifying request/response shapes, validation rules, or error handling -- update scenarios
 - Removing an endpoint, procedure, or command -- remove or archive scenarios
 - Changing authentication or authorization requirements -- update scenarios
 
-**Automated enforcement**: `rhino-cli specs coverage` catches missing step definitions. Nx cache inputs include Gherkin specs so stale specs invalidate test caches.
+**Automated enforcement**: each owner's project-local `test:coverage:*` targets catch missing,
+duplicate, or unused scenario bindings and invalid exemptions. Nx cache inputs include Gherkin specs
+so stale specs invalidate test and static-validation caches.
 
 ## 2. Contracts (OpenAPI Specs)
 
@@ -47,19 +49,24 @@ when_to_use: "Use when unsure which companion artifact a feature change must als
 
 **Update when:**
 
-- **Unit tests**: Any logic change requires updated unit tests. Coverage thresholds (90% for backends, 70-80% for frontends) enforce this.
-- **Integration tests**: Changes to database interactions, external service calls, or cross-component behavior require updated integration tests.
-- **E2E tests**: Changes to user-facing flows, API contracts, or full-stack behavior require updated E2E tests.
+- **Unit tests**: Every active scenario requires substantive in-process Unit proof. Unit has no
+  exemption, and runtime line coverage must meet the repository's 99% floor.
+- **Integration tests**: Local deterministic resource boundaries such as filesystems, databases,
+  queues, and subprocesses require Integration proof without network, including loopback.
+- **E2E tests**: Public browser, HTTP, API, or executable-process boundaries require E2E proof with
+  isolated synthetic data and no production identity or production data.
 - **Accessibility tests**: UI changes require accessibility verification (static analysis via oxlint jsx-a11y plugin, manual WCAG AA checks).
 
-**Automated enforcement**: Coverage thresholds in `test:quick` catch missing unit tests. `specs:coverage` catches missing step definitions.
+**Automated enforcement**: `test:unit` in `test:quick` enforces numeric coverage. Static
+`test:coverage:*` targets in the same quick gate enforce exact scenario-to-adapter coverage without
+running tests. Integration and E2E runtime never run in hooks or PR CI.
 
 ## 4. Documentation
 
 **Update when:**
 
 - Adding a new feature that users or developers need to know about
-- Changing API behavior that is documented in READMEs or docs/
+- Changing API behaviour that is documented in READMEs or docs/
 - Adding or removing configuration options
 - Changing architectural boundaries (C4 diagrams in specs/)
 - Adding or removing dependencies that affect setup instructions

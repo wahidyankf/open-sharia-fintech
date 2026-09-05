@@ -66,5 +66,5 @@ All failure paths return HTTP 200; the error state is shown inside the page body
 
 - [Architecture](./architecture.md) — feature-context layout and layer rules
 - [Design system](./design-system.md) — palette, typography, dark mode, components
-- [Behavior specs](./behaviors/README.md) — Gherkin acceptance criteria
+- [Behaviour specs](./behaviours/README.md) — Gherkin acceptance criteria
   per feature context

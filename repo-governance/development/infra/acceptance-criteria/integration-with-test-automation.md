@@ -1,6 +1,6 @@
 ---
 title: "Integration with Test Automation"
-description: Mapping Gherkin scenarios to step definitions in Cucumber.js, Jest-Cucumber, and cucumber-rs.
+description: Mapping canonical Gherkin scenarios to owner-local Vitest Cucumber Unit and Playwright BDD E2E bindings.
 category: explanation
 subcategory: development
 tags:
@@ -9,84 +9,92 @@ tags:
   - testing
   - requirements
 created: 2025-12-07
-when_to_use: Use when wiring a Gherkin scenario to a BDD test framework in TypeScript, Rust, or F#.
+when_to_use: Use when wiring a canonical scenario to the repository's current TypeScript or F# test adapters.
 ---
 
 # Integration with Test Automation
 
-Gherkin scenarios can be directly translated to automated tests using BDD frameworks:
+Follow the [canonical BDD contract](../../behaviour-driven-development.md): features live only in
+the owner's recursively discovered `specs/apps/**/behaviours/` or `specs/libs/**/behaviours/`
+corpus. Every active scenario has a Unit binding; add Integration and E2E bindings only when their
+real boundaries apply.
 
-## JavaScript/TypeScript
+## TypeScript Unit Binding
 
-**Cucumber.js**:
+Use `@amiceli/vitest-cucumber` in the owner's `test:unit` suite. Replace database, filesystem,
+environment, clock, process, and network dependencies with injected doubles.
 
-```javascript
-// features/login.feature
+```gherkin
+# specs/apps/example/web/behaviours/auth/login.feature
 Scenario: User login with valid credentials
   Given a user with email "user@example.com"
   When the user logs in with correct password
   Then the user should be authenticated
-
-// step-definitions/login.steps.js
-Given('a user with email {string}', async (email) => {
-  await createUser({ email });
-});
-
-When('the user logs in with correct password', async () => {
-  await loginPage.login(user.email, user.password);
-});
-
-Then('the user should be authenticated', async () => {
-  expect(await session.isAuthenticated()).toBe(true);
-});
 ```
 
-**Jest-Cucumber**:
+```typescript
+// apps/example-web/tests/unit/steps/login.steps.ts
+import { describeFeature, loadFeature } from "@amiceli/vitest-cucumber";
+import { expect } from "vitest";
 
-```javascript
-import { defineFeature, loadFeature } from "jest-cucumber";
-const feature = loadFeature("./features/login.feature");
+const feature = await loadFeature("specs/apps/example/web/behaviours/auth/login.feature");
 
-defineFeature(feature, (test) => {
-  test("User login with valid credentials", ({ given, when, then }) => {
-    given('a user with email "user@example.com"', () => {
-      // Setup code
+describeFeature(feature, ({ Scenario }) => {
+  Scenario("User login with valid credentials", ({ Given, When, Then }) => {
+    const users = new InMemoryUserRepository(); // Unit double
+    const service = new LoginService({ users });
+    let authenticated = false;
+
+    Given('a user with email "user@example.com"', async () => {
+      await users.add({ email: "user@example.com", password: "correct password" });
     });
-    // ... when, then implementations
+    When("the user logs in with correct password", async () => {
+      authenticated = await service.login("user@example.com", "correct password");
+    });
+    Then("the user should be authenticated", () => {
+      expect(authenticated).toBe(true);
+    });
   });
 });
 ```
 
-## Rust
+## TypeScript E2E Binding
 
-**cucumber-rs** (the `harness = false` test-binary pattern `rhino-cli` uses):
+Use `playwright-bdd` in the dedicated E2E project. `playwright.config.ts` discovers the owner's
+canonical corpus with `defineBddConfig`; step files use `createBdd()` and exercise the real public
+browser or HTTP boundary with synthetic isolated identities.
 
-```rust
-// specs/.../login.feature (Gherkin)
-// tests/login.rs
-#[given(regex = r#"^a user with email "([^"]*)"$"#)]
-fn a_user_with_email(w: &mut LoginWorld, email: String) {
-    w.user = create_user(&email);
-}
+```typescript
+// apps/example-web-e2e/steps/login.steps.ts
+import { expect } from "@playwright/test";
+import { createBdd } from "playwright-bdd";
 
-#[when("the user logs in with correct password")]
-fn logs_in(w: &mut LoginWorld) {
-    w.response = login(&w.user.email, &w.user.password);
-}
+const { Given, When, Then } = createBdd();
 
-#[then("the user should be authenticated")]
-fn is_authenticated(w: &mut LoginWorld) {
-    assert!(w.response.authenticated);
-}
+Given('a user with email "user@example.com"', async ({ page }) => {
+  await page.goto("/test-fixtures/users/user@example.com");
+});
+When("the user logs in with correct password", async ({ page }) => {
+  await page.goto("/login");
+  await page.getByLabel("Email").fill("user@example.com");
+  await page.getByLabel("Password").fill("correct password");
+  await page.getByRole("button", { name: "Log in" }).click();
+});
+Then("the user should be authenticated", async ({ page }) => {
+  await expect(page).toHaveURL("/dashboard");
+});
 ```
 
 ## F\#
 
-F# suites auto-bind scenarios by name rather than declaring explicit step definitions, so there is
-no step-definition file to write — name the test after the scenario and the binding follows.
+F# suites use their owner-local scenario-name/step mapping through the native test harness. Unit
+bindings inject doubles. Integration may use a real isolated socket-free resource such as a
+temporary file or embedded database; public process or HTTP proof belongs to E2E.
 
 ## Adding a Language
 
-Only wire a framework for a language this repository actually builds in. Adding a new one also
-means teaching `rhino-cli`'s spec-coverage extractor to recognise its step-definition syntax —
-otherwise the scenarios read as uncovered.
+Only wire an adapter this repository actually builds. Adding a new binding syntax also means
+teaching the owner-local static `test:coverage:*` validators to recognise it; otherwise scenarios
+correctly read as uncovered. Run the
+[Gherkin implementation review](../../../workflows/gherkin-implementation-review.md) after a
+material feature, adapter, exemption, or coverage-mechanism change.

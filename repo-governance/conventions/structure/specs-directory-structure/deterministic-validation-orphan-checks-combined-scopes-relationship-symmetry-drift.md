@@ -1,7 +1,7 @@
 ---
-title: "Deterministic Validation: Orphan Checks, Combined Scopes, and Drift Detection"
-description: The reverse-direction step orphan check, combined multi-perspective coverage runs, and the current (unimplemented) drift-detection commands
-when_to_use: Read this when debugging an orphan-step coverage failure or wiring a combined gherkin-scopes coverage run.
+title: "Deterministic Validation: Exact Bindings, Owner Corpora, and Drift Detection"
+description: Project-local exact-one scenario binding, recursive owner corpora, and explicit drift detection
+when_to_use: Read this when debugging static behaviour coverage or wiring a project-owned corpus and adapter.
 category: explanation
 subcategory: conventions
 tags:
@@ -16,23 +16,37 @@ tags:
 created: 2026-04-02
 ---
 
-# Deterministic Validation: Orphan Checks, Combined Scopes, and Drift Detection
+# Deterministic Validation: Exact Bindings, Owner Corpora, and Drift Detection
 
-## Reverse-direction step orphan check (Fix #15)
+## Exact-one scenario binding
 
-Every `rhino-cli specs coverage` invocation enforces both directions:
+Every owner and dedicated E2E project declares a recursive canonical corpus and its adapter sources
+in a project-local `behaviour-coverage.json`. The project's static `test:coverage:*` targets enforce
+both directions:
 
-- **Forward**: every Gherkin step has a matching impl.
-- **Reverse**: every impl matcher has at least one matching Gherkin step.
+- **Forward**: every expanded Gherkin scenario has exactly one matching implementation for each
+  applicable layer, or a valid higher-layer exemption.
+- **Reverse**: every discovered scenario implementation belongs to one canonical scenario.
 
-Orphan impls fail the gate non-zero. There is no `--allow-orphan-steps` flag and no env var escape hatch — any orphan is either real drift or an extractor bug that must be fixed at source. The pre-flight audit ran across all 15 specs:coverage-wired projects in worktree as part of this plan and reached `FAIL=0` before merge.
+Missing, duplicate, and unused bindings fail non-zero. Unit is always applicable and has no
+exemption. Integration and E2E exemptions require a genuine boundary mismatch, an immediately
+preceding canonical comment, and a named alternative proof. There is no allow-orphan or deferred
+scenario escape hatch; `@wip` and skipped bindings are invalid.
 
-The validator handles Scenario Outline forms in both directions: outline steps are emitted with `<placeholder>` tokens intact for forward matching against vitest-cucumber per-scenario impls, and Examples-table-expanded variants feed both directions so playwright-bdd regex-pattern impls binding expanded values count as covered. Comments in `.ts/.tsx` source are stripped before extraction (line comments only when at line start to preserve regex literals; block comments anywhere; strings preserved verbatim) so commented-out placeholder doc lines do not become false-positive orphan matches.
+The validator expands Scenario Outlines before matching and treats adapter-specific binding formats
+consistently. It validates static coverage only: it never executes Unit, Integration, or E2E tests,
+directly or transitively.
 
-## Combined gherkin scopes per app
+## One recursive owner corpus
 
-`rhino-cli specs coverage` accepts a variadic specs-dirs list (`specs coverage <specs-dir> [<specs-dir>...] <app-dir>`). Apps with multiple gherkin perspectives (ose-www has web + api; ayokoding-www has web + api + cli) declare a single combined run in `project.json` so impls shared across scopes don't false-positive on per-scope orphan checks.
+An application with multiple perspectives—such as backend and frontend—keeps them beneath one
+logical `behaviours/` owner tree. Static coverage discovers that tree recursively. Each adapter may
+bind the whole corpus or a boundary-appropriate portion, but all omitted higher-layer scenarios
+need explicit valid exemptions in the canonical feature files.
 
 ## Drift detection
 
-Drift detection commands (`drift-routes`, `drift-endpoints`, `drift-contracts`) are **not currently implemented**. The placeholder command files were removed in the BDD+DDD tooling gap-fill plan (2026-05) because reservation-pattern stubs that print "Not yet implemented" mislead callers into believing functionality exists. If drift detection is later required, a new plan adds those commands back as real implementations rather than stubs. Track via the tooling backlog.
+Generic route, endpoint, and contract drift detection remains a separate concern. Do not reserve
+placeholder commands that only print "Not yet implemented". Add a real project-owned validator and
+target when deterministic evidence exists; until then, semantic review follows
+`gherkin-implementation-review` row by row.

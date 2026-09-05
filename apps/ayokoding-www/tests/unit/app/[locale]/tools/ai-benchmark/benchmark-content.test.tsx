@@ -76,12 +76,8 @@ describe("BenchmarkContent — rapid successive filter changes (Rule-15 EWT-003)
   });
 });
 
-// AC-56 (Phase 7, cycle 7.2): the chart and roster (the page's primary content) now precede the
-// legend and sources (reference material, collapsed into `<details>`) in document order — this
-// file carried no `@covers` marker before this cycle, so one is added here directly (per
-// delivery.md's instruction to follow cycle 6.1's pattern of binding the scenario at the same
-// site as its assertion) alongside the mirrored binding in
-// `apps/ayokoding-www/tests/unit/fe-steps/ai-benchmark.steps.tsx`.
+// AC-56 (Phase 7, cycle 7.2): the chart and roster (the page's primary content) precede the
+// legend and sources (reference material, collapsed into `<details>`) in document order.
 // Regression test for Rule-15 UWT-007 (Phase 12 PR review, finding F2): the e2e AC-55/AC-60
 // scenarios (retargeted in this same fix to the realistic 320x568/390x664 breakpoints) are the
 // pixel-measuring half of this guard — jsdom cannot measure wrapped-text layout, so it cannot
@@ -114,7 +110,6 @@ describe("BenchmarkContent — Rule-15 UWT-007 regression guard (F2, Phase 12 PR
 
 describe("BenchmarkContent — document order (AC-56)", () => {
   it("renders the chart before the roster, and the roster before the legend and sources disclosures", async () => {
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The chart precedes the roster and both precede the collapsed reference sections
     const { BenchmarkContent } =
       await import("../../../../../../src/app/[locale]/tools/ai-benchmark/benchmark-content");
     render(<BenchmarkContent />);

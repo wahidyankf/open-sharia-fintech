@@ -9,7 +9,7 @@ applicable-base green aggregate PR CI is `verified`; missing, mismatched, or sta
 `pending`, not a finding and not a fallback check. A relevant fixer edit invalidates only affected
 evidence until current-head CI replaces it.
 
-Continue semantic review, including behavioral correctness, architecture, security, test
+Continue semantic review, including behavioural correctness, architecture, security, test
 integrity, performance, documentation meaning, instruction decay, and type soundness. Continue
 surface-conditional runtime/manual tester gates; they are not substitutes for registered lifecycle
 checks.

@@ -10,7 +10,7 @@ tags:
   - testing
   - red-green-refactor
 created: 2026-05-02
-when_to_use: Use when a behavior cannot or should not be automated and needs a written, repeatable manual verification script instead.
+when_to_use: Use when a behaviour cannot or should not be automated and needs a written, repeatable manual verification script instead.
 ---
 
 # Manual verification is part of TDD
@@ -30,7 +30,7 @@ the exact steps and expected observations. Treat it like an automated test:
 4. **Refactor**: Clean up the implementation; re-run the script to confirm it still passes.
 5. **Promote when feasible**: If the script can be automated cheaply (Playwright spec,
    integration test), automate it as part of the same delivery item. Manual scripts that
-   cover a recurring behavior are technical debt — automate them.
+   cover a recurring behaviour are technical debt — automate them.
 
-See [Manual Behavioral Verification Convention](../../quality/manual-behavioral-verification.md)
+See [Manual Behavioural Verification Convention](../../quality/manual-behavioural-verification.md)
 for the script structure and tooling defaults (Playwright MCP for UI, `curl` for API).

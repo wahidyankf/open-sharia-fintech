@@ -39,7 +39,7 @@ See `plan-validating-quality` Skill for the complete methodology: Structure, Req
 content placement), Technical Documentation (File-Impact tree HARD RULE), Delivery Checklist (TDD
 shape, execution-grade clarity, executor tagging, phase gates, Phase-0-no-PR, delivery boundaries),
 Consistency, the Workflow execution sequence (Steps 0-7 including re-validation mode and Factual
-Accuracy Step 4b), and 21 numbered validation rules covering Operational Readiness, Manual Behavioral
+Accuracy Step 4b), and 21 numbered validation rules covering Operational Readiness, Manual Behavioural
 Assertion, Worktree Specification, Execution-Grade Clarity, Anti-Hallucination Scan, Harness-Neutrality
 Scan, Executor-Tag Validation, Phase-Gate & Natural-Pause, Specs & Gherkin Delivery Coverage,
 Regression Test Mandate, UI-Design-Funnel Completeness, Knowledge Capture Phase Presence, Delivery
@@ -64,8 +64,9 @@ or proof.
 Enforce natural-seam, deployable-state, temporary-flag-lifecycle, and nonnumeric-boundary requirements.
 Keep Gherkin in PRD/spec sources. Apply these checks prospectively: do not raise migration
 findings against `plans/done/` or the existing Rhino plan. Consume exact deterministic gate evidence
-for links, maps, word budgets, formatting, Mermaid mechanics, and Gherkin cardinality instead of
-rederiving those predicates.
+for links, maps, word budgets, formatting, and Mermaid mechanics instead of rederiving those
+predicates. Treat project-local `test:coverage:behaviour` as delivery evidence for static corpus,
+adapter, exemption, and journey-shape checks; semantic Gherkin journey review remains in scope.
 Reject prospective archival steps that hardcode or predict a completion date. They must resolve the
 repository-local date only after completion gates pass and reuse one `<completion-date>` value for
 the folder, done index, and evidence.

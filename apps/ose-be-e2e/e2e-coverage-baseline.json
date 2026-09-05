@@ -2,7 +2,7 @@
   "project": "ose-be-e2e",
   "allowedUnbound": [
     {
-      "feature": "../../specs/apps/ose/be/behaviors/health/health.feature",
+      "feature": "../../specs/apps/ose/be/behaviours/health/health.feature",
       "scenario": "Health endpoint returns 200"
     }
   ]

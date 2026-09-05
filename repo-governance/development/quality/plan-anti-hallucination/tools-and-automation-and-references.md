@@ -32,7 +32,7 @@ when_to_use: "Use to locate the automated enforcement."
 - [Plans Organization Convention](../../../conventions/structure/plans.md) — what goes in a plan; this convention says how to verify what you write.
 - [Factual Validation Convention](../../../conventions/writing/factual-validation.md) — universal `[Verified]` / `[Outdated]` / `[Unverified]` system this convention extends.
 - [Web Research Delegation Convention](../../../conventions/writing/web-research-delegation.md) — universal delegation threshold this convention lowers for plan content.
-- [Manual Behavioral Verification Convention](.././manual-behavioral-verification.md) — runtime verification (Playwright MCP / curl); complementary to anti-hallucination at authoring time.
+- [Manual Behavioural Verification Convention](.././manual-behavioural-verification.md) — runtime verification (Playwright MCP / curl); complementary to anti-hallucination at authoring time.
 - [Worktree Path Convention](../../conventions/structure/worktree-path.md) — worktree routing referenced by the Worktree Specification rule in plans.
 
 **Agents:**

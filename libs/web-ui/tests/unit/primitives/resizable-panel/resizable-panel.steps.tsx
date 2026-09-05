@@ -7,7 +7,7 @@ import { expect } from "vitest";
 import { ResizablePanel } from "../../../../src/primitives/resizable-panel/resizable-panel";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../specs/libs/web-ui/behaviors/resizable-panel/resizable-panel.feature"),
+  path.resolve(__dirname, "../../../../../../specs/libs/web-ui/behaviours/resizable-panel/resizable-panel.feature"),
 );
 
 function getHandle(container: HTMLElement): HTMLElement {
@@ -38,8 +38,15 @@ describeFeature(feature, ({ Scenario }) => {
     let resultWidthPx: number;
 
     Given("a resizable panel rendered at 250 pixels with a 150 to 350 pixel band", () => {
-      // precondition noted; render + drag happen together in the When step because
-      // @testing-library/react auto-cleans the DOM between each Given/When/Then step
+      cleanup();
+      const { container } = render(
+        <ResizablePanel storageKey="given-drag-widen" defaultWidth={250} minPct={15} maxPct={35} viewportPx={1000}>
+          content
+        </ResizablePanel>,
+      );
+      expect(getPanelWidthPx(container)).toBe(250);
+      expect(getHandle(container).getAttribute("aria-valuemin")).toBe("150");
+      expect(getHandle(container).getAttribute("aria-valuemax")).toBe("350");
     });
 
     When("the user drags the separator handle 60 pixels to the right", () => {
@@ -62,7 +69,14 @@ describeFeature(feature, ({ Scenario }) => {
     let resultWidthPx: number;
 
     Given("a resizable panel rendered at 340 pixels with a 150 to 350 pixel band", () => {
-      // precondition noted; render + drag happen together in the When step
+      cleanup();
+      const { container } = render(
+        <ResizablePanel storageKey="given-drag-clamp" defaultWidth={340} minPct={15} maxPct={35} viewportPx={1000}>
+          content
+        </ResizablePanel>,
+      );
+      expect(getPanelWidthPx(container)).toBe(340);
+      expect(getHandle(container).getAttribute("aria-valuemax")).toBe("350");
     });
 
     When("the user drags the separator handle 100 pixels to the right", () => {
@@ -86,7 +100,15 @@ describeFeature(feature, ({ Scenario }) => {
     const storageKey = "steps-drag-no-persist-mid-drag";
 
     Given("a resizable panel rendered at 250 pixels with a 150 to 350 pixel band", () => {
-      // precondition noted; render + drag happen together in the When step
+      cleanup();
+      localStorage.removeItem(storageKey);
+      const { container } = render(
+        <ResizablePanel storageKey={storageKey} defaultWidth={250} minPct={15} maxPct={35} viewportPx={1000}>
+          content
+        </ResizablePanel>,
+      );
+      expect(getPanelWidthPx(container)).toBe(250);
+      expect(localStorage.getItem(storageKey)).toBeNull();
     });
 
     When("the user drags the separator handle 60 pixels to the right without releasing", () => {
@@ -117,7 +139,14 @@ describeFeature(feature, ({ Scenario }) => {
     const storageKey = "steps-drag-persist-on-release";
 
     Given("a resizable panel rendered at 250 pixels with a 150 to 350 pixel band", () => {
-      // precondition noted; render + drag happen together in the When step
+      cleanup();
+      localStorage.removeItem(storageKey);
+      const { container } = render(
+        <ResizablePanel storageKey={storageKey} defaultWidth={250} minPct={15} maxPct={35} viewportPx={1000}>
+          content
+        </ResizablePanel>,
+      );
+      expect(getPanelWidthPx(container)).toBe(250);
     });
 
     When("the user drags the separator handle 60 pixels to the right", () => {
@@ -142,7 +171,16 @@ describeFeature(feature, ({ Scenario }) => {
     let ariaValueNow: string | null;
 
     Given("the separator handle is focused on a panel at 250 pixels", () => {
-      // precondition noted; render + focus + keypress happen together in the When step
+      cleanup();
+      const { container } = render(
+        <ResizablePanel storageKey="given-keyboard-widen" defaultWidth={250} viewportPx={1000}>
+          content
+        </ResizablePanel>,
+      );
+      const handle = getHandle(container);
+      handle.focus();
+      expect(document.activeElement).toBe(handle);
+      expect(getPanelWidthPx(container)).toBe(250);
     });
 
     When("the user presses ArrowRight", () => {
@@ -174,7 +212,13 @@ describeFeature(feature, ({ Scenario }) => {
     let handleClassName: string;
 
     Given("a resizable panel is rendered", () => {
-      // precondition noted; render + inspection happen together in the When step
+      cleanup();
+      const { container } = render(
+        <ResizablePanel storageKey="given-separator-semantics" defaultWidth={250} viewportPx={1000}>
+          content
+        </ResizablePanel>,
+      );
+      expect(getHandle(container).isConnected).toBe(true);
     });
 
     When("the accessibility tree is inspected", async () => {
@@ -213,7 +257,18 @@ describeFeature(feature, ({ Scenario }) => {
     let handleAriaLabelAttr: string | null;
 
     Given('a resizable panel is rendered with a custom handle label "Ubah ukuran panel"', () => {
-      // precondition noted; render + inspection happen together in the When step
+      cleanup();
+      const { container } = render(
+        <ResizablePanel
+          storageKey="given-handle-label-localized"
+          defaultWidth={250}
+          viewportPx={1000}
+          handleAriaLabel="Ubah ukuran panel"
+        >
+          content
+        </ResizablePanel>,
+      );
+      expect(getHandle(container).getAttribute("aria-label")).toBe("Ubah ukuran panel");
     });
 
     When("the accessibility tree is inspected", () => {
@@ -240,8 +295,20 @@ describeFeature(feature, ({ Scenario }) => {
     let resultWidthPx: number;
 
     Given("a resizable panel rendered at 250 pixels has been dragged to 310 pixels", () => {
-      // precondition noted; render + drag + double-click happen together in the When step
-      // because @testing-library/react auto-cleans the DOM between each Given/When/Then step
+      cleanup();
+      const { container } = render(
+        <ResizablePanel
+          storageKey="given-double-click-reset"
+          defaultWidth={250}
+          minPct={15}
+          maxPct={35}
+          viewportPx={1000}
+        >
+          content
+        </ResizablePanel>,
+      );
+      dragHandleBy(getHandle(container), 60);
+      expect(getPanelWidthPx(container)).toBe(310);
     });
 
     When("the user double-clicks the separator handle", () => {
@@ -273,7 +340,16 @@ describeFeature(feature, ({ Scenario }) => {
     let resultWidthPx: number;
 
     Given("the separator handle is focused on a panel at 250 pixels with a 150 to 350 pixel band", () => {
-      // precondition noted; render + focus + keypress happen together in the When step
+      cleanup();
+      const { container } = render(
+        <ResizablePanel storageKey="given-home-key" defaultWidth={250} minPct={15} maxPct={35} viewportPx={1000}>
+          content
+        </ResizablePanel>,
+      );
+      const handle = getHandle(container);
+      handle.focus();
+      expect(document.activeElement).toBe(handle);
+      expect(getPanelWidthPx(container)).toBe(250);
     });
 
     When("the user presses Home", () => {
@@ -298,7 +374,16 @@ describeFeature(feature, ({ Scenario }) => {
     let resultWidthPx: number;
 
     Given("the separator handle is focused on a panel at 250 pixels with a 150 to 350 pixel band", () => {
-      // precondition noted; render + focus + keypress happen together in the When step
+      cleanup();
+      const { container } = render(
+        <ResizablePanel storageKey="given-end-key" defaultWidth={250} minPct={15} maxPct={35} viewportPx={1000}>
+          content
+        </ResizablePanel>,
+      );
+      const handle = getHandle(container);
+      handle.focus();
+      expect(document.activeElement).toBe(handle);
+      expect(getPanelWidthPx(container)).toBe(250);
     });
 
     When("the user presses End", () => {

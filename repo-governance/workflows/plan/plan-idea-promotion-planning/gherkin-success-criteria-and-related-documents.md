@@ -1,7 +1,7 @@
 ---
 title: "Gherkin Success Criteria and Related Documents"
 description: The three Gherkin scenarios this workflow must satisfy, and links to the conventions and workflows it composes.
-when_to_use: Use when verifying this workflow's behavior against its acceptance criteria, or navigating to a related document.
+when_to_use: Use when verifying this workflow's behaviour against its acceptance criteria, or navigating to a related document.
 ---
 
 # Gherkin Success Criteria and Related Documents

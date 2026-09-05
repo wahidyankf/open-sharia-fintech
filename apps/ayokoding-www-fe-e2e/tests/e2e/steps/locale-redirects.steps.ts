@@ -21,12 +21,10 @@ When("locale redirects are applied", async ({ page }) => {
   await page.waitForLoadState("networkidle");
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/i18n/locale-redirects.feature:The root URL enters the default locale
 Then("the visitor reaches the default locale at {string}", async ({ page }, destinationUrl: string) => {
   await expect(page).toHaveURL(new RegExp(`${destinationUrl.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`));
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/i18n/locale-redirects.feature:Uppercase locale URLs redirect to lowercase canonical URLs
 Then("the visitor is permanently redirected to {string}", async ({ page }, destinationUrl: string) => {
   const redirectResponse = localeEntryResponses.get(page);
   expect(redirectResponse, "the locale entry response should be captured").toBeDefined();

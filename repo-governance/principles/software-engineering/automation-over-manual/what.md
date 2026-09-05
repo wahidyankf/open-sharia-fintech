@@ -10,7 +10,7 @@ tags:
   - ai-agents
   - consistency
 created: 2025-12-15
-when_to_use: Use for a quick working definition of automated vs. manual behavior.
+when_to_use: Use for a quick working definition of automated vs. manual behaviour.
 ---
 
 # What

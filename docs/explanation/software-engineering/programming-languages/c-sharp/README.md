@@ -43,12 +43,13 @@ OSE Platform C# applications MUST use the following stack:
 
 **Testing Stack**:
 
-- **xUnit** (preferred) for unit and integration tests
+- **xUnit** (preferred) for Unit, Integration, and API E2E tests
 - **FluentAssertions** for readable, expressive assertions
 - **Moq** for interface mocking and test doubles
 - **Bogus** for realistic fake test data generation
-- **TestContainers.Net** for database integration tests (no mocked repositories)
-- **Microsoft.AspNetCore.Mvc.Testing** (WebApplicationFactory) for API integration tests
+- **SQLite file databases** for isolated zero-network repository Integration tests
+- **TestContainers.Net** as an E2E backing service reached only through the product's public boundary
+- **Microsoft.AspNetCore.Mvc.Testing** (`WebApplicationFactory`) for public-API E2E tests
 
 **Build Tools**:
 
@@ -159,7 +160,7 @@ OSE Platform follows a three-tier .NET versioning strategy aligned with Microsof
 **MUST follow these mandatory standards for all C# code in OSE Platform:**
 
 1. **[Coding Standards](coding-standards.md) — Naming conventions, namespace organization, C# 12 idioms, anti-patterns**
-2. **[Testing Standards](testing-standards.md) — xUnit, FluentAssertions, Moq, TestContainers.Net, WebApplicationFactory**
+2. **[Testing Standards](testing-standards.md) — xUnit, FluentAssertions, Unit doubles, zero-network Integration, public-API E2E, and 99% Unit line coverage**
 3. **[Code Quality Standards](code-quality-standards.md) — Roslyn analyzers, dotnet format, .editorconfig, nullable reference types**
 4. **[Build Configuration](build-configuration.md) — .csproj SDK-style, Directory.Build.props, NuGet Central Package Management**
 5. **[Error Handling Standards](error-handling-standards.md) — Exception hierarchy, ProblemDetails, Result pattern, global middleware**
@@ -280,14 +281,15 @@ graph LR
 - MUST use `dotnet format --verify-no-changes` in CI/CD (format violations fail the build)
 - MUST include `Microsoft.CodeAnalysis.NetAnalyzers` for Roslyn static analysis
 - SHOULD include `SonarAnalyzer.CSharp` for additional code smell detection
-- MUST achieve >=95% line coverage measured with Coverlet and enforced by the native `test:coverage` Nx target
+- MUST achieve >=99% line coverage measured with Coverlet and enforced during `test:unit`; static `test:coverage:*` targets never execute tests
 
 **Testing Automation (REQUIRED)**:
 
 - MUST write unit tests with xUnit (Fact/Theory attributes, AAA pattern)
 - MUST use FluentAssertions for all assertions (`result.Should().Be(expected)`)
-- MUST use TestContainers.Net for database integration tests (no mocked DbContext for repository tests)
-- MUST use WebApplicationFactory for ASP.NET Core integration tests
+- MUST use a real isolated non-network resource, such as a temporary SQLite file, for applicable repository Integration tests
+- MUST classify TestContainers.Net-backed flows as E2E and exercise the product through its public API or process boundary
+- MUST use WebApplicationFactory for ASP.NET Core public-API E2E tests
 - SHOULD use Bogus for generating realistic domain test data (Zakat payer profiles, Murabaha contract data)
 - SHOULD use Moq for mocking external dependencies and application service interfaces
 
@@ -295,7 +297,7 @@ graph LR
 
 - MUST integrate `dotnet format`, `dotnet build`, and `dotnet test` in CI/CD pipeline
 - SHOULD use Makefile or Taskfile for local development build tasks
-- MUST collect Coverlet coverage and enforce threshold with the native `test:coverage` Nx target
+- MUST collect Coverlet coverage and enforce its threshold during the native `test:unit` runtime
 - SHOULD use pre-commit hooks for `dotnet format` and analyzer validation
 
 **See**: [Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md), [Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)
@@ -311,7 +313,7 @@ graph LR
 
 **Code Review Requirements**:
 
-- All C# code MUST pass automated checks (`dotnet format --verify-no-changes`, `dotnet build /p:TreatWarningsAsErrors=true`, `dotnet test`, Coverlet coverage >=95% enforced by the native `test:coverage` Nx target)
+- All C# code MUST pass automated checks (`dotnet format --verify-no-changes`, `dotnet build /p:TreatWarningsAsErrors=true`, `test:unit` with Coverlet coverage >=99%, and applicable static coverage validators)
 - Code reviewers MUST verify compliance with standards in this index
 - Non-compliance with mandatory standards (Coding, Testing, Code Quality) blocks merge
 - Nullable reference type warnings treated as errors MUST be resolved before merge
@@ -346,7 +348,7 @@ graph LR
 - [C# Framework Integration Standards](./framework-integration.md) — Authoritative OSE Platform C# framework integration standards (ASP.NET Core DI, EF Core, SignalR, middleware pipeline)
 - [C# Performance Standards](./performance-standards.md) — Authoritative OSE Platform C# performance standards (Span<T>, ArrayPool, BenchmarkDotNet, dotnet-trace profiling, IAsyncEnumerable)
 - [C# Security Standards](./security-standards.md) — Authoritative OSE Platform C# security standards (ASP.NET Core Data Protection, JWT, FluentValidation, CORS, secrets management)
-- [C# Testing Standards](./testing-standards.md) — Authoritative OSE Platform C# testing standards (xUnit, FluentAssertions, Moq, TestContainers.Net)
+- [C# Testing Standards](./testing-standards.md) — Authoritative OSE Platform C# testing standards (xUnit, FluentAssertions, Moq, zero-network Integration, and public-API E2E)
 - [C# Type Safety Standards](./type-safety-standards.md) — Authoritative OSE Platform C# type safety standards (nullable reference types, generics, discriminated unions, pattern matching)
 
 ---

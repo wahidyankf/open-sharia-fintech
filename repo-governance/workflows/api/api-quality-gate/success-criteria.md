@@ -1,7 +1,7 @@
 ---
 title: "Success Criteria"
 description: "Defines clean-discovery, verified-fix, partial, and lifecycle scenarios."
-when_to_use: "Use when validating the bounded API quality gate's observable behavior."
+when_to_use: "Use when validating the bounded API quality gate's observable behaviour."
 ---
 
 # Success Criteria

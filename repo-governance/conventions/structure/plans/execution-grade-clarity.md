@@ -26,7 +26,7 @@ repository or stack context, chat, or tribal knowledge.
 - Exactly one independently verifiable action per checkbox, including its prerequisites, expected
   observation, failure handling, and evidence destination. Never write only “implement”, “set up”,
   or “configure”.
-- Separate RED, GREEN, and REFACTOR checkboxes for every code behavior slice, each with its exact
+- Separate RED, GREEN, and REFACTOR checkboxes for every code behaviour slice, each with its exact
   test/source path, symbol, copyable command, and expected failure/pass state.
 
 ## Counted Claims Carry the Command That Produced Them
@@ -75,4 +75,4 @@ human readability without adding maintenance burden.
 **Acceptance Criteria**: All user stories in `prd.md` must include testable acceptance criteria using
 Gherkin format. See [Acceptance Criteria Convention](../../../development/infra/acceptance-criteria.md)
 for complete details. Deterministic gates own Gherkin mechanics; semantic plan review checks that
-the referenced behavior, outcome, and proof are complete and consistent.
+the referenced behaviour, outcome, and proof are complete and consistent.

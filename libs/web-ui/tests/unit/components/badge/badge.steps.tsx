@@ -6,84 +6,93 @@ import { expect } from "vitest";
 import { Badge } from "../../../../src/components/badge/badge";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../specs/libs/web-ui/behaviors/badge/badge.feature"),
+  path.resolve(__dirname, "../../../../../../specs/libs/web-ui/behaviours/badge/badge.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {
   Scenario("Renders default variant", ({ When, Then, And }) => {
-    When('I render a Badge with text "workout"', () => {});
+    let badge: HTMLElement;
 
-    Then('I see text "workout"', () => {
+    When('I render a Badge with text "workout"', () => {
       cleanup();
       render(<Badge>workout</Badge>);
-      expect(screen.getByText("workout")).toBeDefined();
+      badge = screen.getByText("workout");
+    });
+
+    Then('I see text "workout"', () => {
+      expect(badge).toBeDefined();
     });
 
     And("the badge has solid background", () => {
-      cleanup();
-      render(<Badge>workout</Badge>);
-      expect(screen.getByText("workout").className).toContain("bg-[var(--hue-color)]");
+      expect(badge.className).toContain("bg-[var(--hue-color)]");
     });
   });
 
   Scenario("Renders outline variant with hue", ({ When, Then, And }) => {
-    When('I render a Badge variant "outline" hue "honey"', () => {});
+    let badge: HTMLElement;
 
-    Then("the badge has honey wash background", () => {
+    When('I render a Badge variant "outline" hue "honey"', () => {
       cleanup();
       render(
         <Badge variant="outline" hue="honey">
           chip
         </Badge>,
       );
-      const el = screen.getByText("chip") as HTMLElement;
-      expect(el.style.getPropertyValue("--hue-wash")).toBe("var(--hue-honey-wash)");
+      badge = screen.getByText("chip");
+    });
+
+    Then("the badge has honey wash background", () => {
+      expect(badge.style.getPropertyValue("--hue-wash")).toBe("var(--hue-honey-wash)");
     });
 
     And("the badge has honey border", () => {
-      cleanup();
-      render(
-        <Badge variant="outline" hue="honey">
-          chip
-        </Badge>,
-      );
-      expect(screen.getByText("chip").className).toContain("border");
+      expect(badge.className).toContain("border");
     });
   });
 
   Scenario("Renders secondary variant", ({ When, Then }) => {
-    When('I render a Badge variant "secondary"', () => {});
+    let badge: HTMLElement;
 
-    Then("the badge has background color from --color-secondary", () => {
+    When('I render a Badge variant "secondary"', () => {
       cleanup();
       render(<Badge variant="secondary">sec</Badge>);
-      expect(screen.getByText("sec").className).toContain("bg-secondary");
+      badge = screen.getByText("sec");
+    });
+
+    Then("the badge has background color from --color-secondary", () => {
+      expect(badge.className).toContain("bg-secondary");
     });
   });
 
   Scenario("Renders destructive variant", ({ When, Then }) => {
-    When('I render a Badge variant "destructive"', () => {});
+    let badge: HTMLElement;
 
-    Then("the badge uses destructive colors", () => {
+    When('I render a Badge variant "destructive"', () => {
       cleanup();
       render(<Badge variant="destructive">err</Badge>);
-      expect(screen.getByText("err").className).toContain("bg-destructive");
+      badge = screen.getByText("err");
+    });
+
+    Then("the badge uses destructive colors", () => {
+      expect(badge.className).toContain("bg-destructive");
     });
   });
 
   Scenario("Renders md size", ({ When, Then, And }) => {
-    When('I render a Badge with size "md"', () => {});
+    let badge: HTMLElement;
 
-    Then('the badge has class containing "text-[13px]"', () => {
+    When('I render a Badge with size "md"', () => {
       cleanup();
       render(<Badge size="md">md</Badge>);
-      expect(screen.getByText("md").className).toContain("text-[13px]");
+      badge = screen.getByText("md");
+    });
+
+    Then('the badge has class containing "text-[13px]"', () => {
+      expect(badge.className).toContain("text-[13px]");
     });
 
     And('the badge has class containing "px-2.5"', () => {
-      cleanup();
-      render(<Badge size="md">md</Badge>);
-      expect(screen.getByText("md").className).toContain("px-2.5");
+      expect(badge.className).toContain("px-2.5");
     });
   });
 });

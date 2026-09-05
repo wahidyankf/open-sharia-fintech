@@ -48,7 +48,7 @@ This standard defines adoption expectations per app type and rollout timeline. "
 
 App READMEs and their corresponding specs trees maintain two-way navigation:
 
-- The app README `## Behavior and Architecture` section carries a direct link to `specs/apps/<app-family>/README.md`.
+- The app README `## Behaviour and Architecture` section carries a direct link to `specs/apps/<app-family>/README.md`.
 - The spec tree `specs/apps/<app-family>/README.md` carries a link back to each app README it covers.
 - When a spec file moves (e.g., during flat-root migration), ALL inbound links to that file update in the same commit.
 

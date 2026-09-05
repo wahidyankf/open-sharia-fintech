@@ -18,7 +18,7 @@ ose-web:typecheck` exits 0"). Bare "implement X", "set up Y", "configure Z", "ad
 4. **One independently verifiable action** per checkbox, including prerequisites, expected
    observation, failure handling, and evidence destination. An omnibus checkbox hiding distinct
    actions: **HIGH**. A useful high checkbox count is not a finding.
-5. **Separate TDD actions**: every code behavior slice has ordered RED, GREEN, and REFACTOR
+5. **Separate TDD actions**: every code behaviour slice has ordered RED, GREEN, and REFACTOR
    checkboxes with exact test/source path or bounded discovery, symbol, command, and expected state.
    Combined/missing cycle actions: **HIGH**.
 

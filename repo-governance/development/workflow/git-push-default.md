@@ -1,6 +1,6 @@
 ---
 title: "Git Push Default Convention"
-description: Default git push behavior — every plan uses worktree-to-pr; public direct-main and worktree-to-origin-main are unavailable, while private main-to-origin-main is limited to named IaC or CI-IaC exceptions.
+description: Default git push behaviour — every plan uses worktree-to-pr; public direct-main and worktree-to-origin-main are unavailable, while private main-to-origin-main is limited to named IaC or CI-IaC exceptions.
 category: explanation
 subcategory: development
 tags:

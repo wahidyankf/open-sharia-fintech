@@ -53,5 +53,5 @@ without the other makes a report's provenance harder to follow than the rename i
 
 ## Related
 
-- [Behaviors](./behaviors/README.md) — the scenarios this system must satisfy.
+- [Behaviours](./behaviours/README.md) — the scenarios this system must satisfy.
 - [`apps/ose-app-web/README.md`](../../../../apps/ose-app-web/README.md) — the implementing project.

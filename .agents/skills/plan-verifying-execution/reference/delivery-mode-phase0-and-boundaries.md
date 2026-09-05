@@ -18,7 +18,7 @@
    was left unintegrated. See
    [Plans Organization Convention §PRs Open at Delivery Boundaries](../../../../repo-governance/conventions/structure/plans/prs-open-at-delivery-boundaries-rules.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
    Also confirm each landed unit matches a natural cohesive seam, contains all artifacts needed for
-   internal consistency, and left `main` safe to deploy to production immediately. For incomplete behavior,
+   internal consistency, and left `main` safe to deploy to production immediately. For incomplete behaviour,
    verify the temporary production-disabled flag, both path tests, and rollout/rollback/removal.
    A LOC- or file-count-derived boundary is **HIGH**.
 

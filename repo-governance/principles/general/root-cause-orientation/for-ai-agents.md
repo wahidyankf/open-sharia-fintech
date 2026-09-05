@@ -8,7 +8,7 @@ tags:
   - root-cause
   - senior-engineer
 created: 2026-03-09
-when_to_use: Use when defining or auditing how an AI agent must apply root cause orientation in its own behavior.
+when_to_use: Use when defining or auditing how an AI agent must apply root cause orientation in its own behaviour.
 ---
 
 # For AI Agents

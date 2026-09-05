@@ -43,11 +43,3 @@ export const NewEntryInput = Schema.Struct({
   labels: Schema.optionalWith(Schema.Array(Schema.String), { default: () => [] as string[] }),
 });
 export type NewEntryInput = typeof NewEntryInput.Type;
-
-export const UpdateEntryInput = Schema.Struct({
-  name: Schema.optional(EntryName),
-  payload: Schema.optional(EntryPayload),
-});
-export type UpdateEntryInput = typeof UpdateEntryInput.Type;
-
-export const PayloadFromJsonString = Schema.parseJson(EntryPayload);

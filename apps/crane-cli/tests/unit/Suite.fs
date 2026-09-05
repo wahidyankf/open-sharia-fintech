@@ -1,5 +1,6 @@
 module CraneCli.Tests.Unit.Suite
 
+open System
 open System.IO
 open System.Reflection
 open TickSpec
@@ -7,40 +8,39 @@ open Xunit
 
 let private assembly = Assembly.GetExecutingAssembly()
 
-let private gherkinRoot =
-    match System.Environment.GetEnvironmentVariable("GHERKIN_ROOT") with
-    | null -> Path.Combine(__SOURCE_DIRECTORY__, "../../../../specs/apps/crane/cli/behaviors")
-    | root -> root
-
 /// Every scenario in the owner corpus, one xUnit row each.
 ///
-/// This function raises rather than degrading. A corpus that cannot be read is
-/// indistinguishable at the exit code from a corpus that passes, so an earlier
-/// version returned a single no-op row "so [Theory] does not fail with No data
-/// found" — which is exactly what let a retired `gherkinRoot` path hide 36
-/// scenarios behind a green target. A missing directory, an unreadable feature
-/// file, and an empty corpus are all failures here.
+/// Feature text is embedded at build time so Unit setup remains in-process and
+/// never discovers or reads the real filesystem at runtime.
 let private buildScenarioData () : seq<obj[]> =
-    if not (Directory.Exists gherkinRoot) then
-        failwithf "the Gherkin corpus directory does not exist: %s" gherkinRoot
+    let resources =
+        assembly.GetManifestResourceNames()
+        |> Array.filter (fun name -> name.EndsWith(".feature", StringComparison.Ordinal))
 
-    let files =
-        Directory.GetFiles(gherkinRoot, "*.feature", SearchOption.AllDirectories)
-
-    if Array.isEmpty files then
-        failwithf "no .feature file was found under %s" gherkinRoot
+    if Array.isEmpty resources then
+        failwith "no embedded .feature resource was found for the Crane Unit corpus"
 
     let defs = StepDefinitions(assembly)
 
     let loaded =
-        files
-        |> Seq.collect (fun path ->
-            let feature = defs.GenerateFeature(path)
+        resources
+        |> Seq.collect (fun resourceName ->
+            use stream = assembly.GetManifestResourceStream(resourceName)
+
+            if isNull stream then
+                failwithf "embedded Gherkin resource cannot be opened: %s" resourceName
+
+            use reader = new StreamReader(stream)
+
+            let lines =
+                reader.ReadToEnd().Replace("\r\n", "\n", StringComparison.Ordinal).Split('\n')
+
+            let feature = defs.GenerateFeature(resourceName, lines)
             feature.Scenarios |> Seq.map (fun scenario -> [| scenario :> obj |]))
         |> Seq.toList
 
     if List.isEmpty loaded then
-        failwithf "the %d feature file(s) under %s expanded to no scenarios" files.Length gherkinRoot
+        failwithf "the %d embedded feature resource(s) expanded to no scenarios" resources.Length
 
     loaded :> seq<_>
 

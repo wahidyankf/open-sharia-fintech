@@ -73,7 +73,7 @@ synthesis pass. `pr-review-fixer` never participates.
 - [Evidence and Outcomes](./pr-review/evidence-and-outcomes.md) — Defines pass authentication,
   terminal states, and no-retry rules. Use when posting or consuming a pass result.
 - [Success Criteria](./pr-review/success-criteria.md) — Defines clean, findings, and stale scenarios.
-  Use when validating the workflow's observable behavior.
+  Use when validating the workflow's observable behaviour.
 
 `clean` describes this pass only. It is not approval or a merge gate.
 

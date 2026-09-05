@@ -15,6 +15,7 @@ development path.
 | ------------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | Pull-request and main checks    | Validates affected workspace quality and environment contracts                    | `pr-quality-gate.yml`, `validate-env.yml`                                                                           |
 | Dependency and parity audits    | Looks for dependency risk and cross-repository Rhino CLI drift                    | `dependency-vulnerability-audit.yml`, `rhino-cli-parity-audit.yml`                                                  |
+| Non-product full quality        | Runs complete library and executable-tool test layers twice daily or on demand    | `non-product-full-quality.yml`                                                                                      |
 | Website delivery                | Tests each public website before its managed delivery step                        | `*-www-test-local-deploy-prod.yml` and `_reusable-www-test-local-deploy.yml`                                        |
 | Application delivery            | Tests a paired web/backend application before its managed staging path            | `*-app-test-local-deploy-stag.yml`, `*-app-test-stag.yml`, and reusable counterparts                                |
 | Backend images and UI artifacts | Builds publishable backend images or the web UI artifact when their inputs change | `_reusable-be-build-deploy.yml`, `*-be-build-deploy-stag.yml`, `publish-images.yml`, `web-ui-build-deploy-prod.yml` |
@@ -37,7 +38,7 @@ families rather than maintaining a fragile duplicate list.
 
 ## Maintenance boundaries
 
-- Reusable workflows hold shared behavior; callers provide the product-specific
+- Reusable workflows hold shared behaviour; callers provide the product-specific
   inputs.
 - Keep secrets in GitHub’s protected configuration. Never copy them into YAML,
   logs, issues, or documentation.

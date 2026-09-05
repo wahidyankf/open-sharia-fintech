@@ -29,7 +29,7 @@ node --version  # v20.x (different)
 npm test        # FAIL: Failures
 ```
 
-**Why it's bad**: Different environments = different behavior. Wastes time debugging environment instead of code.
+**Why it's bad**: Different environments = different behaviour. Wastes time debugging environment instead of code.
 
 PASS: **Solution**: Use Volta to pin versions across all environments.
 
@@ -48,7 +48,7 @@ FAIL: **Problem**: Different dependency versions on each install.
 
 // Monday: npm install gets express@4.18.0
 // Friday: npm install gets express@4.19.0 (patch release)
-// Different behavior
+// Different behaviour
 ```
 
 **Why it's bad**: Non-deterministic. Builds differ. Hard to debug.

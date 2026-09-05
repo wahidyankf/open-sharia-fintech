@@ -94,9 +94,11 @@ export function CustomEntryLogger({ isOpen, onClose, onSaved, runtime, initialNa
           },
         ]),
       )
+      .then(() => {
+        reset();
+        onSaved();
+      })
       .catch(() => {});
-    reset();
-    onSaved();
   }
 
   const isNew = !initialName;

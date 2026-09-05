@@ -1,61 +1,93 @@
 /**
  * Step definitions for ts-env-loader's own APP_ENV tier loader feature.
  *
- * Covers: specs/libs/ts-env-loader/behaviors/env-loader/env-loader.feature
+ * Covers: specs/libs/ts-env-loader/behaviours/env-loader/env-loader.feature
  *
- * Each scenario drives `loadTierEnv()` with an isolated `appDir` (a throwaway temp directory
- * holding fixture `.env.*` files) and an isolated `env` object (a plain record, not the real
- * `process.env`) so the suite never touches this process's real environment or filesystem.
+ * Each scenario drives `loadTierEnv()` through an in-memory file port and an isolated `env`
+ * object. No setup, subject, or assertion touches the process environment or filesystem.
  */
 import path from "path";
-import { mkdtempSync, rmSync, writeFileSync, existsSync } from "node:fs";
-import { tmpdir } from "node:os";
 import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
 import { describe, expect, it } from "vitest";
-import { loadTierEnv, resolveTier, type EnvRecord } from "../../src/index";
+import { loadTierEnv, resolveTier, type EnvRecord, type TierEnvPort } from "../../src/index";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../specs/libs/ts-env-loader/behaviors/env-loader/env-loader.feature"),
+  path.resolve(__dirname, "../../../../specs/libs/ts-env-loader/behaviours/env-loader/env-loader.feature"),
 );
 
-const tmpDirs: string[] = [];
+const appDir = path.resolve("/virtual/ts-env-loader-app");
 
-function makeTmpAppDir(): string {
-  const dir = mkdtempSync(path.join(tmpdir(), "ts-env-loader-test-"));
-  tmpDirs.push(dir);
-  return dir;
+function memoryPort(files: Readonly<Record<string, string>>): TierEnvPort {
+  return {
+    exists: (filePath) => Object.hasOwn(files, filePath),
+    load(filePath, env) {
+      const source = files[filePath];
+      if (source === undefined) return;
+      for (const line of source.split("\n")) {
+        const separator = line.indexOf("=");
+        if (separator < 1) continue;
+        const key = line.slice(0, separator);
+        if (env[key] === undefined) env[key] = line.slice(separator + 1);
+      }
+    },
+  };
 }
 
-function writeEnvFile(appDir: string, fileName: string, contents: string): void {
-  writeFileSync(path.join(appDir, fileName), contents, "utf-8");
+function fixtureFiles(entries: Readonly<Record<string, string>>): Record<string, string> {
+  return Object.fromEntries(Object.entries(entries).map(([name, contents]) => [path.join(appDir, name), contents]));
 }
 
-function cleanupTmpDirs(): void {
-  for (const dir of tmpDirs.splice(0)) {
-    rmSync(dir, { recursive: true, force: true });
+function invoke(env: EnvRecord, files: Readonly<Record<string, string>>): void {
+  loadTierEnv({ appDir, env, port: memoryPort(files) });
+}
+
+function missing(fileName: string, files: Readonly<Record<string, string>>): boolean {
+  return !Object.hasOwn(files, path.join(appDir, fileName));
+}
+
+function fileFixture(fileName: string, contents: string): Record<string, string> {
+  return fixtureFiles({ [fileName]: contents });
+}
+
+function mergeFiles(...sets: ReadonlyArray<Readonly<Record<string, string>>>): Record<string, string> {
+  return Object.assign({}, ...sets);
+}
+
+function tierFile(contents = "VAR=value\n"): Record<string, string> {
+  return fileFixture(".env.stag", contents);
+}
+
+function localTierFile(contents = "VAR=value\n"): Record<string, string> {
+  return fileFixture(".env.local", contents);
+}
+
+function strayFile(name: string, contents = "VAR=other\n"): Record<string, string> {
+  return fileFixture(name, contents);
+}
+
+function capture(action: () => void): unknown {
+  try {
+    action();
+    return undefined;
+  } catch (error) {
+    return error;
   }
 }
 
-describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
-  AfterEachScenario(() => {
-    cleanupTmpDirs();
-  });
-
+describeFeature(feature, ({ Scenario, ScenarioOutline }) => {
   Scenario("Loads the selected tier's file", ({ Given, When, Then }) => {
-    let appDir = "";
+    let files: Record<string, string> = {};
     let env: EnvRecord = {};
 
     Given('only ".env.stag" exists in the app directory', () => {
-      appDir = makeTmpAppDir();
-      writeEnvFile(appDir, ".env.stag", "SHARED_VAR=stag-value\nSTAG_ONLY_VAR=stag-only\n");
+      files = tierFile("SHARED_VAR=stag-value\nSTAG_ONLY_VAR=stag-only\n");
     });
 
     When('the loader runs with APP_ENV set to "stag"', () => {
       env = { APP_ENV: "stag" };
-      loadTierEnv({ appDir, env });
+      invoke(env, files);
     });
 
-    // @covers specs/libs/ts-env-loader/behaviors/env-loader/env-loader.feature:Loads the selected tier's file
     Then('every variable defined in ".env.stag" is applied', () => {
       expect(env["SHARED_VAR"]).toBe("stag-value");
       expect(env["STAG_ONLY_VAR"]).toBe("stag-only");
@@ -63,43 +95,41 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
   });
 
   Scenario("Process env always wins over the tier file", ({ Given, When, Then, And }) => {
-    let appDir = "";
+    let files: Record<string, string> = {};
     let env: EnvRecord = {};
 
     Given('".env.local" sets a variable to a file value', () => {
-      appDir = makeTmpAppDir();
-      writeEnvFile(appDir, ".env.local", "SOME_VAR=file-value\n");
+      files = localTierFile("SOME_VAR=file-value\n");
     });
 
     When('the process already has that variable set at tier "local"', () => {
       env = { APP_ENV: "local", SOME_VAR: "process-value" };
-      loadTierEnv({ appDir, env });
+      invoke(env, files);
     });
 
     Then("the process value is used", () => {
       expect(env["SOME_VAR"]).toBe("process-value");
     });
 
-    // @covers specs/libs/ts-env-loader/behaviors/env-loader/env-loader.feature:Process env always wins over the tier file
     And('the ".env.local" value is not applied over it', () => {
       expect(env["SOME_VAR"]).toBe("process-value");
     });
   });
 
   Scenario("Tolerates a missing tier file", ({ Given, When, Then, And }) => {
-    let appDir = "";
+    let files: Record<string, string> = {};
     let env: EnvRecord = {};
     let thrown: unknown;
 
     Given('no ".env.stag" file exists in the app directory', () => {
-      appDir = makeTmpAppDir();
-      expect(existsSync(path.join(appDir, ".env.stag"))).toBe(false);
+      files = {};
+      expect(missing(".env.stag", files)).toBe(true);
     });
 
     When('the loader runs with APP_ENV set to "stag"', () => {
       env = { APP_ENV: "stag", EXISTING_VAR: "already-set" };
       try {
-        loadTierEnv({ appDir, env });
+        invoke(env, files);
       } catch (error) {
         thrown = error;
       }
@@ -109,7 +139,6 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       expect(thrown).toBeUndefined();
     });
 
-    // @covers specs/libs/ts-env-loader/behaviors/env-loader/env-loader.feature:Tolerates a missing tier file
     And("the process environment is left otherwise untouched", () => {
       expect(env["EXISTING_VAR"]).toBe("already-set");
     });
@@ -117,7 +146,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
 
   ScenarioOutline("Fails loudly on a stray auto-loaded env file", ({ Given, When, Then }, examples) => {
     const file = String(examples["file"] ?? "");
-    let appDir = "";
+    let files: Record<string, string> = {};
     let thrown: unknown;
 
     // The literal "<file>" placeholder in the Gherkin outline is replaced by the Cucumber
@@ -127,20 +156,13 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
     // validator matches step definitions against each example row's *substituted* step text (so a
     // literal "<file>" binding would never match a real file name). `{string}` satisfies both.
     Given("a stray {string} sits beside the tier file", () => {
-      appDir = makeTmpAppDir();
-      writeEnvFile(appDir, ".env.stag", "VAR=value\n");
-      writeEnvFile(appDir, file, "VAR=other\n");
+      files = mergeFiles(tierFile(), strayFile(file));
     });
 
     When("the loader runs with APP_ENV set to a non-local tier", () => {
-      try {
-        loadTierEnv({ appDir, env: { APP_ENV: "stag" } });
-      } catch (error) {
-        thrown = error;
-      }
+      thrown = capture(() => invoke({ APP_ENV: "stag" }, files));
     });
 
-    // @covers specs/libs/ts-env-loader/behaviors/env-loader/env-loader.feature:Fails loudly on a stray auto-loaded env file
     Then('the loader throws, naming {string} and the correct ".env.<tier>" replacement', () => {
       expect(thrown).toBeInstanceOf(Error);
       expect((thrown as Error).message).toContain(file);
@@ -149,24 +171,17 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
   });
 
   Scenario("Tolerates a stray file at the local tier", ({ Given, When, Then }) => {
-    let appDir = "";
+    let files: Record<string, string> = {};
     let thrown: unknown;
 
     Given('a stray ".env" sits beside ".env.local"', () => {
-      appDir = makeTmpAppDir();
-      writeEnvFile(appDir, ".env.local", "VAR=value\n");
-      writeEnvFile(appDir, ".env", "VAR=other\n");
+      files = mergeFiles(localTierFile(), strayFile(".env"));
     });
 
     When('the loader runs with APP_ENV set to "local"', () => {
-      try {
-        loadTierEnv({ appDir, env: { APP_ENV: "local" } });
-      } catch (error) {
-        thrown = error;
-      }
+      thrown = capture(() => invoke({ APP_ENV: "local" }, files));
     });
 
-    // @covers specs/libs/ts-env-loader/behaviors/env-loader/env-loader.feature:Tolerates a stray file at the local tier
     Then("the loader does not throw", () => {
       expect(thrown).toBeUndefined();
     });

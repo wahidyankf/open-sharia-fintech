@@ -26,7 +26,7 @@ For a quality-gate handoff, accept exact `delegated-gate-ids` and `lifecycle-evi
 `md-links` is delegated, do not resolve, re-check, fix, or AI-rederive paths/fragments; retain the
 semantic correctness of prerequisite relationships and all separation checks. Checkers preserve
 the ledger; fixers return a scope-intersected `updated-lifecycle-evidence`. Omitted delegation
-preserves standalone full behavior.
+preserves standalone full behaviour.
 
 **CRITICAL**: Only validate relationships **explicitly listed** in the Software Design Reference prerequisite table.
 

@@ -45,7 +45,7 @@ transcript demonstrates the false-clean problem, not the claim below on its own:
 ran, so the final `0 0` here is equally consistent with `main:main` having updated only `main` — the
 ref that was actually behind — and leaving the already-current `origin/main` untouched.)
 
-Separately, as a documented git behavior rather than something this transcript isolates:
+Separately, as a documented git behaviour rather than something this transcript isolates:
 `git fetch origin main:main` does update both `main` and `refs/remotes/origin/main` — but the
 `origin/main` half is git's **opportunistic remote-tracking update**, which fires only when the
 remote's standard `remote.origin.fetch` refspec is configured, as it is for every repository this

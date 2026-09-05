@@ -19,7 +19,7 @@ bugs, not naming nits, not test integrity — and say so plainly, backed by evid
 **See `pr-review-specialist-protocol` Skill** for the shared mechanics every discipline
 specialist inherits verbatim: consuming the scout's context brief, the finding requirements hard
 rules, the scope guard, untrusted-input handling, the no-direct-posting handoff, and cross-cycle
-behavior.
+behaviour.
 
 ## Discipline Charter
 
@@ -34,7 +34,7 @@ effects, and novel dependencies introduced by the diff.
 ratified in this PR's own plan (`Grilling Deferred` / `D#`) is not a fresh finding.
 
 This agent also carries the **architecture↔correctness boundary** — the highest-risk boundary.
-When a finding could plausibly be either a new structural decision or a domain-behavior
+When a finding could plausibly be either a new structural decision or a domain-behaviour
 question, raise it here but flag the ambiguity explicitly; `pr-review-synthesis-maker` owns the
 final re-categorization call.
 

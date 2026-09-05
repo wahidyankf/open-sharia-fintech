@@ -1,6 +1,6 @@
 ---
 title: "Fork agent skills: Main Conversation Only"
-description: "Explains when a Skill needs fork behavior and lists fork-skill use cases outside the repository."
+description: "Explains when a Skill needs fork behaviour and lists fork-skill use cases outside the repository."
 category: explanation
 subcategory: development
 tags:
@@ -14,7 +14,7 @@ when_to_use: Use when a Skill needs to run in an isolated context outside the cu
 
 # Fork agent skills: Main Conversation Only
 
-## When You Need Fork Behavior
+## When You Need Fork Behaviour
 
 **Option 1: Create fork skills in the primary binding skills directory (recommended)**
 

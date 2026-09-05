@@ -4,27 +4,14 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Icon } from "@open-sharia-enterprise/web-ui";
+import { APP_TAB_ROUTES } from "@/contexts/routing/application";
 
 interface TabBarProps {
   onFabPress: () => void;
 }
 
-interface TabConfig {
-  id: string;
-  href: string;
-  label: string;
-  icon: string;
-}
-
-const LEFT_TABS: ReadonlyArray<TabConfig> = [
-  { id: "home", href: "/app/home", label: "Home", icon: "home" },
-  { id: "progress", href: "/app/progress", label: "Progress", icon: "trend" },
-];
-
-const RIGHT_TABS: ReadonlyArray<TabConfig> = [
-  { id: "history", href: "/app/history", label: "History", icon: "history" },
-  { id: "settings", href: "/app/settings", label: "Settings", icon: "settings" },
-];
+const LEFT_TABS = APP_TAB_ROUTES.filter(({ id }) => id === "home" || id === "progress");
+const RIGHT_TABS = APP_TAB_ROUTES.filter(({ id }) => id === "history" || id === "settings");
 
 interface TabLinkProps {
   href: string;

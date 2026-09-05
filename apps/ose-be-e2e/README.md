@@ -1,6 +1,6 @@
 # ose-be-e2e
 
-This project tests OSE’s backend through its HTTP API. Playwright-BDD executes the same behavior
+This project tests OSE’s backend through its HTTP API. Playwright-BDD executes the same behaviour
 examples that describe the service, without needing a browser. 🧪
 
 ## Run locally
@@ -28,8 +28,14 @@ different running environment; never commit credentials or real access values.
 
 ```bash
 npm exec nx -- run ose-be-e2e:test:quick
-npm exec nx -- run ose-be-e2e:test:specs
+npm exec nx -- run ose-be-e2e:test:coverage
+npm exec nx -- run ose-be-e2e:test:e2e
 ```
 
-The behavior source of truth is
-[the OSE backend Gherkin suite](../../specs/apps/ose/be/behaviors/README.md).
+The behaviour source of truth is
+[the OSE backend Gherkin suite](../../specs/apps/ose/be/behaviours/README.md).
+
+This dedicated E2E project owns no independent corpus. Its `test:e2e` adapter observes the backend
+through public HTTP and messaging boundaries; `test:coverage:e2e`, `test:coverage:behaviour`, and
+aggregate `test:coverage` validate it statically. Unit and Integration are omitted because their
+in-process and local-resource boundaries belong to `ose-be`.

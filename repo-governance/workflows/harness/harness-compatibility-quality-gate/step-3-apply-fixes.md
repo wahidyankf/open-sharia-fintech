@@ -28,7 +28,7 @@ lifecycle-evidence: {current-lifecycle-evidence}`
 - Mechanical binding file updates (frontmatter field additions/renames, file relocations
   within the dotdir, permission schema updates where the new schema is unambiguous)
 - Spec updates in `specs/apps/rhino/` where a harness convention change alters rhino-cli
-  behavior the specs document (Gherkin scenarios under `behavior/`, container/component
+  behaviour the specs document (Gherkin scenarios under `behaviour/`, container/component
   descriptions, README claims) — the fixer edits the affected spec files to stay consistent
   with the catalog and binding changes
 

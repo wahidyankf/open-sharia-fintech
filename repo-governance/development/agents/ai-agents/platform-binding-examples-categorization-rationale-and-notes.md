@@ -35,8 +35,8 @@ This role-based categorization was chosen because it:
 
 **Why green (not purple)?**
 
-1. **Primary role**: Link validation (checker behavior) with audit report generation
-2. **Color follows primary role**: The `-checker` suffix and validation-first behavior make green the correct color
+1. **Primary role**: Link validation (checker behaviour) with audit report generation
+2. **Color follows primary role**: The `-checker` suffix and validation-first behaviour make green the correct color
 3. **State management is secondary**: Cache file management supports the validation role, not the reverse
 4. **Consistency**: Agent `Role` declarations and naming suffix both say "Checker (green)"
 

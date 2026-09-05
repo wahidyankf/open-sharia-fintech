@@ -1,74 +1,44 @@
 ---
-title: "Mandatory Targets — test:quick Composition and Gate-Surface Rule"
-description: The canonical five-step test:quick composition with a worked rhino-cli example, and the gate-surface / scheduled-tier rule.
+title: "Mandatory test:quick Composition and Gate Surfaces"
+description: "Closed fast-gate composition with static coverage and no higher-layer runtime"
 category: explanation
 subcategory: development
-tags:
-  - nx
-  - targets
-  - project-json
-  - build
-  - scripts
+tags: [nx, targets, testing, coverage]
 created: 2026-02-23
-when_to_use: Use when wiring or auditing a project's test:quick target definition.
+when_to_use: "Use when wiring or auditing test:quick and its lifecycle surfaces."
 ---
 
-# Mandatory Targets — test:quick Composition and Gate-Surface Rule
+# Mandatory `test:quick` Composition and Gate Surfaces
 
-## Canonical `test:quick` Composition
+An owner project's sequential `test:quick` runs:
 
-`test:quick` is a **sequential** `nx:run-commands` with `"parallel": false` running in this **exact order**:
+1. `typecheck` when applicable;
+2. `lint`;
+3. `test:unit`; and
+4. every applicable static `test:coverage:*` validator, directly or through `test:coverage`.
 
-1. `nx run <project>:typecheck`
-2. `nx run <project>:lint`
-3. `nx run <project>:test:unit` (plain/fast smoke)
-4. `nx run <project>:test:coverage` (same suite under coverage, ≥ 90% line)
-5. `nx run <project>:test:specs` (all `specs:*` validators)
+Composite testing targets use `nx:run-commands` with object-form commands, an explicit
+`"forwardAllArgs": false` on every command and on the options object, and `"parallel": false`.
+Invoke sibling targets as `npm exec -- nx run <project>:<target>`. Keep cache and input declarations
+explicit and use `cwd` only when the underlying command is project-relative. This selector is the
+Nx 22-compatible equivalent of BeaverNest's Nx 23 `run -p <project> -t <target>` form.
 
-It reuses each sibling target's definition and Nx cache. Order is guaranteed by `parallel: false`.
-It stops at the first failing step. Because `test:quick` composes `test:unit` + `test:coverage` +
-`test:specs`, **all three must be present on every project** (echo where N/A).
+The Unit invocation collects native line coverage and hard-fails below 99%. An explicitly
+enumerated boundary adapter may leave the Unit denominator only when it is wholly a resource,
+process, generated-code, or static-data boundary and named Integration or E2E runtime proof
+exercises it. Keep exclusions to named files or narrow functions; broad path globs, mixed core-logic
+exclusions, and boundary code without higher-layer proof fail the gate.
 
-Canonical example for a Rust CLI project (`rhino-cli`):
+A dedicated E2E project's quick target omits Unit runtime and runs its applicable static validators.
+Every coverage target must stay deterministic and must not execute or depend on `test:unit`,
+`test:integration`, or `test:e2e`. Runtime Unit may produce and enforce native code-coverage data as
+part of its own invocation; static coverage validators neither produce nor consume runtime proof.
+This is an intentional compatibility difference from the BeaverNest command-shape reference,
+whose `test:coverage:*` targets execute tests and whose quick target is not cached: OSE adopts its
+command structure, but retains static-only coverage targets and cache-correct quick inputs.
 
-```json
-{
-  "test:quick": {
-    "executor": "nx:run-commands",
-    "cache": true,
-    "inputs": [
-      "{projectRoot}/src/**/*.rs",
-      "{projectRoot}/tests/**/*.rs",
-      "{projectRoot}/Cargo.toml",
-      "{projectRoot}/Cargo.lock",
-      "{workspaceRoot}/specs/apps/rhino/**/*.feature"
-    ],
-    "options": {
-      "commands": [
-        "nx run rhino-cli:typecheck",
-        "nx run rhino-cli:lint",
-        "nx run rhino-cli:test:unit",
-        "nx run rhino-cli:test:coverage",
-        "nx run rhino-cli:test:specs"
-      ],
-      "parallel": false
-    }
-  }
-}
-```
-
-## Gate-Surface and Scheduled-Tier Rule
-
-**Gate rule**: `(pre-commit ∪ pre-push) == PR gate`; the registry defines the check set and the
-CI matrix derives matrix-wired entries from it.
-
-| Gate       | What runs                                                                               | When                               |
-| ---------- | --------------------------------------------------------------------------------------- | ---------------------------------- |
-| Pre-commit | Formatting only (lint-staged: prettier, rustfmt, fantomas, gofmt, …)                    | Every commit                       |
-| Pre-push   | `typecheck`, `lint`, `test:quick` (includes `test:unit`, `test:coverage`, `test:specs`) | Every push                         |
-| PR gate    | Identical to pre-push                                                                   | Every PR open / update             |
-| CRON-only  | `test:integration`, `test:e2e`                                                          | Scheduled CI (2× daily, WIB 06/18) |
-
-`test:integration` and `test:e2e` are **CRON-only** — they run in scheduled CI workflows (2× daily at
-WIB 06:00 and 18:00), never in the pre-push hook or PR gate. This keeps the pre-push gate fast while
-ensuring continuous coverage.
+Pre-commit runs staged deterministic checks only. Pre-push runs affected quick targets with
+`--parallel=1`; PR/main may use explicitly bounded project parallelism while preserving each
+project's ordered quick composition. None may reach Integration or E2E runtime. Developers select
+impacted higher-layer scenarios manually; scheduled/full-quality CI runs complete applicable
+Integration and E2E suites.

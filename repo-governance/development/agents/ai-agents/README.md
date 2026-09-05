@@ -47,7 +47,7 @@ when_to_use: "Read this index to find the right AI Agents Convention child docum
 - [Principles and Requirements](./information-accuracy-verification-principles.md) — What an agent must verify before reporting a claim.
 - [Git Worktree Awareness](./information-accuracy-verification-git-worktree-awareness.md) — A spawned agent reads or writes files inside a worktree.
 - [Git Worktree Awareness](./information-accuracy-verification-git-worktree-toolchain-init.md) — The two-step toolchain-initialization rule for a new worktree.
-- [Git Worktree Awareness](./information-accuracy-verification-git-worktree-awareness-continued.md) — The default-push-behavior rule, with an example and its consequences.
+- [Git Worktree Awareness](./information-accuracy-verification-git-worktree-awareness-continued.md) — The default-push-behaviour rule, with an example and its consequences.
 - [Verification Checklist for Agents](./information-accuracy-verification-checklist.md) — A final checklist before an agent reports a task complete.
 - [When to Create a New Agent](./creating-new-agents-when-to-create.md) — Deciding whether a task needs a new agent or fits an existing one.
 - [Agent Creation Checklist](./creating-new-agents-checklist.md) — The step-by-step checklist while creating a new agent definition file.

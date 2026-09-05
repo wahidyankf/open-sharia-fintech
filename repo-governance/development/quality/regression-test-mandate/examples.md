@@ -16,14 +16,14 @@ when_to_use: "Use when you need a concrete pass/fail example."
 
 # Examples
 
-## PASS: Behavioral bug with Gherkin scenario
+## PASS: Behavioural bug with Gherkin scenario
 
 A developer discovers that the savings tab ignores the geographic filter and shows global
 averages instead of city-specific figures.
 
 They fix the filtering logic AND add:
 
-1. A Gherkin scenario in `specs/apps/organiclever/app-web/behaviors/.../calculator.feature`:
+1. A Gherkin scenario in `specs/apps/organiclever/app-web/behaviours/.../calculator.feature`:
 
    ```gherkin
    Scenario: Savings tab respects the selected city filter

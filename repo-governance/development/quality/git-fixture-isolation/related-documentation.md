@@ -21,7 +21,7 @@ when_to_use: "Use when you need a related convention on testing or safety."
   document extends: an exit-status assertion alone is a regression-test-style patch that is
   necessary but not sufficient for this defect class; this convention supplies the durable
   defense-in-depth a narrow exit-status check lacks.
-- [Three-Level Testing Standard](.././three-level-testing-standard.md) -- CLI-app integration tests
+- [Behaviour-Driven Development](../../behaviour-driven-development.md) -- CLI-app integration tests
   that use real `/tmp` filesystem fixtures are the primary home for git-fixture tests in this
   monorepo; this convention governs their isolation once their test level is chosen.
 - [Reproducible Environments Convention (Git Identity Guardrail)](../../workflow/reproducible-environments.md) --
