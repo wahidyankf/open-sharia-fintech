@@ -3,6 +3,7 @@ name: pr-review-synthesis-maker
 description: Planning-grade PR-review coordinator — the mandatory synthesizer atop nine discipline specialists. Consumes the scout's risk tier, specialist set, shared context, probe class and prior-use state, then deduplicates, re-categorizes, reasonableness-filters, tool-verifies, and posts exactly ONE consolidated review.
 tools: Read, Bash, Grep, Glob, WebFetch, WebSearch
 model: opus
+effort: high
 color: blue
 skills:
   - pr-review-synthesis-coordination

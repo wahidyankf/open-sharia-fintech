@@ -3,6 +3,7 @@ name: pr-review-scout-maker
 description: Planning-grade PR-review pass stage 0. Pins one head, selects the risk-routed specialist set, assembles shared context, and records the probe before one fan-out. Never discovers or posts findings.
 tools: Read, Bash, Grep, Glob
 model: opus
+effort: high
 color: blue
 skills:
   - pr-review-scout-classification
