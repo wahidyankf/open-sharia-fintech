@@ -1,6 +1,18 @@
 name: HIPPO Consumer Smoke
 
 on:
+  # A Linux-only retention defect once reached main through a green pull request
+  # because this suite ran on no pull-request surface at all. The path filter
+  # keeps unrelated pull requests free of the job while every change to the
+  # consumer boundary is proved on both operating systems before it merges.
+  pull_request:
+    paths:
+      - hippo
+      - hippo.lock
+      - hippo.local.json.example
+      - .github/scripts/test-hippo-bootstrap.sh
+      - .github/scripts/test-hippo-consumer.sh
+      - .github/workflows/hippo-consumer-smoke.yml
   schedule:
     - cron: "0 6,18 * * *"
   workflow_dispatch:
