@@ -180,6 +180,14 @@ config_file = "agents/docs-tutorial-fixer.toml"
 description = "Creates and updates tutorial documentation following Diátaxis framework and tutorial conventions"
 config_file = "agents/docs-tutorial-maker.toml"
 
+[agents.harness-compatibility-checker]
+description = "Validates cross-vendor parity invariants (Phase 0, deterministic) and detects external drift between each supported coding-agent harness's current upstream configuration conventions and the platform-binding catalog (Phase 1, web-research-backed). Emits a combined dual-labelled audit report to local-tmp/harness-compat/."
+config_file = "agents/harness-compatibility-checker.toml"
+
+[agents.harness-compatibility-fixer]
+description = "Applies validated fixes from a harness-compatibility-checker audit report. Auto-remediates Phase 0 parity sync drift (Invariant 3 via npm run generate:bindings) and Phase 1 catalog/binding updates. Also updates specs/apps/rhino/ when harness changes alter documented CLI behaviour. Flags all other findings for human resolution."
+config_file = "agents/harness-compatibility-fixer.toml"
+
 [agents.pdf-to-md-checker]
 description = "Validates that a Markdown file is a verbatim, complete representation of its source PDF. Checks for missing sections, incorrect text, table integrity, OCR quality, Mermaid validity, and figure coverage. Use when verifying PDF-to-Markdown conversion fidelity before cross-referencing."
 config_file = "agents/pdf-to-md-checker.toml"
@@ -268,26 +276,6 @@ config_file = "agents/readme-fixer.toml"
 description = "Creates and updates README.md content while maintaining engagement, accessibility, and quality standards. Rewrites jargony sections, adds context to acronyms, breaks up dense paragraphs, and ensures navigation-focused structure. Use when adding or updating README content."
 config_file = "agents/readme-maker.toml"
 
-[agents.repo-harness-compatibility-checker]
-description = "Validates cross-vendor parity invariants (Phase 0, deterministic) and detects external drift between each supported coding-agent harness's current upstream configuration conventions and the platform-binding catalog (Phase 1, web-research-backed). Emits a combined dual-labelled audit report to local-tmp/harness-compat/."
-config_file = "agents/repo-harness-compatibility-checker.toml"
-
-[agents.repo-harness-compatibility-fixer]
-description = "Applies validated fixes from a repo-harness-compatibility-checker audit report. Auto-remediates Phase 0 parity sync drift (Invariant 3 via npm run generate:bindings) and Phase 1 catalog/binding updates. Also updates specs/apps/rhino/ when harness changes alter documented CLI behaviour. Flags all other findings for human resolution."
-config_file = "agents/repo-harness-compatibility-fixer.toml"
-
-[agents.repo-rules-checker]
-description = "Validates repository-wide consistency including file naming, linking, emoji usage, convention compliance, agent-to-agent duplication, agent-Skill duplication, Skill-to-Skill consolidation opportunities, and rules governance (contradictions, inaccuracies, inconsistencies). Outputs to local-tmp/repo-rules/ with progressive streaming."
-config_file = "agents/repo-rules-checker.toml"
-
-[agents.repo-rules-fixer]
-description = "Applies validated fixes from repository rules audit reports including agent-Skill duplication removal, Skills coverage gap remediation, rules governance fixes (contradictions, inaccuracies, inconsistencies), licensing convention fixes, and software-documentation fixes."
-config_file = "agents/repo-rules-fixer.toml"
-
-[agents.repo-rules-maker]
-description = "Creates repository rules and conventions in repo-governance/ directories. Documents standards, patterns, and quality requirements."
-config_file = "agents/repo-rules-maker.toml"
-
 [agents.repo-setup-manager]
 description = "Executes Phase 0 of a plan delivery checklist: uses HIPPO for dependency and toolchain convergence, then runs scoped baselines and resolves preexisting failures before plan work begins."
 config_file = "agents/repo-setup-manager.toml"
@@ -303,6 +291,18 @@ config_file = "agents/repo-workflow-fixer.toml"
 [agents.repo-workflow-maker]
 description = "Creates workflow documentation in repo-governance/workflows/ following workflow pattern convention."
 config_file = "agents/repo-workflow-maker.toml"
+
+[agents.rules-checker]
+description = "Validates repository-wide consistency including file naming, linking, emoji usage, convention compliance, agent-to-agent duplication, agent-Skill duplication, Skill-to-Skill consolidation opportunities, and rules governance (contradictions, inaccuracies, inconsistencies). Outputs to local-tmp/repo-rules/ with progressive streaming."
+config_file = "agents/rules-checker.toml"
+
+[agents.rules-fixer]
+description = "Applies validated fixes from repository rules audit reports including agent-Skill duplication removal, Skills coverage gap remediation, rules governance fixes (contradictions, inaccuracies, inconsistencies), licensing convention fixes, and software-documentation fixes."
+config_file = "agents/rules-fixer.toml"
+
+[agents.rules-maker]
+description = "Creates repository rules and conventions in repo-governance/ directories. Documents standards, patterns, and quality requirements."
+config_file = "agents/rules-maker.toml"
 
 [agents.social-linkedin-post-maker]
 description = "Creates LinkedIn posts in social-media-posts/linkedin/ from completed origin/main updates across the ose-public and ose-private repos. Enforces the 3,000-character LinkedIn body limit (measured from the \"OPEN SHARIA ENTERPRISE\" line down). Optimizes for engagement and professional tone. Use every time a LinkedIn post is created in social-media-posts/linkedin/."

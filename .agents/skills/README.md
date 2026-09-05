@@ -104,18 +104,18 @@ below.
 
 - [Agent Developing Agents](./agent-developing-agents/README.md) — AI agent frontmatter, naming, tool-access standards
 - [Ci Standards](./ci-standards/README.md) — CI/CD compliance knowledge
+- [Harness Compatibility Protocol](./harness-compatibility-protocol/README.md) — cross-vendor harness parity invariants
 - [Repo Applying Maker Checker Fixer](./repo-applying-maker-checker-fixer/README.md) — Maker/Checker/Fixer three-stage workflow pattern
 - [Repo Assessing Criticality Confidence](./repo-assessing-criticality-confidence/README.md) — criticality x confidence classification system
 - [Repo Defining Workflows](./repo-defining-workflows/README.md) — workflow-pattern frontmatter and execution phases
 - [Repo Generating Validation Reports](./repo-generating-validation-reports/README.md) — validation report format: UUIDs, timestamps
-- [Repo Harness Compatibility Protocol](./repo-harness-compatibility-protocol/README.md) — cross-vendor harness parity invariants
-- [Repo Practicing Trunk Based Development](./repo-practicing-trunk-based-development/README.md) — Trunk Based Development and the worktree-to-pr default
-- [Repo Rules Fixing](./repo-rules-fixing/README.md) — repo-rules-fixer's applying-fixes mechanics
-- [Repo Understanding Repository Architecture](./repo-understanding-repository-architecture/README.md) — six-layer governance hierarchy
 - [Repo Maintaining Task Lists](./repo-maintaining-task-lists/README.md) — open the harness's native task list before any task and keep it in sync
+- [Repo Practicing Trunk Based Development](./repo-practicing-trunk-based-development/README.md) — Trunk Based Development and the worktree-to-pr default
 - [Repo Propagating Rules](./repo-propagating-rules/README.md) — run the rules-propagation workflow whenever a rule is created, updated, or deleted
+- [Repo Understanding Repository Architecture](./repo-understanding-repository-architecture/README.md) — six-layer governance hierarchy
 - [Repo Understanding Shared Vocabulary](./repo-understanding-shared-vocabulary/README.md) — what repo rules, content trees, and delivery units cover
-- [Repo Validating Governance Rules](./repo-validating-governance-rules/README.md) — repo-rules-checker's repo-wide consistency methodology
+- [Rules Fixing](./rules-fixing/README.md) — rules-fixer's applying-fixes mechanics
+- [Rules Validating Governance](./rules-validating-governance/README.md) — rules-checker's repo-wide consistency methodology
 - [Social Linkedin Posting](./social-linkedin-posting/README.md) — social-linkedin-post-maker's character-limit and workflow rules
 - [Specs Scaffolding](./specs-scaffolding/README.md) — specs-maker's four surface-profile trees
 - [Specs Validating Structure](./specs-validating-structure/README.md) — specs-checker's nine validation categories

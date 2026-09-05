@@ -36,7 +36,7 @@ Standardized methods ensure:
 
 This convention applies to:
 
-- **Validation agents** - repo-rules-checker, docs-checker, docs-link-checker, etc.
-- **Fix agents** - repo-rules-fixer and similar automated fix tools
+- **Validation agents** - rules-checker, docs-checker, docs-link-checker, etc.
+- **Fix agents** - rules-fixer and similar automated fix tools
 - **Content agents** - Any agent that validates file structure or conventions
 - **Custom scripts** - Bash scripts performing repository consistency checks

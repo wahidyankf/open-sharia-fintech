@@ -52,7 +52,7 @@ color: blue
 
 ```yaml
 ---
-name: repo-rules-checker
+name: rules-checker
 description: Validates consistency between agents, AGENTS.md, conventions, and documentation. Use when checking for inconsistencies, contradictions, duplicate content, or verifying repository rule compliance.
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet

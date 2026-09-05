@@ -28,7 +28,7 @@ when_to_use: "Use when deciding whether a finding is MEDIUM_CONFIDENCE."
 
 **Examples Across Domains:**
 
-**repo-rules-fixer:**
+**rules-fixer:**
 
 - Content duplication between AGENTS.md and convention file (context differs, may be intentional)
 - Link target unclear (file missing, but can't determine correct target automatically)

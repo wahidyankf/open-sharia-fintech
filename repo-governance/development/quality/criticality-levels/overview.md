@@ -21,7 +21,7 @@ This convention establishes a universal **four-level criticality system** (CRITI
 
 **Problem**: Seven different severity classification systems existed across checker agents, causing confusion and inconsistency:
 
-- `repo-rules-checker`: Critical/Important/Minor
+- `rules-checker`: Critical/Important/Minor
 - `apps-ayokoding-www-general-checker`: Must Fix/Warnings/Suggestions
 - `readme-checker`: High/Medium/Low Priority
 - `docs-checker`: [Verified]/[Error]/[Outdated] (verification-based, NOT severity)

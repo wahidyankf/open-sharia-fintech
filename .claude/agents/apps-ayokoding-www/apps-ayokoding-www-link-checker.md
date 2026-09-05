@@ -3,6 +3,7 @@ name: apps-ayokoding-www-link-checker
 description: Validates links in ayokoding-web content. Checks internal and external links for correctness and accessibility.
 tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Edit, Bash
 model: haiku
+effort: xhigh
 color: green
 skills:
   - docs-applying-content-quality

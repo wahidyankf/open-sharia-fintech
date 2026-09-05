@@ -3,6 +3,7 @@ name: swe-fsharp-dev
 description: Develops F# applications following functional programming principles, railway-oriented error handling, and platform coding standards. Use when implementing F# code for OSE Platform.
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
+effort: xhigh
 color: purple
 skills:
   - swe-programming-fsharp

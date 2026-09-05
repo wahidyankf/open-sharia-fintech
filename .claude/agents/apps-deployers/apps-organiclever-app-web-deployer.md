@@ -3,6 +3,7 @@ name: apps-organiclever-app-web-deployer
 description: Deploys the OrganicLever app group to staging via the scheduled organiclever-app-test-local-deploy-stag.yml GitHub Actions workflow. The workflow runs the full local-stack test suite, then force-pushes the stag-organiclever-app-web and stag-organiclever-be branches. Vercel listens to stag-organiclever-app-web for automatic builds. Production promotion is deferred — no production-CD workflow exists yet.
 tools: Bash, Grep
 model: haiku
+effort: xhigh
 color: purple
 skills:
   - repo-practicing-trunk-based-development

@@ -3,6 +3,7 @@ name: pr-review-logic-maker
 description: Execution-grade PR reviewer scoped to the business-logic/correctness discipline only — behaviour vs. domain intent plus Gherkin acceptance-criteria conformance across edge/error cases. One of nine discipline-scoped specialists feeding the pr-review-synthesis-maker coordinator; inherits pr-review-maker's hard rules verbatim, scoped to its own charter and SUPPRESS block.
 tools: Read, Bash, Grep, Glob, WebFetch, WebSearch
 model: sonnet
+effort: xhigh
 color: blue
 skills:
   - pr-review-specialist-protocol

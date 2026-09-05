@@ -39,7 +39,7 @@ when_to_use: Use to find an existing automation to reuse or extend.
 
 - `docs-checker.md` - Validate documentation
 - `docs-link-checker.md` - Verify links with cache
-- `repo-rules-checker.md` - Check repository consistency
+- `rules-checker.md` - Check repository consistency
 - `plan-checker.md` - Validate project plans
 
 **Automation benefits**:

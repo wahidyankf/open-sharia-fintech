@@ -106,5 +106,5 @@ grep -r "Functional Source License" --include="LICENSE" .
 
 **Agents:**
 
-- `repo-rules-checker` — Validates licensing compliance
-- `repo-rules-fixer` — Fixes licensing violations
+- `rules-checker` — Validates licensing compliance
+- `rules-fixer` — Fixes licensing violations

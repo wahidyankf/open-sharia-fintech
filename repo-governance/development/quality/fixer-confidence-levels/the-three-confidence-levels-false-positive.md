@@ -27,7 +27,7 @@ when_to_use: "Use when deciding whether a finding is a false positive."
 
 **Examples Across Domains:**
 
-**repo-rules-fixer:**
+**rules-fixer:**
 
 - Checker flagged markdown headings as YAML comments (searched entire file instead of just frontmatter)
 - Checker reported missing field that actually exists (case sensitivity issue)

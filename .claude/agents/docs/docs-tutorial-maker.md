@@ -3,6 +3,7 @@ name: docs-tutorial-maker
 description: Creates and updates tutorial documentation following Diátaxis framework and tutorial conventions
 tools: Read, Write, Edit, Grep, Glob, Bash
 model:
+effort: high
 color: blue
 skills:
   - docs-creating-tutorial-structure

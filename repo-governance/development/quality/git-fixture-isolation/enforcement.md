@@ -44,7 +44,7 @@ when_to_use: "Use when locating the automated enforcement for git-fixture isolat
   `status.success()`-style check all appear in the same function or in a shared helper the
   function calls.
 
-- **`repo-rules-checker`**: May additionally audit that this convention itself stays cross-referenced
+- **`rules-checker`**: May additionally audit that this convention itself stays cross-referenced
   from [Regression Test Mandate](.././regression-test-mandate.md),
   [Behaviour-Driven Development](../../behaviour-driven-development.md), and
   [Reproducible Environments Convention](../../workflow/reproducible-environments.md), per

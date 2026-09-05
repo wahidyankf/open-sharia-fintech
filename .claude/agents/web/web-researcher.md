@@ -3,6 +3,7 @@ name: web-researcher
 description: Researches current, verifiable information from the web in an isolated context. Use when you need facts beyond training data cutoff, latest API or library docs, current best practices, or verification of uncertain claims. Returns cited, structured findings without bloating main conversation context.
 tools: Read, Glob, Grep, WebFetch, WebSearch
 model: sonnet
+effort: xhigh
 color: green
 skills:
   - docs-validating-factual-accuracy

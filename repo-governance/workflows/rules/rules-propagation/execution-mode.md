@@ -15,13 +15,13 @@ only mode available when the agent family is unavailable.
 
 ## Delegation Map
 
-| Step  | Owner                                                                      |
-| ----- | -------------------------------------------------------------------------- |
-| 0 – 5 | Main thread                                                                |
-| 6     | `repo-rules-maker`                                                         |
-| 7     | Main thread, with `repo-config.yml` reads                                  |
-| 8     | `repo-rules-checker` and `repo-rules-fixer`, via the composed quality gate |
-| 9     | Main thread                                                                |
+| Step  | Owner                                                            |
+| ----- | ---------------------------------------------------------------- |
+| 0 – 5 | Main thread                                                      |
+| 6     | `rules-maker`                                                    |
+| 7     | Main thread, with `repo-config.yml` reads                        |
+| 8     | `rules-checker` and `rules-fixer`, via the composed quality gate |
+| 9     | Main thread                                                      |
 
 ## Concurrency
 

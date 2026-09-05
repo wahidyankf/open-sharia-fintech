@@ -3,6 +3,7 @@ name: pr-review-performance-maker
 description: Execution-grade PR reviewer scoped to the performance discipline only — concrete or likely performance regressions, hot-path changes, algorithmic-complexity growth, and resource (memory/IO/alloc) concerns. One of nine discipline-scoped specialists feeding the pr-review-synthesis-maker coordinator; inherits pr-review-maker's hard rules verbatim, scoped to its own charter and SUPPRESS block.
 tools: Read, Bash, Grep, Glob, WebFetch, WebSearch
 model: sonnet
+effort: xhigh
 color: blue
 skills:
   - pr-review-specialist-protocol

@@ -22,18 +22,18 @@ when_to_use: "Use for repo-wide rules or ayokoding-www content."
 
 **Agents**:
 
-- **repo-rules-maker** (🟦 Maker) - Propagates rule changes across multiple files
-- **repo-rules-checker** (🟩 Checker) - Validates consistency, generates audit reports
-- **repo-rules-fixer** (🟨 Fixer) - Applies validated fixes from audit reports
+- **rules-maker** (🟦 Maker) - Propagates rule changes across multiple files
+- **rules-checker** (🟩 Checker) - Validates consistency, generates audit reports
+- **rules-fixer** (🟨 Fixer) - Applies validated fixes from audit reports
 
 **Use Case**: Maintaining consistency when adding/modifying conventions or standards
 
 **Example**:
 
 ```
-1. repo-rules-maker: Add new emoji usage rule to convention doc + update AGENTS.md + update agents
-2. repo-rules-checker: Validate all files comply with new rule
-3. repo-rules-fixer: Fix non-compliant files found in audit
+1. rules-maker: Add new emoji usage rule to convention doc + update AGENTS.md + update agents
+2. rules-checker: Validate all files comply with new rule
+3. rules-fixer: Fix non-compliant files found in audit
 ```
 
 ## 2. apps-ayokoding-www-\* (Next.js 16 Content for ayokoding-www)

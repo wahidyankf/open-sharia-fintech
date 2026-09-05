@@ -74,7 +74,7 @@ all apply as written.
 
 Does not modify any files (read-only + report generation); does not validate folders outside the
 explicit list; does not validate test binding substance (use `gherkin-implementation-review`); does not
-validate governance docs (`repo-rules-checker`); does not run tests (CI).
+validate governance docs (`rules-checker`); does not run tests (CI).
 
 ## Principles Implemented
 

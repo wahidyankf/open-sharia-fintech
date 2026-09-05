@@ -3,6 +3,7 @@ name: repo-setup-manager
 description: "Executes Phase 0 of a plan delivery checklist: uses HIPPO for dependency and toolchain convergence, then runs scoped baselines and resolves preexisting failures before plan work begins."
 tools: [Read, Bash, Glob, Grep]
 model: sonnet
+effort: xhigh
 color: green
 skills:
   - repo-maintaining-task-lists

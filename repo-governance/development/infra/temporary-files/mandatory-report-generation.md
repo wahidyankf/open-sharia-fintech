@@ -25,7 +25,7 @@ directory moved.
 
 All checker agents in the following families MUST write audit reports to `local-tmp/<agent-family>/`, using the family token each declares in its own body:
 
-1. **repo-rules-checker** - Repository consistency validation
+1. **rules-checker** - Repository consistency validation
 2. **apps-ayokoding-www-general-checker** - General content validation (ayokoding-www)
 3. **apps-ayokoding-www-by-example-checker** - By-example tutorial validation (ayokoding-www)
 4. **apps-ayokoding-www-facts-checker** - Educational content factual accuracy validation

@@ -1705,9 +1705,9 @@ type HarnessResourceSteps() =
         Assert.Contains("Enforcement Points", lookupFileContent)
 
     [<When>]
-    member _.``"repo-rules-checker" runs Step 6``() =
+    member _.``"rules-checker" runs Step 6``() =
         Assert.Equal(Complete, planStatus)
-        lookupFileContent <- readAgentSurface ".claude/agents/repo/repo-rules-checker.md"
+        lookupFileContent <- readAgentSurface ".claude/agents/repo/rules-checker.md"
 
     [<Then>]
     member _.``it reports qualitative bloat concerns across the whole instruction-file class``() =
@@ -1773,9 +1773,9 @@ type HarnessResourceSteps() =
         lifecycleEvidence <- Map.ofList [ "governance-word-budget", "passed" ]
 
     [<When>]
-    member _.``"repo-rules-checker" runs Step 0\.5``() =
+    member _.``"rules-checker" runs Step 0\.5``() =
         Assert.Equal(Some "passed", Map.tryFind "governance-word-budget" lifecycleEvidence)
-        lookupFileContent <- readAgentSurface ".claude/agents/repo/repo-rules-checker.md"
+        lookupFileContent <- readAgentSurface ".claude/agents/repo/rules-checker.md"
 
     [<Then>]
     member _.``it consumes the exact delegated gate ID "governance-word-budget"``() =
@@ -3181,8 +3181,8 @@ let ``The rule is documented as a convention`` () =
     FeatureRunner.runWordBudgetRule "The rule is documented as a convention"
 
 [<Fact>]
-let ``repo-rules-checker validates the budget qualitatively`` () =
-    FeatureRunner.runWordBudgetRule "repo-rules-checker validates the budget qualitatively"
+let ``rules-checker validates the budget qualitatively`` () =
+    FeatureRunner.runWordBudgetRule "rules-checker validates the budget qualitatively"
 
 [<Fact>]
 let ``The quality-gate workflow delegates the validator by exact gate ID`` () =

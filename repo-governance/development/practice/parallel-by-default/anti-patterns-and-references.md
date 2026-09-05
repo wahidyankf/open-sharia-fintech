@@ -71,5 +71,5 @@ when_to_use: Use when reviewing your own execution pattern for one of these four
 
 **Agents:**
 
-- `repo-rules-checker` - Validates convention compliance
-- `repo-rules-maker` - Creates and updates conventions
+- `rules-checker` - Validates convention compliance
+- `rules-maker` - Creates and updates conventions

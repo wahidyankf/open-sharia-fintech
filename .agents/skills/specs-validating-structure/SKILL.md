@@ -51,7 +51,7 @@ execution pattern, fix report format, safety rules, and changed-file capture.
 
 Test bindings and semantic implementation (use the
 [`gherkin-implementation-review`](../../../repo-governance/workflows/gherkin-implementation-review.md)),
-governance docs (`repo-rules-checker`), or runtime tests (CI). This methodology is read-only.
+governance docs (`rules-checker`), or runtime tests (CI). This methodology is read-only.
 
 ## Related
 

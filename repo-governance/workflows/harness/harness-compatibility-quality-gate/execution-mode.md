@@ -1,13 +1,13 @@
 ---
 title: "Execution Mode"
-description: How to invoke repo-harness-compatibility-checker and -fixer via Agent Delegation, with the Manual Orchestration fallback and how each is triggered.
+description: How to invoke harness-compatibility-checker and -fixer via Agent Delegation, with the Manual Orchestration fallback and how each is triggered.
 when_to_use: Use when starting a harness compatibility quality gate run and deciding preferred vs. fallback execution mode.
 ---
 
 # Execution Mode
 
-**Preferred Mode**: Agent Delegation — invoke `repo-harness-compatibility-checker` and
-`repo-harness-compatibility-fixer` via the Agent tool with `subagent_type`
+**Preferred Mode**: Agent Delegation — invoke `harness-compatibility-checker` and
+`harness-compatibility-fixer` via the Agent tool with `subagent_type`
 (see [Workflow Execution Modes Convention](../../meta/execution-modes.md)).
 
 **Fallback Mode**: Manual Orchestration — execute workflow logic directly using
@@ -25,10 +25,10 @@ User: "Run repo harness compatibility quality gate workflow"
 The orchestrator will:
 
 1. Resolve delegated registry IDs and lifecycle evidence, then invoke
-   `repo-harness-compatibility-checker` via the Agent tool (runs unowned semantic parity in Phase 0,
+   `harness-compatibility-checker` via the Agent tool (runs unowned semantic parity in Phase 0,
    then delegates per-harness web research to
    `web-researcher` in Phase 1, writes a combined drift audit report)
-2. Invoke `repo-harness-compatibility-fixer` via the Agent tool (reads audit, applies fixes
+2. Invoke `harness-compatibility-fixer` via the Agent tool (reads audit, applies fixes
    to parity drift, catalog rows, binding files, and specs as needed)
 3. Iterate until zero domain findings are achieved on two consecutive validations; lifecycle
    evidence is reported separately and never rerun here

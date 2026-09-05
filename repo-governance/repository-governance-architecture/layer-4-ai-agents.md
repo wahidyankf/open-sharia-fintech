@@ -38,7 +38,7 @@ when_to_use: Use for Layer 4's scope and agent requirements.
 - `docs-checker` - Validates factual accuracy using web verification
 - `docs-fixer` - Applies validated factual corrections
 - `readme-maker` - Creates/updates README files
-- `repo-rules-checker` - Validates repository-wide consistency
+- `rules-checker` - Validates repository-wide consistency
 
 **Requirements**:
 

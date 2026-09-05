@@ -3,6 +3,7 @@ name: apps-ayokoding-www-general-checker
 description: Validates general ayokoding-web content quality including bilingual completeness and content quality.
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
+effort: xhigh
 color: green
 skills:
   - docs-applying-content-quality

@@ -3,6 +3,7 @@ name: swe-csharp-dev
 description: Develops C# applications following nullable reference type principles, async/await patterns, and platform coding standards. Use when implementing C# code for OSE Platform.
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
+effort: xhigh
 color: purple
 skills:
   - swe-programming-csharp

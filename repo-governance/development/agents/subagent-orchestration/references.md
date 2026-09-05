@@ -29,5 +29,5 @@ when_to_use: Use when looking for further reading on subagent orchestration.
 
 **Agents:**
 
-- `repo-rules-checker` - Validates convention compliance
-- `repo-rules-maker` - Creates and updates conventions
+- `rules-checker` - Validates convention compliance
+- `rules-maker` - Creates and updates conventions

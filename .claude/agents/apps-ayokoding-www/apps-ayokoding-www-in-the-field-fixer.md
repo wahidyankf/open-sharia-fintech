@@ -3,6 +3,7 @@ name: apps-ayokoding-www-in-the-field-fixer
 description: Applies validated fixes from apps-ayokoding-www-in-the-field-checker audit reports. Re-validates in-the-field findings before applying changes. Use after reviewing checker output.
 tools: Read, Edit, Write, Glob, Grep, Bash
 model: sonnet
+effort: xhigh
 color: yellow
 skills:
   - docs-creating-in-the-field-tutorials

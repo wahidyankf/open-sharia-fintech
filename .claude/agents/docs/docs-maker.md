@@ -3,6 +3,7 @@ name: docs-maker
 description: Expert documentation writer specializing in GitHub-compatible markdown and Diátaxis framework. Use when creating, editing, or organizing project documentation.
 tools: Read, Write, Edit, Glob, Grep
 model: sonnet
+effort: xhigh
 color: blue
 skills:
   - docs-authoring-standards

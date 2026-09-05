@@ -3,6 +3,7 @@ name: apps-ayokoding-www-deployer
 description: Deploys ayokoding-web (Next.js) to production environment branch (prod-ayokoding-www) after validation. Vercel listens to production branch for automatic builds.
 tools: Bash, Grep
 model: haiku
+effort: xhigh
 color: purple
 skills:
   - repo-practicing-trunk-based-development

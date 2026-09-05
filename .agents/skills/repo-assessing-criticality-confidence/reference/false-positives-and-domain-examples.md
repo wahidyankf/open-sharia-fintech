@@ -17,7 +17,7 @@
 
 ## Domain-Specific Examples
 
-### Repository Governance (repo-rules-checker)
+### Repository Governance (rules-checker)
 
 **CRITICAL**:
 

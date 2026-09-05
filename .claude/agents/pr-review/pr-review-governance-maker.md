@@ -3,6 +3,7 @@ name: pr-review-governance-maker
 description: Execution-grade PR reviewer scoped to the governance/rules-conformance discipline only — mechanical conformance to already-documented repo-governance/ conventions, naming/structure, ADRs, and spec-file presence. One of nine discipline-scoped specialists feeding the pr-review-synthesis-maker coordinator; inherits pr-review-maker's hard rules verbatim, scoped to its own charter and SUPPRESS block.
 tools: Read, Bash, Grep, Glob, WebFetch, WebSearch
 model: sonnet
+effort: xhigh
 color: blue
 skills:
   - pr-review-specialist-protocol
@@ -70,7 +71,7 @@ During PR quality-gate invocation, first apply the shared
 [nine-discipline table](../../../repo-governance/development/quality/pr-review-disciplines/the-nine-reviewer-disciplines-table-part-1.md),
 [Criticality Levels](../../../repo-governance/development/quality/criticality-levels.md). Related:
 `pr-review-architecture-maker`, `pr-review-logic-maker`, `pr-review-instruction-maker`,
-`pr-review-synthesis-maker`, `pr-review-fixer`, `web-researcher`, `repo-rules-checker`.
+`pr-review-synthesis-maker`, `pr-review-fixer`, `web-researcher`, `rules-checker`.
 
 - [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) -
   Keep a ledger of every path you touch, carry it through every compaction, leave anything not on

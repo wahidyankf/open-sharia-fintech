@@ -65,7 +65,7 @@ file, especially for deletions and large reorganizations.
 
 - `docs-maker.md` - Creates new documentation (use for new index files)
 - `docs-link-checker.md` - Validates links (use after file operations to verify)
-- `repo-rules-checker.md` - Validates consistency (use for large reorganizations)
+- `rules-checker.md` - Validates consistency (use for large reorganizations)
 
 - [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep
   a ledger of every path you touch, carry it through every compaction, leave anything not on it

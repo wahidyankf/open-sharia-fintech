@@ -17,5 +17,5 @@ when_to_use: Use when looking for a tool to validate an agent's model-tier decla
 The following agents enforce or assist with model selection:
 
 - **agent-maker** -- applies these guidelines when creating new agents
-- **repo-rules-checker** -- validates that all agents have model justification blocks and appropriate tier assignments
-- **repo-rules-fixer** -- corrects model selection issues identified by the checker
+- **rules-checker** -- validates that all agents have model justification blocks and appropriate tier assignments
+- **rules-fixer** -- corrects model selection issues identified by the checker

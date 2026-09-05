@@ -1,6 +1,6 @@
 ---
 title: "Validation and Compliance"
-description: "Explains how repo-rules-checker validates agent compliance and how to manually verify an agent."
+description: "Explains how rules-checker validates agent compliance and how to manually verify an agent."
 category: explanation
 subcategory: development
 tags:
@@ -16,7 +16,7 @@ when_to_use: Use when running or interpreting an agent-compliance validation pas
 
 ## Repo-Rule-Checker Integration
 
-The `repo-rules-checker` agent validates all agents against this convention.
+The `rules-checker` agent validates all agents against this convention.
 
 **Checks performed:**
 
@@ -38,4 +38,4 @@ Before committing a new agent:
 2. **Use the agent creation checklist** - Verify all items
 3. **Test the agent** - Invoke it and verify behaviour
 4. **Review existing agents** - Ensure consistency
-5. **Run repo-rules-checker** - Validate compliance
+5. **Run rules-checker** - Validate compliance

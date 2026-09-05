@@ -19,7 +19,7 @@ when_to_use: "Use to locate the automated enforcement or a related convention."
 
 This convention is enforced by:
 
-- **`repo-rules-checker`**: audits the eleven `pr-review-*-maker.md` agent definitions against the
+- **`rules-checker`**: audits the eleven `pr-review-*-maker.md` agent definitions against the
   discipline table's owned/routed-to scope and flags a specialist charter that omits its
   `SUPPRESS` block, misstates a routing target, or contradicts a grey-zone ruling.
 - **`pr-review-synthesis-maker`**: applies the boundary tie-breaker rule and the seven grey-zone

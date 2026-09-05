@@ -26,9 +26,9 @@ Existing agents using different terminology should migrate to this convention.
 
 ## Phase 2: Pilot Agent (Week 2)
 
-1. Update `repo-rules-checker` to use CRITICAL/HIGH/MEDIUM/LOW sections
+1. Update `rules-checker` to use CRITICAL/HIGH/MEDIUM/LOW sections
 2. Test report generation with standardized format
-3. Validate that `repo-rules-fixer` correctly interprets new format
+3. Validate that `rules-fixer` correctly interprets new format
 4. Identify any issues before broader rollout
 
 ## Phase 3: Checker Agent Families (Week 2-3)
@@ -49,7 +49,7 @@ Existing agents using different terminology should migrate to this convention.
 - apps-ayokoding-www-facts-checker
 - apps-ayokoding-www-link-checker
 - docs-link-checker ([OK]/[BROKEN]/[REDIRECT] + CRITICAL/HIGH/MEDIUM/LOW)
-- repo-rules-checker
+- rules-checker
 
 **Plan/Priority Family**:
 
@@ -61,7 +61,7 @@ Existing agents using different terminology should migrate to this convention.
 
 Update all fixer agents to use priority-based execution:
 
-- repo-rules-fixer (pilot)
+- rules-fixer (pilot)
 - apps-ayokoding-www-general-fixer
 - apps-ayokoding-www-by-example-fixer
 - apps-ayokoding-www-facts-fixer

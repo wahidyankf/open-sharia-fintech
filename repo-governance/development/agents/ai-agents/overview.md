@@ -47,7 +47,7 @@ This convention applies to:
 
 - All agent files in the platform binding directory (primary) and secondary agent directories
 - References to agents in `AGENTS.md`
-- Agent validation rules in `repo-rules-checker`
+- Agent validation rules in `rules-checker`
 
 ## Platform Bindings
 

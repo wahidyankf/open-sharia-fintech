@@ -50,7 +50,7 @@ agent judges the size by eye, and no other document restates the numbers.
 
 **Agent Responsibilities:**
 
-1. **Content agents (`repo-rules-maker`, `docs-maker`, and peers):**
+1. **Content agents (`rules-maker`, `docs-maker`, and peers):**
    - MUST NOT add verbose content to AGENTS.md
    - When adding conventions, create the detailed doc first, then a brief AGENTS.md summary
    - When the budget gate reports an over-budget file, remediate by progressive disclosure — split

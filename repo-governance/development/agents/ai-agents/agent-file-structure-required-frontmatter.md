@@ -41,7 +41,7 @@ skills: []
    - MUST exactly match the filename (without `.md` extension)
    - Use kebab-case format
    - Should be descriptive and action-oriented
-   - Examples: `docs-maker`, `repo-rules-checker`, `api-validator`
+   - Examples: `docs-maker`, `rules-checker`, `api-validator`
 
 2. **`description`** (required)
    - One-line summary of when to use this agent

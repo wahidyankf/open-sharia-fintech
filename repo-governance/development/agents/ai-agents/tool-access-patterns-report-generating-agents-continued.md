@@ -37,7 +37,7 @@ See [Temporary Files Convention - Progressive Writing Requirement](../../infra/t
 
 ```yaml
 ---
-name: repo-rules-checker
+name: rules-checker
 description: Validates consistency between agents, AGENTS.md, conventions, and documentation.
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet

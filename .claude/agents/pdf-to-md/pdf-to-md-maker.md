@@ -3,6 +3,7 @@ name: pdf-to-md-maker
 description: Converts PDF files to verbatim Markdown representations. Handles text-based PDFs via pdftotext, image-only PDFs via OCR (tesseract), converts diagrams to Mermaid format, and processes arbitrarily large files in 50-page chunks. By default outputs to same directory and filename as PDF with .md extension. Use when converting a PDF to Markdown for cross-referencing or archival.
 tools: Read, Write, Edit, Bash, Glob, Grep
 model: sonnet
+effort: xhigh
 color: blue
 skills:
   - docs-converting-pdf-to-markdown

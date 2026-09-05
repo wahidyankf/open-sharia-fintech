@@ -70,9 +70,9 @@ check; authors discover offenders at execution.
 
 ### Row 4 — Governance Sweep
 
-**Decision**: Aligned. Every repo runs a `repo-rules-maker`-driven sweep.
+**Decision**: Aligned. Every repo runs a `rules-maker`-driven sweep.
 
-**Rationale**: Both repos carry the `repo-rules-maker` agent. The rule propagation
+**Rationale**: Both repos carry the `rules-maker` agent. The rule propagation
 pattern is the same in every repo, so no deviation is warranted.
 
 ### Row 5 — Skill Propagation
@@ -148,7 +148,7 @@ rule is provably consistent repo-wide before any commit lands.
 
 **Decision**: Aligned. No deterministic markdown linter covers Gherkin fences in `.md` files.
 Plan-doc Gherkin in `plans/in-progress/` and `plans/backlog/` is caught by `plan-checker` AI
-judgment criteria and by `repo-rules-checker` judgment criteria during quality-gate sweeps.
+judgment criteria and by `rules-checker` judgment criteria during quality-gate sweeps.
 `plans/done/` is exempt (immutable archive). This plan's execution also manually retrofits
 active plans' markdown Gherkin to conform (Phase 14 in the delivery checklist).
 

@@ -59,7 +59,7 @@ Before creating a new agent, check if existing agents already cover the domain:
 **PASS: Good - Specialized Agents:**
 
 - `docs-maker` - Documentation only
-- `repo-rules-checker` - Consistency validation only
+- `rules-checker` - Consistency validation only
 - `swe-rust-dev` - Rust development only
 
 **FAIL: Bad - Over-Generalized:**

@@ -29,4 +29,4 @@ This practice respects the following core principles:
   - Apply the senior engineer test (question complexity proactively)
   - Prefer boring solutions (battle-tested patterns over clever code)
 
-- **[Automation Over Manual](../../../principles/software-engineering/automation-over-manual.md)**: Agents transform manual processes into automated workflows. Instead of manually validating 200+ markdown files, `repo-rules-checker` automates validation. Agents transform manual processes into repeatable, consistent automated workflows.
+- **[Automation Over Manual](../../../principles/software-engineering/automation-over-manual.md)**: Agents transform manual processes into automated workflows. Instead of manually validating 200+ markdown files, `rules-checker` automates validation. Agents transform manual processes into repeatable, consistent automated workflows.

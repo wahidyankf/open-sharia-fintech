@@ -1,6 +1,6 @@
 ---
 title: "Common Pitfalls, Examples, and Validation"
-description: Common vercel.json misconfiguration pitfalls with fixes, PASS/FAIL examples of buildCommand alignment, and how the repo-rules-checker agent validates this convention.
+description: Common vercel.json misconfiguration pitfalls with fixes, PASS/FAIL examples of buildCommand alignment, and how the rules-checker agent validates this convention.
 category: explanation
 subcategory: development
 tags:
@@ -96,7 +96,7 @@ produce an app without the generated sitemaps.
 
 ## Validation
 
-The `repo-rules-checker` agent validates that:
+The `rules-checker` agent validates that:
 
 - Any `build` target with a non-empty `dependsOn` list in `project.json` has a `buildCommand` in
   `vercel.json` that includes equivalent steps
@@ -113,5 +113,5 @@ The `repo-rules-checker` agent validates that:
 
 **Agents:**
 
-- `repo-rules-checker` - Validates `vercel.json` build command alignment
-- `repo-rules-fixer` - Corrects misaligned `buildCommand` entries
+- `rules-checker` - Validates `vercel.json` build command alignment
+- `rules-fixer` - Corrects misaligned `buildCommand` entries

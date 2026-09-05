@@ -19,7 +19,7 @@ These budgets bound how agents spend two scarce resources — external API rate 
 
 ## Authoring and Propagating Repository Rules
 
-Rule work runs through the [rules-propagation workflow](../../../workflows/rules/rules-propagation.md), which is entered automatically the moment a request implies a rule is being created, updated, superseded, or deleted — however that request is phrased, and including any edit to a repo-rules surface. The workflow composes the agents rather than replacing them: `repo-rules-maker` remains the canonical maker for `repo-governance/` content, `repo-rules-checker` validates, and `repo-rules-fixer` applies validated fixes. Invoking the maker directly skips the normalization, conflict scan, placement, and enforcement-disposition steps, which is the failure this routing exists to prevent.
+Rule work runs through the [rules-propagation workflow](../../../workflows/rules/rules-propagation.md), which is entered automatically the moment a request implies a rule is being created, updated, superseded, or deleted — however that request is phrased, and including any edit to a repo-rules surface. The workflow composes the agents rather than replacing them: `rules-maker` remains the canonical maker for `repo-governance/` content, `rules-checker` validates, and `rules-fixer` applies validated fixes. Invoking the maker directly skips the normalization, conflict scan, placement, and enforcement-disposition steps, which is the failure this routing exists to prevent.
 
 **Enforcement disposition — unenforced by decision.** Two mechanisms make an ad-hoc rule edit
 unlikely: an agent skill that fires on rule-shaped phrasing, and a pre-write reminder that fires on
@@ -27,7 +27,7 @@ any write to a repo-rules surface. Neither _fails_. The reminder is warn-only by
 so that it can never deadlock the propagation workflow's own writes — and a check that cannot fail
 is not coverage. A blocking variant was considered and declined; enforcement is review-time.
 
-A portable rule is authored with `repo-rules-maker` in one repository per rules-propagation run.
+A portable rule is authored with `rules-maker` in one repository per rules-propagation run.
 When the run finishes, Step 9 records the other OSE repository as a sibling obligation and a later
 run carries the same canonical change there; no other repository is a propagation target. Each
 repository's ready PR merges on its own hardened prerequisites and merge opportunity — never hold

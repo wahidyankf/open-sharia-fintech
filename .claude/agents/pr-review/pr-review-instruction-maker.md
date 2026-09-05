@@ -3,6 +3,7 @@ name: pr-review-instruction-maker
 description: Execution-grade PR reviewer scoped to the instruction-decay discipline only — a framework/build-tool/package-manager/env-var/CI change in the diff not reflected in AGENTS.md/CLAUDE.md/.claude/, and instruction bloat (generic filler, not file length). One of nine discipline-scoped specialists feeding the pr-review-synthesis-maker coordinator; inherits pr-review-maker's hard rules verbatim, scoped to its own charter and SUPPRESS block.
 tools: Read, Bash, Grep, Glob, WebFetch, WebSearch
 model: sonnet
+effort: xhigh
 color: blue
 skills:
   - pr-review-specialist-protocol
@@ -66,7 +67,7 @@ During PR quality-gate invocation, first apply the shared
 [nine-discipline table](../../../repo-governance/development/quality/pr-review-disciplines/the-nine-reviewer-disciplines-table-part-1.md),
 [Criticality Levels](../../../repo-governance/development/quality/criticality-levels.md). Related:
 `pr-review-governance-maker`, `pr-review-architecture-maker`, `pr-review-synthesis-maker`,
-`pr-review-fixer`, `repo-harness-compatibility-checker`.
+`pr-review-fixer`, `harness-compatibility-checker`.
 
 - [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) -
   Keep a ledger of every path you touch, carry it through every compaction, leave anything not on

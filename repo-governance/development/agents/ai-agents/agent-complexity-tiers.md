@@ -91,8 +91,8 @@ whose thresholds live in `repo-config.yml` and are enforced at pre-push and in C
 
 - plan-maker (comprehensive project planning)
 - plan-checker (pre-implementation validation)
-- repo-rules-maker (cascading updates across files)
-- repo-rules-checker (comprehensive consistency validation)
+- rules-maker (cascading updates across files)
+- rules-checker (comprehensive consistency validation)
 - docs-link-checker (external/internal link validation with caching)
 
 **When to use this tier**:

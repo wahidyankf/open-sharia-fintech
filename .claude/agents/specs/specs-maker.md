@@ -2,7 +2,8 @@
 name: specs-maker
 description: Creates new spec areas, missing README files, and scaffolds Gherkin feature structure at explicitly specified paths under specs/. Use when adding a new app or library to the specs directory.
 tools: Read, Write, Edit, Glob, Grep, Bash
-model: sonnet
+model: opus
+effort: high
 color: blue
 skills:
   - specs-scaffolding
@@ -40,7 +41,7 @@ structure conventions every scaffolded file follows.
 Does NOT validate existing specs (that is `specs-checker`); does NOT fix existing specs (that is
 `specs-fixer`); does NOT create content outside the explicitly specified target path; does NOT
 create implementation code (per-language developer agents); does NOT modify governance docs
-(`repo-rules-maker`); does NOT perform flat-root-to-C4-aware migrations (plan-level operation);
+(`rules-maker`); does NOT perform flat-root-to-C4-aware migrations (plan-level operation);
 does NOT make BDD/API-contract adoption decisions.
 
 ## Principles Implemented/Respected

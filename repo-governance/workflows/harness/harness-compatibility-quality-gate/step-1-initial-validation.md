@@ -10,7 +10,7 @@ Run the unowned parity checks (Phase 0), then per-harness external drift detecti
 Lifecycle-owned predicates are delegated under the shared
 [validation-ownership rule](../../meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
 
-**Agent**: `repo-harness-compatibility-checker`
+**Agent**: `harness-compatibility-checker`
 
 - **Args**: `scope: {input.scope}, mode: {input.mode}, EXECUTION_SCOPE: harness-compat,
 delegated-gate-ids: {step0.outputs.delegated-gate-ids},

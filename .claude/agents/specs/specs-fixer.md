@@ -2,7 +2,8 @@
 name: specs-fixer
 description: Applies validated fixes from specs-checker audit reports for explicitly listed spec folders. Re-validates findings before applying. Use after reviewing specs-checker output.
 tools: Read, Write, Edit, Glob, Grep, Bash
-model: sonnet
+model: opus
+effort: high
 color: yellow
 skills:
   - specs-validating-structure

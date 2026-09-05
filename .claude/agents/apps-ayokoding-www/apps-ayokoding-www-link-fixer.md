@@ -3,6 +3,7 @@ name: apps-ayokoding-www-link-fixer
 description: Applies validated fixes from link-checker audit reports. Re-validates link findings before applying changes.
 tools: Read, Edit, Write, Glob, Grep, Bash, WebFetch, WebSearch
 model: haiku
+effort: xhigh
 color: yellow
 skills:
   - docs-applying-content-quality

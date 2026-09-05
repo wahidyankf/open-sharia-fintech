@@ -17,7 +17,7 @@ Domain-specialized agents hallucinate less than generic orchestration. When a de
 - Action touches a specific language file (`.fs`, `.go`, `.kt`, `.cs`, `.fsproj`, `.csproj`, etc.)
 - Action touches a specific app context (`apps/ose-www/...` → `apps-ose-www-content-maker` for content)
 - Action is content/documentation (`docs-maker`, `readme-maker`, `specs-maker`)
-- Action is governance / repo rules (`repo-rules-maker`)
+- Action is governance / repo rules (`rules-maker`)
 - Action is content-platform skill domain (`apps-ayokoding-www-by-example-maker`, `apps-ayokoding-www-in-the-field-maker`, etc.)
 
 **When to skip annotation** (default plan-execution Agent Selection suffices):

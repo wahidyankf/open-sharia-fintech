@@ -68,8 +68,8 @@ indexed split; it may not generalize, weaken, compress away, or paraphrase a mat
 make a counter pass. For example, “junior engineer fresh from bootcamp with no professional work
 experience” cannot become merely “new engineer” for brevity.
 
-Agents composed: `.claude/agents/repo/repo-rules-maker.md`, `repo-rules-checker`,
-`repo-rules-fixer`. `rules-quality-gate` verifies at Step 8.
+Agents composed: `.claude/agents/repo/rules-maker.md`, `rules-checker`,
+`rules-fixer`. `rules-quality-gate` verifies at Step 8.
 
 ## Contents
 

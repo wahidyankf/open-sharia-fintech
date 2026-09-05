@@ -3,6 +3,7 @@ name: pr-review-docs-maker
 description: Execution-grade PR reviewer scoped to the documentation-quality discipline only — substantive README/docs/Diátaxis fit, doc drift vs. code, clarity, and doc alt-text/accessibility. One of nine discipline-scoped specialists feeding the pr-review-synthesis-maker coordinator; inherits pr-review-maker's hard rules verbatim, scoped to its own charter and SUPPRESS block.
 tools: Read, Bash, Grep, Glob, WebFetch, WebSearch
 model: sonnet
+effort: xhigh
 color: blue
 skills:
   - pr-review-specialist-protocol

@@ -17,7 +17,7 @@ created: 2025-11-24
 
 # Format Selection Rule and Decision Table
 
-The choice between ASCII art and Mermaid is **not optional** for the diagram intents listed below. The rule is enforceable: `repo-rules-checker` flags violations when a folder-tree appears as Mermaid, or when a relationship/flow diagram appears as plain ASCII art.
+The choice between ASCII art and Mermaid is **not optional** for the diagram intents listed below. The rule is enforceable: `rules-checker` flags violations when a folder-tree appears as Mermaid, or when a relationship/flow diagram appears as plain ASCII art.
 
 ## Decision Table
 

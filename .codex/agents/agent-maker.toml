@@ -41,8 +41,8 @@ Create new AI agent files following AI Agents Convention.
 
 **Related Agents**:
 
-- `repo-rules-checker` - Validates repository consistency
-- `repo-rules-maker` - Creates repository rules
+- `rules-checker` - Validates repository consistency
+- `rules-maker` - Creates repository rules
 
 **Related Conventions**:
 

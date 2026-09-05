@@ -22,7 +22,7 @@ The binary must be built first via
 `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- build rhino-cli`; the prebuilt
 path is `apps/rhino-cli/src/dist/rhino-cli-fsharp`.
 
-**Agent**: `repo-rules-checker`
+**Agent**: `rules-checker`
 
 - **Args**: `scope: all, preflight-report: {step4.preflight.outputs.preflight-report},
 delegated-gate-ids: {step0.outputs.delegated-gate-ids},

@@ -71,4 +71,4 @@ toolchain, or verifying an environment after adding a new project language.
 - [Conventions Respected](./development-environment-setup/conventions-implemented-respected.md) — governance.
 - [Related Workflows](./development-environment-setup/related-workflows.md) — CI Quality Gate.
 - [Related Documentation](./development-environment-setup/related-documentation.md) — how-to guide, governance docs.
-- [Agents](./development-environment-setup/agents.md) — repo-rules-checker follow-up.
+- [Agents](./development-environment-setup/agents.md) — rules-checker follow-up.

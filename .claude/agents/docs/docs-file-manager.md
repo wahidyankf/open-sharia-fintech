@@ -3,6 +3,7 @@ name: docs-file-manager
 description: Expert at managing files and directories in docs/ directory. Use for renaming, moving, or deleting files/directories while maintaining kebab-case conventions, fixing links, and preserving git history.
 tools: Read, Edit, Glob, Grep, Bash
 model: haiku
+effort: xhigh
 color: yellow
 skills:
   - docs-managing-file-operations
@@ -61,7 +62,7 @@ file, especially for deletions and large reorganizations.
 
 - `docs-maker.md` - Creates new documentation (use for new index files)
 - `docs-link-checker.md` - Validates links (use after file operations to verify)
-- `repo-rules-checker.md` - Validates consistency (use for large reorganizations)
+- `rules-checker.md` - Validates consistency (use for large reorganizations)
 
 - [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep
   a ledger of every path you touch, carry it through every compaction, leave anything not on it

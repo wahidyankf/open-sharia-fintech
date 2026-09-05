@@ -1,11 +1,11 @@
 ---
 title: "Report File Naming Standard — Repository Audit and Link Validation Reports"
-description: Filename pattern and retention for repo-rules-checker and docs-link-checker reports.
+description: Filename pattern and retention for rules-checker and docs-link-checker reports.
 category: explanation
 subcategory: development
 tags: [temporary-files, ai-agents, file-organization, best-practices]
 created: 2025-12-01
-when_to_use: Use when naming a repo-rules-checker or docs-link-checker report.
+when_to_use: Use when naming a rules-checker or docs-link-checker report.
 ---
 
 # Report File Naming Standard — Repository Audit and Link Validation Reports
@@ -14,7 +14,7 @@ Continues [Report File Naming Standard](./report-file-naming-standard.md).
 
 ## Repository Audit Reports
 
-**Agent**: repo-rules-checker
+**Agent**: rules-checker
 **Pattern**: `repo-rules__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 **Example**: `repo-rules__a1b2c3__2025-12-14--20-45__audit.md`
 

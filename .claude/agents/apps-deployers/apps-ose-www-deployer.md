@@ -3,6 +3,7 @@ name: apps-ose-www-deployer
 description: Deploys ose-web to production environment branch (prod-ose-www) after validation. Vercel listens to production branch for automatic builds.
 tools: Bash, Grep
 model: haiku
+effort: xhigh
 color: purple
 skills:
   - repo-practicing-trunk-based-development

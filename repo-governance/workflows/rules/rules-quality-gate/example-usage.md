@@ -14,8 +14,8 @@ User: "Run repository rules quality gate workflow in normal mode"
 
 The AI will invoke specialized agents via the Agent tool:
 
-- Validate repository consistency (`repo-rules-checker` delegated agent)
-- Apply fixes for CRITICAL/HIGH findings (`repo-rules-fixer` delegated agent)
+- Validate repository consistency (`rules-checker` delegated agent)
+- Apply fixes for CRITICAL/HIGH findings (`rules-fixer` delegated agent)
 - Iterate until zero CRITICAL/HIGH findings achieved
 - Report MEDIUM/LOW findings without fixing them
 

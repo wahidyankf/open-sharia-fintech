@@ -14,11 +14,11 @@ User: "Run repo harness compatibility quality gate workflow"
 
 The orchestrator invokes specialized agents:
 
-- `repo-harness-compatibility-checker` consumes lifecycle evidence, runs unowned Phase 0 parity,
+- `harness-compatibility-checker` consumes lifecycle evidence, runs unowned Phase 0 parity,
   then Phase 1
   (fetches current upstream conventions for all supported harnesses and diffs against the
   catalog and committed binding files)
-- `repo-harness-compatibility-fixer` applies in-scope parity fixes (CRITICAL/HIGH/MEDIUM)
+- `harness-compatibility-fixer` applies in-scope parity fixes (CRITICAL/HIGH/MEDIUM)
   and catalog updates
 - Iterates until zero findings achieved on two consecutive checks
 - Reports LOW-severity drift without fixing it

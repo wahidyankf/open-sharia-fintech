@@ -3,6 +3,7 @@ name: api-exploratory-tester
 description: Tests live REST/GraphQL APIs against contracts and specs, then writes reproducible findings to a plan, delivery record, or local-tmp. Never drives a browser or fixes defects.
 tools: Read, Write, Edit, Glob, Grep, Bash, WebFetch, WebSearch
 model: sonnet
+effort: xhigh
 color: green
 skills:
   - api-testing-exploratory-methodology

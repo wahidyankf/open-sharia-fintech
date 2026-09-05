@@ -3,6 +3,7 @@ name: docs-link-checker
 description: Validates internal and external documentation links. Always uses docs/metadata/external-links-status.yaml as its sole cache, prunes it, and updates lastFullScan on every invocation. Use for dead links, URL reachability, internal references, or link-health audits.
 tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Edit, Bash
 model: haiku
+effort: xhigh
 color: green
 skills:
   - docs-applying-content-quality

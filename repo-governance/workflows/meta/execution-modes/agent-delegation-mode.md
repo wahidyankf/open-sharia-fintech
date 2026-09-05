@@ -27,7 +27,7 @@ Invoke specialized agents via the Agent tool with `subagent_type` when the workf
 
 ## When to Use Agent Delegation
 
-- Workflow step references a named agent (e.g., `plan-checker`, `repo-rules-fixer`)
+- Workflow step references a named agent (e.g., `plan-checker`, `rules-fixer`)
 - That agent exists as a defined delegated agent type in the primary binding directory (e.g., `.claude/agents/`)
 - The step requires persistent file changes (audit reports, fixes)
 - You want the agent's full specialized validation/fixing logic applied

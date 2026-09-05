@@ -2,7 +2,8 @@
 name: specs-checker
 description: Validates explicitly listed specs/ folders (and their subfolders) for structural completeness, content accuracy, internal consistency, and cross-folder coherence. Use when auditing specification quality or before major spec refactors.
 tools: Read, Glob, Grep, Write, Bash
-model: sonnet
+model: opus
+effort: high
 color: green
 skills:
   - repo-generating-validation-reports
@@ -70,7 +71,7 @@ all apply as written.
 
 Does not modify any files (read-only + report generation); does not validate folders outside the
 explicit list; does not validate test binding substance (use `gherkin-implementation-review`); does not
-validate governance docs (`repo-rules-checker`); does not run tests (CI).
+validate governance docs (`rules-checker`); does not run tests (CI).
 
 ## Principles Implemented
 

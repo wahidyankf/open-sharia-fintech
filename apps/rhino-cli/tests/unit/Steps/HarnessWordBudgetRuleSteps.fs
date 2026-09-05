@@ -55,7 +55,7 @@ type HarnessWordBudgetRuleSteps() =
     member _.``I look under "repo-governance/conventions/structure/"``() = runRuleChecks ()
 
     [<When>]
-    member _.``"repo-rules-checker" runs Step 6``() = runRuleChecks ()
+    member _.``"rules-checker" runs Step 6``() = runRuleChecks ()
 
     [<When>]
     member _.``I read "repo-governance/workflows/rules/rules-quality-gate\.md"``() = runRuleChecks ()
@@ -65,7 +65,7 @@ type HarnessWordBudgetRuleSteps() =
         json <- repoGovernanceAuditJsonForCategory auditCategory.Value
 
     [<When>]
-    member _.``"repo-rules-checker" runs Step 0\.5``() =
+    member _.``"rules-checker" runs Step 0\.5``() =
         Assert.Equal(Some "governance-word-budget", lifecycleGateId)
         checks <- wordBudgetRuleChecks convention checker workflow lifecycle
 
@@ -118,7 +118,7 @@ let ``word-budget convention carries deterministic contract`` () =
 let ``checker owns qualitative review only`` () =
     let s = HarnessWordBudgetRuleSteps()
     s.``the plan is complete`` ()
-    s.``"repo-rules-checker" runs Step 6`` ()
+    s.``"rules-checker" runs Step 6`` ()
     s.``it reports qualitative bloat concerns across the whole instruction-file class`` ()
     s.``it annotates that the word ceiling is enforced by the deterministic "governance-word-budget" gate`` ()
 
@@ -141,6 +141,6 @@ let ``preflight envelope contains word-budget category`` () =
 let ``AI checker consumes lifecycle evidence`` () =
     let s = HarnessWordBudgetRuleSteps()
     s.``lifecycle evidence contains a current "governance-word-budget" result`` ()
-    s.``"repo-rules-checker" runs Step 0\.5`` ()
+    s.``"rules-checker" runs Step 0\.5`` ()
     s.``it consumes the exact delegated gate ID "governance-word-budget"`` ()
     s.``it does not re-derive word counts in Step 6`` ()

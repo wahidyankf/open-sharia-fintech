@@ -3,6 +3,7 @@ name: repo-workflow-checker
 description: Validates workflow documentation quality and compliance with workflow pattern convention.
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
+effort: xhigh
 color: green
 skills:
   - docs-applying-content-quality

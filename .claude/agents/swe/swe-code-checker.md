@@ -3,6 +3,7 @@ name: swe-code-checker
 description: Validates that application and library projects conform to platform coding standards, Nx target conventions, and language-specific best practices. Outputs to local-tmp/swe-code/ with progressive streaming.
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
+effort: xhigh
 color: green
 skills:
   - repo-generating-validation-reports
@@ -30,7 +31,7 @@ and criticality assessment of deviations need advanced reasoning.
 Validate that all `apps/` and `libs/` projects conform to platform coding standards defined in
 `docs/explanation/software-engineering/` and enforced through Nx targets, linters, and coverage
 tools. **Scope**: project infrastructure + language-specific code standards. **Not in scope**:
-documentation content quality (`docs-checker`), repository governance (`repo-rules-checker`).
+documentation content quality (`docs-checker`), repository governance (`rules-checker`).
 
 When invoked by `gherkin-implementation-review`, switch to its row-by-row semantic protocol. Expand
 Scenario Outlines, inspect every applicable adapter, trace Given–When–Then through production code
@@ -75,7 +76,7 @@ total.
 [F#](../../../docs/explanation/software-engineering/programming-languages/f-sharp/README.md).
 
 **Related Agents**: `swe-typescript-dev`, `swe-rust-dev`, `swe-fsharp-dev`
-(implement the standards this agent checks), `repo-rules-checker` (repo-wide governance).
+(implement the standards this agent checks), `rules-checker` (repo-wide governance).
 
 - [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
 

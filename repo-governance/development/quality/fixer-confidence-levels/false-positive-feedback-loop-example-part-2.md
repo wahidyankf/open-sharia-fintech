@@ -19,7 +19,7 @@ when_to_use: "Use for the second half of a worked feedback-loop example."
 
 **Checker Update:**
 
-- Maintainer updates repo-rules-checker with corrected AWK pattern
+- Maintainer updates rules-checker with corrected AWK pattern
 - Re-runs checker: 0 violations found
 - False positives eliminated
 
@@ -34,7 +34,7 @@ when_to_use: "Use for the second half of a worked feedback-loop example."
 
 ### Fixer Agents Using This Convention
 
-- [repo-rules-fixer.md](../../../.claude/agents/repo/repo-rules-fixer.md) - Repository structural consistency fixer
+- [rules-fixer.md](../../../.claude/agents/repo/rules-fixer.md) - Repository structural consistency fixer
 - [apps-ayokoding-www-general-fixer.md](../../../.claude/agents/apps-ayokoding-www/apps-ayokoding-www-general-fixer.md) - ayokoding-www general Next.js content fixer
 - [apps-ayokoding-www-by-example-fixer.md](../../../.claude/agents/apps-ayokoding-www/apps-ayokoding-www-by-example-fixer.md) - ayokoding-www by-example tutorial fixer
 - [apps-ayokoding-www-facts-fixer.md](../../../.claude/agents/apps-ayokoding-www/apps-ayokoding-www-facts-fixer.md) - ayokoding-www factual accuracy fixer

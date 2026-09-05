@@ -36,7 +36,7 @@ Do NOT use these directories for:
 
 ### For Report-Generating Agents
 
-Agents that create validation/audit reports (docs-checker, plan-checker, repo-rules-checker, etc.) should:
+Agents that create validation/audit reports (docs-checker, plan-checker, rules-checker, etc.) should:
 
 1. Use `local-tmp/<agent-family>/`, creating it first with `mkdir -p`
 2. Follow naming pattern: `{agent-family}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__{type}.md`
@@ -55,7 +55,7 @@ Any agent writing a report MUST have:
 
 ```yaml
 ---
-name: repo-rules-checker
+name: rules-checker
 description: Validates consistency between agents, AGENTS.md, conventions, and documentation.
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet

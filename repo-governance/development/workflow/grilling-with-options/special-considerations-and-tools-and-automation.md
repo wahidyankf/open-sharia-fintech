@@ -40,7 +40,7 @@ itself does not produce a standalone artifact. Compliance with this convention i
 primarily by checking that plan-creation workflows and agent definitions reference it — not
 by inspecting a generated file.
 
-`repo-rules-checker`'s general cross-reference and consistency validation flags a
+`rules-checker`'s general cross-reference and consistency validation flags a
 plan-creation touchpoint that drops its reference to this convention. The touchpoints
 expected to reference this convention are:
 
@@ -60,7 +60,7 @@ expected to reference this convention are:
   service used by `plan-planning` and `plan-maker`. This convention governs
   the format and mechanism that `grill-me` MUST use. Platform-specific tool invocations
   live in the [Platform Binding Examples](./platform-binding-examples-claude-code-and-opencode.md) sections.
-- **`repo-rules-checker`** — Its general cross-reference/consistency validation flags a
+- **`rules-checker`** — Its general cross-reference/consistency validation flags a
   plan-creation touchpoint that has dropped its reference to this convention.
-- **`repo-rules-fixer`** — Restores missing convention references to touchpoint files when
+- **`rules-fixer`** — Restores missing convention references to touchpoint files when
   flagged.

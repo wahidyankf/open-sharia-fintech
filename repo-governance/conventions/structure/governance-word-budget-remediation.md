@@ -27,7 +27,7 @@ word ceiling (progressive disclosure applied to itself).
 3. **Standalone deterministic audit**: `rhino-cli repo-governance audit` can include this category
    alongside `layer-coherence`, `traceability-audit`, and `vendor-audit`. The rules quality gate
    delegates word-budget enforcement to pre-push/CI and passes exact lifecycle evidence to
-   `repo-rules-checker`; the checker does not consume or rederive word-budget findings there.
+   `rules-checker`; the checker does not consume or rederive word-budget findings there.
 
 No pre-commit surface is declared for this gate (FR-1.14): a whole-tree scan on every commit buys
 no additional coverage over the pre-push/CI enforcement points above, and

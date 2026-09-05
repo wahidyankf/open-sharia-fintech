@@ -62,7 +62,7 @@ During PR quality-gate invocation, first apply the shared
 [nine-discipline table](../../repo-governance/development/quality/pr-review-disciplines/the-nine-reviewer-disciplines-table-part-1.md),
 [Criticality Levels](../../repo-governance/development/quality/criticality-levels.md). Related:
 `pr-review-architecture-maker`, `pr-review-logic-maker`, `pr-review-instruction-maker`,
-`pr-review-synthesis-maker`, `pr-review-fixer`, `web-researcher`, `repo-rules-checker`.
+`pr-review-synthesis-maker`, `pr-review-fixer`, `web-researcher`, `rules-checker`.
 
 - [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) -
   Keep a ledger of every path you touch, carry it through every compaction, leave anything not on

@@ -30,7 +30,7 @@ the commit-discipline rule for their output.
   any mismatch.
 - **`harness:bindings-validation`** npm script — wraps `rhino-cli harness bindings validate`; invoked
   from the pre-push hook when binding surfaces change (AD8).
-- **`repo-harness-compatibility-checker`** / **`repo-harness-compatibility-fixer`** agents — run on
+- **`harness-compatibility-checker`** / **`harness-compatibility-fixer`** agents — run on
   demand or on a schedule; use web research to detect external upstream convention drift (distinct
   from the deterministic parity guard above).
 

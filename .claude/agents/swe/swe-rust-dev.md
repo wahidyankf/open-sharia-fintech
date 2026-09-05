@@ -3,6 +3,7 @@ name: swe-rust-dev
 description: Develops Rust applications following ownership principles, zero-cost abstraction patterns, and platform coding standards. Use when implementing Rust code for OSE Platform.
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
+effort: xhigh
 color: purple
 skills:
   - swe-programming-rust

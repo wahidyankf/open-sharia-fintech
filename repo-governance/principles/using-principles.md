@@ -64,15 +64,15 @@ Prioritize principles in order of importance:
 After creating a new convention or practice document:
 
 1. **Use docs-maker** to create the convention/practice document with principles section
-2. **Use repo-rules-maker** to make the change effective across repository:
+2. **Use rules-maker** to make the change effective across repository:
    - Update AGENTS.md with brief summary
    - Update relevant README files (conventions/development index)
    - Update agents that should enforce the new rule
    - Add validation checks to appropriate checker agents
-3. **Use repo-rules-checker** to validate consistency after changes
-4. **Use repo-rules-fixer** if issues found (after user review)
+3. **Use rules-checker** to validate consistency after changes
+4. **Use rules-fixer** if issues found (after user review)
 
-**Workflow**: docs-maker (create) → repo-rules-maker (propagate) → repo-rules-checker (validate) → repo-rules-fixer (fix if needed)
+**Workflow**: docs-maker (create) → rules-maker (propagate) → rules-checker (validate) → rules-fixer (fix if needed)
 
 ## Vision Supported
 

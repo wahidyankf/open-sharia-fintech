@@ -17,7 +17,7 @@ when_to_use: Use when looking up which tool enforces a specific part of this pol
 
 ## Tools and Automation
 
-- **repo-rules-checker** — validates that any plan introducing dependency bumps includes a Security Clearance Status section and applies the three-path decision tree
+- **rules-checker** — validates that any plan introducing dependency bumps includes a Security Clearance Status section and applies the three-path decision tree
 - `npm audit --audit-level=moderate` — mandatory post-update security scan for npm packages
 - `govulncheck ./...` — mandatory post-update security scan for Go modules
 - `grep -E '"\^|"~'` — pin verification after any `package.json` edit

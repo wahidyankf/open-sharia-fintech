@@ -3,6 +3,7 @@ name: web-usability-tester
 description: Performs spec-blind heuristic usability evaluation of a live website and records findings in local-tmp by default. Judges first-time usability; output-mode plan or delivery must be explicit.
 tools: Read, Write, Edit, Glob, Grep, Bash, WebFetch, WebSearch
 model: sonnet
+effort: xhigh
 color: green
 skills:
   - web-testing-usability-heuristics

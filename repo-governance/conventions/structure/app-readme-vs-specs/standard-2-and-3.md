@@ -45,4 +45,4 @@ created: 2026-05-09
 | `infra/k8s/<app>/staging/README.md`    | 30 lines  |
 | `infra/k8s/<app>/production/README.md` | 30 lines  |
 
-These caps are enforced by `repo-rules-checker`. Exceeding a cap is a HIGH finding. The cap exists because a README that exceeds it almost certainly contains Category B content.
+These caps are enforced by `rules-checker`. Exceeding a cap is a HIGH finding. The cap exists because a README that exceeds it almost certainly contains Category B content.

@@ -3,6 +3,7 @@ name: apps-organiclever-www-deployer
 description: Deploys organiclever-www (OrganicLever marketing website) to production environment branch (prod-organiclever-www) after validation. Vercel listens to the production branch for automatic builds.
 tools: Bash, Grep
 model: haiku
+effort: xhigh
 color: purple
 skills:
   - repo-practicing-trunk-based-development
