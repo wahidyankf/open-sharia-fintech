@@ -16,8 +16,17 @@ runs:
       uses: volta-cli/action@v5
 
     - name: Cache npm dependencies
-      if: inputs.run-npm-ci == 'true'
+      if: inputs.run-npm-ci == 'true' && github.ref == 'refs/heads/main'
       uses: actions/cache@v5
+      with:
+        path: ~/.npm
+        key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          npm-${{ runner.os }}-
+
+    - name: Restore npm dependencies
+      if: inputs.run-npm-ci == 'true' && github.ref != 'refs/heads/main'
+      uses: actions/cache/restore@v5
       with:
         path: ~/.npm
         key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
@@ -30,6 +39,7 @@ runs:
       run: npm ci
 
     - name: Configure Nx cache
+      if: github.ref == 'refs/heads/main'
       uses: actions/cache@v5
       with:
         path: .nx/cache
@@ -38,5 +48,14 @@ runs:
         # prefix here: the exact `key` above has no dynamic suffix (DD-8), so
         # a middle tier reproducing that same key plus a trailing "-" can
         # never prefix-match anything actually saved under this scheme.
+        restore-keys: |
+          nx-${{ runner.os }}-
+
+    - name: Restore Nx cache
+      if: github.ref != 'refs/heads/main'
+      uses: actions/cache/restore@v5
+      with:
+        path: .nx/cache
+        key: nx-${{ runner.os }}-${{ hashFiles('nx.json', 'package-lock.json') }}
         restore-keys: |
           nx-${{ runner.os }}-

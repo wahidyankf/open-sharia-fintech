@@ -43,11 +43,9 @@ jobs:
           # F#/C# project affected via nx's default namedInputs without
           # touching a .fs/.cs file, so a file-glob predicate here would be
           # narrower than what the `dotnet` job's own targets need and could
-          # silently skip that merge-blocking gate. The `format` job needs a
-          # much cheaper, narrower signal (just "should we install the
-          # dotnet SDK for fantomas") and now computes that itself locally
-          # via a file-glob check — see that job's own `dotnet-files` step —
-          # rather than depending on this job's affected-graph precision.
+          # silently skip that merge-blocking gate. The `format` job installs
+          # .NET unconditionally because it executes the framework-dependent
+          # gate-profile apphost, so it does not consume this output.
           DETECT_FAILED=false
 
           # A real git-diff error (bad ref, corrupted repo, etc.) is NOT the
@@ -144,38 +142,10 @@ jobs:
         with:
           channel: stable
           flutter-version-file: .fvmrc
-      # format-verify-fantomas (surfaces=["ci"]) and lint-staged's own "*.fs"
-      # handler both invoke the bare `fantomas` binary, which only the
-      # setup-dotnet composite action installs (dotnet SDK + global fantomas
-      # tool). This job only needs a cheap "did a .fs/.fsi/.fsx/.fsproj/.cs/
-      # .csproj file literally change" signal to decide whether to pay that
-      # SDK-install cost — a narrower, cheaper question than the `detect`
-      # job's affected-PROJECT-graph precision (which the merge-blocking
-      # `dotnet` job needs instead — see `detect`'s has-dotnet-projects
-      # comment for why those are different questions). Computing it locally
-      # here removes the `needs: detect` edge this job previously carried
-      # purely to read that narrower signal, which had re-serialized
-      # `format` behind `detect` on every run even though `format`'s only
-      # other prerequisite (`build-rhino`) already runs in parallel with
-      # `detect`.
-      - name: Detect dotnet file changes (fast local check for SDK install)
-        id: dotnet-files
-        run: |
-          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
-            git fetch --no-tags origin "$GITHUB_BASE_REF" 2>/dev/null || true
-          fi
-          if ! CHANGED_FILES=$(git diff --name-only "$NX_BASE"...HEAD); then
-            echo "::warning::git diff --name-only $NX_BASE...HEAD failed — failing safe by installing the dotnet SDK anyway" >&2
-            echo "has-dotnet-files=true" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          if echo "$CHANGED_FILES" | grep -qE '\.(fs|fsi|fsx|fsproj|cs|csproj)$'; then
-            echo "has-dotnet-files=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "has-dotnet-files=false" >> "$GITHUB_OUTPUT"
-          fi
+      # The downloaded gate-profile apphost is framework-dependent, so every
+      # consumer provisions its pinned .NET runtime before executing it. This
+      # action also installs Fantomas for the formatting surface.
       - uses: ./.github/actions/setup-dotnet
-        if: steps.dotnet-files.outputs.has-dotnet-files == 'true'
       - uses: actions/download-artifact@v4
         with:
           name: rhino-cli-gate-binary
@@ -219,26 +189,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      # Self-contained, non-AOT per the Phase 1 publish-mode decision
-      # (learnings.md#publish-mode-decision) — bundles the .NET runtime so
-      # the downstream consumer jobs stay toolchain-free, unlike a
-      # framework-dependent publish. Invokes the Nx `build` target itself
-      # (never a hand-written `dotnet publish` duplicate) so there is exactly
-      # one source of truth for the publish command; `--rid` overrides the
-      # target's `--use-current-runtime` default with the pinned RID judgment
-      # call recorded in
-      # learnings.md#2026-08-26--phase-2-publish-rid-pinned-to-linux-x64-judgment-call.
+      # The general Nx build remains self-contained by default. This
+      # intra-workflow gate artifact is framework-dependent because every
+      # consumer provisions the pinned .NET runtime; excluding that runtime
+      # from every upload keeps transient Actions storage within budget.
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-dotnet
-      - run: npx nx run rhino-cli:build --rid="-r linux-x64"
+      - run: npx nx run rhino-cli:build --rid="-r linux-x64" --selfContained=false
       - uses: actions/upload-artifact@v4
         with:
           name: rhino-cli-gate-binary
           path: apps/rhino-cli/src/dist
           # Intra-run scratch: every downstream gate job consumes this within
           # the same run, so it is dead the moment the run ends. 1 is the
-          # shortest window GitHub accepts; the repository default (90 days)
-          # multiplied this by the PR rate into gigabytes of Actions storage.
+          # shortest window GitHub accepts; a long inherited default would
+          # multiply this by the PR rate into gigabytes of Actions storage.
           retention-days: 1
 
   enumerate:
@@ -258,6 +223,7 @@ jobs:
           # falling back to `dotnet run`/node. jq is runner-provided; no
           # npm-managed tool is needed here.
           run-npm-ci: false
+      - uses: ./.github/actions/setup-dotnet
       - uses: actions/download-artifact@v4
         with:
           name: rhino-cli-gate-binary
@@ -283,16 +249,10 @@ jobs:
       - uses: ./.github/actions/setup-node
         with:
           run-npm-ci: ${{ contains(matrix.group.doctor_tools, 'npm') }}
-      # format-verify-fantomas (ci-group: formatting-verify) invokes the bare
-      # `fantomas` binary, which only this composite action installs (dotnet
-      # SDK + global fantomas tool). Its repo-config.yml gate entry declares
-      # no `doctor_tools` (fantomas isn't in the doctor tool inventory —
-      # see application/doctor/tools.rs), so the generic "Provision
-      # registry-declared tools" step below never installs it. Scoped to
-      # this one group rather than every matrix member to avoid paying the
-      # dotnet-SDK-install cost on unrelated CI groups.
+      # Every matrix member executes the downloaded framework-dependent
+      # gate-profile apphost. The composite also installs Fantomas for the
+      # formatting-verify group.
       - uses: ./.github/actions/setup-dotnet
-        if: matrix.group.group == 'formatting-verify'
       # format-verify-dart invokes bare `dart format`, and runs only in this
       # group alongside the similarly scoped Fantomas setup above.
       - uses: subosito/flutter-action@v2

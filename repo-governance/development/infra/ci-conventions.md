@@ -27,7 +27,7 @@ GitHub Actions, and naming.
 - [Docker Conventions](./ci-conventions/docker-conventions.md) — The Dockerfile template, compose file roles, and .dockerignore pattern. Use when writing a Dockerfile, compose file, or .dockerignore.
 - [GitHub Actions Conventions — File Organisation and Composite Actions](./ci-conventions/github-actions-file-organisation-and-composite-actions.md) — The path pattern for workflow and action files. Use when creating or locating a workflow file or action.
 - [Expression Safety](./ci-conventions/github-actions-expression-safety.md) — Two GitHub Actions expression-injection and falsy-value antipatterns. Use when a run step references a `${{ ... }}` expression.
-- [Artifact Retention](./ci-conventions/github-actions-artifact-retention.md) — Why every upload-artifact step must declare retention-days. Use when a workflow step uploads a build artifact or test report.
+- [GitHub Actions Storage](./ci-conventions/github-actions-storage.md) — Storage limits for artifacts, Packages, and caches. Use when a workflow creates or retains GitHub-hosted data.
 - [GitHub Actions Conventions — Reusable Workflows and CRON Scheduling](./ci-conventions/github-actions-reusable-workflows-and-cron-scheduling.md) — Reusable workflow structure and the staggered CRON tracks. Use when writing a reusable workflow or scheduling a CRON job.
 
 ## Naming and Onboarding
