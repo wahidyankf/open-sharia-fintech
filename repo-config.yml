@@ -10,6 +10,7 @@
 #   governance-word-budget — per-surface instruction-file word budgets (rhino-cli governance word-budget validate)
 #   env-contract     — surface registry for rhino-cli env validate (code↔config drift detection)
 #   env-injection    — value-less injection manifest for rhino-cli env validate (manifest-consistency)
+#   gate-surface-guards — optional whole-surface execution wrappers
 #   gates            — declared quality-gate registry; every `gate` command (list/run/emit/validate) reads this list
 
 harness:
@@ -329,6 +330,23 @@ env-injection:
     - key: PLAYWRIGHT_GREP_INVERT
       class: literal
       environments: []
+
+# The generated pre-push shim stays tool-neutral. Rhino re-executes the whole
+# surface once through this outer HIPPO admission and the marker prevents the
+# child gate run from admitting a second time.
+gate-surface-guards:
+  pre-push:
+    command: env
+    args:
+      - OSE_HIPPO_PRE_PUSH_ACTIVE=1
+      - ./hippo
+      - run
+      - --class
+      - ephemeral
+      - --disk-path
+      - .
+      - --
+    active-env: OSE_HIPPO_PRE_PUSH_ACTIVE
 
 gates:
   # Declared quality-gate registry. Fields per entry:

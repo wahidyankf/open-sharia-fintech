@@ -22,7 +22,7 @@ across all turns.
 git fetch origin
 git worktree add -b <identifier> worktrees/<identifier> origin/main
 cd worktrees/<identifier>
-npm install
+./hippo run --class ephemeral --disk-path . -- npm install
 npm run doctor -- --fix
 ```
 

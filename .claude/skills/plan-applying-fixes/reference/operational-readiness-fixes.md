@@ -26,11 +26,11 @@ projects (e.g. add `test:integration`/`test:e2e` if warranted).
 ```markdown
 ### Environment Setup
 
-- [ ] Install dependencies: `npm install`
-- [ ] Run doctor to verify tooling: `npm run doctor`
+- [ ] Install dependencies: `rtk ./hippo run --class ephemeral --disk-path . -- npm install`
+- [ ] Run the guarded Doctor check: `rtk npm run doctor`
 - [ ] [Add project-specific setup: env vars, DB, Docker, etc.]
-- [ ] Verify dev server starts: `nx dev [project-name]`
-- [ ] Verify existing tests pass before making changes: `nx run [project-name]:test:quick`
+- [ ] Verify dev server starts: `rtk ./hippo run --class service --disk-path . -- npm exec nx -- dev [project-name]`
+- [ ] Verify existing tests pass before making changes: `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- run [project-name]:test:quick`
 ```
 
 Customize based on the plan's target projects and tech stacks.

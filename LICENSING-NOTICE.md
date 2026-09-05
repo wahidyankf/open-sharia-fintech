@@ -33,6 +33,14 @@ and MIT-licensed. If third-party code is vendored in the future, it retains its 
 (not this repository's MIT license), and the applicable terms are recorded in a `LICENSE` file
 within the relevant subdirectory.
 
+The root [`hippo`](./hippo) release bootstrap and its hermetic consumer test were adapted from the
+MIT-licensed BeaverNest repository at commit
+[`584ab5a`](https://github.com/wahidyankf/beaver-nest/commit/584ab5af21b272eea6e09fa329f8a5d53e10603c).
+Copyright remains `2026 wahidyankf` under that repository's MIT license. OSE changes only its
+consumer mappings and integration checks. The HIPPO executable is downloaded from checksum-pinned
+[upstream releases](https://github.com/wahidyankf/hippo/releases) into an external cache; neither
+the executable nor HIPPO source is vendored here.
+
 ## More Information
 
 - [Root license text](./LICENSE)

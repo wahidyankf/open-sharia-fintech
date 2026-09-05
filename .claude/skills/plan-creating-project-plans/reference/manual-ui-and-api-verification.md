@@ -18,7 +18,7 @@ When the plan touches web UI or API code, delivery plans MUST include manual ass
 ### Manual UI Verification (Playwright MCP) — all locales × all breakpoints
 
 - [ ] [AI] Discover supported locales: read `apps/[app]/src/features/i18n/` or `next.config.ts`
-- [ ] [AI] Start dev server: `nx dev [project-name]`
+- [ ] [AI] Start dev server: `rtk ./hippo run --class service --disk-path . -- npm exec nx -- dev [project-name]`
 - [ ] [AI] For EACH locale × EACH breakpoint (375 / 768 / 1280 px): navigate to the locale-prefixed
       URL (`/en/...`, `/id/...`) via `browser_navigate` + `browser_resize`
 - [ ] [AI] Inspect DOM via `browser_snapshot` — verify `html[lang]` matches the locale, no untranslated strings
@@ -35,7 +35,7 @@ When the plan touches web UI or API code, delivery plans MUST include manual ass
 ```markdown
 ### Manual API Verification (curl)
 
-- [ ] [AI] Start backend server: `nx dev [project-name]`
+- [ ] [AI] Start backend server: `rtk ./hippo run --class service --disk-path . -- npm exec nx -- dev [project-name]`
 - [ ] [AI] Verify health endpoint: `curl -s http://localhost:[port]/api/health | jq .` — paste response inline
 - [ ] [AI] Verify affected endpoints return expected responses — paste command + status + body inline
 - [ ] [AI] Test error cases with invalid payloads — verify proper error responses

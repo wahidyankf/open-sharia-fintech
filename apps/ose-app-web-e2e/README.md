@@ -7,18 +7,20 @@ the app’s Gherkin examples into Playwright-BDD scenarios. 🚦
 
 ```bash
 # Install Chromium once on this machine
-npm exec nx -- run ose-app-web-e2e:install
+./hippo run --class transactional --disk-path . -- npm exec nx -- run ose-app-web-e2e:install
 
 # Playwright starts the web app automatically. Start the API only for
 # scenarios that require local full-stack behaviour.
 npm exec nx -- run ose-be:dev
 
 # Run the browser scenarios
-npm exec nx -- run ose-app-web-e2e:test:e2e
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- run ose-app-web-e2e:test:e2e
 ```
 
-Use `npm exec nx -- run ose-app-web-e2e:test:e2e:ui` to debug interactively, or
-`npm exec nx -- run ose-app-web-e2e:test:e2e:report` to open the last report.
+Use `./hippo run --class service --disk-path . -- npm exec nx -- run ose-app-web-e2e:test:e2e:ui`
+to debug interactively, or
+`./hippo run --class service --disk-path . -- npm exec nx -- run ose-app-web-e2e:test:e2e:report`
+to open the last report.
 
 ## Target a running environment
 

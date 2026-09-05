@@ -1,6 +1,6 @@
 ---
 title: "Information Accuracy and Verification — Git Worktree Awareness: Toolchain Initialization Rule"
-description: "States the two-step npm install and npm run doctor -- --fix toolchain-initialization rule that applies after creating a worktree."
+description: "States the guarded-install and transactional-Doctor toolchain initialization required after creating a worktree."
 category: explanation
 subcategory: development
 tags:
@@ -16,9 +16,10 @@ when_to_use: Use when an agent has just created a git worktree and needs to conv
 
 1. **Initialize each worktree at its own root — two steps, in order** — After creating with
    `rtk git worktree add` (or another supported creation mechanism),
-   immediately run `rtk npm install` and then `rtk npm run doctor -- --fix` from its
-   root. The install creates its ignored `node_modules/` and runs `prepare`, activating Husky hooks;
-   another checkout's install is not a substitute. The explicit doctor call converges native
+   immediately run `rtk ./hippo run --class ephemeral --disk-path . -- npm install` and then
+   `rtk npm run doctor -- --fix` from its root. The guarded install creates its ignored
+   `node_modules/` and runs `prepare`, activating Husky hooks; another checkout's install is not a
+   substitute. The explicit Doctor call selects transactional admission and converges native
    toolchains because `postinstall` deliberately tolerates doctor drift. This applies to every new
    worktree, including docs-only work, because commit and pre-push hooks still execute repository
    tooling. Re-entering an existing worktree alone does not trigger setup. See

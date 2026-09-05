@@ -40,8 +40,9 @@ and git hooks.
   (`organiclever-be`, `ose-be`) or the F# CLI apps (`rhino-cli`, `crane-cli`) themselves. Install
   Rust separately, and only if you are editing a `.rs` file under `apps/ayokoding-www/content/` —
   that is its one remaining local use, formatted by the pre-commit `rustfmt` step.
-- **Automated** — Run `npm run doctor -- --fix` to auto-install missing tools. Use
-  `npm run doctor -- --fix --dry-run` to preview what would be installed.
+- **Automated** — Run `npm run doctor -- --fix` to auto-install missing tools. The Doctor wrapper
+  detects `--fix` and requests a transactional reservation; checks without that flag remain
+  ephemeral. Use `npm run doctor -- --fix --dry-run` to preview what would be installed.
 
 ## Prerequisites
 
@@ -76,8 +77,8 @@ dotnet --version   # Expected: a version line, not "command not found"
 # 5. Clone and bootstrap
 git clone https://github.com/wahidyankf/ose-public.git
 cd ose-public
-npm install          # Installs deps + git hooks
-npx playwright install  # Installs test browsers
+./hippo run --class ephemeral --disk-path . -- npm install # Installs deps + git hooks
+./hippo run --class transactional --disk-path . -- npm exec playwright -- install # Installs test browsers
 
 # 6. Verify
 npm run doctor
@@ -156,8 +157,10 @@ If the versions don't match, force install by reading the pin rather than copyin
 from this page:
 
 ```bash
-volta install node@$(node -p "require('./package.json').volta.node")
-volta install npm@$(node -p "require('./package.json').volta.npm")
+./hippo run --class transactional --disk-path . -- \
+  volta install node@$(node -p "require('./package.json').volta.node")
+./hippo run --class transactional --disk-path . -- \
+  volta install npm@$(node -p "require('./package.json').volta.npm")
 ```
 
 ### Step 4: .NET SDK
@@ -191,15 +194,30 @@ rustc --version
 ```bash
 git clone https://github.com/wahidyankf/ose-public.git
 cd ose-public
-npm install
+./hippo run --class ephemeral --disk-path . -- npm install
 ```
 
-`npm install` does three things:
+The root bootstrap verifies the release pin and cached executable identity before `npm install`
+does three things:
 
 1. Installs all npm dependencies
 2. Runs `npm run doctor` automatically (postinstall script) to verify your toolchain — but discards
    its exit code, so a failed or skipped check never stops the install
 3. Sets up Husky git hooks (pre-commit, commit-msg, pre-push)
+
+### HIPPO local policy and shared coordination
+
+The committed `hippo.local.json.example` is a safe schema-2 reservation example. Copy it to the
+ignored `hippo.local.json` only when this machine needs a local policy; never commit the copy. Keep
+the normal per-user HIPPO root so every checkout shares one CPU/memory ledger. Set `HIPPO_ROOT` only
+for an explicitly isolated test or separately administered domain, not to make one repository
+invisible to the others.
+
+HIPPO exit `73` requires safe disk cleanup. Exit `75` is a temporary capacity, FIFO, lease, or
+rollout-coordination deferral: let that attempt exit before retrying it, and never start duplicate
+retries. Exit `78` requires configuration or reservation replanning. Do not bypass the guard,
+change workload class to gain admission, or delete state whose owner may still be live. See
+[Resource-Aware Development](../../repo-governance/development/practice/resource-aware-development.md).
 
 ### Step 6: Keep local environment data out of onboarding
 
@@ -211,7 +229,7 @@ uncommitted.
 ### Step 7: Install Playwright Browsers
 
 ```bash
-npx playwright install
+./hippo run --class transactional --disk-path . -- npm exec playwright -- install
 ```
 
 This downloads Chromium, Firefox, and WebKit (~500 MB total). Required for all `*-e2e`
@@ -220,7 +238,7 @@ projects.
 On Linux, also install system dependencies:
 
 ```bash
-npx playwright install-deps
+./hippo run --class transactional --disk-path . -- npm exec playwright -- install-deps
 ```
 
 ## Verification
@@ -285,7 +303,8 @@ types/lint, `test:unit`, and every applicable static `test:coverage:*` per proje
 them first:
 
 ```bash
-npm exec nx -- affected -t test:quick,compat:min-version,specs:structure-validation
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- \
+  affected -t test:quick,compat:min-version,specs:structure-validation
 ```
 
 Subsequent pushes reuse cached results and complete in seconds.
@@ -324,7 +343,8 @@ whatever holds it:
 ```bash
 lsof -i :5434
 # If it is another Docker stack, stop that stack:
-docker compose -f infra/dev/<other-stack>/docker-compose.yml down
+./hippo run --class transactional --disk-path . -- \
+  docker compose -f infra/dev/<other-stack>/docker-compose.yml down
 ```
 
 ### Playwright "browser not found"
@@ -332,13 +352,13 @@ docker compose -f infra/dev/<other-stack>/docker-compose.yml down
 Re-install browsers:
 
 ```bash
-npx playwright install
+./hippo run --class transactional --disk-path . -- npm exec playwright -- install
 ```
 
 On Linux, also run:
 
 ```bash
-npx playwright install-deps
+./hippo run --class transactional --disk-path . -- npm exec playwright -- install-deps
 ```
 
 ## Version Reference

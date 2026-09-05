@@ -40,4 +40,6 @@ nested role subfolders, e.g. `.claude/agents/swe/swe-rust-dev.md`, not flat unde
 
 > "Run `nx affected -t lint --parallel=cores-1`..."
 
-The `--parallel` flag may or may not accept `cores-1` — check `nx --help` or repo docs. The actual repo standard (per AGENTS.md) is `cores-1` parallelism, but verify before quoting.
+The `--parallel` flag may or may not accept `cores-1` — check `nx --help` or repository docs. The
+repository standard is the fixed allocation supplied by the guarded consumer: omit a hard-coded
+flag when Nx reads `NX_PARALLEL`, or pass only a verified supported numeric value.

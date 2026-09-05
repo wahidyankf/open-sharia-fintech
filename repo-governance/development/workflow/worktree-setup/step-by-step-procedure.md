@@ -32,7 +32,7 @@ when_to_use: Use as a walkthrough when creating a worktree and running its toolc
 
    ```bash
    # Set the active worktree root as the command workdir.
-   rtk npm install
+   rtk ./hippo run --class ephemeral --disk-path . -- npm install
    ```
 
 4. Converge the toolchain from the same directory:
@@ -41,6 +41,9 @@ when_to_use: Use as a walkthrough when creating a worktree and running its toolc
    rtk npm run doctor -- --fix
    ```
 
-   This command is idempotent — when the toolchain is already healthy it is a no-op pass; when drifted it actively converges. To preview changes without applying them, use `rtk npm run doctor -- --fix --dry-run`.
+   The Doctor wrapper detects `--fix` and selects transactional admission. The command is
+   idempotent — when the toolchain is already healthy it is a no-op pass; when drifted it actively
+   converges. To preview changes without applying them, use
+   `rtk npm run doctor -- --fix --dry-run`.
 
 5. Confirm both steps completed without errors before Git commits or Nx commands in the worktree.

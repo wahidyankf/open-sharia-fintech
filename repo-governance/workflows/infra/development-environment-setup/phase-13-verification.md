@@ -54,11 +54,12 @@ E2E verification in the next section.
 
 ```bash
 # Start a backend
-nx run organiclever-be:dev &
+./hippo run --class service --disk-path . -- npm exec nx -- run organiclever-be:dev &
 
 # Wait for it to be ready, then run E2E
 sleep 5
-nx run organiclever-be-e2e:test:e2e
+./hippo run --class ephemeral --disk-path . -- \
+  npm exec nx -- run organiclever-be-e2e:test:e2e
 
 # Stop the backend
 kill %1

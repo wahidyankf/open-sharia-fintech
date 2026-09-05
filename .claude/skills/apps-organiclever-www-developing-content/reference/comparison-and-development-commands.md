@@ -22,13 +22,14 @@
 
 ```bash
 # Start development server (http://localhost:3200)
-nx dev organiclever-www
+rtk ./hippo run --class service --disk-path . -- npm exec nx -- dev organiclever-www
 
 # Build for production (local verification)
-nx build organiclever-www
+rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- build organiclever-www
 
 # Type checking
-npx tsc --noEmit --project apps/organiclever-www/tsconfig.json
+rtk ./hippo run --class ephemeral --disk-path . -- npm exec tsc -- \
+  --noEmit --project apps/organiclever-www/tsconfig.json
 ```
 
 ### Option 2: Docker Compose (containerized, or running alongside the backend)
@@ -38,10 +39,12 @@ frontend, or want an environment closer to CI.
 
 ```bash
 # From repository root — starts organiclever-www in Docker
-npm run organiclever-www:dev
+rtk ./hippo run --class service --disk-path . -- \
+  docker compose -f infra/dev/organiclever-www/docker-compose.yml up --build
 
 # Or start the frontend container only
-docker compose -f infra/dev/organiclever-www/docker-compose.yml up organiclever-www
+rtk ./hippo run --class service --disk-path . -- \
+  docker compose -f infra/dev/organiclever-www/docker-compose.yml up organiclever-www
 ```
 
 **First startup** (~2-4 min): installs npm dependencies inside the container.

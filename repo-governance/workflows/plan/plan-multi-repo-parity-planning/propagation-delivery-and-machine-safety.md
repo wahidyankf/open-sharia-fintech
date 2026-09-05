@@ -1,6 +1,6 @@
 ---
 title: "Propagation, Delivery Shape, and Shared-Machine Safety"
-description: Covers parity propagation, the sequential-by-default cross-repository heavy-work schedule, per-repo delivery shape, and shared-machine safety.
+description: Covers parity propagation, capacity-controlled cross-repository compute, per-repo delivery shape, and shared-machine safety.
 when_to_use: Use when deciding whether repos can run in parallel, how a repo's plan lands as PRs, or before running any destructive-looking git operation.
 ---
 
@@ -9,11 +9,11 @@ when_to_use: Use when deciding whether repos can run in parallel, how a repo's p
 The repos form a logical propagation fan-out, not a content-dependency chain: **`ose-public` is the
 source of truth**, and `ose-private` is its one downstream target. Where a parity set covers more
 than two repos, downstream repos may remain independent DAG nodes, but resource-heavy worktree
-provisioning, toolchain setup, builds, and validation run **one repository at a time by default** on
-the shared machine. Concurrent cross-repository heavy work requires a concrete operational need
-recorded in the plan and confirmed machine, disk, runner, and risk controls. Lightweight independent
-work may still use the N+1 model. `ose-private` does not participate in the parity loop for content
-it does not carry.
+provisioning, toolchain setup, builds, and validation each enter
+[Resource-Aware Development](../../../development/practice/resource-aware-development.md).
+Independent compute may overlap only when HIPPO admits its fixed reservations. Dependency,
+shared-output, byte-identity, transactional, and documented correctness edges remain sequential.
+`ose-private` does not participate in the parity loop for content it does not carry.
 
 The one hard serialization: **`apps/rhino-cli` must stay byte-identical across the parity repos
 — `ose-public` and `ose-private`** — so plans touching it propagate one repo at a time

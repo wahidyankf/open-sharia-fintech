@@ -8,21 +8,22 @@ when_to_use: Use when deciding whether to run repos concurrently, or the parity-
 
 **Continues from** [Step 4 — Execution Phase](./step-4-execution-phase.md).
 
-**Propagation shape when the invoker opts out of strict whole-repository sequencing**: the repos
-form a logical fan-out, not a content-dependency chain — `ose-public` is the source of truth and
-`ose-private` its one downstream node. Once `ose-public` reaches `pass`, downstream repos may remain
-independent DAG nodes, but their resource-heavy worktree provisioning, toolchain setup, builds, and
-validation still run one repository at a time by default. Concurrent cross-repository heavy work
-requires a concrete operational need recorded in the plan and confirmed machine, disk, runner, and
-risk controls; lightweight independent work may use the N+1 model.
+**Propagation shape**: repository labels do not create a content-dependency chain. Model the
+composite as plan nodes: portable public-source or Rhino nodes precede the private nodes that consume
+their output, while repo-specific nodes without that edge may be ready concurrently. Resource-heavy
+worktree provisioning, toolchain setup, builds, and validation enter HIPPO under the declared
+workload class. Logically independent compute may overlap within shared N=3 agent slots when its
+complete reservations are admitted; capacity changes execution timing, not dependency order.
 
-Two constraints override any permitted fan-out and force strict serialization:
+These constraints add explicit edges between the affected nodes; they do not serialize unrelated
+work elsewhere in either repository:
 
 - **`apps/rhino-cli` byte-identity** across the parity repos — `ose-public` and
   `ose-private` — a plan touching it propagates one repo at a time, never concurrently
   ([AGENTS.md §Related Repositories](../../../../AGENTS.md#related-repositories)).
-- **Any node writing what another node reads** — the general DAG independence test. Sequence is not
-  dependency, but a shared write target is.
+- **Any node writing what another node reads** — the general DAG independence test. This includes
+  dependencies, shared outputs, transactional/destructive mutations, service/port ownership, and
+  any documented runtime correctness race. Sequence is not dependency, but a shared write target is.
 
 **Expect the local `parity-manifest` pre-push gate to fire on the very first push, before any
 cross-repo work.** Editing a byte-identity-governed file (`apps/rhino-cli/src/`, `Cargo.toml`,
@@ -58,6 +59,7 @@ did not create. See
 **Output per repo**: plan-execution `final-status`, `iterations-completed`, final validation
 report.
 
-**On failure**: apply the Step 3 failure policy. Under the default stop policy, terminate the
-composite with status `partial` (completed repos stay archived; the failing repo's plan stays in
-`plans/in-progress/` with its worktree retained).
+**On failure**: apply the Step 3 failure policy and the safe-boundary rules in the first Step 4
+shard. Under the default stop policy, freeze new admissions, settle or safely cancel in-flight work,
+then terminate the composite with status `partial` (completed repos stay archived; the failing
+repo's plan stays in `plans/in-progress/` with its worktree retained).

@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 2,
+  "coordination": {
+    "mode": "reservation",
+    "maxActiveOwners": 20,
+    "automaticOwnerShares": {
+      "balanced": 4,
+      "constrained": 2,
+      "minimal": 1
+    }
+  },
+  "defaultProfile": "local-constrained",
+  "profiles": {
+    "local-constrained": {
+      "extends": "constrained",
+      "fallback": "minimal",
+      "strict": false,
+      "maxCpuUtilizationPercent": 90
+    }
+  }
+}

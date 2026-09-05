@@ -13,7 +13,8 @@ created: 2026-03-22
 # Project Dependency Graph
 
 Complete reference for how projects depend on each other in the Nx monorepo.
-Run `nx graph` to visualize this interactively.
+Run `./hippo run --class service --disk-path . -- npm exec nx -- graph` to visualize this
+interactively.
 
 > **Note**: The polyglot demo apps (`a-demo-be-*`, `a-demo-fe-*`, `a-demo-fs-ts-nextjs`) and
 > their contract/spec infrastructure were removed from this repo on 2026-04-18.

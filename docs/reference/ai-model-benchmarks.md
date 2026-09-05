@@ -19,8 +19,10 @@ Canonical benchmark reference for all AI models used in this project. Last updat
 > frontier/big-brand reference, and the composite-benchmark capability summary. Each table is
 > rewritten between a matched pair of HTML-comment markers (`BEGIN GENERATED` / `END GENERATED`), so
 > hand-edits inside those pairs are overwritten on every refresh — edit `models.ts` instead, then
-> regenerate. Refresh with `npx nx run ayokoding-www:generate-benchmark-reference`; check for drift
-> with `npx nx run ayokoding-www:validate-benchmark-reference`. All other prose (benchmark
+> regenerate. Refresh with
+> `./hippo run --class transactional --disk-path . -- npm exec nx -- run ayokoding-www:generate-benchmark-reference`;
+> check for drift with
+> `./hippo run --class ephemeral --disk-path . -- npm exec nx -- run ayokoding-www:validate-benchmark-reference`. All other prose (benchmark
 > definitions, tier rationale, caveats) is hand-maintained and preserved verbatim.
 
 ## Purpose and Scope

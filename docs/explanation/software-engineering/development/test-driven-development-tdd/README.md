@@ -30,7 +30,15 @@ All code developed for the OSE Platform MUST follow the TDD methodology and stan
 
 **REQUIRED Test Runner:**
 
-- **Nx Monorepo**: `npm exec nx -- run [project-name]:test:quick` (pre-push gate), `npm exec nx -- run [project-name]:test:unit` (isolated unit tests), `npm exec nx -- affected -t test:quick` (affected projects). See [Nx Target Standards](../../../../../repo-governance/development/infra/nx-targets.md) for canonical target names.
+- **Nx Monorepo**:
+  `./hippo run --class transactional --disk-path . -- npm exec nx -- run [project-name]:test:quick`
+  (pre-push gate),
+  `./hippo run --class transactional --disk-path . -- npm exec nx -- run [project-name]:test:unit`
+  (isolated unit tests), and
+  `./hippo run --class transactional --disk-path . -- npm exec nx -- affected -t test:quick`
+  (affected projects). See
+  [Nx Target Standards](../../../../../repo-governance/development/infra/nx-targets.md) for canonical
+  target names.
 
 **PROHIBITED:**
 

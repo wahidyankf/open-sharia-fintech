@@ -4,7 +4,7 @@ description: The hard-gate check that every plan is execution-ready, followed by
 when_to_use: Use before starting the execution phase, to verify readiness and record the operational decisions that govern it.
 ---
 
-# Step 2 — Phase Gate: Plans Ready for Execution (Sequential, Hard Gate)
+# Step 2 — Phase Gate: Plans Ready for Execution (Hard Gate)
 
 Before any execution, verify for EVERY target repo:
 
@@ -21,7 +21,7 @@ subset silently — the invoker decides whether to fix and re-gate or abandon.
 
 **Output**: All plans verified execution-ready.
 
-## Step 3 — Pre-Execution Grill (Third Grill, Sequential, Hard Gate)
+## Step 3 — Pre-Execution Grill (Third Grill, Hard Gate)
 
 The composite grills three times: the planning phase's matrix grill and post-research grill, then
 this pre-execution grill. Invoke the `grill-me` skill per the
@@ -31,11 +31,13 @@ question per message; interactive multiple-choice tool when available.
 
 **Mandatory questions** (plus any opened by the answers):
 
-1. **Execution order**: which repo executes first/next/last? Options grounded in the deviation
-   matrix (e.g., anchor repo first as reference implementation **(Recommended)** / riskiest repo
-   first to surface unknowns early / `{input.execution-order}` as given).
-2. **Failure policy**: if repo N's execution ends `partial`/`fail`, do we stop the composite
-   **(Recommended)** or continue to repo N+1 and report at the end?
+1. **Execution DAG**: which plan nodes are initially ready, and which cross-repository edges are
+   required? Options must be grounded in the deviation matrix. Portable public-to-private and Rhino
+   propagation keep the public source node ahead of its private consumer **(Recommended)**; a
+   repo-specific node with no such edge may enter the ready set immediately. Do not turn a preferred
+   review order into a dependency or serialize a whole repository when only one node is constrained.
+2. **Failure policy**: if any node ends `partial`/`fail`, do we stop new scheduling across the
+   composite **(Recommended)** or continue only independent ready nodes and report at the end?
 3. **Unresolved design decisions**: per plan-execution's pre-execution requirement, stress-test
    any decision the plans left open — one question per open decision, options from the plan's
    tech-docs.
@@ -56,4 +58,4 @@ question per message; interactive multiple-choice tool when available.
 terminate with status `fail` — the gated plans remain in `plans/in-progress/` for a later
 standalone plan-execution run.
 
-**Output**: Confirmed execution order, failure policy, and resolved open decisions.
+**Output**: Confirmed execution DAG, failure policy, and resolved open decisions.

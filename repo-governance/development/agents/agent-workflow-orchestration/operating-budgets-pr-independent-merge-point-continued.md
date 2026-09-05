@@ -20,6 +20,7 @@ The qualifier **"that produces changes"** is load-bearing, and a plan's **Phase 
 Because the worktree is now a per-repository unit rather than a per-PR one, it is cleaned up once —
 after every PR that used it has landed — not when the first one does. An N-repo plan may use at most
 one worktree per repo, but its resource-heavy worktree setup, toolchain convergence, builds, and
-validation run one repository at a time by default. Concurrent cross-repository heavy work requires
-a recorded operational need and confirmed capacity and risk controls; the cap still forecloses a
-second worktree for a repo the plan already has one open in.
+validation are compute nodes governed by
+[Resource-Aware Development](../../practice/resource-aware-development.md). Independent repositories
+may overlap when HIPPO admits them; the cap still forecloses a second worktree for a repo the plan
+already has one open in, and shared-output/correctness edges still serialize.

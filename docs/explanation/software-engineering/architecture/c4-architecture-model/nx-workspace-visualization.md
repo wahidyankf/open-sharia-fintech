@@ -148,7 +148,9 @@ C4 container diagrams can reference the Nx project graph for detailed dependency
 
 **Add note in diagram documentation**:
 
-> For detailed Nx project dependencies, run `nx graph` or visit the [Nx Project Graph documentation](../../../../reference/monorepo-structure.md).
+> For detailed Nx project dependencies, run
+> `./hippo run --class service --disk-path . -- npm exec nx -- graph` or visit the
+> [Nx Project Graph documentation](../../../../reference/monorepo-structure.md).
 
 ### Visualization Strategy
 

@@ -1,0 +1,28 @@
+---
+title: "Workload Classes and Supervision"
+description: Which workload class a command takes, and what HIPPO sheds first when the host is under critical pressure.
+category: explanation
+subcategory: development
+tags:
+  - resource-management
+  - parallelism
+  - development
+  - tooling
+created: 2026-09-05
+when_to_use: Use when choosing between the ephemeral, service, and transactional classes, or when a run was shed.
+---
+
+# Workload Classes and Supervision
+
+Use `ephemeral` for restartable builds, tests, and reads; `service` for restartable long-running
+development; and `transactional` for authorized indivisible mutations such as destructive resets,
+tool installation, binding generation, or tracked-output writes. Never change class to gain entry.
+
+Under critical pressure HIPPO sheds the newest eligible ephemeral, then the newest service only
+when none is eligible; it never sheds a transaction, and it signals and reaps only that child
+group before release. Interactive children temporarily own the foreground terminal; pipes and
+non-controlling input remain unchanged.
+
+A guarded command returns only once its whole process group has retired, so a payload that leaves
+a persistent daemon behind — MSBuild node reuse is the one observed here — keeps the guard waiting
+long after the work itself finished. Disable the reuse or stop the daemon; never kill the guard.

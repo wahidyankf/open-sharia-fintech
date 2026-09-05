@@ -14,8 +14,10 @@ Invoke the [plan-planning workflow](../../plan/plan-planning.md) with:
   table, the Security & Functional Clearance Status, the recorded cutoff date, a link to the
   `clearance-report`, and this **Definition of Done** for the plan it must author:
   - Every in-scope manifest is pinned (exact, no `^`/`~`) to its approved target version.
-  - Lockfiles regenerated (`npm install`, `cargo update -p`, `go mod tidy`, etc.).
-  - Post-bump re-audit clean (`npm audit --audit-level=moderate`, `govulncheck ./...`).
+  - Lockfiles regenerated through separate transactional HIPPO boundaries (`npm install`,
+    `cargo update -p`, `go mod tidy`, etc.).
+  - Post-bump re-audit clean through ephemeral HIPPO boundaries (`npm audit --audit-level=moderate`,
+    `govulncheck ./...`).
   - Post-bump CISA KEV cross-reference clean (no remaining KEV-listed CVEs in pinned versions).
   - All `WAIVER`/`FUNCTIONAL-HOLD`/`KEV-listed` entries propagated to `docs/reference/security-waivers.md` with KEV and EPSS columns populated.
   - Affected-project quality gates pass (typecheck, lint, and `test:quick`, including Unit runtime

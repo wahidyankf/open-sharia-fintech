@@ -718,25 +718,25 @@ class ZakatCalculator {
 
 ```bash
 # Build specific library
-npm exec nx -- build ts-zakat-calculator
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- build ts-zakat-calculator
 
 # Run fast quality gate (pre-push standard)
-npm exec nx -- run ts-zakat-calculator:test:quick
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- run ts-zakat-calculator:test:quick
 
 # Run isolated unit tests
-npm exec nx -- run ts-zakat-calculator:test:unit
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- run ts-zakat-calculator:test:unit
 
 # Lint specific library
-nx lint ts-zakat-calculator
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- lint ts-zakat-calculator
 
 # Build only affected projects (after git changes)
-npm exec nx -- affected -t build
+./hippo run --class transactional --disk-path . -- npm exec nx -- affected -t build
 
 # Run quality gate for affected projects
-npm exec nx -- affected -t test:quick
+./hippo run --class transactional --disk-path . -- npm exec nx -- affected -t test:quick
 
 # Visualize dependency graph
-nx graph
+./hippo run --class service --disk-path . -- npm exec nx -- graph
 ```
 
 **See**: [Nx Target Standards](../../../../../repo-governance/development/infra/nx-targets.md) for canonical target names.

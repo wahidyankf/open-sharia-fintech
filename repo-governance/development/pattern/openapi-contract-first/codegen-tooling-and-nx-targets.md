@@ -42,14 +42,14 @@ Each app that participates in contract-first development exposes these Nx target
 Run codegen for a specific app:
 
 ```bash
-nx run organiclever-app-web:codegen
-nx run organiclever-be:codegen
-nx run ose-www:codegen
-nx run ose-be:codegen
+./hippo run --class transactional --disk-path . -- npm exec nx -- run organiclever-app-web:codegen
+./hippo run --class transactional --disk-path . -- npm exec nx -- run organiclever-be:codegen
+./hippo run --class transactional --disk-path . -- npm exec nx -- run ose-app-web:codegen
+./hippo run --class transactional --disk-path . -- npm exec nx -- run ose-be:codegen
 ```
 
 Validate the spec itself:
 
 ```bash
-nx run organiclever-contracts:lint
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- run organiclever-contracts:lint
 ```

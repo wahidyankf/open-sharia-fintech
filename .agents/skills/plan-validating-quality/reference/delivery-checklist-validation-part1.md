@@ -56,10 +56,11 @@ prerequisites, paths, commands, observations, recovery, or proof, flag the relev
   Reject numeric boundaries; require atomic artifacts and the canonical incomplete-feature flag
   lifecycle.
 - **Cross-repository resource schedule (HARD RULE)**: when a plan spans repositories, its
-  `## Parallelization Model` records either repository-serial worktree provisioning, toolchain
-  setup, builds, and validation, or a concrete overlap need with confirmed machine, disk, runner,
-  and risk controls. Missing or incomplete schedule/exception: **HIGH**. Live overlap and capacity
-  are execution facts; this check validates only the repository-visible declaration. See
+  `## Parallelization Model` classifies each compute-bearing node under the resource-aware boundary
+  and names every dependency, shared-output, byte-identity, transactional, or correctness edge that
+  forces serialization. Missing guards/classes or unexplained serial edges: **HIGH**. Live HIPPO
+  admission and capacity are execution facts; this check validates only the repository-visible
+  declaration. See
   [Delivery Checklists Express a DAG](../../../../repo-governance/conventions/structure/plans/delivery-checklists-express-a-dag.md#delivery-checklists-express-a-dag-hard-rule).
 - **Specs and Gherkin delivery (Two Paths)**: a plan changing observable behaviour in `apps/`,
   `libs/`, or `specs/` needs delivery steps adding/updating companion `specs/` `.feature` files and

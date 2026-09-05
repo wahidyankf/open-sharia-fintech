@@ -23,13 +23,16 @@ Enforcement is automated via `rhino-cli repo-governance vendor validate`.
 
 ```bash
 # Audit the repo-governance/ directory (default)
-apps/rhino-cli/scripts/rhino-bin.sh repo-governance vendor validate repo-governance/
+./hippo run --class ephemeral --disk-path . -- \
+  apps/rhino-cli/scripts/rhino-bin.sh repo-governance vendor validate repo-governance/
 
 # Audit the canonical root instruction surface
-apps/rhino-cli/scripts/rhino-bin.sh repo-governance vendor validate AGENTS.md
+./hippo run --class ephemeral --disk-path . -- \
+  apps/rhino-cli/scripts/rhino-bin.sh repo-governance vendor validate AGENTS.md
 
 # Or via Nx (cached)
-npx nx run rhino-cli:governance:vendor-audit-validation
+./hippo run --class ephemeral --disk-path . -- \
+  npm exec nx -- run rhino-cli:governance:vendor-audit-validation
 ```
 
 The validator takes one path per invocation, so each covered surface is audited separately.

@@ -26,16 +26,19 @@ byte-identity of this app's own tree against its checked-in SHA-256 manifest goi
 
 ```bash
 # Build the self-contained release binary (Nx)
-nx build rhino-cli
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- build rhino-cli
 
 # Run via dotnet (no prior build required)
-dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- --help
+./hippo run --class ephemeral --disk-path . -- \
+  dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- --help
 
 # Echo a message
-dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- --say "hello world"
+./hippo run --class ephemeral --disk-path . -- \
+  dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- --say "hello world"
 
 # Reject invalid output format (exits 1)
-dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- --output xml --help
+./hippo run --class ephemeral --disk-path . -- \
+  dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- --output xml --help
 ```
 
 ## Installation
@@ -43,14 +46,13 @@ dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj
 Local to this monorepo. To produce a standalone, self-contained binary:
 
 ```bash
-nx build rhino-cli
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- build rhino-cli
 # Binary at apps/rhino-cli/src/dist/rhino-cli-fsharp
 ```
 
-SDK pinned to .NET 10.0.204 via `apps/rhino-cli/global.json` (`rollForward: latestMinor`).
-`apps/rhino-cli/scripts/rhino-bin.sh` is the resolver shim every generated gate command invokes: it
-prefers an explicit `RHINO_CLI_FSHARP_BIN` override, falls back to the published `dist` binary, and
-only shells to `dotnet run` (needing the SDK) as a last resort.
+.NET 10.0.204 is pinned in `apps/rhino-cli/global.json` with `rollForward: latestMinor`. Generated
+gates resolve the binary through `scripts/rhino-bin.sh`: explicit `RHINO_CLI_FSHARP_BIN`, then the
+published `dist` binary, then SDK-backed `dotnet run`.
 
 ## Nx Targets
 
@@ -112,18 +114,14 @@ does not exist yet cannot be bound truthfully.
 
 ## Dependency Status
 
-Core NuGet packages beyond the .NET SDK itself: `Argu` (CLI argument parsing, `RhinoCli.Cli`),
-`YamlDotNet` (`RhinoCli.Application`), and `FSharp.Analyzers.Build` +
-`G-Research.FSharp.Analyzers` (build-time lint, all five projects). `deps:audit` scans the full
-transitive set for known vulnerabilities; see
+Core packages are `Argu`, `YamlDotNet`, `FSharp.Analyzers.Build`, and
+`G-Research.FSharp.Analyzers`. `deps:audit` scans the transitive set for vulnerabilities; see
 [Dependency Bump Stability & Safety Policy](../../repo-governance/development/workflow/dependency-bump-policy.md)
 for the bump-review process.
 
 ## See also
 
-- Rewrite plan (`rewrite-rhino-cli-to-fsharp`, `plans/`): documents the Rust-to-F# port and the
-  preceding Rust-to-Go migration plan referenced from its own history (recoverable from git
-  history; not linked here — `plans/done/` is repo-specific and this README is byte-identical
-  across sibling repos)
+- Rewrite plan (`rewrite-rhino-cli-to-fsharp`, `plans/`): records the Rust-to-F# port and prior
+  Rust-to-Go history (recoverable from Git; not linked because `plans/done/` is repo-specific)
 - Gherkin specs (shared with the retired Rust and Go binaries):
   [`specs/apps/rhino/cli/behaviours/`](../../specs/apps/rhino/cli/behaviours/)

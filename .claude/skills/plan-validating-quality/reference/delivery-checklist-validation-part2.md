@@ -65,5 +65,6 @@
   behaviour must be complete-and-inert behind a temporary production-disabled feature flag with
   enabled and disabled path tests and recorded rollout, rollback, and removal. Missing any of this
   delivery evidence is **HIGH**.
-- Phase transitions have explicit verification steps (e.g. "Verify `nx run app:typecheck` passes").
+- Phase transitions have explicit verification steps (e.g. "Verify
+  `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- run app:typecheck` passes").
 - Input/Outcome/Proof prose is not a task; every action checkbox is an independent harness task.

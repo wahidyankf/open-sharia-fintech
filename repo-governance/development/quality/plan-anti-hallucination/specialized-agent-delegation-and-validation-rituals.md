@@ -24,8 +24,9 @@ Domain-specialized agents hallucinate less than generic orchestration because th
 
 ```markdown
 - [ ] Edit `apps/organiclever-be/src/Domain/User.fs`: add `email: string option` field with case-insensitive
-      uniqueness constraint. Verify by running `nx run organiclever-be:test:unit` — new test
-      `User_RejectsDuplicateEmailIgnoringCase` passes.
+      uniqueness constraint. Verify by running
+      `rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- run organiclever-be:test:unit`
+      — new test `User_RejectsDuplicateEmailIgnoringCase` passes.
   - _Suggested executor: `swe-fsharp-dev`_
 ```
 

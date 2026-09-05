@@ -10,10 +10,11 @@ checkbox satisfies all that apply:
 1. **Explicit file path(s)** for file-touching actions. When unknowable at authoring time, give the
    maximum-detail target (parent directory, naming pattern, sibling reference). Bare "the auth file",
    "the relevant config", "wherever needed": **HIGH**.
-2. **Explicit shell command(s)** for command actions (e.g. `npx nx run ose-web:test:quick`). Bare
+2. **Explicit shell command(s)** for command actions (e.g.
+   `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- run ose-web:test:quick`). Bare
    "run the lint", "run tests", "validate": **HIGH**.
-3. **Concrete acceptance criterion** stating the observable proof of done (e.g. "`nx run
-ose-web:typecheck` exits 0"). Bare "implement X", "set up Y", "configure Z", "add caching", "fix
+3. **Concrete acceptance criterion** stating the observable proof of done (e.g. "the guarded
+   `ose-web:typecheck` command exits 0"). Bare "implement X", "set up Y", "configure Z", "add caching", "fix
    the bug": **HIGH**.
 4. **One independently verifiable action** per checkbox, including prerequisites, expected
    observation, failure handling, and evidence destination. An omnibus checkbox hiding distinct

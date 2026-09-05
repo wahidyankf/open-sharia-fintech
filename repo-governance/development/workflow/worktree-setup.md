@@ -21,11 +21,13 @@ when_to_use: Use immediately after creating a git worktree, before Git mutations
 After creating a git worktree, initialize dependencies, Git hooks, and the polyglot
 toolchain from the **root directory of that worktree** with a mandatory two-step sequence:
 
-1. Run `rtk npm install` at that worktree root. Besides dependencies, `prepare` activates Husky hooks.
+1. Run `rtk ./hippo run --class ephemeral --disk-path . -- npm install` at that worktree root.
+   Besides dependencies, `prepare` activates Husky hooks.
 2. Run `rtk npm run doctor -- --fix` at the same worktree root.
 
 Both steps are required. The first makes that checkout's hooks and Node/Nx dependencies usable;
-the second converges the native toolchains managed by `rhino-cli doctor`.
+the second uses the Doctor wrapper's transactional class to converge native toolchains managed by
+`rhino-cli doctor`.
 
 In a repository without npm, use its declared root bootstrap only when it installs local
 dependencies and Git hooks; never invent or infer an equivalent command.

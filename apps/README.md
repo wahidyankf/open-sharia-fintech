@@ -36,12 +36,14 @@ End-to-end projects keep browser and API behaviour separate from the application
 Run Nx targets from the workspace root. Replace `ose-www` with the project you chose above:
 
 ```bash
-npm exec nx -- dev ose-www
-npm exec nx -- run ose-www:test:quick
-npm exec nx -- build ose-www
+./hippo run --class service --disk-path . -- npm exec nx -- dev ose-www
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- run ose-www:test:quick
+./hippo run --class transactional --disk-path . -- npm exec nx -- build ose-www
 ```
 
-Each project declares its available targets in `project.json`. Use `npm exec nx -- show project <project-name>` to inspect them, and follow the app README for app-specific setup.
+Each project declares its available targets in `project.json`. Use
+`./hippo run --class ephemeral --disk-path . -- npm exec nx -- show project <project-name>` to
+inspect them, and follow the app README for app-specific setup.
 
 ## Structure and boundaries
 

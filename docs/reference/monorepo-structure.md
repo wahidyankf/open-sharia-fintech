@@ -510,13 +510,13 @@ import { formatDate } from "@open-sharia-enterprise/ts-utils";
 
 ```bash
 # View full dependency graph
-nx graph
+./hippo run --class service --disk-path . -- npm exec nx -- graph
 
 # View specific project dependencies
-nx graph --focus=ose-www
+./hippo run --class service --disk-path . -- npm exec nx -- graph --focus=ose-www
 
 # View affected projects
-nx affected:graph
+./hippo run --class service --disk-path . -- npm exec nx -- graph --affected
 ```
 
 ## Path Mappings

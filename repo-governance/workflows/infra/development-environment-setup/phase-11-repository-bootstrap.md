@@ -1,6 +1,6 @@
 ---
 title: "Phase 11: Repository Bootstrap (Sequential)"
-description: "Phase 11: clone the repo, run npm install (which installs git hooks), restore or initialize .env files, then run npm run doctor to verify every tool."
+description: "Phase 11: clone, run guarded npm install, restore or initialize local env files, then run Doctor to verify every tool."
 when_to_use: "Use when bootstrapping the repository itself after language toolchains are installed."
 ---
 
@@ -20,12 +20,12 @@ cd open-sharia-enterprise
 ## 11.2 Install npm dependencies
 
 ```bash
-npm install
+./hippo run --class ephemeral --disk-path . -- npm install
 ```
 
 This also triggers Husky to install git hooks (pre-commit, commit-msg, pre-push).
 
-**Success criteria**: `npm install` exits 0. `.husky/pre-commit`, `.husky/commit-msg`,
+**Success criteria**: the guarded `npm install` exits 0. `.husky/pre-commit`, `.husky/commit-msg`,
 `.husky/pre-push` exist.
 
 ## 11.3 Restore environment files

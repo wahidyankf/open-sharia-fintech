@@ -47,29 +47,35 @@ sudo apt-get update
 sudo apt-get install -y build-essential curl git
 ```
 
-## Install the version managers
+## Install the required runtimes
 
 The repository pins its Node.js and npm versions in `package.json`; Volta reads those pins when
-you enter the cloned repository. Cargo is also needed because the repository's tool checker is a
-Rust command-line application, and the check you run below cannot pass without it.
+you enter the cloned repository. The repository tool checker is an F#/.NET application, so the
+.NET SDK must also be available before its checks can run.
 
-Run these commands on either supported operating system:
+Install Volta on either supported operating system:
 
 ```bash
 curl https://get.volta.sh | bash
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 ```
 
-Close and reopen the terminal so both installers can update its command path. Confirm the tools
-are available before continuing:
+Install the .NET SDK with Homebrew on macOS, or follow Microsoft's package instructions on Ubuntu:
+
+```bash
+# macOS
+brew install dotnet
+```
+
+Close and reopen the terminal so the installers can update its command path. Confirm the tools are
+available before continuing:
 
 ```bash
 git --version
 volta --version
-cargo --version
+dotnet --version
 ```
 
-Each command should print a version. If `volta` or `cargo` is still not found, reopen the terminal
+Each command should print a version. If `volta` or `dotnet` is still not found, reopen the terminal
 once more and follow the recovery guidance below.
 
 ## Clone and prepare OSE
@@ -81,13 +87,14 @@ git clone https://github.com/wahidyankf/ose-public.git
 cd ose-public
 ```
 
-Now install the workspace dependencies. Volta selects the Node.js and npm versions declared by
-this checkout; `npm install` also installs the repository's Git hooks.
+Now install the workspace dependencies through the pinned HIPPO consumer. Volta selects the Node.js
+and npm versions declared by this checkout; the guarded install also installs the repository's Git
+hooks.
 
 ```bash
 node --version
 npm --version
-npm install
+./hippo run --class ephemeral --disk-path . -- npm install
 ```
 
 The first two commands print versions matching the `volta` values in this checkout's
@@ -110,7 +117,7 @@ independently deployable applications, with Nx coordinating the tasks that build
 Start its development target for `ose-www`:
 
 ```bash
-npm exec nx -- run ose-www:dev
+./hippo run --class service --disk-path . -- npm exec nx -- run ose-www:dev
 ```
 
 Nx starts Next.js on the resolved port — 3100 unless `OSE_WWW_PORT` says otherwise — and keeps the
@@ -123,11 +130,11 @@ When you are finished, return to the terminal running the server and press <kbd>
 
 ## Recover from common setup problems
 
-### `volta` or `cargo` is not found
+### `volta` or `dotnet` is not found
 
 The installer has not yet updated the current shell. Close and reopen the terminal, then rerun the
 matching version command. If it is still missing, rerun the relevant installer from
-[Install the version managers](#install-the-version-managers), reopen the terminal, and try again.
+[Install the required runtimes](#install-the-required-runtimes), reopen the terminal, and try again.
 
 ### The tool check reports Docker as missing
 
@@ -153,7 +160,8 @@ process. The development target reads `OSE_WWW_PORT` and falls back to 3100 only
 is unset:
 
 ```bash
-OSE_WWW_PORT=4000 npm exec nx -- run ose-www:dev
+OSE_WWW_PORT=4000 ./hippo run --class service --disk-path . -- \
+  npm exec nx -- run ose-www:dev
 ```
 
 Open <http://localhost:4000> instead. A value that is not a usable port number stops startup and
@@ -166,8 +174,8 @@ override, under its own variable name — see
 Regenerate the website build through its declared Nx target, then start development again:
 
 ```bash
-npm exec nx -- run ose-www:build
-npm exec nx -- run ose-www:dev
+./hippo run --class transactional --disk-path . -- npm exec nx -- run ose-www:build
+./hippo run --class service --disk-path . -- npm exec nx -- run ose-www:dev
 ```
 
 The build target regenerates its search data before creating the local Next.js output.

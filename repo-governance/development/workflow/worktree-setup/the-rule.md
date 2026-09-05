@@ -1,6 +1,6 @@
 ---
 title: "The Rule"
-description: The mandatory two-step npm install / doctor --fix sequence, run order, the --fix flag, and the shared cargo target-directory symlink it provisions.
+description: The mandatory guarded-install and transactional-Doctor sequence, run order, the --fix flag, and the shared cargo target-directory symlink it provisions.
 category: explanation
 subcategory: development
 tags:
@@ -25,17 +25,20 @@ invocation, or another creation mechanism—run BOTH commands from that new work
 # Set the active worktree root as the command workdir.
 
 # Step 1: Node/Nx workspace dependencies (node_modules/)
-rtk npm install
+rtk ./hippo run --class ephemeral --disk-path . -- npm install
 
 # Step 2: Toolchain convergence (Rust, .NET/F#, TypeScript/Node — all managed by rhino-cli)
 rtk npm run doctor -- --fix
 ```
 
-Each worktree needs its own ignored `node_modules/`. Running `rtk npm install` there also runs the
+Each worktree needs its own ignored `node_modules/`. The guarded install there also runs the
 repository's `prepare` script, which activates Husky's tracked hooks for Git operations from that
 worktree. A successful install in the primary checkout does not initialize a new worktree.
 
-**Order matters.** Run `rtk npm install` first, because `rhino-cli doctor` itself is a Rust binary built and invoked through the Node tooling; the doctor script may need a freshly synchronized `node_modules/` to run correctly. Run `rtk npm run doctor -- --fix` second to actively converge the native toolchain.
+**Order matters.** Run the guarded install first, because `rhino-cli doctor` is an F#/.NET program
+invoked through the Node tooling and may need synchronized `node_modules/`. Run
+`rtk npm run doctor -- --fix` second; its argv-aware wrapper selects transactional admission before
+actively converging the native toolchain.
 
 **Use `--fix`, not plain `doctor`.** Plain `rtk npm run doctor` only detects drift and requires a second human action. `rtk npm run doctor -- --fix` actively converges to the declared toolchain state in a single step. For a preview, use `rtk npm run doctor -- --fix --dry-run`.
 

@@ -22,12 +22,11 @@ The default execution model is **parallel**. An agent MUST run multiple independ
 - The outputs of the units do not depend on each other
 - All inputs needed to launch the units are already known
 
-The burden of proof is ordinarily on serialization: an agent that runs independent work serially
-must have an explicit reason (dependency, ordering constraint, tool conflict). The standing
-shared-machine reason is cross-repository resource-heavy work in one plan — provision worktrees,
-converge toolchains, build, and validate one repository at a time by default. Concurrent heavy work
-requires a concrete operational need recorded in the plan plus confirmed machine, disk, runner, and
-risk controls. Outside that narrow exception, absence of a reason means parallel.
+The burden of proof is on logical serialization: an agent that runs independent work serially must
+name a dependency, shared output, byte-identity sequence, transaction, or documented correctness
+constraint. Compute cost alone creates no logical edge. Instead, route each compute-bearing node
+through [Resource-Aware Development](../resource-aware-development.md); HIPPO decides whether safe
+capacity permits overlap. Absence of a logical reason means parallel subject to both N and HIPPO.
 
 ## Standard 2 — The N+1 Model (One Adjustable N)
 
@@ -35,6 +34,6 @@ No more than **N** independent units of work run simultaneously at any point, wh
 
 **One N, not two.** This model replaces an older asymmetry that set a cap of three for tool-call batching but a stricter cap of two for background subagents. Both collapse into the single adjustable N. Background Agent-tool spawns are a **specialization** of this norm, not an exception to it — the [Subagent Orchestration Convention](../../agents/subagent-orchestration.md) owns their extra mechanics (polling, stuck detection, relaunch) while using the same N.
 
-**Why the default is 3**: N=3 is chosen specifically to **bound token/compute-budget burn** — parallelism has real cost, since each concurrent unit independently spends tokens and API quota against the vendor's per-minute limit. Fewer than three under-uses available throughput; more risks rate-limit cascades and budget overrun. Assume the machine is **shared** — other agents, engineers, and processes run concurrently against the same disk, git object store, and CI runners — so the safe N is bounded by what that machine can absorb alongside everyone else.
+**Why the default is 3**: N=3 is chosen specifically to **bound token/API-budget burn** — parallelism has real cost, since each concurrent unit independently spends tokens and quota against the vendor's per-minute limit. Fewer than three under-uses available throughput; more risks rate-limit cascades and budget overrun. The machine is still shared, but HIPPO separately governs admitted child CPU/memory; N never substitutes for that allocation.
 
 **Adjustment rule**: N is adjustable per-plan and **along the way**. Raising it requires all three of genuinely independent work, machine capacity, and budget headroom; **lowering it is required** under budget, runner, or disk pressure. A plan declares its chosen N in its `## Parallelization Model` section. The agent MUST NOT silently self-promote beyond the declared N based on its own assessment of available headroom.

@@ -12,14 +12,20 @@ From the repository root, install the workspace dependencies and make sure the .
 available. Docker is needed for the local PostgreSQL and NATS services used below.
 
 ```bash
-npm install
-docker compose -f apps/ose-be/docker-compose.e2e.yml up -d
+./hippo run --class ephemeral --disk-path . -- npm install
+./hippo run --class service --disk-path . -- \
+  docker compose -f apps/ose-be/docker-compose.e2e.yml up
+```
 
+Keep that reservation-owning terminal open while PostgreSQL and NATS run. In another terminal,
+export the backend configuration and start the service:
+
+```bash
 export DATABASE_URL='Host=localhost;Port=5432;Database=ose_app;Username=postgres;Password=postgres'
 export ASPNETCORE_URLS='http://localhost:8302'
 
-npm exec nx -- run ose-be:codegen
-npm exec nx -- run ose-be:dev
+./hippo run --class transactional --disk-path . -- npm exec nx -- run ose-be:codegen
+./hippo run --class service --disk-path . -- npm exec nx -- run ose-be:dev
 ```
 
 The sample connection string is only for the local Docker services defined in this repository. The
@@ -36,10 +42,12 @@ Expected response:
 { "status": "healthy" }
 ```
 
-Stop the local services when finished:
+Stop the backend and dependency terminals with <kbd>Ctrl</kbd>+<kbd>C</kbd> when finished, then
+remove the stopped containers and network transactionally:
 
 ```bash
-docker compose -f apps/ose-be/docker-compose.e2e.yml down
+./hippo run --class transactional --disk-path . -- \
+  docker compose -f apps/ose-be/docker-compose.e2e.yml down
 ```
 
 ## What is available today
@@ -103,17 +111,17 @@ Useful starting points:
 
 Run these from the repository root.
 
-| Command                                      | Use it for                                                                                       |
-| -------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `npm exec nx -- run ose-be:codegen`          | Generate F# contract types from the bundled OpenAPI specification.                               |
-| `npm exec nx -- run ose-be:dev`              | Run the backend with file watching.                                                              |
-| `npm exec nx -- run ose-be:build`            | Produce the release build.                                                                       |
-| `npm exec nx -- run ose-be:typecheck`        | Compile and type-check the F# service.                                                           |
-| `npm exec nx -- run ose-be:lint`             | Run formatting and strict F# analysis.                                                           |
-| `npm exec nx -- run ose-be:test:unit`        | Run the fast F# unit tests.                                                                      |
-| `npm exec nx -- run ose-be:test:integration` | Test owned filesystem/process-environment adapters with isolated local resources and no network. |
-| `npm exec nx -- run ose-be:test:quick`       | Run the backend's focused quality gate, including specs coverage.                                |
-| `npm exec nx -- run ose-be-e2e:test:e2e`     | Run the separate Playwright backend end-to-end suite with local containers.                      |
+| Command                                                                                     | Use it for                                                                                       |
+| ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `./hippo run --class transactional --disk-path . -- npm exec nx -- run ose-be:codegen`      | Generate F# contract types from the bundled OpenAPI specification.                               |
+| `./hippo run --class service --disk-path . -- npm exec nx -- run ose-be:dev`                | Run the backend with file watching.                                                              |
+| `./hippo run --class transactional --disk-path . -- npm exec nx -- run ose-be:build`        | Produce the release build.                                                                       |
+| `./hippo run --class transactional --disk-path . -- npm exec nx -- run ose-be:typecheck`    | Compile and type-check the F# service.                                                           |
+| `./hippo run --class transactional --disk-path . -- npm exec nx -- run ose-be:lint`         | Run formatting and strict F# analysis.                                                           |
+| `./hippo run --class transactional --disk-path . -- npm exec nx -- run ose-be:test:unit`    | Run the fast F# unit tests.                                                                      |
+| `./hippo run --class ephemeral --disk-path . -- npm exec nx -- run ose-be:test:integration` | Test owned filesystem/process-environment adapters with isolated local resources and no network. |
+| `./hippo run --class transactional --disk-path . -- npm exec nx -- run ose-be:test:quick`   | Run the backend's focused quality gate, including specs coverage.                                |
+| `./hippo run --class ephemeral --disk-path . -- npm exec nx -- run ose-be-e2e:test:e2e`     | Run the separate Playwright backend end-to-end suite with local containers.                      |
 
 For the backend's expected behaviour, see the
 [Gherkin scenarios](../../specs/apps/ose/be/behaviours/README.md). For the broader product

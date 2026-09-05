@@ -10,10 +10,12 @@ when_to_use: Use when verifying what protections this composite provides, or nav
   the planning workflow; worktree isolation + freshness sync, Iron Rules, CI verification, and
   immediate precondition-gated worktree cleanup from the execution workflow
 - **Hard phase gate**: no execution on missing, un-gated, undelivered, or worktree-less plans
-- **Sequential by default**: one repo executes at a time; cross-repo blast radius is bounded to
-  the repo currently in flight
-- **Stop-on-failure default**: a failing repo halts the composite unless the invoker explicitly
-  chose continue-on-failure in the pre-execution grill
+- **DAG-concurrent by default**: independent per-repository nodes may overlap only within shared
+  N=3 agent slots and HIPPO admission; public-to-private/Rhino, dependency, writer-reader,
+  shared-output, transactional/destructive, service/port, and proven correctness edges serialize
+- **Stop-on-failure default**: a failing node freezes new admissions; restartable work cancels only
+  at safe boundaries, indivisible mutations settle, and downstream work remains blocked unless the
+  invoker explicitly chose continue-on-failure for proven-independent nodes
 - **No PR-mode execution**: plans awaiting review are never executed by this composite
 - **Hook compliance and secrets rule**: every commit in every repo passes that repo's hooks; the
   [No Secrets in Git convention](../../../conventions/security/no-secrets-in-committed-files.md) applies in full

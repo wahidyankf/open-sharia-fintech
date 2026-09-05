@@ -1,0 +1,72 @@
+name: HIPPO Consumer Smoke
+
+on:
+  schedule:
+    - cron: "0 6,18 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hippo-consumer-smoke-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  consumer:
+    name: Consumer (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-15]
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js without workspace installation
+        uses: ./.github/actions/setup-node
+        with:
+          run-npm-ci: "false"
+
+      - name: Set up .NET for Rhino config validation
+        uses: ./.github/actions/setup-dotnet
+
+      - name: Verify the hermetic consumer contract
+        run: ./.github/scripts/test-hippo-consumer.sh
+
+      - name: Install and identify the pinned release
+        env:
+          HIPPO_INSTALL_CACHE: ${{ runner.temp }}/hippo-cache
+        run: ./hippo version --json
+
+      - name: Verify configured status schema
+        env:
+          HIPPO_CONFIG: ${{ github.workspace }}/hippo.local.json.example
+          HIPPO_INSTALL_CACHE: ${{ runner.temp }}/hippo-cache
+          HIPPO_ROOT: ${{ runner.temp }}/hippo-state
+        run: |
+          ./hippo status --json --disk-path . > "${RUNNER_TEMP}/hippo-status.json"
+          node -e '
+          const value = JSON.parse(require("fs").readFileSync(process.env.RUNNER_TEMP + "/hippo-status.json", "utf8"));
+          if (value.schemaVersion !== 4 || value.profile?.resolvedProfile !== "local-constrained" || !value.configHash) process.exit(1);
+          const coordination = value.coordination;
+          if (coordination?.mode !== "reservation" || coordination.schemaVersion !== 4) process.exit(1);
+          for (const field of ["capacity", "allocated", "waiting"]) {
+            const vector = coordination[field];
+            if (typeof vector?.cpu !== "number" || typeof vector?.memoryBytes !== "number") process.exit(1);
+          }
+          '
+
+      - name: Verify shared root and OSE worker mappings
+        env:
+          HIPPO_CONFIG: ${{ github.workspace }}/hippo.local.json.example
+          HIPPO_INSTALL_CACHE: ${{ runner.temp }}/hippo-cache
+          HIPPO_ROOT: ${{ runner.temp }}/hippo-state
+        run: |
+          assertion="test \"\$NX_PARALLEL\" = \"\$HIPPO_CONCURRENCY\" && test \"\$DOTNET_PROCESSOR_COUNT\" = \"\$HIPPO_CONCURRENCY\" && test \"\$HIPPO_ROOT\" = \"\$EXPECTED_HIPPO_ROOT\""
+          EXPECTED_HIPPO_ROOT="$HIPPO_ROOT" ./hippo run --class ephemeral --disk-path . -- sh -c "$assertion"
+          EXPECTED_HIPPO_ROOT="$HIPPO_ROOT" ./hippo run --class ephemeral --cwd docs --disk-path docs -- sh -c "$assertion"

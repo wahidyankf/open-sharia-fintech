@@ -60,7 +60,7 @@ when_to_use: Use when reviewing your own execution pattern for one of these four
 **Related Principles:**
 
 - [Deliberate Problem-Solving](../../../principles/general/deliberate-problem-solving.md) - Bounded, pre-decided constraints over reactive improvisation
-- [Simplicity Over Complexity](../../../principles/general/simplicity-over-complexity.md) - One fixed cap over adaptive scheduling
+- [Simplicity Over Complexity](../../../principles/general/simplicity-over-complexity.md) - One declared agent cap, with child-resource admission owned by one scheduler
 - [Automation Over Manual](../../../principles/software-engineering/automation-over-manual.md) - Automated parallel execution over manually sequenced round-trips
 - [Explicit Over Implicit](../../../principles/software-engineering/explicit-over-implicit.md) - Documented constants, not inferred limits
 

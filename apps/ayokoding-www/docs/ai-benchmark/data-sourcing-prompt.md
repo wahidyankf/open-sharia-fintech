@@ -179,9 +179,11 @@ retrievable, mark it unavailable rather than guessing.
 2. Update `dataset.snapshotDate` and the header-comment date at the top of `models.ts`.
 3. Re-check every `secondary`-graded figure against a primary source before writing it; if a
    primary cannot be found, leave the grade as `secondary` (or `conflicted` / `unavailable`).
-4. Run the dataset's own guards: `nx run ayokoding-www:test:unit` (the `models.unit.test.ts` file
-   beside the data module enforces the ten invariants), then `nx run ayokoding-www:typecheck` and
-   `nx run ayokoding-www:lint`.
+4. Run the dataset's own guards:
+   `./hippo run --class ephemeral --disk-path . -- npm exec nx -- run ayokoding-www:test:unit` (the
+   `models.unit.test.ts` file beside the data module enforces the ten invariants), then
+   `./hippo run --class ephemeral --disk-path . -- npm exec nx -- run ayokoding-www:typecheck` and
+   `./hippo run --class ephemeral --disk-path . -- npm exec nx -- run ayokoding-www:lint`.
 5. Record any unresolved gap in
    [`plans/done/2026-07-30__ayokoding-www-tools-ai-benchmark/evidence/`](../../../../plans/done/2026-07-30__ayokoding-www-tools-ai-benchmark/evidence/)
    with the same `K-N` style the research snapshot uses.

@@ -14,6 +14,8 @@ when_to_use: Use when determining the composite's final status, or confirming wh
   `partial`/`fail`, or a delivery target was not reached; completed repos remain archived,
   failing repos retain their current plan/worktree state with evidence and escalation. A terminal
   audit or cleanup-precondition failure is never a user-choice `pass` path and reopens execution.
+  Under stop-on-failure, no new node is admitted after the failure; restartable in-flight work is
+  cancelled only at a safe boundary, and indivisible work settles before this status is assigned.
 - **Failure** (`fail`): the planning phase failed, the phase gate found a repo not
   execution-ready, or the invoker abandoned any of the three grills
 
@@ -33,8 +35,8 @@ This composite is intentionally exhaustive: **three grill sessions, all hard gat
    authoring with undecided cells.
 2. **Post-research grill** (planning Step 5): research findings validated against the decisions —
    no authoring on stale assumptions.
-3. **Pre-execution grill** (composite Step 3): execution order, failure policy, open design
-   decisions, and `[HUMAN]` availability — no execution on unconfirmed operational decisions.
+3. **Pre-execution grill** (composite Step 3): execution DAG, cross-repository edges, failure policy,
+   open design decisions, and `[HUMAN]` availability — no execution on unconfirmed operational decisions.
    Cleanup is not grilled: after delivered-head terminal audit and `pass`, eligible exact
    identity-recorded worktrees are removed immediately; failed preconditions retain evidence,
    reopen execution, and escalate.
