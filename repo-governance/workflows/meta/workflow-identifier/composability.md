@@ -32,7 +32,8 @@ Mixed composition example — agents, procedures, and nested workflows in one wo
 ```markdown
 ### 1. Prepare Environment (Procedure)
 
-Run `npm install && npm run doctor`.
+Run `rtk ./hippo run --class ephemeral --disk-path . -- npm install`, then
+`rtk npm run doctor -- --fix`.
 
 ### 2. Validate Docs (Nested Workflow)
 

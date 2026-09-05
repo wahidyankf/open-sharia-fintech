@@ -17,6 +17,9 @@ storybook-static/
 # Nx cache
 .nx/
 
+# HIPPO machine policy
+/hippo.local.json
+
 # Homebrew
 Brewfile.lock.json
 

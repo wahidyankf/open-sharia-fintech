@@ -69,7 +69,8 @@ human readability without adding maintenance burden.
 ```markdown
 - [ ] Edit `apps/ose-www/src/server/trpc.ts`: wrap the public router with
       `unstable_cache(..., { revalidate: 300 })`. Verify by running
-      `npx nx run ose-www:test:quick` — all tests pass.
+      `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- run ose-www:test:quick`
+      — all tests pass.
 ```
 
 **Acceptance Criteria**: All user stories in `prd.md` must include testable acceptance criteria using

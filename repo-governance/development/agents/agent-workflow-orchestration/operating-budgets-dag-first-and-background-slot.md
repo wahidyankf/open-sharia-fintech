@@ -24,10 +24,11 @@ Every non-trivial task list **and** plan delivery checklist declares an explicit
 
 Determine independence before fanning out, not after. Two nodes are independent only when neither reads what the other writes; a shared output file, a shared branch, or an ordering constraint makes them dependent regardless of how separable they look. The delivery-checklist expression of this rule is documented in the [Plans Organization Convention](../../../conventions/structure/plans.md).
 
-For multi-repository plans, the DAG also carries a resource-scheduling edge across each repository's
-worktree provisioning, toolchain setup, build, and validation phases. Run those heavy phases one
-repository at a time by default even when their content nodes are logically independent. Remove the
-edge only when the plan records a concrete operational need and confirms capacity and risk controls.
+For multi-repository plans, classify each compute-bearing node under
+[Resource-Aware Development](../../practice/resource-aware-development.md). Compute cost alone does
+not add a DAG edge: logically independent nodes enter HIPPO concurrently and run only when their
+fixed CPU/memory reservations fit. Add serial edges only for dependency, shared-output,
+byte-identity, transactional, or documented correctness constraints.
 
 ## Background-Slot Preference
 

@@ -322,8 +322,8 @@ Then("the user is redirected to the dashboard", async ({ page }) => {
 ### Nx targets for E2E
 
 ```bash
-nx run organiclever-app-web-e2e:test:e2e        # Headless — real system, no mocking
-nx run organiclever-app-web-e2e:test:e2e:ui     # Playwright UI mode
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- run organiclever-app-web-e2e:test:e2e
+./hippo run --class service --disk-path . -- npm exec nx -- run organiclever-app-web-e2e:test:e2e:ui
 ```
 
 ---

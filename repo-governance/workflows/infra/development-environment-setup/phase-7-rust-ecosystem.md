@@ -1,14 +1,18 @@
 ---
 title: "Phase 7: Rust Ecosystem (Sequential)"
-description: "Phase 7 (full scope only): install Rust via rustup and cargo-llvm-cov, required for rhino-cli."
-when_to_use: "Use when setting up the Rust toolchain for rhino-cli."
+description: "Phase 7 (full scope only): install Rust and cargo-llvm-cov for full Doctor and Rust-content gates."
+when_to_use: "Use when satisfying the full Doctor inventory or formatting Rust course content."
 ---
 
 # Phase 7: Rust Ecosystem (Sequential)
 
 **Condition**: `{input.scope} == full`
 
-Required for: `rhino-cli`
+Required for: full-scope Doctor verification and Rust course-content formatting gates
+
+This phase runs before the repository bootstrap makes the pinned `./hippo` consumer available. Its
+system-level installers therefore remain native and sequential; subsequent repository-local work
+uses HIPPO admission.
 
 ## 7.1 Install Rust via rustup
 

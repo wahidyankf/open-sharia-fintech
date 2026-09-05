@@ -22,13 +22,14 @@ After completing all items in a delivery phase, verify the phase's authored gate
 2. If the plan involves integration or e2e tests, also run:
 
    ```bash
-   npx nx affected -t test:integration
-   npx nx affected -t test:e2e
+   ./hippo run --class ephemeral --disk-path . -- npm exec nx -- affected -t test:integration
+   ./hippo run --class ephemeral --disk-path . -- npm exec nx -- affected -t test:e2e
    ```
 
    **Transient contention flakes on a many-project affected run**: when `test:e2e` (or `build`) runs
    across a large affected set on one shared local machine, expect occasional non-deterministic
-   failures unrelated to the plan's own diff — an evicted/stale build artifact under concurrent
-   `--parallel` builds, or a request timing out in a test that fires many concurrent HTTP calls. Before
+   failures unrelated to the plan's own diff — an evicted/stale build artifact under
+   allocation-driven concurrent builds, or a request timing out in a test that fires many concurrent
+   HTTP calls. Before
    treating any such failure as a regression, rebuild the affected project fresh and re-run just that
    failing target in isolation; a clean pass there confirms contention, not a real defect.

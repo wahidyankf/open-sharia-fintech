@@ -35,7 +35,7 @@ workflow starts, provision one for each target repo:
 # Per repo: from repo root
 git worktree add worktrees/<objective-slug> main
 cd worktrees/<objective-slug>
-npm install
+./hippo run --class ephemeral --disk-path . -- npm install
 npm run doctor -- --fix
 ```
 
@@ -46,7 +46,8 @@ is unavailable. Follow
 
 Worktrees land at `worktrees/<objective-slug>/` per the
 [Worktree Path Convention](../../../conventions/structure/worktree-path.md). The two-step toolchain
-initialization (`npm install` then `npm run doctor -- --fix`) is required per the
+initialization (guarded `npm install`, then transactional `npm run doctor -- --fix`) is required per
+the
 [Worktree Toolchain Initialization](../../../development/workflow/worktree-setup.md)
 practice. Commit in the worktree branch, push to `origin main` of each repo, then remove the
 worktree after delivery.

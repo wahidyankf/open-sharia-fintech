@@ -37,7 +37,7 @@ Re-run the quality gates to confirm the fix resolves the failure — either the 
 target directly, or the full local pre-push gate set via the same shim `.husky/pre-push` invokes:
 
 ```bash
-npx nx affected -t test:quick
+./hippo run --class transactional --disk-path . -- npm exec nx -- affected -t test:quick
 # or, to run every registry-declared pre-push gate exactly as the hook does:
 apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push
 ```

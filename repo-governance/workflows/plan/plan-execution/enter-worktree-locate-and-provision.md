@@ -40,8 +40,9 @@ pending`, treat provisioning and identity initialization below as a blocking gat
 
      3. If `rtk git worktree add` fails (e.g., path already exists as a stale entry), run `rtk git worktree prune` and retry once; if it still fails, terminate with status `fail` and emit the error output verbatim.
      4. From the new worktree root, immediately run
-        `rtk npm install && rtk npm run doctor -- --fix` to install its
-        dependencies, activate Husky hooks, and converge tooling, per
+        `rtk ./hippo run --class ephemeral --disk-path . -- npm install`, then
+        `rtk npm run doctor -- --fix`, to install its dependencies, activate Husky hooks, and
+        converge tooling, per
         [Worktree Toolchain Initialization](../../../development/workflow/worktree-setup.md).
      5. Add the immutable [Provisioned Worktree Identity](../../../conventions/structure/plans/worktree-specification.md#worktree-identity-record) and initial [Delivery Branch Inventory](../../../conventions/structure/plans/worktree-specification.md#delivery-branch-inventory) entry to the plan using its declared repository-relative route, the branch returned by `rtk git worktree add`, the executor identity, and current UTC time. Reconcile the resolved runtime path with `rtk git worktree list --porcelain`, but keep that host-specific path in ignored runtime evidence rather than the plan. The entry is `provisioned`/`active`; its proof is that exact creation command and timestamp. A missing, conflicting, or uninitialized record blocks later cleanup.
         Replace `Provisioning status: pending` with `Provisioning status: provisioned` in the same

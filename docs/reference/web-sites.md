@@ -38,9 +38,9 @@ than falling back silently.
 | ose-be               | `OSE_BE_PORT`               |
 
 ```bash
-nx dev ose-www --port=4000          # flag
-OSE_WWW_PORT=4000 nx dev ose-www    # variable
-docker run -e OSE_WWW_PORT=4000 …   # same variable inside a container
+./hippo run --class service --disk-path . -- npm exec nx -- dev ose-www --port=4000       # flag
+OSE_WWW_PORT=4000 ./hippo run --class service --disk-path . -- npm exec nx -- dev ose-www # variable
+./hippo run --class service --disk-path . -- docker run -e OSE_WWW_PORT=4000 …            # container
 ```
 
 A bare `PORT` is deliberately not honoured — one exported `PORT` would otherwise retarget every app

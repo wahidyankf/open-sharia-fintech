@@ -4,10 +4,12 @@ description: Runs plan-execution in full for each repo's gated plan, inheriting 
 when_to_use: Use when executing the composite's per-repo execution step and needing the exact plan-execution rules that apply.
 ---
 
-# Step 4 — Execution Phase (Per Repo, Sequential, Nested Workflow)
+# Step 4 — Execution Phase (Concurrent DAG, Nested Per-Repo Workflow)
 
-For each repo in the confirmed order, run [plan-execution](../plan-execution.md) in FULL for
-`plans/in-progress/<objective-slug>/` in that repo:
+For every ready repository node in the confirmed DAG, run
+[plan-execution](../plan-execution.md) in FULL for `plans/in-progress/<objective-slug>/` in that
+repo. Independent nodes may overlap within the shared N=3 agent-slot budget, and every
+compute-bearing child enters the shared HIPPO admission domain under its declared workload class:
 
 - **Args**: `plan-path: plans/in-progress/<objective-slug>/, max-iterations:
 {input.max-iterations}, max-concurrency: {input.max-concurrency}`
@@ -51,8 +53,17 @@ Every plan-execution rule applies unchanged, including:
   extra prompt. Never use ancestry as a squash-merge proxy; retain, evidence, and escalate if any
   precondition fails.
 
-**Sequencing rule**: one repo at a time. Repo N+1's execution does not start until repo N reaches
-`pass` (archival delivered, replacement proof green, terminal audit passed) — or, under a continue-on-failure policy from Step 3, until
-repo N is explicitly recorded as `partial`/`fail` and the invoker's policy says continue.
+**Scheduling rule**: admit a node only when all of its declared predecessors have reached their
+required terminal state and both an N=3 agent slot and HIPPO capacity are available. Preserve
+public-to-private/Rhino propagation, dependency, writer-reader/shared-output,
+transactional/destructive, service/port, and documented correctness edges. A preferred sequence or
+temporary capacity shortage is not an edge; independent ready nodes remain eligible to overlap.
+
+Under the default stop-on-failure policy, freeze new admissions as soon as any node becomes
+`partial`/`fail`. Request cooperative cancellation of restartable ephemeral or service work only at
+a safe boundary; never interrupt a transactional/destructive mutation, delivery critical section,
+or cleanup that must complete to leave durable state valid. Let such in-flight work settle, retain
+its evidence, and keep downstream nodes blocked. Continue-on-failure may resume scheduling only for
+nodes proven independent of the failed node and its outputs.
 
 **Continues in** [Step 4 — Execution Phase (Continued)](./step-4-execution-phase-continued.md).

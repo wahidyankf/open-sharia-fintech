@@ -36,12 +36,13 @@
 - **Input:** AC-EMAIL-02 and the existing validation API.
 - **Outcome:** the validator accepts and rejects the canonical cases.
 - [ ] [AI] **RED:** add the exact failing cases in `[test path]`; run
-      `rtk nx run ts-utils:test:unit`; acceptance: they fail for the missing rule.
+      `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- run ts-utils:test:unit`;
+      acceptance: they fail for the missing rule.
 - [ ] [AI] **GREEN:** implement the validator in `[source path/symbol]`; rerun the focused command;
       acceptance: all cases pass.
 - [ ] [AI] **REFACTOR:** extract the named pattern constant; rerun focused and quick tests;
       acceptance: behaviour is unchanged.
-- **Proof:** RED failure recorded; `rtk nx run ts-utils:test:unit` passes.
+- **Proof:** RED failure recorded; the focused command above passes.
 ```
 
 `plan-checker` flags missing TDD detail or outcome fields as HIGH severity findings.

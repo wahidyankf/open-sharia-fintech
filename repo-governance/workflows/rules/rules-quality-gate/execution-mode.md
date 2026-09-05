@@ -24,8 +24,9 @@ User: "Run repository rules quality gate workflow in normal mode"
 
 The AI will:
 
-0. Resolve lifecycle ownership/evidence, then build rhino-cli if missing (`rtk nx build
-rhino-cli`) and run the filtered domain preflight (Step 0.5).
+0. Resolve lifecycle ownership/evidence, then build rhino-cli if missing
+   (`rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- build rhino-cli`) and run
+   the filtered domain preflight (Step 0.5).
 1. Invoke `repo-rules-checker` via the Agent tool (reads governance files, writes audit)
 2. Invoke `repo-rules-fixer` via the Agent tool (reads audit, applies fixes, writes fix report)
 3. Iterate until zero threshold-level domain findings are achieved; report lifecycle status separately

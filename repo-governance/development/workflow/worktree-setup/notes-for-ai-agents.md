@@ -19,9 +19,11 @@ when_to_use: Use when an agent creates a worktree or discovers missing dependenc
 # Notes for AI Agents
 
 Agents that create worktrees via `rtk git worktree add`, the `EnterWorktree` tool, or an
-`isolation: "worktree"` configuration MUST immediately run BOTH `rtk npm install` AND
-`rtk npm run doctor -- --fix` from that worktree's root, in order. The install activates Husky hooks as
-well as dependencies. Doing only one step is a rule violation.
+`isolation: "worktree"` configuration MUST immediately run BOTH
+`rtk ./hippo run --class ephemeral --disk-path . -- npm install` AND
+`rtk npm run doctor -- --fix` from that worktree's root, in order. The install activates Husky hooks
+as well as dependencies; Doctor fix selects transactional admission. Doing only one step is a rule
+violation.
 
 Merely entering an existing worktree does not trigger the sequence again.
 

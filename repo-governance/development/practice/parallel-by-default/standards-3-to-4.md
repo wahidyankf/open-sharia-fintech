@@ -29,8 +29,8 @@ The DAG's **independent-node width** is what the orchestrator fans out to — N 
 
 Task lists express this via `blocks` / `blockedBy`; `delivery.md` expresses it as phases/steps plus a `## Parallelization Model` section — see the [Plans Organization Convention](../../../conventions/structure/plans.md) and the [Agent Workflow Orchestration Convention](../../agents/agent-workflow-orchestration.md).
 
-For a plan spanning repositories, the `## Parallelization Model` also records its resource schedule.
-Logical independence does not by itself authorize overlapping the plan's resource-heavy worktree
-provisioning, toolchain setup, builds, or validation: those run one repository at a time by default.
-An exception records the concrete operational need and evidence that machine, disk, runner, and risk
-controls can absorb the overlap.
+For a plan spanning repositories, the `## Parallelization Model` also classifies each compute node
+under [Resource-Aware Development](../resource-aware-development.md) and records any dependency,
+shared-output, byte-identity, transactional, or correctness edge that forces serialization.
+Logically independent compute nodes may overlap only when HIPPO admits their complete reservations;
+the plan never invents its own live-capacity exception.

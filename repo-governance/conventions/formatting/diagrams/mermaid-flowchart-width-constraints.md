@@ -29,7 +29,8 @@ The `rhino-cli md mermaid validate` command enforces a maximum horizontal width 
 **Automated enforcement**:
 
 ```bash
-apps/rhino-cli/scripts/rhino-bin.sh md mermaid validate
+./hippo run --class ephemeral --disk-path . -- \
+  apps/rhino-cli/scripts/rhino-bin.sh md mermaid validate
 ```
 
 Run without flags to perform a repo-wide scan (the Nx target runs with `--exclude apps/rhino-cli/tests/fixtures --exclude plans/done --exclude apps/ayokoding-www/content` plus the standardized noise-skip set) using defaults (MaxWidth=4, unlimited depth). Pass additional `--exclude <prefix>` flags to suppress noise in project-specific runs.

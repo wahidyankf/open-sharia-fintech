@@ -17,8 +17,9 @@ rtk bash -lc './apps/rhino-cli/src/dist/rhino-cli-fsharp repo-governance audit -
   > local-tmp/repo-governance-audit/repo-governance-audit__{uuid}__{timestamp}.json'
 ```
 
-The binary must be built first via `rtk nx build rhino-cli`; the prebuilt path is
-`apps/rhino-cli/src/dist/rhino-cli-fsharp`.
+The binary must be built first via
+`rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- build rhino-cli`; the prebuilt
+path is `apps/rhino-cli/src/dist/rhino-cli-fsharp`.
 
 > **Recommendation**: Pin `RHINO_AUDIT_NOW=<RFC3339>` per workflow run to enable the SHA-256 hash-reuse optimization (the `ran_at` field is derived from this env var; without it the timestamp defaults to `time.Now()` and the hash always changes). See [`apps/rhino-cli/README.md`](../../../../apps/rhino-cli/README.md#global-flags) for details.
 
@@ -29,7 +30,8 @@ The binary must be built first via `rtk nx build rhino-cli`; the prebuilt path i
     count them in the domain result.
   - Exit 2 (invocation error): Terminate with `fail`. Re-run
     `rtk bash -lc './apps/rhino-cli/src/dist/rhino-cli-fsharp repo-governance audit -o text --skip vendor-audit --skip governance-word-budget'`;
-    rebuild with `rtk nx build rhino-cli` when needed.
+    rebuild with
+    `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- build rhino-cli` when needed.
 
 The two lifecycle-owned skips are mandatory in this workflow, not an operator hatch. `--exclude`
 may still narrow retained legacy paths when explicitly justified; never skip layer coherence or

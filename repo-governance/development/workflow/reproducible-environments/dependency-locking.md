@@ -1,6 +1,6 @@
 ---
 title: "Dependency Locking"
-description: Lockfile discipline — npm ci over npm install, CI lockfile-freshness checks, and lockfile PR review practices.
+description: Lockfile discipline — guarded npm ci, hosted-CI freshness checks, and lockfile PR review practices.
 category: explanation
 subcategory: development
 tags:
@@ -31,10 +31,9 @@ when_to_use: Use when installing dependencies, wiring CI lockfile checks, or rev
 
 ```bash
 # PASS: Development: Install from lockfile
-npm ci
+./hippo run --class ephemeral --disk-path . -- npm ci
 
-# FAIL: Avoid in automated environments
-npm install  # May update lockfile
+# FAIL: Do not substitute npm install; it may update the lockfile.
 ```
 
 **Why npm ci**:
@@ -48,6 +47,8 @@ npm install  # May update lockfile
 ## CI/CD Configuration
 
 **Enforce lockfile freshness**:
+
+These commands run natively inside the hosted workflow because the CI runner owns its capacity.
 
 ```yaml
 # .github/workflows/ci.yml

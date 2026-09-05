@@ -11,9 +11,9 @@ change as product, research, assurance, and platform work develops.
 This is the active OSE product monorepo, not a generic project starter. It holds OSE product work,
 its supporting research, and the governance and automation that carry them.
 
-One sibling repository sits nearby, and it is not a copy of this one.
-
-`ose-private` holds authorized product operations and is closed to the public.
+Adjacent repositories have distinct roles: `ose-private` holds authorized operations,
+[HIPPO](https://github.com/wahidyankf/hippo) supplies resource coordination, and
+[BeaverNest](https://github.com/wahidyankf/beaver-nest) is an independent family product.
 
 The [repository comparison](./docs/reference/related-repositories.md) says which repository answers
 which question.
@@ -78,8 +78,8 @@ Before installing dependencies, have these tools available:
 - Git to clone the repository.
 - [Volta](https://volta.sh/) to install the Node.js and npm versions pinned in
   [`package.json`](./package.json).
-- Rust and Cargo. The repository’s tool checker is a Rust command-line application. Without Cargo
-  the check fails, but the install still reports success.
+- The .NET SDK used by the repository's F# command-line tools.
+- Rust and Cargo for the workspace projects and checks that use them.
 - Docker and `jq` only for container-based or broader local-tooling work. Neither is needed for the
   first `ose-www` website run.
 
@@ -91,13 +91,14 @@ macOS or Ubuntu installation commands and recovery steps for a missing tool.
 ```bash
 git clone https://github.com/wahidyankf/ose-public.git
 cd ose-public
-npm install
+./hippo run --class ephemeral --disk-path . -- npm install
 ```
 
-`npm install` installs the workspace dependencies, sets up Git hooks, and runs a broad repository
-tool check. Follow the onboarding tutorial's focused check for the website path; install Docker and
-other optional tools only when your chosen work needs them. To repair a required tool after
-installing it, run:
+`./hippo` verifies the pinned upstream release before `npm install` installs dependencies, Git
+hooks, and repository tooling. Follow the onboarding tutorial's focused check; install optional
+tools only when your chosen work needs them. The normal Doctor check is ephemeral; `--fix` is
+detected by its wrapper and uses a transactional reservation because it can install tools or
+replace managed directories. To repair a required tool, run:
 
 ```bash
 npm run doctor -- --fix
@@ -112,13 +113,13 @@ is still missing, return to the
 List the projects that Nx can run:
 
 ```bash
-npm exec nx -- show projects
+npm run nx:show -- projects
 ```
 
 The list it prints includes `ose-www`, the public website. Start that one:
 
 ```bash
-npm exec nx -- dev ose-www
+./hippo run --class service --disk-path . -- npm exec nx -- dev ose-www
 ```
 
 Open <http://localhost:3100> when the development server reports that it is ready.
@@ -126,7 +127,7 @@ Open <http://localhost:3100> when the development server reports that it is read
 Already using port 3100? Point the site somewhere else instead of guessing which process to stop:
 
 ```bash
-OSE_WWW_PORT=4000 npm exec nx -- dev ose-www
+OSE_WWW_PORT=4000 ./hippo run --class service --disk-path . -- npm exec nx -- dev ose-www
 ```
 
 Then open <http://localhost:4000> instead.
@@ -140,8 +141,8 @@ or explore the [OSE Platform app](./apps/ose-www/) itself.
 ## Project status
 
 OSE is pre-alpha. Expect breaking changes, evolving architecture, and experimental implementations.
-The project uses TypeScript and Next.js for web applications, Rust for repository and link-checking
-tools, and F# for backend and document-processing work. See the
+The project uses TypeScript and Next.js for web applications, Rust for selected workspace tools,
+and F# for repository tooling, backend, and document-processing work. See the
 [technology-stack reference](./docs/reference/system-architecture/technology-stack.md) for the
 current technical picture.
 

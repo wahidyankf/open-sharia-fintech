@@ -84,6 +84,7 @@ deliberately when you want output preserved, and it will fail predicate 1 on nam
 substance.
 
 Reclaim by **moving** to a dated quarantine (`local-tmp/.reclaim-quarantine-YYYY-MM-DD/`) first,
-then proving nothing load-bearing moved (`npm run doctor -- --fix`, `nx run rhino-cli:test:quick`,
-`nx affected -t build` all exit 0), and only then deleting. Until that proof passes, the whole
-operation is one `mv` from undone.
+then proving nothing load-bearing moved (`npm run doctor -- --fix`,
+`./hippo run --class ephemeral --disk-path . -- npm exec nx -- run rhino-cli:test:quick`, and
+`./hippo run --class transactional --disk-path . -- npm exec nx -- affected -t build` all exit 0), and
+only then deleting. Until that proof passes, the whole operation is one `mv` from undone.

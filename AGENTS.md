@@ -32,12 +32,19 @@ Filenames: lowercase kebab-case.
 ## Build, Test, Lint
 
 ```bash
-rtk npm install                     # deps + doctor
-rtk nx run [project]:test:quick     # pre-push gate
-rtk nx affected -t build,test:quick,lint
+rtk ./hippo run --class ephemeral --disk-path . -- npm install
+rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- run [project]:test:quick
+rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- affected -t build,test:quick,lint
 ```
 
 **See**: [nx-targets.md](./repo-governance/development/infra/nx-targets.md)
+
+Local compute uses the checksum-pinned root `./hippo` consumer. HIPPO source, specifications, and
+releases stay in the independent [upstream repository](https://github.com/wahidyankf/hippo); never
+copy them here. Independent compute may overlap only through HIPPO admission; dependency,
+shared-output, Rhino byte-identity, transactional, and correctness edges still serialize.
+
+**See**: [resource-aware-development.md](./repo-governance/development/practice/resource-aware-development.md)
 
 ## Quality Gates
 
@@ -91,7 +98,8 @@ repository plan. Exhaust instructions, repository evidence, history, safe diagno
 reversible assumptions before asking the user; never assume material authority or preference. Preserve
 user-set rules across compaction/handoff; reconcile before resuming. N+1 agents (N=3). Reconcile the
 file ledger with `git status`. Hand-author `.claude/`; generate mirrors together. New worktree: run
-`rtk npm install` at its root. Poll CI every 2
+`rtk ./hippo run --class ephemeral --disk-path . -- npm install` at its root, then run
+`rtk npm run doctor -- --fix`. Poll CI every 2
 minutes; never `gh run watch`. If main only polls non-CI background work, update user every 5 minutes.
 
 **See**: [agent-workflow-orchestration.md](./repo-governance/development/agents/agent-workflow-orchestration.md)
@@ -124,7 +132,8 @@ Stage/commit only when explicitly instructed. License MIT — see
 ## Related Repositories
 
 Parity sibling: [ose-private](https://github.com/wahidyankf/ose-private); `apps/rhino-cli` byte-identical.
-Independent: [BeaverNest](https://github.com/wahidyankf/beaver-nest); work stays there; learnings inform OSE.
+Independent: [HIPPO](https://github.com/wahidyankf/hippo) supplies resource coordination;
+[BeaverNest](https://github.com/wahidyankf/beaver-nest) remains its own product.
 
 [Details](./docs/reference/related-repositories.md)
 

@@ -16,7 +16,10 @@ Git hooks, GitHub Actions workflows, Nx build system, and development workflow f
 
 ## CI/CD Pipeline Overview
 
-The platform uses a multi-layered quality assurance strategy combining local git hooks, GitHub Actions workflows (CI), and Nx caching. All continuous integration is handled through GitHub Actions.
+The platform uses a multi-layered quality assurance strategy combining local git hooks, GitHub
+Actions workflows (CI), and Nx caching. All continuous integration is handled through GitHub
+Actions. Commands described inside the hosted workflow sections are runner-owned and remain native;
+local development commands use the root HIPPO consumer.
 
 **Local development hooks:**
 
@@ -288,7 +291,7 @@ runs are no-ops, avoiding both the Storybook build and the Vercel deployment.
 1. **Start Development**:
 
    ```bash
-   nx dev [project-name]
+   ./hippo run --class service --disk-path . -- npm exec nx -- dev [project-name]
    ```
 
 2. **Make Changes**:

@@ -12,123 +12,142 @@ created: 2025-11-29
 
 # How to Run Nx Commands
 
-This guide covers common Nx workflows and commands for working with the monorepo.
+This guide covers common Nx workflows and commands for working with the monorepo. Run local
+compute from the repository root through the checksum-pinned `./hippo` consumer. Each independent
+command gets one outer HIPPO boundary; do not wrap a root npm script that already provides one.
+
+Use `ephemeral` for restartable builds, tests, checks, and read-only reports whose complete target
+DAG writes only ignored/cache output; `service` for long-running or interactive processes; and
+`transactional` for resets, generators, and any command whose dependency closure writes tracked or
+explicitly requested report output. See
+[Resource-Aware Development](../../repo-governance/development/practice/resource-aware-development.md)
+for the governing class, retry, and serialization rules.
 
 ## Basic Project Commands
 
-> **Standard target names**: All target names follow [Nx Target Standards](../../repo-governance/development/infra/nx-targets.md). Use `test:quick` for the pre-push gate, `test:unit` for isolated unit tests, `dev` for development servers, `start` for production server mode. Avoid `nx test`, `nx serve`, and other non-standard names.
+> **Standard target names**: All target names follow
+> [Nx Target Standards](../../repo-governance/development/infra/nx-targets.md). Use `test:quick` for
+> the pre-push gate, `test:unit` for isolated unit tests, `dev` for development servers, and `start`
+> for production server mode. Avoid `nx test`, `nx serve`, and other non-standard names.
 
 ### Run a Single Project
 
 ```bash
 # Build a specific project
-nx build [project-name]
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- build [project-name]
 
 # Run the fast pre-push quality gate
-nx run [project-name]:test:quick
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- run [project-name]:test:quick
 
 # Run isolated unit tests
-nx run [project-name]:test:unit
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- run [project-name]:test:unit
 
 # Lint a specific project
-nx lint [project-name]
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- lint [project-name]
 
-# Start development server for an app
-nx dev [app-name]
+# Start a development server for an app
+./hippo run --class service --disk-path . -- npm exec nx -- dev [app-name]
 
-# Start production server for an app
-nx start [app-name]
+# Start production server mode for an app
+./hippo run --class service --disk-path . -- npm exec nx -- start [app-name]
 ```
 
 **Examples**:
 
 ```bash
-nx build fsharp-env-loader          # Build library
-nx run fsharp-env-loader:test:quick # Fast quality gate (pre-push)
-nx run fsharp-env-loader:test:unit  # Isolated unit tests
-nx dev ose-app-web                  # Start the app dev server
-nx build ose-app-web                # Build the app
+# Build the library
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- build fsharp-env-loader
+
+# Run its fast quality gate
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- run fsharp-env-loader:test:quick
+
+# Run its isolated unit tests
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- run fsharp-env-loader:test:unit
+
+# Start the application development server
+./hippo run --class service --disk-path . -- npm exec nx -- dev ose-app-web
+
+# Build the application
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- build ose-app-web
 ```
 
 ### Run Multiple Projects
 
+Use the guarded root scripts when they exactly match the requested all-project operation:
+
 ```bash
 # Build all projects
-nx run-many -t build
+npm run build
 
-# Run fast quality gate across all projects
-nx run-many -t test:quick
+# Run the fast quality gate across all projects
+npm test
 
 # Lint all projects
-nx run-many -t lint
+npm run lint
 
-# Run multiple targets
-nx run-many -t build lint
+# Run every build and lint target through one transactional boundary
+./hippo run --class transactional --disk-path . -- npm exec nx -- run-many -t build lint
 ```
 
-**Using npm scripts**:
-
-```bash
-npm run build    # Same as: nx run-many -t build
-npm run lint     # Same as: nx run-many -t lint
-```
+The three transactional root scripts above already invoke `./hippo` because their complete project
+DAG may reach tracked-output generators. HIPPO safely reuses an inherited fixed allocation, but
+adding another wrapper is redundant and nonconforming with OSE's one-outer-boundary policy.
 
 ### Run Specific Projects
 
 ```bash
 # Build specific projects
-nx run-many -t build -p fsharp-env-loader ose-www
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- run-many -t build -p fsharp-env-loader ose-www
 
 # Run test:quick for specific projects
-nx run-many -t test:quick -p fsharp-env-loader ose-app-web
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- run-many -t test:quick -p fsharp-env-loader ose-app-web
 ```
 
 ## Affected Commands
 
-Affected commands only run tasks for projects that changed since the last commit (or specified base).
+Affected commands only run tasks for projects that changed since the last commit or the specified
+base. The transactional root aliases already provide the outer HIPPO boundary because the selected
+set may include a tracked-output generator.
 
 ### Build Only What Changed
 
 ```bash
-# Build affected projects (since main branch)
-nx affected -t build
+# Build affected projects using the configured default base
+npm run affected:build
 
-# Run fast quality gate for affected projects (pre-push standard)
-nx affected -t test:quick
+# Run the fast quality gate for affected projects
+npm run affected:test
 
 # Lint affected projects
-nx affected -t lint
+npm run affected:lint
 
-# Specify a different base
-nx affected -t build --base=abc123
-nx affected -t test:quick --base=origin/main
-```
-
-**Using npm scripts**:
-
-```bash
-npm run affected:build # Same as: nx affected -t build
-npm run affected:test  # Same as: nx affected -t test:quick
-npm run affected:lint  # Same as: nx affected -t lint
+# Specify a different base when the root alias does not express it
+./hippo run --class transactional --disk-path . -- npm exec nx -- affected -t build --base=abc123
+./hippo run --class transactional --disk-path . -- npm exec nx -- affected -t test:quick --base=origin/main
 ```
 
 ### Affected Graph
 
-```bash
-# View affected projects graph
-nx affected:graph
+Graph commands are interactive services unless they write a file:
 
-# View affected projects graph (custom base)
-nx affected:graph --base=origin/main
+```bash
+# View the affected-project graph
+npm run graph -- --affected
+
+# View the affected-project graph using a custom base
+npm run graph -- --affected --base=origin/main
 ```
 
-### Affected Detection in CI/CD
+### Affected Detection in Hosted CI
+
+Hosted CI runners own their resource controls, so their commands remain native and are not wrapped
+with the repository's local HIPPO consumer:
 
 ```bash
-# In CI pipeline (GitHub Actions example)
-nx affected -t build --base=origin/main --head=HEAD
-nx affected -t test:quick --base=origin/main --head=HEAD
-nx affected -t lint --base=origin/main --head=HEAD
+# Hosted CI runner-owned execution
+npm exec nx -- affected -t build --base=origin/main --head=HEAD
+npm exec nx -- affected -t test:quick --base=origin/main --head=HEAD
+npm exec nx -- affected -t lint --base=origin/main --head=HEAD
 ```
 
 ## Dependency Graph
@@ -136,37 +155,36 @@ nx affected -t lint --base=origin/main --head=HEAD
 ### View Full Dependency Graph
 
 ```bash
-# Open dependency graph in browser
-nx graph
-
-# Using npm script
+# Open the dependency graph in a browser through the guarded service script
 npm run graph
 ```
 
 This opens an interactive visualization showing:
 
-- All projects (apps and libs)
+- All projects (apps and libraries)
 - Dependencies between projects
-- Direction of dependencies
+- Dependency direction
 
 ### View Specific Project Dependencies
 
 ```bash
 # Show dependencies of a specific project
-nx graph --focus=fsharp-env-loader
+npm run graph -- --focus=fsharp-env-loader
 
 # Show what depends on a project
-nx graph --focus=fsharp-env-loader --groupByFolder
+npm run graph -- --focus=fsharp-env-loader --groupByFolder
 ```
 
 ### Export Graph
 
-```bash
-# Export graph as HTML
-nx graph --file=dependency-graph.html
+Writing an exported graph is transactional even though inspecting the graph is read-only:
 
-# Export graph as JSON
-nx graph --file=dependency-graph.json
+```bash
+# Export the graph as HTML
+./hippo run --class transactional --disk-path . -- npm exec nx -- graph --file=dependency-graph.html
+
+# Export the graph as JSON
+./hippo run --class transactional --disk-path . -- npm exec nx -- graph --file=dependency-graph.json
 ```
 
 ## Caching
@@ -176,68 +194,68 @@ Nx caches task outputs to speed up subsequent runs.
 ### Cache Behaviour
 
 ```bash
-# First build (executes task)
-nx build fsharp-env-loader
+# First build executes the task
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- build fsharp-env-loader
 # Output: Compiled successfully
 
-# Second build (uses cache)
-nx build fsharp-env-loader
+# Second build may use the cache
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- build fsharp-env-loader
 # Output: [existing outputs match the cache, left as is]
 ```
 
-### Clear Cache
+### Clear the Cache
+
+Resetting Nx mutates workspace cache and daemon state, so use the guarded transactional Nx script:
 
 ```bash
-# Clear all Nx cache
-rm -rf .nx/cache
-
-# Or clear specific project cache
-nx reset
+npm run nx -- reset
 ```
 
-### Disable Cache (Development)
+### Disable Cache During Development
 
 ```bash
-# Skip cache for a single run
-nx build fsharp-env-loader --skip-nx-cache
+# Skip cache for a single build
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- build fsharp-env-loader --skip-nx-cache
 
-# Skip cache for affected
-nx affected -t build --skip-nx-cache
+# Skip cache for affected builds while protecting possible tracked generators
+./hippo run --class transactional --disk-path . -- npm exec nx -- affected -t build --skip-nx-cache
 ```
 
 ## Workspace Commands
 
 ### List All Projects
 
+The `nx:show` root script is an ephemeral, already-guarded read-only entrypoint:
+
 ```bash
-# List all projects in workspace
-nx show projects
+# List all projects in the workspace
+npm run nx:show -- projects
 
 # List only apps
-nx show projects --type=app
+npm run nx:show -- projects --type=app
 
-# List only libs
-nx show projects --type=lib
+# List only libraries
+npm run nx:show -- projects --type=lib
 ```
 
 ### Show Project Details
 
 ```bash
 # Show project configuration
-nx show project fsharp-env-loader
+npm run nx:show -- project fsharp-env-loader
 
-# Show project graph
-nx graph --focus=fsharp-env-loader
+# Show the project graph interactively
+npm run graph -- --focus=fsharp-env-loader
 ```
 
 ### Workspace Information
 
 ```bash
-# Show Nx version
-npx nx --version
+# Show the repository-pinned Nx version
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- --version
 
 # Show workspace information
-nx report
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- report
 ```
 
 ## Common Workflows
@@ -247,53 +265,53 @@ nx report
 **Starting a new feature**:
 
 ```bash
-# 1. Pull latest changes
+# 1. Pull the latest changes; this is not a compute-bearing Nx command
 git pull origin main
 
-# 2. Start development server
-nx dev ose-app-web
+# 2. Start the development server in a dedicated terminal
+./hippo run --class service --disk-path . -- npm exec nx -- dev ose-app-web
+```
 
-# 3. Make changes to app or libs
+After making changes, use another terminal for restartable checks:
 
-# 4. Test changes
-nx run fsharp-env-loader:test:quick
-nx build ose-app-web
+```bash
+# 3. Test and build the changed surfaces
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- run fsharp-env-loader:test:quick
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- build ose-app-web
 
-# 5. View affected projects
-nx affected:graph
+# 4. Inspect the affected graph interactively
+npm run graph -- --affected
 ```
 
 ### Testing Workflow
 
 ```bash
-# 1. Run fast quality gate for changed projects (pre-push standard)
-nx affected -t test:quick
+# 1. Run the fast quality gate for changed projects
+npm run affected:test
 
 # 2. Run test:quick for a specific project
-nx run fsharp-env-loader:test:quick
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- run fsharp-env-loader:test:quick
 
 # 3. Run isolated unit tests for a specific project
-nx run fsharp-env-loader:test:unit
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- run fsharp-env-loader:test:unit
 
-# 4. Run all test:quick targets
-nx run-many -t test:quick
+# 4. Run every test:quick target
+npm test
 ```
 
 ### Build Workflow
 
 ```bash
 # 1. Build affected projects
-nx affected -t build
+npm run affected:build
 
-# 2. Build a specific project; Nx builds any dependency that has its own
-#    build target first. ose-app-web's libraries are consumed from source,
-#    so this runs the one build.
-nx build ose-app-web
+# 2. Build a specific project; Nx honors dependencies within this DAG
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- build ose-app-web
 
 # 3. Build all projects
-nx run-many -t build
+npm run build
 
-# 4. Verify build outputs
+# 4. Verify build outputs; these reads do not need HIPPO admission
 ls libs/fsharp-env-loader/bin
 ls apps/ose-app-web/.next
 ```
@@ -301,26 +319,29 @@ ls apps/ose-app-web/.next
 ### Pre-Commit Workflow
 
 ```bash
-# 1. Check affected projects
-nx affected:graph
+# 1. Inspect the affected graph interactively
+npm run graph -- --affected
 
-# 2. Build affected
-nx affected -t build
+# 2. Build, test, and lint affected projects
+npm run affected:build
+npm run affected:test
+npm run affected:lint
 
-# 3. Run fast quality gate for affected (same as pre-push hook)
-nx affected -t test:quick
-
-# 4. Lint affected
-nx affected -t lint
-
-# 5. If all pass, commit changes
-git add .
+# 3. If all checks pass, stage and commit the intended paths
+git add [paths]
 git commit -m "feat: add new feature"
 ```
+
+Independent guarded commands may overlap only when they have no dependency, shared-output, or
+correctness edge. Wait for a producer before starting a consumer, and never overlap commands that
+write the same output tree. Nx continues to enforce dependencies inside one admitted command.
 
 ## CI/CD Workflows
 
 ### GitHub Actions Example
+
+This hosted workflow is runner-owned. Keep its native concurrency controls and do not wrap its
+commands with the local `./hippo` consumer.
 
 ```yaml
 name: CI
@@ -328,29 +349,29 @@ name: CI
 on: [push, pull_request]
 
 jobs:
- build:
-  runs-on: ubuntu-latest
-  steps:
-   - uses: actions/checkout@v3
-    with:
-     fetch-depth: 0  # Fetch all history for affected detection
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Fetch all history for affected detection
 
-   - name: Setup Node.js
-    uses: actions/setup-node@v3
-    with:
-     node-version: '24.13.1'
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "24.13.1"
 
-   - name: Install dependencies
-    run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-   - name: Build affected
-    run: nx affected -t build --base=origin/main --head=HEAD
+      - name: Build affected
+        run: npm exec nx -- affected -t build --base=origin/main --head=HEAD
 
-   - name: Quick Tests (required status check before PR merge)
-    run: nx affected -t test:quick --base=origin/main --head=HEAD
+      - name: Quick Tests (required status check before PR merge)
+        run: npm exec nx -- affected -t test:quick --base=origin/main --head=HEAD
 
-   - name: Lint affected
-    run: nx affected -t lint --base=origin/main --head=HEAD
+      - name: Lint affected
+        run: npm exec nx -- affected -t lint --base=origin/main --head=HEAD
 ```
 
 > **Note**: `test:quick` is the required GitHub Actions status check before PR merge. Run impacted
@@ -361,47 +382,57 @@ jobs:
 
 ### Optimize CI with Caching
 
+This cache is also owned by the hosted runner:
+
 ```yaml
 - name: Cache Nx
- uses: actions/cache@v3
- with:
-  path: .nx/cache
-  key: nx-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-  restore-keys: |
-   nx-${{ runner.os }}-
+  uses: actions/cache@v3
+  with:
+    path: .nx/cache
+    key: nx-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+    restore-keys: |
+      nx-${{ runner.os }}-
 ```
 
 ## Performance Tips
 
-### Use Affected Commands in CI
+### Use Affected Commands in Hosted CI
 
-Instead of rebuilding everything:
-
-```bash
-# ❌ Slow: Build everything
-nx run-many -t build
-
-# ✅ Fast: Build only affected
-nx affected -t build
-
-# ✅ Fast quality gate (pre-push and CI)
-nx affected -t test:quick
-```
-
-### Use Parallel Execution
-
-Nx automatically runs tasks in parallel when possible:
+Avoid rebuilding everything on the runner:
 
 ```bash
-# Runs builds in parallel (respects dependency order)
-nx run-many -t build --parallel=3
+# Slow: build everything on the hosted runner
+npm exec nx -- run-many -t build
+
+# Faster: build only affected projects on the hosted runner
+npm exec nx -- affected -t build
+
+# Fast quality gate on the hosted runner
+npm exec nx -- affected -t test:quick
 ```
+
+These examples remain native because hosted CI owns their capacity. Local equivalents use the
+guarded `affected:*` npm scripts.
+
+### Use Allocation-Driven Parallel Execution Locally
+
+Nx automatically runs independent tasks in parallel when possible:
+
+```bash
+# The root script provides one transactional HIPPO boundary for the complete build DAG
+npm run build
+```
+
+Do not hard-code a repository-wide worker count. HIPPO supplies the admitted CPU allocation through
+`NX_PARALLEL`; a lower positive caller value survives, while a higher value is clamped to the
+reservation. Allocation changes fan-out, not the Nx dependency graph or any documented
+shared-output or correctness serialization.
 
 ### Use Watch Mode for Development
 
 ```bash
-# Watch mode for builds (if configured)
-nx build fsharp-env-loader --watch
+# Watch mode is a long-running service
+./hippo run --class service --disk-path . -- npm exec nx -- build fsharp-env-loader --watch
 ```
 
 ## Troubleshooting
@@ -413,82 +444,93 @@ nx build fsharp-env-loader --watch
 **Solution**:
 
 ```bash
-# Clear Nx cache
-nx reset
+# Reset cache and daemon state transactionally
+npm run nx -- reset
 
-# Rebuild from scratch
-nx build fsharp-env-loader --skip-nx-cache
+# Rebuild from scratch with a restartable ephemeral command
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- build fsharp-env-loader --skip-nx-cache
 ```
 
 ### Dependency Issues
 
-**Problem**: Changes to library don't trigger app rebuild
+**Problem**: Changes to a library do not trigger an app rebuild
 
 **Solution**:
 
 ```bash
-# Check if dependency exists in graph
-nx graph --focus=ose-app-web
+# Check whether the dependency exists in the interactive graph
+npm run graph -- --focus=ose-app-web
 
-# Ensure library is built first
-nx build fsharp-env-loader
-nx build ose-app-web
+# If manual builds are required, wait for the producer before starting the consumer
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- build fsharp-env-loader
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- build ose-app-web
 ```
+
+The two builds above deliberately remain sequential because the application consumes the library
+output. Prefer one Nx DAG command when the project graph already represents that edge.
 
 ### Affected Detection Issues
 
-**Problem**: Affected detection doesn't identify changed projects
+**Problem**: Affected detection does not identify changed projects
 
 **Solution**:
 
 ```bash
-# Check git status
+# Inspect and stage the intended Git state
 git status
+git add [paths]
 
-# Ensure changes are committed or staged
-git add .
+# Use a specific base for affected detection
+./hippo run --class transactional --disk-path . -- npm exec nx -- affected -t build --base=origin/main
 
-# Use specific base
-nx affected -t build --base=origin/main
-
-# View affected graph to debug
-nx affected:graph
+# View the affected graph to debug interactively
+npm run graph -- --affected --base=origin/main
 ```
 
 ## Advanced Commands
 
 ### Run Commands with Environment Variables
 
-```bash
-# Set environment variable for command
-NODE_ENV=production nx build ose-app-web
+Set caller environment variables before the HIPPO boundary:
 
-# Multiple environment variables
-NODE_ENV=production DEBUG=true nx build ose-app-web
+```bash
+# Set one environment variable for the command
+NODE_ENV=production ./hippo run --class ephemeral --disk-path . -- npm exec nx -- build ose-app-web
+
+# Set multiple environment variables
+NODE_ENV=production DEBUG=true ./hippo run --class ephemeral --disk-path . -- npm exec nx -- build ose-app-web
 ```
 
-### Run Custom Commands
+Do not manually raise `NX_PARALLEL`; the wrapper supplies or clamps it to the admitted allocation.
+
+### Run Custom Targets and Generators
+
+Classify a custom target by what it does rather than by its name:
 
 ```bash
-# Run arbitrary command for all projects
-nx run-many -t custom-script
+# A restartable read-only custom check is ephemeral
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- run ose-app-web:custom-check
 
-# Run command for specific projects
-nx run custom-target -p ose-app-web
+# A generator writes tracked output, so use the transactional root Nx script
+npm run nx -- generate [plugin]:[generator] [name]
 ```
 
-### Generate Dependency Report
+If a custom target writes tracked files, shared cache state, or an indivisible output, run it through
+the transactional `npm run nx -- ...` entrypoint. Keep dependent or same-output targets serialized.
+
+### Generate a Dependency Report
 
 ```bash
-# Export dependency graph as JSON
-nx graph --file=graph.json
+# Exporting the graph writes a report and is transactional
+./hippo run --class transactional --disk-path . -- npm exec nx -- graph --file=graph.json
 
-# Use jq to analyze dependencies
-nx graph --file=graph.json | jq '.dependencies'
+# Analyze the completed report without another HIPPO admission
+jq '.dependencies' graph.json
 ```
 
 ## Related Documentation
 
+- [Resource-Aware Development](../../repo-governance/development/practice/resource-aware-development.md) - Local HIPPO admission, workload classes, worker allocation, and correctness boundaries
 - [Nx Target Standards](../../repo-governance/development/infra/nx-targets.md) - Canonical target names, mandatory targets per project type, caching rules, and execution model
 - [Add New App](./add-new-app.md)
 - [Add New Library](./add-new-lib.md)

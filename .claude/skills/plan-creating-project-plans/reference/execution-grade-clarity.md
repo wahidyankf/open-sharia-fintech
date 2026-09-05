@@ -9,12 +9,14 @@ with no professional work experience and no repository or stack context.**
 - Every independently verifiable action is a separate checkbox with an executor tag.
 
 - **Explicit file path(s)** when the action touches a known file. When the path cannot be determined at authoring time, give the maximum-possible-detail target: parent directory + naming pattern + sibling reference (e.g., "new file under `apps/organiclever-www/src/lib/` following the pattern of sibling `auth.ts`").
-- **Explicit shell command(s)** verbatim when applicable (e.g., `npx nx run ose-web:test:quick`), not "run the lint".
+- **Explicit shell command(s)** verbatim when applicable (e.g.,
+  `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- run ose-web:test:quick`), not
+  "run the lint".
 - **Prerequisites, expected failure/pass state, failure handling, and evidence destination** for
   each action; never assume professional experience supplies a missing step.
 - **Separate RED, GREEN, and REFACTOR checkboxes** for every code behaviour slice.
 - **Concrete proof** stating the observable change that proves done (e.g., "all assertions in
-  `trpc.test.ts` pass", "`nx run ose-web:typecheck` exits 0"). No bare "implement X", "set up Y",
+  `trpc.test.ts` pass", "the guarded `ose-web:typecheck` command exits 0"). No bare "implement X", "set up Y",
   "configure Z".
 
 Canonical Gherkin remains in `prd.md`/`specs/**`; reference IDs/titles instead of copying full
@@ -44,7 +46,7 @@ Do not duplicate that exception here.
 ```markdown
 - [ ] Edit `apps/ose-www/src/server/trpc.ts`: wrap the public router with
       `unstable_cache(..., { revalidate: 300 })`. Verify by running
-      `npx nx run ose-web:test:quick` — all tests pass.
+      `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- run ose-web:test:quick` — all tests pass.
 ```
 
 **Bad**:
@@ -58,7 +60,7 @@ Do not duplicate that exception here.
 ```markdown
 - [ ] Create `apps/organiclever-be/src/Middleware/RateLimit.fs` (siblings: `Auth.fs`, `Cors.fs`)
       implementing token-bucket rate limiting per `tech-docs.md §Rate Limiting`. Verify by running
-      `npx nx run organiclever-be:test:unit` — new test `RateLimit_RejectsExceedingRequests` passes.
+      `rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- run organiclever-be:test:unit` — new test `RateLimit_RejectsExceedingRequests` passes.
 ```
 
 **Bad**:
@@ -70,7 +72,7 @@ Do not duplicate that exception here.
 **Good**:
 
 ```markdown
-- [ ] Run `npx nx affected -t lint` — exits 0 with no errors reported.
+- [ ] Run `rtk npm run affected:lint` — the existing guarded root alias exits 0 with no errors reported.
 ```
 
 See [Plans Organization Convention §Execution-Grade Clarity](../../../../repo-governance/conventions/structure/plans/execution-grade-clarity.md#execution-grade-clarity-hard-rule) for the authoritative rule.

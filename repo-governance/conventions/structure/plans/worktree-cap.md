@@ -21,7 +21,8 @@ touching **N** repositories therefore provisions **at most N worktrees total**, 
 mode works in the primary checkout and provisions no worktree.
 
 This caps a genuinely scarce shared resource: each worktree is a full checkout plus a converged
-polyglot toolchain (`npm install && npm run doctor -- --fix`), and on the same-machine assumption
+polyglot toolchain (guarded `npm install`, then transactional `npm run doctor -- --fix`), and on the
+same-machine assumption
 (other agents, engineers, and CI runners sharing this disk concurrently — see the
 [Agent Workflow Orchestration Convention](../../../development/agents/agent-workflow-orchestration/operating-budgets-parallelism-budget.md))
 that setup cost is worth paying once per repo, not once per delivery unit.
@@ -34,10 +35,10 @@ direct-push mode instead uses one direct integration checkpoint per unit. See
 **serially** in the reused worktree — land unit A, refresh from `origin/main`, then create unit B's
 branch in the same directory. Other modes apply the same land-and-refresh order from their resolved
 work location and use their own integration mechanism. Repositories remain separate DAG nodes, but their
-resource-heavy worktree provisioning, toolchain setup, builds, and validation run **one repository
-at a time by default** on the shared machine. Concurrent cross-repository heavy work requires the
-plan's recorded operational need plus confirmed capacity and risk controls; lightweight independent
-work may still fan out. See
+resource-heavy worktree provisioning, toolchain setup, builds, and validation pass through HIPPO
+admission rather than acquiring a repository-serial edge by default. Independent
+repositories may overlap when their reservations fit; dependency, shared-output, byte-identity,
+transactional, and documented correctness edges still serialize. See
 [Delivery Checklists Express a DAG](./delivery-checklists-express-a-dag.md).
 
 **Cleanup timing**: a repo's provisioned worktree is removed only once **every** delivery unit that

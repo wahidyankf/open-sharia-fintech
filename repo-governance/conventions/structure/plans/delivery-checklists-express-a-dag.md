@@ -25,11 +25,12 @@ phase, stating:
   phase builds the source of truth the next one needs, not because the list happens to be ordered.
 - **The plan's chosen N** (see the [Agent Workflow Orchestration Convention](../../../development/agents/agent-workflow-orchestration.md)
   for the N+1 model), and any reason it differs from the default.
-- **The cross-repository resource schedule**, when the plan spans repositories. Provisioning
-  worktrees, converging toolchains, building, and validating run in one repository at a time by
-  default, even when their logical DAG nodes are independent. Concurrent cross-repository heavy
-  work is permitted only when the plan records a concrete operational need and confirms the
-  machine, disk, runner, and risk controls that make the overlap safe.
+- **The cross-repository resource schedule**, when the plan spans repositories. Classify every
+  compute-bearing node under
+  [Resource-Aware Development](../../../development/practice/resource-aware-development.md), and
+  identify dependency, shared-output, byte-identity, transactional, or documented correctness
+  edges. Independent nodes enter HIPPO concurrently and execute only when their complete
+  reservations are admitted; the plan does not invent a manual live-capacity exception.
 - **Cleanup as the terminal node**, depending on every delivery node — so the cleanup gate can never
   remove a worktree, branch, or artifact that an in-flight node still needs.
 
@@ -44,10 +45,10 @@ shared branch, or an ordering constraint makes them dependent however separable 
 
 **Enforcement**: `plan-checker` flags a non-trivial plan lacking a `## Parallelization Model` section
 as **MEDIUM**, flags a declared-parallel node set with a genuine write conflict as **HIGH**, and for
-a multi-repository plan verifies that the section records either the default repository-serial heavy
-work schedule or a concrete exception with machine, disk, runner, and risk controls.
-`plan-execution-checker` verifies delivery evidence against that recorded schedule or exception.
-Only live overlap and capacity facts remain **unenforced by decision** because a repository-local
-check cannot authenticate them.
+a multi-repository plan verifies that every compute node has a guard/class and that every declared
+serial edge names a logical or correctness reason. `plan-execution-checker` verifies delivery
+evidence against that schedule, including HIPPO admission/deferral evidence and preserved serial
+edges. Live host capacity remains **unenforced by decision** because a repository-local check cannot
+authenticate it.
 
 See [Delivery Checklists Express a DAG — Delivery Units and Planning Granularity](./delivery-checklists-express-a-dag-continued.md) for how DAG nodes map to natural units and mode-specific integration.

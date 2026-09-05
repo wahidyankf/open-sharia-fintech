@@ -36,7 +36,7 @@ detailed checkbox with exact path, command/inspection, acceptance observation, a
 ### Validation Checklist
 
 - [ ] Every code outcome has separate detailed RED, GREEN, and REFACTOR checkboxes.
-- [ ] All tests pass (`rtk nx affected -t test:quick`).
+- [ ] All tests pass (`rtk npm run affected:test`, the existing guarded root alias).
 - [ ] Code meets quality standards.
 - [ ] Documentation and rules are reconciled.
 - [ ] Acceptance criteria are verified.

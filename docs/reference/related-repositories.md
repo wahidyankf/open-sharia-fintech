@@ -11,14 +11,20 @@ created: 2026-04-18
 
 # Related Repositories
 
-The OSE ecosystem has two sibling repositories under active coordination. Each has a different job,
-so choose the one that matches what you are trying to understand rather than treating them as
-interchangeable copies.
+The OSE ecosystem has one two-repository parity set plus independent public repositories that
+supply tools or product learnings. Each has a different job, so choose the repository that matches
+what you are trying to understand rather than treating them as interchangeable copies.
 
-| Repository                                               | Visibility  | Role                                                  | Start there when…                                                  |
-| -------------------------------------------------------- | ----------- | ----------------------------------------------------- | ------------------------------------------------------------------ |
-| [`ose-public`](https://github.com/wahidyankf/ose-public) | Public, MIT | The OSE product platform and its public research      | You want to understand or run OSE itself.                          |
-| `ose-private`                                            | Private     | Authorized product operations and infrastructure work | You are an authorized maintainer following its private onboarding. |
+This page is the descriptive catalogue. The canonical relationship, parity, propagation, and
+consumer-boundary rules are governed by the
+[Related Repositories Convention](../../repo-governance/conventions/structure/related-repositories.md).
+
+| Repository                                               | Visibility  | Role                                                     | Start there when…                                                  |
+| -------------------------------------------------------- | ----------- | -------------------------------------------------------- | ------------------------------------------------------------------ |
+| [`ose-public`](https://github.com/wahidyankf/ose-public) | Public, MIT | The OSE product platform and its public research         | You want to understand or run OSE itself.                          |
+| `ose-private`                                            | Private     | Authorized product operations and infrastructure work    | You are an authorized maintainer following its private onboarding. |
+| [HIPPO](https://github.com/wahidyankf/hippo)             | Public, MIT | Upstream resource coordination, specifications, releases | You are changing HIPPO behavior rather than OSE integration.       |
+| [BeaverNest](https://github.com/wahidyankf/beaver-nest)  | Public, MIT | Independent family product and applied learning lab      | You are changing the BeaverNest product.                           |
 
 ## The reader path that matters most
 
@@ -31,10 +37,22 @@ internal implementation, access model, or operational layout.
 
 ## Repositories outside the parity set
 
-Some repositories share history with `ose-public` without sharing obligations. **They carry no sync
-obligation in either direction**, sit outside the `rhino-cli` byte-identity boundary, and are not
-propagation targets for governance, agent, skill, or workflow changes. No gate, agent, or workflow
-here may treat one as a parity peer.
+Some public repositories support or inform OSE without sharing parity obligations. **They carry no
+sync obligation in either direction**, sit outside the `rhino-cli` byte-identity boundary, and are
+not propagation targets for governance, agent, skill, or workflow changes. No gate, agent, or
+workflow here may treat one as a parity peer.
+
+### HIPPO stays upstream
+
+[HIPPO](https://github.com/wahidyankf/hippo) coordinates resource-sensitive development work across
+repository checkouts. OSE consumes its published executable through the root `./hippo` bootstrap,
+which verifies the version, source commit, platform archive checksum, and embedded identity before
+placing the executable in an external user cache.
+
+Only OSE-specific integration belongs here: the checksum lock, bootstrap, local-policy example,
+worker-variable mappings, entrypoint declarations, and consumer tests. HIPPO implementation,
+behavior specifications, release automation, and generic conformance tests remain upstream. Never
+copy or fork that source into OSE.
 
 ### BeaverNest moved out
 
@@ -56,7 +74,8 @@ transfer creates no parity or automatic propagation obligation.
 
 It carries no `rhino-cli` at all, so there is nothing for the byte-identity boundary to cover, and
 `rhino-cli`'s parity gate asserts that the boundary never names it — see
-`apps/rhino-cli/src/application/parity.rs`.
+`apps/rhino-cli/src/RhinoCli.Application/src/Parity.fs` and its tests in
+`apps/rhino-cli/tests/unit/Steps/ParityManifestSteps.fs`.
 
 If you are looking for BeaverNest code, issues, or plans, go to that repository. Anything still
 naming BeaverNest here is a historical record — an archived plan under [`plans/done/`](../../plans/done/README.md)
@@ -107,10 +126,11 @@ private-only operational exceptions explicitly.
 
 - **Elixir/Erlang CI toolchain provisioning.** `ose-public`'s `rust` job in `pr-quality-gate.yml`
   installs Erlang/Elixir via `erlef/setup-beam` and sets `RHINO_REQUIRE_ELIXIR=1`, so the two
-  Elixir formatter-wrapper tests in `apps/rhino-cli/tests/gate_format_verify_wrappers.rs` run for
-  real on every push. `ose-private` carries no Elixir source and provisions no such toolchain, so
-  those same byte-identical tests self-skip there instead — a deliberate, not accidental,
-  divergence: nothing in `ose-private` needs the coverage the toolchain would exercise.
+  Elixir formatter-wrapper scenarios bound in
+  `apps/rhino-cli/tests/unit/Steps/GateExecutionSteps.fs` run for real on every push. `ose-private`
+  carries no Elixir source and provisions no such toolchain, so those same byte-identical tests
+  self-skip there instead — a deliberate, not accidental, divergence: nothing in `ose-private`
+  needs the coverage the toolchain would exercise.
 
 ## Contribution and access boundaries
 

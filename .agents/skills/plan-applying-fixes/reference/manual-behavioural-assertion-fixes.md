@@ -7,7 +7,7 @@
 ```markdown
 ### Manual UI Verification (Playwright MCP)
 
-- [ ] Start dev server: `nx dev [project-name]`
+- [ ] Start dev server: `rtk ./hippo run --class service --disk-path . -- npm exec nx -- dev [project-name]`
 - [ ] Navigate to affected pages via `browser_navigate`
 - [ ] Inspect DOM via `browser_snapshot` — verify correct rendering
 - [ ] Test interactive flows via `browser_click` / `browser_fill_form`
@@ -22,7 +22,7 @@
 ```markdown
 ### Manual API Verification (curl)
 
-- [ ] Start backend server: `nx dev [project-name]`
+- [ ] Start backend server: `rtk ./hippo run --class service --disk-path . -- npm exec nx -- dev [project-name]`
 - [ ] Verify health endpoint: `curl -s http://localhost:[port]/api/health | jq .`
 - [ ] Verify affected endpoints return expected responses
 - [ ] Test error cases with invalid payloads — verify proper error responses

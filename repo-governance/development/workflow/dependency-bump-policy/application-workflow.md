@@ -26,8 +26,14 @@ When proposing or executing a dependency bump, follow these steps in order:
 6. Apply Rule 5a (recency): confirm the chosen version is the most recent eligible one for its path
 7. Apply Rule 5b (functional stability): confirm the chosen version is not yanked/deprecated and has no open release-blocker for its primary function — if it fails, fall back to the most recent eligible version that passes and record a `FUNCTIONAL-HOLD`
 8. Convert all version specs to exact pins (remove carets and tildes)
-9. Run lockfile updates: `npm install`, `go mod tidy`, `mvn versions:resolve-ranges`
-10. Run security re-audit: `npm audit --audit-level=moderate`, `govulncheck ./...`, optionally `mvn org.owasp:dependency-check-maven:check`
+9. Run each authorized lockfile update through a transactional boundary:
+   `./hippo run --class transactional --disk-path . -- npm install`,
+   `./hippo run --class transactional --disk-path . -- go mod tidy`, or
+   `./hippo run --class transactional --disk-path . -- mvn versions:resolve-ranges`.
+10. Run each security re-audit through an ephemeral boundary:
+    `./hippo run --class ephemeral --disk-path . -- npm audit --audit-level=moderate`,
+    `./hippo run --class ephemeral --disk-path . -- govulncheck ./...`, or optionally
+    `./hippo run --class ephemeral --disk-path . -- mvn org.owasp:dependency-check-maven:check`.
     10a. Cross-reference every CVE from steps 3–5 against the CISA KEV feed:
     `curl -s https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json | jq '.vulnerabilities[] | select(.cveID=="CVE-YYYY-NNNNN")'`.
     Record `dateAdded` and `knownRansomwareCampaignUse` for any matches; append `(KEV-listed)` to

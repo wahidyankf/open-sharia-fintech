@@ -6,7 +6,8 @@ Domain-specialized agents hallucinate less than generic orchestration. When a de
 
 ```markdown
 - [ ] Edit `apps/organiclever-be/src/Domain/User.fs` [Repo-grounded]: add `email: string option` field
-      with case-insensitive uniqueness. Verify by running `nx run organiclever-be:test:unit` — new test
+      with case-insensitive uniqueness. Verify by running
+      `rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- run organiclever-be:test:unit` — new test
       `User_RejectsDuplicateEmailIgnoringCase` passes.
   - _Suggested executor: `swe-fsharp-dev`_
 ```
@@ -22,7 +23,7 @@ Domain-specialized agents hallucinate less than generic orchestration. When a de
 **When to skip annotation** (default plan-execution Agent Selection suffices):
 
 - Single-line edit to a governance doc
-- Mechanical operation (`mv`, `git mv`, `npm install`)
+- Mechanical operation (`mv`, `git mv`, or an already classified guarded install)
 - Shell command without code edits
 
 The plan-execution workflow respects the annotation as Priority 0 — the suggested executor wins over heuristic matches by file extension or content keyword. Citing a non-existent agent is treated as Anti-Pattern AP-7 (HIGH finding by `plan-checker`; see [refuse-uncertainty-and-anti-patterns.md](refuse-uncertainty-and-anti-patterns.md)).

@@ -33,7 +33,7 @@ This practice eliminates both failure modes by inverting the default: parallel u
 - Delegated Agent-tool spawns running in background (covered in detail by [Subagent Orchestration Convention](../../agents/subagent-orchestration.md))
 - Any work where sub-units do not depend on each other's output
 
-### What This Practice Does NOT Cover
+### Related Boundaries and Exceptions
 
 - Dependent work, where a later step requires an earlier step's result — those stay sequential
 - Resource-heavy work across repositories in one plan: worktree provisioning, toolchain setup,

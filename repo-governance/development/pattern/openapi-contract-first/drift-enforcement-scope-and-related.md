@@ -20,7 +20,8 @@ when_to_use: "Use when a CI drift check fails, or checking whether a given app p
 CI enforces that committed generated files match the spec. After running `codegen`, any non-empty `git diff` in the
 generated output directory fails the build.
 
-The CI step for each app follows this pattern:
+The hosted CI runner owns each app's drift step, so these commands remain native rather than
+entering a local HIPPO boundary:
 
 ```bash
 # 1. Run codegen from the committed spec
@@ -31,9 +32,10 @@ git diff --exit-code src/generated-contracts/
 # (Rust apps use generated-contracts/ without the src/ prefix)
 ```
 
-A non-zero exit code from `git diff --exit-code` means the spec was updated but codegen was not re-run before commit,
-or vice versa. The fix is always to re-run `nx run <app>:codegen` and commit the updated generated files together with
-the spec change.
+A non-zero exit code from `git diff --exit-code` means the spec was updated but codegen was not
+re-run before commit, or vice versa. Fix local drift with
+`./hippo run --class transactional --disk-path . -- npm exec nx -- run <app>:codegen`, then commit
+the updated generated files together with the spec change.
 
 ## Scope
 

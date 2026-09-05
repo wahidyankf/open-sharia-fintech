@@ -30,7 +30,9 @@ when_to_use: "Use for a worked example of this convention."
       `unstable_cache(fn, keyParts, { revalidate: 300 })` per Next.js 16 docs (verified
       2026-05-03 at https://nextjs.org/docs/app/api-reference/functions/unstable_cache,
       excerpt: "unstable_cache allows caching results of expensive operations") [Web-cited].
-      Verify by running `npx nx run ose-www:test:quick` — all tests pass.
+      Verify by running
+      `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- run ose-www:test:quick`
+      — all tests pass.
 ```
 
 ### Bad — invented file path + fabricated API

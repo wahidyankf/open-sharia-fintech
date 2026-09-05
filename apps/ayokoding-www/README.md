@@ -9,16 +9,22 @@ and Indonesian. 🌱
 From the repository root:
 
 ```bash
-# Start the local site at http://localhost:3101
-npm exec nx -- run ayokoding-www:dev
+# Refresh tracked content indexes transactionally
+./hippo run --class transactional --disk-path . -- npm exec nx -- run ayokoding-www:generate-indexes
+
+# Start the local site at http://localhost:3101 without a second generator pass
+./hippo run --class service --disk-path . --cwd apps/ayokoding-www -- \
+  node ../../scripts/next-with-port.mjs dev --env AYOKODING_WWW_PORT --default 3101
 
 # Run the project’s quick quality gate
-npm exec nx -- run ayokoding-www:test:quick
+./hippo run --class ephemeral --disk-path . -- npm exec nx -- run ayokoding-www:test:quick
 ```
 
-The development command refreshes the generated content indexes before starting Next.js. Use
-`npm exec nx -- run ayokoding-www:build` when you need production-build evidence, or
-`npm exec nx -- run ayokoding-www:start` to serve a completed local build.
+The transactional preflight refreshes content indexes before the service starts. Use
+`./hippo run --class transactional --disk-path . -- npm exec nx -- run ayokoding-www:build` when
+you need production-build evidence, or
+`./hippo run --class service --disk-path . -- npm exec nx -- run ayokoding-www:start` to serve a
+completed local build.
 
 ## How the app is shaped
 

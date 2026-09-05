@@ -88,7 +88,9 @@ research runs.
 also adds a **new default behaviour**: plans are authored inside a
 dedicated worktree (`worktrees/<identifier>/`), provisioned if absent via
 `git worktree add -b <identifier> worktrees/<identifier> main` followed by
-`npm install` and `npm run doctor -- --fix`. After delivery the worktree is
+the repository-standard guarded install and transactional Doctor convergence:
+`rtk ./hippo run --class ephemeral --disk-path . -- npm install`, then
+`rtk npm run doctor -- --fix`. After delivery the worktree is
 removed with `git worktree remove`.
 
 **Rationale**: the invoker directed both the worktree default and the push

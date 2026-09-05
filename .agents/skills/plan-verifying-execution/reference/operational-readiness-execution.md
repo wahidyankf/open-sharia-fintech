@@ -49,19 +49,19 @@ preexisting ...`)
 
 6. **Environment Setup Was Performed**
    - Verify the plan included environment setup steps and they were completed
-   - Check that `rtk npm install` and then `rtk npm run doctor -- --fix` ran at the selected
-     worktree root before any work; another checkout or inferred equivalent does not count
+   - Check that `rtk ./hippo run --class ephemeral --disk-path . -- npm install` and then
+     `rtk npm run doctor -- --fix` ran at the selected worktree root before any work; another
+     checkout or inferred equivalent does not count
    - Missing setup evidence: MEDIUM finding
 
 7. **Cross-Repository Resource Schedule Was Followed**
    - Applies only when the plan spans repositories
-   - Read the repository-serial heavy-work schedule or capacity-controlled exception recorded in
-     `## Parallelization Model`
-   - Verify implementation notes, execution logs, and timestamps show worktree provisioning,
-     toolchain setup, builds, and validation followed that schedule; for an exception, verify the
-     recorded machine, disk, runner, and risk controls were observed
-   - Missing execution evidence or evidence contradicting the recorded schedule/exception: HIGH
-     finding; do not claim live capacity or overlap facts without authenticated evidence
+   - Read each compute node's HIPPO guard/class and every declared dependency, shared-output,
+     byte-identity, transactional, or correctness serialization edge in `## Parallelization Model`
+   - Verify implementation notes, execution logs, and timestamps show admitted or deferred HIPPO
+     execution and preserve every declared serial edge; independent nodes may overlap when admitted
+   - Missing execution evidence or evidence contradicting guarded admission or a declared serial
+     edge: HIGH finding; do not claim live capacity or overlap facts without authenticated evidence
 
 ### Finding Severity
 
@@ -72,4 +72,4 @@ preexisting ...`)
 - Monolithic independent concerns or incomplete intermediate commits: **HIGH**
 - Missing implementation notes: **MEDIUM**
 - Missing setup evidence: **MEDIUM**
-- Missing or contradictory cross-repository schedule/exception execution evidence: **HIGH**
+- Missing or contradictory HIPPO admission or correctness-edge evidence: **HIGH**

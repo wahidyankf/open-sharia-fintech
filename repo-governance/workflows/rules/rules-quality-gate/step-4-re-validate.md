@@ -18,8 +18,9 @@ rtk bash -lc './apps/rhino-cli/src/dist/rhino-cli-fsharp repo-governance audit -
   > local-tmp/repo-governance-audit/repo-governance-audit__{uuid}__{timestamp}.json'
 ```
 
-The binary must be built first via `rtk nx build rhino-cli`; the prebuilt path is
-`apps/rhino-cli/src/dist/rhino-cli-fsharp`.
+The binary must be built first via
+`rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- build rhino-cli`; the prebuilt
+path is `apps/rhino-cli/src/dist/rhino-cli-fsharp`.
 
 **Agent**: `repo-rules-checker`
 
