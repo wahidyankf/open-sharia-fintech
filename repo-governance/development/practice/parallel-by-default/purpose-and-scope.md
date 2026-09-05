@@ -36,9 +36,10 @@ This practice eliminates both failure modes by inverting the default: parallel u
 ### Related Boundaries and Exceptions
 
 - Dependent work, where a later step requires an earlier step's result — those stay sequential
-- Resource-heavy work across repositories in one plan: worktree provisioning, toolchain setup,
-  builds, and validation run one repository at a time by default on the shared machine. Concurrent
-  heavy work is an explicit exception requiring a recorded operational need and confirmed capacity
-  and risk controls.
+- Capacity arithmetic for compute-bearing work: worktree provisioning, toolchain setup, builds,
+  and validation enter the [Resource-Aware Development](../resource-aware-development.md)
+  boundary, which admits them against shared CPU and memory rather than a per-repository turn.
+  Dependency, shared-output, byte-identity, transactional, and documented correctness edges
+  still serialize.
 - Intra-agent concurrency inside a subagent's own execution (governed by that agent's own behaviour)
 - Bash-level pipeline parallelism (e.g., `&` / `wait` in shell scripts)
