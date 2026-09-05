@@ -12,25 +12,17 @@ const workspaceRoot = path.resolve(__dirname, "../..");
 const testDir = defineBddConfig({
   featuresRoot: workspaceRoot,
   features: [
-    path.join(workspaceRoot, "specs/apps/ayokoding/www/behaviors/backend/**/*.feature"),
+    path.join(workspaceRoot, "specs/apps/ayokoding/www/behaviours/backend/**/*.feature"),
     // The learn section's three-structural-bucket invariant is a backend/build-time filesystem
     // check (no runtime API surface), but its Gherkin lives under frontend/navigation/ (it
     // describes what a reader browsing /learn sees) rather than backend/ — so it's outside this
     // project's own glob above. Listed separately rather than widening to the full
     // frontend/**/*.feature tree, which would pull in ~130 unrelated frontend scenarios this
     // backend-only project has no business generating tests for.
-    path.join(workspaceRoot, "specs/apps/ayokoding/www/behaviors/frontend/navigation/learn-three-bucket.feature"),
+    path.join(workspaceRoot, "specs/apps/ayokoding/www/behaviours/frontend/navigation/learn-three-bucket.feature"),
   ],
-  steps: "./tests/integration/steps/**/*.steps.ts",
-  // Default is 'fail-on-gen': bddgen refuses to generate ANY test file while ANY scenario in the
-  // globbed features lacks a matching step def. learn-three-bucket.feature's OTHER eight scenarios
-  // (tagged @unit/@e2e — real-navigation redirect checks) are outside this integration project's
-  // remit entirely; only the untagged "exposes exactly three structural buckets" scenario this
-  // glob entry was added for is integration-relevant. 'skip-scenario' lets generation succeed for
-  // that one and renders the rest as `test.fixme` (visibly pending here, already real-bound at
-  // fe-e2e's e2e level) instead of hard-blocking this project's whole suite — same pattern
-  // ayokoding-www-fe-e2e's own config already documents for its own tag-mixed corpus.
-  missingSteps: "skip-scenario",
+  steps: "./tests/e2e/steps/**/*.steps.ts",
+  tags: "not @e2e-exempt",
 });
 
 export default defineConfig({

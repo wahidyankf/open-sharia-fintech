@@ -16,7 +16,7 @@ when_to_use: Use when an agent is about to run any git config user.* command, or
 
 # Git Identity Guardrail
 
-No AI agent sets or modifies git identity at any scope. This behavioral guardrail replaces the
+No AI agent sets or modifies git identity at any scope. This behavioural guardrail replaces the
 former `scripts/git-identity-check.sh` pre-commit script, which was removed because it
 over-restricted human developers who legitimately maintain per-repository identities via
 `includeIf`.

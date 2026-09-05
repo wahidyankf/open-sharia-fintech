@@ -22,7 +22,7 @@ Use this section when you need the repository's shared rules for writing, organi
 - Starting a reader-facing page? Begin with [writing](./writing/README.md), then use [formatting](./formatting/README.md) and [linking](./linking/README.md) — apply writing standards first, then formatting and linking rules as needed.
 - Deciding where a document belongs? Use [structure](./structure/README.md) — documentation organization frameworks, file naming, and project planning structure, including the Diátaxis convention it links to.
 - Creating learning material? Use [tutorials](./tutorials/README.md) — standards for creating learning-oriented tutorial content.
-- Handling environment or sensitive data guidance? Use [security](./security/README.md) — repository security conventions governing agent behavior and data protection; check before making a change.
+- Handling environment or sensitive data guidance? Use [security](./security/README.md) — repository security conventions governing agent behaviour and data protection; check before making a change.
 
 ## Scope
 
@@ -80,7 +80,7 @@ Conventions are organized into semantic categories. Each subdirectory has its ow
 - [Writing Conventions](./writing/README.md) — Content quality, validation, writing standards
 - [Structure Conventions](./structure/README.md) — Documentation organization, file naming, plans
 - [Tutorial Conventions](./tutorials/README.md) — Tutorial creation and structure conventions
-- [Security Conventions](./security/README.md) — Security conventions governing agent behavior and data protection
+- [Security Conventions](./security/README.md) — Security conventions governing agent behaviour and data protection
 
 ## Related Documentation
 

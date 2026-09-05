@@ -40,7 +40,7 @@ Go's goroutines are lightweight threads managed by the Go runtime, not the OS. U
 **When to include**:
 
 - Concept involves multiple components or flow
-- State machines or lifecycle diagrams clarify behavior
+- State machines or lifecycle diagrams clarify behaviour
 - Architecture or relationships need visualization
 - Comparison between approaches benefits from visual aid
 

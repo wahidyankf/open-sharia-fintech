@@ -2,36 +2,54 @@ import path from "path";
 import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
 import { expect } from "vitest";
 import { testCaller } from "./helpers/test-caller";
+import { draftFixture } from "./helpers/test-service";
 import { TRPCError } from "@trpc/server";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviors/backend/content/content-api.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviours/backend/content/content-api.feature"),
 );
 
 describeFeature(feature, ({ Scenario, Background }) => {
   Background(({ Given }) => {
-    Given("the API is running", () => {});
+    Given("the API is running", async () => {
+      await expect(testCaller.meta.health()).resolves.toEqual({ status: "ok" });
+    });
   });
 
   Scenario(
-    "Get existing page by slug returns HTML, frontmatter, headings, and prev/next links",
+    "Get existing page by slug returns HTML, page metadata, headings, and prev/next links",
     ({ Given, When, Then, And }) => {
       let result: Awaited<ReturnType<typeof testCaller.content.getBySlug>>;
 
-      Given('a published page exists at slug "en/programming/golang/getting-started"', () => {
-        // content is available in the test fixture
+      Given('a published page exists at slug "en/learn/courses/just-enough-go/learning/beginner"', async () => {
+        await expect(
+          testCaller.content.getBySlug({ locale: "en", slug: "learn/courses/just-enough-go/learning/beginner" }),
+        ).resolves.toMatchObject({ title: "Beginner Examples", draft: false });
       });
 
-      When('the client calls content.getBySlug with slug "en/programming/golang/getting-started"', async () => {
-        result = await testCaller.content.getBySlug({ locale: "en", slug: "learn/overview" });
-      });
+      When(
+        'the client calls content.getBySlug with slug "en/learn/courses/just-enough-go/learning/beginner"',
+        async () => {
+          result = await testCaller.content.getBySlug({
+            locale: "en",
+            slug: "learn/courses/just-enough-go/learning/beginner",
+          });
+        },
+      );
 
       Then('the response should contain a non-null "html" field', () => {
         expect(result.html).toContain("<h2");
       });
 
-      And('the response should contain a non-null "frontmatter" field', () => {
-        expect(result.title).toBe("Overview");
+      And("the response should contain the page metadata for the requested slug", () => {
+        expect(result).toMatchObject({
+          title: "Beginner Examples",
+          slug: "learn/courses/just-enough-go/learning/beginner",
+          locale: "en",
+          weight: 10,
+          draft: false,
+          isSection: false,
+        });
       });
 
       And('the response should contain a non-null "headings" field', () => {
@@ -39,12 +57,14 @@ describeFeature(feature, ({ Scenario, Background }) => {
       });
 
       And('the response should contain a "prev" navigation link', () => {
-        expect(result).toHaveProperty("prev");
+        expect(result.prev).toEqual({ title: "Overview", slug: "learn/courses/just-enough-go/learning/overview" });
       });
 
-      // @covers specs/apps/ayokoding/www/behaviors/backend/content/content-api.feature:Get existing page by slug returns HTML, frontmatter, headings, and prev/next links
       And('the response should contain a "next" navigation link', () => {
-        expect(result).toHaveProperty("next");
+        expect(result.next).toEqual({
+          title: "Intermediate Examples",
+          slug: "learn/courses/just-enough-go/learning/intermediate",
+        });
       });
     },
   );
@@ -60,7 +80,6 @@ describeFeature(feature, ({ Scenario, Background }) => {
       }
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/backend/content/content-api.feature:Get non-existent page by slug returns 404
     Then("the response should indicate the page was not found", () => {
       expect(error).toBeInstanceOf(TRPCError);
       expect(error?.code).toBe("NOT_FOUND");
@@ -70,19 +89,18 @@ describeFeature(feature, ({ Scenario, Background }) => {
   Scenario("Draft pages are excluded from content retrieval", ({ Given, When, Then }) => {
     let error: TRPCError | null = null;
 
-    Given('a draft page exists at slug "en/programming/draft-article"', () => {
-      // draft page is present in the test fixture as learn/draft-page
+    Given('a draft page exists at slug "en/learn/paths/skills/e2e-fixture-alpha"', () => {
+      expect(draftFixture).toMatchObject({ slug: "learn/paths/skills/e2e-fixture-alpha", locale: "en", draft: true });
     });
 
-    When('the client calls content.getBySlug with slug "en/programming/draft-article"', async () => {
+    When('the client calls content.getBySlug with slug "en/learn/paths/skills/e2e-fixture-alpha"', async () => {
       try {
-        await testCaller.content.getBySlug({ locale: "en", slug: "learn/draft-page" });
+        await testCaller.content.getBySlug({ locale: "en", slug: "learn/paths/skills/e2e-fixture-alpha" });
       } catch (e) {
         error = e as TRPCError;
       }
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/backend/content/content-api.feature:Draft pages are excluded from content retrieval
     Then("the response should indicate the page was not found", () => {
       expect(error).toBeInstanceOf(TRPCError);
       expect(error?.code).toBe("NOT_FOUND");
@@ -92,19 +110,28 @@ describeFeature(feature, ({ Scenario, Background }) => {
   Scenario("List children of a section returns pages ordered by weight ascending", ({ Given, When, Then, And }) => {
     let result: Awaited<ReturnType<typeof testCaller.content.listChildren>>;
 
-    Given('a section exists at slug "en/programming/golang" with child pages weighted 30, 10, and 20', () => {
-      // section with weighted children is available in the test fixture
+    Given(
+      'a section exists at slug "en/learn/courses/just-enough-go/learning" with child pages weighted 30, 1, 100, 20, and 10',
+      async () => {
+        const children = await testCaller.content.listChildren({
+          locale: "en",
+          parentSlug: "learn/courses/just-enough-go/learning",
+        });
+        expect(children.map(({ weight }) => weight)).toEqual([1, 10, 20, 30, 100]);
+      },
+    );
+
+    When('the client calls content.listChildren with slug "en/learn/courses/just-enough-go/learning"', async () => {
+      result = await testCaller.content.listChildren({
+        locale: "en",
+        parentSlug: "learn/courses/just-enough-go/learning",
+      });
     });
 
-    When('the client calls content.listChildren with slug "en/programming/golang"', async () => {
-      result = await testCaller.content.listChildren({ locale: "en", parentSlug: "learn" });
+    Then("the response should contain 5 child pages", () => {
+      expect(result).toHaveLength(5);
     });
 
-    Then("the response should contain 3 child pages", () => {
-      expect(result.length).toBeGreaterThan(0);
-    });
-
-    // @covers specs/apps/ayokoding/www/behaviors/backend/content/content-api.feature:List children of a section returns pages ordered by weight ascending
     And("the child pages should be ordered by weight ascending", () => {
       for (let i = 1; i < result.length; i++) {
         expect(result[i]!.weight).toBeGreaterThanOrEqual(result[i - 1]!.weight);
@@ -123,7 +150,6 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(result.length).toBeGreaterThan(0);
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/backend/content/content-api.feature:Get navigation tree returns full hierarchy for the requested locale
     And("every node should include a slug and title", () => {
       const firstNode = result[0]!;
       expect(firstNode).toHaveProperty("slug");
@@ -135,15 +161,27 @@ describeFeature(feature, ({ Scenario, Background }) => {
   Scenario("Page content includes rendered HTML with code blocks preserved", ({ Given, When, Then }) => {
     let result: Awaited<ReturnType<typeof testCaller.content.getBySlug>>;
 
-    Given('a published page exists at slug "en/programming/golang/variables" with a fenced code block', () => {
-      // page with code block is available in the test fixture as learn/overview
-    });
+    Given(
+      'a published page exists at slug "en/learn/courses/just-enough-go/learning/beginner" with a fenced code block',
+      async () => {
+        const page = await testCaller.content.getBySlug({
+          locale: "en",
+          slug: "learn/courses/just-enough-go/learning/beginner",
+        });
+        expect(page?.html).toContain("<code");
+      },
+    );
 
-    When('the client calls content.getBySlug with slug "en/programming/golang/variables"', async () => {
-      result = await testCaller.content.getBySlug({ locale: "en", slug: "learn/overview" });
-    });
+    When(
+      'the client calls content.getBySlug with slug "en/learn/courses/just-enough-go/learning/beginner"',
+      async () => {
+        result = await testCaller.content.getBySlug({
+          locale: "en",
+          slug: "learn/courses/just-enough-go/learning/beginner",
+        });
+      },
+    );
 
-    // @covers specs/apps/ayokoding/www/behaviors/backend/content/content-api.feature:Page content includes rendered HTML with code blocks preserved
     Then('the response "html" field should contain a rendered code element', () => {
       expect(result.html).toContain("<code");
     });

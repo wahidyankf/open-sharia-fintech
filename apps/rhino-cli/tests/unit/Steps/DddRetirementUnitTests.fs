@@ -13,13 +13,6 @@ open RhinoCli.Application
 
 let private applicationAssembly = typeof<RepoConfig.GateEntry>.Assembly
 
-let private newTempDir () =
-    let dir =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-ddd-retirement-" + Guid.NewGuid().ToString("N"))
-
-    Directory.CreateDirectory(dir) |> ignore
-    dir
-
 /// Runs `route`, capturing stdout/stderr around the call and restoring the
 /// prior writers afterwards even if `route` throws.
 let private runCaptured (getRepoRoot: unit -> Result<string, string>) (argv: string[]) : int * string * string =
@@ -62,7 +55,7 @@ let ``the repo-config parser carries no DDD-only specs section`` () =
 
 [<Fact>]
 let ``specs domain-coverage validate is not a route`` () =
-    let root = newTempDir ()
+    let root = "/synthetic/repo"
 
     let exitCode, stdout, stderr =
         runCaptured (fun () -> Ok root) [| "specs"; "domain-coverage"; "validate"; "widget-app" |]

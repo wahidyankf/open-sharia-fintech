@@ -74,4 +74,4 @@ agent and needs to invoke it within the same run (e.g., wiring a freshly created
 a later phase) should not treat an unlisted `subagent_type` as a broken agent. **Workaround**:
 invoke `general-purpose` and instruct it, as its first step, to `Read` the new agent's `.md` file in
 full and follow its instructions verbatim, then perform the task — this reproduces the target
-agent's behavior without requiring session-level registration.
+agent's behaviour without requiring session-level registration.

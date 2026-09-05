@@ -21,7 +21,7 @@ when_to_use: Use when justifying why the target-naming and echo-placeholder rule
 
 - **[Automation Over Manual](../../../principles/software-engineering/automation-over-manual.md)**: Targets integrate with Nx affected computation, caching, the pre-push hook, and the PR merge gate. Consistent naming allows workspace-level automation (`nx affected -t test:quick`) to work across all project types without special cases.
 
-- **[Simplicity Over Complexity](../../../principles/general/simplicity-over-complexity.md)**: The mandatory-six targets (`test:unit`, `test:integration`, `test:e2e`, `test:quick`, `lint`, `typecheck`) use echo placeholders rather than omitting targets, so `nx affected -t <target>` covers every project uniformly with no special-casing. A Rust CLI does not need `dev` or `start`. The `test:specs` aggregate collects all `specs:*` validators into one target so the pre-push hook invokes the full specs gate through `test:quick` without separate gate steps.
+- **[Simplicity Over Complexity](../../../principles/general/simplicity-over-complexity.md)**: Projects omit inapplicable targets instead of publishing no-op contracts. `test:coverage` composes applicable static validators, and `test:quick` remains the one closed fast gate.
 
 ## Conventions Implemented/Respected
 
@@ -29,4 +29,4 @@ when_to_use: Use when justifying why the target-naming and echo-placeholder rule
 
 - **[Reproducible Environments Convention](../../workflow/reproducible-environments.md)**: Projects with local dependencies expose an `install` target so dependency state is always explicit and reproducible.
 
-- **[Three-Level Testing Standard](../../quality/three-level-testing-standard.md)**: The `test:unit`, `test:integration`, and `test:e2e` targets defined here map to the mandatory three-level testing architecture. Each target's isolation boundaries, caching rules, and CI schedule derive from that standard.
+- **[Behaviour-Driven Development](../../behaviour-driven-development.md)**: The `test:unit`, `test:integration`, and `test:e2e` targets defined here map to the mandatory three-level testing architecture. Each target's isolation boundaries, caching rules, and CI schedule derive from that standard.

@@ -14,7 +14,6 @@ When("the calculator entry renders", async ({ page }) => {
   await page.waitForLoadState("networkidle");
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/tools-index.feature:The calculator entry shows a description distinct from its link text
 Then("the calculator entry shows a description distinct from its link text", async ({ page }) => {
   // Scope to the main content area to avoid matching the footer Tools column
   // which also links to the calculator (added in Phase 3 footer nav update).
@@ -38,7 +37,6 @@ When("the AI benchmark entry renders", async ({ page }) => {
   await page.waitForLoadState("networkidle");
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/tools-index.feature:The AI benchmark entry shows a description distinct from its link text
 Then("the AI benchmark entry shows a description distinct from its link text", async ({ page }) => {
   // Scope to the main content area to avoid matching the footer Tools column
   // which will also link to the AI benchmark tool once R-3 wires it up.
@@ -63,7 +61,6 @@ Given("I navigate to {string}", async ({ page }, path: string) => {
   await page.waitForLoadState("networkidle");
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/tools-index.feature:Exactly one main landmark renders on the Tools pages
 Then("exactly one main landmark is present", async ({ page }) => {
   await expect(page.locator("main")).toHaveCount(1);
 });

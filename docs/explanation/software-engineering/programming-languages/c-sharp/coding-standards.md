@@ -78,7 +78,7 @@ public class ZakatCalculatorTests
 
 ### 2. Explicit Over Implicit
 
-**Principle**: Choose explicit configuration and types over magic, convention, and hidden behavior.
+**Principle**: Choose explicit configuration and types over magic, convention, and hidden behaviour.
 
 **How C# Implements**:
 

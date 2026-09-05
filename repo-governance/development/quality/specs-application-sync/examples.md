@@ -24,7 +24,7 @@ They:
 
 1. Update `specs/apps/organiclever/be/contracts/` (OpenAPI spec) with the new endpoint definition
 2. Run `nx run organiclever-contracts:codegen` and related codegen targets
-3. Add a Gherkin scenario to `specs/apps/organiclever/be/behaviors/products/get-product.feature`
+3. Add a Gherkin scenario to `specs/apps/organiclever/be/behaviours/products/get-product.feature`
 4. Update `specs/apps/organiclever/be/architecture.md` if the endpoint belongs to a new component
 5. Implement the endpoint in `apps/organiclever-be/`
 
@@ -34,7 +34,7 @@ All changes are in a single commit or PR.
 
 A developer adds `GET /api/products/:id` to `apps/organiclever-be/` but does not update the OpenAPI contract, Gherkin feature files, or C4 diagrams.
 
-The `codegen` target dependency fails at `typecheck` because the generated types are stale. Even if `codegen` is run, the missing Gherkin scenario means the behavior is unspecified, and the C4 diagram no longer reflects what the system does.
+The `codegen` target dependency fails at `typecheck` because the generated types are stale. Even if `codegen` is run, the missing Gherkin scenario means the behaviour is unspecified, and the C4 diagram no longer reflects what the system does.
 
 This is a violation of the sync convention.
 
@@ -58,7 +58,7 @@ CI now has a mismatch: the app path and the spec path use different names. Revie
 
 ## PASS: Bug fix with no spec change
 
-A developer fixes a null pointer dereference in a Go repository function. The bug caused a 500 response where a 200 was expected. The existing Gherkin scenario for that endpoint already described the expected 200 behavior — the bug caused a deviation from the spec, and the fix restores compliance.
+A developer fixes a null pointer dereference in a Go repository function. The bug caused a 500 response where a 200 was expected. The existing Gherkin scenario for that endpoint already described the expected 200 behaviour — the bug caused a deviation from the spec, and the fix restores compliance.
 
 No spec changes are needed: the spec was correct and the code was wrong.
 
@@ -66,4 +66,4 @@ No spec changes are needed: the spec was correct and the code was wrong.
 
 A developer extracts a large tRPC router into two smaller routers for maintainability. The API surface (procedure names, input shapes, output shapes) is unchanged. No new procedures are added.
 
-No Gherkin or C4 changes are needed: external behavior and container/component boundaries are unchanged.
+No Gherkin or C4 changes are needed: external behaviour and container/component boundaries are unchanged.

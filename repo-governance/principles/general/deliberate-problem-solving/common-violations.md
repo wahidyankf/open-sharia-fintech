@@ -7,7 +7,7 @@ tags:
   - problem-solving
   - communication
 created: 2026-01-29
-when_to_use: Use when identifying whether a specific behavior is a known violation of deliberate problem-solving.
+when_to_use: Use when identifying whether a specific behaviour is a known violation of deliberate problem-solving.
 ---
 
 # Common Violations

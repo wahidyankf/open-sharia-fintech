@@ -5,7 +5,7 @@ category: explanation
 subcategory: development
 tags: []
 created: 2026-05-12
-when_to_use: Use when the work is ambiguous, shared, or already in motion, and you need a behavioral practice rather than a code pattern or tool configuration.
+when_to_use: Use when the work is ambiguous, shared, or already in motion, and you need a behavioural practice rather than a code pattern or tool configuration.
 ---
 
 # Development Practices
@@ -20,7 +20,7 @@ These practices define **HOW developers and AI agents should behave** when encou
 
 **Belongs Here:**
 
-- Behavioral practices for developers and AI agents
+- Behavioural practices for developers and AI agents
 - Proactive quality habits
 - Error resolution approaches
 - Day-to-day development decision-making guidance
@@ -53,7 +53,7 @@ These practices define **HOW developers and AI agents should behave** when encou
 
 This set of development practices implements/respects the following core principles:
 
-- **[Root Cause Orientation](../../principles/general/root-cause-orientation.md)**: Practices in this category operationalize root cause analysis into daily development behavior, ensuring errors are fixed at their source rather than worked around.
+- **[Root Cause Orientation](../../principles/general/root-cause-orientation.md)**: Practices in this category operationalize root cause analysis into daily development behaviour, ensuring errors are fixed at their source rather than worked around.
 
 - **[Deliberate Problem-Solving](../../principles/general/deliberate-problem-solving.md)**: Development practices require understanding problems before acting, preventing hasty workarounds that accumulate technical debt.
 

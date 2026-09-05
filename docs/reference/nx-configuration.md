@@ -31,22 +31,16 @@ Complete reference for Nx workspace configuration files, options, and settings.
 
 ### Complete Example
 
-> **Note**: `targetDefaults` uses the canonical target names defined in [Nx Target Standards](../../repo-governance/development/infra/nx-targets.md). The standard targets are `test:quick`, `test:unit`, `test:integration`, and `test:e2e` — not a generic `test` target. See the governance document for caching rules and mandatory targets per project type.
+> **Note**: `targetDefaults` uses the canonical target names defined in
+> [Nx Target Standards](../../repo-governance/development/infra/nx-targets.md). Runtime targets are
+> `test:unit`, `test:integration`, and `test:e2e`; static coverage targets are `test:coverage` and
+> `test:coverage:*`. `test:quick` composes Unit runtime with every applicable static validator. See
+> the governance document for role-specific applicability and caching rules.
 
 ```json
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "affected": {
-    "defaultBase": "main"
-  },
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "nx/tasks-runners/default",
-      "options": {
-        "cacheableOperations": ["build", "typecheck", "lint", "test:quick", "test:unit", "test:integration"]
-      }
-    }
-  },
+  "defaultBase": "origin/main",
   "targetDefaults": {
     "build": {
       "dependsOn": ["^build"],
@@ -65,8 +59,23 @@ Complete reference for Nx workspace configuration files, options, and settings.
     "test:unit": {
       "cache": true
     },
-    "test:integration": {
+    "test:coverage": {
       "cache": true
+    },
+    "test:coverage:unit": {
+      "cache": true
+    },
+    "test:coverage:integration": {
+      "cache": true
+    },
+    "test:coverage:e2e": {
+      "cache": true
+    },
+    "test:coverage:behaviour": {
+      "cache": true
+    },
+    "test:integration": {
+      "cache": false
     },
     "test:e2e": {
       "cache": false
@@ -90,23 +99,19 @@ JSON schema for validation and autocomplete.
 
 **Value**: `"./node_modules/nx/schemas/nx-schema.json"`
 
-#### `affected`
+#### `defaultBase`
 
 Configuration for affected detection.
 
-**Fields**:
+**Value**: `"origin/main"`
 
-- `defaultBase` (string): Base branch for comparing changes
-  - Default: `"main"`
-  - Used by: `nx affected:*` commands
+Nx uses this base ref when an affected command does not receive an explicit base.
 
 **Example**:
 
 ```json
 {
-  "affected": {
-    "defaultBase": "main"
-  }
+  "defaultBase": "origin/main"
 }
 ```
 
@@ -121,7 +126,7 @@ Configuration for task runners and caching.
     - Default: `"nx/tasks-runners/default"`
   - `options` (object): Runner options
     - `cacheableOperations` (string[]): Tasks to cache
-      - Examples: `["build", "test", "lint"]`
+      - Examples: `["build", "test:unit", "test:coverage", "lint"]`
 
 **Example**:
 
@@ -131,7 +136,7 @@ Configuration for task runners and caching.
     "default": {
       "runner": "nx/tasks-runners/default",
       "options": {
-        "cacheableOperations": ["build", "test", "lint"]
+        "cacheableOperations": ["build", "test:unit", "test:coverage", "lint"]
       }
     }
   }
@@ -175,8 +180,23 @@ Default configuration for targets across all projects.
     "test:unit": {
       "cache": true
     },
-    "test:integration": {
+    "test:coverage": {
       "cache": true
+    },
+    "test:coverage:unit": {
+      "cache": true
+    },
+    "test:coverage:integration": {
+      "cache": true
+    },
+    "test:coverage:e2e": {
+      "cache": true
+    },
+    "test:coverage:behaviour": {
+      "cache": true
+    },
+    "test:integration": {
+      "cache": false
     },
     "test:e2e": {
       "cache": false
@@ -185,7 +205,11 @@ Default configuration for targets across all projects.
 }
 ```
 
-**Standard target names**: Use `test:quick`, `test:unit`, `test:integration`, `test:e2e` — not a generic `test` target. See [Nx Target Standards](../../repo-governance/development/infra/nx-targets.md) for the complete target naming standard.
+**Standard target names**: Use `test:quick`; the applicable runtime targets `test:unit`,
+`test:integration`, and `test:e2e`; and static-only `test:coverage` / `test:coverage:*` targets. Do
+not use a generic `test` target. See
+[Nx Target Standards](../../repo-governance/development/infra/nx-targets.md) for the complete
+role-based standard.
 
 **Codegen dependency chain** (demo apps): All demo app `typecheck` and `build` targets must declare `dependsOn: ["codegen"]`. This ensures generated types from the OpenAPI spec are always up to date before type checking or building. Example:
 
@@ -321,21 +345,45 @@ Per-project:
     "test:quick": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "tsc --noEmit -p libs/ts-utils/tsconfig.json && node --import tsx --test libs/ts-utils/src/**/*.test.ts",
-        "cwd": "."
+        "commands": [
+          "npx nx run ts-utils:typecheck",
+          "npx nx run ts-utils:lint",
+          "npx nx run ts-utils:test:unit",
+          "npx nx run ts-utils:test:coverage"
+        ],
+        "parallel": false
       }
     },
     "test:unit": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "node --import tsx --test libs/ts-utils/src/**/*.test.ts",
+        "command": "vitest run --config libs/ts-utils/vitest.config.ts --coverage",
         "cwd": "."
+      }
+    },
+    "test:coverage:unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node scripts/behaviour-coverage.mjs --config libs/ts-utils/behaviour-coverage.json --adapter unit"
+      }
+    },
+    "test:coverage:behaviour": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node scripts/behaviour-coverage.mjs --config libs/ts-utils/behaviour-coverage.json --adapter behaviour"
+      }
+    },
+    "test:coverage": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["npx nx run ts-utils:test:coverage:unit", "npx nx run ts-utils:test:coverage:behaviour"],
+        "parallel": false
       }
     },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "echo 'Linting not configured yet'",
+        "command": "eslint libs/ts-utils/src",
         "cwd": "."
       }
     }
@@ -343,7 +391,10 @@ Per-project:
 }
 ```
 
-**Target names follow [Nx Target Standards](../../repo-governance/development/infra/nx-targets.md)**: `test:quick` is the mandatory pre-push gate; `test:unit` runs isolated unit tests. Avoid generic `test` targets.
+**Target names follow [Nx Target Standards](../../repo-governance/development/infra/nx-targets.md)**:
+`test:quick` is the mandatory pre-push gate, `test:unit` runs isolated Unit tests with a 99% line
+threshold configured in `vitest.config.ts`, and `test:coverage` aggregates the applicable static
+validators. Avoid generic `test` targets and no-op placeholders.
 
 ### Tag Convention
 

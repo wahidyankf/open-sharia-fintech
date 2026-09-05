@@ -57,7 +57,7 @@ logging.md:                     weight: 10000003  # Observability
 
 # Quality Foundation (10000004-10000005)
 test-driven-development.md:     weight: 10000004
-behavior-driven-development.md: weight: 10000005
+behaviour-driven-development.md: weight: 10000005
 
 # Core Concepts (10000006-10000009)
 design-principles.md:           weight: 10000006  # SOLID, DRY, YAGNI

@@ -34,7 +34,7 @@ academic paper. `.github/pull_request_template.md` prompts for each in compact f
    artifacts must land together, and confirm that unrelated purposes are excluded. Do not use LOC
    or file counts to justify, force, or erase the boundary.
 7. **Why the resulting `main` state is production-deployable.** State whether user-reachable
-   behavior is complete and active or incomplete and complete-and-inert behind a temporary feature
+   behaviour is complete and active or incomplete and complete-and-inert behind a temporary feature
    flag disabled in production by default. For a flag, name enabled/disabled-path tests and the
    rollout, rollback, and removal record. State the supporting build, test, lint, operational, and
    rollback proof.

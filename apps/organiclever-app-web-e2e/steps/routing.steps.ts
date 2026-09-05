@@ -1,9 +1,9 @@
 /**
  * Step definitions for the URL-routed shell.
  *
- * Covers: specs/apps/organiclever/app-web/behaviors/routing/app-routes.feature
+ * Covers: specs/apps/organiclever/app-web/behaviours/routing/app-routes.feature
  * Plus the new "URL persists across page refresh" scenario added to
- * specs/apps/organiclever/app-web/behaviors/app-shell/navigation.feature.
+ * specs/apps/organiclever/app-web/behaviours/app-shell/navigation.feature.
  *
  * The 308-redirect and 404 step impls live in disabled-routes.steps.ts.
  */
@@ -28,8 +28,9 @@ async function expectScreen(page: import("@playwright/test").Page, screen: strin
   await expect(locator).toBeVisible({ timeout: 10000 });
 }
 
-Given("the application is running", async () => {
-  // No-op — the dev server is started externally for the e2e run.
+Given("the application is running", async ({ request }) => {
+  const response = await request.get(`${APP_BASE_URL}/app/home`);
+  expect(response.ok()).toBe(true);
 });
 
 Given(/^the user is on "(\/app\/[^"]+)"$/, async ({ page }, target: string) => {
@@ -67,25 +68,19 @@ Then(/^the URL is still "(\/app[^"]*)"$/, async ({ page }, target: string) => {
   await expect(page).toHaveURL(`${APP_BASE_URL}${target}`, { timeout: 10000 });
 });
 
-// @covers specs/apps/organiclever/app-web/behaviors/routing/app-routes.feature:Visiting /app redirects to /app/home
-// @covers specs/apps/organiclever/app-web/behaviors/routing/app-routes.feature:Back from Progress returns to Home
 Then("the Home screen is visible", async ({ page }) => {
   await expectScreen(page, "Home");
 });
 
-// @covers specs/apps/organiclever/app-web/behaviors/routing/app-routes.feature:Refreshing a tab URL keeps the user on that tab
-// @covers specs/apps/organiclever/app-web/behaviors/app-shell/navigation.feature:URL persists across page refresh on each tab
 Then(/^the "([^"]+)" screen is visible$/, async ({ page }, screen: string) => {
   await expectScreen(page, screen);
 });
 
-// @covers specs/apps/organiclever/app-web/behaviors/routing/app-routes.feature:Visiting /app/home renders the Home screen
 Then("the Home tab is marked active in the navigation", async ({ page }) => {
   const homeLink = page.getByRole("link", { name: "Home" }).first();
   await expect(homeLink).toHaveAttribute("aria-current", "page", { timeout: 10000 });
 });
 
-// @covers specs/apps/organiclever/app-web/behaviors/routing/app-routes.feature:Each tab is reachable by URL
 Then(/^the "([^"]+)" tab is marked active$/, async ({ page }, tab: string) => {
   const link = page.getByRole("link", { name: tab }).first();
   await expect(link).toHaveAttribute("aria-current", "page", { timeout: 10000 });

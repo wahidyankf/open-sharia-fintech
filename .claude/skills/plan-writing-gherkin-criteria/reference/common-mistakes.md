@@ -45,7 +45,7 @@ And "sessions" database table should have new row
 ```
 
 ```gherkin
-# ✅ Good - Asserts observable behavior
+# ✅ Good - Asserts observable behaviour
 Then user should be logged in
 And user session should be active
 ```
@@ -64,15 +64,14 @@ Then the system should respond quickly
 Then the response should be received within 200ms
 ```
 
-## Mistake 4: Testing multiple behaviors in one scenario
+## Mistake 4: Testing multiple behaviours in one scenario
 
-**Problem**: Scenario tests multiple unrelated behaviors
+**Problem**: Scenario tests multiple unrelated behaviours
 
 ```gherkin
-# ❌ Bad - Multiple behaviors
+# ❌ Bad - Multiple behaviours
 # Deliberate non-conforming example — the repeated primary Then is the violation
-# being illustrated (multiple behaviors = multiple primary keywords; see
-# Step-Keyword Cardinality HARD rule)
+# being illustrated; split unrelated behaviour into separate scenarios
 Scenario: User management and article creation
   Given I create user "Alice"
   Then user "Alice" should exist

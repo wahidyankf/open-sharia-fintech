@@ -4,10 +4,11 @@
 /// utility functions
 /// [Repo-grounded — `apps/rhino-cli/src/internal/contracts/dart_scaffold.rs`,
 /// `apps/rhino-cli/src/internal/contracts/types.rs`], binding
-/// `specs/apps/rhino/cli/behaviors/contracts/contracts-dart-scaffold.feature`.
+/// `specs/apps/rhino/cli/behaviours/contracts/contracts-dart-scaffold.feature`.
 module RhinoCli.Application.Contracts
 
 open System.IO
+open System.Diagnostics.CodeAnalysis
 open System.Text
 
 /// Where to scaffold the generated Dart package.
@@ -21,6 +22,11 @@ type DartScaffoldResult =
         /// Model file base names, sorted.
         ModelFiles: string list
     }
+
+type DartScaffoldPlan =
+    { Pubspec: string
+      Barrel: string
+      Result: DartScaffoldResult }
 
 /// `pubspec.yaml` content emitted for the generated package.
 [<Literal>]
@@ -37,12 +43,31 @@ let BarrelHeader =
 let BarrelUtils =
     "\nconst _deepEquality = DeepCollectionEquality();\nfinal _dateFormatter = _DateFormatter();\n\nclass _DateFormatter {\n  String format(DateTime dt) =>\n      '${dt.year.toString().padLeft(4, '0')}'\n      '-${dt.month.toString().padLeft(2, '0')}'\n      '-${dt.day.toString().padLeft(2, '0')}';\n}\n\nT? mapValueOfType<T>(Map<String, dynamic> map, String key) {\n  final v = map[key];\n  return v is T ? v : null;\n}\n\nDateTime? mapDateTime(Map<String, dynamic> map, String key, String? f) {\n  final v = map[key];\n  return v is String && v.isNotEmpty ? DateTime.tryParse(v) : null;\n}\n\nMap<K, V>? mapCastOfType<K, V>(Map<String, dynamic> map, String key) {\n  final v = map[key];\n  return v is Map ? v.cast<K, V>() : null;\n}\n"
 
+/// Pure scaffold rendering from discovered model basenames.
+let planDartScaffold (modelFiles: string list) : DartScaffoldPlan =
+    let basenames = modelFiles |> List.map Path.GetFileName |> List.sort
+    let sb = StringBuilder()
+    sb.Append BarrelHeader |> ignore
+
+    basenames
+    |> List.iter (fun name -> sb.Append("part 'model/").Append(name).Append("';\n") |> ignore)
+
+    sb.Append BarrelUtils |> ignore
+
+    { Pubspec = PubspecContent
+      Barrel = sb.ToString()
+      Result =
+        { PubspecCreated = true
+          BarrelCreated = true
+          ModelFiles = basenames } }
+
 /// Creates `pubspec.yaml` and the barrel library for the Dart
 /// generated-contracts package, overwriting whatever is already there.
+// Coverage boundary: real filesystem creation and writes are exercised by Contracts Integration
+// and published-process E2E proof for every retained scaffold scenario.
+[<ExcludeFromCodeCoverage>]
 let scaffoldDart (opts: DartScaffoldOptions) : Result<DartScaffoldResult, string> =
     try
-        File.WriteAllText(Path.Combine(opts.Dir, "pubspec.yaml"), PubspecContent)
-
         let libDir = Path.Combine(opts.Dir, "lib")
         Directory.CreateDirectory libDir |> ignore
         let modelDir = Path.Combine(libDir, "model")
@@ -56,18 +81,9 @@ let scaffoldDart (opts: DartScaffoldOptions) : Result<DartScaffoldResult, string
             else
                 []
 
-        let sb = StringBuilder()
-        sb.Append BarrelHeader |> ignore
-
-        for base' in basenames do
-            sb.Append("part 'model/").Append(base').Append("';\n") |> ignore
-
-        sb.Append BarrelUtils |> ignore
-        File.WriteAllText(Path.Combine(libDir, "crud_contracts.dart"), sb.ToString())
-
-        Ok
-            { PubspecCreated = true
-              BarrelCreated = true
-              ModelFiles = basenames }
+        let plan = planDartScaffold basenames
+        File.WriteAllText(Path.Combine(opts.Dir, "pubspec.yaml"), plan.Pubspec)
+        File.WriteAllText(Path.Combine(libDir, "crud_contracts.dart"), plan.Barrel)
+        Ok plan.Result
     with ex ->
         Error ex.Message

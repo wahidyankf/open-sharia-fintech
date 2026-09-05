@@ -1,44 +1,67 @@
 import path from "path";
 import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
-import { render, screen } from "@testing-library/react";
-import { expect } from "vitest";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { expect, vi } from "vitest";
+
+let mockPathname = "/en/unrelated";
+vi.mock("next/navigation", () => ({
+  usePathname: () => mockPathname,
+}));
 import "./helpers/test-setup";
 import { Breadcrumb } from "@/features/navigation/shell/breadcrumb";
 import { TableOfContents } from "@/features/navigation/shell/toc";
 import { PrevNext } from "@/features/navigation/shell/prev-next";
+import { SidebarTree } from "@/features/navigation/shell/sidebar-tree";
 import { parseMarkdown } from "@/features/content/core/parser";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviors/frontend/navigation/navigation.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviours/frontend/navigation/navigation.feature"),
 );
 
-describeFeature(feature, ({ Scenario, Background }) => {
+describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
+  AfterEachScenario(() => {
+    cleanup();
+    mockPathname = "/en/unrelated";
+  });
+
   Background(({ Given }) => {
-    Given("the app is running", () => {});
+    Given("the app is running", () => {
+      expect(Breadcrumb).toBeTypeOf("function");
+    });
   });
 
   Scenario("Sidebar shows section tree with collapsible nodes", ({ When, Then, And }) => {
     When("a visitor opens a content page that has child sections", () => {
-      // Sidebar is a server component — unit test verifies child SidebarTree renders
-      expect(true).toBe(true);
+      render(
+        <SidebarTree
+          locale="en"
+          nodes={[
+            {
+              slug: "learn",
+              title: "Learn",
+              isSection: true,
+              weight: 0,
+              children: [{ slug: "learn/typescript", title: "TypeScript", isSection: false, weight: 0, children: [] }],
+            },
+          ]}
+        />,
+      );
     });
 
     Then("the sidebar should display the section tree", () => {
-      expect(true).toBe(true);
+      expect(screen.getByRole("link", { name: "Learn" })).toBeTruthy();
     });
 
     And("parent nodes should be expandable and collapsible", () => {
-      expect(true).toBe(true);
+      expect(screen.getByRole("button", { name: "Expand section" })).toBeTruthy();
     });
 
     And("the visitor clicks a collapsed parent node", () => {
-      expect(true).toBe(true);
+      fireEvent.click(screen.getByRole("button", { name: "Expand section" }));
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/navigation.feature:Sidebar shows section tree with collapsible nodes
     And("its child items should become visible", () => {
-      // Interactive collapse/expand is tested at E2E level
-      expect(true).toBe(true);
+      expect(screen.getByRole("link", { name: "TypeScript" })).toBeTruthy();
     });
   });
 
@@ -75,7 +98,6 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(links.length).toBe(2); // Learn and Software Engineering are both links
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/navigation.feature:Breadcrumb shows ancestor path hierarchy without current page
     And("the breadcrumb should render on a single row without horizontally truncating link text", () => {
       const nav = screen.getByLabelText("Breadcrumb");
       const ol = nav.querySelector("ol");
@@ -116,10 +138,8 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(screen.getByText("Advanced")).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/navigation.feature:Table of contents shows heading links for H2 to H4
     And("H1 headings should not appear in the table of contents", () => {
-      // H1 is not in the headings prop — only H2-H4 are extracted by the parser
-      expect(true).toBe(true);
+      expect(screen.queryByRole("heading", { level: 1 })).toBeNull();
     });
   });
 
@@ -143,10 +163,9 @@ describeFeature(feature, ({ Scenario, Background }) => {
     });
 
     And("the visitor clicks the next link", () => {
-      // Navigation click is tested at E2E level
+      fireEvent.click(screen.getByRole("link", { name: /Next Advanced Topics/i }));
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/navigation.feature:Previous and Next links navigate between siblings
     And("they should be taken to the next sibling page", () => {
       const links = screen.getAllByRole("link");
       const nextLink = links.find((l) => l.getAttribute("href")?.includes("advanced"));
@@ -156,18 +175,28 @@ describeFeature(feature, ({ Scenario, Background }) => {
 
   Scenario("Active page is highlighted in the sidebar", ({ When, Then, And }) => {
     When("a visitor is on a specific content page", () => {
-      // Sidebar highlighting requires SidebarTree which uses usePathname
-      expect(true).toBe(true);
+      mockPathname = "/en/learn/active";
+      render(
+        <SidebarTree
+          locale="en"
+          nodes={[
+            { slug: "learn/active", title: "Active", isSection: false, weight: 0, children: [] },
+            { slug: "learn/other", title: "Other", isSection: false, weight: 1, children: [] },
+          ]}
+        />,
+      );
     });
 
     Then("the corresponding item in the sidebar should be visually highlighted as active", () => {
-      // Active state highlighting is tested at E2E level
-      expect(true).toBe(true);
+      const active = screen.getByRole("link", { name: "Active" });
+      expect(active.className).toContain("bg-primary/10");
+      expect(active.className).toContain("text-primary");
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/navigation.feature:Active page is highlighted in the sidebar
     And("no other sidebar item should be highlighted as active", () => {
-      expect(true).toBe(true);
+      const other = screen.getByRole("link", { name: "Other" });
+      expect(other.className).not.toContain("bg-primary/10");
+      expect(document.querySelectorAll("a.bg-primary\\/10")).toHaveLength(1);
     });
   });
 
@@ -193,7 +222,6 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(html).not.toContain(".md");
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/navigation.feature:In-body relative markdown links resolve to real site routes
     And("the href should not be a raw filesystem-relative path", () => {
       expect(html).not.toContain('href="../');
       expect(html).not.toContain('href="./');
@@ -222,7 +250,6 @@ describeFeature(feature, ({ Scenario, Background }) => {
         expect(html).toContain('href="/en/learn/fundamentally-strong/software-engineer/just-enough-nvim/sibling"');
       });
 
-      // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/navigation.feature:In-body relative markdown links authored from a section index page resolve to real site routes
       And('the href should not contain a literal ".md" extension', () => {
         expect(html).not.toContain(".md");
       });

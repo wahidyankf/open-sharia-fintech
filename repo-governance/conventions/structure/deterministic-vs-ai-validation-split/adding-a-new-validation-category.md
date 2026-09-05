@@ -27,8 +27,8 @@ A new deterministic category MUST:
 
 - Have a dedicated subcommand under the CLI orchestrator (e.g., `repo-governance <category-name>`).
 - Emit findings in the canonical envelope shape with a stable composite key.
-- Have ≥90% line coverage on the implementation files.
-- Have a Gherkin feature file under `specs/apps/rhino/cli/behaviors/<domain>/` with both happy-path and failure-path scenarios.
+- Have ≥99% Unit line coverage on the implementation files.
+- Have a Gherkin feature file under `specs/apps/rhino/cli/behaviours/<domain>/` with both happy-path and failure-path scenarios.
 - Have unit tests (mocked I/O) AND integration tests (`//go:build integration`, real `t.TempDir()` fixtures).
 - Be byte-deterministic given a fixed clock.
 

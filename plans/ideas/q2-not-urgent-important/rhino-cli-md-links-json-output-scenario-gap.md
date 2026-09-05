@@ -5,7 +5,7 @@ One-line summary: the retired `ayokoding-cli`/`ose-cli` link checkers each carri
 equivalent, even though the JSON-output behaviour itself is live and unit-tested.
 
 > Idea, added 2026-08-18, filed from the `repo-clean-up` plan's `README.md` § Resolved Decisions.
-> That plan retired `specs/apps/{ayokoding,ose}/behavior/*-cli/gherkin/links/links-check.feature`
+> That plan retired the historical `specs/apps/{ayokoding,ose}/behavior/*-cli/gherkin/links/links-check.feature`
 > on the grounds that `md links validate` already carries equivalent spec coverage at repository
 > scope — true for every deleted scenario except this one.
 
@@ -13,18 +13,14 @@ equivalent, even though the JSON-output behaviour itself is live and unit-tested
 
 The deleted feature files each carried:
 
-```gherkin
-@integration
-Scenario: JSON output produces structured results
-```
+`Scenario: JSON output produces structured results`.
 
-The successor spec, `specs/apps/rhino/cli/behaviors/md/docs-validate-links.feature`,
+The successor spec, `specs/apps/rhino/cli/behaviours/md/docs-validate-links.feature`,
 has 10 scenarios covering valid links, broken links, external URLs, `--staged-only`, `--exclude`,
 repo-wide scan, and anchor cases — none of them exercises `--output json` / `-o json`.
 
 The behaviour is not missing from the product, only from the BDD spec: JSON output is implemented
-at `apps/rhino-cli/src/commands/md_validate_links.rs:47` and unit-tested at
-`apps/rhino-cli/src/application/docs/links.rs:966-972,1030-1042`. So there is no live defect — a
+in the F# `RhinoCli.Application` and `RhinoCli.Cli` projects and covered by Unit tests. So there is no live defect — a
 release-blocking gap in JSON-output correctness would already be caught by the unit tests — but the
 BDD layer's promise of full behavioural coverage for this command is not actually kept.
 
@@ -51,10 +47,11 @@ minimal one.
 
 ## Rough scope & non-goals
 
-In scope: one additional `@integration` scenario in `docs-validate-links.feature`, its step
-definitions, and the resulting parity-manifest update.
+In scope: one additional untagged scenario in `docs-validate-links.feature`, mandatory in-process
+Unit proof, the applicable real-filesystem Integration adapter, public-process E2E proof, and the
+resulting parity-manifest update.
 
-Out of scope: any change to the command's actual JSON schema or behavior; broader BDD coverage
+Out of scope: any change to the command's actual JSON schema or behaviour; broader BDD coverage
 audits of other `rhino-cli` subcommands.
 
 ## Risks & open questions
@@ -77,6 +74,6 @@ scope for `apps/rhino-cli/**` generally (`README.md` § Out of scope,
 ## What success looks like + promotion signal
 
 Success: `docs-validate-links.feature` carries a scenario for `-o json`, `apps/rhino-cli`'s
-`specs:behavior:coverage` gate covers it, and the parity manifest is back in sync across all three
+`test:coverage` static aggregate covers every applicable adapter, and the parity manifest is back in sync across all three
 repos. Ready to promote once someone is willing to own the three-repo propagation in the same PR —
 this is a small idea gated entirely by that one logistics question, not by design uncertainty.

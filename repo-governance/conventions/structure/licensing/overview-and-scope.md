@@ -48,7 +48,7 @@ requiring a root LICENSE change.
 - License type selection for new applications, libraries, and directories
 - Per-directory LICENSE file placement rules
 - Copyright notice format
-- Root LICENSE fallback behavior
+- Root LICENSE fallback behaviour
 
 ### What This Convention Does NOT Cover
 

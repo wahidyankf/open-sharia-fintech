@@ -25,7 +25,7 @@ when_to_use: Use when explaining inline skill delivery.
 
 ## Inline agent skills (Knowledge Delivery)
 
-**Default behavior** - Progressive knowledge injection:
+**Default behaviour** - Progressive knowledge injection:
 
 ```
 Knowledge Flow (Inline):

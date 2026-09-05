@@ -687,7 +687,7 @@ export const ScrollToSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
 
   const scrollToSection = () => {
-    sectionRef.current?.scrollIntoView({ behavior: 'smooth' });
+    sectionRef.current?.scrollIntoView({ behaviour: 'smooth' });
   };
 
   return (

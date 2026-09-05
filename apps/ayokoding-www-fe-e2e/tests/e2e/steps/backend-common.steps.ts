@@ -7,19 +7,49 @@ const { Given, When } = createBdd();
 // Shared Background step for every backend/**/*.feature scenario — the live server is already up
 // via this project's own `webServer` (playwright.config.ts), the same server the frontend e2e
 // scenarios in this project drive.
-Given("the API is running", async () => {});
+Given("the API is running", async ({ request }) => {
+  const response = await request.get(buildTrpcUrl("meta.health", undefined));
+  expect(response.ok()).toBe(true);
+  expect(extractTrpcData(await response.json())).toEqual({ status: "ok" });
+});
 
-// Fixture Given steps: no-ops. Real data comes from the running app's real seeded content, exactly
-// like ayokoding-www-be-e2e's own integration-level bindings for the identical corpus — the
-// Gherkin's slug/title text is illustrative, not literal test data to seed.
-Given("a published page exists at slug {string}", async ({}, _slug: string) => {});
-Given("a draft page exists at slug {string}", async ({}, _slug: string) => {});
+Given("a published page exists at slug {string}", async ({ request }, slugWithLocale: string) => {
+  const [locale, ...segments] = slugWithLocale.split("/");
+  const response = await request.get(buildTrpcUrl("content.getBySlug", { locale, slug: segments.join("/") }));
+  expect(response.ok()).toBe(true);
+  expect(extractTrpcData(await response.json())).toMatchObject({ locale, draft: false });
+});
 Given(
-  "a section exists at slug {string} with child pages weighted {int}, {int}, and {int}",
-  async ({}, _slug: string, _w1: number, _w2: number, _w3: number) => {},
+  "a section exists at slug {string} with child pages weighted {int}, {int}, {int}, {int}, and {int}",
+  async ({ request }, slugWithLocale: string, ...declaredWeights: number[]) => {
+    const [locale, ...segments] = slugWithLocale.split("/");
+    const response = await request.get(
+      buildTrpcUrl("content.listChildren", { locale, parentSlug: segments.join("/") }),
+    );
+    expect(response.ok()).toBe(true);
+    const children = extractTrpcData(await response.json()) as Array<{ weight: number }>;
+    expect(children.map(({ weight }) => weight)).toEqual([...declaredWeights].sort((left, right) => left - right));
+  },
 );
-Given("a published page exists at slug {string} with a fenced code block", async ({}, _slug: string) => {});
-Given("a page exists at slug {string} under locale {string}", async ({}, _slug: string, _locale: string) => {});
+Given(
+  "a published page exists at slug {string} with a fenced code block",
+  async ({ request }, slugWithLocale: string) => {
+    const [locale, ...segments] = slugWithLocale.split("/");
+    const response = await request.get(buildTrpcUrl("content.getBySlug", { locale, slug: segments.join("/") }));
+    expect(response.ok()).toBe(true);
+    expect(extractTrpcData(await response.json())).toMatchObject({ html: expect.stringContaining("<code") });
+  },
+);
+Given(
+  "a page exists at slug {string} under locale {string}",
+  async ({ request }, slugWithLocale: string, expectedLocale: string) => {
+    const [locale, ...segments] = slugWithLocale.split("/");
+    expect(locale).toBe(expectedLocale);
+    const response = await request.get(buildTrpcUrl("content.getBySlug", { locale, slug: segments.join("/") }));
+    expect(response.ok()).toBe(true);
+    expect(extractTrpcData(await response.json())).toMatchObject({ locale: expectedLocale });
+  },
+);
 
 // Shared: getTree for locale {string}
 When("the client calls content.getTree with locale {string}", async ({ request }, locale: string) => {
@@ -32,7 +62,7 @@ When("the client calls content.getTree with locale {string}", async ({ request }
 
 // Shared: getBySlug with slug {string}. Mirrors ayokoding-www-be-e2e's identical binding: the
 // Gherkin's own example slugs are illustrative (not seeded fixtures), so real, known-good content
-// (learn/overview) stands in for the "happy path" case while the invalid-locale/not-found/draft
+// (learn/overview) stands in for the "happy path" case while the invalid-locale/bad-request/draft
 // cases exercise the tRPC endpoint's real error responses.
 When("the client calls content.getBySlug with slug {string}", async ({ request }, slugStr: string) => {
   const parts = slugStr.split("/");
@@ -47,7 +77,7 @@ When("the client calls content.getBySlug with slug {string}", async ({ request }
     return;
   }
 
-  if (slugStr.includes("does/not/exist") || slugStr.includes("draft")) {
+  if (slugStr.includes("does/not/exist")) {
     const url = buildTrpcUrl("content.getBySlug", { locale, slug });
     const response = await request.get(url);
     const body = await response.json();
@@ -55,26 +85,19 @@ When("the client calls content.getBySlug with slug {string}", async ({ request }
     return;
   }
 
-  if (locale === "id") {
-    const url = buildTrpcUrl("content.getTree", { locale: "id" });
-    const response = await request.get(url);
-    expect(response.ok()).toBeTruthy();
-    const body = await response.json();
-    backendState.idResult = extractTrpcData(body) as unknown[];
-    return;
-  }
-
-  const url = buildTrpcUrl("content.getBySlug", { locale: "en", slug: "learn/overview" });
+  const url = buildTrpcUrl("content.getBySlug", { locale, slug });
   const response = await request.get(url);
   expect(response.ok()).toBeTruthy();
   const body = await response.json();
-  backendState.pageResult = extractTrpcData(body);
-  backendState.enResult = [extractTrpcData(body)];
+  const data = extractTrpcData(body);
+  backendState.pageResult = data;
+  backendState[`${locale}Result`] = data;
 });
 
 // Shared: listChildren with slug {string}
-When("the client calls content.listChildren with slug {string}", async ({ request }, _slug: string) => {
-  const url = buildTrpcUrl("content.listChildren", { locale: "en", parentSlug: "learn" });
+When("the client calls content.listChildren with slug {string}", async ({ request }, slugWithLocale: string) => {
+  const [locale, ...segments] = slugWithLocale.split("/");
+  const url = buildTrpcUrl("content.listChildren", { locale, parentSlug: segments.join("/") });
   const response = await request.get(url);
   expect(response.ok()).toBeTruthy();
   const body = await response.json();

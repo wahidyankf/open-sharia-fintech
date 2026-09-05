@@ -56,7 +56,7 @@ stateDiagram-v2
     note right of Red
         🔴 RED
         Write failing test
-        Specify desired behavior
+        Specify desired behaviour
     end note
 
     note right of Green

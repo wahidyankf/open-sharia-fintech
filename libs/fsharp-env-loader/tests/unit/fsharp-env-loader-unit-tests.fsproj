@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Behavior/FsharpEnvLoaderBehaviorDriver.fs" />
+    <Compile Include="Behaviour/FsharpEnvLoaderBehaviourDriver.fs" />
     <Compile Include="Tests/EnvTierTests.fs" />
     <Compile Include="Tests/PortResolverTests.fs" />
   </ItemGroup>
@@ -48,7 +48,7 @@
 
   <Target Name="CopyGherkinSpecs" BeforeTargets="Build">
     <ItemGroup>
-      <GherkinFiles Include="$(ProjectDir)..\..\..\..\specs\libs\fsharp-env-loader\behaviors\**\*.feature" />
+      <GherkinFiles Include="$(ProjectDir)..\..\..\..\specs\libs\fsharp-env-loader\behaviours\**\*.feature" />
     </ItemGroup>
     <Copy SourceFiles="@(GherkinFiles)" DestinationFolder="$(OutputPath)specs\%(RecursiveDir)" />
   </Target>

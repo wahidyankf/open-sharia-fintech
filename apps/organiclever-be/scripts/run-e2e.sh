@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # E2E test runner for organiclever-be.
-# Brings up PostgreSQL + NATS via docker-compose, starts the F# backend on
-# port 8202, runs the organiclever-be-e2e Playwright suite against it, then tears down.
+# Brings up PostgreSQL + NATS via docker-compose and lets the Playwright harness
+# own backend process lifecycle so startup behaviours can observe real transitions.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
@@ -18,13 +18,8 @@ COMPOSE_FILE="${ROOT}/apps/organiclever-be/docker-compose.e2e.yml"
 PROJECT_NAME="organiclever-be-e2e"
 PORT=8202
 FSPROJ="${ROOT}/apps/organiclever-be/src/OrganicleverBe/OrganicleverBe.fsproj"
-BE_PID=""
 
 cleanup() {
-	if [[ -n "${BE_PID}" ]]; then
-		kill "${BE_PID}" 2>/dev/null || true
-		wait "${BE_PID}" 2>/dev/null || true
-	fi
 	docker compose -p "${PROJECT_NAME}" -f "${COMPOSE_FILE}" down -v >/dev/null 2>&1 || true
 }
 trap cleanup EXIT
@@ -42,23 +37,7 @@ export ORGANICLEVER_BE_PORT="${PORT}"
 export ORGANICLEVER_BE_CORS_ORIGINS="*"
 export ORGANICLEVER_BE_NATS_URL="nats://localhost:4226"
 
-dotnet run --project "${FSPROJ}" --no-build --configuration Release &
-BE_PID="$!"
-
-# Wait until the health endpoint responds (up to 60 s)
-echo "Waiting for organiclever-be on port ${PORT}..."
-for i in $(seq 1 60); do
-	if curl -sf "http://localhost:${PORT}/api/v1/health" >/dev/null 2>&1; then
-		echo "organiclever-be is ready (${i}s)"
-		break
-	fi
-	if [[ "${i}" -eq 60 ]]; then
-		echo "ERROR: organiclever-be did not start within 60 seconds" >&2
-		exit 1
-	fi
-	sleep 1
-done
-
-# Run the Playwright e2e suite
+# Run the Playwright e2e suite. Its shared process harness starts/stops the
+# backend inside scenario steps and performs final worker cleanup.
 cd "${ROOT}/apps/organiclever-be-e2e"
 npx bddgen && npx playwright test

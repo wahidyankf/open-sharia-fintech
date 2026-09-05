@@ -9,5 +9,5 @@ title: "Reference"
 - [03 Finding Requirements](./finding-requirements.md) — the hard-rule requirements every finding in the consolidated review must carry
 - [04 Scope Guard](./scope-guard.md) — the scope test every surviving finding is measured against, and the two things it never suppresses
 - [05 Github Reviews Api Mechanics](./github-reviews-api-mechanics.md) — GitHub Reviews API mechanics and untrusted-input handling
-- [06 Cross Cycle And External Verification](./cross-cycle-and-external-verification.md) — cross-cycle behavior and external fact verification
+- [06 Cross Cycle And External Verification](./cross-cycle-and-external-verification.md) — cross-cycle behaviour and external fact verification
 - [07 Machine Readable Audit Record](./machine-readable-audit-record.md) — the stable post title, finding IDs, and HTML-comment record making every cycle analyzable later

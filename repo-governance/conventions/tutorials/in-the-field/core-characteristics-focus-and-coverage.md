@@ -33,7 +33,7 @@ In-the-field prioritizes:
 
 **Included in production scenarios**:
 
-- Test-Driven Development and Behavior-Driven Development
+- Test-Driven Development and Behaviour-Driven Development
 - Build tools (Maven, Gradle) and CI/CD pipelines
 - Docker containerization and Kubernetes orchestration
 - Authentication (Basic Auth, JWT, OAuth2/OIDC)

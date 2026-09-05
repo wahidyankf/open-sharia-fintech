@@ -34,7 +34,7 @@ The convention applies to all apps and infra directories in the monorepo. Its Or
 ### What This Convention Covers
 
 - Content placement decisions for app and infra `README.md` files
-- The canonical corpus tree (`README.md`, `architecture.md`, `behaviors/`, optional `contracts/`) and per-surface variants
+- The canonical corpus tree (`README.md`, `architecture.md`, `behaviours/`, optional `contracts/`) and per-surface variants
 - PM-readability requirements for every file under `specs/apps/`
 - BDD and API contract adoption expectations by app type
 - Cross-link requirements between app READMEs and their corresponding `specs/` trees
@@ -47,4 +47,4 @@ The convention applies to all apps and infra directories in the monorepo. Its Or
 - C4 diagram content and internal structure — see the C4 files within each app's spec tree
 - OpenAPI authoring standards — see contract project documentation
 - README writing quality (voice, scannability, engagement) — see [README Quality Convention](../../writing/readme-quality.md)
-- The canonical path pattern for Gherkin feature files within `behavior/` — see [Specs Directory Structure Convention](../specs-directory-structure.md)
+- The canonical path pattern for Gherkin feature files within `behaviour/` — see [Specs Directory Structure Convention](../specs-directory-structure.md)

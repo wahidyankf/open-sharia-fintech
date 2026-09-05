@@ -19,7 +19,7 @@ when_to_use: Use when justifying why native toolchain management beats IaC or co
 
 Every major package manager handles re-installation gracefully:
 
-| Command                        | Re-run Behavior                 | Idempotent? | Notes                  |
+| Command                        | Re-run Behaviour                | Idempotent? | Notes                  |
 | ------------------------------ | ------------------------------- | ----------- | ---------------------- |
 | `brew install go`              | Fetches manifest, skips install | Yes         | Network call but no-op |
 | `volta install node@X`         | Silent no-op                    | Yes         |                        |

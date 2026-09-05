@@ -1,0 +1,97 @@
+import path from "node:path";
+import { describeFeature, loadFeature } from "@amiceli/vitest-cucumber";
+import { expect } from "vitest";
+import type { TreeNode } from "@/features/content/core/types";
+import { integrationCaller } from "./helpers/integration-caller";
+
+const feature = await loadFeature(
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviours/backend/navigation/navigation-api.feature"),
+);
+
+function findNode(nodes: TreeNode[], slug: string): TreeNode | undefined {
+  for (const node of nodes) {
+    if (node.slug === slug) return node;
+    const nested = findNode(node.children, slug);
+    if (nested) return nested;
+  }
+  return undefined;
+}
+
+describeFeature(feature, ({ Scenario, Background }) => {
+  Background(({ Given }) => {
+    Given("the API is running", async () => {
+      await expect(integrationCaller.meta.health()).resolves.toEqual({ status: "ok" });
+    });
+  });
+
+  Scenario("Navigation tree structure matches the filesystem hierarchy", ({ Given, When, Then, And }) => {
+    let result: TreeNode[];
+    Given('content exists in locale "en" with sections "about-ayokoding", "learn", and "rants"', async () => {
+      const tree = (await integrationCaller.content.getTree({ locale: "en" })) as TreeNode[];
+      const localeRoot = tree.find(({ slug }) => slug === "");
+      expect(localeRoot?.children.map(({ slug }) => slug)).toEqual(
+        expect.arrayContaining(["about-ayokoding", "learn", "rants"]),
+      );
+    });
+    When('the client calls content.getTree with locale "en"', async () => {
+      result = (await integrationCaller.content.getTree({ locale: "en" })) as TreeNode[];
+    });
+    Then('the response tree should contain top-level nodes for "about-ayokoding", "learn", and "rants"', () => {
+      const localeRoot = result.find(({ slug }) => slug === "");
+      expect(localeRoot?.children.map(({ slug }) => slug)).toEqual(
+        expect.arrayContaining(["about-ayokoding", "learn", "rants"]),
+      );
+    });
+    And("each node should reflect its position in the directory hierarchy", () => {
+      expect(findNode(result, "learn/courses/just-enough-go/learning/beginner")?.slug).toBe(
+        "learn/courses/just-enough-go/learning/beginner",
+      );
+    });
+  });
+
+  Scenario("Navigation nodes are ordered by weight ascending", ({ Given, When, Then }) => {
+    let result: TreeNode[];
+    Given(
+      'a section "learn/courses/just-enough-go/learning" in locale "en" has child nodes with weights 30, 1, 100, 20, and 10',
+      async () => {
+        const children = await integrationCaller.content.listChildren({
+          locale: "en",
+          parentSlug: "learn/courses/just-enough-go/learning",
+        });
+        expect(children.map(({ weight }) => weight)).toEqual([1, 10, 20, 30, 100]);
+      },
+    );
+    When('the client calls content.getTree with locale "en"', async () => {
+      result = (await integrationCaller.content.getTree({ locale: "en" })) as TreeNode[];
+    });
+    Then(
+      'the children of "learn/courses/just-enough-go/learning" should appear in order: weight 1, weight 10, weight 20, weight 30, weight 100',
+      () =>
+        expect(findNode(result, "learn/courses/just-enough-go/learning")?.children.map(({ weight }) => weight)).toEqual(
+          [1, 10, 20, 30, 100],
+        ),
+    );
+  });
+
+  Scenario("Section nodes include a children array", ({ Given, When, Then, And }) => {
+    let result: TreeNode[];
+    Given(
+      'a section "learn/courses/just-enough-go/learning" in locale "en" contains at least one child page',
+      async () => {
+        const tree = (await integrationCaller.content.getTree({ locale: "en" })) as TreeNode[];
+        expect(findNode(tree, "learn/courses/just-enough-go/learning")?.children.length).toBeGreaterThan(0);
+      },
+    );
+    When('the client calls content.getTree with locale "en"', async () => {
+      result = (await integrationCaller.content.getTree({ locale: "en" })) as TreeNode[];
+    });
+    Then('the "learn/courses/just-enough-go/learning" node should have a non-empty "children" array', () =>
+      expect(findNode(result, "learn/courses/just-enough-go/learning")?.children.length).toBeGreaterThan(0),
+    );
+    And('each child should include a "slug" and "title"', () => {
+      for (const child of findNode(result, "learn/courses/just-enough-go/learning")!.children) {
+        expect(child).toMatchObject({ slug: expect.any(String), title: expect.any(String) });
+      }
+    });
+  });
+});

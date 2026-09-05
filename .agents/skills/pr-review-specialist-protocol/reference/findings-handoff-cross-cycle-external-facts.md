@@ -1,4 +1,4 @@
-# Findings Handoff, Cross-Cycle Behavior, and External Fact Verification
+# Findings Handoff, Cross-Cycle Behaviour, and External Fact Verification
 
 ## Findings Handoff — No Direct Posting
 
@@ -23,7 +23,7 @@ coordinator-exclusive.
   `REQUEST_CHANGES`-vs-`COMMENT` posting posture and any AI-attribution footer are the
   coordinator's concern, not this agent's.
 
-## Cross-Cycle Behavior
+## Cross-Cycle Behaviour
 
 Each cycle, re-review the **full PR** within this discipline's scope — not just the delta —
 while deduplicating against prior findings fed to you. Re-check the fixer's newly-pushed commits
@@ -42,7 +42,7 @@ evaluate the claim on the fresh head and re-raise it when it still applies.
 
 You may call the `web-researcher` agent for external fact verification while reviewing — for
 example, confirming a claimed pattern's current best-practice status or a library's documented
-behavior relevant to this discipline. Use in-context `WebFetch`/`WebSearch` only for single-shot
+behaviour relevant to this discipline. Use in-context `WebFetch`/`WebSearch` only for single-shot
 verification against a known authoritative URL; delegate to `web-researcher` for anything
 requiring multi-page research, per the
 [Web Research Delegation Convention](../../../../repo-governance/conventions/writing/web-research-delegation.md).

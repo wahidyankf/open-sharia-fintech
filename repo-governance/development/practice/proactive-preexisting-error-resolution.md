@@ -42,6 +42,6 @@ This practice implements/respects the following conventions:
 
 - [Why This Matters](./proactive-preexisting-error-resolution/why-this-matters.md) — the backlog problem, the monkey-patch problem, and the normalization problem.
 - [The Three Anti-Patterns](./proactive-preexisting-error-resolution/the-three-anti-patterns.md) — acting ignorant, monkey-patching, and passive mentioning, each with worked examples.
-- [Expected Behavior](./proactive-preexisting-error-resolution/expected-behavior.md) — the five-step response: diagnose, fix, verify, scope, communicate.
+- [Expected Behaviour](./proactive-preexisting-error-resolution/expected-behaviour.md) — the five-step response: diagnose, fix, verify, scope, communicate.
 - [Scope Judgment](./proactive-preexisting-error-resolution/scope-judgment.md) — how to size a fix as small (inline), medium (own commit), or large (a plan).
-- [Checklist, For AI Agents, and Related Documentation](./proactive-preexisting-error-resolution/checklist-agents-and-related-documentation.md) — the completion checklist, agent behavior rules, and links to related conventions.
+- [Checklist, For AI Agents, and Related Documentation](./proactive-preexisting-error-resolution/checklist-agents-and-related-documentation.md) — the completion checklist, agent behaviour rules, and links to related conventions.

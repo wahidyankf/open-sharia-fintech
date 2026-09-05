@@ -1,7 +1,7 @@
 ---
 title: "5. Re-validate (Sequential)"
 description: "Step 5: re-runs pdf-to-md-checker after fixes to confirm resolution, including scoped re-validation and the carry-forward audit for zero-applied-fix iterations."
-when_to_use: "Use when implementing or debugging the re-validation step, especially the scoped-scan and carry-forward-audit behavior."
+when_to_use: "Use when implementing or debugging the re-validation step, especially the scoped-scan and carry-forward-audit behaviour."
 ---
 
 # 5. Re-validate (Sequential)

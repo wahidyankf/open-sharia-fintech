@@ -216,13 +216,17 @@ let build () =
 
 The composition root determines which Nx targets can run without external infrastructure.
 
-| Composition root type  | Nx target          | Infrastructure required    |
-| ---------------------- | ------------------ | -------------------------- |
-| Production (JPA/Kafka) | `test:integration` | Docker (PostgreSQL, Kafka) |
-| Test (InMemory/Fake)   | `test:unit`        | None                       |
-| Production startup     | `dev`              | Docker or remote env       |
+| Composition root type                  | Nx target          | Boundary required                          |
+| -------------------------------------- | ------------------ | ------------------------------------------ |
+| Test (in-memory/fake)                  | `test:unit`        | In-process only                            |
+| Real local-resource adapter            | `test:integration` | Isolated local resource, no network        |
+| Production public boundary (JPA/Kafka) | `test:e2e`         | Controlled networked stack, synthetic data |
+| Production startup                     | `dev`              | Docker or remote environment               |
 
-**REQUIRED**: The `test:unit` target MUST be runnable without Docker. If a test requires a real database, it belongs in `test:integration`, and the test composition root MUST NOT be used for it.
+**REQUIRED**: `test:unit` MUST run without Docker or any real OS/resource dependency.
+`test:integration` may replace a fake with a real isolated local resource only when no network path
+is opened. A database or broker reached through HTTP/TCP/UDP belongs to `test:e2e`, which must enter
+through the application's public boundary.
 
 **See**: [Nx Target Standards](../../../../../repo-governance/development/infra/nx-targets.md) for the three-level testing standard and caching rules.
 

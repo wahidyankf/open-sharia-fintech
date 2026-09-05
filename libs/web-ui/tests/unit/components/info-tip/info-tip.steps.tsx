@@ -6,58 +6,71 @@ import { expect } from "vitest";
 import { InfoTip } from "../../../../src/components/info-tip/info-tip";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../specs/libs/web-ui/behaviors/info-tip/info-tip.feature"),
+  path.resolve(__dirname, "../../../../../../specs/libs/web-ui/behaviours/info-tip/info-tip.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {
   Scenario("Trigger button renders", ({ When, Then }) => {
+    let trigger: HTMLElement;
+
     When('I render an InfoTip with title "Volume" and text "Adjust the volume"', () => {
-      // precondition noted
+      cleanup();
+      render(<InfoTip title="Volume" text="Adjust the volume" />);
+      trigger = screen.getByRole("button", { name: "Volume" });
     });
 
     Then('the trigger button with aria-label "Volume" should be visible', () => {
-      cleanup();
-      render(<InfoTip title="Volume" text="Adjust the volume" />);
-      expect(screen.getByRole("button", { name: "Volume" })).toBeDefined();
+      expect(trigger.getAttribute("aria-label")).toBe("Volume");
     });
   });
 
   Scenario("Click trigger opens Sheet", ({ Given, When, Then }) => {
+    let sheetDescription: HTMLElement;
+
     Given('I render an InfoTip with title "Volume" and text "Adjust the volume"', () => {
-      // precondition noted
+      cleanup();
+      render(<InfoTip title="Volume" text="Adjust the volume" />);
+      expect(screen.getByRole("button", { name: "Volume" })).toBeDefined();
     });
 
     When("the user clicks the trigger button", () => {
-      // precondition noted; action and assertion in Then step
+      cleanup();
+      render(<InfoTip title="Volume" text="Adjust the volume" />);
+      fireEvent.click(screen.getByRole("button", { name: "Volume" }));
+      sheetDescription = screen.getByText("Adjust the volume");
     });
 
     Then('the Sheet with title "Volume" should be visible', () => {
+      expect(sheetDescription.textContent).toBe("Adjust the volume");
+    });
+  });
+
+  Scenario("Sheet close button closes Sheet", ({ Given, When, Then, And }) => {
+    let sheetClosed = false;
+
+    Given('I render an InfoTip with title "Volume" and text "Adjust the volume"', () => {
+      cleanup();
+      render(<InfoTip title="Volume" text="Adjust the volume" />);
+      expect(screen.getByRole("button", { name: "Volume" })).toBeDefined();
+    });
+
+    When("the user clicks the trigger button", () => {
       cleanup();
       render(<InfoTip title="Volume" text="Adjust the volume" />);
       fireEvent.click(screen.getByRole("button", { name: "Volume" }));
       expect(screen.getByText("Adjust the volume")).toBeDefined();
     });
-  });
-
-  Scenario("Sheet close button closes Sheet", ({ Given, When, Then, And }) => {
-    Given('I render an InfoTip with title "Volume" and text "Adjust the volume"', () => {
-      // precondition noted
-    });
-
-    When("the user clicks the trigger button", () => {
-      // precondition noted; actions in And and Then steps
-    });
 
     And("the user clicks the close button", () => {
-      // precondition noted; action and assertion in Then step
-    });
-
-    Then("the Sheet should not be visible", () => {
       cleanup();
       render(<InfoTip title="Volume" text="Adjust the volume" />);
       fireEvent.click(screen.getByRole("button", { name: "Volume" }));
       fireEvent.click(screen.getByRole("button", { name: /got it/i }));
-      expect(screen.queryByText("Adjust the volume")).toBeNull();
+      sheetClosed = screen.queryByText("Adjust the volume") === null;
+    });
+
+    Then("the Sheet should not be visible", () => {
+      expect(sheetClosed).toBe(true);
     });
   });
 });

@@ -233,10 +233,10 @@ let doubled = mapZakatAmount (fun x -> x * 2m) 1000m
 
 ## Avoiding Closure Over Mutable State
 
-**PROHIBITED**: Closures that capture mutable references — causes unpredictable behavior in parallel contexts:
+**PROHIBITED**: Closures that capture mutable references — causes unpredictable behaviour in parallel contexts:
 
 ```fsharp
-// WRONG: Closure captures mutable state — undefined behavior when parallelized
+// WRONG: Closure captures mutable state — undefined behaviour when parallelized
 let mutable total = 0m
 let processItem item = total <- total + calculateZakat item  // Mutable capture!
 

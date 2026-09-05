@@ -65,7 +65,7 @@ mockups. Category: **User Report**. No monitoring, test, or gate detected any of
 
 The **done/archival criterion for user-facing work relied on automated gates plus zero validation
 findings, with no production visual or value-bearing sign-off**. The plan-execution workflow's manual
-behavioral-verification step (visual check against the mockups) was not performed before archival.
+behavioural-verification step (visual check against the mockups) was not performed before archival.
 Automated tests asserted **presence** (a `tablist` exists, a divider exists, a badge element exists)
 but never **parity** (does it match the mockup?) or **value** (are the right rows above the divider?).
 Because nothing compared the rendered result to the design, design-parity gaps and an inverted-logic
@@ -135,6 +135,6 @@ The headline insights:
 ## References
 
 - [User-Facing Delivery Hardening Convention](../../../repo-governance/development/quality/user-facing-delivery-hardening.md) — the fourteen durable rules this incident produced.
-- [Manual Behavioral Verification Convention](../../../repo-governance/development/quality/manual-behavioral-verification.md) — the verification baseline the convention hardens.
+- [Manual Behavioural Verification Convention](../../../repo-governance/development/quality/manual-behavioural-verification.md) — the verification baseline the convention hardens.
 - [Plan Execution Workflow](../../../repo-governance/workflows/plan/plan-execution.md) — finalization/archival gate.
 - Plan: `plans/in-progress/ayokoding-www-salary-savings-calculator/` (delivery log §7.6–§7.7 record the fixes and lessons as-built).

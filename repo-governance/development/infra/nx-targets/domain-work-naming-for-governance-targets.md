@@ -22,25 +22,26 @@ operation. This distinguishes governance targets from language-level lifecycle t
 
 **Canonical governance and validation targets** (defined on `rhino-cli`):
 
-| Target                                 | What it validates                                                                          |
-| -------------------------------------- | ------------------------------------------------------------------------------------------ |
-| `specs:behavior:coverage`              | Gherkin feature/scenario coverage at the behavior level (renamed from `specs:coverage`)    |
-| `specs:structure-validation`           | Adoption + tree shape + counts validated together (merged from three removed leaf targets) |
-| `specs:gherkin-cardinality-validation` | Each Gherkin keyword used within cardinality bounds                                        |
-| `links:validation`                     | Internal links in all non-excluded `.md` files                                             |
-| `mermaid:validation`                   | Mermaid diagram width, label, and syntax rules (flowchart + state)                         |
-| `headings:hierarchy-validation`        | Heading nesting in prose allowlist paths                                                   |
-| `env:validation`                       | `.env.example` surfaces match the `env-contract:` section in `repo-config.yml`             |
-| `governance:vendor-audit-validation`   | `repo-governance/` docs contain no vendor-specific content                                 |
-| `cross-vendor:parity-validation`       | Cross-vendor behavioral parity (Phase 0 deterministic invariants)                          |
-| `governance-word-budget:validation`    | Word budget on auto-loaded instruction files (`AGENTS.md`, `CLAUDE.md`, harness surfaces)  |
-| `governance-readme-index:validation`   | README index audit (`docs/`, `repo-governance/`, `specs/`, `.claude/`)                     |
-| `harness:bindings-validation`          | `.claude/` ↔ `.opencode/` ↔ `.codex/` binding parity                                       |
-| `compat:min-version`                   | Minimum Supported Rust Version compatibility                                               |
+| Target                               | What it validates                                                                          |
+| ------------------------------------ | ------------------------------------------------------------------------------------------ |
+| `specs:structure-validation`         | Adoption + tree shape + counts validated together (merged from three removed leaf targets) |
+| `links:validation`                   | Internal links in all non-excluded `.md` files                                             |
+| `mermaid:validation`                 | Mermaid diagram width, label, and syntax rules (flowchart + state)                         |
+| `headings:hierarchy-validation`      | Heading nesting in prose allowlist paths                                                   |
+| `env:validation`                     | `.env.example` surfaces match the `env-contract:` section in `repo-config.yml`             |
+| `governance:vendor-audit-validation` | `repo-governance/` docs contain no vendor-specific content                                 |
+| `cross-vendor:parity-validation`     | Cross-vendor behavioural parity (Phase 0 deterministic invariants)                         |
+| `governance-word-budget:validation`  | Word budget on auto-loaded instruction files (`AGENTS.md`, `CLAUDE.md`, harness surfaces)  |
+| `governance-readme-index:validation` | README index audit (`docs/`, `repo-governance/`, `specs/`, `.claude/`)                     |
+| `harness:bindings-validation`        | `.claude/` ↔ `.opencode/` ↔ `.codex/` binding parity                                       |
+| `compat:min-version`                 | Minimum Supported Rust Version compatibility                                               |
 
 **Rule**: governance/validation target keys are `{domain}:{work}` where both parts are lowercase
 kebab-case. The domain must be a recognizable noun (the scope); the work must be a verb phrase
 ending in `-validation` (for pure checks) or a bare verb (`check`). Do not invent `validate:*`
 prefixes — use the canonical list above or follow the `{domain}:{work}` pattern.
+
+Project-local static `test:coverage` and `test:coverage:*` belong to the testing lifecycle family,
+not this repository-wide governance target list.
 
 See [nx-target-naming.md](../nx-target-naming.md) for the full derivation rule and examples.

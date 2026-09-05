@@ -47,7 +47,7 @@ Before publishing a convention document, verify:
 ## Integration
 
 - [ ] Referenced in `repo-governance/conventions/README.md`
-- [ ] Mentioned in AGENTS.md if it affects agent behavior
+- [ ] Mentioned in AGENTS.md if it affects agent behaviour
 - [ ] Used by at least one agent OR enforced in a hook/process
 - [ ] Cross-referenced by related conventions
 

@@ -10,8 +10,8 @@ module RhinoCli.Cli.RootArgs
 /// carries arguments yet; each wave replaces its own namespace's case with a
 /// real Argu sub-parser as that namespace is ported. A pure DU declaration
 /// has no coverable sequence point, so this scaffold does not depress
-/// `test:coverage`'s 90%-line threshold before any wave has real code and
-/// real tests to measure — see `RhinoCli.Infrastructure.Placeholder`'s doc
+/// `test:unit`'s 99%-line threshold before any wave has real code and real
+/// tests to measure — see `RhinoCli.Infrastructure.Placeholder`'s doc
 /// comment for the same reasoning applied to the lower layers.
 type Namespace =
     | TestCoverage

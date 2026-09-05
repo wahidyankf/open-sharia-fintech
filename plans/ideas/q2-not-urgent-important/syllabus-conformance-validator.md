@@ -31,7 +31,7 @@ Not yet — that is the point of this brief. Two conditions must hold before bui
   corpora and may shift as a fourth learning-bearing plan lands. A validator built on a still-moving
   census would encode a frozen list the convention explicitly warns against.
 - **A second consumer must appear.** One recipe, run by hand, is adequate for three corpora. The cost
-  of a `rhino-cli` subcommand (parser, tests, Gherkin behavior tree, byte-identity across three repos)
+  of a `rhino-cli` subcommand (parser, tests, Gherkin behaviour tree, byte-identity across three repos)
   is only justified once the recipe is run often enough that forgetting it becomes the failure mode.
 
 Filing now captures the design while it is fresh and names the promotion signal, so the decision to
@@ -62,7 +62,7 @@ A `rhino-cli md syllabus validate [--corpus <path>]` subcommand that:
   two never disagree.
 
 Wire it into the same pre-commit / pre-push / CI positions as the other `md` validators, and add its
-Gherkin behavior tree under `specs/apps/rhino/cli/behaviors/**` per the byte-identity
+Gherkin behaviour tree under `specs/apps/rhino/cli/behaviours/**` per the byte-identity
 boundary.
 
 ## Rough scope & non-goals

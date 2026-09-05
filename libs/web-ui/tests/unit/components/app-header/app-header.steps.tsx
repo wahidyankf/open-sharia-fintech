@@ -6,43 +6,49 @@ import { vi, expect } from "vitest";
 import { AppHeader } from "../../../../src/components/app-header/app-header";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../specs/libs/web-ui/behaviors/app-header/app-header.feature"),
+  path.resolve(__dirname, "../../../../../../specs/libs/web-ui/behaviours/app-header/app-header.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {
   Scenario("Renders title", ({ When, Then }) => {
+    let header: HTMLElement;
+
     When('I render an AppHeader with title "Workouts"', () => {
-      // precondition noted
+      cleanup();
+      render(<AppHeader title="Workouts" />);
+      header = screen.getByText("Workouts");
     });
 
     Then('the heading "Workouts" should be visible', () => {
-      cleanup();
-      render(<AppHeader title="Workouts" />);
-      expect(screen.getByText("Workouts")).toBeDefined();
+      expect(header.textContent).toBe("Workouts");
     });
   });
 
   Scenario("Back button appears when onBack provided", ({ When, Then }) => {
+    let backButton: HTMLElement;
+
     When('I render an AppHeader with title "Details" and an onBack handler', () => {
-      // precondition noted
+      cleanup();
+      render(<AppHeader title="Details" onBack={vi.fn()} />);
+      backButton = screen.getByRole("button", { name: /go back/i });
     });
 
     Then('a button with aria-label "Go back" should be visible', () => {
-      cleanup();
-      render(<AppHeader title="Details" onBack={() => {}} />);
-      expect(screen.getByRole("button", { name: /go back/i })).toBeDefined();
+      expect(backButton.getAttribute("aria-label")).toBe("Go back");
     });
   });
 
   Scenario("Back button absent when onBack not provided", ({ When, Then }) => {
+    let backButton: HTMLElement | null;
+
     When('I render an AppHeader with title "Home" without onBack', () => {
-      // precondition noted
+      cleanup();
+      render(<AppHeader title="Home" />);
+      backButton = screen.queryByRole("button", { name: /go back/i });
     });
 
     Then('no button with aria-label "Go back" should be present', () => {
-      cleanup();
-      render(<AppHeader title="Home" />);
-      expect(screen.queryByRole("button", { name: /go back/i })).toBeNull();
+      expect(backButton).toBeNull();
     });
   });
 
@@ -50,7 +56,9 @@ describeFeature(feature, ({ Scenario }) => {
     const onBackMock = vi.fn();
 
     Given('I render an AppHeader with title "Details" and an onBack handler', () => {
-      // precondition noted; render happens in When step to persist mock state
+      cleanup();
+      render(<AppHeader title="Details" onBack={onBackMock} />);
+      expect(screen.getByRole("button", { name: /go back/i })).toBeDefined();
     });
 
     When("the user clicks the back button", () => {
@@ -65,14 +73,16 @@ describeFeature(feature, ({ Scenario }) => {
   });
 
   Scenario("Renders subtitle when provided", ({ When, Then }) => {
+    let subtitle: HTMLElement;
+
     When('I render an AppHeader with title "Workouts" and subtitle "Today"', () => {
-      // precondition noted
+      cleanup();
+      render(<AppHeader title="Workouts" subtitle="Today" />);
+      subtitle = screen.getByText("Today");
     });
 
     Then('the text "Today" should be visible', () => {
-      cleanup();
-      render(<AppHeader title="Workouts" subtitle="Today" />);
-      expect(screen.getByText("Today")).toBeDefined();
+      expect(subtitle.textContent).toBe("Today");
     });
   });
 });

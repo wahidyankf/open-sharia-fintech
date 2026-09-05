@@ -11,9 +11,15 @@ Then('the response should contain a non-null "html" field', async () => {
   expect(pageResult.html).toBeTruthy();
 });
 
-Then('the response should contain a non-null "frontmatter" field', async () => {
-  const pageResult = backendState.pageResult as Record<string, unknown>;
-  expect(pageResult.title).toBeTruthy();
+Then("the response should contain the page metadata for the requested slug", async () => {
+  expect(backendState.pageResult).toMatchObject({
+    title: "Beginner Examples",
+    slug: "learn/courses/just-enough-go/learning/beginner",
+    locale: "en",
+    weight: 10,
+    draft: false,
+    isSection: false,
+  });
 });
 
 Then('the response should contain a non-null "headings" field', async () => {
@@ -22,28 +28,35 @@ Then('the response should contain a non-null "headings" field', async () => {
 });
 
 Then('the response should contain a "prev" navigation link', async () => {
-  expect(backendState.pageResult).toHaveProperty("prev");
+  expect(backendState.pageResult).toMatchObject({
+    prev: { title: "Overview", slug: "learn/courses/just-enough-go/learning/overview" },
+  });
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/backend/content/content-api.feature:Get existing page by slug returns HTML, frontmatter, headings, and prev/next links
 Then('the response should contain a "next" navigation link', async () => {
-  expect(backendState.pageResult).toHaveProperty("next");
+  expect(backendState.pageResult).toMatchObject({
+    next: {
+      title: "Intermediate Examples",
+      slug: "learn/courses/just-enough-go/learning/intermediate",
+    },
+  });
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/backend/content/content-api.feature:Get non-existent page by slug returns 404
-// @covers specs/apps/ayokoding/www/behaviors/backend/content/content-api.feature:Draft pages are excluded from content retrieval
-// @covers specs/apps/ayokoding/www/behaviors/backend/i18n/i18n-api.feature:Requesting a slug prefixed with an invalid locale returns not found
 Then("the response should indicate the page was not found", async () => {
-  const arr = backendState.errorResult as unknown[];
-  expect(arr[0]).toHaveProperty("error");
+  const errors = backendState.errorResult as { error?: { json?: { data?: { code?: string } } } }[];
+  expect(errors[0]?.error?.json?.data?.code).toBe("NOT_FOUND");
 });
 
-Then("the response should contain 3 child pages", async () => {
+Then("the response should reject the invalid locale as a bad request", async () => {
+  const errors = backendState.errorResult as { error?: { json?: { data?: { code?: string } } } }[];
+  expect(errors[0]?.error?.json?.data?.code).toBe("BAD_REQUEST");
+});
+
+Then("the response should contain 5 child pages", async () => {
   const children = backendState.childrenResult as { weight: number }[];
-  expect(children.length).toBeGreaterThan(0);
+  expect(children).toHaveLength(5);
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/backend/content/content-api.feature:List children of a section returns pages ordered by weight ascending
 Then("the child pages should be ordered by weight ascending", async () => {
   const children = backendState.childrenResult as { weight: number }[];
   for (let i = 1; i < children.length; i++) {
@@ -56,16 +69,20 @@ Then("the response should contain a tree with top-level section nodes", async ()
   expect(tree.length).toBeGreaterThan(0);
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/backend/content/content-api.feature:Get navigation tree returns full hierarchy for the requested locale
 Then("every node should include a slug and title", async () => {
-  const tree = backendState.treeResult as Record<string, unknown>[];
-  expect(tree[0]).toHaveProperty("slug");
-  expect(tree[0]).toHaveProperty("weight");
-  expect(tree[0]).toHaveProperty("children");
+  const tree = backendState.treeResult as Array<{ slug: string; title: string; children: unknown[] }>;
+  const visit = (nodes: typeof tree): void => {
+    for (const node of nodes) {
+      expect(node.slug).toEqual(expect.any(String));
+      expect(node.title).toEqual(expect.any(String));
+      expect(Array.isArray(node.children)).toBe(true);
+      visit(node.children as typeof tree);
+    }
+  };
+  visit(tree);
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/backend/content/content-api.feature:Page content includes rendered HTML with code blocks preserved
 Then('the response "html" field should contain a rendered code element', async () => {
   const pageResult = backendState.pageResult as Record<string, unknown>;
-  expect((pageResult.html as string).length).toBeGreaterThan(0);
+  expect(pageResult.html).toEqual(expect.stringContaining("<code"));
 });

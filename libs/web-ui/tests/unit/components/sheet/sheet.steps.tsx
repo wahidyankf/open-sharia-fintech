@@ -6,19 +6,21 @@ import { vi, expect } from "vitest";
 import { Sheet } from "../../../../src/components/sheet/sheet";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../specs/libs/web-ui/behaviors/sheet/sheet.feature"),
+  path.resolve(__dirname, "../../../../../../specs/libs/web-ui/behaviours/sheet/sheet.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {
   Scenario("Title renders", ({ When, Then }) => {
+    let title: HTMLElement;
+
     When('I render a Sheet with title "Settings"', () => {
-      // precondition noted
+      cleanup();
+      render(<Sheet title="Settings" onClose={vi.fn()} />);
+      title = screen.getByText("Settings");
     });
 
     Then('the heading "Settings" should be visible', () => {
-      cleanup();
-      render(<Sheet title="Settings" onClose={() => {}} />);
-      expect(screen.getByText("Settings")).toBeDefined();
+      expect(title.textContent).toBe("Settings");
     });
   });
 
@@ -26,7 +28,9 @@ describeFeature(feature, ({ Scenario }) => {
     const onCloseMock = vi.fn();
 
     Given('I render a Sheet with title "Settings" and an onClose handler', () => {
-      // precondition noted; render happens in When step to persist mock state
+      cleanup();
+      render(<Sheet title="Settings" onClose={onCloseMock} />);
+      expect(screen.getByRole("button", { name: /close/i })).toBeDefined();
     });
 
     When("the user clicks the close button", () => {
@@ -41,14 +45,16 @@ describeFeature(feature, ({ Scenario }) => {
   });
 
   Scenario("Has accessible title", ({ When, Then }) => {
+    let dialog: HTMLElement;
+
     When('I render a Sheet with title "My Sheet"', () => {
-      // precondition noted
+      cleanup();
+      render(<Sheet title="My Sheet" onClose={vi.fn()} />);
+      dialog = screen.getByRole("dialog", { name: "My Sheet" });
     });
 
     Then('the dialog should have accessible label "My Sheet"', () => {
-      cleanup();
-      render(<Sheet title="My Sheet" onClose={() => {}} />);
-      expect(screen.getByRole("dialog", { name: "My Sheet" })).toBeDefined();
+      expect(dialog.getAttribute("aria-labelledby")).not.toBeNull();
     });
   });
 });

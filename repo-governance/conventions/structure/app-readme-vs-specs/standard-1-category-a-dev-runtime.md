@@ -32,4 +32,4 @@ Content a developer needs to run, build, test, or lint THIS specific checkout on
 | Environment variables consumed at runtime                  | Wire-level, depends on which env file the app reads                          |
 | Project layout (top-level `src/`, `tests/`, configs)       | Filesystem of THIS checkout — top-level only, not per-context recursion      |
 | Tech-stack version pinning                                 | "I'm running Node 24.13.1, Next.js 16, F# .NET 10" — version source-of-truth |
-| One paragraph + link to `specs/` for behavior              | The pointer that completes the split                                         |
+| One paragraph + link to `specs/` for behaviour             | The pointer that completes the split                                         |

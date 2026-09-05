@@ -134,7 +134,7 @@ Consistency with the established pattern makes the doc discoverable.
 
 **Rationale**: This is a purely internal governance and tooling change. All factual claims
 carry `[Repo-grounded]`, `[Judgment call]`, or `[Unverified]` labels; no external library
-versions, API signatures, or vendor behaviors are claimed.
+versions, API signatures, or vendor behaviours are claimed.
 
 ### Row 12 — Stage / Gate Mode
 
@@ -165,7 +165,7 @@ reason.
 ## Related Documentation
 
 - [Acceptance Criteria Convention](../../repo-governance/development/infra/acceptance-criteria.md) — canonical rule text
-- [BDD Spec-to-Test Mapping Convention](../../repo-governance/development/infra/bdd-spec-test-mapping.md) — how specs are consumed
+- [Behaviour-Driven Development](../../repo-governance/development/behaviour-driven-development.md) — how specs are consumed
 - [Plan Domain Parity — Design Decisions (2026-06-06)](./plan-domain-parity-decisions.md) — precedent doc this follows
 - [Plan Delivery Checklist](../../plans/done/2026-06-07__gherkin-step-keyword-cardinality/delivery.md) — full phased execution plan
 - [Technical Documentation](../../plans/done/2026-06-07__gherkin-step-keyword-cardinality/tech-docs.md) — deviation matrix source

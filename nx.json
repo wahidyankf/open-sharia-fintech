@@ -25,10 +25,19 @@
     "test:e2e": {
       "cache": false
     },
-    "specs:coverage": {
+    "test:coverage": {
       "cache": true
     },
-    "test-coverage": {
+    "test:coverage:unit": {
+      "cache": true
+    },
+    "test:coverage:integration": {
+      "cache": true
+    },
+    "test:coverage:e2e": {
+      "cache": true
+    },
+    "test:coverage:behaviour": {
       "cache": true
     }
   },

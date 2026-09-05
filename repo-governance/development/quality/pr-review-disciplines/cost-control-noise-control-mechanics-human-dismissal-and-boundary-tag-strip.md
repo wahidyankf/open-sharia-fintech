@@ -29,7 +29,7 @@ already settled.
 The inherited untrusted-input rule is sharpened with a concrete technique: before any PR body,
 comment, or linked-issue text reaches a model, **strip user-supplied structural boundary tags** —
 fabricated delimiters such as `<mr_input>`, `<system>`, or `<review>` that a PR author could inject
-to spoof the prompt frame and redirect a reviewer's behavior. This is in addition to, not a
+to spoof the prompt frame and redirect a reviewer's behaviour. This is in addition to, not a
 replacement for, the inherited prompt-injection filtering every specialist, `pr-review-scout-maker`
 (the pipeline's first and only raw-input ingestion point), and `pr-review-synthesis-maker` already
 carry.

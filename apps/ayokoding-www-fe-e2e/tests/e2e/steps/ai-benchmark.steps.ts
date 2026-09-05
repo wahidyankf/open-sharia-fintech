@@ -1,24 +1,159 @@
 import { createBdd } from "playwright-bdd";
 import { expect } from "@playwright/test";
 import type { Page } from "@playwright/test";
+import {
+  computeGroups,
+  type Band,
+  type ModelScore,
+} from "../../../../ayokoding-www/src/features/ai-benchmark/core/bands";
+import {
+  dataset,
+  isConflictedFigure,
+  type EvidenceGrade,
+  type Model,
+} from "../../../../ayokoding-www/src/features/ai-benchmark/core/data/models";
+import {
+  BAND_LABEL_KEYS,
+  BENCHMARK_COLUMNS,
+  GRADE_LABEL_KEYS,
+  HARNESS_DISPLAY_NAMES,
+} from "../../../../ayokoding-www/src/features/ai-benchmark/core/data/benchmarks";
+import { OPERATORS } from "../../../../ayokoding-www/src/features/ai-benchmark/core/data/operators";
+import { lowestRate } from "../../../../ayokoding-www/src/features/ai-benchmark/core/price";
+import { coverage } from "../../../../ayokoding-www/src/features/ai-benchmark/core/score";
+import { t } from "../../../../ayokoding-www/src/features/i18n/core/translations";
 
 const { Given, When, Then } = createBdd();
 
-// AI Benchmark e2e step bindings. AC-1, AC-2, and AC-36 are the scenarios bound at the e2e layer
-// in this plan; every other scenario is permanently unit-only (see DD-22 in tech-docs.md) and
-// renders as `test.fixme` under this project's `missingSteps: "skip-scenario"` config — they are
-// not deferred pending a later e2e binding.
+// AI Benchmark public-boundary step bindings.
 
 // The active locale for the scenario — set by "Given the locale is …" and read by the navigation
 // step. Module-scoped because playwright-bdd step functions are stateless over the fixture context.
 let scenarioLocale = "en";
+let targetModelId = "";
+let modelIdsBefore: string[] = [];
+let unrelatedBandOrdersBefore: Record<string, string[]> = {};
+let copiedUrl = "";
+let inspectedElements: ReturnType<Page["locator"]>[] = [];
+let sampledValues: number[] = [];
+let sampledStrings: string[] = [];
+
+const productionGroups = computeGroups(dataset);
+const productionScores = new Map<string, ModelScore>();
+for (const scores of Object.values(productionGroups)) {
+  for (const score of scores) productionScores.set(score.model.id, score);
+}
+
+function sorted(values: readonly string[]): string[] {
+  return [...values].sort((left, right) => left.localeCompare(right));
+}
+
+function rosterModelIds(): string[] {
+  return dataset.models.map((model) => model.id);
+}
+
+function modelsForHarness(harness: Model["harnesses"][number]): string[] {
+  return dataset.models.filter((model) => model.harnesses.includes(harness)).map((model) => model.id);
+}
+
+function formatIndex(value: number): string {
+  return new Intl.NumberFormat("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(value);
+}
+
+function formatPercent(value: number): string {
+  return `${new Intl.NumberFormat("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(value)}%`;
+}
+
+function formatCoverage(ratio: number): string {
+  return `${new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(ratio * 100)}%`;
+}
+
+function formatPriceUsd(value: number): string {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value);
+}
+
+function bandLabel(band: Band): string {
+  const key = BAND_LABEL_KEYS[band];
+  if (!key) throw new Error(`Missing production label key for band ${band}`);
+  return t("en", key);
+}
+
+function expectedSnapshotText(): string {
+  const date = new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(dataset.snapshotDate));
+  return `${t("en", "aiBenchSnapshotLabel")}: ${date}`;
+}
+
+function expectedPrimaryPrice(model: Model): { input: string; output: string } {
+  const rate = lowestRate(model);
+  if (!rate) {
+    const unavailable = t("en", "aiBenchNoFigure");
+    return { input: unavailable, output: unavailable };
+  }
+  if (rate.kind === "subscription") {
+    const value = `${t("en", "aiBenchSubscription")} (${formatPriceUsd(rate.planCostUsd)})`;
+    return { input: value, output: value };
+  }
+  return { input: formatPriceUsd(rate.input), output: formatPriceUsd(rate.output) };
+}
+
+async function loadBenchmark(page: Page, query = "", locale = scenarioLocale): Promise<void> {
+  await page.goto(`/${locale}/tools/ai-benchmark${query}`);
+  await page.waitForLoadState("networkidle");
+  await expect(page.getByTestId("ai-bench-page")).toBeVisible();
+}
+
+async function bandRowIds(page: Page, band: string): Promise<string[]> {
+  return page
+    .getByTestId(`benchmark-chart-band-${band}`)
+    .locator('[data-testid^="benchmark-chart-row-"]')
+    .evaluateAll((rows) => rows.map((row) => row.getAttribute("data-testid")!.replace("benchmark-chart-row-", "")));
+}
+
+async function tableRowIds(page: Page): Promise<string[]> {
+  return page
+    .locator('[data-testid="model-table-desktop"] tbody tr[data-model-id]')
+    .evaluateAll((rows) => rows.map((row) => row.getAttribute("data-model-id")!));
+}
+
+async function allChartModelIds(page: Page): Promise<string[]> {
+  return page
+    .getByTestId("benchmark-chart")
+    .locator('[data-testid^="benchmark-chart-row-"], [data-testid^="benchmark-chart-unrated-model-"]')
+    .evaluateAll((nodes) =>
+      nodes.map((node) =>
+        (node.getAttribute("data-testid") ?? "")
+          .replace("benchmark-chart-row-", "")
+          .replace("benchmark-chart-unrated-model-", ""),
+      ),
+    );
+}
 
 // ── Preconditions ─────────────────────────────────────────────────────────────
 
-// Background step — the dataset is always loaded on the served page; nothing to set up. The empty
-// fixture destructuring is the playwright-bdd idiom for a fixture-less step (an `no-empty-pattern`
-// lint warning, non-failing, matching the project's generated step files).
-Given("the AI benchmark dataset is loaded", async ({}) => {});
+// A real route render is the public proof that the server loaded the benchmark dataset. Every
+// scenario starts from this usable page; scenario-specific URL steps may deliberately navigate
+// again with their own locale or query string.
+Given("the AI benchmark dataset is loaded", async ({ page }) => {
+  scenarioLocale = "en";
+  targetModelId = "";
+  modelIdsBefore = [];
+  unrelatedBandOrdersBefore = {};
+  copiedUrl = "";
+  inspectedElements = [];
+  sampledValues = [];
+  sampledStrings = [];
+  await loadBenchmark(page, "", "en");
+});
 
 Given("the locale is {string}", async ({}, locale: string) => {
   scenarioLocale = locale;
@@ -39,24 +174,13 @@ When("the AI benchmark page renders", async ({ page }) => {
 
 // ── Page shell assertions (AC-1 / AC-2) ───────────────────────────────────────
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The English page renders its localized heading
 Then("the page shows a level-one heading in English", async ({ page }) => {
-  const h1 = page.locator("h1").first();
-  await expect(h1).toBeVisible();
-  const text = (await h1.textContent()) ?? "";
-  expect(text.trim().length).toBeGreaterThan(0);
-  // The served English H1 must carry the English copy, not the Indonesian one.
-  expect(text.trim()).not.toBe("Tolok Ukur Model AI");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(t("en", "aiBenchTitle"));
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The Indonesian page renders its localized heading
 Then("the page shows a level-one heading in Indonesian", async ({ page }) => {
-  const h1 = page.locator("h1").first();
-  await expect(h1).toBeVisible();
-  const text = (await h1.textContent()) ?? "";
-  expect(text.trim().length).toBeGreaterThan(0);
-  // The served Indonesian H1 must carry the localized copy, distinct from English.
-  expect(text.trim()).not.toBe("AI Model Benchmark");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(t("id", "aiBenchTitle"));
+  expect(t("id", "aiBenchTitle")).not.toBe(t("en", "aiBenchTitle"));
 });
 
 Then("the document language attribute is {string}", async ({ page }, expectedLang: string) => {
@@ -70,9 +194,10 @@ Then("the document language attribute is {string}", async ({ page }, expectedLan
 // DOM region instead carries `role="group"` with `aria-labelledby` (`benchmark-chart-band-{opus,
 // sonnet,haiku}`), not one shared svg — the first band's own region is enough to prove the family
 // carries a real accessible name.
-// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The merged chart exposes an accessible name
 Then("each rated band's chart region exposes a localized accessible name", async ({ page }) => {
-  await expect(page.locator('[data-testid^="benchmark-chart-band-"][role="group"]').first()).toHaveAccessibleName(/.+/);
+  for (const band of ["opus", "sonnet", "haiku"] as const) {
+    await expect(page.getByTestId(`benchmark-chart-band-${band}`)).toHaveAccessibleName(bandLabel(band));
+  }
 });
 
 // ── Phase 8 — harness and class filters (AC-18, AC-22, AC-27) ─────────────────
@@ -82,32 +207,27 @@ Then("each rated band's chart region exposes a localized accessible name", async
 // (cost-of-living-calculator.steps.ts) as a bare `waitForLoadState`, so navigation happens in each
 // scenario's own Given/When step here, not there.
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The page with no query parameters shows the whole roster
 Given("the URL carries no query parameters", async ({ page }) => {
   await page.goto("/en/tools/ai-benchmark");
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The page with no query parameters shows the whole roster
 Then("every roster model is shown in the data table", async ({ page }) => {
   await page.waitForLoadState("networkidle");
-  // Appendix A.2 roster — see apps/ayokoding-www's core/data/models.ts's own "38 rows" comment.
-  await expect(page.locator('[data-testid="model-table-desktop"] tbody tr[data-model-id]')).toHaveCount(38);
+  expect(sorted(await tableRowIds(page))).toEqual(sorted(rosterModelIds()));
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A harness filter switches the merged chart to that harness's rate
 Given("a fixture model priced differently by two harnesses", async ({}) => {
   // The e2e layer exercises the REAL roster (no fixture injection over HTTP) — Grok 4.5
   // (core/data/models.ts) is genuinely priced differently by two harnesses: cursor/opencode-zen at
   // a metered $2/$6 rate, opencode-go at a flat-rate subscription instead.
+  targetModelId = "grok-4.5";
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A harness filter switches the merged chart to that harness's rate
 When("the merged chart renders with that harness selected", async ({ page }) => {
   await page.goto("/en/tools/ai-benchmark?harness=opencode-go");
   await page.waitForLoadState("networkidle");
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A harness filter switches the merged chart to that harness's rate
 Then("that model's price bars use that harness's own rate, not its lowest available rate", async ({ page }) => {
   // opencode-go carries Grok 4.5 as a flat-rate subscription, not a per-token rate — selecting it
   // must remove Grok 4.5's metered bar and show its inline subscription text instead (DD-1).
@@ -115,19 +235,16 @@ Then("that model's price bars use that harness's own rate, not its lowest availa
   await expect(page.getByTestId("benchmark-chart-subscription-grok-4.5")).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A reloaded filtered URL reproduces the same view
 Given("the reader has applied a harness filter and a class filter", async ({ page }) => {
   await page.goto("/en/tools/ai-benchmark?harness=cursor&class=opus");
   await page.waitForLoadState("networkidle");
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A reloaded filtered URL reproduces the same view
 When("the reader reloads the resulting URL", async ({ page }) => {
   await page.reload();
   await page.waitForLoadState("networkidle");
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A reloaded filtered URL reproduces the same view
 Then("the same filtered set of models is shown", async ({ page }) => {
   const rowIds = () =>
     page
@@ -147,7 +264,1102 @@ Then("the same filtered set of models is shown", async ({ page }) => {
   // A genuine narrowing — neither empty (that combination has matches on the live roster) nor the
   // full 38-row roster (the filters really did narrow it).
   expect(idsAfterReload.length).toBeGreaterThan(0);
-  expect(idsAfterReload.length).toBeLessThan(38);
+  expect(idsAfterReload.length).toBeLessThan(dataset.models.length);
+});
+
+// ── Public roster, metadata, and explanatory content ─────────────────────────
+
+When("the page first renders", async ({ page }) => {
+  await expect(page.getByTestId("ai-bench-page")).toBeVisible();
+});
+
+When("the data table is rendered", async ({ page }) => {
+  await expect(page.getByTestId("model-table")).toBeAttached();
+});
+
+Then("a data table is present in the document", async ({ page }) => {
+  await expect(page.getByTestId("model-table-desktop").locator("table")).toHaveCount(1);
+});
+
+Then("the table has a caption", async ({ page }) => {
+  const caption = page.getByTestId("model-table-desktop").locator("caption");
+  await expect(caption).toHaveCount(1);
+  expect((await caption.textContent())?.trim().length).toBeGreaterThan(0);
+});
+
+Then("every table header cell declares a scope", async ({ page }) => {
+  const headers = page.getByTestId("model-table-desktop").locator("th");
+  expect(await headers.count()).toBeGreaterThan(0);
+  const scopes = await headers.evaluateAll((cells) => cells.map((cell) => cell.getAttribute("scope")));
+  expect(scopes.every((scope) => scope === "col" || scope === "row")).toBe(true);
+});
+
+Then(
+  "each model row lists its harnesses, class, every benchmark score, composite index, coverage ratio, input price, and output price",
+  async ({ page }) => {
+    const primaryRows = page.locator('[data-testid="model-table-desktop"] tbody tr[data-model-id]');
+    const detailRows = page.locator('[data-testid="model-table-desktop"] tbody tr[data-model-detail-id]');
+    await expect(primaryRows).toHaveCount(dataset.models.length);
+    await expect(detailRows).toHaveCount(dataset.models.length);
+
+    for (const model of dataset.models) {
+      const score = productionScores.get(model.id);
+      if (!score) throw new Error(`Production score is missing for ${model.id}`);
+
+      const primary = page.locator(`[data-testid="model-table-desktop"] tbody tr[data-model-id="${model.id}"]`);
+      const detail = page.locator(`[data-testid="model-table-desktop"] tbody tr[data-model-detail-id="${model.id}"]`);
+      const primaryCells = primary.locator(":scope > th, :scope > td");
+      await expect(primaryCells).toHaveCount(6);
+      await expect(primaryCells.nth(0)).toContainText(model.name);
+      await expect(primaryCells.nth(1)).toHaveText(model.vendor);
+      await expect(primaryCells.nth(2)).toHaveText(bandLabel(score.band));
+      await expect(primaryCells.nth(3)).toContainText(
+        score.index === undefined ? t("en", "aiBenchNoFigure") : formatIndex(score.index),
+      );
+
+      const expectedPrice = expectedPrimaryPrice(model);
+      await expect(primaryCells.nth(4)).toContainText(expectedPrice.input);
+      await expect(primaryCells.nth(5)).toContainText(expectedPrice.output);
+
+      const detailText = (await detail.textContent()) ?? "";
+      for (const harness of model.harnesses) {
+        expect(detailText).toContain(HARNESS_DISPLAY_NAMES[harness] ?? harness);
+      }
+      expect(detailText).toContain(formatCoverage(score.coverage));
+
+      for (const column of BENCHMARK_COLUMNS) {
+        expect(detailText).toContain(t("en", column.labelKey));
+        const figure = model.figures.find((candidate) => candidate.benchmark === column.id);
+        if (!figure) continue;
+        const expectedValue = isConflictedFigure(figure)
+          ? `${formatPercent(figure.low)} ${t("en", "aiBenchRangeSeparator")} ${formatPercent(figure.high)}`
+          : formatPercent(figure.value);
+        expect(detailText).toContain(expectedValue);
+      }
+    }
+  },
+);
+
+Then("every benchmark score cell carries an evidence grade marker", async ({ page }) => {
+  const details = page.locator('[data-testid="model-table-desktop"] tr[data-model-detail-id]');
+  const reportedFigures = details.locator('[data-slot="figure-cell"]');
+  expect(await reportedFigures.count()).toBeGreaterThan(0);
+  expect(await reportedFigures.locator('[data-slot="evidence-badge"]').count()).toBe(await reportedFigures.count());
+});
+
+Then("every price cell carries an evidence grade marker", async ({ page }) => {
+  const pricedCells = page.locator(
+    '[data-testid="model-table-desktop"] tr[data-model-id] td:nth-last-child(-n+2) [data-slot="figure-cell"]',
+  );
+  expect(await pricedCells.count()).toBeGreaterThan(0);
+  expect(await pricedCells.locator('[data-slot="evidence-badge"]').count()).toBe(await pricedCells.count());
+});
+
+Then("every benchmark score cell resolves to a source link", async ({ page }) => {
+  const figures = page.locator(
+    '[data-testid="model-table-desktop"] tr[data-model-detail-id] [data-slot="figure-cell"]',
+  );
+  const links = figures.locator('a[href^="http"]');
+  expect(await links.count()).toBe(await figures.count());
+});
+
+Then("every price cell resolves to a source link", async ({ page }) => {
+  const figures = page.locator(
+    '[data-testid="model-table-desktop"] tr[data-model-id] td:nth-last-child(-n+2) [data-slot="figure-cell"]',
+  );
+  expect(await figures.locator('a[href^="http"]').count()).toBe(await figures.count());
+});
+
+Given("the dataset carries a snapshot date", async ({ page }) => {
+  await expect(page.getByTestId("ai-bench-snapshot")).toBeAttached();
+});
+
+Then("the snapshot date is shown in text", async ({ page }) => {
+  await expect(page.getByTestId("ai-bench-snapshot")).toHaveText(expectedSnapshotText());
+});
+
+Given("the page carries a how-to-read disclosure", async ({ page }) => {
+  await expect(page.getByTestId("how-to-read")).toBeAttached();
+});
+
+Then(
+  "a single honesty line stating that most frontier benchmark scores are vendor self-reported is visible without interaction",
+  async ({ page }) => {
+    const honesty = page.getByTestId("ai-bench-how-to-honesty");
+    await expect(honesty).toBeVisible();
+    await expect(honesty).toContainText(/vendor|penyedia/i);
+  },
+);
+
+Then("the remaining how-to-read points are reachable from that line's disclosure control", async ({ page }) => {
+  const details = page.getByTestId("ai-bench-how-to-details");
+  await details.locator("summary").click();
+  await expect(page.getByTestId("ai-bench-how-to-list")).toBeVisible();
+});
+
+Given('the reader opens "How to read this benchmark"', async ({ page }) => {
+  const details = page.getByTestId("ai-bench-how-to-details");
+  if (!(await details.getAttribute("open"))) await details.locator("summary").click();
+});
+
+When("the reader reads the price-related guidance", async ({ page }) => {
+  await expect(page.getByTestId("ai-bench-how-to-price-unit")).toBeVisible();
+});
+
+Then("the text states the unit each dollar figure is priced per", async ({ page }) => {
+  const locale = scenarioLocale === "id" ? "id" : "en";
+  await expect(page.getByTestId("ai-bench-how-to-price-unit")).toHaveText(t(locale, "aiBenchHowToPriceUnit"));
+});
+
+Then("a Subscription-priced model's figure is visibly distinguished from a per-unit price", async ({ page }) => {
+  const subscriptionModel = dataset.models.find((model) => lowestRate(model)?.kind === "subscription");
+  expect(subscriptionModel, "the public roster has a subscription-priced model").toBeDefined();
+  const rate = lowestRate(subscriptionModel!);
+  expect(rate?.kind).toBe("subscription");
+  if (rate?.kind !== "subscription") throw new Error("Expected a subscription rate");
+
+  const figure = page.locator(
+    `[data-testid="benchmark-chart-subscription-${subscriptionModel!.id}"], ` +
+      `[data-testid="benchmark-chart-unrated-model-${subscriptionModel!.id}"]`,
+  );
+  await expect(figure).toBeVisible();
+  await expect(figure).toContainText(t("en", "aiBenchSubscription"));
+  await expect(figure).toContainText(formatPriceUsd(rate.planCostUsd));
+});
+
+Given("I am on the AI Model Benchmark page", async ({ page }) => {
+  await expect(page.getByTestId("ai-bench-page")).toBeVisible();
+});
+
+When('I look for an explanation of the "Class" and evidence-grade labels', async ({ page }) => {
+  await page.getByTestId("ai-bench-legend").locator("summary").click();
+});
+
+Then("an expandable legend defines each of the four classes and each of the five evidence grades", async ({ page }) => {
+  const classes = [
+    ["opus", "aiBenchBandOpus", "aiBenchLegendClassOpus"],
+    ["sonnet", "aiBenchBandSonnet", "aiBenchLegendClassSonnet"],
+    ["haiku", "aiBenchBandHaiku", "aiBenchLegendClassHaiku"],
+    ["unrated", "aiBenchBandUnrated", "aiBenchLegendClassUnrated"],
+  ] as const;
+  const grades = [
+    ["verified", "aiBenchGradeVerified", "aiBenchLegendGradeVerified"],
+    ["self-reported", "aiBenchGradeSelfReported", "aiBenchLegendGradeSelfReported"],
+    ["secondary", "aiBenchGradeSecondary", "aiBenchLegendGradeSecondary"],
+    ["conflicted", "aiBenchGradeConflicted", "aiBenchLegendGradeConflicted"],
+    ["unavailable", "aiBenchGradeUnavailable", "aiBenchLegendGradeUnavailable"],
+  ] as const;
+
+  for (const [id, labelKey, definitionKey] of classes) {
+    const entry = page.getByTestId(`ai-bench-legend-class-${id}`);
+    await expect(entry.locator("dt")).toHaveText(`${t("en", labelKey)}:`);
+    await expect(entry.locator("dd")).toHaveText(t("en", definitionKey));
+  }
+  for (const [id, labelKey, definitionKey] of grades) {
+    const entry = page.getByTestId(`ai-bench-legend-grade-${id}`);
+    await expect(entry.locator("dt")).toHaveText(`${t("en", labelKey)}:`);
+    await expect(entry.locator("dd")).toHaveText(t("en", definitionKey));
+  }
+});
+
+Given("the dataset names its benchmark operators", async ({ page }) => {
+  await expect(page.getByTestId("ai-bench-sources")).toBeAttached();
+});
+
+Then("a sources and licences section lists every named operator", async ({ page }) => {
+  await page.getByTestId("ai-bench-sources").locator("summary").click();
+  const entries = page.getByTestId("ai-bench-sources").getByTestId("source-operator");
+  await expect(entries).toHaveCount(OPERATORS.length);
+  for (const [index, operator] of OPERATORS.entries()) {
+    const entry = entries.nth(index);
+    await expect(entry.locator("dt")).toHaveText(operator.name);
+    await expect(entry.getByTestId("operator-terms")).toHaveText(t("en", operator.termsKey));
+    if (operator.url) await expect(entry.locator("dt a")).toHaveAttribute("href", operator.url);
+  }
+});
+
+Then("each operator entry states its republication terms or records that none are stated", async ({ page }) => {
+  const terms = page.getByTestId("ai-bench-sources").getByTestId("operator-terms");
+  await expect(terms).toHaveCount(OPERATORS.length);
+  for (const [index, operator] of OPERATORS.entries()) {
+    await expect(terms.nth(index)).toHaveText(t("en", operator.termsKey));
+  }
+});
+
+Then("no rendered text matches a raw translation key", async ({ page }) => {
+  await expect(page.locator("body")).not.toContainText(/aiBench/);
+});
+
+Given('the class legend is rendered in the "en" locale', async ({ page }) => {
+  scenarioLocale = "en";
+  await loadBenchmark(page, "", "en");
+  await page.getByTestId("ai-bench-legend").locator("summary").click();
+});
+
+Given('the class legend is rendered in the "id" locale', async ({ page }) => {
+  scenarioLocale = "id";
+  await loadBenchmark(page, "", "id");
+  await page.getByTestId("ai-bench-legend").locator("summary").click();
+});
+
+When("the haiku class label is read", async ({ page }) => {
+  copiedUrl = (await page.getByTestId("ai-bench-legend-class-haiku").locator("dt").textContent())?.trim() ?? "";
+});
+
+Then('that label is "Haiku"', async ({}) => {
+  expect(copiedUrl.replace(/:$/, "")).toBe("Haiku");
+});
+
+Then("that label is identical to the label the other locale renders", async ({ page }) => {
+  const otherLocale = scenarioLocale === "en" ? "id" : "en";
+  await loadBenchmark(page, "", otherLocale);
+  await page.getByTestId("ai-bench-legend").locator("summary").click();
+  const other = (await page.getByTestId("ai-bench-legend-class-haiku").locator("dt").textContent())?.trim() ?? "";
+  expect(other).toBe(copiedUrl);
+});
+
+When("the set of known capability class identifiers is inspected", async ({ page }) => {
+  await page.getByTestId("ai-bench-legend").locator("summary").click();
+  sampledValues = [];
+  inspectedElements = [page.getByTestId("ai-bench-legend-classes")];
+});
+
+Then('the identifiers are exactly "opus", "sonnet", "haiku", and "unrated"', async ({ page }) => {
+  for (const band of BAND_IDS) await expect(page.getByTestId(`ai-bench-legend-class-${band}`)).toHaveCount(1);
+  await expect(inspectedElements[0]!.locator(":scope > div")).toHaveCount(4);
+});
+
+Then('no identifier is "light"', async ({ page }) => {
+  await expect(page.locator('[data-testid*="light"]')).toHaveCount(0);
+  await expect(inspectedElements[0]!).not.toContainText(/\blight\b/i);
+});
+
+Given("the dataset records a benchmark-integrity note for a model", async ({ page }) => {
+  targetModelId = "gpt-5.6-sol";
+  await expect(page.locator(`[data-model-id="${targetModelId}"]`)).toHaveCount(2);
+});
+
+Given('the dataset records a benchmark-integrity note for the model "gpt-5.6-sol"', async ({ page }) => {
+  targetModelId = "gpt-5.6-sol";
+  await expect(page.locator(`[data-model-id="${targetModelId}"]`)).toHaveCount(2);
+});
+
+When("that model is rendered in the data table", async ({ page }) => {
+  const row = page.locator(`[data-testid="model-table-desktop"] tr[data-model-id="${targetModelId}"]`);
+  await expect(row).toBeAttached();
+  inspectedElements = [row];
+});
+
+Then("the integrity note is reachable from that model's row", async ({}) => {
+  const noteLink = inspectedElements[0]!.locator('[data-slot="integrity-note"]');
+  await expect(noteLink).toHaveCount(1);
+  await expect(noteLink).toHaveAttribute("href", /^https:/);
+});
+
+When('that model is rendered in the data table on the "id" locale', async ({ page }) => {
+  scenarioLocale = "id";
+  await loadBenchmark(page, "", "id");
+  const row = page.locator(`[data-testid="model-table-desktop"] tr[data-model-id="${targetModelId}"]`);
+  await expect(row).toBeAttached();
+  inspectedElements = [row];
+});
+
+Then("the claim text is visible as real on-page text behind a click-to-reveal disclosure", async ({}) => {
+  const details = inspectedElements[0]!.locator('[data-slot="integrity-note-detail"]');
+  await details.locator("summary").click();
+  await expect(details.locator("p")).toBeVisible();
+  expect((await details.locator("p").textContent())?.trim().length).toBeGreaterThan(40);
+});
+
+Then("the visible claim text is the Indonesian translation, not the English source text", async ({}) => {
+  const claim = inspectedElements[0]!.locator('[data-slot="integrity-note-detail"] p');
+  await expect(claim).toContainText(/melaporkan|mencurangi/i);
+  await expect(claim).not.toContainText(/reported|gamed/i);
+});
+
+Given("the legend and sources are rendered as disclosures below the roster", async ({ page }) => {
+  const roster = page.getByTestId("model-table");
+  const legend = page.getByTestId("ai-bench-legend");
+  const sources = page.getByTestId("ai-bench-sources");
+  inspectedElements = [roster, legend, sources];
+  await expect(legend).not.toHaveAttribute("open", "");
+  await expect(sources).not.toHaveAttribute("open", "");
+});
+
+When("each disclosure is expanded", async ({}) => {
+  await inspectedElements[1]!.locator("summary").click();
+  await inspectedElements[2]!.locator("summary").click();
+});
+
+Then("the legend defines each of the four classes and each of the five evidence grades", async ({ page }) => {
+  const classDefinitions: Readonly<Record<string, string>> = {
+    opus: "aiBenchLegendClassOpus",
+    sonnet: "aiBenchLegendClassSonnet",
+    haiku: "aiBenchLegendClassHaiku",
+    unrated: "aiBenchLegendClassUnrated",
+  };
+  const gradeDefinitions: Readonly<Record<EvidenceGrade, string>> = {
+    verified: "aiBenchLegendGradeVerified",
+    "self-reported": "aiBenchLegendGradeSelfReported",
+    secondary: "aiBenchLegendGradeSecondary",
+    conflicted: "aiBenchLegendGradeConflicted",
+    unavailable: "aiBenchLegendGradeUnavailable",
+  };
+  for (const [band, labelKey] of Object.entries(BAND_LABEL_KEYS)) {
+    const entry = page.getByTestId(`ai-bench-legend-class-${band}`);
+    await expect(entry.locator("dt")).toHaveText(`${t("en", labelKey)}:`);
+    const definitionKey = classDefinitions[band];
+    if (!definitionKey) throw new Error(`Missing legend definition key for ${band}`);
+    await expect(entry.locator("dd")).toHaveText(t("en", definitionKey));
+  }
+  for (const [grade, labelKey] of Object.entries(GRADE_LABEL_KEYS)) {
+    const entry = page.getByTestId(`ai-bench-legend-grade-${grade}`);
+    await expect(entry.locator("dt")).toHaveText(`${t("en", labelKey)}:`);
+    const definitionKey = gradeDefinitions[grade as EvidenceGrade];
+    await expect(entry.locator("dd")).toHaveText(t("en", definitionKey));
+  }
+});
+
+Then("the sources section lists every named operator", async ({ page }) => {
+  const entries = page.getByTestId("ai-bench-sources").getByTestId("source-operator");
+  await expect(entries).toHaveCount(OPERATORS.length);
+  for (const [index, operator] of OPERATORS.entries()) {
+    const entry = entries.nth(index);
+    await expect(entry.locator("dt")).toHaveText(operator.name);
+    await expect(entry.getByTestId("operator-terms")).toHaveText(t("en", operator.termsKey));
+  }
+});
+
+Given("the page renders with no filters applied", async ({ page }) => {
+  await loadBenchmark(page);
+});
+
+When("the document order of the page's regions is inspected", async ({ page }) => {
+  inspectedElements = [
+    page.getByTestId("benchmark-chart"),
+    page.getByTestId("model-table"),
+    page.getByTestId("ai-bench-legend"),
+    page.getByTestId("ai-bench-sources"),
+  ];
+});
+
+Then("the chart region precedes the roster region", async ({ page }) => {
+  expect(
+    await page.evaluate(() => {
+      const chart = document.querySelector('[data-testid="benchmark-chart"]')!;
+      const roster = document.querySelector('[data-testid="model-table"]')!;
+      return Boolean(chart.compareDocumentPosition(roster) & Node.DOCUMENT_POSITION_FOLLOWING);
+    }),
+  ).toBe(true);
+});
+
+Then("the legend and sources disclosures both follow the roster region", async ({ page }) => {
+  expect(
+    await page.evaluate(() => {
+      const roster = document.querySelector('[data-testid="model-table"]')!;
+      const legend = document.querySelector('[data-testid="ai-bench-legend"]')!;
+      const sources = document.querySelector('[data-testid="ai-bench-sources"]')!;
+      return [legend, sources].every((node) =>
+        Boolean(roster.compareDocumentPosition(node) & Node.DOCUMENT_POSITION_FOLLOWING),
+      );
+    }),
+  ).toBe(true);
+});
+
+// ── Live chart and roster semantics ──────────────────────────────────────────
+
+When("the capability groups are computed", async ({ page }) => {
+  inspectedElements = BAND_IDS.map((band) =>
+    page.getByTestId(band === "unrated" ? "benchmark-chart-unrated" : `benchmark-chart-band-${band}`),
+  );
+});
+
+Then('each model appears in exactly one of "opus", "sonnet", "haiku", or "unrated"', async ({ page }) => {
+  const chartIds = await allChartModelIds(page);
+  const tableIds = await tableRowIds(page);
+  expect(new Set(chartIds).size).toBe(chartIds.length);
+  expect([...chartIds].sort()).toEqual([...tableIds].sort());
+});
+
+Given("a fixture model whose coverage ratio is below the low-coverage threshold", async ({ page }) => {
+  targetModelId = "gpt-5.6-terra";
+  await expect(page.getByTestId(`benchmark-chart-row-${targetModelId}`)).toBeVisible();
+});
+
+When("the merged chart is rendered", async ({ page }) => {
+  await expect(page.getByTestId("benchmark-chart")).toBeVisible();
+});
+
+Then("that model's row carries a low-coverage marker", async ({ page }) => {
+  await expect(page.getByTestId(`benchmark-chart-low-coverage-${targetModelId}`)).toBeVisible();
+});
+
+Then("the marker states the model's coverage ratio in text", async ({ page }) => {
+  const model = dataset.models.find((candidate) => candidate.id === targetModelId);
+  if (!model) throw new Error(`Production model is missing for ${targetModelId}`);
+  await expect(page.getByTestId(`benchmark-chart-low-coverage-${targetModelId}`)).toHaveText(
+    `${t("en", "aiBenchCoverageLow")} (${formatCoverage(coverage(model))})`,
+  );
+});
+
+Given("two fixture models whose composite indices differ", async ({ page }) => {
+  inspectedElements = [
+    page.getByTestId("benchmark-chart-row-claude-opus-5"),
+    page.getByTestId("benchmark-chart-row-claude-sonnet-5"),
+  ];
+  await expect(inspectedElements[0]!).toBeVisible();
+  await expect(inspectedElements[1]!).toBeVisible();
+});
+
+Then("the ratio of their bar lengths equals the ratio of their composite indices", async ({}) => {
+  const values = await Promise.all(
+    inspectedElements.map(async (row) => {
+      const label = (await row.locator('[data-slot="chart-bar-label"]').textContent()) ?? "";
+      const numeric = Number(label.match(/([\d.]+)\s*$/)?.[1]);
+      const width = await row
+        .locator('[data-slot="chart-bar-row-fill"]')
+        .first()
+        .evaluate((element: HTMLElement) => Number.parseFloat(element.style.width));
+      return { numeric, width };
+    }),
+  );
+  expect(values.every(({ numeric, width }) => Number.isFinite(numeric) && Number.isFinite(width))).toBe(true);
+  // The public index label is intentionally rounded to one decimal, while the CSS width retains
+  // the unrounded index. Therefore each true index lies within +/- 0.05 of its published label;
+  // assert the rendered ratio is inside the exact interval those two published values imply.
+  const [first, second] = values as [{ numeric: number; width: number }, { numeric: number; width: number }];
+  const renderedRatio = first.width / second.width;
+  const minimumPublishedRatio = (first.numeric - 0.05) / (second.numeric + 0.05);
+  const maximumPublishedRatio = (first.numeric + 0.05) / (second.numeric - 0.05);
+  expect(renderedRatio).toBeGreaterThanOrEqual(minimumPublishedRatio);
+  expect(renderedRatio).toBeLessThanOrEqual(maximumPublishedRatio);
+});
+
+Then("the chart states its axis maximum", async ({ page }) => {
+  await expect(page.getByTestId("chart-axis-max").first()).toContainText(/100(?:\.0)?/);
+});
+
+Then("every bar has a text label carrying the model name", async ({ page }) => {
+  for (const band of ["opus", "sonnet", "haiku"] as const) {
+    for (const score of productionGroups[band]) {
+      await expect(page.getByTestId(`benchmark-chart-label-${score.model.id}`)).toHaveText(
+        `${score.model.name} — ${formatIndex(score.index ?? 0)}`,
+      );
+    }
+  }
+});
+
+Then("every bar has a text label carrying its numeric composite index", async ({ page }) => {
+  for (const band of ["opus", "sonnet", "haiku"] as const) {
+    for (const score of productionGroups[band]) {
+      if (score.index === undefined) throw new Error(`Rated model ${score.model.id} has no production index`);
+      await expect(page.getByTestId(`benchmark-chart-label-${score.model.id}`)).toHaveText(
+        `${score.model.name} — ${formatIndex(score.index)}`,
+      );
+    }
+  }
+});
+
+Given("a fixture model with a per-token input rate and output rate", async ({ page }) => {
+  targetModelId = "claude-opus-5";
+  await expect(page.getByTestId(`benchmark-chart-row-${targetModelId}`)).toBeVisible();
+});
+
+Then("that model has one bar labelled as the input rate", async ({ page }) => {
+  await expect(page.getByTestId(`benchmark-chart-bar-price-in-${targetModelId}`)).toContainText(/input/i);
+});
+
+Then("that model has one bar labelled as the output rate", async ({ page }) => {
+  await expect(page.getByTestId(`benchmark-chart-bar-price-out-${targetModelId}`)).toContainText(/output/i);
+});
+
+Given(
+  "a fixture model with no published composite score, available only under a flat-rate subscription",
+  async ({ page }) => {
+    targetModelId = "mimo-v2.5";
+    await expect(page.getByTestId(`benchmark-chart-unrated-model-${targetModelId}`)).toBeVisible();
+  },
+);
+
+When("the merged chart renders the roster", async ({ page }) => {
+  await expect(page.getByTestId("benchmark-chart")).toBeVisible();
+});
+
+Then("that model appears in the unrated group's plain text list", async ({ page }) => {
+  await expect(page.getByTestId(`benchmark-chart-unrated-model-${targetModelId}`)).toBeVisible();
+});
+
+Then("that list entry states the model's subscription plan cost", async ({ page }) => {
+  const model = dataset.models.find((candidate) => candidate.id === targetModelId);
+  if (!model) throw new Error(`Production model is missing for ${targetModelId}`);
+  const rate = lowestRate(model);
+  if (!rate || rate.kind !== "subscription") {
+    throw new Error(`Production model ${targetModelId} has no subscription price`);
+  }
+  const expected = `${model.name} — ${t("en", "aiBenchSubscription")}: ${formatPriceUsd(rate.planCostUsd)}${
+    rate.caps ? ` (${rate.caps})` : ""
+  }`;
+  await expect(page.getByTestId(`benchmark-chart-unrated-model-${targetModelId}`)).toHaveText(expected);
+});
+
+Then("that model renders no per-token bar and no zero value", async ({ page }) => {
+  await expect(page.getByTestId(`benchmark-chart-bar-price-in-${targetModelId}`)).toHaveCount(0);
+  await expect(page.getByTestId(`benchmark-chart-bar-price-out-${targetModelId}`)).toHaveCount(0);
+  await expect(page.getByTestId(`benchmark-chart-unrated-model-${targetModelId}`)).not.toContainText(
+    /—\s*0(?:\.0)?(?:\D|$)/,
+  );
+});
+
+When("the merged chart is rendered without a harness filter", async ({ page }) => {
+  await loadBenchmark(page);
+});
+
+Then("that model's bars use the lower of the two harness rates", async ({ page }) => {
+  await expect(page.getByTestId(`benchmark-chart-bar-price-in-${targetModelId}`)).toContainText("$2.00");
+  await expect(page.getByTestId(`benchmark-chart-bar-price-out-${targetModelId}`)).toContainText("$6.00");
+});
+
+Then("the chart states that it shows the lowest available harness rate", async ({ page }) => {
+  await expect(page.getByTestId("benchmark-chart-subtitle")).toContainText(/lowest|terendah/i);
+});
+
+Then("every band group carries its class name as text", async ({ page }) => {
+  for (const band of ["opus", "sonnet", "haiku"]) {
+    await expect(page.getByTestId(`benchmark-chart-band-${band}-label`)).toContainText(new RegExp(band, "i"));
+  }
+  await expect(page.getByTestId("benchmark-chart-unrated-heading")).toContainText(/unrated|belum dinilai/i);
+});
+
+Then("every model row carries its class as text in the data table", async ({ page }) => {
+  for (const model of dataset.models) {
+    const score = productionScores.get(model.id);
+    if (!score) throw new Error(`Production score is missing for ${model.id}`);
+    const row = page.locator(`[data-testid="model-table-desktop"] tbody tr[data-model-id="${model.id}"]`);
+    await expect(row.locator(":scope > td:nth-of-type(2)")).toHaveText(bandLabel(score.band));
+  }
+});
+
+Given("the merged chart has replaced the two former charts", async ({ page }) => {
+  await expect(page.getByTestId("benchmark-chart")).toHaveCount(1);
+  await expect(page.locator('[data-testid="capability-chart"], [data-testid="price-chart"]')).toHaveCount(0);
+});
+
+When("a screen reader encounters the chart", async ({ page }) => {
+  inspectedElements = [page.getByTestId("benchmark-chart")];
+});
+
+Then(
+  "each rated band renders its own labelled region carrying its localized band name as its accessible name",
+  async ({ page }) => {
+    for (const band of ["opus", "sonnet", "haiku"]) {
+      await expect(page.getByTestId(`benchmark-chart-band-${band}`)).toHaveAccessibleName(new RegExp(band, "i"));
+    }
+  },
+);
+
+Then("every figure the chart encodes is still reachable via the roster below", async ({ page }) => {
+  expect((await allChartModelIds(page)).sort()).toEqual((await tableRowIds(page)).sort());
+});
+
+Given("a fixture model whose benchmark figure has conflicting published values", async ({ page }) => {
+  targetModelId = "claude-opus-5";
+  const detail = page.locator(`[data-testid="model-table-desktop"] tr[data-model-detail-id="${targetModelId}"]`);
+  await expect(detail).toBeAttached();
+  inspectedElements = [detail];
+});
+
+Then("that cell shows the lowest and highest published values", async ({}) => {
+  const model = dataset.models.find((candidate) => candidate.id === targetModelId);
+  const figure = model?.figures.find(isConflictedFigure);
+  if (!figure) throw new Error(`Production model ${targetModelId} has no conflicted figure`);
+  const expectedRange = `${formatPercent(figure.low)} ${t("en", "aiBenchRangeSeparator")} ${formatPercent(figure.high)}`;
+  const ranged = inspectedElements[0]!.locator('[data-slot="figure-cell-value"]', { hasText: expectedRange });
+  await expect(ranged).toHaveText(expectedRange);
+  sampledValues = [figure.low, figure.high];
+  inspectedElements.push(ranged);
+});
+
+Then("that cell shows no averaged value", async ({}) => {
+  expect(sampledValues).toHaveLength(2);
+  const average = formatPercent((sampledValues[0]! + sampledValues[1]!) / 2);
+  await expect(inspectedElements[1]!).not.toContainText(average);
+});
+
+Given("a model in the sonnet band with a metered input and output rate", async ({ page }) => {
+  targetModelId = "claude-sonnet-5";
+  await expect(
+    page.getByTestId(`benchmark-chart-band-sonnet`).getByTestId(`benchmark-chart-row-${targetModelId}`),
+  ).toBeVisible();
+});
+
+When("the merged chart renders that model's row", async ({ page }) => {
+  inspectedElements = [page.getByTestId(`benchmark-chart-row-${targetModelId}`)];
+  await expect(inspectedElements[0]!).toBeVisible();
+});
+
+Then("the row shows one capability bar, one price-in bar, and one price-out bar", async ({ page }) => {
+  for (const kind of ["capability", "price-in", "price-out"]) {
+    await expect(page.getByTestId(`benchmark-chart-bar-${kind}-${targetModelId}`)).toHaveCount(1);
+  }
+});
+
+Then("all three bars appear stacked within that single row, not in separate chart sections", async ({}) => {
+  await expect(inspectedElements[0]!.locator('[data-slot="chart-bar-row"]')).toHaveCount(3);
+  await expect(inspectedElements[0]!.locator("xpath=ancestor::*[@data-testid='benchmark-chart'][1]")).toHaveCount(1);
+});
+
+Given("a model in the haiku band with no metered rate and one subscription rate", async ({ page }) => {
+  targetModelId = "deepseek-v4-flash";
+  await loadBenchmark(page, "?harness=opencode-go");
+  await expect(
+    page.getByTestId("benchmark-chart-band-haiku").getByTestId(`benchmark-chart-row-${targetModelId}`),
+  ).toBeVisible();
+});
+
+Then("the row shows its capability bar as normal", async ({ page }) => {
+  await expect(page.getByTestId(`benchmark-chart-bar-capability-${targetModelId}`)).toBeVisible();
+});
+
+Then('the price-bar area of that row shows "Subscription \\($cost\\)" text instead of two bars', async ({ page }) => {
+  await expect(page.getByTestId(`benchmark-chart-subscription-${targetModelId}`)).toContainText(
+    /subscription|langganan/i,
+  );
+  await expect(page.getByTestId(`benchmark-chart-bar-price-in-${targetModelId}`)).toHaveCount(0);
+  await expect(page.getByTestId(`benchmark-chart-bar-price-out-${targetModelId}`)).toHaveCount(0);
+});
+
+Given("a model with no published composite score on any benchmark", async ({ page }) => {
+  targetModelId = "gpt-5.5";
+  await expect(page.getByTestId(`benchmark-chart-unrated-model-${targetModelId}`)).toBeVisible();
+});
+
+Then("no capability bar or price bar is rendered for that model", async ({ page }) => {
+  await expect(page.getByTestId(`benchmark-chart-row-${targetModelId}`)).toHaveCount(0);
+  await expect(page.locator(`[data-testid*="bar-"][data-testid$="-${targetModelId}"]`)).toHaveCount(0);
+});
+
+Given("a model in the haiku band with no metered rate and no subscription rate", async ({ page }) => {
+  targetModelId = "gemini-3.1-pro";
+  await expect(page.getByTestId(`benchmark-chart-row-${targetModelId}`)).toBeVisible();
+});
+
+Then('the price-bar area of that row shows a "not reported" placeholder instead of two bars', async ({ page }) => {
+  await expect(page.getByTestId(`benchmark-chart-not-reported-${targetModelId}`)).toBeVisible();
+  await expect(page.getByTestId(`benchmark-chart-bar-price-in-${targetModelId}`)).toHaveCount(0);
+  await expect(page.getByTestId(`benchmark-chart-bar-price-out-${targetModelId}`)).toHaveCount(0);
+});
+
+Given("the full roster is rendered below the md breakpoint", async ({ page }) => {
+  await navigateAtViewport(page, 390, "en");
+  await expect(page.getByTestId("model-table-mobile")).toBeVisible();
+});
+
+When("a model's card is inspected before any interaction", async ({ page }) => {
+  inspectedElements = [page.locator('[data-testid^="model-card-"][data-model-id]').first()];
+  targetModelId = (await inspectedElements[0]!.getAttribute("data-model-id")) ?? "";
+});
+
+Then("the card shows the model name, its class, its composite index, and its price", async ({ page }) => {
+  for (const field of ["name", "class", "index", "price"]) {
+    const value = page.getByTestId(`model-card-${field}-${targetModelId}`);
+    await expect(value).toBeVisible();
+    expect((await value.textContent())?.trim().length).toBeGreaterThan(0);
+  }
+});
+
+Then("the card's remaining figures are inside a closed disclosure", async ({ page }) => {
+  const details = page.getByTestId(`model-card-details-${targetModelId}`);
+  await expect(details).not.toHaveAttribute("open", "");
+  expect(await details.locator("dt").count()).toBeGreaterThan(0);
+});
+
+Given("a model is rendered in both the roster card and the desktop table", async ({ page }) => {
+  await navigateAtViewport(page, 390, "en");
+  const card = page.locator('[data-testid^="model-card-"][data-model-id]').first();
+  targetModelId = (await card.getAttribute("data-model-id")) ?? "";
+  inspectedElements = [
+    card,
+    page.locator(`[data-testid="model-table-desktop"] tr[data-model-id="${targetModelId}"]`),
+    page.locator(`[data-testid="model-table-desktop"] tr[data-model-detail-id="${targetModelId}"]`),
+  ];
+  expect(await inspectedElements[1]!.count()).toBe(1);
+  expect(await inspectedElements[2]!.count()).toBe(1);
+});
+
+When("that model's card disclosure is expanded", async ({ page }) => {
+  await page.getByTestId(`model-card-disclosure-${targetModelId}`).click();
+  await expect(page.getByTestId(`model-card-details-${targetModelId}`)).toHaveAttribute("open", "");
+});
+
+Then(
+  "the card's summary and expanded content together carry every figure that model's table row carries",
+  async ({}) => {
+    const cardValues = await inspectedElements[0]!.locator('[data-slot="figure-cell-value"]').allTextContents();
+    const tableValues = await inspectedElements[1]!.locator('[data-slot="figure-cell-value"]').allTextContents();
+    tableValues.push(...(await inspectedElements[2]!.locator('[data-slot="figure-cell-value"]').allTextContents()));
+    expect(new Set(cardValues)).toEqual(new Set(tableValues));
+    expect(cardValues.length).toBeGreaterThan(0);
+  },
+);
+
+// ── URL-backed filters and independent per-band sorting ───────────────────────
+
+Given("the URL carries a harness parameter naming a known harness", async ({ page }) => {
+  await loadBenchmark(page, "?harness=cursor");
+});
+
+Then("only models that harness exposes are shown in the merged chart", async ({ page }) => {
+  const ids = await allChartModelIds(page);
+  expect(sorted(ids)).toEqual(sorted(modelsForHarness("cursor")));
+});
+
+Then("only models that harness exposes are shown in the data table", async ({ page }) => {
+  expect((await tableRowIds(page)).sort()).toEqual((await allChartModelIds(page)).sort());
+});
+
+Given("the URL carries a class parameter naming a known band", async ({ page }) => {
+  await loadBenchmark(page, "?class=haiku");
+});
+
+Then("only models in that band are shown in the merged chart", async ({ page }) => {
+  const ids = await allChartModelIds(page);
+  const expected = productionGroups.haiku.map((score) => score.model.id);
+  expect(sorted(ids)).toEqual(sorted(expected));
+  expect(sorted(ids)).toEqual(sorted(await bandRowIds(page, "haiku")));
+});
+
+Then("only models in that band are shown in the data table", async ({ page }) => {
+  const expected = productionGroups.haiku.map((score) => score.model.id);
+  expect(sorted(await tableRowIds(page))).toEqual(sorted(expected));
+});
+
+Given("the URL carries both a harness parameter and a class parameter", async ({ page }) => {
+  await loadBenchmark(page, "?harness=cursor&class=opus");
+});
+
+Then("only models satisfying both filters are shown", async ({ page }) => {
+  const ids = await tableRowIds(page);
+  const expected = productionGroups.opus
+    .filter((score) => score.model.harnesses.includes("cursor"))
+    .map((score) => score.model.id);
+  expect(sorted(ids)).toEqual(sorted(expected));
+  expect(sorted(ids)).toEqual(sorted(await allChartModelIds(page)));
+});
+
+Given("the URL carries a harness parameter with an unknown value", async ({ page }) => {
+  modelIdsBefore = await tableRowIds(page);
+  await loadBenchmark(page, "?harness=not-a-real-harness");
+});
+
+Then("every roster model is shown", async ({ page }) => {
+  const actual = await tableRowIds(page);
+  expect(sorted(actual)).toEqual(sorted(rosterModelIds()));
+  expect(sorted(actual)).toEqual(sorted(modelIdsBefore));
+});
+
+Then("no error is surfaced to the reader", async ({ page }) => {
+  await expect(page.locator("h1")).toBeVisible();
+  await expect(page.getByTestId("ai-bench-empty-state")).toHaveCount(0);
+});
+
+Given("the URL carries the harness parameter twice with two different known harness values", async ({ page }) => {
+  await loadBenchmark(page, "?harness=claude-code&harness=codex-cli");
+});
+
+Then("the filter uses the first of the two values", async ({ page }) => {
+  await expect(page.locator("#benchmark-filter-harness-desktop")).toHaveValue("claude-code");
+});
+
+Then("every roster model matching that harness is shown", async ({ page }) => {
+  const ids = await tableRowIds(page);
+  expect(sorted(ids)).toEqual(sorted(modelsForHarness("claude-code")));
+  expect(sorted(ids)).toEqual(sorted(await allChartModelIds(page)));
+});
+
+Given(
+  "the URL carries the harness parameter twice, an unknown value first and a known harness second",
+  async ({ page }) => {
+    modelIdsBefore = await tableRowIds(page);
+    await loadBenchmark(page, "?harness=not-a-real-harness&harness=claude-code");
+  },
+);
+
+Then("the filter falls back to unfiltered", async ({ page }) => {
+  await expect(page.locator("#benchmark-filter-harness-desktop")).toHaveValue("");
+});
+
+Given("the URL carries a filter combination that matches no model", async ({ page }) => {
+  await loadBenchmark(page, "?harness=opencode-go&class=opus");
+});
+
+Then("an explicit empty-state message is shown", async ({ page }) => {
+  const empty = page.getByTestId("ai-bench-empty-state");
+  await expect(empty).toBeVisible();
+  expect((await empty.textContent())?.trim().length).toBeGreaterThan(0);
+});
+
+Then("the chart and the data table do not render in the empty state", async ({ page }) => {
+  await expect(page.getByTestId("benchmark-chart")).toHaveCount(0);
+  await expect(page.getByTestId("model-table")).toHaveCount(0);
+});
+
+Given("a Class filter is active that excludes every model in the Sonnet band", async ({ page }) => {
+  await loadBenchmark(page, "?class=opus");
+});
+
+When("the page renders the Sonnet band", async ({ page }) => {
+  await expect(page.getByTestId("benchmark-chart-band-sonnet")).toBeVisible();
+});
+
+Then("the band shows an explicit message that no models in this class match the current filter", async ({ page }) => {
+  const message = page.getByTestId("benchmark-chart-band-sonnet-empty");
+  await expect(message).toBeVisible();
+  expect((await message.textContent())?.trim().length).toBeGreaterThan(0);
+});
+
+Then("the band's own sort control is hidden rather than left interactive", async ({ page }) => {
+  await expect(page.locator("#benchmark-chart-sort-sonnet")).toHaveCount(0);
+});
+
+When('the reader resets the class filter to "All classes"', async ({ page }) => {
+  await page.locator("#benchmark-filter-class-desktop").selectOption("");
+  await page.waitForURL((url) => !url.searchParams.has("class"));
+});
+
+Then("the URL retains the harness parameter but no longer carries the class parameter", async ({ page }) => {
+  const url = new URL(page.url());
+  expect(url.searchParams.get("harness")).toBe("cursor");
+  expect(url.searchParams.has("class")).toBe(false);
+});
+
+Then("the roster reflects only the harness filter", async ({ page }) => {
+  const ids = await tableRowIds(page);
+  expect(sorted(ids)).toEqual(sorted(modelsForHarness("cursor")));
+});
+
+Given("the sonnet band is displaying models in capability-descending order", async ({ page }) => {
+  await loadBenchmark(page);
+  modelIdsBefore = await bandRowIds(page, "sonnet");
+  unrelatedBandOrdersBefore = {
+    opus: await bandRowIds(page, "opus"),
+    haiku: await bandRowIds(page, "haiku"),
+  };
+  await expect(page.locator("#benchmark-chart-sort-sonnet")).toHaveValue("capability");
+});
+
+When('the reader selects "Price: Low to High" from the sonnet band\'s sort control', async ({ page }) => {
+  await page.locator("#benchmark-chart-sort-sonnet").selectOption("price-asc");
+  await page.waitForURL(/sort-sonnet=price-asc/);
+});
+
+Then("the sonnet band's rows re-render sorted by ascending output rate", async ({ page }) => {
+  const labels = await page
+    .getByTestId("benchmark-chart-band-sonnet")
+    .locator('[data-testid^="benchmark-chart-bar-price-out-"] [data-slot="chart-bar-row-label"]')
+    .allTextContents();
+  const rates = labels.map((label) => Number(label.match(/\$([\d.]+)/)?.[1])).filter(Number.isFinite);
+  expect(rates.length).toBeGreaterThan(1);
+  expect(rates).toEqual([...rates].sort((a, b) => a - b));
+});
+
+Then("the opus and haiku bands keep their own independently-selected sort order", async ({ page }) => {
+  expect(await bandRowIds(page, "opus")).toEqual(unrelatedBandOrdersBefore.opus);
+  expect(await bandRowIds(page, "haiku")).toEqual(unrelatedBandOrdersBefore.haiku);
+});
+
+Given("the opus band is sorted by capability", async ({ page }) => {
+  await loadBenchmark(page);
+  modelIdsBefore = await bandRowIds(page, "opus");
+  await expect(page.locator("#benchmark-chart-sort-opus")).toHaveValue("capability");
+});
+
+When("the reader switches the opus band's sort to price low to high", async ({ page }) => {
+  await page.locator("#benchmark-chart-sort-opus").selectOption("price-asc");
+  await page.waitForURL(/sort-opus=price-asc/);
+});
+
+Then("every model previously in the opus band still appears in the opus band", async ({ page }) => {
+  expect((await bandRowIds(page, "opus")).sort()).toEqual([...modelIdsBefore].sort());
+});
+
+Then("the set of models in the band is unchanged, only their order changes", async ({ page }) => {
+  const after = await bandRowIds(page, "opus");
+  expect([...after].sort()).toEqual([...modelIdsBefore].sort());
+  expect(after).not.toEqual(modelIdsBefore);
+});
+
+Given('the reader has selected "Price: High to Low" for the opus band', async ({ page }) => {
+  await loadBenchmark(page);
+  await page.locator("#benchmark-chart-sort-opus").selectOption("price-desc");
+  await page.waitForURL(/sort-opus=price-desc/);
+  modelIdsBefore = await bandRowIds(page, "opus");
+});
+
+When("the reader copies the current page URL", async ({ page }) => {
+  copiedUrl = page.url();
+});
+
+Then('the URL contains a "sort-opus" query parameter set to the descending-price value', async ({}) => {
+  expect(new URL(copiedUrl).searchParams.get("sort-opus")).toBe("price-desc");
+});
+
+Then("loading that URL directly reproduces the opus band sorted the same way", async ({ page }) => {
+  await page.goto(copiedUrl);
+  await page.waitForLoadState("networkidle");
+  expect(await bandRowIds(page, "opus")).toEqual(modelIdsBefore);
+  await expect(page.locator("#benchmark-chart-sort-opus")).toHaveValue("price-desc");
+});
+
+Given('a URL containing "sort-sonnet=not-a-real-value"', async ({ page }) => {
+  await loadBenchmark(page, "?sort-sonnet=not-a-real-value");
+});
+
+When("the page loads with that URL", async ({ page }) => {
+  await expect(page.getByTestId("benchmark-chart")).toBeVisible();
+});
+
+Then("the sonnet band renders sorted by capability \\(the default\\)", async ({ page }) => {
+  await expect(page.locator("#benchmark-chart-sort-sonnet")).toHaveValue("capability");
+  const labels = await page
+    .getByTestId("benchmark-chart-band-sonnet")
+    .locator('[data-slot="chart-bar-label"]')
+    .allTextContents();
+  const indices = labels.map((label) => Number(label.match(/([\d.]+)\s*$/)?.[1]));
+  expect(indices).toEqual([...indices].sort((a, b) => b - a));
+});
+
+Then("no error is thrown", async ({ page }) => {
+  await expect(page.getByTestId("benchmark-chart")).toBeVisible();
+  await expect(page.getByTestId("ai-bench-empty-state")).toHaveCount(0);
+});
+
+Given('a query string of "class=haiku&sort-haiku=price-asc"', async ({ page }) => {
+  await loadBenchmark(page, "?class=haiku&sort-haiku=price-asc");
+  copiedUrl = page.url();
+});
+
+When("that query string is decoded and then re-encoded", async ({ page }) => {
+  await expect(page.locator("#benchmark-filter-class-desktop")).toHaveValue("haiku");
+  await expect(page.locator("#benchmark-chart-sort-haiku")).toHaveValue("price-asc");
+});
+
+Then("the re-encoded query string is identical to the original", async ({ page }) => {
+  const params = new URL(page.url()).searchParams;
+  expect(params.toString()).toBe("class=haiku&sort-haiku=price-asc");
+});
+
+Then(
+  'a query string carrying the retired "class=light" or "sortLight" decodes to the default unfiltered, capability-sorted state',
+  async ({ page }) => {
+    await loadBenchmark(page, "?class=light&sortLight=price-asc");
+    await expect(page.locator("#benchmark-filter-class-desktop")).toHaveValue("");
+    for (const band of ["opus", "sonnet", "haiku"]) {
+      await expect(page.locator(`#benchmark-chart-sort-${band}`)).toHaveValue("capability");
+    }
+    expect(sorted(await tableRowIds(page))).toEqual(sorted(rosterModelIds()));
+  },
+);
+
+// ── Responsive and disclosure structure ──────────────────────────────────────
+
+Given("a model's roster card is rendered with its disclosure expanded", async ({ page }) => {
+  await navigateAtViewport(page, 390, "en");
+  const card = page.locator('[data-testid^="model-card-"][data-model-id]').first();
+  targetModelId = (await card.getAttribute("data-model-id")) ?? "";
+  await page.getByTestId(`model-card-disclosure-${targetModelId}`).click();
+  inspectedElements = [page.getByTestId(`model-card-details-${targetModelId}`)];
+});
+
+When("the structure of the disclosure's content is inspected", async ({}) => {
+  await expect(inspectedElements[0]!.locator(":scope > section")).toHaveCount(2);
+});
+
+Then("every field belongs to exactly one labelled group", async ({}) => {
+  const sections = inspectedElements[0]!.locator(":scope > section");
+  const totalTerms = await inspectedElements[0]!.locator("dt").count();
+  let groupedTerms = 0;
+  for (let index = 0; index < (await sections.count()); index += 1) {
+    await expect(sections.nth(index).locator(":scope > h4")).toHaveCount(1);
+    groupedTerms += await sections.nth(index).locator("dt").count();
+  }
+  expect(groupedTerms).toBe(totalTerms);
+  expect(totalTerms).toBeGreaterThan(0);
+});
+
+Then("each group's heading is one level below the card's own model-name heading", async ({ page }) => {
+  await expect(page.getByTestId(`model-card-name-${targetModelId}`)).toHaveJSProperty("tagName", "H3");
+  await expect(inspectedElements[0]!.locator(":scope > section > h4")).toHaveCount(2);
+});
+
+Given(
+  "a model with more than one unpublished benchmark figure is rendered with its disclosure expanded",
+  async ({ page }) => {
+    await navigateAtViewport(page, 390, "en");
+    targetModelId = "gpt-5.6-terra";
+    await page.getByTestId(`model-card-disclosure-${targetModelId}`).click();
+    inspectedElements = [page.getByTestId(`model-card-details-${targetModelId}`)];
+  },
+);
+
+When("the disclosure's name-value groups are inspected", async ({}) => {
+  const groups = inspectedElements[0]!.locator("dl > div");
+  expect(await groups.count()).toBeGreaterThan(0);
+  inspectedElements.push(groups);
+});
+
+Then(
+  'every unpublished figure\'s label is a term in one single group sharing one "not reported" description',
+  async ({}) => {
+    const groups = inspectedElements[1]!;
+    let shared: ReturnType<Page["locator"]> | undefined;
+    for (let index = 0; index < (await groups.count()); index += 1) {
+      const candidate = groups.nth(index);
+      if (
+        (await candidate.locator("dt").count()) >= 2 &&
+        /not reported|tidak dilaporkan/i.test((await candidate.locator("dd").textContent()) ?? "")
+      ) {
+        shared = candidate;
+        break;
+      }
+    }
+    expect(shared).toBeDefined();
+    expect(await shared!.locator("dt").count()).toBeGreaterThanOrEqual(2);
+    await expect(shared!.locator("dd")).toHaveCount(1);
+    inspectedElements.push(shared!);
+  },
+);
+
+Then("no unpublished figure occupies a name-value group of its own", async ({}) => {
+  expect(await inspectedElements[2]!.locator("dt").count()).toBeGreaterThanOrEqual(2);
+  await expect(inspectedElements[2]!.locator("dd")).toHaveCount(1);
+});
+
+Given("the merged chart is rendered at a mobile, a tablet, and a desktop viewport width", async ({ page }) => {
+  sampledValues = [390, 768, 1280];
+  await navigateAtViewport(page, sampledValues[0]!, "en");
+});
+
+When("the DOM structure and the declared text sizes at each width are inspected", async ({ page }) => {
+  const widths = [...sampledValues];
+  sampledValues = [];
+  sampledStrings = [];
+  for (const width of widths) {
+    await navigateAtViewport(page, width, "en");
+    const label = page.locator('[data-slot="chart-bar-label"]').first();
+    const row = page.locator('[data-testid^="benchmark-chart-row-"]').first();
+    sampledValues.push(await label.evaluate((element) => Number.parseFloat(getComputedStyle(element).fontSize)));
+    sampledStrings.push(await row.evaluate((element) => getComputedStyle(element).display));
+  }
+});
+
+Then("the declared text size of every chart label is identical at all three widths", async ({}) => {
+  expect(sampledValues).toHaveLength(3);
+  expect(new Set(sampledValues).size).toBe(1);
+  expect(sampledValues[0]).toBeGreaterThanOrEqual(12);
+});
+
+Then("the row layout changes from stacked to a label column only at the desktop width", async ({}) => {
+  expect(sampledStrings).toEqual(["block", "block", "grid"]);
 });
 
 // ── AC-38 — live-page band-token contrast (Phase 9, M-11/M-12) ────────────────
@@ -217,7 +1429,6 @@ let bandBaseContrastRatios: Record<(typeof RATED_BAND_IDS)[number], number> = {
   haiku: 0,
 };
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:Band colours meet contrast in both themes
 Given("the page is rendered in the {string} theme", async ({ page }, theme: string) => {
   await page.goto(`/${scenarioLocale}/tools/ai-benchmark`);
   await page.waitForLoadState("networkidle");
@@ -233,7 +1444,6 @@ Given("the page is rendered in the {string} theme", async ({ page }, theme: stri
   }
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:Band colours meet contrast in both themes
 When("the computed styles of the band tokens are read from the live page", async ({ page }) => {
   // The colour-SYNTAX resolution (`oklch()`/`lab()`/nested `var()` → concrete sRGB bytes) can only
   // happen inside the browser — a `<canvas>` 2D context is the one API guaranteed to fully
@@ -296,7 +1506,6 @@ When("the computed styles of the band tokens are read from the live page", async
   bandBaseContrastRatios = nextBase;
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:Band colours meet contrast in both themes
 Then("every band token meets the WCAG AA contrast ratio against its background", async ({}) => {
   for (const band of BAND_IDS) {
     expect(
@@ -306,7 +1515,6 @@ Then("every band token meets the WCAG AA contrast ratio against its background",
   }
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:Band colours meet contrast in both themes
 //
 // The assertion the M-14 fix (Phase 9 Round 1a) actually needs: the base/bar-fill token
 // (`--chart-band-<band>`) is what a DOM bar's `bg-*` background colour resolves to
@@ -339,7 +1547,6 @@ async function navigateAtViewport(page: Page, width: number, locale: string, hei
 let overflowScrollWidth = 0;
 let overflowClientWidth = 0;
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The document never scrolls horizontally
 Given(
   "the AI benchmark page is loaded at a {string} px viewport in the {string} locale",
   async ({ page }, width: string, locale: string) => {
@@ -358,7 +1565,6 @@ Then("the document scroll width does not exceed the document client width", asyn
 
 // ── Sticky desktop header (AC-59, DD-27 Unit 2) ───────────────────────────────
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The roster table header stays visible while the page scrolls at desktop width
 Given("the AI benchmark page is loaded at a 1440 px viewport", async ({ page }) => {
   await navigateAtViewport(page, 1440, "en");
 });
@@ -393,7 +1599,6 @@ async function readComputedTextStyle(locator: ReturnType<Page["locator"]>): Prom
 let cardLabelStyle: ComputedTextStyle | null = null;
 let cardValueStyle: ComputedTextStyle | null = null;
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:An expanded card's figure value out-ranks its own field label
 Given("the AI benchmark page is loaded at a 390 px viewport with one roster card expanded", async ({ page }) => {
   await navigateWithFirstCardExpanded(page);
 });
@@ -419,7 +1624,6 @@ let gradedCellFlexDirection = "";
 let labelBox: { top: number; bottom: number } | null = null;
 let valueBox: { top: number; bottom: number } | null = null;
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:An expanded card's figure value and its evidence badge flow on one row
 When("the computed flex direction of a graded figure cell is read from the live page", async ({ page }) => {
   const details = page.locator('[data-testid^="model-card-details-"]').first();
   const gradedCell = details.locator('[data-slot="figure-cell"]').first();
@@ -470,7 +1674,6 @@ Given("the AI benchmark page is loaded at a {string} px viewport", async ({ page
 type TapTargetFailure = { description: string; width: number; height: number };
 let tapTargetFailures: TapTargetFailure[] = [];
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:Every interactive target meets the minimum target size
 When("the bounding box of every link and every disclosure control is measured", async ({ page }) => {
   const targets = page.locator('[data-testid="ai-bench-page"] a, [data-testid="ai-bench-page"] summary');
   const count = await targets.count();
@@ -502,7 +1705,6 @@ Then("every measured target is at least 24 CSS pixels wide and at least 24 CSS p
 
 let chartLabelFontSizePx = 0;
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:Chart label text renders at a fixed size across viewports
 When("the computed font size of a chart model label is read from the live page", async ({ page }) => {
   const label = page.locator('[data-testid^="benchmark-chart-label-"]').first();
   chartLabelFontSizePx = await label.evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
@@ -535,7 +1737,6 @@ Then("that computed font size is at least 12 CSS pixels", async ({}) => {
 let chartLabelFontSizeAt1440 = 0;
 let bodyFontSizeAt1440 = 0;
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:Chart label text never exceeds the page's own body text size
 When(
   "the computed font sizes of a chart model label and the page body text are read from the live page",
   async ({ page }) => {
@@ -559,7 +1760,6 @@ let barTrackWidthAt320 = 0;
 let chartRowWidthAt320 = 0;
 let chartRowDisplayAt320 = "";
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The chart plot occupies the full container width on a phone
 When(
   "the width of a capability bar's track is compared with the width of its containing chart region",
   async ({ page }) => {
@@ -609,7 +1809,6 @@ Given(
 
 let firstChartElementOffsetTop = 0;
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The chart is visible above the fold on a phone
 When("the vertical offset of the first chart element is read from the live page", async ({ page }) => {
   const chart = page.locator('[data-testid="benchmark-chart"]').first();
   const box = await chart.boundingBox();
@@ -629,7 +1828,6 @@ Then("that offset is less than the viewport height", async ({}) => {
 // pre-fix chart position measured 701px at 390px width), so it was non-protective; 664 is the
 // realistic breakpoint `delivery.md`'s UWT-007 retest actually measured the defect and its fix at.
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The overhauled page behaves identically in both locales
 Given(
   "the AI benchmark page is loaded in the {string} locale at a 390 px viewport",
   async ({ page }, locale: string) => {

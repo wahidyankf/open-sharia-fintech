@@ -14,7 +14,7 @@ read as though there were. The bounded run is:
 2. The appropriate `swe-*-dev` agent — chosen by the implementing language of the service under
    test (`swe-fsharp-dev` for `ose-be` / `organiclever-be`, `swe-typescript-dev`, `swe-rust-dev`,
    and so on) — fixes each finding.
-3. The tester verifies the original findings and smoke-tests affected API behavior against the
+3. The tester verifies the original findings and smoke-tests affected API behaviour against the
    rebuilt/redeployed service.
 
 Run each step at most once. An unresolved original finding or regression produces `partial`; it does

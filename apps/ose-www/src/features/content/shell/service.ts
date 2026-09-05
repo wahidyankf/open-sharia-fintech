@@ -13,16 +13,25 @@ export interface SearchDoc {
   slug: string;
 }
 
+export interface ContentServiceOptions {
+  readonly showDrafts?: boolean;
+  readonly readSearchData?: (searchDataPath: string) => Promise<string>;
+}
+
 export class ContentService {
   private readonly repository: ContentRepository;
   private readonly searchDataPath: string | null;
+  private readonly showDrafts: boolean;
+  private readonly readSearchData: (searchDataPath: string) => Promise<string>;
   private contentMap: Map<string, ContentMeta> | null = null;
   private searchIndex: FlexSearch.Document<SearchDoc, true> | null = null;
   private docStore = new Map<string, SearchDoc>();
 
-  constructor(repository: ContentRepository, searchDataPath?: string) {
+  constructor(repository: ContentRepository, searchDataPath?: string, options: ContentServiceOptions = {}) {
     this.repository = repository;
     this.searchDataPath = searchDataPath ?? null;
+    this.showDrafts = options.showDrafts ?? env.OSE_WEB_SHOW_DRAFTS === "true";
+    this.readSearchData = options.readSearchData ?? ((filePath) => fs.readFile(filePath, "utf-8"));
   }
 
   async getIndex(): Promise<{
@@ -116,9 +125,8 @@ export class ContentService {
   }
 
   private getUpdatesFromMap(contentMap: Map<string, ContentMeta>): ContentMeta[] {
-    const showDrafts = env.OSE_WEB_SHOW_DRAFTS === "true";
     return [...contentMap.values()]
-      .filter((m) => m.category === "updates" && !m.isSection && (!m.draft || showDrafts))
+      .filter((m) => m.category === "updates" && !m.isSection && (!m.draft || this.showDrafts))
       .sort((a, b) => {
         const dateA = a.date?.getTime() ?? 0;
         const dateB = b.date?.getTime() ?? 0;
@@ -141,7 +149,7 @@ export class ContentService {
   private async tryLoadPreBuiltSearchData(): Promise<SearchDoc[] | null> {
     if (!this.searchDataPath) return null;
     try {
-      const raw = await fs.readFile(this.searchDataPath, "utf-8");
+      const raw = await this.readSearchData(this.searchDataPath);
       return JSON.parse(raw) as SearchDoc[];
     } catch {
       return null;

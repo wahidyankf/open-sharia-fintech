@@ -178,7 +178,7 @@ OSE Platform follows a current-LTS strategy with documented compatibility lines:
 **Mandatory Standards (All F# Developers MUST follow)**:
 
 1. [Coding Standards](coding-standards.md) — Naming, module structure, pipeline operator
-2. [Testing Standards](testing-standards.md) — Expecto framework, FsCheck, coverage >=95%
+2. [Testing Standards](testing-standards.md) — Expecto framework, FsCheck, Unit line coverage >=99%
 3. [Code Quality Standards](code-quality-standards.md) — Fantomas formatting, exhaustive pattern matching
 
 **Context-Specific Standards (Apply when relevant)**:
@@ -278,7 +278,7 @@ graph LR
 - SHOULD use FSharpLint for additional style enforcement
 - MUST set `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` in `.fsproj`
 - MUST enable exhaustive pattern match warnings (enabled by default — never suppress)
-- MUST achieve >=95% line coverage measured with Coverlet and enforced by the native `test:coverage` Nx target
+- MUST achieve >=99% line coverage measured with Coverlet and enforced during `test:unit`; static `test:coverage:*` targets never execute tests
 
 **Testing Automation (REQUIRED)**:
 
@@ -308,7 +308,7 @@ graph LR
 
 **Code Review Requirements**:
 
-- All F# code MUST pass automated checks (Fantomas, `dotnet test`, coverage >=95% enforced by the native `test:coverage` Nx target)
+- All F# code MUST pass automated checks (Fantomas, `test:unit` with Coverlet coverage >=99%, and applicable static coverage validators)
 - Code reviewers MUST verify Fantomas formatting compliance (CI should enforce this automatically)
 - Non-compliance with mandatory standards (Coding, Testing, Code Quality) blocks merge
 - Incomplete pattern match warnings MUST be resolved before merge — never suppressed with `#nowarn`

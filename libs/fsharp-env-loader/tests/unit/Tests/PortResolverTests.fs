@@ -4,7 +4,7 @@ open Xunit
 open FsharpEnvLoader.PortResolver
 
 /// These cases mirror, one for one, the scenarios in
-/// `specs/libs/ts-env-loader/behaviors/port-resolver/port-resolver.feature`
+/// `specs/libs/ts-env-loader/behaviours/port-resolver/port-resolver.feature`
 /// and their TypeScript step definitions in
 /// `libs/ts-env-loader/src/port-resolver.unit.test.ts`. The two
 /// implementations are only "the same mechanism" if they agree case by case,
@@ -25,27 +25,23 @@ let private noEnv: string -> string = envFrom []
 
 // --- Precedence ------------------------------------------------------------
 
-// @covers specs/libs/ts-env-loader/behaviors/port-resolver/port-resolver.feature:The CLI flag outranks every other source
 [<Fact>]
 let ``the CLI flag outranks every other source`` () =
     let readEnvironment = envFrom [ "OSE_WWW_PORT", "4000" ]
     let actual = resolvePort [| "--port"; "5000" |] readEnvironment "OSE_WWW_PORT" 3100
     Assert.Equal(Ok 5000, actual)
 
-// @covers specs/libs/ts-env-loader/behaviors/port-resolver/port-resolver.feature:The prefixed variable outranks the fallback
 [<Fact>]
 let ``the prefixed variable outranks the fallback`` () =
     let readEnvironment = envFrom [ "OSE_WWW_PORT", "4000" ]
     let actual = resolvePort [||] readEnvironment "OSE_WWW_PORT" 3100
     Assert.Equal(Ok 4000, actual)
 
-// @covers specs/libs/ts-env-loader/behaviors/port-resolver/port-resolver.feature:The fallback applies when nothing else supplies a port
 [<Fact>]
 let ``the fallback applies when nothing else supplies a port`` () =
     let actual = resolvePort [||] noEnv "OSE_WWW_PORT" 3100
     Assert.Equal(Ok 3100, actual)
 
-// @covers specs/libs/ts-env-loader/behaviors/port-resolver/port-resolver.feature:A bare PORT variable never moves the listener
 [<Fact>]
 let ``a bare PORT variable never moves the listener`` () =
     // A bare PORT is Next.js's own knob; this repo deliberately does NOT honour
@@ -57,7 +53,6 @@ let ``a bare PORT variable never moves the listener`` () =
 
 // --- Blank values fall through ---------------------------------------------
 
-// @covers specs/libs/ts-env-loader/behaviors/port-resolver/port-resolver.feature:A blank value at a tier falls through to the next tier
 [<Theory>]
 [<InlineData("", "4000", 4000)>]
 [<InlineData("", "", 3100)>]
@@ -71,7 +66,6 @@ let ``a blank value at a tier falls through to the next tier`` (flagValue: strin
 
 // --- Malformed values fail loudly ------------------------------------------
 
-// @covers specs/libs/ts-env-loader/behaviors/port-resolver/port-resolver.feature:A present but malformed port fails loudly instead of falling through
 [<Theory>]
 [<InlineData("0")>]
 [<InlineData("65536")>]
@@ -86,7 +80,6 @@ let ``a present but malformed port fails loudly instead of falling through`` (fl
         Assert.Contains("--port", message)
         Assert.Contains("65535", message)
 
-// @covers specs/libs/ts-env-loader/behaviors/port-resolver/port-resolver.feature:A malformed prefixed variable names that variable in the error
 [<Fact>]
 let ``a malformed prefixed variable names that variable in the error`` () =
     let readEnvironment = envFrom [ "OSE_WWW_PORT", "not-a-port" ]
@@ -117,7 +110,6 @@ let ``a trailing bare --port with no value falls through to the env var`` () =
     let actual = resolvePort [| "--port" |] readEnvironment "OSE_WWW_PORT" 3100
     Assert.Equal(Ok 4000, actual)
 
-// @covers specs/libs/ts-env-loader/behaviors/port-resolver/port-resolver.feature:An out-of-range compiled-in fallback is caught at startup
 [<Fact>]
 let ``an out-of-range compiled-in fallback is caught at startup`` () =
     match resolvePort [||] noEnv "OSE_WWW_PORT" 70000 with

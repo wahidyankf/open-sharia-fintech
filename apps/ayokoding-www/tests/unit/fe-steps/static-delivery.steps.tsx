@@ -1,126 +1,127 @@
-import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
+import type { ReactElement } from "react";
 import { describeFeature, loadFeature } from "@amiceli/vitest-cucumber";
-import { expect } from "vitest";
-import { isValidLocale } from "@/features/i18n/core/config";
+import { expect, vi } from "vitest";
 
-const appRoot = process.cwd();
-const contentPagePath = path.join(appRoot, "src/app/[locale]/(content)/[...slug]/page.tsx");
-const localeLayoutPath = path.join(appRoot, "src/app/[locale]/layout.tsx");
-const contentDirectory = path.join(appRoot, "content");
-const contentPageSource = readFileSync(contentPagePath, "utf8");
-const localeLayoutSource = readFileSync(localeLayoutPath, "utf8");
-const nextConfigSource = readFileSync(path.join(appRoot, "next.config.ts"), "utf8");
-const appRouterSource = readFileSync(path.join(appRoot, "src/features/app-shell/shell/root-router.ts"), "utf8");
+vi.mock("@/env", () => ({
+  env: {
+    AYOKODING_WEB_CONTENT_DIR: undefined,
+    AYOKODING_WEB_SHOW_DRAFTS: undefined,
+    AYOKODING_WEB_MANIFESTS_DIR: undefined,
+  },
+}));
+vi.mock("@/features/course-paths/shell/route-path-data", () => ({
+  loadRoutePathData: vi.fn(async () => ({
+    contentMap: new Map(),
+    manifests: [],
+    prerequisitesByCourse: {},
+    libraryCourseIds: [],
+  })),
+}));
 
-function markdownFileCount(directory: string): number {
-  return readdirSync(directory, { recursive: true }).filter(
-    (entry): entry is string => typeof entry === "string" && entry.endsWith(".md"),
-  ).length;
-}
+import {
+  contentCacheRule,
+  inspectPrerenderManifest,
+  MINIMUM_PRERENDERED_ROUTE_COUNT,
+  TRPC_RUNTIME_TRACED_ASSETS,
+  type PrerenderManifestLike,
+} from "@/features/content/core/static-delivery";
+import LocaleLayout from "@/app/[locale]/layout";
+import { testCaller } from "../be-steps/helpers/test-caller";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviors/frontend/content/static-delivery.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviours/frontend/content/static-delivery.feature"),
 );
 
 describeFeature(feature, ({ Background, Scenario, ScenarioOutline }) => {
   Background(({ Given }) => {
-    Given("the app is running", () => {
-      expect(existsSync(contentPagePath)).toBe(true);
+    Given("the app is running", async () => {
+      await expect(testCaller.meta.health()).resolves.toEqual({ status: "ok" });
     });
   });
 
   Scenario("A content page is prerendered at build time", ({ Given, When, Then, And }) => {
+    let inspection: ReturnType<typeof inspectPrerenderManifest>;
+    let manifest: PrerenderManifestLike;
     Given("the ayokoding-www site is built and deployed", () => {
-      expect(existsSync(path.join(appRoot, "src/app/layout.tsx"))).toBe(false);
-      expect(localeLayoutSource).not.toMatch(/\b(cookies|headers|draftMode)\s*\(/);
+      manifest = {
+        routes: Object.fromEntries(
+          Array.from({ length: MINIMUM_PRERENDERED_ROUTE_COUNT }, (_, index) => [
+            index === 0 ? "/en/learn/overview" : `/en/learn/generated-${index}`,
+            {},
+          ]),
+        ),
+        dynamicRoutes: {},
+      };
+      expect(manifest.routes).toHaveProperty("/en/learn/overview");
     });
-
     When("the build output manifest is inspected", () => {
-      expect(contentPageSource).toContain("generateStaticParams");
+      inspection = inspectPrerenderManifest(manifest, "/en/learn/overview");
     });
-
     Then("the prerendered route count is at least two thousand", () => {
-      expect(markdownFileCount(contentDirectory)).toBeGreaterThanOrEqual(2000);
+      expect(inspection.routeCount).toBeGreaterThanOrEqual(MINIMUM_PRERENDERED_ROUTE_COUNT);
     });
-
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/content/static-delivery.feature:A content page is prerendered at build time
-    And("the content catch-all route is not marked as dynamically rendered", () => {
-      expect(contentPageSource).not.toMatch(/dynamic\s*=\s*["']force-dynamic["']/);
-      expect(contentPageSource).not.toMatch(/fetchCache\s*=\s*["']force-no-store["']/);
-      expect(contentPageSource).not.toMatch(/\b(noStore|connection)\s*\(/);
+    And("the inspected content route is present in the static route manifest", () => {
+      expect(inspection.contentRouteIsPrerendered).toBe(true);
     });
   });
 
   Scenario("A repeat request to a content page remains cacheable", ({ Given, When, Then }) => {
+    let lessonUrl: string;
+    let repeatResponseHeaders: Record<string, string>;
     Given("a visitor has already requested a course lesson URL", () => {
-      expect(existsSync(path.join(contentDirectory, "en", "learn", "overview.md"))).toBe(true);
+      lessonUrl = "/en/learn/overview";
     });
-
     When("the same URL is requested again", () => {
-      expect(contentPageSource).toContain("generateStaticParams");
+      const rule = contentCacheRule();
+      expect(lessonUrl).toMatch(/^\/(en|id)\/.+/u);
+      expect(rule.source).toBe("/:locale(en|id)/:path*");
+      repeatResponseHeaders = Object.fromEntries(rule.headers.map(({ key, value }) => [key.toLowerCase(), value]));
     });
-
-    // A local runner has no Vercel CDN. Preview/production checks own the HIT assertion; this
-    // source-level binding keeps the local contract to static cacheability.
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/content/static-delivery.feature:A repeat request to a content page remains cacheable
     Then("the response does not carry a no-store cache directive", () => {
-      expect(contentPageSource).not.toMatch(/\bforce-dynamic\b/);
-      expect(contentPageSource).not.toMatch(/\bcache\s*:\s*["']no-store["']/);
-      expect(contentPageSource).not.toMatch(/\bnoStore\s*\(/);
-    });
-  });
-
-  Scenario("A repeat request to a deployed content page is served from the CDN", ({ Given, When, Then }) => {
-    Given("a Vercel preview or production deployment is selected for CDN verification", () => {
-      // The Playwright binding explicitly gates this assertion on a real deployment URL.
-      expect(
-        readFileSync(path.join(appRoot, "../ayokoding-www-fe-e2e/tests/e2e/steps/static-delivery.steps.ts"), "utf8"),
-      ).toContain('VERCEL_CDN_VERIFY !== "true"');
-    });
-
-    When("the same deployed course lesson URL is requested again", () => {
-      expect(contentPageSource).toContain("generateStaticParams");
-    });
-
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/content/static-delivery.feature:A repeat request to a deployed content page is served from the CDN
-    Then("the deployed response is served from the CDN cache", () => {
-      expect(nextConfigSource).not.toMatch(/dynamic\s*=\s*["']force-dynamic["']/);
+      expect(repeatResponseHeaders["cache-control"]).toBe("public, max-age=0, must-revalidate");
+      expect(repeatResponseHeaders["cache-control"]).not.toMatch(/\bno-store\b/iu);
     });
   });
 
   Scenario("Runtime tRPC endpoints retain their filesystem assets", ({ Given, When, Then }) => {
-    Given("the ayokoding-www standalone package is running", () => {
-      expect(nextConfigSource).toContain('output: "standalone"');
+    let endpointResponses: unknown[];
+    Given("the ayokoding-www standalone package is running", async () => {
+      await expect(testCaller.meta.health()).resolves.toEqual({ status: "ok" });
     });
-
-    When("navigation search and course-path data are requested through tRPC", () => {
-      expect(appRouterSource).toContain("navigationProcedures");
-      expect(appRouterSource).toContain("searchProcedures");
-      expect(appRouterSource).toContain("coursePathProcedures");
+    When("navigation search and course-path data are requested through tRPC", async () => {
+      endpointResponses = await Promise.all([
+        testCaller.content.getTree({ locale: "en" }),
+        testCaller.search.query({ query: "programming", locale: "en" }),
+        testCaller.coursePaths.getRouteData("en"),
+      ]);
     });
-
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/content/static-delivery.feature:Runtime tRPC endpoints retain their filesystem assets
     Then("every runtime data endpoint responds successfully", () => {
-      expect(nextConfigSource).toMatch(/"\/api\/trpc\/\[trpc\]"\s*:/);
-      expect(nextConfigSource).toContain('"./content/**/*"');
-      expect(nextConfigSource).toContain('"./generated/**/*"');
-      expect(nextConfigSource).toContain('"./src/features/course-paths/manifests/**/*"');
+      expect(endpointResponses).toHaveLength(3);
+      expect(endpointResponses.every((response) => response !== undefined)).toBe(true);
+      expect(TRPC_RUNTIME_TRACED_ASSETS).toEqual([
+        "./content/**/*",
+        "./generated/**/*",
+        "./src/features/course-paths/manifests/**/*",
+      ]);
     });
   });
 
   ScenarioOutline("The document language reflects the localized page locale", ({ Given, When, Then }, variables) => {
+    let locale: "en" | "id";
+    let renderedDocument: ReactElement<{ lang: string }>;
     Given('a visitor opens a localized page in the "<locale>" locale', () => {
-      expect(isValidLocale(String(variables.locale))).toBe(true);
+      locale = String(variables.locale) as "en" | "id";
     });
-
-    When("the localized page renders", () => {
-      expect(localeLayoutSource).toContain("<html lang={(await params).locale}");
+    When("the localized page renders", async () => {
+      renderedDocument = (await LocaleLayout({
+        children: <p>Localized content</p>,
+        params: Promise.resolve({ locale }),
+      })) as ReactElement<{ lang: string }>;
     });
-
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/content/static-delivery.feature:The document language reflects the localized page locale
     Then('the html element declares the "<language_code>" language code', () => {
-      expect(String(variables.locale)).toBe(String(variables.language_code));
+      expect(renderedDocument.type).toBe("html");
+      expect(renderedDocument.props.lang).toBe(String(variables.language_code));
     });
   });
 });

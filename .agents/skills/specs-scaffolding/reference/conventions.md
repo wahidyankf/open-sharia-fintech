@@ -23,7 +23,7 @@ Standard 5 for the complete PM-readability contract.
 
 ## Feature File Placement
 
-BE/web/CLI: MUST be placed in domain subdirectories under `behavior/<surface>/gherkin/<domain>/`
+BE/web/CLI: MUST be placed in domain subdirectories under `behaviour/<surface>/gherkin/<domain>/`
 (all surfaces use the same domain-subdir rule; build-time CLI features share the `cli` surface).
 Libs: MUST be placed in package subdirectories under `gherkin/<package>/`.
 
@@ -48,4 +48,4 @@ for full rules.
 ## Folder Listing Order
 
 In any README listing, folders appear in canonical order: `product/`, `system-context/`,
-`containers/`, `components/`, `behavior/`.
+`containers/`, `components/`, `behaviour/`.

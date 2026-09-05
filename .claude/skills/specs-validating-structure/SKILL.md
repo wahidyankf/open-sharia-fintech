@@ -20,9 +20,9 @@ Quality-gate invocations may pass exact `delegated-gate-ids` under
 [Lifecycle Validation Ownership](../../../repo-governance/workflows/meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
 Do not run, re-derive, report, or fix the matching predicates: `governance-readme-index` owns
 README existence/index membership; `md-links` owns internal path/fragment resolution;
-`specs-gherkin-cardinality` owns primary-keyword cardinality; `specs-structure` owns adoption,
-tree shape, and registered counts. Keep semantic and cross-folder judgment. Omitted delegation
-preserves standalone full behavior. Accept `lifecycle-evidence`: checkers preserve it; fixers
+`specs-structure` owns adoption, tree shape, and registered counts. Keep Gherkin journey coherence,
+semantic, and cross-folder judgment. Omitted delegation
+preserves standalone full behaviour. Accept `lifecycle-evidence`: checkers preserve it; fixers
 scope-intersect changed files and return `updated-lifecycle-evidence`.
 
 ## The Nine Validation Categories
@@ -49,8 +49,9 @@ execution pattern, fix report format, safety rules, and changed-file capture.
 
 ## What This Methodology Does NOT Cover
 
-Test code or step definitions (`rhino-cli specs behavior-coverage validate`), governance docs
-(`repo-rules-checker`), running tests (CI). This methodology is read-only — no file modification.
+Test bindings and semantic implementation (use the
+[`gherkin-implementation-review`](../../../repo-governance/workflows/gherkin-implementation-review.md)),
+governance docs (`repo-rules-checker`), or runtime tests (CI). This methodology is read-only.
 
 ## Related
 

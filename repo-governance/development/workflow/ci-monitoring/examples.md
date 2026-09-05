@@ -9,7 +9,7 @@ tags:
   - rate-limiting
   - monitoring
   - workflow
-when_to_use: Use when you need a concrete example of correct or incorrect CI monitoring behavior.
+when_to_use: Use when you need a concrete example of correct or incorrect CI monitoring behaviour.
 ---
 
 # Examples

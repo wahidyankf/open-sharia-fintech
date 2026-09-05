@@ -40,7 +40,7 @@ The app is split into five bounded contexts: journal, stats, workout-session...
 **After** (Category A only — link pointer for Category B):
 
 ```markdown
-## Behavior and Architecture
+## Behaviour and Architecture
 
 OrganicLever Web is a productivity tracker. See [specs/apps/organiclever/](../../specs/apps/organiclever/README.md) for routes, screens, bounded-context map, architecture decisions, and design system.
 ```

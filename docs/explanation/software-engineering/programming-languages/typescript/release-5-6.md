@@ -19,7 +19,7 @@ created: 2026-09-03
 # TypeScript 5.6 Release
 
 TypeScript 5.6 is a documented strictness milestone. The platform guidance relies on its checks for
-always-truthy or always-nullish expressions and its improved build-mode behavior.
+always-truthy or always-nullish expressions and its improved build-mode behaviour.
 
 Use the exact compiler version declared by the owning project; the milestone is not a floating
 dependency requirement.

@@ -34,7 +34,7 @@ cross-language lint gates and the policy that binds them.
 - [Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md) — every
   artifact type uses a declared warning-and-above threshold.
 - [Reproducibility](../../principles/software-engineering/reproducibility.md) — local and CI lint
-  behavior use the same checked-in tool configuration.
+  behaviour use the same checked-in tool configuration.
 
 ## Conventions Implemented/Respected
 

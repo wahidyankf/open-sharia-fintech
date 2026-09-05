@@ -37,14 +37,12 @@ let ``extractBlocks finds mermaid block`` () =
     let result = extractBlocks mdText
     Assert.Equal(1, result.Length)
 
-// @covers specs/apps/crane/cli/behaviors/media/mermaid-validate.feature:Valid graph TD block produces no finding
 [<Fact>]
 let ``validateMd returns empty for valid mermaid`` () =
     let mdText = "```mermaid\ngraph TD\n A-->B\n```"
     let result = validateMd mdText
     Assert.Empty(result)
 
-// @covers specs/apps/crane/cli/behaviors/media/mermaid-validate.feature:Unknown diagram type produces a HIGH finding
 [<Fact>]
 let ``validateMd returns finding for invalid mermaid`` () =
     let mdText = "```mermaid\nunknownType\n A-->B\n```"
@@ -53,7 +51,6 @@ let ``validateMd returns finding for invalid mermaid`` () =
     Assert.Equal("HIGH", result.[0].Criticality)
     Assert.Equal("mermaid-syntax", result.[0].Category)
 
-// @covers specs/apps/crane/cli/behaviors/media/mermaid-validate.feature:Unmatched bracket produces a HIGH finding
 [<Fact>]
 let ``validateMd returns HIGH finding mentioning bracket for unmatched bracket block`` () =
     let mdText = "```mermaid\ngraph TD\n A[ unclosed\n```"
@@ -62,7 +59,6 @@ let ``validateMd returns HIGH finding mentioning bracket for unmatched bracket b
     Assert.Equal("HIGH", result.[0].Criticality)
     Assert.Contains("bracket", result.[0].Description)
 
-// @covers specs/apps/crane/cli/behaviors/media/mermaid-validate.feature:All known diagram type keywords are accepted
 [<Fact>]
 let ``validateMd returns empty for all known diagram type keywords`` () =
     let types =

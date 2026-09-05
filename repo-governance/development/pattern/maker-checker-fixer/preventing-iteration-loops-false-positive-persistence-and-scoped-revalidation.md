@@ -26,9 +26,9 @@ Without explicit mechanisms to track accepted decisions, checker-fixer workflows
 
 **Key format**: `[category] | [file] | [brief-description]` — stable across runs.
 
-**Checker behavior**: When a finding matches the skip list, log as `[PREVIOUSLY ACCEPTED FALSE_POSITIVE — skipped]` in the informational section. Do NOT count in findings total.
+**Checker behaviour**: When a finding matches the skip list, log as `[PREVIOUSLY ACCEPTED FALSE_POSITIVE — skipped]` in the informational section. Do NOT count in findings total.
 
-**Fixer behavior**: At end of every fix report, append each FALSE_POSITIVE to `.known-false-positives.md` and include an `## Accepted FALSE_POSITIVE Findings` section in the fix report.
+**Fixer behaviour**: At end of every fix report, append each FALSE_POSITIVE to `.known-false-positives.md` and include an `## Accepted FALSE_POSITIVE Findings` section in the fix report.
 
 ## 2. Scoped Re-validation (Changed Files Only)
 

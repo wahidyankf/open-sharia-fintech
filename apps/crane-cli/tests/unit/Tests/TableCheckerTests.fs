@@ -26,7 +26,6 @@ let ``detectTables returns empty for plain text`` () =
     let result = detectTables "plain text no tables"
     Assert.Empty(result)
 
-// @covers specs/apps/crane/cli/behaviors/media/table-check.feature:detect command identifies tables in layout text
 [<Fact>]
 let ``detectTables detects 3-column table`` () =
     let text = makeTable 3 1
@@ -34,7 +33,6 @@ let ``detectTables detects 3-column table`` () =
     Assert.Equal(1, result.Length)
     Assert.Equal(3, result.[0].ColCount)
 
-// @covers specs/apps/crane/cli/behaviors/media/table-check.feature:Present table with matching structure produces no finding
 [<Fact>]
 let ``checkTables returns empty for matching tables`` () =
     let pdfText = makeTable 3 1
@@ -42,7 +40,6 @@ let ``checkTables returns empty for matching tables`` () =
     let result = checkTables pdfText mdText
     Assert.Empty(result)
 
-// @covers specs/apps/crane/cli/behaviors/media/table-check.feature:Missing table produces a CRITICAL finding
 [<Fact>]
 let ``checkTables returns CRITICAL finding for missing table`` () =
     let pdfText = makeTable 3 1
@@ -51,7 +48,6 @@ let ``checkTables returns CRITICAL finding for missing table`` () =
     Assert.NotEmpty(result)
     Assert.Equal("CRITICAL", result.[0].Criticality)
 
-// @covers specs/apps/crane/cli/behaviors/media/table-check.feature:Table with wrong row count produces a MEDIUM finding
 [<Fact>]
 let ``checkTables returns MEDIUM finding for row count mismatch`` () =
     let pdfText = makeTable 3 3

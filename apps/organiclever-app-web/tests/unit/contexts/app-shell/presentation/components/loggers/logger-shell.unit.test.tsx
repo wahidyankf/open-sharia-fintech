@@ -1,7 +1,7 @@
 /**
  * Unit tests for LoggerShell component.
  *
- * Renders the shell with jsdom and validates the open/closed behavior and
+ * Renders the shell with jsdom and validates the open/closed behaviour and
  * button interactions without requiring a JournalRuntime.
  */
 

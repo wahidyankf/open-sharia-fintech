@@ -1,7 +1,7 @@
 /**
  * Step definitions for the Disabled Routes feature.
  *
- * Covers: specs/apps/organiclever/app-web/behaviors/routing/disabled-routes.feature
+ * Covers: specs/apps/organiclever/app-web/behaviours/routing/disabled-routes.feature
  *
  * GET-only routes (/login, /profile) are verified by navigating with page.goto
  * and checking the HTTP status. /login and /profile remain as guards against
@@ -20,16 +20,23 @@ let currentMethod = "";
 let currentPath = "";
 let redirectStatus: number | null = null;
 let redirectLocation: string | null = null;
+let responseStatus: number | null = null;
 
-Given("the application is running in local-first mode", async () => {
-  // No-op: the server always runs in local-first mode for these tests.
+Given("the application is running in local-first mode", async ({ request }) => {
+  currentMethod = "";
+  currentPath = "";
+  redirectStatus = null;
+  redirectLocation = null;
+  responseStatus = null;
+  const response = await request.get(`${APP_BASE_URL}/app/home`);
+  expect(response.ok()).toBe(true);
 });
 
 When(/a visitor requests (\w+) (\/(?:login|profile))$/, async ({ page }, method: string, routePath: string) => {
   currentMethod = method;
   currentPath = routePath;
   const response = await page.goto(routePath);
-  expect(response?.status()).toBe(404);
+  responseStatus = response?.status() ?? null;
 });
 
 When(/a visitor requests GET "\/app"$/, async ({ request }) => {
@@ -44,20 +51,15 @@ When(/a visitor requests GET "\/app\/does-not-exist"$/, async ({ page }) => {
   currentMethod = "GET";
   currentPath = "/app/does-not-exist";
   const response = await page.goto(`${APP_BASE_URL}/app/does-not-exist`);
-  expect(response?.status()).toBe(404);
+  responseStatus = response?.status() ?? null;
 });
 
-// @covers specs/apps/organiclever/app-web/behaviors/routing/disabled-routes.feature:Disabled routes return 404
-// @covers specs/apps/organiclever/app-web/behaviors/routing/app-routes.feature:Unknown segment under /app returns 404
 Then("the response status is 404", async () => {
-  // Status assertion is performed in the When step for inline access to response.
-  // This Then step confirms the path was exercised.
-  expect(currentPath).toBeTruthy();
-  expect(currentMethod).toBeTruthy();
+  expect({ method: currentMethod, path: currentPath, status: responseStatus }).toMatchObject({
+    status: 404,
+  });
 });
 
-// @covers specs/apps/organiclever/app-web/behaviors/routing/disabled-routes.feature:Old /app URL permanent-redirects to /app/home
-// @covers specs/apps/organiclever/app-web/behaviors/routing/app-routes.feature:Old /app URL permanent-redirects to /app/home
 Then(/the response is a 308 redirect to "(\/app\/home)"$/, async ({}, target: string) => {
   expect(redirectStatus).toBe(308);
   expect(redirectLocation).toBeTruthy();

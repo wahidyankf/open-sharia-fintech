@@ -1,6 +1,6 @@
 ---
 title: "Security Conventions"
-description: Repository security conventions governing agent behavior and data protection
+description: Repository security conventions governing agent behaviour and data protection
 when_to_use: Use before a change touches configuration, credentials, or environment files, to find the applicable security rule.
 category: explanation
 subcategory: conventions

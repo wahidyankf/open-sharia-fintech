@@ -10,6 +10,7 @@ open OrganicleverBe.Infrastructure.AppDbContext
 open OrganicleverBe.Infrastructure.Database
 open OrganicleverBe.Infrastructure.NatsClient
 open OrganicleverBe.Infrastructure.NatsConnect
+open OrganicleverBe.Contexts.Db.Application
 open OrganicleverBe.Contexts.Db.Infrastructure
 open OrganicleverBe.Contexts.Env.Infrastructure
 open OrganicleverBe.Contexts.Messaging.Application
@@ -42,7 +43,9 @@ let main args =
     let connStr = requireDatabaseUrl ()
 
     // 2. Schema migration on boot (db context — DbUp embedded scripts).
+    let migrationStatus = newMigrationStatus ()
     runMigrations connStr
+    migrationStatus.MarkApplied()
 
     // 3. Messaging: config is required (fail-fast on missing ORGANICLEVER_BE_NATS_URL);
     //    the connection itself is best-effort + non-fatal, including the JetStream
@@ -71,7 +74,8 @@ let main args =
             eprintfn "%s" message
             exit 1
 
-    let host = buildHost args connStr (buildWebApp status) listenUrl
+    let host =
+        buildHost args connStr (buildWebAppWithMigrationStatus migrationStatus status) listenUrl
 
     host.Run()
 

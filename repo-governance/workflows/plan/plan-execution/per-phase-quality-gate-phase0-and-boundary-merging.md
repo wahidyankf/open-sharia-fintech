@@ -16,6 +16,6 @@ under a permitted direct mode, land the unit at its direct-push checkpoint. Do n
 every intermediate phase or hold independent ready units for a plan-end batch. Grouping dependent
 phases into one unit is not batching. The merge actor is `[AI]` by default; `[HUMAN]` applies only
 where the plan declares that gate. Split only at natural cohesive seams, never LOC or file counts,
-and integrate only an exact resulting `main` state safe to deploy immediately. Incomplete behavior
+and integrate only an exact resulting `main` state safe to deploy immediately. Incomplete behaviour
 reaches `main` complete-and-inert behind a temporary production-disabled feature flag, with both
 paths tested and rollout, rollback, and removal recorded.

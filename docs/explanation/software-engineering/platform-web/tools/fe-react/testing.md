@@ -44,7 +44,7 @@ Testing is essential for maintaining React application quality. This guide cover
 React Testing Library encourages testing components the way users interact with them:
 
 - Query by accessible names, roles, and text (not implementation details)
-- Test behavior, not implementation
+- Test behaviour, not implementation
 - Avoid testing internal state
 - Focus on user interactions
 
@@ -54,7 +54,7 @@ import userEvent from '@testing-library/user-event';
 import { ZakatCalculator } from './ZakatCalculator';
 
 describe('ZakatCalculator', () => {
-  // ✅ Good - tests user-visible behavior
+  // ✅ Good - tests user-visible behaviour
   it('calculates zakat when user enters wealth above nisab', async () => {
     const user = userEvent.setup();
     render(<ZakatCalculator />);

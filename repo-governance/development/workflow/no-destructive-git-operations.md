@@ -23,7 +23,7 @@ force-push and hook-bypass approval. Together they cover both directions; neithe
 
 - [The Same-Machine Assumption, Principles, and Conventions](./no-destructive-git-operations/the-same-machine-assumption-principles-and-conventions.md) — Why concurrency makes these operations dangerous, and what this convention implements.
 - [Forbidden Operations](./no-destructive-git-operations/forbidden-operations.md) — The table of forbidden operations, what they destroy, and their safe equivalents.
-- [Forbidden-Operations Caveats and Cross-Worktree Facts](./no-destructive-git-operations/forbidden-operations-caveats-and-cross-worktree-facts.md) — Two easy-to-misread-as-safe behaviors, and what git already isolates.
+- [Forbidden-Operations Caveats and Cross-Worktree Facts](./no-destructive-git-operations/forbidden-operations-caveats-and-cross-worktree-facts.md) — Two easy-to-misread-as-safe behaviours, and what git already isolates.
 - [Whole-Tree Staging Is Forbidden](./no-destructive-git-operations/whole-tree-staging-is-forbidden.md) — Every forbidden staging spelling, and the explicit-paths procedure to use instead.
 - [No Corner-Cutting and Preferring Additive Operations](./no-destructive-git-operations/no-corner-cutting-and-preferring-additive-operations.md) — Why weakening a gate is forbidden, and the additive/own-worktree habits that prevent most destruction.
 

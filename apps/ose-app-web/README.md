@@ -38,16 +38,15 @@ docker compose -f infra/dev/ose-app/docker-compose.yml up --build -d
 
 Run these from the repository root.
 
-| Command                                           | When to use it                                                             |
-| ------------------------------------------------- | -------------------------------------------------------------------------- |
-| `npm exec nx -- dev ose-app-web`                  | Start the local development server on port 3300.                           |
-| `npm exec nx -- build ose-app-web`                | Produce a production build.                                                |
-| `npm exec nx -- run ose-app-web:test:quick`       | Run the app's type, lint, unit, coverage, and specification checks.        |
-| `npm exec nx -- run ose-app-web:test:unit`        | Run unit tests.                                                            |
-| `npm exec nx -- run ose-app-web:test:integration` | Run integration tests.                                                     |
-| `npm exec nx -- run ose-app-web:lint`             | Run accessibility-aware Oxlint and ESLint checks.                          |
-| `npm exec nx -- run ose-app-web:codegen`          | Regenerate TypeScript API types from the OSE Application OpenAPI contract. |
-| `npm exec nx -- run ose-app-web:storybook`        | Explore components locally with Storybook on port 6006.                    |
+| Command                                     | When to use it                                                             |
+| ------------------------------------------- | -------------------------------------------------------------------------- |
+| `npm exec -- nx run ose-app-web:dev`        | Start the local development server on port 3300.                           |
+| `npm exec -- nx run ose-app-web:build`      | Produce a production build.                                                |
+| `npm exec -- nx run ose-app-web:test:quick` | Run type, lint, Unit, static coverage, and specification checks.           |
+| `npm exec -- nx run ose-app-web:test:unit`  | Run Unit tests with the 99% line-coverage hard gate.                       |
+| `npm exec -- nx run ose-app-web:lint`       | Run accessibility-aware Oxlint and ESLint checks.                          |
+| `npm exec -- nx run ose-app-web:codegen`    | Regenerate TypeScript API types from the OSE Application OpenAPI contract. |
+| `npm exec -- nx run ose-app-web:storybook`  | Explore components locally with Storybook on port 6006.                    |
 
 ## How the pieces fit together
 
@@ -64,8 +63,21 @@ Run these from the repository root.
 
 ## Next places to look
 
-- [Frontend acceptance scenarios](../../specs/apps/ose/app-web/behaviors/) describe the
+- [Frontend acceptance scenarios](../../specs/apps/ose/app-web/behaviours/) describe the
   observable browser behaviour.
 - [Browser end-to-end tests](../ose-app-web-e2e/) exercise those scenarios with Playwright.
 - [Development environment setup](../../docs/how-to/setup-development-environment.md) covers the
   tools used across the repository.
+
+## BDD and Testing
+
+The canonical corpus is `specs/apps/ose/app-web/behaviours/`. This project owns the Unit adapter
+through `test:unit`; `ose-app-web-e2e:test:e2e` owns the public browser runtime. Matching
+`test:coverage:*` targets validate both adapters statically. Integration and owner-local E2E
+runtime are omitted because the client owns no non-networked local-resource boundary and the
+dedicated project owns browser execution.
+
+The app-local composition-root Unit suite separately verifies that `next.config.ts` invokes the
+shared `ts-env-loader` port. Tier selection, precedence, and dotenv resource behaviour belong to
+the library corpus at `specs/libs/ts-env-loader/behaviours/`, so the app does not duplicate those
+scenarios.

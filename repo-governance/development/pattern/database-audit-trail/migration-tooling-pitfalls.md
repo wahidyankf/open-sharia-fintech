@@ -60,13 +60,14 @@ thousands separator (e.g., `id_ID`), `50.5` parses as `505.0`. Fix by adding
 
 ## Docker environment differences
 
-Integration tests (built inside `Dockerfile.integration`) and E2E tests (`cargo run` / `uv run`
-with volume mount) may behave differently:
+Networked database E2E tests (including any legacy image still named `Dockerfile.integration`) and
+process E2E tests (`cargo run` / `uv run` with volume mount) may behave differently. The filename
+does not change the boundary: PostgreSQL reached over TCP is E2E, not Integration.
 
 - **Rust migrations**: SQLx `sqlx::migrate!` embeds migration SQL at compile time. When using
   volume mounts, ensure `migrations/` is present in the container build context.
 - **Go version**: Keep `Dockerfile`, `Dockerfile.integration`, AND `Dockerfile.be.dev` in sync with
   `go.mod`'s Go version requirement.
-- **Python Alembic**: The `Dockerfile.integration` needs explicit `COPY alembic/ alembic/` and
+- **Python Alembic**: The database-E2E image needs explicit `COPY alembic/ alembic/` and
   `COPY alembic.ini alembic.ini` — the standard `COPY . .` may not include them if `.dockerignore`
   is aggressive.

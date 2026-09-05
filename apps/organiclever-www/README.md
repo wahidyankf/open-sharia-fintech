@@ -2,7 +2,7 @@
 
 The pre-alpha marketing site for [OrganicLever](../../specs/apps/organiclever/overview.md), a local-first life journal for recording and reviewing everyday activity. It serves the public landing experience at the domain root; the product client is a separate application, [`organiclever-app-web`](../organiclever-app-web/README.md).
 
-This project is intentionally simple: it renders static Next.js marketing content, has no dedicated backend API, and does not persist application data. That makes it a good place for an early engineer to work on the public story, visual system, and accessible landing-page behavior without coupling to product runtime concerns.
+This project is intentionally simple: it renders static Next.js marketing content, has no dedicated backend API, and does not persist application data. That makes it a good place for an early engineer to work on the public story, visual system, and accessible landing-page behaviour without coupling to product runtime concerns.
 
 ## Run locally
 
@@ -22,7 +22,7 @@ No project-specific environment variables are required. The checked-in [`.env.ex
 - [`src/features/home/`](./src/features/home/) — landing-page composition: hero, feature cards, weekly-rhythm preview, and principles.
 - [`src/features/app-shell/`](./src/features/app-shell/) — shared landing navigation and footer.
 - [`tests/unit/steps/`](./tests/unit/steps/) — Vitest Cucumber step definitions for the marketing and accessibility scenarios.
-- [`specs/apps/organiclever/www/behaviors/frontend/`](../../specs/apps/organiclever/www/behaviors/frontend/README.md) — executable acceptance criteria shared by unit and E2E tests.
+- [`specs/apps/organiclever/www/behaviours/frontend/`](../../specs/apps/organiclever/www/behaviours/frontend/README.md) — executable acceptance criteria shared by unit and E2E tests.
 
 ## Engineering shape
 
@@ -49,5 +49,13 @@ Browser E2E tests belong to the paired [`organiclever-www-fe-e2e`](../organiclev
 
 - [OrganicLever product overview](../../specs/apps/organiclever/overview.md) — the product direction and current capabilities.
 - [Marketing site architecture](../../specs/apps/organiclever/www/architecture.md) — the as-built site and the tRPC surface behind it.
-- [Marketing behavior specs](../../specs/apps/organiclever/www/behaviors/frontend/README.md) — the landing page’s acceptance criteria.
+- [Marketing behaviour specs](../../specs/apps/organiclever/www/behaviours/frontend/README.md) — the landing page’s acceptance criteria.
 - [System architecture application reference](../../docs/reference/system-architecture/applications.md) — monorepo-level application context.
+
+## BDD and Testing
+
+The canonical corpus is `specs/apps/organiclever/www/behaviours/`. This project owns the Unit
+adapter through `test:unit`; `organiclever-www-fe-e2e:test:e2e` owns the applicable public browser
+runtime. Matching `test:coverage:*` targets validate both adapters statically. Integration and
+owner-local E2E runtime are omitted because the site has no backend or other non-networked
+local-resource boundary and the dedicated project owns browser execution.

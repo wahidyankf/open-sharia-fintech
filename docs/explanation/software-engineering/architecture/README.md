@@ -136,7 +136,7 @@ C4 and DDD complement each other throughout the design process:
 3. Draw **System Context diagram** (C4) showing bounded contexts as containers
 4. Design **Aggregates** (DDD) within each bounded context
 5. Create **Component diagrams** (C4) showing aggregates and their relationships
-6. Document **runtime behavior** with Dynamic diagrams (C4) and Domain Events (DDD)
+6. Document **runtime behaviour** with Dynamic diagrams (C4) and Domain Events (DDD)
 
 See DDD and C4 Integration for examples and guidance.
 

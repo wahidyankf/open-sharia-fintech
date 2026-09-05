@@ -93,7 +93,7 @@ Six work streams, most of them serialized by shared config files (`package.json`
 ## Rough scope & non-goals
 
 In scope: the six streams above, plus companion Gherkin under the app's specs tree for the three
-behavior-changing streams (search, diagram rendering, calculator lazy-load), bound by unit and e2e
+behaviour-changing streams (search, diagram rendering, calculator lazy-load), bound by Unit and E2E
 step definitions, and a live-site retest before archival since the changes are UI-affecting at
 runtime without adding screens.
 

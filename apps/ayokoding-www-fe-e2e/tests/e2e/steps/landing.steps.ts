@@ -51,8 +51,6 @@ Then("the landing section grid should include a card linking to {string}", async
 // Scoping to <main> guards against any same-href link in footer nav.
 // ---------------------------------------------------------------------------
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/ia-navigation-revamp.feature:Landing homepage renders hero, sections, and tools teaser in English
-// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/ia-navigation-revamp.feature:Landing homepage renders hero, sections, and tools teaser in Indonesian
 Then("the tools teaser should link to {string}", async ({ page }, href: string) => {
   const main = page.getByRole("main");
   const teaserLink = main.locator(`a[href="${href}"]`);

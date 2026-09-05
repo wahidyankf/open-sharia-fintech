@@ -7,13 +7,10 @@ import { defineBddConfig } from "playwright-bdd";
 process.env.APP_ENV ??= "test";
 
 const testDir = defineBddConfig({
-  featuresRoot: "../../specs/apps/organiclever/be/behaviors",
-  features: "../../specs/apps/organiclever/be/behaviors/**/*.feature",
+  featuresRoot: "../../specs/apps/organiclever/be/behaviours",
+  features: "../../specs/apps/organiclever/be/behaviours/**/*.feature",
   steps: ["./steps/**/*.ts"],
-  // Exclude @unit scenarios (Rust unit tests) and @integration scenarios
-  // (Rust integration tests with real DB, no HTTP server).
-  // All other scenarios (including @e2e and untagged) run here via Playwright.
-  tags: "not @unit and not @integration",
+  tags: "not @e2e-exempt",
 });
 
 export default defineConfig({

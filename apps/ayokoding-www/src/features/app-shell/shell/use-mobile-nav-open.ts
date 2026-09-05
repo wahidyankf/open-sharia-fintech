@@ -9,7 +9,7 @@ interface MobileNavOpenState {
    * it — pass `event.currentTarget` from the triggering `onClick` handler.
    *
    * `trigger` is preferred over reading `document.activeElement` at call time because mouse-click
-   * default-focus behavior differs by browser engine: Chromium and Firefox focus a clicked
+   * default-focus behaviour differs by browser engine: Chromium and Firefox focus a clicked
    * `<button>` by default, but WebKit (Safari) does not — so `document.activeElement` is only a
    * reliable stand-in for "the element the reader just activated" on some engines, never all of
    * them (course-paths plan, Cycle 3.4 — found via the `path-order-nav.feature` phone-drawer e2e

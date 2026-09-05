@@ -405,7 +405,7 @@ struct ContractId(Uuid);
 // Now the compiler prevents passing the wrong amount:
 fn pay_zakat(amount: ZakatAmount) { ... }
 let profit = MurabahaProfit(Decimal::new(1000, 0));
-pay_zakat(profit); // COMPILE ERROR — correct behavior!
+pay_zakat(profit); // COMPILE ERROR — correct behaviour!
 
 // WRONG: Raw primitives allow mixing without error
 fn pay_zakat(amount: Decimal) { ... }

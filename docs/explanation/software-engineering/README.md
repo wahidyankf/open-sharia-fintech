@@ -28,7 +28,7 @@ You do not need to read everything in order. Start with the question you have, t
 | How a record or workflow moves through defined stages                                    | [Finite State Machine (FSM)](./architecture/finite-state-machine-fsm/README.md)                                                                                                                                                                        |
 | How teams turn examples and acceptance criteria into reliable code                       | [Software Development Practices](./development/README.md) — turning examples and acceptance criteria into reliable code                                                                                                                                |
 | Which language or web framework a part of the platform uses                              | [Programming Languages](./programming-languages/README.md) — language-specific idioms, best practices, and antipatterns, or [Libraries and Frameworks](./platform-web/README.md) — documentation on libraries and frameworks for scalable applications |
-| How browser behavior is checked automatically                                            | [Automation Testing](./automation-testing/README.md) — why automated checks build confidence in the platform                                                                                                                                           |
+| How browser behaviour is checked automatically                                           | [Automation Testing](./automation-testing/README.md) — why automated checks build confidence in the platform                                                                                                                                           |
 | Why a dependency's license was accepted or needs care                                    | [Licensing](./licensing/README.md) — license analysis and compliance decisions for dependencies                                                                                                                                                        |
 
 ## The engineering map
@@ -45,11 +45,11 @@ You do not need to read everything in order. Start with the question you have, t
 
 For a product conversation, DDD and C4 are usually the most useful entry points: DDD helps establish what the business means, while C4 helps show where that work lives in the wider system.
 
-### Development: make behavior clear and verifiable
+### Development: make behaviour clear and verifiable
 
 [Software Development Practices](./development/README.md) — covers two complementary ways to build confidence before implementation becomes large or hard to change:
 
-- [Behavior-Driven Development (BDD)](./development/behavior-driven-development-bdd/README.md) uses concrete examples and Gherkin scenarios to keep product intent, acceptance criteria, and automated checks aligned.
+- [Behaviour-Driven Development (BDD)](./development/behaviour-driven-development-bdd/README.md) uses concrete examples and Gherkin scenarios to keep product intent, acceptance criteria, and automated checks aligned.
 - [Test-Driven Development (TDD)](./development/test-driven-development-tdd/README.md) uses the Red-Green-Refactor cycle to guide small, well-tested design steps.
 
 BDD is especially useful when a feature needs a shared business conversation; TDD is especially useful when implementing and refining the underlying code. They can be used together.
@@ -61,7 +61,7 @@ The platform uses more than one language and framework because its web applicati
 - [Programming Languages](./programming-languages/README.md) — Language-specific idioms, best practices, and antipatterns
 - [Libraries and Frameworks](./platform-web/README.md) — Documentation on libraries and frameworks for building scalable applications
 
-Use these pages after you know the relevant application or library. They explain how to apply a language or framework well here; they are not a substitute for choosing a product boundary or defining the feature's behavior.
+Use these pages after you know the relevant application or library. They explain how to apply a language or framework well here; they are not a substitute for choosing a product boundary or defining the feature's behaviour.
 
 ### Quality and operational confidence
 

@@ -17,7 +17,7 @@ implementation matches what was promised, and that every execution-time gate act
 - `reference/03-operational-readiness-execution.md` — Step 5b (Operational Readiness Execution)
   verification.
 - `reference/04-manual-assertions-ui-api-e2e-locale.md` and
-  `reference/05-manual-assertions-evidence-and-retests.md` — Step 5c (Manual Behavioral Assertions)
+  `reference/05-manual-assertions-evidence-and-retests.md` — Step 5c (Manual Behavioural Assertions)
   verification: UI/API/end-to-end/locale checks, evidence capture, and Rule-15/Rule-16 retests.
 - `reference/06-plan-archival.md` — Step 5d (Plan Archival and README Updates) verification.
 - `reference/07-worktree-verification-declaration-and-history.md` and
@@ -51,7 +51,7 @@ granular outcome-section checklist. Apply this contract prospectively; do not re
 plans or the existing Rhino plan.
 
 Verify that delivery followed natural cohesive seams rather than LOC or file counts and that every
-merged state was immediately safe to deploy to production. For incomplete behavior, require the
+merged state was immediately safe to deploy to production. For incomplete behaviour, require the
 temporary production-disabled flag, enabled and disabled path tests, and recorded rollout,
 rollback, and removal.
 

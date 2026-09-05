@@ -19,7 +19,7 @@ that outweigh those risks, and the market context that shaped the decision.
 
 ## The Decision
 
-All code in this repository is MIT-licensed. Product applications, behavioral specifications,
+All code in this repository is MIT-licensed. Product applications, behavioural specifications,
 shared libraries, and AI agent configuration are uniformly MIT — no competing-use restrictions,
 no rolling-conversion clauses, no per-directory license splits.
 

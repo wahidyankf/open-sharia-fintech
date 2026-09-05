@@ -15,7 +15,7 @@ when_to_use: Use when checking whether a specific delivery transcript correctly 
 
 # Examples — Default and Direct-Push Selection
 
-## PASS: Correct behavior — default worktree-to-pr
+## PASS: Correct behaviour — default worktree-to-pr
 
 ```
 Plan executor: Delivering governance convention update via the default mode.
@@ -31,7 +31,7 @@ Draft PR opened. Iterating until the done-definition is met, then merging once t
 preconditions hold -- `[AI]` by default; `[HUMAN]` only where this plan opts into that gate.
 ```
 
-## FAIL: Incorrect behavior — pushing directly without an explicit mode selection
+## FAIL: Incorrect behaviour — pushing directly without an explicit mode selection
 
 ```
 Plan executor: Committing governance convention.
@@ -46,7 +46,7 @@ Done. Convention is now on main.
 No `## Delivery Mode` field and no invocation argument selected a direct-push mode. The default is
 `worktree-to-pr`; pushing straight to `origin main` here is wrong.
 
-## PASS: Correct behavior for an eligible private `main-to-origin-main` selection
+## PASS: Correct behaviour for an eligible private `main-to-origin-main` selection
 
 The `ose-private` plan's `## Delivery Mode` field is `main-to-origin-main`, and its `## Worktree`
 field is `Not applicable (N/A)`. It changes one stateful Terraform resource and requires the primary

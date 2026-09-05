@@ -96,7 +96,7 @@ The platform consists of the following applications across its technology stacks
 - **Dev Command**: `nx dev organiclever-be`
 - **Location**: `apps/organiclever-be/`
 - **Features**:
-  - Coverlet code coverage enforcement (>=90%)
+  - Coverlet Unit line coverage enforcement (>=99%)
   - Production Dockerfile with multi-stage build
   - OpenAPI 3.1 contract-first development
 
@@ -108,7 +108,7 @@ The platform consists of the following applications across its technology stacks
 - **Dev Command**: `nx dev ose-be`
 - **Location**: `apps/ose-be/`
 - **Features**:
-  - Coverlet code coverage enforcement (>=90%)
+  - Coverlet Unit line coverage enforcement (>=99%)
   - Hexagonal DDD architecture with 5 bounded contexts
   - OpenAPI 3.1 contract-first development (planned)
 
@@ -148,13 +148,6 @@ The platform consists of the following applications across its technology stacks
 - **Technology**: Playwright
 - **Run Command**: `nx run organiclever-www-fe-e2e:test:e2e`
 - **Location**: `apps/organiclever-www-fe-e2e/`
-
-#### organiclever-www-be-e2e
-
-- **Purpose**: Backend E2E slot for organiclever-www (placeholder — no backend API)
-- **Technology**: Playwright
-- **Run Command**: `nx run organiclever-www-be-e2e:test:e2e`
-- **Location**: `apps/organiclever-www-be-e2e/`
 
 #### organiclever-be-e2e
 
@@ -209,14 +202,12 @@ graph LR
 
     subgraph "E2E Test Suites"
         OL_WWW_FE_E2E[organiclever-www-fe-e2e<br/>Playwright FE E2E]
-        OL_WWW_BE_E2E[organiclever-www-be-e2e<br/>Playwright BE slot]
         OL_BE_E2E[organiclever-be-e2e<br/>Playwright E2E]
     end
 
     NX[Nx Workspace<br/>Build Orchestration]
 
     OL_WWW_FE_E2E -->|Tests| OL_FE
-    OL_WWW_BE_E2E -.->|Placeholder| OL_FE
     OL_BE_E2E -->|Tests| OL_BE
     NX -.->|Manages| OL_FE
     NX -.->|Manages| OL_BE
@@ -224,7 +215,6 @@ graph LR
     style OL_FE fill:#0077b6,stroke:#03045e,color:#ffffff
     style OL_BE fill:#e76f51,stroke:#9d0208,color:#ffffff
     style OL_WWW_FE_E2E fill:#457b9d,stroke:#1d3557,color:#ffffff
-    style OL_WWW_BE_E2E fill:#457b9d,stroke:#1d3557,color:#ffffff
     style OL_BE_E2E fill:#457b9d,stroke:#1d3557,color:#ffffff
     style NX fill:#6a4c93,stroke:#22223b,color:#ffffff
 ```

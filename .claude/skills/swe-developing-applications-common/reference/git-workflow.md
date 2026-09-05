@@ -80,7 +80,7 @@ git commit -m "docs(readme): update installation instructions"
 
 **CRITICAL**: Never stage or commit unless explicitly instructed by user
 
-**Default Behavior**:
+**Default Behaviour**:
 
 - Do NOT run `git add` automatically
 - Do NOT run `git commit` automatically

@@ -34,7 +34,7 @@ defect: its work has no declared route to `main`.
 
 Each row must name one natural cohesive seam, state how its exact resulting `main` state is safe to
 deploy to production immediately, and identify its rollback evidence. Keep all build, verification,
-operational, rollback, and internal-consistency artifacts with the unit. Incomplete behavior
+operational, rollback, and internal-consistency artifacts with the unit. Incomplete behaviour
 requires a temporary production-disabled feature flag, enabled and disabled path tests, and
 rollout/rollback/removal.
 LOC and file counts never create, erase, or force a row.

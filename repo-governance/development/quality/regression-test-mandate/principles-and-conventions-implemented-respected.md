@@ -44,13 +44,13 @@ when_to_use: "Use when tracing this mandate to the principles/conventions behind
 - **[Feature Change Completeness Convention](.././feature-change-completeness.md)**: That convention
   requires all related specs, contracts, tests, and documentation to accompany a _feature change_.
   This mandate is its bug-driven dual: a _fix_ is not complete without a _reproducing test_. The
-  two rules together cover the full space -- no behavior change (new, modified, or restored) lands
+  two rules together cover the full space -- no behaviour change (new, modified, or restored) lands
   without companion artifacts. See [Relationship to Feature Change Completeness](./relationship-to-feature-change-completeness.md).
 
-- **[Three-Level Testing Standard](.././three-level-testing-standard.md)**: The reproducing test must
+- **[Behaviour-Driven Development](../../behaviour-driven-development.md)**: The reproducing test must
   slot into the appropriate level -- unit for logic defects, integration for persistence/boundary
   defects, E2E for full-stack or user-facing defects -- following the isolation rules of that level.
 
-- **[Code Quality Convention](.././code.md)**: Automated quality gates (typecheck, lint, test:quick,
-  specs:coverage) run the full regression suite on every push. The pinning test must pass those
-  gates in CI before the fix lands.
+- **[Code Quality Convention](.././code.md)**: Fast gates run Unit plus every applicable static
+  coverage validator through `test:quick`; scheduled CI runs the full Integration and E2E suites.
+  The pinning test must pass its applicable runtime and coverage gates before the fix lands.

@@ -38,8 +38,8 @@ when_to_use: "Use to locate a plan-execution child document."
 - [Overview and Monitoring Tool](./post-push-ci-verification-overview.md) — When Post-Push CI Verification applies and the required ScheduleWakeup-based monitoring tool and cadence.
 - [Direct-Push Modes](./post-push-ci-verification-direct-push.md) — Monitoring CI after a push under worktree-to-origin-main or main-to-origin-main.
 - [PR-Branch Modes](./post-push-ci-verification-pr-branch.md) — Monitoring CI after a push under worktree-to-pr or main-to-pr.
-- [Web UI and API Verification](./manual-behavioral-assertions-web-and-api.md) — A phase touches web UI or API code and needs manual verification.
-- [Full-Stack Verification and Evidence](./manual-behavioral-assertions-full-stack-and-evidence.md) — Full-stack verification covering both UI and API, and the evidence-capture requirements for delivery.md.
+- [Web UI and API Verification](./manual-behavioural-assertions-web-and-api.md) — A phase touches web UI or API code and needs manual verification.
+- [Full-Stack Verification and Evidence](./manual-behavioural-assertions-full-stack-and-evidence.md) — Full-stack verification covering both UI and API, and the evidence-capture requirements for delivery.md.
 - [Validation](./validation-and-check-for-findings.md) — Running independent validation after execution, or deciding whether zero findings were achieved.
 - [Continue Execution](./continue-execution.md) — A validation report returns findings that must be fixed before re-validation.
 - [Re-validate](./revalidate-and-iteration-control.md) — The re-validation step and the iteration-control logic that loops execution or proceeds to finalization.

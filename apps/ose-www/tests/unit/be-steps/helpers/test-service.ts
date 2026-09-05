@@ -21,13 +21,13 @@ export const testContentService = new ContentService(repository);
 
 // Service with draft included (for draft filtering test)
 const allWithDraft: ContentMeta[] = [...allMetas, mockDraftMeta];
-const repoWithDraft = new InMemoryContentRepository(
+export const testRepositoryWithDraft = new InMemoryContentRepository(
   allWithDraft.map((meta) => ({
     meta,
     content: `## ${meta.title}\n\nTest content for ${meta.title}.`,
   })),
 );
-export const testContentServiceWithDraft = new ContentService(repoWithDraft);
+export const testContentServiceWithDraft = new ContentService(testRepositoryWithDraft);
 
 // Service with multiple "phase" pages for search limit test
 const phaseMetas: ContentMeta[] = [1, 2, 3, 4, 5].map((n) => ({

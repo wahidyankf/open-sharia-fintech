@@ -46,7 +46,7 @@ created: 2026-01-26
 
 **Testing Philosophy**:
 
-- **Test behavior, not implementation** - Focus on what users see and do
+- **Test behaviour, not implementation** - Focus on what users see and do
 - **Integration over unit** - Test component interactions
 - **Server Components as units** - They're pure functions
 - **E2E for critical flows** - User journeys through the app
@@ -109,9 +109,8 @@ afterEach(() => {
 ```json
 {
   "scripts": {
-    "test": "vitest",
+    "test:unit": "vitest run --coverage",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui"
   }
@@ -868,7 +867,7 @@ export function createMockUser(overrides = {}) {
 
 ### ✅ Do
 
-- **Test user behavior** not implementation
+- **Test user behaviour** not implementation
 - **Use semantic queries** (`getByRole`, `getByLabelText`)
 - **Mock external dependencies** (database, APIs)
 - **Test error states** and edge cases
@@ -900,10 +899,10 @@ export default defineConfig({
       reporter: ["text", "json", "html"],
       exclude: ["node_modules/", "test/", "**/*.test.{ts,tsx}", "**/*.config.{ts,js}"],
       thresholds: {
-        lines: 80,
-        functions: 80,
-        branches: 80,
-        statements: 80,
+        lines: 99,
+        functions: 99,
+        branches: 99,
+        statements: 99,
       },
     },
   },

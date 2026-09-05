@@ -1,19 +1,12 @@
 import { layer } from "@effect/vitest";
 import { Effect, Layer, Schema } from "effect";
 import { PGlite } from "@electric-sql/pglite";
-import { PgliteService } from "../../../../../src/contexts/journal/infrastructure/runtime";
-import { runMigrations } from "../../../../../src/contexts/journal/infrastructure/run-migrations";
-import {
-  appendEntries,
-  listEntries,
-  updateEntry,
-  deleteEntry,
-  bumpEntry,
-  clearEntries,
-} from "../../../../../src/contexts/journal/infrastructure/journal-store";
-import { EntryId, EntryName, EntryPayload } from "../../../../../src/contexts/journal/domain/schema";
-import { EmptyBatch, NotFound, StorageUnavailable } from "../../../../../src/contexts/journal/domain/errors";
 import { expect } from "vitest";
+import { EmptyBatch, StorageUnavailable } from "../../../../../src/contexts/journal/domain/errors";
+import { EntryName, EntryPayload } from "../../../../../src/contexts/journal/domain/schema";
+import { appendEntries, listEntries } from "../../../../../src/contexts/journal/infrastructure/journal-store";
+import { runMigrations } from "../../../../../src/contexts/journal/infrastructure/run-migrations";
+import { PgliteService } from "../../../../../src/contexts/journal/infrastructure/runtime";
 
 const TestPgliteLayer = Layer.scoped(
   PgliteService,
@@ -27,9 +20,9 @@ const TestPgliteLayer = Layer.scoped(
   ),
 );
 
-const makeName = (s: string) => Schema.decodeUnknownSync(EntryName)(s);
-const makePayload = (obj: Record<string, unknown>) => Schema.decodeUnknownSync(EntryPayload)(obj);
-const makeTs = () =>
+const makeName = (value: string) => Schema.decodeUnknownSync(EntryName)(value);
+const makePayload = (value: Record<string, unknown>) => Schema.decodeUnknownSync(EntryPayload)(value);
+const makeTimestamp = () =>
   new Date().toISOString() as unknown as import("../../../../../src/contexts/journal/domain/schema").IsoTimestamp;
 
 layer(TestPgliteLayer)("journal-store - appendEntries", (it) => {
@@ -45,24 +38,24 @@ layer(TestPgliteLayer)("journal-store - appendEntries", (it) => {
 
   it.effect("appends entries and returns them", () =>
     Effect.gen(function* () {
-      yield* clearEntries();
-      const ts = makeTs();
+      const timestamp = makeTimestamp();
       const entries = yield* appendEntries([
         {
           name: makeName("workout"),
           payload: makePayload({ reps: 5 }),
-          startedAt: ts,
-          finishedAt: ts,
+          startedAt: timestamp,
+          finishedAt: timestamp,
           labels: [] as const,
         },
         {
           name: makeName("meal"),
           payload: makePayload({ calories: 500 }),
-          startedAt: ts,
-          finishedAt: ts,
+          startedAt: timestamp,
+          finishedAt: timestamp,
           labels: [] as const,
         },
       ]);
+
       expect(entries).toHaveLength(2);
       expect(entries[0]?.name).toBe("workout");
       expect(entries[1]?.name).toBe("meal");
@@ -77,28 +70,32 @@ layer(TestPgliteLayer)("journal-store - listEntries", (it) => {
     "returns entries ordered by created_at DESC",
     () =>
       Effect.gen(function* () {
-        yield* clearEntries();
-
-        const ts1 = makeTs();
+        const firstTimestamp = makeTimestamp();
         yield* appendEntries([
-          { name: makeName("reading"), payload: makePayload({}), startedAt: ts1, finishedAt: ts1, labels: [] as const },
+          {
+            name: makeName("reading"),
+            payload: makePayload({}),
+            startedAt: firstTimestamp,
+            finishedAt: firstTimestamp,
+            labels: [] as const,
+          },
         ]);
 
-        yield* Effect.promise(() => new Promise((r) => setTimeout(r, 10)));
+        yield* Effect.promise(() => new Promise((resolve) => setTimeout(resolve, 10)));
 
-        const ts2 = makeTs();
+        const secondTimestamp = makeTimestamp();
         yield* appendEntries([
           {
             name: makeName("learning"),
             payload: makePayload({}),
-            startedAt: ts2,
-            finishedAt: ts2,
+            startedAt: secondTimestamp,
+            finishedAt: secondTimestamp,
             labels: [] as const,
           },
         ]);
 
         const entries = yield* listEntries();
-        expect(entries.length).toBeGreaterThanOrEqual(2);
+        expect(entries).toHaveLength(2);
         expect(entries[0]?.name).toBe("learning");
         expect(entries[1]?.name).toBe("reading");
       }),
@@ -106,144 +103,12 @@ layer(TestPgliteLayer)("journal-store - listEntries", (it) => {
   );
 });
 
-layer(TestPgliteLayer)("journal-store - updateEntry", (it) => {
-  it.effect("updates entry name", () =>
-    Effect.gen(function* () {
-      yield* clearEntries();
-      const ts = makeTs();
-      const appended = yield* appendEntries([
-        {
-          name: makeName("workout"),
-          payload: makePayload({ x: 1 }),
-          startedAt: ts,
-          finishedAt: ts,
-          labels: [] as const,
-        },
-      ]);
-      const entry = appended[0];
-      if (!entry) throw new Error("Expected entry");
-      const id = Schema.decodeUnknownSync(EntryId)(entry.id);
-      const updated = yield* updateEntry(id, {
-        name: makeName("meal"),
-      });
-      expect(updated.name).toBe("meal");
-      expect(updated.payload).toEqual({ x: 1 });
-    }),
-  );
-
-  it.effect("returns NotFound for missing entry", () =>
-    Effect.gen(function* () {
-      const id = Schema.decodeUnknownSync(EntryId)("non-existent-id");
-      const result = yield* Effect.either(updateEntry(id, { name: makeName("workout") }));
-      expect(result._tag).toBe("Left");
-      if (result._tag === "Left") {
-        expect(result.left).toBeInstanceOf(NotFound);
-      }
-    }),
-  );
-});
-
-layer(TestPgliteLayer)("journal-store - deleteEntry", (it) => {
-  it.effect("deletes existing entry and returns true", () =>
-    Effect.gen(function* () {
-      yield* clearEntries();
-      const ts = makeTs();
-      const appended = yield* appendEntries([
-        { name: makeName("focus"), payload: makePayload({}), startedAt: ts, finishedAt: ts, labels: [] as const },
-      ]);
-      const entry = appended[0];
-      if (!entry) throw new Error("Expected entry");
-      const id = Schema.decodeUnknownSync(EntryId)(entry.id);
-      const deleted = yield* deleteEntry(id);
-      expect(deleted).toBe(true);
-    }),
-  );
-
-  it.effect("returns false for non-existent entry", () =>
-    Effect.gen(function* () {
-      const id = Schema.decodeUnknownSync(EntryId)("ghost-id");
-      const deleted = yield* deleteEntry(id);
-      expect(deleted).toBe(false);
-    }),
-  );
-});
-
-layer(TestPgliteLayer)("journal-store - bumpEntry", (it) => {
-  it.effect(
-    "bumps entry to top of list",
-    () =>
-      Effect.gen(function* () {
-        yield* clearEntries();
-
-        const ts1 = makeTs();
-        const appendedOlder = yield* appendEntries([
-          { name: makeName("reading"), payload: makePayload({}), startedAt: ts1, finishedAt: ts1, labels: [] as const },
-        ]);
-        const older = appendedOlder[0];
-        if (!older) throw new Error("Expected entry");
-
-        yield* Effect.promise(() => new Promise((r) => setTimeout(r, 10)));
-
-        const ts2 = makeTs();
-        yield* appendEntries([
-          {
-            name: makeName("learning"),
-            payload: makePayload({}),
-            startedAt: ts2,
-            finishedAt: ts2,
-            labels: [] as const,
-          },
-        ]);
-
-        const olderId = Schema.decodeUnknownSync(EntryId)(older.id);
-        yield* bumpEntry(olderId);
-
-        const entries = yield* listEntries();
-        expect(entries[0]?.name).toBe("reading");
-      }),
-    { timeout: 30000 },
-  );
-
-  it.effect("returns NotFound for non-existent entry", () =>
-    Effect.gen(function* () {
-      const id = Schema.decodeUnknownSync(EntryId)("ghost-id-2");
-      const result = yield* Effect.either(bumpEntry(id));
-      expect(result._tag).toBe("Left");
-      if (result._tag === "Left") {
-        expect(result.left).toBeInstanceOf(NotFound);
-      }
-    }),
-  );
-});
-
-layer(TestPgliteLayer)("journal-store - clearEntries", (it) => {
-  it.effect("removes all entries", () =>
-    Effect.gen(function* () {
-      const ts = makeTs();
-      yield* appendEntries([
-        { name: makeName("workout"), payload: makePayload({}), startedAt: ts, finishedAt: ts, labels: [] as const },
-        { name: makeName("meal"), payload: makePayload({}), startedAt: ts, finishedAt: ts, labels: [] as const },
-      ]);
-
-      yield* clearEntries();
-
-      const entries = yield* listEntries();
-      expect(entries).toHaveLength(0);
-    }),
-  );
-});
-
-// A PGlite handle whose `query`/`exec` calls always reject, simulating a real
-// connection-level failure (e.g. IndexedDB blocked, WASM crash) — the one
-// path `appendEntries`/`updateEntry`/`deleteEntry`/`bumpEntry`/`clearEntries`
-// take that the happy-path in-memory suites above never exercise.
 const FailingDbLayer = Layer.scoped(
   PgliteService,
   Effect.acquireRelease(
     Effect.sync(() => ({
       db: {
         query: () => Promise.reject(new Error("connection lost")),
-        exec: () => Promise.reject(new Error("connection lost")),
       } as unknown as PGlite,
     })),
     () => Effect.void,
@@ -253,55 +118,18 @@ const FailingDbLayer = Layer.scoped(
 layer(FailingDbLayer)("journal-store - StorageUnavailable on connection failure", (it) => {
   it.effect("appendEntries surfaces StorageUnavailable", () =>
     Effect.gen(function* () {
-      const ts = makeTs();
+      const timestamp = makeTimestamp();
       const result = yield* Effect.either(
         appendEntries([
-          { name: makeName("workout"), payload: makePayload({}), startedAt: ts, finishedAt: ts, labels: [] as const },
+          {
+            name: makeName("workout"),
+            payload: makePayload({}),
+            startedAt: timestamp,
+            finishedAt: timestamp,
+            labels: [] as const,
+          },
         ]),
       );
-      expect(result._tag).toBe("Left");
-      if (result._tag === "Left") {
-        expect(result.left).toBeInstanceOf(StorageUnavailable);
-      }
-    }),
-  );
-
-  it.effect("updateEntry surfaces StorageUnavailable", () =>
-    Effect.gen(function* () {
-      const id = Schema.decodeUnknownSync(EntryId)("00000000-0000-0000-0000-000000000001");
-      const result = yield* Effect.either(updateEntry(id, {}));
-      expect(result._tag).toBe("Left");
-      if (result._tag === "Left") {
-        expect(result.left).toBeInstanceOf(StorageUnavailable);
-      }
-    }),
-  );
-
-  it.effect("deleteEntry surfaces StorageUnavailable", () =>
-    Effect.gen(function* () {
-      const id = Schema.decodeUnknownSync(EntryId)("00000000-0000-0000-0000-000000000002");
-      const result = yield* Effect.either(deleteEntry(id));
-      expect(result._tag).toBe("Left");
-      if (result._tag === "Left") {
-        expect(result.left).toBeInstanceOf(StorageUnavailable);
-      }
-    }),
-  );
-
-  it.effect("bumpEntry surfaces StorageUnavailable", () =>
-    Effect.gen(function* () {
-      const id = Schema.decodeUnknownSync(EntryId)("00000000-0000-0000-0000-000000000003");
-      const result = yield* Effect.either(bumpEntry(id));
-      expect(result._tag).toBe("Left");
-      if (result._tag === "Left") {
-        expect(result.left).toBeInstanceOf(StorageUnavailable);
-      }
-    }),
-  );
-
-  it.effect("clearEntries surfaces StorageUnavailable", () =>
-    Effect.gen(function* () {
-      const result = yield* Effect.either(clearEntries());
       expect(result._tag).toBe("Left");
       if (result._tag === "Left") {
         expect(result.left).toBeInstanceOf(StorageUnavailable);

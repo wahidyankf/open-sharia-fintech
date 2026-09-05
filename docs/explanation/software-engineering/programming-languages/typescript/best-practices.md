@@ -83,10 +83,10 @@ export default defineConfig({
       provider: "v8",
       reporter: ["text", "json", "html"],
       thresholds: {
-        lines: 80,
-        functions: 80,
-        branches: 80,
-        statements: 80,
+        lines: 99,
+        functions: 99,
+        branches: 99,
+        statements: 99,
       },
     },
   },
@@ -145,7 +145,7 @@ class ZakatCalculator {
 
 ### 2. Explicit Over Implicit
 
-**Principle**: Make behavior, configuration, and dependencies explicit rather than relying on hidden defaults or magic.
+**Principle**: Make behaviour, configuration, and dependencies explicit rather than relying on hidden defaults or magic.
 
 **How TypeScript Implements**:
 
@@ -368,7 +368,7 @@ describe("calculateZakat", () => {
 **FAIL Example** (Impure with Side Effects):
 
 ```typescript
-// Impure function - behavior unpredictable
+// Impure function - behaviour unpredictable
 class ZakatCalculator {
   private database: Database;
   private logger: Logger;
@@ -493,10 +493,10 @@ CMD ["npm", "start"]
 
 // Result: Different developers get different dependency versions
 // CI/CD produces different builds at different times
-// Behavior changes unpredictably
+// Behaviour changes unpredictably
 ```
 
-**Islamic Finance Application**: Reproducible Murabaha markup calculations ensure that profit-sharing ratios remain consistent across all deployment environments. When Islamic scholars audit the system in 2026, they must see the same calculations that ran in 2024 - reproducibility ensures Shariah compliance across time. Every build produces identical binaries with identical behavior.
+**Islamic Finance Application**: Reproducible Murabaha markup calculations ensure that profit-sharing ratios remain consistent across all deployment environments. When Islamic scholars audit the system in 2026, they must see the same calculations that ran in 2024 - reproducibility ensures Shariah compliance across time. Every build produces identical binaries with identical behaviour.
 
 **See Also**: [Reproducibility Principle](../../../../../repo-governance/principles/software-engineering/reproducibility.md)
 
@@ -648,7 +648,7 @@ class Money {
 
 ### 5. Test-Driven Quality
 
-Write tests that document expected behavior. Tests are living documentation and safety nets for refactoring.
+Write tests that document expected behaviour. Tests are living documentation and safety nets for refactoring.
 
 **Why it matters**: Zakat calculation rules, Qard Hasan profit computations, and Donation distribution logic must be verifiable through tests that serve as specification documentation.
 
@@ -683,7 +683,7 @@ describe("ZakatCalculator", () => {
 
 Favor composition and delegation over class inheritance. This provides greater flexibility and reduces coupling.
 
-**Why it matters**: Financial products like Qard Hasan, Ijara, and Musharaka share behaviors but have distinct rules. Composition allows mixing behaviors without rigid hierarchies.
+**Why it matters**: Financial products like Qard Hasan, Ijara, and Musharaka share behaviours but have distinct rules. Composition allows mixing behaviours without rigid hierarchies.
 
 ### Error Handling Strategies
 
@@ -750,7 +750,7 @@ class MurabahaProduct extends FinancingProduct {
 
 ### 7. Explicit Configuration Over Magic
 
-Prefer explicit configuration and dependencies over implicit conventions or "magic" behavior.
+Prefer explicit configuration and dependencies over implicit conventions or "magic" behaviour.
 
 **Why it matters**: Financial calculations must be transparent and auditable. Explicit configuration makes it clear what rules are being applied.
 
@@ -924,10 +924,10 @@ export default defineConfig({
       provider: "v8",
       reporter: ["text", "json", "html"],
       thresholds: {
-        lines: 80,
-        functions: 80,
-        branches: 80,
-        statements: 80,
+        lines: 99,
+        functions: 99,
+        branches: 99,
+        statements: 99,
       },
     },
   },
@@ -2299,7 +2299,7 @@ class DonationDistributionService {
 - [ ] Integration tests for critical paths
 - [ ] Tests have descriptive names
 - [ ] Edge cases covered
-- [ ] Code coverage ≥85%
+- [ ] Unit line coverage ≥99% through `test:unit`
 
 ### Performance and Resources
 

@@ -17,7 +17,7 @@ to keep the raw hook files thin and testable.
 
 The pre-commit hook delegates entirely to
 `rtk apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-commit`. `repo-config.yml:gates` is
-the live inventory, including ordering, scope, blocking behavior, mutations, and restaging. Query
+the live inventory, including ordering, scope, blocking behaviour, mutations, and restaging. Query
 that registry instead of maintaining a second list here:
 
 ```bash
@@ -27,6 +27,9 @@ rtk apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=pre-commit --format=
 Use `rtk apps/rhino-cli/scripts/rhino-bin.sh gate validate` to check that the hook and registry
 remain conformant. Language formatter and file-selection details belong to the corresponding
 registry entries and project targets, not this overview.
+
+Pre-commit may run only deterministic staged-file checks. It must not invoke `test:unit`,
+`test:integration`, `test:e2e`, `test:quick`, or any other runtime test path.
 
 ## commit-msg
 

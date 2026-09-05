@@ -53,7 +53,7 @@ and route classification, context assembly, and prior-cycle dismissal-read are
 **See `pr-review-synthesis-coordination` Skill** for the full mechanics: the four coordination
 functions and DD-11 attribution tracking, review header template and finding-requirements
 hard rules, GitHub Reviews API mechanics and untrusted-input handling, and cross-cycle/
-human-dismissal behavior plus external fact verification.
+human-dismissal behaviour plus external fact verification.
 
 ## When to Use This Agent
 

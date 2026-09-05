@@ -1,6 +1,6 @@
 ---
 title: "User-Facing Delivery Hardening Convention"
-description: Sixteen durable rules for planning, executing, verifying, and archiving user-facing feature work so design-parity and behavioral defects cannot ship past green gates
+description: Sixteen durable rules for planning, executing, verifying, and archiving user-facing feature work so design-parity and behavioural defects cannot ship past green gates
 category: explanation
 subcategory: development
 tags:
@@ -16,7 +16,7 @@ when_to_use: "Use when planning, executing, or archiving a user-facing (UI or AP
 
 # User-Facing Delivery Hardening Convention
 
-This convention states sixteen durable rules -- spanning authoring, execution, and verification -- so design-parity and behavioral defects cannot ship past green automated gates on user-facing work.
+This convention states sixteen durable rules -- spanning authoring, execution, and verification -- so design-parity and behavioural defects cannot ship past green automated gates on user-facing work.
 
 ## Documents
 

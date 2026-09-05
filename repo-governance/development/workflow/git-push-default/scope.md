@@ -1,6 +1,6 @@
 ---
 title: "Scope"
-description: What the Git Push Default Convention covers — delivery-mode push behavior and checklist authoring — and what it explicitly defers to companion conventions.
+description: What the Git Push Default Convention covers — delivery-mode push behaviour and checklist authoring — and what it explicitly defers to companion conventions.
 category: explanation
 subcategory: development
 tags:
@@ -17,9 +17,9 @@ when_to_use: Use when determining whether a git-push question is governed by thi
 
 ## What This Convention Covers
 
-- Default push and PR-opening behavior for every delivery mode.
+- Default push and PR-opening behaviour for every delivery mode.
 - Linear history maintenance before every push, whether to a PR branch or to `origin main`.
-- Agent behavior in all plan contexts: `plan-maker`, `plan-checker`, `plan-fixer`, and the
+- Agent behaviour in all plan contexts: `plan-maker`, `plan-checker`, `plan-fixer`, and the
   plan-execution workflow.
 - Delivery checklist authoring — plan documents must declare a `## Delivery Mode` field only when
   overriding the default, and must tag git-mechanical steps correctly for the resolved mode.

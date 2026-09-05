@@ -53,7 +53,7 @@ hook or agent to catch — there is nothing to detect.
 ```
 
 Manual detection (no automated hook currently catches this for human developers — see
-[Standard 3](./standards.md#standard-3-enforcement-is-a-behavioral-guardrail-not-a-pre-commit-script)):
+[Standard 3](./standards.md#standard-3-enforcement-is-a-behavioural-guardrail-not-a-pre-commit-script)):
 
 ```bash
 git config --local --list | grep "^user\."

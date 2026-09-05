@@ -20,7 +20,7 @@ when_to_use: Use when you need a visual overview of the Gherkin workflow, links 
 
 ```mermaid
 graph TD
- A[Write Gherkin Scenario] -- define behavior --> B[Scenario: Login Success]
+ A[Write Gherkin Scenario] -- define behaviour --> B[Scenario: Login Success]
  B --> C[Given: Initial state]
  C --> D[When: User action]
  D --> E[Then: Expected outcome]
@@ -39,7 +39,7 @@ graph TD
 
 ## Related Conventions
 
-- [BDD Spec-to-Test Mapping Convention](../bdd-spec-test-mapping.md) - Mandatory 1:1 mapping between CLI commands and Gherkin specifications
+- [Behaviour-Driven Development](../../behaviour-driven-development.md) - Mandatory 1:1 mapping between CLI commands and Gherkin specifications
 - [Plans Organization Convention](../../../conventions/structure/plans.md) - Where to use acceptance criteria in plans
 - [Tutorial Convention](../../../conventions/tutorials/general.md) - Acceptance criteria for tutorial quality
 - [Content Quality Principles](../../../conventions/writing/quality.md) - Writing clear, testable content
@@ -57,9 +57,9 @@ graph TD
 **Follow best practices**:
 
 - Be specific with concrete values
-- One scenario per behavior
+- One scenario per behaviour
 - Use present tense
-- Focus on behavior, not implementation
+- Focus on behaviour, not implementation
 - Make it testable
 - Use data tables for multiple inputs
 

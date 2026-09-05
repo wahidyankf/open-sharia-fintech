@@ -10,16 +10,7 @@
 // value types describing failure modes of the aggregate, with no
 // dependency on Effect runtime services or infrastructure.
 
-export {
-  EntryId,
-  EntryName,
-  EntryPayload,
-  IsoTimestamp,
-  JournalEntry,
-  NewEntryInput,
-  UpdateEntryInput,
-  PayloadFromJsonString,
-} from "./schema";
+export { EntryId, EntryName, EntryPayload, IsoTimestamp, JournalEntry, NewEntryInput } from "./schema";
 
 export type { Hue, ExerciseType, TimerMode } from "./typed-payloads";
 export {
@@ -35,5 +26,5 @@ export {
   TypedEntry,
 } from "./typed-payloads";
 
-export { NotFound, StorageUnavailable, InvalidPayload, EmptyBatch } from "./errors";
+export { NotFound, StorageUnavailable, EmptyBatch } from "./errors";
 export type { StoreError } from "./errors";

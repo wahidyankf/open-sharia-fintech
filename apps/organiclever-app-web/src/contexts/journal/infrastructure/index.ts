@@ -8,7 +8,7 @@
 // `JournalRuntime` symbols import from this barrel directly until the
 // app-shell composes a single shared runtime in a future plan.
 
-export { appendEntries, listEntries, updateEntry, deleteEntry, bumpEntry, clearEntries } from "./journal-store";
+export { appendEntries, listEntries } from "./journal-store";
 
 export { PgliteService, PgliteLive, makeJournalRuntime, JOURNAL_STORE_DATA_DIR } from "./runtime";
 export type { JournalRuntime } from "./runtime";

@@ -17,7 +17,7 @@ when_to_use: "Read this index to find the right Workflow Pattern Convention chil
 - [Step Execution Patterns](./step-execution-patterns.md) — The three step execution patterns — Sequential, Parallel, Conditional — with examples, plus how max-concurrency controls parallel fan-out.
 - [State Management](./state-management.md) — How workflows pass data between steps using {input.name}, {stepN.outputs.name}, {stepN.status}, and {stepN.user-approved} references.
 - [Human Checkpoints](./human-checkpoints.md) — How workflows pause for human approval using the AskUserQuestion tool, with an example checkpoint block.
-- [Error Handling](./error-handling.md) — How each workflow step defines failure behavior, and the five common error-handling patterns (fail fast, continue, retry, user intervention, fallback).
+- [Error Handling](./error-handling.md) — How each workflow step defines failure behaviour, and the five common error-handling patterns (fail fast, continue, retry, user intervention, fallback).
 - [Validation](./validation.md) — The six checks a workflow document must pass before execution — frontmatter schema, agent references, input/output types, dependencies, state references, and file naming.
 - [Relationship to Other Layers](./relationship-to-other-layers.md) — How workflows relate to principles, conventions, development practices, agents, other workflows, and plans.
 - [Composability](./composability.md) — A workflow step can itself be another workflow, an agent, or a procedure, in any combination — shown with mixed-composition and output-chaining examples.

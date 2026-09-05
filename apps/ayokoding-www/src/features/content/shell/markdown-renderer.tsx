@@ -22,6 +22,9 @@ interface MarkdownRendererProps {
   locale: string;
 }
 
+export const MARKDOWN_PROSE_CLASS =
+  "prose prose-neutral dark:prose-invert prose-headings:scroll-mt-20 prose-headings:font-semibold prose-headings:text-foreground prose-p:my-4 prose-p:leading-7 prose-a:text-primary max-w-none";
+
 export function MarkdownRenderer({ html, locale }: MarkdownRendererProps) {
   const options: HTMLReactParserOptions = {
     replace: (domNode) => {
@@ -90,6 +93,9 @@ export function MarkdownRenderer({ html, locale }: MarkdownRendererProps) {
               copiedLabel={t(locale as Locale, "copied")}
               errorLabel={t(locale as Locale, "copyFailed")}
             >
+              <div data-code-language-label className="mb-1 text-xs font-semibold text-muted-foreground uppercase">
+                {pre.attribs["data-language"] ?? "text"}
+              </div>
               <figure {...attributesToProps(domNode.attribs, domNode.name)}>
                 {domToReact(domNode.children as DOMNode[], options)}
               </figure>
@@ -111,11 +117,7 @@ export function MarkdownRenderer({ html, locale }: MarkdownRendererProps) {
     },
   };
 
-  return (
-    <div className="prose prose-neutral dark:prose-invert prose-headings:scroll-mt-20 prose-a:text-primary max-w-none">
-      {parse(html, options)}
-    </div>
-  );
+  return <div className={MARKDOWN_PROSE_CLASS}>{parse(html, options)}</div>;
 }
 
 function getTextContent(node: Element): string {

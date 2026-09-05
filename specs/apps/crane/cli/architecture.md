@@ -33,14 +33,14 @@ output is JSON rather than prose: a caller parses it, so a field name is part of
 
 ## Components
 
-Crane is ports-and-adapters. The core holds the rules; the adapters hold everything that touches
-the outside world.
+Crane is ports-and-adapters. The executable owns its inbound command adapter and composition root;
+`fsharp-crane-core` owns the rules, outbound adapters, and local-resource managers.
 
 ```mermaid
 flowchart TD
-    IN[Adapters/In<br/>CliAdapter] --> LOGIC[Core/Logic<br/>checkers and managers]
-    LOGIC --> DOMAIN[Core/Domain<br/>Finding, PdfMetadata, Report]
-    LOGIC --> OUT[Adapters/Out<br/>PdfAdapter, OcrAdapter]
+    IN[crane-cli<br/>Adapters/In/CliAdapter] --> LOGIC[fsharp-crane-core<br/>Core/Logic]
+    LOGIC --> DOMAIN[fsharp-crane-core<br/>Core/Domain]
+    LOGIC --> OUT[fsharp-crane-core<br/>Adapters/Out]
 ```
 
 | Component      | Responsibility                                                                               |
@@ -59,13 +59,15 @@ called, not part of the adapter itself.
 **JSON output is a contract.** A command's stdout shape is consumed by agents. Renaming or removing
 a field is a breaking change and needs a scenario change in the same delivery unit.
 
-**The core never touches the filesystem directly.** Every read of a PDF or a language-data file goes
-through `Adapters/Out`, which is what lets the unit suite exercise the checkers in memory.
+**Unit proof stays in process.** Report and skiplist logic accepts injected file, clock, ID, and
+environment dependencies; Unit scenarios use deterministic in-memory implementations. The library's
+real report, skiplist, and extraction-cache filesystem paths run only in Integration or through the
+public CLI process.
 
 **No network.** Extraction, OCR, and validation are entirely local; a machine without connectivity
 runs the whole tool.
 
 ## Related
 
-- [Behaviors](./behaviors/README.md) — the scenarios this system must satisfy.
+- [Behaviours](./behaviours/README.md) — the scenarios this system must satisfy.
 - [`apps/crane-cli/README.md`](../../../../apps/crane-cli/README.md) — the implementing project.

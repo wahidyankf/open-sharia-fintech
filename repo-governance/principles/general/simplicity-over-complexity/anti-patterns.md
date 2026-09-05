@@ -72,7 +72,7 @@ class PremiumUser extends AuthenticatedUser {}
 class AdminUser extends PremiumUser {}
 ```
 
-**Why it's bad**: Fragile base class. Changes ripple through hierarchy. Hard to understand behavior.
+**Why it's bad**: Fragile base class. Changes ripple through hierarchy. Hard to understand behaviour.
 
 ## Over-Generic Code
 

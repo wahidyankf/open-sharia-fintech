@@ -39,7 +39,7 @@ in the selected technical form):
 - **MEDIUM (under-diagrammed plan)**: a non-trivial plan covers a diagram-warranting concern
   (component interactions, agent/system sequence, state transitions, decision branches,
   upstream/downstream dependency position, phase/delivery flow) with no diagram for it. Trivial
-  plans (config bumps, renames, doc fixes, no-behavior-change dependency bumps) are
+  plans (config bumps, renames, doc fixes, no-behaviour-change dependency bumps) are
   exempt. Each undiagrammed concern is a separate finding.
 - Reference: [Plans Organization Convention §Diagrams in Plans](../../../../repo-governance/conventions/structure/plans.md) and
   [Diagrams Convention](../../../../repo-governance/conventions/formatting/diagrams.md).

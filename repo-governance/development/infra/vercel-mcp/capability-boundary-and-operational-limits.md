@@ -34,7 +34,7 @@ steps no agent can execute.
 - Observability settings, including enabling or disabling paid tiers.
 - Firewall and WAF managed rulesets.
 - The compute-model setting (an agent cannot even read whether it is enabled).
-- Domain and DNS configuration, including redirect behavior.
+- Domain and DNS configuration, including redirect behaviour.
 
 **The consequence for cost, security, and platform-settings plans**: their dashboard steps do not
 become `[AI]` merely because a Vercel MCP is connected. Group every such step into Phase 0 so the

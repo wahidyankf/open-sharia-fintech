@@ -40,7 +40,7 @@
 - [ ] [AI] **GREEN:** implement the validator in `[source path/symbol]`; rerun the focused command;
       acceptance: all cases pass.
 - [ ] [AI] **REFACTOR:** extract the named pattern constant; rerun focused and quick tests;
-      acceptance: behavior is unchanged.
+      acceptance: behaviour is unchanged.
 - **Proof:** RED failure recorded; `rtk nx run ts-utils:test:unit` passes.
 ```
 

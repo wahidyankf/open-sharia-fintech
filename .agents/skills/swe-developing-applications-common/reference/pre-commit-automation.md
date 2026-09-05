@@ -21,7 +21,10 @@ When code files are modified, **Husky + lint-staged** automatically run:
 - **Run `test:quick` for affected projects**: Executes the fast quality gate (`nx affected -t test:quick`) — this is the canonical pre-push check. Every project must expose a `test:quick` target.
 - **Markdown linting**: Final markdown quality check
 
-> **Note**: `test:e2e` does NOT run in the pre-push hook. It runs on a scheduled GitHub Actions cron job (twice daily per workflow) targeting each `*-e2e` project. See [Nx Target Standards](../../../../repo-governance/development/infra/nx-targets.md) for the full execution model.
+> **Note**: `test:integration` and `test:e2e` do NOT run in pre-commit, pre-push, or PR/main gates.
+> Select only impacted targets manually during development/review; scheduled GitHub Actions
+> workflows run the complete suites. See [Nx Target Standards](../../../../repo-governance/development/infra/nx-targets.md)
+> for the full execution model.
 
 ## Trust the Automation
 

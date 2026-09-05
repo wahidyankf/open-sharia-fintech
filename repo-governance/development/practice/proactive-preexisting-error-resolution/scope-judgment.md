@@ -45,6 +45,6 @@ These require more than a single commit:
 
 - Architectural problems where the wrong abstraction is used throughout a module
 - Systemic configuration issues affecting multiple services
-- Test suites with fundamental structural problems (testing implementation instead of behavior)
+- Test suites with fundamental structural problems (testing implementation instead of behaviour)
 
 Create a plan in `plans/in-progress/` and begin executing it. The presence of a plan does not defer the work — it organizes it. Execution starts immediately.

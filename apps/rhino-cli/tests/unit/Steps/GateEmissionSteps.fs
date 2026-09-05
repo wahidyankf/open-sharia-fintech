@@ -1,13 +1,18 @@
 /// TickSpec step definitions binding `gate-emission.feature`'s five scenarios
 /// to `RhinoCli.Cli.Gate`'s `lint-staged` emitter
 /// [Repo-grounded —
-/// `specs/apps/rhino/cli/behaviors/gate/gate-emission.feature`,
+/// `specs/apps/rhino/cli/behaviours/gate/gate-emission.feature`,
 /// `apps/rhino-cli/tests/gate_specs.rs`].
 ///
-/// Each scenario writes a self-contained `repo-config.yml` and `package.json`
-/// into a throwaway temp directory and calls `Gate.emitAtRoot` in-process,
-/// following `GateDeclarationSteps.fs`'s convention.
+/// Each scenario supplies config/package documents in memory and invokes the
+/// production emission core directly.
 module RhinoCli.Tests.Unit.Steps.GateEmissionSteps
+
+/// Explicit static-coverage ownership; the validator scopes this file's
+/// TickSpec bindings to these canonical features.
+let private behaviourFeatureOwnership =
+    [ "specs/apps/rhino/cli/behaviours/gate/gate-emission.feature" ]
+
 
 open System
 open System.IO
@@ -15,10 +20,8 @@ open System.Text.Json
 open TickSpec
 open Xunit
 
-let private repoRoot: string =
-    match RhinoCli.Infrastructure.GitRoot.findRoot () with
-    | Ok root -> root
-    | Error message -> failwithf "locate repository root: %s" message
+let private repoRoot =
+    Path.GetFullPath(Path.Combine(__SOURCE_DIRECTORY__, "..", "..", "..", "..", ".."))
 
 /// Mirrors `gate_specs.rs::config`.
 let private config (gates: string) : string = "gates:\n" + gates
@@ -39,22 +42,19 @@ let private emptyLintStagedPackage = "{\"name\":\"fixture\",\"lint-staged\":{}}\
 /// comment for why TickSpec's one-instance-per-scenario lifecycle makes
 /// instance-level mutable fields the idiomatic state-threading mechanism.
 type GateEmissionSteps() =
-    let root =
-        let dir =
-            Path.Combine(Path.GetTempPath(), "rhino-cli-gate-emission-" + Guid.NewGuid().ToString("N"))
-
-        Directory.CreateDirectory dir |> ignore
-        dir
-
+    let mutable configText = ""
+    let mutable package = emptyLintStagedPackage
     let mutable succeeded: bool option = None
     let mutable output: string = ""
     let mutable firstEmittedPackage: string option = None
 
     let write (relative: string) (contents: string) =
-        File.WriteAllText(Path.Combine(root, relative), contents)
+        match relative with
+        | "repo-config.yml" -> configText <- contents
+        | "package.json" -> package <- contents
+        | other -> failwithf "unsupported in-memory fixture document %s" other
 
-    let packageText () =
-        File.ReadAllText(Path.Combine(root, "package.json"))
+    let packageText () = package
 
     let lintStaged () =
         JsonDocument.Parse(packageText ()).RootElement.GetProperty "lint-staged"
@@ -65,8 +65,14 @@ type GateEmissionSteps() =
         |> List.ofSeq
 
     let emit () =
-        match RhinoCli.Cli.Gate.emitAtRoot root "pre-commit" with
-        | Ok text ->
+        let config =
+            match RhinoCli.Application.RepoConfig.parse configText with
+            | Ok value -> value
+            | Error message -> failwithf "parse emission fixture registry: %s" message
+
+        match RhinoCli.Cli.Gate.emitPackageText config "pre-commit" package with
+        | Ok(updatedPackage, text) ->
+            package <- updatedPackage
             succeeded <- Some true
             output <- text
         | Error message ->
@@ -183,7 +189,7 @@ type GateEmissionSteps() =
         )
 
     [<Then>]
-    member _.``a {{command}} placeholder expands to the gate's kind-derived command exactly once``() =
+    member _.``a \{\{command\}\} placeholder expands to the gate's kind-derived command exactly once``() =
         Assert.Equal<string list>(
             [ "bash -c 'apps/rhino-cli/scripts/rhino-bin.sh repo-config validate' --" ],
             commandsFor "repo-config.yml"
@@ -230,7 +236,7 @@ type GateEmissionSteps() =
 module private FeatureRunner =
 
     let private featurePath: string =
-        Path.Combine(repoRoot, "specs", "apps", "rhino", "cli", "behaviors", "gate", "gate-emission.feature")
+        Path.Combine(repoRoot, "specs", "apps", "rhino", "cli", "behaviours", "gate", "gate-emission.feature")
 
     let private extractScenario (featureLines: string[]) (scenarioTitle: string) : string[] =
         let featureLine =
@@ -255,7 +261,9 @@ module private FeatureRunner =
         Array.append [| featureLine; "" |] featureLines.[startIdx .. endIdx - 1]
 
     let run (scenarioTitle: string) : unit =
-        let allLines = File.ReadAllLines featurePath
+        let allLines =
+            ConventionSteps.FeatureResource.readLines (Path.GetFileName featurePath)
+
         let snippet = extractScenario allLines scenarioTitle
         let definitions = StepDefinitions([| typeof<GateEmissionSteps> |])
         let feature = definitions.GenerateFeature(featurePath, snippet)

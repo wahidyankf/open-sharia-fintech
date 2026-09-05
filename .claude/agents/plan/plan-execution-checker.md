@@ -51,7 +51,7 @@ Writes validation findings to `local-tmp/plan-execution/` using the pattern
 Validate that completed plan implementation matches what the plan promised — business intent
 (`brd.md`), product requirements (`prd.md`), the chosen technical form, the delivery
 checklist, code quality standards — and that every execution-time gate actually held: operational
-readiness, manual behavioral assertions, plan archival, worktree usage, phase gates, post-execution
+readiness, manual behavioural assertions, plan archival, worktree usage, phase gates, post-execution
 anti-hallucination, Knowledge Capture routing (a **blocking gate**), and delivery mode / exact-head
 PR-CI compliance. Absence of semantic review is valid unless the user explicitly requested it.
 
@@ -62,7 +62,7 @@ their changing phase; recovery ends executed or `Not triggered` with evidence.
 Outcome cohesion does not relax natural delivery seams or atomic consistency. Verify that no LOC or
 file count created, erased, or forced a PR boundary. Each delivery unit must contain every artifact
 needed to build, verify, operate, roll back, and remain internally consistent, and its exact
-resulting `main` state must be immediately safe to deploy to production. For incomplete behavior,
+resulting `main` state must be immediately safe to deploy to production. For incomplete behaviour,
 require a temporary production-disabled feature flag, enabled and disabled path tests, and recorded
 rollout, rollback, and removal. Do not report migration findings against archived plans or the
 existing Rhino plan.

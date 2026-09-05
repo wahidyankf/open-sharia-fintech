@@ -42,16 +42,16 @@ index rather than assuming a guide exists for a given language.
 
 TDD is **required** for all code changes across every language. Write the failing test first,
 confirm it fails for the right reason, implement the minimum code to pass, then refactor. This rule
-applies at every test level — unit, integration, E2E, contract, property/fuzz, snapshot/visual,
-manual verification, performance, and accessibility. Pick the cheapest level that meaningfully
-captures the behavior under change.
+applies at every test level — Unit is mandatory for active Gherkin and each applicable
+Integration/E2E adapter also starts red. Contract, property/fuzz, snapshot/visual, manual,
+performance, and accessibility proof supplement those adapters where relevant.
 
 **Manual verification is TDD-compatible** when it is a written, dated, repeatable script with
 discrete expected observations — not an informal "click around" check. Use Playwright MCP for UI
 and `curl` for API verification. Promote manual scripts to automated tests whenever feasible.
 
 **Mini-TDD passes are encouraged**: split a feature into multiple small Red→Green→Refactor cycles,
-one per behavior. Each cycle is independently committable.
+one per behaviour. Each cycle is independently committable.
 
 **Canonical reference**:
 [Test-Driven Development Convention](../../../../repo-governance/development/workflow/test-driven-development.md)
@@ -59,5 +59,7 @@ one per behavior. Each cycle is independently committable.
 table, manual verification guidance, and applying TDD to delivery checklists.
 
 See also:
-[Manual Behavioral Verification](../../../../repo-governance/development/quality/manual-behavioral-verification.md),
-[Three-Level Testing Standard](../../../../repo-governance/development/quality/three-level-testing-standard.md).
+[Manual Behavioural Verification](../../../../repo-governance/development/quality/manual-behavioural-verification.md),
+[Behaviour-Driven Development](../../../../repo-governance/development/behaviour-driven-development.md).
+Use the [BDD standard](../../../../repo-governance/development/behaviour-driven-development.md) for
+canonical boundaries, applicability, static coverage, and exemptions.

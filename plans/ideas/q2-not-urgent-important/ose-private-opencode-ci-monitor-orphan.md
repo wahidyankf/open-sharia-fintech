@@ -113,7 +113,7 @@ Out of scope:
 - The `.opencode/agents/README.md` present in `ose-public` but not in the siblings — a related but
   distinct mirror-shape divergence recorded by the same plan, invisible to the same guards, and not
   routed here.
-- What the CI-monitoring workflow or its plugin actually does. Its behavior is not being re-litigated;
+- What the CI-monitoring workflow or its plugin actually does. Its behaviour is not being re-litigated;
   only the provenance of one mirror file is.
 - Any `ose-private` infrastructure content. This brief concerns governance and tooling shape only.
 

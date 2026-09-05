@@ -11,7 +11,7 @@ command's accepted arguments, the JSON it writes to stdout, and its exit code.
 
 - [Architecture](./architecture.md) — the current as-built system: its context, the one binary it
   ships, its ports-and-adapters interior, and the constraints that bind them.
-- [Behaviors](./behaviors/README.md) — the recursive Gherkin corpus, grouped by command family.
+- [Behaviours](./behaviours/README.md) — the recursive Gherkin corpus, grouped by command family.
 
 ## Consumers
 

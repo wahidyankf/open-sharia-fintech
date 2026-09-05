@@ -18,7 +18,7 @@ when_to_use: "Read when you need to compute a github-slugger anchor by hand, jus
 ## Slug algorithm reference
 
 Use `github-slugger` (or its identical algorithm) — do not re-derive the rules from scratch.
-Key slug behaviors relevant to example headings:
+Key slug behaviours relevant to example headings:
 
 - Colons (`:`) are stripped (no replacement character).
 - En-dashes (`–`) are preserved as `-`.

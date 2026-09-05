@@ -83,7 +83,7 @@ User: "Run ayokoding-web primer quality gate workflow for just-enough-rust/learn
 - 5 MEDIUM findings (missing annotations, borderline scope-creep flags)
 - 8 LOW findings (style improvements)
 
-**Fixer behavior**:
+**Fixer behaviour**:
 
 - Fixes: 2 CRITICAL + 3 HIGH = 5 fixes applied
 - Skips: 5 MEDIUM + 8 LOW = 13 findings reported but not fixed

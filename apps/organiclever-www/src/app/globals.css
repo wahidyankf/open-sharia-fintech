@@ -71,6 +71,10 @@
 }
 
 @layer components {
+  .ol-focus-surface :is(a, button, input, select, textarea):focus-visible {
+    outline: 3px solid #005f5f;
+    outline-offset: 3px;
+  }
   .ac {
     color: var(--hue-teal-ink);
   }

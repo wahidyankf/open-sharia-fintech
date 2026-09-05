@@ -17,7 +17,7 @@ created: 2026-02-08
 
 # Automation Testing
 
-Automated tests turn an expected product behavior into a repeatable check. They help a product person see whether a promise is protected, and help an engineer change code without relying on memory or a lucky manual click-through.
+Automated tests turn an expected product behaviour into a repeatable check. They help a product person see whether a promise is protected, and help an engineer change code without relying on memory or a lucky manual click-through.
 
 This section explains the testing tools and patterns used in this repository. It is context, not a substitute for the test targets listed in an application's README or the repository quality rules.
 
@@ -38,9 +38,9 @@ The repository uses Playwright for browser automation. Individual apps own their
 
 ## Keep the learning path practical
 
-If you are new to automated testing, start with a small behavior that a reader or user can observe. Describe the intended outcome in plain language, find the existing test boundary, and then use the detailed Playwright guidance when you need selectors, fixtures, traces, or debugging techniques.
+If you are new to automated testing, start with a small behaviour that a reader or user can observe. Describe the intended outcome in plain language, find the existing test boundary, and then use the detailed Playwright guidance when you need selectors, fixtures, traces, or debugging techniques.
 
-For the test-first practices that connect product examples to implementation, see [Behavior-Driven Development](../development/behavior-driven-development-bdd/README.md) and [Test-Driven Development](../development/test-driven-development-tdd/README.md).
+For the test-first practices that connect product examples to implementation, see [Behaviour-Driven Development](../development/behaviour-driven-development-bdd/README.md) and [Test-Driven Development](../development/test-driven-development-tdd/README.md).
 
 ## Related reading
 

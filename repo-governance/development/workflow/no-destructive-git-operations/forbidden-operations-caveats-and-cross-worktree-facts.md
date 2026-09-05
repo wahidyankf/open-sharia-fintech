@@ -1,6 +1,6 @@
 ---
 title: "Forbidden-Operations Caveats and Cross-Worktree Facts"
-description: Two forbidden-operation behaviors that are easy to misread as safe, and the git mechanics that already enforce isolation across worktrees.
+description: Two forbidden-operation behaviours that are easy to misread as safe, and the git mechanics that already enforce isolation across worktrees.
 category: explanation
 subcategory: development
 tags:
@@ -15,7 +15,7 @@ when_to_use: Use when tempted to treat bare --force-with-lease or --prune=now as
 
 # Forbidden-Operations Caveats and Cross-Worktree Facts
 
-Two behaviors deserve their own statement because they are easy to misread as safe:
+Two behaviours deserve their own statement because they are easy to misread as safe:
 
 - **Bare `--force-with-lease` is not the safe form.** The lease is checked against whatever the local
   ref says, so a stale fetch can satisfy it. Per

@@ -31,15 +31,15 @@ const fundamentallyStrong = manifest({ pathId: "careers/fundamentally-strong/rol
 const feature = await loadFeature(
   path.resolve(
     process.cwd(),
-    "../../specs/apps/ayokoding/www/behaviors/frontend/course-paths/category-landing-arc-chooser.feature",
+    "../../specs/apps/ayokoding/www/behaviours/frontend/course-paths/category-landing-arc-chooser.feature",
   ),
 );
 
 describeFeature(feature, ({ Scenario }) => {
   Scenario("The careers category landing offers an arc chooser", ({ Given, When, Then, And }) => {
     Given("a fixture careers manifest set with three arcs is loaded", () => {
-      // Fixture: `interviewReady`, `immediatelyA`+`immediatelyB` (same arc, two roles), and
-      // `fundamentallyStrong` above — three distinct arcs.
+      const arcs = new Set([interviewReady, immediatelyA, immediatelyB, fundamentallyStrong].map(({ arc }) => arc));
+      expect(arcs).toEqual(new Set(["interview-ready", "immediately-effective", "fundamentally-strong"]));
     });
 
     When("a reader opens the careers category landing at /en/learn/paths/careers/", () => {
@@ -58,7 +58,6 @@ describeFeature(feature, ({ Scenario }) => {
       expect(nav.getAllByRole("link").length).toBe(3);
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/category-landing-arc-chooser.feature:The careers category landing offers an arc chooser
     And("the immediately-effective arc card previews exactly two member roles", () => {
       // No `contentMap` is passed, so the arc title falls back to `humanizeKebabSlug` (UWT-001
       // fix) — "Immediately Effective", not the raw "immediately-effective" slug.

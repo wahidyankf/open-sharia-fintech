@@ -18,9 +18,9 @@ created: 2026-04-02
 
 # Specs Directory Structure Convention
 
-The `specs/` directory contains all behavioral specifications (Gherkin feature files), architectural diagrams (C4), domain design artifacts (DDD), and API contracts (OpenAPI) for the monorepo. This convention codifies the canonical logical-owner-corpus directory structure that all projects must follow.
+The `specs/` directory contains all behavioural specifications (Gherkin feature files), architectural diagrams (C4), domain design artifacts (DDD), and API contracts (OpenAPI) for the monorepo. This convention codifies the canonical logical-owner-corpus directory structure that all projects must follow.
 
-The authoritative combined convention — covering what content belongs in app READMEs vs `specs/`, the corpus tree shape, PM-readability requirements, and BDD/DDD/Contracts adoption expectations — is [App README vs Specs Convention](../structure/app-readme-vs-specs.md). This document describes the canonical path patterns and domain subdirectory rules within the `behavior/` tree in detail, and defines how the overall spec tree is organized.
+The authoritative combined convention — covering what content belongs in app READMEs vs `specs/`, the corpus tree shape, PM-readability requirements, and BDD/DDD/Contracts adoption expectations — is [App README vs Specs Convention](../structure/app-readme-vs-specs.md). This document describes the canonical path patterns and domain subdirectory rules within the `behaviour/` tree in detail, and defines how the overall spec tree is organized.
 
 ## In This Convention
 

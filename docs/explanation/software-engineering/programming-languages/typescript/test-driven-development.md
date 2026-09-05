@@ -34,7 +34,7 @@ Test-Driven Development (TDD) follows Red-Green-Refactor cycle: write failing te
 - **Test First**: Write test before implementation
 - **Small Steps**: One test at a time
 - **Fast Feedback**: Tests run quickly
-- **High Coverage**: Aim for >85% code coverage
+- **Hard Unit Coverage Gate**: Enforce at least 99% line coverage in `test:unit`
 
 ### TDD Red-Green-Refactor
 
@@ -73,8 +73,8 @@ graph TD
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TB
     A["E2E Tests<br/>Playwright, Full Flows<br/>Slow, Few"]:::orange
-    B["Integration Tests<br/>Mocked I/O — MSW + in-memory<br/>Medium Speed"]:::purple
-    C["Unit Tests<br/>Functions + Classes<br/>Fast, Many"]:::teal
+    B["Integration Tests<br/>Real local · no network<br/>Manual impacted"]:::purple
+    C["Unit Tests<br/>In-process injected boundaries<br/>99% line hard gate"]:::teal
 
     A --> B
     B --> C
@@ -160,10 +160,10 @@ const config: Config = {
   collectCoverageFrom: ["src/**/*.ts", "!src/**/*.d.ts", "!src/**/*.test.ts"],
   coverageThreshold: {
     global: {
-      branches: 80,
-      functions: 80,
-      lines: 80,
-      statements: 80,
+      branches: 99,
+      functions: 99,
+      lines: 99,
+      statements: 99,
     },
   },
 };
@@ -289,10 +289,10 @@ export default defineConfig({
       reporter: ["text", "json", "html"],
       exclude: ["**/*.test.ts", "**/*.spec.ts", "**/node_modules/**"],
       thresholds: {
-        lines: 80,
-        functions: 80,
-        branches: 80,
-        statements: 80,
+        lines: 99,
+        functions: 99,
+        branches: 99,
+        statements: 99,
       },
     },
   },
@@ -451,13 +451,15 @@ describe("Donor", () => {
 
 ## Integration Testing
 
-**REQUIRED**: Integration tests MUST mock all external I/O. No real database, no real network.
+**REQUIRED**: Integration tests use a real isolated local resource and no network path. Injected
+in-memory repositories and intercepted HTTP are Unit proof; HTTP dispatch is E2E.
 
 **See**: [Integration Testing Standards](../../development/test-driven-development-tdd/integration-testing-standards.md) for full patterns.
 
-### In-Memory Repository Integration
+### In-Memory Repository Unit Test
 
-Use in-memory repository implementations — never a real database or ORM connection.
+Use in-memory repository implementations for Unit proof. Integration uses an isolated local
+resource under the canonical boundary rules.
 
 ```typescript
 // In-memory repository (no Prisma, no real DB)
@@ -477,7 +479,7 @@ class InMemoryDonationRepository implements DonationRepository {
   }
 }
 
-describe("DonationService Integration", () => {
+describe("DonationService Unit behaviour", () => {
   let repository: InMemoryDonationRepository;
   let service: DonationService;
 
@@ -513,10 +515,10 @@ describe("DonationService Integration", () => {
 });
 ```
 
-### API Route Integration Testing with MSW
+### API Route Unit Testing with MSW
 
-For Next.js API routes or Express handlers, test them with the real handler code but mock
-all outbound HTTP using MSW. Never call a real external service.
+For Next.js API routes or Express handlers, invoke the handler in process and replace outbound HTTP
+with MSW. This is Unit proof because no real OS or network boundary is crossed.
 
 ```typescript
 import { setupServer } from "msw/node";
@@ -709,10 +711,10 @@ export default defineConfig({
       reporter: ["text", "json", "html", "lcov"],
       exclude: ["**/*.test.ts", "**/*.spec.ts", "**/node_modules/**", "**/dist/**", "**/*.config.ts"],
       thresholds: {
-        lines: 80,
-        functions: 80,
-        branches: 80,
-        statements: 80,
+        lines: 99,
+        functions: 99,
+        branches: 99,
+        statements: 99,
       },
       all: true,
     },
@@ -726,7 +728,7 @@ export default defineConfig({
 
 - [ ] Test written before implementation
 - [ ] Test fails for the right reason (expected error message)
-- [ ] Test is focused and tests one behavior
+- [ ] Test is focused and tests one behaviour
 - [ ] Test has clear, descriptive name (describe/it blocks)
 - [ ] Assertions use appropriate matchers (toBe, toEqual, toThrow)
 

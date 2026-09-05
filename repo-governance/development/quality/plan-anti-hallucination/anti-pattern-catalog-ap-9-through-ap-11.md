@@ -1,6 +1,6 @@
 ---
 title: "Anti-Patterns: AP-9 - AP-11"
-description: "Behavior claim, cross-link, absence-search fabrication."
+description: "Behaviour claim, cross-link, absence-search fabrication."
 category: explanation
 subcategory: development
 tags:
@@ -16,11 +16,11 @@ when_to_use: "Use as a checklist for AP-9 - AP-11."
 
 # Anti-Pattern Catalog: AP-9 through AP-11
 
-## AP-9: Citing a behavior claim without a source
+## AP-9: Citing a behaviour claim without a source
 
 > "Vercel automatically caches static assets for 31 days..."
 
-Behavior claims need either a repo-doc reference, an inline `[Web-cited]` excerpt with URL + date, or `[Judgment call]`.
+Behaviour claims need either a repo-doc reference, an inline `[Web-cited]` excerpt with URL + date, or `[Judgment call]`.
 
 ## AP-10: Cross-link to a file that does not exist
 

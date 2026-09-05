@@ -36,4 +36,4 @@ See: [`secrets-and-env-standards.md`](./secrets-and-env-standards.md)
 - [Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md) — names
   the only two restricted environment-file tiers and the exact content-fixture boundary.
 - [Reproducibility](../../principles/software-engineering/reproducibility.md) — keeps agent access
-  behavior consistent across machines and harnesses.
+  behaviour consistent across machines and harnesses.

@@ -9,16 +9,11 @@ open CraneCore.Tests.Unit.Tests.PdfToMarkdownRoutingSteps
 
 let private assembly = Assembly.GetExecutingAssembly()
 
-let private specsDir =
-    let assemblyDir = Path.GetDirectoryName(assembly.Location)
-    Path.Combine(assemblyDir, "specs")
-
-let private getFeatureFile (namePart: string) =
-    if Directory.Exists(specsDir) then
-        Directory.GetFiles(specsDir, "*.feature", SearchOption.AllDirectories)
-        |> Array.tryFind (fun f -> f.Contains(namePart))
-    else
-        None
+let private getFeatureResource (namePart: string) =
+    assembly.GetManifestResourceNames()
+    |> Array.tryFind (fun name ->
+        name.Contains(namePart, StringComparison.Ordinal)
+        && name.EndsWith(".feature", StringComparison.Ordinal))
 
 type private ConvertScenarioServiceProvider() =
     interface IServiceProvider with
@@ -29,14 +24,23 @@ type private ConvertScenarioServiceProvider() =
                 null
 
 let private buildScenarioData (namePart: string) : seq<obj[]> =
-    match getFeatureFile namePart with
-    | Some path ->
+    match getFeatureResource namePart with
+    | Some resourceName ->
         let defs = StepDefinitions(assembly)
         defs.ServiceProviderFactory <- fun () -> ConvertScenarioServiceProvider() :> IServiceProvider
-        let lines = File.ReadAllLines(path)
-        let feature = defs.GenerateFeature(path, lines)
+        use stream = assembly.GetManifestResourceStream(resourceName)
+
+        if isNull stream then
+            failwithf "embedded Gherkin resource cannot be opened: %s" resourceName
+
+        use reader = new StreamReader(stream)
+
+        let lines =
+            reader.ReadToEnd().Replace("\r\n", "\n", StringComparison.Ordinal).Split('\n')
+
+        let feature = defs.GenerateFeature(resourceName, lines)
         feature.Scenarios |> Seq.map (fun scenario -> [| scenario :> obj |])
-    | None -> Seq.empty
+    | None -> failwithf "embedded Gherkin resource not found: %s" namePart
 
 type ConvertFeatureTests() =
     static member Scenarios() : seq<obj[]> =

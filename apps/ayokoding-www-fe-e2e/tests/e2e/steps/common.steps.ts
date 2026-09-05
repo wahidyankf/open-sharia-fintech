@@ -1,8 +1,14 @@
 import { createBdd } from "playwright-bdd";
+import { expect } from "@playwright/test";
+import { buildTrpcUrl, extractTrpcData } from "./backend-helpers";
 
 const { Given, When } = createBdd();
 
-Given("the app is running", async () => {});
+Given("the app is running", async ({ request }) => {
+  const response = await request.get(buildTrpcUrl("meta.health", undefined));
+  expect(response.ok()).toBe(true);
+  expect(extractTrpcData(await response.json())).toEqual({ status: "ok" });
+});
 
 When("a visitor opens a content page", async ({ page }) => {
   await page.goto("/en/learn/overview");

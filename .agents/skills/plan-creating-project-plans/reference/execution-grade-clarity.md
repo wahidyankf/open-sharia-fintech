@@ -12,7 +12,7 @@ with no professional work experience and no repository or stack context.**
 - **Explicit shell command(s)** verbatim when applicable (e.g., `npx nx run ose-web:test:quick`), not "run the lint".
 - **Prerequisites, expected failure/pass state, failure handling, and evidence destination** for
   each action; never assume professional experience supplies a missing step.
-- **Separate RED, GREEN, and REFACTOR checkboxes** for every code behavior slice.
+- **Separate RED, GREEN, and REFACTOR checkboxes** for every code behaviour slice.
 - **Concrete proof** stating the observable change that proves done (e.g., "all assertions in
   `trpc.test.ts` pass", "`nx run ose-web:typecheck` exits 0"). No bare "implement X", "set up Y",
   "configure Z".
@@ -21,7 +21,7 @@ Canonical Gherkin remains in `prd.md`/`specs/**`; reference IDs/titles instead o
 scenarios. Checklist, LOC, and file counts never create, erase, or force delivery boundaries. Split
 only at natural cohesive seams, keep every artifact required for an internally consistent unit
 together, and require each resulting `main` state to be safe to deploy to production immediately.
-For incomplete behavior, record a temporary production-disabled flag, tests for both paths, and
+For incomplete behaviour, record a temporary production-disabled flag, tests for both paths, and
 rollout, rollback, and removal.
 
 **`plan-checker` flags violations as HIGH severity. `plan-fixer` rewrites offending items with maximum detail.**

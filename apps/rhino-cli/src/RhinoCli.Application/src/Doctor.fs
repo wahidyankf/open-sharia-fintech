@@ -1,6 +1,6 @@
 /// Port of `rhino-cli doctor`'s cargo shared-target-directory symlinking and
 /// prune-cache GC step for
-/// `specs/apps/rhino/cli/behaviors/system/cargo-target-share.feature`'s
+/// `specs/apps/rhino/cli/behaviours/system/cargo-target-share.feature`'s
 /// 18 scenarios [Repo-grounded —
 /// `apps/rhino-cli/src/application/doctor/target_share.rs`,
 /// `apps/rhino-cli/src/commands/doctor.rs`]. Redirects each Rust crate's
@@ -14,7 +14,7 @@
 /// resolution, worktree enumeration, check/fix/prune/sweep, and their text
 /// formatters). This file now also carries the tool-check engine —
 /// `checker.rs`/`fixer.rs`/`reporter.rs`/`tools.rs` — for
-/// `specs/apps/rhino/cli/behaviors/system/doctor.feature`'s 17
+/// `specs/apps/rhino/cli/behaviours/system/doctor.feature`'s 17
 /// scenarios, below the "Tool-check engine" banner comment. CLI argument
 /// parsing and dispatch wiring (`commands/doctor.rs::run`) remain out of
 /// scope for both features — every scenario here, like the target-share ones
@@ -24,7 +24,7 @@
 /// Below the "F# lint-target Fantomas tool-invocation check" banner comment,
 /// this file also carries an F#-native meta-check with no Rust equivalent
 /// (`apps/rhino-cli/src` never invoked Fantomas) for
-/// `specs/apps/rhino/cli/behaviors/system/fsharp-tool-invocation.feature`'s
+/// `specs/apps/rhino/cli/behaviours/system/fsharp-tool-invocation.feature`'s
 /// 1 scenario: every locally discovered Nx `project.json` `lint` target that
 /// invokes Fantomas must restore the local `.NET` tool manifest first and
 /// must never invoke a bare global `fantomas` binary.
@@ -40,13 +40,14 @@
 module RhinoCli.Application.Doctor
 
 open System
-open System.Diagnostics
+open System.Diagnostics.CodeAnalysis
 open System.IO
-open System.Runtime.InteropServices
 open System.Text.Encodings.Web
 open System.Text.Json
 open System.Text.Json.Nodes
 open RhinoCli.Domain.Types
+
+module Resource = RhinoCli.Application.DoctorResource
 
 // ---------------------------------------------------------------------------
 // CI detection
@@ -65,10 +66,11 @@ let isCi (ciEnvSet: bool) (ghaEnvSet: bool) : bool = ciEnvSet || ghaEnvSet
 
 /// Reads the real `CI`/`GITHUB_ACTIONS` environment variables and returns
 /// [`isCi`]'s verdict for the current process.
+[<ExcludeFromCodeCoverage>]
 let isCiAmbient () : bool =
     isCi
-        (not (String.IsNullOrEmpty(Environment.GetEnvironmentVariable("CI"))))
-        (not (String.IsNullOrEmpty(Environment.GetEnvironmentVariable("GITHUB_ACTIONS"))))
+        (Resource.environmentVariable "CI" |> Option.isSome)
+        (Resource.environmentVariable "GITHUB_ACTIONS" |> Option.isSome)
 
 // ---------------------------------------------------------------------------
 // Crate discovery
@@ -90,14 +92,15 @@ let isCiAmbient () : bool =
 ///   When the developer runs the doctor command with the fix flag
 ///   Then every discovered crate's target is a symlink into the shared cache
 ///   And no crate is skipped due to a hardcoded crate list
+[<ExcludeFromCodeCoverage>]
 let discoverCrates (repoRoot: string) : string list =
     [ "apps"; "libs" ]
     |> List.collect (fun top ->
         let topDir = Path.Combine(repoRoot, top)
 
-        if Directory.Exists(topDir) then
-            Directory.GetDirectories(topDir)
-            |> Array.filter (fun d -> File.Exists(Path.Combine(d, "Cargo.toml")))
+        if Resource.directoryExists topDir then
+            Resource.directories topDir
+            |> Array.filter (fun d -> Resource.fileExists (Path.Combine(d, "Cargo.toml")))
             |> Array.toList
         else
             [])
@@ -127,14 +130,9 @@ let cacheRootFrom (overrideDir: string option) (home: string option) : string =
 
 /// Reads the real `OSE_CARGO_TARGET_CACHE`/`HOME` environment variables and
 /// returns [`cacheRootFrom`]'s verdict for the current process.
+[<ExcludeFromCodeCoverage>]
 let cacheRootAmbient () : string =
-    let envOpt (name: string) : string option =
-        match Environment.GetEnvironmentVariable(name) with
-        | null
-        | "" -> None
-        | value -> Some value
-
-    cacheRootFrom (envOpt "OSE_CARGO_TARGET_CACHE") (envOpt "HOME")
+    cacheRootFrom (Resource.environmentVariable "OSE_CARGO_TARGET_CACHE") (Resource.environmentVariable "HOME")
 
 /// Returns the basename of the directory containing the git common dir
 /// [Repo-grounded — `target_share.rs::repo_name`].
@@ -192,13 +190,12 @@ let sharedTargetPath (cacheRoot: string) (repoNameValue: string) (crateDir: stri
 /// when `path` is not a symlink (including when nothing exists there at
 /// all) — mirrors `std::fs::read_link`'s "does not follow, works on broken
 /// links" contract via .NET's `FileSystemInfo.LinkTarget`.
-let private linkTargetOf (path: string) : string option =
-    match DirectoryInfo(path).LinkTarget with
-    | null -> None
-    | target -> Some target
+[<ExcludeFromCodeCoverage>]
+let private linkTargetOf (path: string) : string option = Resource.linkTarget path
 
 /// Returns `true` when `link` is a symlink whose raw target equals
 /// `expectedTarget` [Repo-grounded — `target_share.rs::is_correct_symlink`].
+[<ExcludeFromCodeCoverage>]
 let private isCorrectSymlink (link: string) (expectedTarget: string) : bool =
     match linkTargetOf link with
     | Some actual -> actual = expectedTarget
@@ -212,20 +209,21 @@ let private isCorrectSymlink (link: string) (expectedTarget: string) : bool =
 /// `symlink_metadata` match].
 ///
 /// `Directory.Delete` never follows a symlink into its target's contents —
-/// documented .NET behavior since .NET Core 3.0 — so deleting a directory
+/// documented .NET behaviour since .NET Core 3.0 — so deleting a directory
 /// -type symlink here removes only the link itself, exactly like Rust's
 /// `remove_file` branch for the symlink case.
+[<ExcludeFromCodeCoverage>]
 let private removeExistingEntry (path: string) : bool =
     match linkTargetOf path with
     | Some _ ->
-        Directory.Delete(path, false)
+        Resource.deleteDirectory path false
         false
     | None ->
-        if Directory.Exists(path) then
-            Directory.Delete(path, true)
+        if Resource.directoryExists path then
+            Resource.deleteDirectory path true
             true
-        elif File.Exists(path) then
-            File.Delete(path)
+        elif Resource.fileExists path then
+            Resource.deleteFile path
             false
         else
             false
@@ -238,44 +236,27 @@ let private removeExistingEntry (path: string) : bool =
 /// listed worktree path, sorted and deduplicated, or `None` when the
 /// enumeration itself fails (spawn error or non-zero exit)
 /// [Repo-grounded — `target_share.rs::worktree_roots`].
+[<ExcludeFromCodeCoverage>]
 let private worktreeRoots (repoRoot: string) : string list option =
-    use proc = new Process()
-    proc.StartInfo.FileName <- "git"
-    proc.StartInfo.ArgumentList.Add("worktree")
-    proc.StartInfo.ArgumentList.Add("list")
-    proc.StartInfo.ArgumentList.Add("--porcelain")
-    proc.StartInfo.WorkingDirectory <- repoRoot
-    proc.StartInfo.EnvironmentVariables.Remove("GIT_DIR")
-    proc.StartInfo.EnvironmentVariables.Remove("GIT_WORK_TREE")
-    proc.StartInfo.RedirectStandardOutput <- true
-    proc.StartInfo.RedirectStandardError <- true
-    proc.StartInfo.UseShellExecute <- false
-
-    try
-        proc.Start() |> ignore
-        let stdout = proc.StandardOutput.ReadToEnd()
-        proc.StandardError.ReadToEnd() |> ignore
-        proc.WaitForExit()
-
-        if proc.ExitCode <> 0 then
-            None
-        else
-            stdout.Split('\n')
-            |> Array.choose (fun line ->
-                if line.StartsWith("worktree ", StringComparison.Ordinal) then
-                    Some(line.Substring("worktree ".Length))
-                else
-                    None)
-            |> Array.distinct
-            |> Array.sort
-            |> Array.toList
-            |> Some
-    with :? System.ComponentModel.Win32Exception ->
-        None
+    match Resource.runCaptured "git" [ "worktree"; "list"; "--porcelain" ] (Some repoRoot) true with
+    | Ok(stdout, _, 0) ->
+        stdout.Split('\n')
+        |> Array.choose (fun line ->
+            if line.StartsWith("worktree ", StringComparison.Ordinal) then
+                Some(line.Substring("worktree ".Length))
+            else
+                None)
+        |> Array.distinct
+        |> Array.sort
+        |> Array.toList
+        |> Some
+    | Ok _
+    | Error _ -> None
 
 /// [`worktreeRoots`] with the fix/check step's degraded fallback applied:
 /// falls back to just `repoRoot` when the enumeration fails
 /// [Repo-grounded — `target_share.rs::roots_or_self`].
+[<ExcludeFromCodeCoverage>]
 let private rootsOrSelf (repoRoot: string) : string list =
     worktreeRoots repoRoot |> Option.defaultValue [ repoRoot ]
 
@@ -284,6 +265,7 @@ let private rootsOrSelf (repoRoot: string) : string list =
 /// `std::path::Path::canonicalize`'s "resolve, fall back to the original on
 /// failure" contract from `target_share.rs::live_referenced_entries`/
 /// `prune_orphans`, without requiring the path to exist.
+[<ExcludeFromCodeCoverage>]
 let private canonicalize (path: string) : string =
     try
         Path.GetFullPath(path)
@@ -300,6 +282,7 @@ let private canonicalize (path: string) : string =
 /// symlinks is a genuine empty live set (prune may delete orphans), whereas
 /// a *failed* enumeration means we cannot know what is referenced, so the
 /// caller must fail closed and delete nothing.
+[<ExcludeFromCodeCoverage>]
 let private liveReferencedEntries (repoRoot: string) : Set<string> option =
     worktreeRoots repoRoot
     |> Option.map (fun worktrees ->
@@ -318,6 +301,70 @@ let private liveReferencedEntries (repoRoot: string) : Set<string> option =
 type TargetShareStatus =
     { CrateDir: string; SharedPath: string }
 
+/// Observable state of a crate's local `target` entry, supplied by the
+/// filesystem adapter to the pure target-share planner.
+type TargetEntryKind =
+    | TargetAbsent
+    | CorrectTargetLink
+    | PlainTargetDirectory
+    | ReplaceableTargetEntry
+
+/// Mutation decision for one discovered crate.
+type TargetShareAction =
+    | KeepTargetLink
+    | CreateTargetLink
+    | ReplacePlainTarget
+    | ReplaceTargetEntry
+
+type TargetSharePlan =
+    { CrateDir: string
+      SharedPath: string
+      Action: TargetShareAction }
+
+/// Plans target sharing from discovered crate values and injected entry-state
+/// observations. This is the Unit-owned core used by the filesystem adapter.
+let planTargetShares
+    (cacheRoot: string)
+    (repoNameValue: string)
+    (ci: bool)
+    (crateDirs: string list)
+    (entryKind: string -> string -> TargetEntryKind)
+    : TargetSharePlan list =
+    if ci then
+        []
+    else
+        crateDirs
+        |> List.map (fun crateDir ->
+            let sharedPath = sharedTargetPath cacheRoot repoNameValue crateDir
+
+            let action =
+                match entryKind crateDir sharedPath with
+                | TargetAbsent -> CreateTargetLink
+                | CorrectTargetLink -> KeepTargetLink
+                | PlainTargetDirectory -> ReplacePlainTarget
+                | ReplaceableTargetEntry -> ReplaceTargetEntry
+
+            { CrateDir = crateDir
+              SharedPath = sharedPath
+              Action = action })
+
+[<ExcludeFromCodeCoverage>]
+let private targetEntryKind (crateDir: string) (sharedPath: string) : TargetEntryKind =
+    let target = Path.Combine(crateDir, "target")
+
+    if isCorrectSymlink target sharedPath then
+        CorrectTargetLink
+    elif Resource.directoryExists target && linkTargetOf target |> Option.isNone then
+        PlainTargetDirectory
+    elif
+        Resource.directoryExists target
+        || Resource.fileExists target
+        || linkTargetOf target |> Option.isSome
+    then
+        ReplaceableTargetEntry
+    else
+        TargetAbsent
+
 /// Reports every crate in every checkout of this repo — the main checkout
 /// and each linked worktree — whose `target/` is not yet the correct symlink
 /// into the shared cache. Read-only — never mutates the filesystem. Returns
@@ -330,6 +377,7 @@ type TargetShareStatus =
 ///   When the developer runs the doctor command without the fix flag
 ///   Then the output reports that crate's target as needing to be shared
 ///   And the plain target directory is left unchanged
+[<ExcludeFromCodeCoverage>]
 let checkTargetShares
     (repoRoot: string)
     (cacheRoot: string)
@@ -339,18 +387,19 @@ let checkTargetShares
     if ci then
         []
     else
-        rootsOrSelf repoRoot
-        |> List.collect discoverCrates
-        |> List.choose (fun crateDir ->
-            let target = Path.Combine(crateDir, "target")
-            let sharedPath = sharedTargetPath cacheRoot repoNameValue crateDir
-
-            if isCorrectSymlink target sharedPath then
+        planTargetShares
+            cacheRoot
+            repoNameValue
+            false
+            (rootsOrSelf repoRoot |> List.collect discoverCrates)
+            targetEntryKind
+        |> List.choose (fun plan ->
+            if plan.Action = KeepTargetLink then
                 None
             else
                 Some
-                    { CrateDir = crateDir
-                      SharedPath = sharedPath })
+                    { CrateDir = plan.CrateDir
+                      SharedPath = plan.SharedPath })
 
 // ---------------------------------------------------------------------------
 // fix
@@ -364,6 +413,36 @@ type FixOutcome =
       ReplacedPlainDir: int
       SkippedCi: bool }
 
+/// Summarises a successful application of a target-share plan. Filesystem
+/// failures remain the responsibility of the adapter; this decision table is
+/// Unit-owned.
+let summarizeTargetSharePlan (ci: bool) (plans: TargetSharePlan list) : FixOutcome =
+    if ci then
+        { Created = 0
+          AlreadyCorrect = 0
+          ReplacedPlainDir = 0
+          SkippedCi = true }
+    else
+        plans
+        |> List.fold
+            (fun outcome plan ->
+                match plan.Action with
+                | KeepTargetLink ->
+                    { outcome with
+                        AlreadyCorrect = outcome.AlreadyCorrect + 1 }
+                | CreateTargetLink
+                | ReplaceTargetEntry ->
+                    { outcome with
+                        Created = outcome.Created + 1 }
+                | ReplacePlainTarget ->
+                    { outcome with
+                        Created = outcome.Created + 1
+                        ReplacedPlainDir = outcome.ReplacedPlainDir + 1 })
+            { Created = 0
+              AlreadyCorrect = 0
+              ReplacedPlainDir = 0
+              SkippedCi = false }
+
 /// Creates or repairs each discovered crate's `target/` symlink into the
 /// shared cache, across the main checkout **and every linked worktree**. No
 /// -ops entirely under CI [Repo-grounded —
@@ -375,6 +454,7 @@ type FixOutcome =
 ///   When the developer runs the doctor command with the fix flag
 ///   Then the crate's target becomes a symlink into the shared cargo-target cache
 ///   And the symlink resolves under the repo's own shared-cache namespace
+[<ExcludeFromCodeCoverage>]
 let fixTargetShares (repoRoot: string) (cacheRoot: string) (repoNameValue: string) (ci: bool) : FixOutcome =
     if ci then
         { Created = 0
@@ -382,22 +462,25 @@ let fixTargetShares (repoRoot: string) (cacheRoot: string) (repoNameValue: strin
           ReplacedPlainDir = 0
           SkippedCi = true }
     else
-        rootsOrSelf repoRoot
-        |> List.collect discoverCrates
+        planTargetShares
+            cacheRoot
+            repoNameValue
+            false
+            (rootsOrSelf repoRoot |> List.collect discoverCrates)
+            targetEntryKind
         |> List.fold
-            (fun acc crateDir ->
-                let target = Path.Combine(crateDir, "target")
-                let sharedPath = sharedTargetPath cacheRoot repoNameValue crateDir
-                Directory.CreateDirectory(sharedPath) |> ignore
+            (fun acc plan ->
+                let target = Path.Combine(plan.CrateDir, "target")
+                Resource.createDirectory plan.SharedPath
 
-                if isCorrectSymlink target sharedPath then
+                if plan.Action = KeepTargetLink then
                     { acc with
                         AlreadyCorrect = acc.AlreadyCorrect + 1 }
                 else
                     let replacedPlainDir = removeExistingEntry target
 
                     try
-                        Directory.CreateSymbolicLink(target, sharedPath) |> ignore
+                        Resource.createDirectorySymbolicLink target plan.SharedPath
 
                         { acc with
                             Created = acc.Created + 1
@@ -430,6 +513,31 @@ let private prunedNothing =
       SkippedCi = false
       EnumerationFailed = false }
 
+/// Pure prune decision over already enumerated cache entries and live
+/// references. The resource adapter performs only the returned deletions.
+let planPruneOrphans (entries: string list) (live: Set<string> option) (dryRun: bool) (ci: bool) : PruneOutcome =
+    if ci then
+        { prunedNothing with SkippedCi = true }
+    else
+        match live with
+        | None ->
+            { prunedNothing with
+                EnumerationFailed = true }
+        | Some referenced ->
+            entries
+            |> List.fold
+                (fun acc entryPath ->
+                    if Set.contains entryPath referenced then
+                        { acc with
+                            Preserved = acc.Preserved @ [ entryPath ] }
+                    elif dryRun then
+                        { acc with
+                            Candidates = acc.Candidates @ [ entryPath ] }
+                    else
+                        { acc with
+                            Deleted = acc.Deleted @ [ entryPath ] })
+                prunedNothing
+
 /// Deletes shared-cache entries under `<cacheRoot>/<repoNameValue>/*` that no
 /// live worktree or checkout of the repo references. Never touches an entry
 /// present in [`liveReferencedEntries`]'s result
@@ -440,6 +548,7 @@ let private prunedNothing =
 ///   When the developer runs the doctor command with the prune flag
 ///   Then the orphaned cache entry is deleted
 ///   And every entry still referenced by a live worktree or checkout is preserved
+[<ExcludeFromCodeCoverage>]
 let pruneOrphans
     (repoRoot: string)
     (cacheRoot: string)
@@ -450,32 +559,19 @@ let pruneOrphans
     if ci then
         { prunedNothing with SkippedCi = true }
     else
-        match liveReferencedEntries repoRoot with
-        | None ->
-            { prunedNothing with
-                EnumerationFailed = true }
-        | Some live ->
-            let repoCacheDir = Path.Combine(cacheRoot, repoNameValue)
+        let repoCacheDir = Path.Combine(cacheRoot, repoNameValue)
 
-            if not (Directory.Exists(repoCacheDir)) then
-                prunedNothing
+        let entries =
+            if Resource.directoryExists repoCacheDir then
+                Resource.directories repoCacheDir |> Array.toList
             else
-                Directory.GetDirectories(repoCacheDir)
-                |> Array.toList
-                |> List.fold
-                    (fun acc entryPath ->
-                        if Set.contains (canonicalize entryPath) live then
-                            { acc with
-                                Preserved = acc.Preserved @ [ entryPath ] }
-                        elif dryRun then
-                            { acc with
-                                Candidates = acc.Candidates @ [ entryPath ] }
-                        else
-                            Directory.Delete(entryPath, true)
+                []
 
-                            { acc with
-                                Deleted = acc.Deleted @ [ entryPath ] })
-                    prunedNothing
+        let planned =
+            planPruneOrphans (entries |> List.map canonicalize) (liveReferencedEntries repoRoot) dryRun false
+
+        planned.Deleted |> List.iter (fun entry -> Resource.deleteDirectory entry true)
+        planned
 
 // ---------------------------------------------------------------------------
 // sweep
@@ -490,16 +586,18 @@ type SweepOutcome =
 
 /// Returns `true` when the `cargo-sweep` binary is present on `PATH`
 /// [Repo-grounded — `target_share.rs::cargo_sweep_present`].
+[<ExcludeFromCodeCoverage>]
 let cargoSweepPresent () : bool =
-    match Environment.GetEnvironmentVariable("PATH") with
-    | null -> false
-    | pathVar ->
+    match Resource.environmentVariable "PATH" with
+    | None -> false
+    | Some pathVar ->
         pathVar.Split(Path.PathSeparator)
-        |> Array.exists (fun dir -> dir <> "" && File.Exists(Path.Combine(dir, "cargo-sweep")))
+        |> Array.exists (fun dir -> dir <> "" && Resource.fileExists (Path.Combine(dir, "cargo-sweep")))
 
 /// The repo-scoped subtree `cargo-sweep` reclaims within —
 /// `<cacheRoot>/<repoNameValue>`, never the whole shared `cacheRoot`
 /// [Repo-grounded — `target_share.rs::sweep_scope`].
+[<ExcludeFromCodeCoverage>]
 let private sweepScope (cacheRoot: string) (repoNameValue: string) : string = Path.Combine(cacheRoot, repoNameValue)
 
 /// Runs `cargo-sweep`'s stale-artifact reclamation over this repo's cache
@@ -513,6 +611,7 @@ let private sweepScope (cacheRoot: string) (repoNameValue: string) : string = Pa
 ///   When the developer runs the doctor command with the prune flag
 ///   Then the sweep step is reported as skipped rather than failing the command
 ///   And the command exits successfully
+[<ExcludeFromCodeCoverage>]
 let sweepStale
     (cacheRoot: string)
     (repoNameValue: string)
@@ -533,21 +632,12 @@ let sweepStale
           SkippedCi = false
           Ran = false }
     else
-        use proc = new Process()
-        proc.StartInfo.FileName <- "cargo-sweep"
-        proc.StartInfo.ArgumentList.Add("--time")
-        proc.StartInfo.ArgumentList.Add("30")
-        proc.StartInfo.ArgumentList.Add("--recursive")
-        proc.StartInfo.ArgumentList.Add(sweepScope cacheRoot repoNameValue)
-        proc.StartInfo.RedirectStandardOutput <- true
-        proc.StartInfo.RedirectStandardError <- true
-        proc.StartInfo.UseShellExecute <- false
-
-        (try
-            proc.Start() |> ignore
-            proc.WaitForExit()
-         with _ ->
-             ())
+        Resource.runCaptured
+            "cargo-sweep"
+            [ "--time"; "30"; "--recursive"; sweepScope cacheRoot repoNameValue ]
+            None
+            false
+        |> ignore
 
         { Skipped = false
           SkippedCi = false
@@ -625,7 +715,7 @@ let formatSweepReport (outcome: SweepOutcome) : string =
 // ---------------------------------------------------------------------------
 // Tool-check engine [Repo-grounded — `application/doctor/mod.rs`,
 // `checker.rs`, `fixer.rs`, `reporter.rs`, `tools.rs`] for
-// `specs/apps/rhino/cli/behaviors/system/doctor.feature`'s 17
+// `specs/apps/rhino/cli/behaviours/system/doctor.feature`'s 17
 // scenarios.
 // ---------------------------------------------------------------------------
 
@@ -986,9 +1076,10 @@ let parseClangFormatVersion (out: string) : string =
 
 /// Reads a string property at `propertyPath` out of the JSON file at `path`,
 /// returning `None` when the file is missing, malformed, or lacks that path.
+[<ExcludeFromCodeCoverage>]
 let private readJsonStringProperty (path: string) (propertyPath: string list) : string option =
     try
-        use doc = JsonDocument.Parse(File.ReadAllText path)
+        use doc = JsonDocument.Parse(Resource.readAllText path)
 
         let rec walk (element: JsonElement) (remaining: string list) : string option =
             match remaining with
@@ -1008,16 +1099,19 @@ let private readJsonStringProperty (path: string) (propertyPath: string list) : 
 
 /// Reads the `volta.node` version from a `package.json` file
 /// [Repo-grounded — `checker.rs::read_node_version`].
+[<ExcludeFromCodeCoverage>]
 let readNodeVersion (path: string) : string option =
     readJsonStringProperty path [ "volta"; "node" ]
 
 /// Reads the `volta.npm` version from a `package.json` file
 /// [Repo-grounded — `checker.rs::read_npm_version`].
+[<ExcludeFromCodeCoverage>]
 let readNpmVersion (path: string) : string option =
     readJsonStringProperty path [ "volta"; "npm" ]
 
 /// Reads the .NET SDK version from a `global.json` file
 /// [Repo-grounded — `checker.rs::read_dotnet_version`].
+[<ExcludeFromCodeCoverage>]
 let readDotnetVersion (path: string) : string option =
     readJsonStringProperty path [ "sdk"; "version" ]
 
@@ -1030,9 +1124,10 @@ let readDotnetVersion (path: string) : string option =
 ///   When "npm run doctor" runs
 ///   Then it reports the Rust toolchain as mismatched
 ///   And it names the pinned channel as the expected value
+[<ExcludeFromCodeCoverage>]
 let readRustToolchainChannel (path: string) : string option =
     try
-        File.ReadAllLines(path)
+        Resource.readAllLines path
         |> Array.tryPick (fun line ->
             let t = line.Trim()
 
@@ -1052,11 +1147,12 @@ let requiredRustToolchainComponents: string list = [ "rustfmt"; "clippy" ]
 /// Enumerates repo-relative `rust-toolchain.toml` paths, workspace root
 /// first, then sorted `apps/*` and `libs/*` project directories
 /// [Repo-grounded — `checker.rs::rust_toolchain_manifests`].
+[<ExcludeFromCodeCoverage>]
 let rustToolchainManifests (repoRoot: string) : string list =
     let fileName = "rust-toolchain.toml"
 
     let rootFile =
-        if File.Exists(Path.Combine(repoRoot, fileName)) then
+        if Resource.fileExists (Path.Combine(repoRoot, fileName)) then
             [ fileName ]
         else
             []
@@ -1064,9 +1160,9 @@ let rustToolchainManifests (repoRoot: string) : string list =
     let underParent (parent: string) : string list =
         let dir = Path.Combine(repoRoot, parent)
 
-        if Directory.Exists(dir) then
-            Directory.GetDirectories(dir)
-            |> Array.filter (fun d -> File.Exists(Path.Combine(d, fileName)))
+        if Resource.directoryExists dir then
+            Resource.directories dir
+            |> Array.filter (fun d -> Resource.fileExists (Path.Combine(d, fileName)))
             |> Array.map (fun d -> sprintf "%s/%s/%s" parent (Path.GetFileName(d: string)) fileName)
             |> Array.sort
             |> Array.toList
@@ -1129,6 +1225,33 @@ let readRustToolchainComponents (contents: string) : string list =
 
     loop (contents.Replace("\r\n", "\n").Split('\n') |> Array.toList) false []
 
+/// Evaluates one named Rust toolchain manifest body without reading it from
+/// disk. The resource adapter supplies the body; Unit tests own this policy.
+let rustToolchainLintComponentCheck (relative: string) (contents: string) : ToolCheck option =
+    let declared = readRustToolchainComponents contents
+
+    let missing =
+        requiredRustToolchainComponents
+        |> List.filter (fun required -> not (List.contains required declared))
+
+    if List.isEmpty missing then
+        None
+    else
+        let note =
+            sprintf
+                "%s pins a Rust toolchain but does not declare the %s component(s); a lint gate running cargo fmt/clippy under that channel fails whenever rustup installed it with --profile minimal"
+                relative
+                (String.concat ", " missing)
+
+        Some
+            { Name = "rust-toolchain-components"
+              Binary = ""
+              Status = Warning
+              InstalledVersion = String.concat ", " declared
+              RequiredVersion = String.concat ", " requiredRustToolchainComponents
+              Source = relative
+              Note = note }
+
 /// Builds one [`ToolCheck`] per scanned `rust-toolchain.toml` that omits a
 /// required lint component, reported as [`Warning`] rather than [`Missing`]
 /// [Repo-grounded — `checker.rs::rust_toolchain_lint_component_checks`].
@@ -1140,6 +1263,7 @@ let readRustToolchainComponents (contents: string) : string list =
 ///   When "npm run doctor" runs
 ///   Then the command exits successfully
 ///   And it reports the toolchain component check as a warning naming rustfmt and clippy
+[<ExcludeFromCodeCoverage>]
 let rustToolchainLintComponentChecks (repoRoot: string) : ToolCheck list =
     rustToolchainManifests repoRoot
     |> List.choose (fun relative ->
@@ -1147,29 +1271,7 @@ let rustToolchainLintComponentChecks (repoRoot: string) : ToolCheck list =
             Path.Combine(repoRoot, relative.Replace('/', Path.DirectorySeparatorChar))
 
         try
-            let declared = readRustToolchainComponents (File.ReadAllText fullPath)
-
-            let missing =
-                requiredRustToolchainComponents
-                |> List.filter (fun required -> not (List.contains required declared))
-
-            if List.isEmpty missing then
-                None
-            else
-                let note =
-                    sprintf
-                        "%s pins a Rust toolchain but does not declare the %s component(s); a lint gate running cargo fmt/clippy under that channel fails whenever rustup installed it with --profile minimal"
-                        relative
-                        (String.concat ", " missing)
-
-                Some
-                    { Name = "rust-toolchain-components"
-                      Binary = ""
-                      Status = Warning
-                      InstalledVersion = String.concat ", " declared
-                      RequiredVersion = String.concat ", " requiredRustToolchainComponents
-                      Source = relative
-                      Note = note }
+            rustToolchainLintComponentCheck relative (Resource.readAllText fullPath)
         with _ ->
             None)
 
@@ -1190,30 +1292,31 @@ let playwrightCacheDirFor (isMacOS: bool) (home: string) : string =
 
 /// Returns `true` when at least one Chromium Playwright browser bundle is
 /// found under `home`'s platform-specific Playwright cache directory.
+[<ExcludeFromCodeCoverage>]
 let checkPlaywrightBrowsersAt (home: string option) : bool =
     match home with
     | None -> false
     | Some h ->
         let cacheDir =
-            playwrightCacheDirFor (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) h
+            let isOSX, _ = Resource.platformFlags ()
+            playwrightCacheDirFor isOSX h
 
         try
-            Directory.Exists(cacheDir)
-            && Directory.GetDirectories(cacheDir)
+            Resource.directoryExists cacheDir
+            && Resource.directories cacheDir
                |> Array.exists (fun d -> Path.GetFileName(d: string).StartsWith("chromium-", StringComparison.Ordinal))
         with _ ->
             false
 
 /// Reads the real `HOME` environment variable and returns
 /// [`checkPlaywrightBrowsersAt`]'s verdict for the current process.
+[<ExcludeFromCodeCoverage>]
 let checkPlaywrightBrowsersAmbient () : bool =
-    match Environment.GetEnvironmentVariable("HOME") with
-    | null
-    | "" -> checkPlaywrightBrowsersAt None
-    | home -> checkPlaywrightBrowsersAt (Some home)
+    checkPlaywrightBrowsersAt (Resource.environmentVariable "HOME")
 
 /// Checks whether Playwright browsers are installed, ignoring version
 /// strings [Repo-grounded — `checker.rs::compare_playwright`].
+[<ExcludeFromCodeCoverage>]
 let comparePlaywright (_installed: string) (_required: string) : ToolStatus * string =
     if not (checkPlaywrightBrowsersAmbient ()) then
         Warning, "browsers not installed — run: npx playwright install"
@@ -1653,6 +1756,24 @@ let buildToolDefs (repoRoot: string) : ToolDef list =
         ReadReq = noReq
         InstallCmd = Some installClangFormat } ]
 
+/// Applies Doctor's scope, explicit-selection, and repository skip policies
+/// to an already constructed inventory. Keeping this decision independent of
+/// manifest and environment access lets the mandatory Unit suite exercise the
+/// complete selection policy with in-memory definitions.
+let selectToolDefs
+    (defs: ToolDef list)
+    (scope: DoctorScope)
+    (selectedTools: string list option)
+    (skipTools: string list)
+    : ToolDef list =
+    defs
+    |> List.filter (fun d -> scope <> MinimalScope || isMinimalTool d.Name)
+    |> fun scoped ->
+        match selectedTools with
+        | None -> scoped
+        | Some selected -> scoped |> List.filter (fun d -> List.contains d.Name selected)
+    |> List.filter (fun d -> not (List.contains d.Name skipTools))
+
 /// Builds the tool definitions selected by scope, explicit selection, and the
 /// repository's `doctor.skip-tools` configuration
 /// [Repo-grounded — `mod.rs::selected_tool_defs`].
@@ -1665,59 +1786,39 @@ let buildToolDefs (repoRoot: string) : ToolDef list =
 ///   When the developer runs the doctor command
 ///   Then the command exits successfully
 ///   And the output reports only the selected tofu tool
+[<ExcludeFromCodeCoverage>]
 let selectedToolDefs (options: CheckOptions) : ToolDef list =
-    let scoped =
-        buildToolDefs options.RepoRoot
-        |> List.filter (fun d -> options.Scope <> MinimalScope || isMinimalTool d.Name)
-
-    let explicitlySelected =
-        match options.SelectedTools with
-        | None -> scoped
-        | Some selected -> scoped |> List.filter (fun d -> List.contains d.Name selected)
-
     let skipTools =
         (RhinoCli.Application.RepoConfig.loadOrDefault options.RepoRoot).Doctor.SkipTools
 
-    explicitlySelected
-    |> List.filter (fun d -> not (List.contains d.Name skipTools))
+    selectToolDefs (buildToolDefs options.RepoRoot) options.Scope options.SelectedTools skipTools
 
 // --- Runner [Repo-grounded — `checker.rs`'s "Runner" section] ---
 
 /// Mirrors `exec.LookPath`/`binary_in_path`: walks `PATH` for an executable
 /// file named `name`, or checks the path directly when it contains a
 /// separator.
+[<ExcludeFromCodeCoverage>]
 let private binaryInPath (name: string) : bool =
     if name.Contains('/') then
-        File.Exists(name)
+        Resource.fileExists name
     else
-        match Environment.GetEnvironmentVariable("PATH") with
-        | null -> false
-        | pathVar ->
+        match Resource.environmentVariable "PATH" with
+        | None -> false
+        | Some pathVar ->
             pathVar.Split(Path.PathSeparator)
-            |> Array.exists (fun dir -> dir <> "" && File.Exists(Path.Combine(dir, name)))
+            |> Array.exists (fun dir -> dir <> "" && Resource.fileExists (Path.Combine(dir, name)))
 
 /// Executes `name` with `args` and returns `(stdout, stderr, exitCode)`.
 /// Returns `Error` when `name` is not found in `PATH` (no process is
 /// started) [Repo-grounded — `checker.rs::real_runner`].
+[<ExcludeFromCodeCoverage>]
 let realRunner: CommandRunner =
     fun name args ->
         if not (binaryInPath name) then
             Error(sprintf "binary not found in PATH: %s" name)
         else
-            try
-                use proc = new Process()
-                proc.StartInfo.FileName <- name
-                args |> List.iter proc.StartInfo.ArgumentList.Add
-                proc.StartInfo.RedirectStandardOutput <- true
-                proc.StartInfo.RedirectStandardError <- true
-                proc.StartInfo.UseShellExecute <- false
-                proc.Start() |> ignore
-                let stdout = proc.StandardOutput.ReadToEnd()
-                let stderr = proc.StandardError.ReadToEnd()
-                proc.WaitForExit()
-                Ok(stdout, stderr, proc.ExitCode)
-            with ex ->
-                Error ex.Message
+            Resource.runCaptured name args None false
 
 /// Executes a single [`ToolDef`] check using `runner` and returns a
 /// [`ToolCheck`]. When `runner` returns `Error` (binary not found), the check
@@ -1754,25 +1855,9 @@ let runOneDef (runner: CommandRunner) (def: ToolDef) : ToolCheck =
           Source = def.Source
           Note = note }
 
-/// Runs all tool checks described in `options` and returns aggregated
-/// results [Repo-grounded — `checker.rs::check_all`].
-///
-/// Gherkin (binds) — "All required tools are installed and versions match":
-///   Given all required development tools are present with matching versions
-///   When the developer runs the doctor command
-///   Then the command exits successfully
-///   And the output reports each tool as passing
-let checkAll (options: CheckOptions) : DoctorResult =
-    let runner = options.Runner |> Option.defaultValue realRunner
-    let defs = selectedToolDefs options
-    let baseChecks = defs |> List.map (runOneDef runner)
-
-    let checks =
-        if defs |> List.exists (fun d -> d.Name = "rust") then
-            baseChecks @ rustToolchainLintComponentChecks options.RepoRoot
-        else
-            baseChecks
-
+/// Aggregates an already evaluated check list into a Doctor result. This is
+/// the pure core shared by the resource-backed command and its Unit proof.
+let aggregateDoctorChecks (scope: DoctorScope) (checks: ToolCheck list) : DoctorResult =
     let ok, warn, missing =
         checks
         |> List.fold
@@ -1787,7 +1872,29 @@ let checkAll (options: CheckOptions) : DoctorResult =
       OkCount = ok
       WarnCount = warn
       MissingCount = missing
-      Scope = options.Scope }
+      Scope = scope }
+
+/// Runs all tool checks described in `options` and returns aggregated
+/// results [Repo-grounded — `checker.rs::check_all`].
+///
+/// Gherkin (binds) — "All required tools are installed and versions match":
+///   Given all required development tools are present with matching versions
+///   When the developer runs the doctor command
+///   Then the command exits successfully
+///   And the output reports each tool as passing
+[<ExcludeFromCodeCoverage>]
+let checkAll (options: CheckOptions) : DoctorResult =
+    let runner = options.Runner |> Option.defaultValue realRunner
+    let defs = selectedToolDefs options
+    let baseChecks = defs |> List.map (runOneDef runner)
+
+    let checks =
+        if defs |> List.exists (fun d -> d.Name = "rust") then
+            baseChecks @ rustToolchainLintComponentChecks options.RepoRoot
+        else
+            baseChecks
+
+    aggregateDoctorChecks options.Scope checks
 
 // --- Fixer [Repo-grounded — `fixer.rs`] ---
 
@@ -1820,10 +1927,10 @@ let platformFromFlags (isOSX: bool) (isLinux: bool) : string =
     elif isLinux then "linux"
     else "other"
 
+[<ExcludeFromCodeCoverage>]
 let private currentPlatform () : string =
-    platformFromFlags
-        (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-        (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+    let isOSX, isLinux = Resource.platformFlags ()
+    platformFromFlags isOSX isLinux
 
 /// Summary of a completed fix run [Repo-grounded — `fixer.rs::FixResult`].
 type FixResult =
@@ -1844,22 +1951,8 @@ type FixRunner = string -> string list -> Result<unit, string>
 
 /// Default fix runner: executes `command` with `args`, inheriting
 /// stdout/stderr [Repo-grounded — `fixer.rs::real_fix_runner`].
-let realFixRunner: FixRunner =
-    fun command args ->
-        try
-            use proc = new Process()
-            proc.StartInfo.FileName <- command
-            args |> List.iter proc.StartInfo.ArgumentList.Add
-            proc.StartInfo.UseShellExecute <- false
-            proc.Start() |> ignore
-            proc.WaitForExit()
-
-            if proc.ExitCode = 0 then
-                Ok()
-            else
-                Error(sprintf "exit %d" proc.ExitCode)
-        with ex ->
-            Error ex.Message
+[<ExcludeFromCodeCoverage>]
+let realFixRunner: FixRunner = Resource.runInherited
 
 /// Options controlling a fix run [Repo-grounded — `fixer.rs::FixOptions`].
 type FixOptions =
@@ -1876,8 +1969,13 @@ type FixOptions =
 ///   Given a required development tool is not found in the system PATH
 ///   When the developer runs the doctor command with the fix flag
 ///   Then the output contains fix progress
-let fix (result: DoctorResult) (defs: ToolDef list) (options: FixOptions) (printf: string -> unit) : FixResult =
-    let platform = currentPlatform ()
+let fixAtPlatform
+    (platform: string)
+    (result: DoctorResult)
+    (defs: ToolDef list)
+    (options: FixOptions)
+    (printf: string -> unit)
+    : FixResult =
     let runner = options.Runner |> Option.defaultValue realFixRunner
     let defsArray = List.toArray defs
 
@@ -1929,6 +2027,10 @@ let fix (result: DoctorResult) (defs: ToolDef list) (options: FixOptions) (print
                         else { acc with Fixed = acc.Fixed + 1 })
         zeroFixResult
 
+[<ExcludeFromCodeCoverage>]
+let fix (result: DoctorResult) (defs: ToolDef list) (options: FixOptions) (printf: string -> unit) : FixResult =
+    fixAtPlatform (currentPlatform ()) result defs options printf
+
 /// Builds tool definitions from `options` and then delegates to [`fix`]
 /// [Repo-grounded — `fixer.rs::fix_all`].
 ///
@@ -1939,6 +2041,7 @@ let fix (result: DoctorResult) (defs: ToolDef list) (options: FixOptions) (print
 ///   When the developer runs the doctor command with fix and dry-run flags
 ///   Then the command exits with a failure code
 ///   And the selected tofu dry run previews only its remediation
+[<ExcludeFromCodeCoverage>]
 let fixAll
     (result: DoctorResult)
     (options: CheckOptions)
@@ -2026,7 +2129,7 @@ let formatDoctorText (result: DoctorResult) (quiet: bool) : string =
 ///   Then the command exits successfully
 ///   And the output is valid JSON
 ///   And the JSON lists every checked tool with its status
-let formatDoctorJson (result: DoctorResult) (durationMs: int64) : string =
+let formatDoctorJsonAt (timestamp: DateTimeOffset) (result: DoctorResult) (durationMs: int64) : string =
     let toolNode (c: ToolCheck) : JsonNode =
         let node = JsonObject()
         node.["name"] <- JsonValue.Create(c.Name)
@@ -2058,7 +2161,7 @@ let formatDoctorJson (result: DoctorResult) (durationMs: int64) : string =
     // so `reporter.rs::format_json`'s `skip_serializing_if = "str::is_empty"`
     // on this field never actually skips it — always present.
     root.["scope"] <- JsonValue.Create(doctorScopeCode result.Scope)
-    root.["timestamp"] <- JsonValue.Create(DateTimeOffset.Now.ToString("yyyy-MM-ddTHH:mm:sszzz"))
+    root.["timestamp"] <- JsonValue.Create(timestamp.ToString("yyyy-MM-ddTHH:mm:sszzz"))
     root.["ok_count"] <- JsonValue.Create(result.OkCount)
     root.["warn_count"] <- JsonValue.Create(result.WarnCount)
     root.["missing_count"] <- JsonValue.Create(result.MissingCount)
@@ -2070,16 +2173,21 @@ let formatDoctorJson (result: DoctorResult) (durationMs: int64) : string =
     serializeOptions.Encoder <- JavaScriptEncoder.UnsafeRelaxedJsonEscaping
     root.ToJsonString(serializeOptions)
 
+/// Ambient timestamp adapter retained for the public command boundary.
+[<ExcludeFromCodeCoverage>]
+let formatDoctorJson (result: DoctorResult) (durationMs: int64) : string =
+    formatDoctorJsonAt DateTimeOffset.Now result durationMs
+
 /// Formats `result` as a Markdown report with a summary table and a per-tool
 /// table [Repo-grounded — `reporter.rs::format_markdown`]. `durationMs` is
 /// unused here — the Markdown report has no duration field, only
 /// `**Generated**` (masked as volatile by `shadow-diff.sh`, same as the JSON
 /// formatter's `timestamp`).
-let formatDoctorMarkdown (result: DoctorResult) : string =
+let formatDoctorMarkdownAt (timestamp: DateTimeOffset) (result: DoctorResult) : string =
     let sb = Text.StringBuilder()
     sb.Append("## Doctor Report\n\n") |> ignore
 
-    sb.Append(sprintf "**Generated**: %s\n\n" (DateTimeOffset.Now.ToString("yyyy-MM-ddTHH:mm:sszzz")))
+    sb.Append(sprintf "**Generated**: %s\n\n" (timestamp.ToString("yyyy-MM-ddTHH:mm:sszzz")))
     |> ignore
 
     let total = result.OkCount + result.WarnCount + result.MissingCount
@@ -2111,10 +2219,15 @@ let formatDoctorMarkdown (result: DoctorResult) : string =
 
     sb.ToString()
 
+/// Ambient timestamp adapter retained for the public command boundary.
+[<ExcludeFromCodeCoverage>]
+let formatDoctorMarkdown (result: DoctorResult) : string =
+    formatDoctorMarkdownAt DateTimeOffset.Now result
+
 // ---------------------------------------------------------------------------
 // F# lint-target Fantomas tool-invocation check [F#-native meta-check — no
 // Rust equivalent; `apps/rhino-cli/src` never invoked Fantomas] for
-// `specs/apps/rhino/cli/behaviors/system/fsharp-tool-invocation.feature`'s
+// `specs/apps/rhino/cli/behaviours/system/fsharp-tool-invocation.feature`'s
 // 1 scenario.
 // ---------------------------------------------------------------------------
 
@@ -2135,16 +2248,17 @@ let private excludedProjectJsonDirNames: Set<string> =
 /// [`discoverCrates`]'s single-level walk, since an F# Nx project can nest a
 /// `project.json` below its app directory (e.g.
 /// `apps/rhino-cli/src-fsharp/project.json`).
+[<ExcludeFromCodeCoverage>]
 let rec private findProjectJsonFiles (dir: string) : string list =
-    if not (Directory.Exists dir) then
+    if not (Resource.directoryExists dir) then
         []
     else
         let here =
             let candidate = Path.Combine(dir, "project.json")
-            if File.Exists candidate then [ candidate ] else []
+            if Resource.fileExists candidate then [ candidate ] else []
 
         let nested =
-            Directory.GetDirectories dir
+            Resource.directories dir
             |> Array.filter (fun d -> not (Set.contains (Path.GetFileName(d: string)) excludedProjectJsonDirNames))
             |> Array.toList
             |> List.collect findProjectJsonFiles
@@ -2154,9 +2268,10 @@ let rec private findProjectJsonFiles (dir: string) : string list =
 /// Extracts the `targets.lint.options.commands` JSON string array from the
 /// `project.json` at `projectJsonPath`, returning an empty list when the
 /// file is missing, malformed, or lacks that path.
+[<ExcludeFromCodeCoverage>]
 let private readLintCommands (projectJsonPath: string) : string list =
     try
-        use doc = JsonDocument.Parse(File.ReadAllText projectJsonPath)
+        use doc = JsonDocument.Parse(Resource.readAllText projectJsonPath)
 
         match doc.RootElement.TryGetProperty "targets" with
         | false, _ -> []
@@ -2203,6 +2318,7 @@ let private commandInvokesFantomasViaLocalTool (command: string) : bool =
 /// Gherkin (binds) — "Every locally discovered F# lint target uses the
 /// pinned local Fantomas tool":
 ///   Given the local F# lint targets are discovered
+[<ExcludeFromCodeCoverage>]
 let discoverFsharpLintTargets (repoRoot: string) : FsharpLintTarget list =
     [ "apps"; "libs" ]
     |> List.collect (fun top -> findProjectJsonFiles (Path.Combine(repoRoot, top)))

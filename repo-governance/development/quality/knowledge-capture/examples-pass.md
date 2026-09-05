@@ -63,7 +63,7 @@ remains a later ripeness decision. NOT landed inline in this plan's PR.
 
 - **Context**: Ran `nx affected` for the first time in this session.
 - **Observation**: took a moment to parse the cache-hit summary.
-- **Litmus**: no durable surface would change behavior by routing this — it is a one-time
+- **Litmus**: no durable surface would change behaviour by routing this — it is a one-time
   orientation moment, not a gap in documentation (the docs already explain cache output).
 
 **Routing**: discard — not generalizable; existing docs already cover this, no gap found.

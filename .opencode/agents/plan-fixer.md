@@ -85,7 +85,7 @@ manual/operational proof, and Knowledge Capture. Never migrate archived plans or
 Remove any LOC or file-count boundary test. Repair delivery units around natural cohesive seams,
 keeping every artifact required to build, verify, operate, roll back, and remain internally
 consistent together. Require each exact resulting `main` state to be immediately safe to deploy to
-production; incomplete behavior uses a temporary production-disabled flag with both paths tested
+production; incomplete behaviour uses a temporary production-disabled flag with both paths tested
 and rollout, rollback, and removal recorded.
 Replace any prospectively hardcoded archival date with an execution-time `<completion-date>` step:
 run `rtk date +%F` only after completion proof, then reuse that output for the move and indexes.

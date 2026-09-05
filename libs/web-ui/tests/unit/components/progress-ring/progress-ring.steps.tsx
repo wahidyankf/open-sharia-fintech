@@ -6,61 +6,63 @@ import { expect } from "vitest";
 import { ProgressRing } from "../../../../src/components/progress-ring/progress-ring";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../specs/libs/web-ui/behaviors/progress-ring/progress-ring.feature"),
+  path.resolve(__dirname, "../../../../../../specs/libs/web-ui/behaviours/progress-ring/progress-ring.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {
   Scenario("Full progress ring", ({ When, Then }) => {
+    let progressbar: Element | null;
+
     When("I render a ProgressRing with progress 1", () => {
-      // precondition noted
+      cleanup();
+      progressbar = render(<ProgressRing progress={1} />).container.querySelector("[role='progressbar']");
     });
 
     Then('the progressbar should have aria-valuenow "100"', () => {
-      cleanup();
-      const { container } = render(<ProgressRing progress={1} />);
-      expect(container.querySelector("[role='progressbar']")?.getAttribute("aria-valuenow")).toBe("100");
+      expect(progressbar?.getAttribute("aria-valuenow")).toBe("100");
     });
   });
 
   Scenario("Half progress ring", ({ When, Then }) => {
+    let progressbar: Element | null;
+
     When("I render a ProgressRing with progress 0.5", () => {
-      // precondition noted
+      cleanup();
+      progressbar = render(<ProgressRing progress={0.5} />).container.querySelector("[role='progressbar']");
     });
 
     Then('the progressbar should have aria-valuenow "50"', () => {
-      cleanup();
-      const { container } = render(<ProgressRing progress={0.5} />);
-      expect(container.querySelector("[role='progressbar']")?.getAttribute("aria-valuenow")).toBe("50");
+      expect(progressbar?.getAttribute("aria-valuenow")).toBe("50");
     });
   });
 
   Scenario("Empty progress ring", ({ When, Then }) => {
+    let progressbar: Element | null;
+
     When("I render a ProgressRing with progress 0", () => {
-      // precondition noted
+      cleanup();
+      progressbar = render(<ProgressRing progress={0} />).container.querySelector("[role='progressbar']");
     });
 
     Then('the progressbar should have aria-valuenow "0"', () => {
-      cleanup();
-      const { container } = render(<ProgressRing progress={0} />);
-      expect(container.querySelector("[role='progressbar']")?.getAttribute("aria-valuenow")).toBe("0");
+      expect(progressbar?.getAttribute("aria-valuenow")).toBe("0");
     });
   });
 
   Scenario("Has correct aria attributes", ({ When, Then, And }) => {
+    let progressbar: Element | null;
+
     When("I render a ProgressRing with progress 0.75", () => {
-      // precondition noted
+      cleanup();
+      progressbar = render(<ProgressRing progress={0.75} />).container.querySelector("[role='progressbar']");
     });
 
     Then('the progressbar should have aria-valuemin "0"', () => {
-      cleanup();
-      const { container } = render(<ProgressRing progress={0.75} />);
-      expect(container.querySelector("[role='progressbar']")?.getAttribute("aria-valuemin")).toBe("0");
+      expect(progressbar?.getAttribute("aria-valuemin")).toBe("0");
     });
 
     And('the progressbar should have aria-valuemax "100"', () => {
-      cleanup();
-      const { container } = render(<ProgressRing progress={0.75} />);
-      expect(container.querySelector("[role='progressbar']")?.getAttribute("aria-valuemax")).toBe("100");
+      expect(progressbar?.getAttribute("aria-valuemax")).toBe("100");
     });
   });
 });

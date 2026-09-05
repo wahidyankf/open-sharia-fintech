@@ -13,7 +13,7 @@ title: "Reference"
 - [07 Workflow Overview](./workflow-overview.md) — the plan-checker workflow overview
 - [08 Factual Accuracy Validation](./factual-accuracy-validation.md) — verifying factual claims with web tools (Step 4b)
 - [09 Rule8 Operational Readiness Validation](./rule8-operational-readiness-validation.md) — Rule 8: operational readiness validation (Step 5b)
-- [10 Rule9 Manual Behavioral Assertion Validation](./rule9-manual-behavioral-assertion-validation.md) — Rule 9: manual behavioral assertion validation (Step 5c)
+- [10 Rule9 Manual Behavioural Assertion Validation](./rule9-manual-behavioural-assertion-validation.md) — Rule 9: manual behavioural assertion validation (Step 5c)
 - [11 Rule10 Worktree Specification Validation](./rule10-worktree-specification-validation.md) — Rule 10: worktree specification and archival-cleanup validation (Step 5d)
 - [12 Rule11 Execution Grade Clarity Validation](./rule11-execution-grade-clarity-validation.md) — Rule 11: execution-grade clarity validation (Step 5e)
 - [13 Rule12 Anti Hallucination Scan](./rule12-anti-hallucination-scan.md) — Rule 12: anti-hallucination scan (Step 5f)

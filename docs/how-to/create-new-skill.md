@@ -271,7 +271,7 @@ skills: [domain__your-skill-name] # Add your Skill here
 1. **Be specific**: Include exact terminology users will mention
 2. **List triggers**: Explicitly state "when task mentions X, Y, Z", in 150-250 words
 3. **Avoid generic**: Don't say "helps with documentation" - say "provides Mermaid diagram accessibility standards with color-blind friendly palette"
-4. **Test thoroughly**: Iterate based on actual auto-loading behavior
+4. **Test thoroughly**: Iterate based on actual auto-loading behaviour
 
 ### Content Organization
 
@@ -329,7 +329,7 @@ skills: [domain__your-skill-name] # Add your Skill here
 
 **Right**: Test auto-loading with realistic tasks, iterate on description, verify backward compatibility
 
-**Why**: Auto-loading behavior is critical. Untested Skills may not load when needed or may load when irrelevant.
+**Why**: Auto-loading behaviour is critical. Untested Skills may not load when needed or may load when irrelevant.
 
 ## Examples
 
@@ -416,7 +416,7 @@ wow__understanding-repository-architecture/
 3. Narrow the scope to prevent over-triggering
 4. Test with edge-case tasks to verify it doesn't load inappropriately
 
-### Problem: Agent Behavior Changed After Adding Skill
+### Problem: Agent Behaviour Changed After Adding Skill
 
 **Diagnosis**: Skill content conflicts with agent's inline knowledge
 

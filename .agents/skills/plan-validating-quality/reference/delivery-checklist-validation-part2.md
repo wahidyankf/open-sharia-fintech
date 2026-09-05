@@ -1,6 +1,6 @@
 # Delivery Checklist Validation, Part 2 (Scope 4)
 
-- **Canonical Gherkin references**: every behavior outcome section names stable IDs or exact titles and links
+- **Canonical Gherkin references**: every behaviour outcome section names stable IDs or exact titles and links
   the canonical PRD/spec source. Full inline Gherkin is duplication and **HIGH**. Multiple scenarios
   share one section only when one cohesive outcome and proof boundary binds them; otherwise split.
   Pure refactors and docs/governance-only sections are exempt. See
@@ -15,7 +15,7 @@
 - **Manual-assertion locale and evidence completeness (UI/API plans)**: manual-assertion steps must
   cover all supported locales on a multi-locale app and capture committed evidence (screenshots to
   `evidence/`, curl responses inlined). Full detail in
-  `reference/10-rule9-manual-behavioral-assertion-validation.md` items 4-5 (Step 5c). Single-locale
+  `reference/10-rule9-manual-behavioural-assertion-validation.md` items 4-5 (Step 5c). Single-locale
   coverage, or no evidence-capture step, is **HIGH**. See
   [Evidence Capture Convention](../../../../repo-governance/development/quality/evidence-capture.md).
 - **Rule-15 three-tester retest (web-UI feature-change plans)**: a near-end step runs the
@@ -54,7 +54,7 @@
 
 - Each outcome section has Input, Outcome, Proof, and canonical AC references; every concrete,
   independently verifiable action is a separate executor-tagged checkbox.
-- Code behavior slices have separate RED/GREEN/REFACTOR checkboxes. Flag omitted detail and omnibus
+- Code behaviour slices have separate RED/GREEN/REFACTOR checkboxes. Flag omitted detail and omnibus
   actions; do not flag a high useful checkbox count.
 - Split outcome sections at independent proof boundaries. Reject only mechanical keystroke
   micro-checkboxes with no distinct observation.
@@ -62,7 +62,7 @@
   unit to follow a natural cohesive seam, exclude unrelated purposes, and keep every artifact
   needed to build, verify, operate, roll back, and remain internally consistent together. Require
   its exact resulting `main` state to be safe to deploy to production immediately. Incomplete
-  behavior must be complete-and-inert behind a temporary production-disabled feature flag with
+  behaviour must be complete-and-inert behind a temporary production-disabled feature flag with
   enabled and disabled path tests and recorded rollout, rollback, and removal. Missing any of this
   delivery evidence is **HIGH**.
 - Phase transitions have explicit verification steps (e.g. "Verify `nx run app:typecheck` passes").

@@ -1083,7 +1083,7 @@ const ZakatCalculator: React.FC = () => {
 - ✅ **Update dependencies**: React 18.2+, TypeScript 5+
 - ✅ **Set up testing**: React Testing Library, Jest
 - ✅ **Create feature flags**: For gradual rollout
-- ✅ **Document current behavior**: Capture expected functionality
+- ✅ **Document current behaviour**: Capture expected functionality
 
 ### During Migration
 

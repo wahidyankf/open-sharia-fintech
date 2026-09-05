@@ -52,7 +52,7 @@ All Next.js applications MUST follow the patterns and practices documented here:
 - **Project Structure**: See [Architecture Integration](#architecture-integration)
 - **Routing**: See [Routing](routing.md) — Dynamic routes, route groups, parallel and intercepting routes
 - **Data Fetching**: See [Data Fetching](data-fetching.md) — Server-side fetching, caching, revalidation, and Server Actions
-- **Testing**: See [Testing](testing.md) — Component, Server Action, and E2E testing with Playwright
+- **Testing**: See [Testing](testing.md) — Unit testing with a 99% line gate and E2E with Playwright
 - **Performance**: See [Performance](performance.md) — Image/font optimization, code splitting, and Web Vitals monitoring
 
 ## Software Engineering Principles
@@ -100,7 +100,7 @@ Next.js usage in this platform follows the software engineering principles from 
 - [Next.js API Routes](./api-routes.md) — Guide to Next.js API routes including route handlers, HTTP methods, request/response handling, authentication, and REST API design
 - [Next.js Middleware](./middleware.md) — Guide to Next.js Edge middleware for request modification, authentication, redirects, rewrites, and A/B testing
 - [Next.js Performance](./performance.md) — Guide to Next.js performance optimization including image/font optimization, code splitting, lazy loading, caching strategies, bundle analysis, and Web Vitals monitoring
-- [Next.js Testing](./testing.md) — Guide to testing Next.js applications including component testing with React Testing Library, Server Component testing, Server Action testing, E2E with Playwright, and integration testing
+- [Next.js Testing](./testing.md) — Guide to Unit testing with a 99% line gate, zero-network Integration, and public-boundary E2E with Playwright
 - [Next.js Deployment](./deployment.md) — Guide to Next.js deployment including Vercel, self-hosting with Node.js, Docker containerization, environment variables, CI/CD pipelines, and production monitoring
 - [Next.js Configuration](./configuration.md) — Guide to Next.js configuration including next.config.ts options, environment variables, TypeScript config, custom webpack, turbopack, and experimental features
 - [Next.js Styling](./styling.md) — Guide to styling Next.js applications with CSS Modules, Tailwind CSS, CSS-in-JS, and next/font optimization
@@ -379,7 +379,7 @@ Guide to rendering strategies.
 
 **Covers**:
 
-- Static rendering (SSG) - Default behavior
+- Static rendering (SSG) - Default behaviour
 - Dynamic rendering (SSR) - With dynamic functions
 - Streaming - Progressive rendering
 - Partial Prerendering (PPR) - Static + Dynamic
@@ -450,7 +450,7 @@ Guide to performance optimization.
 - Performance profiling
 - Edge vs Node.js runtime decisions
 
-#### [Next.js Testing](testing.md) — Guide to testing Next.js applications
+#### [Next.js Testing](testing.md) — Unit 99% line coverage, zero-network Integration, and public-boundary E2E
 
 Guide to testing Next.js applications.
 
@@ -1567,7 +1567,7 @@ CMD ["node", "server.js"]
 - [Next.js Security](./security.md) — Guide to securing Next.js applications with CSRF protection, XSS prevention, input validation, authentication, and OWASP Top 10 defenses
 - [Next.js Server Components](./server-components.md) — Guide to React Server Components in Next.js including patterns, composition strategies, and integration with Client Components
 - [Next.js Styling](./styling.md) — Guide to styling Next.js applications with CSS Modules, Tailwind CSS, CSS-in-JS, and next/font optimization
-- [Next.js Testing](./testing.md) — Guide to testing Next.js applications including component testing with React Testing Library, Server Component testing, Server Action testing, E2E with Playwright, and integration testing
+- [Next.js Testing](./testing.md) — Guide to Unit testing with a 99% line gate, zero-network Integration, and public-boundary E2E with Playwright
 - [Next.js TypeScript](./typescript.md) — Guide to TypeScript integration in Next.js with type-safe patterns, configuration, and best practices
 - [Next.js Version Migration](./version-migration.md) — Guide to migrating Next.js applications from Pages Router to App Router, upgrading Next.js versions (13→14→15), React migrations, breaking changes, and migration strategies
 

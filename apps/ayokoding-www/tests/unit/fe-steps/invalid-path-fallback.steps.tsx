@@ -91,23 +91,25 @@ import { renderCoursePathPage } from "../render-course-path-page";
 const feature = await loadFeature(
   path.resolve(
     process.cwd(),
-    "../../specs/apps/ayokoding/www/behaviors/frontend/course-paths/invalid-path-fallback.feature",
+    "../../specs/apps/ayokoding/www/behaviours/frontend/course-paths/invalid-path-fallback.feature",
   ),
 );
 
 describeFeature(feature, ({ Scenario }) => {
   Scenario("An invalid path context falls back to the canonical view", ({ Given, When, Then, And }) => {
     let jsx: React.ReactElement;
+    let requestedPath = "";
 
     Given("a reader opens a course URL with a path context that names no known path", () => {
-      // Precondition noted; the render happens in the When step below.
+      requestedPath = "careers/does-not-exist/anywhere";
+      expect(requestedPath).not.toBe(fixtureManifest.pathId);
     });
 
     When("the course page renders", async () => {
       jsx = await renderCoursePathPage({
         locale: "en",
         slug: ["learn", "courses", "just-enough-python"],
-        search: { path: "careers/does-not-exist/anywhere" },
+        search: { path: requestedPath },
       });
       cleanup();
       render(jsx);
@@ -118,11 +120,9 @@ describeFeature(feature, ({ Scenario }) => {
       expect(screen.queryByRole("navigation", { name: "Page navigation" })).toBeNull();
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/invalid-path-fallback.feature:An invalid path context falls back to the canonical view
     And("no error is shown", () => {
-      // Reaching this assertion at all proves ContentPage() did not throw — the fixture course
-      // has no path-membership beyond a non-matching `?path=`, so no exception propagated.
-      expect(true).toBe(true);
+      expect(screen.queryByRole("alert")).toBeNull();
+      expect(document.body.textContent?.toLowerCase()).not.toContain("error");
     });
   });
 });

@@ -114,7 +114,7 @@ import { SidebarHost } from "@/features/course-paths/shell/sidebar-host";
 const feature = await loadFeature(
   path.resolve(
     process.cwd(),
-    "../../specs/apps/ayokoding/www/behaviors/frontend/course-paths/canonical-fallback.feature",
+    "../../specs/apps/ayokoding/www/behaviours/frontend/course-paths/canonical-fallback.feature",
   ),
 );
 
@@ -123,7 +123,9 @@ describeFeature(feature, ({ Scenario }) => {
     let jsx: React.ReactElement;
 
     Given("a reader opens a course URL /en/learn/courses/<course-id> with no path context query parameter", () => {
-      // Precondition noted; the render happens in the When step below.
+      const requestedUrl = new URL("https://ayokoding.com/en/learn/courses/just-enough-python");
+      expect(requestedUrl.pathname).toBe("/en/learn/courses/just-enough-python");
+      expect(requestedUrl.searchParams.has("path")).toBe(false);
     });
 
     When("the course page renders", async () => {
@@ -141,7 +143,6 @@ describeFeature(feature, ({ Scenario }) => {
       expect(prereqs.getByRole("link", { name: "Git" })).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/canonical-fallback.feature:A course deep-linked without path context renders the canonical view
     And('a "this course is part of" affordance lists every path that includes the course', () => {
       const partOf = within(screen.getByRole("navigation", { name: "This course is part of" }));
       expect(partOf.getByRole("link", { name: "Python Fundamentals" })).toBeTruthy();
@@ -170,7 +171,6 @@ describeFeature(feature, ({ Scenario }) => {
         expect(screen.getByRole("navigation", { name: "Sidebar navigation" })).toBeTruthy();
       });
 
-      // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/canonical-fallback.feature:A course opened without path context renders the generic sidebar unchanged
       And("no path rail, path readout, or path breadcrumb segment appears", () => {
         expect(screen.queryByRole("navigation", { name: /course list/i })).toBeNull();
         expect(screen.queryByText(/on path/i)).toBeNull();

@@ -35,14 +35,15 @@ const courseTitles = {
 const feature = await loadFeature(
   path.resolve(
     process.cwd(),
-    "../../specs/apps/ayokoding/www/behaviors/frontend/course-paths/arc-landing-one-role.feature",
+    "../../specs/apps/ayokoding/www/behaviours/frontend/course-paths/arc-landing-one-role.feature",
   ),
 );
 
 describeFeature(feature, ({ Scenario }) => {
   Scenario("An arc landing with one path renders a full card, not a sparse stub", ({ Given, When, Then, And }) => {
     Given("a fixture arc manifest lists exactly one role", () => {
-      // Fixture: `soloRole` above — the "interview-ready" arc's only loaded manifest.
+      expect([soloRole]).toHaveLength(1);
+      expect(soloRole.arc).toBe("interview-ready");
     });
 
     When("a reader opens that arc's landing page", () => {
@@ -55,7 +56,6 @@ describeFeature(feature, ({ Scenario }) => {
       expect(screen.getByText(/Just Enough Python/)).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/arc-landing-one-role.feature:An arc landing with one path renders a full card, not a sparse stub
     And("the layout does not reserve or render a visibly empty second card", () => {
       // Count the top-level role-card <li> items directly (not `querySelectorAll("li")`, which
       // would also count the syllabus preview's own nested <li> items per course).

@@ -51,7 +51,7 @@ with no pull number; only the reply sub-resource is nested under the pull.
 **Posting a reply body from a file — use `-F`, not `-f`**: when a reply is drafted to a temp file
 and posted with `gh api ... -f body=@/path/to/file`, `gh` treats `@/path/to/file` as the
 **literal string value**, not a file reference — only the capitalized `-F body=@/path/to/file`
-triggers `gh`'s `@file`-read behavior. The lowercase form silently posts the literal
+triggers `gh`'s `@file`-read behaviour. The lowercase form silently posts the literal
 `@/path/to/file` text as the comment body.
 
 **Multi-reply loops in this environment's shell (zsh) are 1-indexed**: a bash-style

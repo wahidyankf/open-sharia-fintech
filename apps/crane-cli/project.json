@@ -52,118 +52,69 @@
     "test:unit": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "if grep -rn -E --include='*.fs' 'Skip\\s*=' apps/crane-cli/tests/unit; then echo 'ERROR: xunit Skip= attribute found in test files above'; exit 1; fi && dotnet test apps/crane-cli/tests/unit/crane-cli-unit-tests.fsproj"
+        "command": "if grep -rn -E --include='*.fs' 'Skip\\s*=' apps/crane-cli/tests/unit; then echo 'ERROR: xunit Skip= attribute found in test files above'; exit 1; fi && dotnet test apps/crane-cli/tests/unit/crane-cli-unit-tests.fsproj /p:CollectCoverage=true /p:Threshold=99 \"/p:Include=[crane]*\" /p:ThresholdType=line \"/p:ExcludeByFile=**/Adapters/In/CliAdapter.fs%2C**/Adapters/Out/PdfAdapter.fs%2C**/Adapters/Out/OcrAdapter.fs%2C**/Program.fs\""
       },
       "cache": true,
       "inputs": [
         "{projectRoot}/src/**/*.fs",
         "{projectRoot}/tests/unit/**/*.fs",
         "{projectRoot}/crane-cli.fsproj",
-        "{workspaceRoot}/specs/apps/crane/cli/behaviors/**/*.feature"
+        "{workspaceRoot}/specs/apps/crane/cli/behaviours/**/*.feature"
       ]
     },
-    "test:coverage": {
+    "test:e2e": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet test apps/crane-cli/tests/unit/crane-cli-unit-tests.fsproj /p:CollectCoverage=true /p:Threshold=99 \"/p:Include=[crane]*\" /p:ThresholdType=line \"/p:ExcludeByFile=**/Adapters/In/CliAdapter.fs%2C**/Adapters/Out/PdfAdapter.fs%2C**/Adapters/Out/OcrAdapter.fs%2C**/Program.fs\""
+        "command": "dotnet test apps/crane-cli/tests/e2e/crane-cli-e2e-tests.fsproj"
       },
+      "dependsOn": ["build"],
       "cache": true,
       "inputs": [
-        "{projectRoot}/src/**/*.fs",
-        "{projectRoot}/tests/unit/**/*.fs",
-        "{projectRoot}/crane-cli.fsproj",
-        "{workspaceRoot}/specs/apps/crane/cli/behaviors/**/*.feature"
+        "{projectRoot}/tests/e2e/**/*.fs",
+        "{projectRoot}/tests/e2e/crane-cli-e2e-tests.fsproj",
+        "{workspaceRoot}/specs/apps/crane/cli/behaviours/**/*.feature"
       ]
     },
     "test:quick": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "npx nx run crane-cli:typecheck",
-          "npx nx run crane-cli:lint",
-          "npx nx run crane-cli:test:unit",
-          "npx nx run crane-cli:test:coverage",
-          "npx nx run crane-cli:test:specs",
-          "npx nx run crane-cli:test:layout:validation",
-          "npx nx run crane-cli:coverage:policy:validation",
-          "npx nx run crane-cli:package-manifest:policy:validation"
+          {
+            "command": "npm exec -- nx run crane-cli:typecheck",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run crane-cli:lint",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run crane-cli:test:unit",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run crane-cli:specs:structure-validation",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run crane-cli:test:coverage",
+            "forwardAllArgs": false
+          }
         ],
-        "parallel": false
-      },
-      "dependsOn": ["typecheck", "lint"],
-      "cache": true,
-      "inputs": ["default", "specs"]
-    },
-    "test:integration": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "echo 'no-op: target not applicable for this project'"
-      },
-      "cache": true
-    },
-    "specs:behavior:coverage": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps specs/apps/crane/cli/behaviors apps/crane-cli"
-      },
-      "cache": true,
-      "inputs": ["{workspaceRoot}/specs/apps/crane/cli/behaviors/**/*.feature", "{projectRoot}/src/**/*.fs"]
-    },
-    "test:behavior:coverage:unit": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract bdd validate --project crane-cli --adapter unit"
+        "parallel": false,
+        "forwardAllArgs": false
       },
       "cache": true,
       "inputs": [
-        "{workspaceRoot}/specs/apps/crane/cli/behaviors/**/*.feature",
-        "{workspaceRoot}/repo-config.yml",
-        "default"
+        "default",
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/apps/crane-cli/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/apps/crane/cli/behaviours/**/*.feature",
+        "{workspaceRoot}/apps/crane-cli/tests/unit/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/apps/crane-cli/tests/unit/crane-cli-unit-tests.fsproj",
+        "{workspaceRoot}/apps/crane-cli/tests/e2e/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/apps/crane-cli/tests/e2e/crane-cli-e2e-tests.fsproj"
       ]
-    },
-    "test:behavior:coverage:integration": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract bdd validate --project crane-cli --adapter integration"
-      },
-      "cache": true,
-      "inputs": [
-        "{workspaceRoot}/specs/apps/crane/cli/behaviors/**/*.feature",
-        "{workspaceRoot}/repo-config.yml",
-        "default"
-      ]
-    },
-    "test:behavior:coverage:e2e": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract bdd validate --project crane-cli --adapter e2e"
-      },
-      "cache": true,
-      "inputs": [
-        "{workspaceRoot}/specs/apps/crane/cli/behaviors/**/*.feature",
-        "{workspaceRoot}/repo-config.yml",
-        "default"
-      ]
-    },
-    "test:behavior:coverage": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "npx nx run crane-cli:test:behavior:coverage:unit",
-          "npx nx run crane-cli:test:behavior:coverage:integration",
-          "npx nx run crane-cli:test:behavior:coverage:e2e"
-        ],
-        "parallel": false
-      },
-      "dependsOn": ["test:behavior:coverage:unit", "test:behavior:coverage:integration", "test:behavior:coverage:e2e"],
-      "cache": true
-    },
-    "test:e2e": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "echo 'no-op: target not applicable for this project'"
-      },
-      "cache": true
     },
     "deps:audit": {
       "executor": "nx:run-commands",
@@ -187,42 +138,92 @@
       "cache": true,
       "inputs": ["{workspaceRoot}/specs/apps/!(rhino)/**/*"]
     },
-    "test:specs": {
+    "test:coverage:unit": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["npx nx run crane-cli:specs:structure-validation", "npx nx run crane-cli:specs:behavior:coverage"],
-        "parallel": false
+        "command": "node scripts/behaviour-coverage.mjs --config apps/crane-cli/behaviour-coverage.json --adapter unit"
       },
       "cache": true,
-      "inputs": ["default", "specs"]
+      "inputs": [
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/apps/crane-cli/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/apps/crane/cli/behaviours/**/*.feature",
+        "{workspaceRoot}/apps/crane-cli/tests/unit/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/apps/crane-cli/tests/unit/crane-cli-unit-tests.fsproj",
+        "{workspaceRoot}/apps/crane-cli/tests/e2e/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/apps/crane-cli/tests/e2e/crane-cli-e2e-tests.fsproj"
+      ]
     },
-    "test:layout:validation": {
+    "test:coverage:e2e": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract layout validate --project crane-cli"
+        "command": "node scripts/behaviour-coverage.mjs --config apps/crane-cli/behaviour-coverage.json --adapter e2e"
       },
       "cache": true,
-      "inputs": ["default", "{projectRoot}/project.json"]
+      "inputs": [
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/apps/crane-cli/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/apps/crane/cli/behaviours/**/*.feature",
+        "{workspaceRoot}/apps/crane-cli/tests/unit/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/apps/crane-cli/tests/unit/crane-cli-unit-tests.fsproj",
+        "{workspaceRoot}/apps/crane-cli/tests/e2e/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/apps/crane-cli/tests/e2e/crane-cli-e2e-tests.fsproj"
+      ]
     },
-    "coverage:policy:validation": {
+    "test:coverage:behaviour": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract coverage validate --project crane-cli"
+        "command": "node scripts/behaviour-coverage.mjs --config apps/crane-cli/behaviour-coverage.json --adapter behaviour"
       },
       "cache": true,
-      "inputs": ["default", "{projectRoot}/project.json"]
+      "inputs": [
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/apps/crane-cli/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/apps/crane/cli/behaviours/**/*.feature",
+        "{workspaceRoot}/apps/crane-cli/tests/unit/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/apps/crane-cli/tests/unit/crane-cli-unit-tests.fsproj",
+        "{workspaceRoot}/apps/crane-cli/tests/e2e/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/apps/crane-cli/tests/e2e/crane-cli-e2e-tests.fsproj"
+      ]
     },
-    "package-manifest:policy:validation": {
+    "test:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract manifest validate --project crane-cli"
+        "commands": [
+          {
+            "command": "npm exec -- nx run crane-cli:test:coverage:unit",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run crane-cli:test:coverage:e2e",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run crane-cli:test:coverage:behaviour",
+            "forwardAllArgs": false
+          }
+        ],
+        "parallel": false,
+        "forwardAllArgs": false
       },
       "cache": true,
-      "inputs": ["default", "{projectRoot}/project.json"]
+      "inputs": [
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/apps/crane-cli/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/apps/crane/cli/behaviours/**/*.feature",
+        "{workspaceRoot}/apps/crane-cli/tests/unit/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/apps/crane-cli/tests/unit/crane-cli-unit-tests.fsproj",
+        "{workspaceRoot}/apps/crane-cli/tests/e2e/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/apps/crane-cli/tests/e2e/crane-cli-e2e-tests.fsproj"
+      ]
     }
   },
   "namedInputs": {
-    "specs": ["{workspaceRoot}/specs/apps/crane/cli/behaviors/**/*.feature"]
+    "specs": ["{workspaceRoot}/specs/apps/crane/cli/behaviours/**/*.feature"]
   },
   "tags": ["type:app", "platform:cli", "lang:fsharp", "domain:crane"],
   "implicitDependencies": ["fsharp-crane-core"]

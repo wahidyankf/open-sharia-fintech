@@ -14,7 +14,6 @@ let ``detectFigures finds Figure 1 reference`` () =
     Assert.Equal(1, result.Length)
     Assert.Equal("1", result.[0].Number)
 
-// @covers specs/apps/crane/cli/behaviors/media/figure-check.feature:Figure with Mermaid block produces no finding
 [<Fact>]
 let ``checkFigures returns empty when figure covered by Mermaid`` () =
     let pdfText = "This document contains Figure 1"
@@ -22,7 +21,6 @@ let ``checkFigures returns empty when figure covered by Mermaid`` () =
     let result = checkFigures pdfText mdText
     Assert.Empty(result)
 
-// @covers specs/apps/crane/cli/behaviors/media/figure-check.feature:Figure with no representation produces a HIGH finding
 [<Fact>]
 let ``checkFigures returns HIGH finding when figure not covered`` () =
     let pdfText = "This document contains Figure 1"
@@ -31,7 +29,6 @@ let ``checkFigures returns HIGH finding when figure not covered`` () =
     Assert.NotEmpty(result)
     Assert.Equal("HIGH", result.[0].Criticality)
 
-// @covers specs/apps/crane/cli/behaviors/media/figure-check.feature:Figure with placeholder produces no finding
 [<Fact>]
 let ``checkFigures returns empty when figure covered by placeholder`` () =
     let pdfText = "This document contains Figure 1"

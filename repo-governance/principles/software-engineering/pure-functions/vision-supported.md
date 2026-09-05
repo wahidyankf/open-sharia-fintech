@@ -23,6 +23,6 @@ This principle serves the [Open Sharia Enterprise Vision](../../../vision/open-s
 - **Easier Testing and Validation**: Pure functions are trivial to test - no mocking databases, no complex setup. Islamic scholars and developers can verify Murabaha markup calculations, profit-sharing ratios, and Zakat formulas through simple input/output tests
 - **Composability**: Pure functions combine easily to build complex Shariah-compliant systems from simple, verified building blocks. Verify each function individually, then trust the composition
 - **Builds Trust**: When Islamic finance calculations have no hidden side effects, users can trust the system. Transparent, deterministic logic demonstrates honesty (Amanah) - a core Islamic value
-- **Educational Value**: Pure functions serve as clear examples of how to implement Shariah rules in code. No magic, no hidden behavior - just inputs and outputs
+- **Educational Value**: Pure functions serve as clear examples of how to implement Shariah rules in code. No magic, no hidden behaviour - just inputs and outputs
 
 **Vision alignment**: Democratizing Islamic enterprise requires trust and transparency. Pure functions make business logic verifiable by anyone - essential when financial transactions must comply with Shariah law. No black boxes in halal finance.

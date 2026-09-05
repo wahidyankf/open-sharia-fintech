@@ -28,3 +28,16 @@ loadTierEnv();
 ## Consumers
 
 `ayokoding-www`, `organiclever-app-web`, `organiclever-www`, `ose-app-web`, `ose-www`.
+
+## BDD and Testing
+
+The canonical corpus is `specs/libs/ts-env-loader/behaviours/`. `test:unit` runs the in-process
+adapter against an injected in-memory `TierEnvPort`; `test:integration` exercises isolated real
+temporary files and dotenv loading. Matching `test:coverage:unit`, `test:coverage:integration`,
+`test:coverage:e2e`, `test:coverage:behaviour`, and aggregate `test:coverage` validate all three
+Gherkin adapters statically.
+The manually selected `test:e2e` target implements the applicable port-resolution scenarios through
+the repository's `scripts/next-with-port.mjs` public process boundary and a synthetic standalone
+server fixture. Tier-file scenarios are E2E-exempt because that public wrapper never invokes the
+library loader; their named Integration proof uses isolated real files. Neither Integration nor
+E2E runs through `test:quick`.

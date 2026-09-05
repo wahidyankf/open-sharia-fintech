@@ -2,6 +2,7 @@ import "./src/contexts/env-loader/infrastructure/env-loader.ts";
 import "./src/env.ts";
 import type { NextConfig } from "next";
 import path from "node:path";
+import { APP_REDIRECTS } from "./src/contexts/routing/application/app-routes";
 
 const nextConfig: NextConfig = {
   output: "standalone",
@@ -24,13 +25,7 @@ const nextConfig: NextConfig = {
   // server-component `permanentRedirect()` form returns 200 + RSC payload in
   // dev mode and breaks the e2e redirect-status assertion.
   async redirects() {
-    return [
-      {
-        source: "/app",
-        destination: "/app/home",
-        permanent: true,
-      },
-    ];
+    return [...APP_REDIRECTS];
   },
 };
 

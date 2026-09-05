@@ -53,5 +53,5 @@ to fall back silently to the compiled-in default.
 
 ## Related
 
-- [Behaviors](./behaviors/README.md) — the scenarios this library must satisfy.
+- [Behaviours](./behaviours/README.md) — the scenarios this library must satisfy.
 - [`libs/ts-env-loader/README.md`](../../../libs/ts-env-loader/README.md) — the implementing package.

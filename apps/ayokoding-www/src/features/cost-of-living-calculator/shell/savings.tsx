@@ -69,7 +69,7 @@ export function SavingsTable({
   onGrossChange,
 }: Props) {
   // Controlled (URL-driven) when a gross prop is supplied; otherwise internal state hydrated
-  // from the URL on mount (legacy/standalone behavior).
+  // from the URL on mount (legacy/standalone behaviour).
   const controlled = grossProp !== undefined;
   const [internalGross, setInternalGross] = useState(0);
   // UWT-005 (USS-001): auto-focus the gross input when the Savings tab mounts (mount === tab
@@ -240,7 +240,13 @@ export function SavingsTable({
                   totalCompUsd,
                   hasSubNational,
                 }) => (
-                  <TableRow key={city.id}>
+                  <TableRow
+                    key={city.id}
+                    data-testid="savings-row"
+                    data-city-id={city.id}
+                    data-country-id={city.countryId}
+                    data-currency={city.currency}
+                  >
                     <TableCell>
                       <a href={`?tab=cost&country=${city.countryId}`}>{localeName(country.name, locale)}</a>
                     </TableCell>
@@ -255,7 +261,11 @@ export function SavingsTable({
                         </span>
                       )}
                     </TableCell>
-                    <TableCell className="hidden text-right lg:table-cell">
+                    <TableCell
+                      data-testid="essentials-value"
+                      data-usd={essUsd}
+                      className="hidden text-right lg:table-cell"
+                    >
                       {fmtDualCurrency(essUsd / fxRate, city.currency, essUsd)}
                     </TableCell>
                     <TableCell
@@ -266,14 +276,22 @@ export function SavingsTable({
                       {fmtDualCurrency(essentialSavings / fxRate, city.currency, essentialSavings)} (
                       {pct(essentialSavings, net)})
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell data-testid="savings-lifestyle" data-usd={afterLifestyle} className="text-right">
                       {fmtDualCurrency(afterLifestyle / fxRate, city.currency, afterLifestyle)} (
                       {pct(afterLifestyle, net)})
                     </TableCell>
-                    <TableCell className="hidden text-right lg:table-cell">
+                    <TableCell
+                      data-testid="non-salary-value"
+                      data-usd={nonSalaryUsd}
+                      className="hidden text-right lg:table-cell"
+                    >
                       {fmtDualCurrency(nonSalaryUsd / fxRate, city.currency, nonSalaryUsd)}
                     </TableCell>
-                    <TableCell className="hidden text-right lg:table-cell">
+                    <TableCell
+                      data-testid="total-comp-value"
+                      data-usd={totalCompUsd}
+                      className="hidden text-right lg:table-cell"
+                    >
                       {fmtDualCurrency(totalCompUsd / fxRate, city.currency, totalCompUsd)}
                     </TableCell>
                   </TableRow>

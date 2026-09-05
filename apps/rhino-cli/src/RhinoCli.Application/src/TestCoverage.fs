@@ -1,48 +1,13 @@
-/// Port of `rhino-cli test-coverage diff` and `rhino-cli test-coverage
-/// merge` — coverage restricted to lines changed in a git diff, and
-/// coverage-map merging/LCOV serialization, respectively [Repo-grounded —
+/// Coverage parsing, aggregation, and reporting used by the public
+/// `rhino-cli test-coverage validate` command [Repo-grounded —
 /// `apps/rhino-cli/src/application/testcoverage/diff.rs`,
 /// `apps/rhino-cli/src/application/testcoverage/types.rs`,
 /// `apps/rhino-cli/src/application/testcoverage/exclude.rs`,
 /// `apps/rhino-cli/src/application/testcoverage/merge.rs`,
-/// `apps/rhino-cli/src/application/testcoverage/lcov.rs`] for
-/// `specs/apps/rhino/cli/behaviors/test-coverage/test-coverage-diff.feature`'s
-/// 4 scenarios and
-/// `specs/apps/rhino/cli/behaviors/test-coverage/test-coverage-merge.feature`'s
-/// 3 scenarios.
-///
-/// Scope: the first PR against the test-coverage subsystem ported only the
-/// pieces `compute_diff_coverage` itself needs: the coverage-report result
-/// shapes (`types.rs`'s `Format`/`FileResult`/`Result`), the
-/// `CoverageMap`/`LineCoverage`/`BranchCoverage` shapes and
-/// `has_missed_branch` — the slice of `merge.rs` `diff.rs` calls directly.
-/// This PR adds `merge.rs`'s own map-merge (`merge_coverage_maps`) and
-/// LCOV-serialization (`format_lcov_string`/`write_lcov`) functions, its
-/// `result_from_coverage_map` line-based aggregator, and the LCOV-specific
-/// slice of `lcov.rs`'s `parse_lcov` plus `merge.rs`'s
-/// `to_coverage_map_lcov` needed to turn a real `.info` file into a
-/// `CoverageMap`. The JaCoCo/Cobertura/Go format parsers/converters and
-/// `lcov.rs`'s own `compute_lcov_result` stay out of scope until the
-/// `test-coverage-validate.feature` PR needs them. Also ports the
-/// Go-`filepath.Match`-semantics exclude matcher (`exclude.rs`) and
-/// `compute_diff_coverage`'s own line-intersection algorithm.
-///
-/// No Rust command wrapper exists for either `test-coverage diff` or
-/// `test-coverage merge` under `apps/rhino-cli/src/commands/` (only
-/// `test_coverage_validate.rs` is wired to a CLI verb) to bind argument
-/// shapes against, so — matching this plan's established `Doctor.fs`
-/// precedent for a feature with no wired-up CLI verb yet — every scenario
-/// calls [`computeDiffCoverage`]/[`mergeCoverageMaps`]/[`writeLcov`]/
-/// [`resultFromCoverageMap`] directly. `get_git_diff`'s real `git diff`
-/// invocation and `parse_git_diff`'s unified-diff text parsing are both
-/// deferred to whichever future PR wires a real `test-coverage diff` CLI
-/// verb: each scenario's changed-line set is supplied directly as a
-/// [`DiffHunk`] list, and each diff scenario's coverage-report contents are
-/// supplied directly as a [`CoverageMap`] rather than round-tripped through
-/// a not-yet-ported file parser. The merge scenarios, in contrast, do
-/// round-trip through real temp LCOV files on disk via [`toCoverageMapLcov`]
-/// and [`writeLcov`], because one merge scenario itself asserts that the
-/// merged output file exists in LCOV format.
+/// `apps/rhino-cli/src/application/testcoverage/lcov.rs`]. Internal diff and
+/// merge helpers remain focused implementation details; the canonical
+/// Gherkin corpus intentionally covers only commands exposed by the
+/// published process.
 module RhinoCli.Application.TestCoverage
 
 open System
@@ -52,6 +17,16 @@ open System.Text.Json
 open System.Text.Json.Nodes
 open System.Text.RegularExpressions
 open System.Xml.Linq
+
+/// Read-only coverage-file boundary. Unit tests supply an in-memory fake;
+/// the public command uses [`systemFileAccess`].
+type FileAccess =
+    { Exists: string -> bool
+      ReadAllLines: string -> string array }
+
+let private systemFileAccess: FileAccess =
+    { Exists = File.Exists
+      ReadAllLines = File.ReadAllLines }
 
 // ---------------------------------------------------------------------------
 // Core types [Repo-grounded — `types.rs`]
@@ -419,11 +394,6 @@ let formatLcovString (cm: CoverageMap) : string =
 
     sb.ToString()
 
-/// Writes `cm` serialized as LCOV text to `outPath`
-/// [Repo-grounded — `merge.rs::write_lcov`].
-let writeLcov (outPath: string) (cm: CoverageMap) : unit =
-    File.WriteAllText(outPath, formatLcovString cm)
-
 /// Computes a [`CoverageResult`] from a `CoverageMap` using the standard
 /// line-based algorithm [Repo-grounded — `merge.rs::result_from_coverage_map`].
 let resultFromCoverageMap (cm: CoverageMap) (threshold: float) : CoverageResult =
@@ -550,9 +520,7 @@ let private parseBrda (rest: string) (current: LcovFile) : LcovFile =
 
 /// Reads and parses an LCOV info file from `filename`, one [`LcovFile`] per
 /// `end_of_record` section [Repo-grounded — `lcov.rs::parse_lcov`].
-let private parseLcov (filename: string) : LcovFile list =
-    let lines = File.ReadAllLines(filename)
-
+let private parseLcovLines (lines: string array) : LcovFile list =
     let files, _ =
         ((List.empty, emptyLcovFile), lines)
         ||> Array.fold (fun (files, current) line ->
@@ -575,7 +543,7 @@ let private parseLcov (filename: string) : LcovFile list =
 
 /// Converts an LCOV info file into a [`CoverageMap`]
 /// [Repo-grounded — `merge.rs::to_coverage_map_lcov`].
-let toCoverageMapLcov (filename: string) : CoverageMap =
+let private toCoverageMapLcovLines (lines: string array) : CoverageMap =
     let convertFile (f: LcovFile) : Map<int64, LineCoverage> =
         let daEntries =
             f.DaLines
@@ -616,8 +584,14 @@ let toCoverageMapLcov (filename: string) : CoverageMap =
 
         (daEntries @ brdaOnlyEntries) |> Map.ofList
 
-    parseLcov filename
+    parseLcovLines lines
     |> List.fold (fun (acc: CoverageMap) f -> Map.add f.Path (convertFile f) acc) Map.empty
+
+/// Converts LCOV text into a [`CoverageMap`] without crossing a filesystem
+/// boundary.
+let toCoverageMapLcovContent (content: string) : CoverageMap =
+    content.Replace("\r\n", "\n", StringComparison.Ordinal).Replace('\r', '\n').Split('\n')
+    |> toCoverageMapLcovLines
 
 // ---------------------------------------------------------------------------
 // Format code + detection [Repo-grounded — `types.rs::Format::code`,
@@ -637,7 +611,7 @@ let formatCode (fmt: Format) : string =
 /// Detects the coverage format of `filename` from its name, then — when the
 /// name gives no answer — its content. Falls back to [`Format.Go`]
 /// [Repo-grounded — `detect.rs::detect_format`].
-let detectFormat (filename: string) : Format =
+let detectFormatWith (files: FileAccess) (filename: string) : Format =
     let lower = filename.ToLowerInvariant()
 
     if lower.EndsWith(".info", StringComparison.Ordinal) || lower.Contains("lcov") then
@@ -646,7 +620,7 @@ let detectFormat (filename: string) : Format =
         Format.Jacoco
     elif lower.EndsWith(".xml", StringComparison.Ordinal) && lower.Contains("cobertura") then
         Format.Cobertura
-    elif not (File.Exists filename) then
+    elif not (files.Exists filename) then
         Format.Go
     else
         let rec scan (lines: string list) : Format =
@@ -687,7 +661,7 @@ let detectFormat (filename: string) : Format =
                 else
                     Format.Go
 
-        File.ReadAllLines(filename) |> List.ofArray |> scan
+        files.ReadAllLines filename |> List.ofArray |> scan
 
 // ---------------------------------------------------------------------------
 // Go cover.out parsing and result computation [Repo-grounded —
@@ -719,13 +693,13 @@ let private isGoCodeLine (content: string) : bool =
 
 /// Reads `go.mod` in `dir` and returns the module path, or `""` when absent
 /// [Repo-grounded — `go_coverage.rs::get_module_name_from`].
-let private getModuleNameFrom (dir: string) : string =
+let private getModuleNameFrom (files: FileAccess) (dir: string) : string =
     let path = Path.Combine(dir, "go.mod")
 
-    if not (File.Exists path) then
+    if not (files.Exists path) then
         ""
     else
-        File.ReadAllLines(path)
+        files.ReadAllLines path
         |> Array.tryPick (fun line ->
             let parts = line.Split([| ' '; '\t' |], StringSplitOptions.RemoveEmptyEntries)
 
@@ -738,24 +712,24 @@ let private getModuleNameFrom (dir: string) : string =
 /// Returns line number (1-based) → content for a source file resolved
 /// relative to `baseDir`, or `None` when the file cannot be opened
 /// [Repo-grounded — `go_coverage.rs::get_source_lines_from`].
-let private getSourceLinesFrom (baseDir: string) (relPath: string) : Map<int, string> option =
+let private getSourceLinesFrom (files: FileAccess) (baseDir: string) (relPath: string) : Map<int, string> option =
     let path = Path.Combine(baseDir, relPath)
 
-    if not (File.Exists path) then
+    if not (files.Exists path) then
         None
     else
-        File.ReadAllLines(path)
+        files.ReadAllLines path
         |> Array.mapi (fun idx line -> idx + 1, line)
         |> Map.ofArray
         |> Some
 
 /// Parses a Go `cover.out` file into its coverage blocks
 /// [Repo-grounded — `go_coverage.rs::parse_cover_out`].
-let private parseCoverOut (filename: string) : Result<CoverBlock list, string> =
-    if not (File.Exists filename) then
+let private parseCoverOut (files: FileAccess) (filename: string) : Result<CoverBlock list, string> =
+    if not (files.Exists filename) then
         Error(sprintf "file not found: %s" filename)
     else
-        File.ReadAllLines(filename)
+        files.ReadAllLines filename
         |> Array.choose (fun line ->
             let trimmed = line.Trim()
 
@@ -783,8 +757,8 @@ let private parseCoverOut (filename: string) : Result<CoverBlock list, string> =
 ///
 /// Gherkin (binds) — see [`validate`]'s doc comment for the scenarios this
 /// function jointly satisfies.
-let computeGoResult (filename: string) (threshold: float) : Result<CoverageResult, string> =
-    parseCoverOut filename
+let computeGoResultWith (files: FileAccess) (filename: string) (threshold: float) : Result<CoverageResult, string> =
+    parseCoverOut files filename
     |> Result.map (fun blocks ->
         let projectDir =
             match Path.GetDirectoryName(filename) with
@@ -792,7 +766,7 @@ let computeGoResult (filename: string) (threshold: float) : Result<CoverageResul
             | "" -> "."
             | d -> d
 
-        let moduleName = getModuleNameFrom projectDir
+        let moduleName = getModuleNameFrom files projectDir
 
         let perFile =
             blocks
@@ -804,7 +778,7 @@ let computeGoResult (filename: string) (threshold: float) : Result<CoverageResul
                     else
                         fp
 
-                let source = getSourceLinesFrom projectDir relPath
+                let source = getSourceLinesFrom files projectDir relPath
 
                 let lineCounts =
                     (Map.empty, fblocks)
@@ -900,12 +874,12 @@ let parseBranchCoverage (condCov: string) : int * int =
 
 /// Reads and parses a Cobertura XML file [Repo-grounded —
 /// `cobertura.rs::parse_cobertura`].
-let private parseCobertura (filename: string) : Result<XDocument, string> =
-    if not (File.Exists filename) then
+let private parseCobertura (files: FileAccess) (filename: string) : Result<XDocument, string> =
+    if not (files.Exists filename) then
         Error(sprintf "file not found: %s" filename)
     else
         try
-            Ok(XDocument.Load(filename))
+            files.ReadAllLines filename |> String.concat "\n" |> XDocument.Parse |> Ok
         with ex ->
             Error(sprintf "invalid Cobertura XML: %s" ex.Message)
 
@@ -914,8 +888,12 @@ let private parseCobertura (filename: string) : Result<XDocument, string> =
 ///
 /// Gherkin (binds) — see [`validate`]'s doc comment for the scenarios this
 /// function jointly satisfies.
-let computeCoberturaResult (filename: string) (threshold: float) : Result<CoverageResult, string> =
-    parseCobertura filename
+let computeCoberturaResultWith
+    (files: FileAccess)
+    (filename: string)
+    (threshold: float)
+    : Result<CoverageResult, string> =
+    parseCobertura files filename
     |> Result.map (fun doc ->
         let name (n: string) = XName.Get(n)
 
@@ -1013,7 +991,7 @@ let computeCoberturaResult (filename: string) (threshold: float) : Result<Covera
 /// Go-`filepath.Match` semantics rather than porting the `glob` crate
 /// separately — the scope this function serves (a handful of
 /// exact-name/simple-wildcard exclusions) does not need the two matchers'
-/// differing edge-case behavior to diverge [Repo-grounded —
+/// differing edge-case behaviour to diverge [Repo-grounded —
 /// `test_coverage_validate.rs::apply_exclude`].
 let applyExclude (patterns: string list) (result: CoverageResult) : CoverageResult =
     if List.isEmpty patterns then
@@ -1185,7 +1163,7 @@ let formatMarkdown (r: CoverageResult) (perFile: bool) (belowThreshold: float) :
 // ---------------------------------------------------------------------------
 // `test-coverage validate` entry point [Repo-grounded —
 // `test_coverage_validate.rs::run`] for
-// `specs/apps/rhino/cli/behaviors/test-coverage/test-coverage-validate.feature`'s
+// `specs/apps/rhino/cli/behaviours/test-coverage/test-coverage-validate.feature`'s
 // 10 scenarios
 // ---------------------------------------------------------------------------
 
@@ -1280,20 +1258,22 @@ type ValidateOutcome =
 ///   When the developer runs test-coverage validate with an 85% threshold
 ///   Then the command exits with a failure code
 ///   And the output describes the missing file
-let validate (opts: ValidateOptions) : Result<ValidateOutcome, string> =
-    let format = detectFormat opts.CoverageFile
+let validateWith (files: FileAccess) (opts: ValidateOptions) : Result<ValidateOutcome, string> =
+    let format = detectFormatWith files opts.CoverageFile
 
     let computed =
         match format with
         | Format.Lcov ->
-            if not (File.Exists opts.CoverageFile) then
+            if not (files.Exists opts.CoverageFile) then
                 Error(sprintf "file not found: %s" opts.CoverageFile)
             else
                 Ok
-                    { resultFromCoverageMap (toCoverageMapLcov opts.CoverageFile) opts.Threshold with
+                    { resultFromCoverageMap
+                          (toCoverageMapLcovLines (files.ReadAllLines opts.CoverageFile))
+                          opts.Threshold with
                         File = opts.CoverageFile }
-        | Format.Go -> computeGoResult opts.CoverageFile opts.Threshold
-        | Format.Cobertura -> computeCoberturaResult opts.CoverageFile opts.Threshold
+        | Format.Go -> computeGoResultWith files opts.CoverageFile opts.Threshold
+        | Format.Cobertura -> computeCoberturaResultWith files opts.CoverageFile opts.Threshold
         | Format.Jacoco -> Error "jacoco coverage files are not supported by this command"
         // Coverage note: unreachable. `format` above is always the result of
         // `detectFormat opts.CoverageFile`, and every branch of `detectFormat`
@@ -1330,3 +1310,5 @@ let validate (opts: ValidateOptions) : Result<ValidateOutcome, string> =
           Passed = filtered.Passed
           Pct = filtered.Pct
           Threshold = filtered.Threshold })
+
+let validate (opts: ValidateOptions) : Result<ValidateOutcome, string> = validateWith systemFileAccess opts

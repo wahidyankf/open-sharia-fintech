@@ -26,7 +26,7 @@ configs, grep the files, run the tools — do not trust docs alone.
 - Repo-specific constraints: CI runner type (self-hosted vs GitHub-hosted), private vs public
   visibility, language stack, existing toolchain, dual-CLI parity guards
 - **rhino-cli byte-identity check** (whenever the objective touches `apps/rhino-cli` or its Gherkin
-  behavior tree): run the canonical manifest validator in each bound repository:
+  behaviour tree): run the canonical manifest validator in each bound repository:
 
   ```bash
   apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate
@@ -34,7 +34,7 @@ configs, grep the files, run the tools — do not trust docs alone.
 
   It covers the two-repository parity boundary (`ose-public`, `ose-private`,
   see §Parallel Propagation Shape above) and the tracked
-  `apps/rhino-cli` source, tests, and Gherkin behavior tree. Any failure is drift that MUST become
+  `apps/rhino-cli` source, tests, and Gherkin behaviour tree. Any failure is drift that MUST become
   its own deviation-matrix row in Step 2 — surface it before grilling, never silently re-sync it.
 
 **Survey freshness**: a clean survey is a point-in-time result, not a standing fact. If execution of a

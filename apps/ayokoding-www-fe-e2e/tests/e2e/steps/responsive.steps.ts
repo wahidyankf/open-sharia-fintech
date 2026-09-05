@@ -25,13 +25,11 @@ Then("the main content area should be visible", async ({ page }) => {
   await expect(main).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/app-shell/responsive.feature:Desktop viewport shows sidebar, content, and table of contents
 Then("the table of contents should be visible", async ({ page }) => {
   const toc = page.getByRole("navigation", { name: /table of contents/i });
   await expect(toc).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/app-shell/responsive.feature:Laptop viewport shows sidebar and content but hides table of contents
 Then("the table of contents should not be visible", async ({ page }) => {
   const toc = page.getByRole("navigation", { name: /table of contents/i });
   await expect(toc).toBeHidden();
@@ -42,7 +40,6 @@ Then("a hamburger menu button should be visible in the header", async ({ page })
   await expect(hamburger).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/app-shell/responsive.feature:Mobile viewport shows hamburger menu and hides sidebar
 Then("the sidebar navigation should not be visible", async ({ page }) => {
   const sidebar = page.getByRole("navigation", { name: /sidebar/i });
   await expect(sidebar).toBeHidden();
@@ -54,17 +51,17 @@ Given("a visitor is on a content page", async ({ page }) => {
 
 When("the visitor taps the hamburger menu button", async ({ page }) => {
   const hamburger = page.getByRole("button", { name: /menu/i });
-  if ((await hamburger.count()) > 0) {
-    await hamburger.click();
-  }
+  await expect(hamburger).toBeVisible();
+  await hamburger.click();
 });
 
 Then("a sidebar drawer should slide into view", async ({ page }) => {
-  // Drawer implementation varies — verify page responded
-  await expect(page.locator("body")).toBeVisible();
+  await expect(page.getByRole("dialog")).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/app-shell/responsive.feature:Mobile hamburger menu opens the sidebar drawer
 Then("the sidebar navigation links should be visible inside the drawer", async ({ page }) => {
-  await expect(page.locator("body")).toBeVisible();
+  const drawer = page.getByRole("dialog");
+  const navigation = drawer.getByRole("navigation", { name: /mobile navigation/i });
+  await expect(navigation).toBeVisible();
+  expect(await navigation.getByRole("link").count()).toBeGreaterThan(0);
 });

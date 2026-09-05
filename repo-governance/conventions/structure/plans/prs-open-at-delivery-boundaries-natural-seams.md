@@ -41,11 +41,11 @@ that already contains its dependencies rather than stacked on an unmerged siblin
 ## Merge Only a Production-Deployable State
 
 Merge a PR only when its exact resulting `main` state is safe to deploy to production immediately.
-Complete user-reachable behavior may be active. Incomplete behavior must be complete-and-inert
+Complete user-reachable behaviour may be active. Incomplete behaviour must be complete-and-inert
 behind a temporary feature flag that is disabled in production by default. The delivery unit must
 test both the enabled and disabled paths and record the rollout, rollback, and flag-removal steps.
 
-A flag does not excuse half-built behavior, a broken enabled path, missing dependencies, or an
+A flag does not excuse half-built behaviour, a broken enabled path, missing dependencies, or an
 unsafe migration. It controls exposure of an otherwise internally complete increment. Work that
 cannot satisfy the production-deployable-state test remains within its dependent delivery unit; it
 does not merge as scaffolding that relies on a later PR to become safe.

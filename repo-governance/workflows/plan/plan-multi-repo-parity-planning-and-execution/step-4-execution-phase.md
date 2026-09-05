@@ -30,7 +30,7 @@ Every plan-execution rule applies unchanged, including:
   above, then keep it in sync via the Atomic Sync Ritual for every item.
 - **Iron Rules**: granular 1:1 tracking, never stop before all done (except `[HUMAN]` gates),
   fix ALL issues including preexisting, sacred delivery.md, local quality gates before push,
-  post-push CI verification, thematic commits, manual behavioral assertions, progress streaming,
+  post-push CI verification, thematic commits, manual behavioural assertions, progress streaming,
   disk-is-truth reconciliation.
 - **Validation loop**: `plan-execution-checker` to zero findings (CRITICAL through LOW).
 - **Knowledge Capture pre-archival gate**: each repo's plan-execution phase blocks its own archival

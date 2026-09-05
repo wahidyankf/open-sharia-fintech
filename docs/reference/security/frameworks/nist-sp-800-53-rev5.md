@@ -1243,7 +1243,7 @@ information security and privacy programs and how those programs manage their re
 risks. Depending on the circumstances, these objectives and risks can be independent or
 overlapping. Federal information security programs are responsible for protecting information
 and information systems from unauthorized access, use, disclosure, disruption, modification, or
-destruction (i.e., unauthorized activity or system behavior) to provide confidentiality, integrity,
+destruction (i.e., unauthorized activity or system behaviour) to provide confidentiality, integrity,
 and availability. Those programs are also responsible for managing security risk and for ensuring
 compliance with applicable security requirements. Federal privacy programs are responsible for
 managing risks to individuals associated with the creation, collection, use, processing, storage,
@@ -1264,7 +1264,7 @@ For example, an organization might select AU-3 (Content of Audit Records) to sup
 monitoring for unauthorized access to an information asset that does not include PII. Since the
 28 Privacy programs may also choose to consider the risks to individuals that may arise from their interactions with
 information systems, where the processing of personally identifiable information may be less impactful than the
-effect that the system has on individuals’ behavior or activities. Such effects would constitute risks to individual
+effect that the system has on individuals’ behaviour or activities. Such effects would constitute risks to individual
 autonomy, and organizations may need to take steps to manage those risks in addition to information security and
 privacy risks.
 potential loss of confidentiality of the information asset does not affect privacy, security
@@ -1311,8 +1311,8 @@ controls focus primarily on assurance. Some controls can support functionality a
 to achieve trustworthy systems.
 31 See [NEUM04].
 Organizations can select assurance-related controls to define system development activities,
-generate evidence about the functionality and behavior of the system, and trace the evidence to
-the system elements that provide such functionality or exhibit such behavior. The evidence is
+generate evidence about the functionality and behaviour of the system, and trace the evidence to
+the system elements that provide such functionality or exhibit such behaviour. The evidence is
 used to obtain a degree of confidence that the system satisfies the stated security and privacy
 requirements while supporting the organization’s mission and business functions. Assurancerelated controls are identified in the control summary tables in Appendix C.
 EVIDENCE OF CONTROL IMPLEMENTATION
@@ -1547,7 +1547,7 @@ Related Controls: AU-2, AU-6.
 
 Require that users log out when [Assignment: organization-defined time period of
 expected inactivity or description of when to log out].
-Discussion: Inactivity logout is behavior- or policy-based and requires users to take physical
+Discussion: Inactivity logout is behaviour- or policy-based and requires users to take physical
 action to log out when they are expecting inactivity longer than the defined period.
 Automatic enforcement of inactivity logout is addressed by AC-11.
 Related Controls: AC-11.
@@ -1630,9 +1630,9 @@ Related Controls: None.
 personnel or roles].
 Discussion: Atypical usage includes accessing systems at certain times of the day or from
 locations that are not consistent with the normal usage patterns of individuals. Monitoring
-for atypical usage may reveal rogue behavior by individuals or an attack in progress. Account
+for atypical usage may reveal rogue behaviour by individuals or an attack in progress. Account
 monitoring may inadvertently create privacy risks since data collected to identify atypical
-usage may reveal previously unknown information about the behavior of individuals.
+usage may reveal previously unknown information about the behaviour of individuals.
 Organizations assess and document privacy risks from monitoring accounts for atypical
 usage in their privacy impact assessment and make determinations that are in alignment
 with their privacy program plan.
@@ -2689,7 +2689,7 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     do not want to log out because of the temporary nature of their absences. Device locks can be
     implemented at the operating system level or at the application level. A proximity lock may be
     used to initiate the device lock (e.g., via a Bluetooth-enabled device or dongle). User-initiated
-    device locking is behavior or policy-based and, as such, requires users to take physical action to
+    device locking is behaviour or policy-based and, as such, requires users to take physical action to
     initiate the device lock. Device locks are not an acceptable substitute for logging out of systems,
     such as when organizations require users to log out at the end of workdays.
     Related Controls: AC-2, AC-7, IA-11, PL-4.
@@ -3061,7 +3061,7 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     increase the risk of unauthorized use and disclosure about remote access mechanisms. The
     organization considers including remote access requirements in the information exchange
     agreements with other organizations, as applicable. Remote access requirements can also be
-    included in rules of behavior (see PL-4) and access agreements (see PS-6).
+    included in rules of behaviour (see PL-4) and access agreements (see PS-6).
     Related Controls: AT-2, AT-3, PS-6.
 
 ##### (7) REMOTE ACCESS | ADDITIONAL PROTECTION FOR SECURITY FUNCTION ACCESS
@@ -3179,7 +3179,7 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     typically associated with a single individual. The processing, storage, and transmission capability
     of the mobile device may be comparable to or merely a subset of notebook/desktop systems,
     depending on the nature and intended purpose of the device. Protection and control of mobile
-    devices is behavior or policy-based and requires users to take physical action to protect and
+    devices is behaviour or policy-based and requires users to take physical action to protect and
     control such devices when outside of controlled areas. Controlled areas are spaces for which
     organizations provide physical or procedural controls to meet the requirements established for
     protecting information and systems.
@@ -3281,7 +3281,7 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
    or components or when such agreements are specified by applicable laws, executive orders,
    directives, regulations, policies, or standards. Authorized individuals include organizational
    personnel, contractors, or other individuals with authorized access to organizational systems and
-   over which organizations have the authority to impose specific rules of behavior regarding
+   over which organizations have the authority to impose specific rules of behaviour regarding
    system access. Restrictions that organizations impose on authorized individuals need not be
    uniform, as the restrictions may vary depending on trust relationships between organizations.
    Therefore, organizations may choose to impose different security restrictions on contractors
@@ -3639,7 +3639,7 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
 
     Provide literacy training on recognizing and reporting potential indicators of insider threat.
     Discussion: Potential indicators and possible precursors of insider threat can include
-    behaviors such as inordinate, long-term job dissatisfaction; attempts to gain access to
+    behaviours such as inordinate, long-term job dissatisfaction; attempts to gain access to
     information not required for job performance; unexplained access to financial resources;
     bullying or harassment of fellow employees; workplace violence; and other serious violations
     of policies, procedures, directives, regulations, rules, or practices. Literacy training includes
@@ -3647,7 +3647,7 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     indicators of insider threat through channels established by the organization and in
     accordance with established policies and procedures. Organizations may consider tailoring
     insider threat awareness topics to the role. For example, training for managers may be
-    focused on changes in the behavior of team members, while training for employees may be
+    focused on changes in the behaviour of team members, while training for employees may be
     focused on more general observations.
     Related Controls: PM-12.
 
@@ -3669,7 +3669,7 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
 
     BEHAVIOR
     Provide literacy training on recognizing suspicious communications and anomalous
-    behavior in organizational systems using [Assignment: organization-defined indicators of
+    behaviour in organizational systems using [Assignment: organization-defined indicators of
     malicious code].
     Discussion: A well-trained workforce provides another organizational control that can be
     employed as part of a defense-in-depth strategy to protect against malicious code coming
@@ -3679,9 +3679,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     that appears to be from a known sponsor or contractor). Personnel are also trained on how
     to respond to suspicious email or web communications. For this process to work effectively,
     personnel are trained and made aware of what constitutes suspicious communications.
-    Training personnel on how to recognize anomalous behaviors in systems can provide
+    Training personnel on how to recognize anomalous behaviours in systems can provide
     organizations with early warning for the presence of malicious code. Recognition of
-    anomalous behavior by organizational personnel can supplement malicious code detection
+    anomalous behaviour by organizational personnel can supplement malicious code detection
     and protection tools and systems employed by organizations.
     Related Controls: None.
 
@@ -4217,8 +4217,8 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     physical access to further enhance the ability to identify suspicious, inappropriate,
     unusual, or malevolent activity.
     Discussion: The correlation of physical audit record information and the audit records from
-    systems may assist organizations in identifying suspicious behavior or supporting evidence of
-    such behavior. For example, the correlation of an individual’s identity for logical access to
+    systems may assist organizations in identifying suspicious behaviour or supporting evidence of
+    such behaviour. For example, the correlation of an individual’s identity for logical access to
     certain systems with the additional physical security information that the individual was
     present at the facility when the logical access occurred may be useful in investigations.
     Related Controls: None.
@@ -4282,7 +4282,7 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     reduction and report generation capabilities do not always emanate from the same system or
     from the same organizational entities that conduct audit logging activities. The audit record
     reduction capability includes modern data mining techniques with advanced data filters to
-    identify anomalous behavior in audit records. The report generation capability provided by the
+    identify anomalous behaviour in audit records. The report generation capability provided by the
     system can generate customizable reports. Time ordering of audit records can be an issue if the
     granularity of the timestamp in the record is insufficient.
     Related Controls: AC-2, AU-2, AU-3, AU-4, AU-5, AU-6, AU-12, AU-16, CM-5, IA-5, IR-4, PM-12, SI4.
@@ -5929,11 +5929,11 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
 ##### (2) LEAST FUNCTIONALITY | PREVENT PROGRAM EXECUTION
 
     Prevent program execution in accordance with [Selection (one or more): [Assignment:
-    organization-defined policies, rules of behavior, and/or access agreements regarding
+    organization-defined policies, rules of behaviour, and/or access agreements regarding
     software program usage and restrictions]; rules authorizing the terms and conditions of
     software program usage].
     Discussion: Prevention of program execution addresses organizational policies, rules of
-    behavior, and/or access agreements that restrict software usage and the terms and
+    behaviour, and/or access agreements that restrict software usage and the terms and
     conditions imposed by the developer or manufacturer, including software licensing and
     copyrights. Restrictions include prohibiting auto-execute features, restricting roles allowed
     to approve program execution, permitting or prohibiting specific software programs, or
@@ -7726,7 +7726,7 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     lead to the compromise of other accounts. Alternative approaches include having different
     authenticators (passwords) on all systems, employing a single sign-on or federation
     mechanism, or using some form of one-time passwords on all systems. Organizations can
-    also use rules of behavior (see PL-4) and access agreements (see PS-6) to mitigate the risk of
+    also use rules of behaviour (see PL-4) and access agreements (see PS-6) to mitigate the risk of
     multiple system accounts.
     Related Controls: PS-6.
 
@@ -7992,7 +7992,7 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Discussion: Adversaries may compromise individual authentication mechanisms employed by
     organizations and subsequently attempt to impersonate legitimate users. To address this threat,
     organizations may employ specific techniques or mechanisms and establish protocols to assess
-    suspicious behavior. Suspicious behavior may include accessing information that individuals do
+    suspicious behaviour. Suspicious behaviour may include accessing information that individuals do
     not typically access as part of their duties, roles, or responsibilities; accessing greater quantities
     of information than individuals would routinely access; or attempting to access information from
     suspicious network addresses. When pre-established conditions or triggers occur, organizations
@@ -8464,13 +8464,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
 
 ##### (13) INCIDENT HANDLING | BEHAVIOR ANALYSIS
 
-    Analyze anomalous or suspected adversarial behavior in or related to [Assignment:
+    Analyze anomalous or suspected adversarial behaviour in or related to [Assignment:
     organization-defined environments or resources].
-    Discussion: If the organization maintains a deception environment, an analysis of behaviors
+    Discussion: If the organization maintains a deception environment, an analysis of behaviours
     in that environment, including resources targeted by the adversary and timing of the
     incident or event, can provide insight into adversarial tactics, techniques, and procedures.
-    External to a deception environment, the analysis of anomalous adversarial behavior (e.g.,
-    changes in system performance or usage patterns) or suspected behavior (e.g., changes in
+    External to a deception environment, the analysis of anomalous adversarial behaviour (e.g.,
+    changes in system performance or usage patterns) or suspected behaviour (e.g., changes in
     searches for the location of specific resources) can give the organization such insight.
     Related Controls: None.
 
@@ -8973,7 +8973,7 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     (a) Log [Assignment: organization-defined audit events] for nonlocal maintenance and
     diagnostic sessions; and
     (b) Review the audit records of the maintenance and diagnostic sessions to detect
-    anomalous behavior.
+    anomalous behaviour.
     Discussion: Audit logging for nonlocal maintenance is enforced by AU-2. Audit events are
     defined in AU-2a.
     Related Controls: AU-6, AU-12.
@@ -10561,31 +10561,31 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Control:
      a.
      Establish and provide to individuals requiring access to the system, the rules that describe
-     their responsibilities and expected behavior for information and system usage, security, and
+     their responsibilities and expected behaviour for information and system usage, security, and
      privacy;
      b.
      Receive a documented acknowledgment from such individuals, indicating that they have
-     read, understand, and agree to abide by the rules of behavior, before authorizing access to
+     read, understand, and agree to abide by the rules of behaviour, before authorizing access to
      information and the system;
      c.
-     Review and update the rules of behavior [Assignment: organization-defined frequency]; and
+     Review and update the rules of behaviour [Assignment: organization-defined frequency]; and
      d.
-     Require individuals who have acknowledged a previous version of the rules of behavior to
+     Require individuals who have acknowledged a previous version of the rules of behaviour to
      read and re-acknowledge [Selection (one or more): [Assignment: organization-defined
      frequency]; when the rules are revised or updated].
-     Discussion: Rules of behavior represent a type of access agreement for organizational users.
+     Discussion: Rules of behaviour represent a type of access agreement for organizational users.
      Other types of access agreements include nondisclosure agreements, conflict-of-interest
-     agreements, and acceptable use agreements (see PS-6). Organizations consider rules of behavior
+     agreements, and acceptable use agreements (see PS-6). Organizations consider rules of behaviour
      based on individual user roles and responsibilities and differentiate between rules that apply to
-     privileged users and rules that apply to general users. Establishing rules of behavior for some
+     privileged users and rules that apply to general users. Establishing rules of behaviour for some
      types of non-organizational users, including individuals who receive information from federal
      systems, is often not feasible given the large number of such users and the limited nature of their
-     interactions with the systems. Rules of behavior for organizational and non-organizational users
+     interactions with the systems. Rules of behaviour for organizational and non-organizational users
      can also be established in AC-8. The related controls section provides a list of controls that are
-     relevant to organizational rules of behavior. PL-4b, the documented acknowledgment portion of
+     relevant to organizational rules of behaviour. PL-4b, the documented acknowledgment portion of
      the control, may be satisfied by the literacy training and awareness and role-based training
-     programs conducted by organizations if such training includes rules of behavior. Documented
-     acknowledgements for rules of behavior include electronic or physical signatures and electronic
+     programs conducted by organizations if such training includes rules of behaviour. Documented
+     acknowledgements for rules of behaviour include electronic or physical signatures and electronic
      agreement check boxes or radio buttons.
      Related Controls: AC-2, AC-6, AC-8, AC-9, AC-17, AC-18, AC-19, AC-20, AT-2, AT-3, CM-11, IA-2,
      IA-4, IA-5, MP-7, PS-6, PS-8, SA-5, SI-12.
@@ -10593,13 +10593,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
 
 ##### (1) RULES OF BEHAVIOR | SOCIAL MEDIA AND EXTERNAL SITE/APPLICATION USAGE RESTRICTIONS
 
-     Include in the rules of behavior, restrictions on:
+     Include in the rules of behaviour, restrictions on:
      (a) Use of social media, social networking sites, and external sites/applications;
      (b) Posting organizational information on public websites; and
      (c) Use of organization-provided identifiers (e.g., email addresses) and authentication
      secrets (e.g., passwords) for creating accounts on external sites/applications.
      Discussion: Social media, social networking, and external site/application usage restrictions
-     address rules of behavior related to the use of social media, social networking, and external
+     address rules of behaviour related to the use of social media, social networking, and external
      sites when organizational personnel are using such sites for official duties or in the conduct
      of official business, when organizational information is involved in social media and social
      networking transactions, and when personnel access social media and networking sites from
@@ -11170,8 +11170,8 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Insider threat programs can leverage the existence of incident handling teams that organizations
      may already have in place, such as computer security incident response teams. Human resources
      records are especially important in this effort, as there is compelling evidence to show that some
-     types of insider crimes are often preceded by nontechnical behaviors in the workplace, including
-     ongoing patterns of disgruntled behavior and conflicts with coworkers and other colleagues.
+     types of insider crimes are often preceded by nontechnical behaviours in the workplace, including
+     ongoing patterns of disgruntled behaviour and conflicts with coworkers and other colleagues.
      These precursors can guide organizational officials in more focused, targeted monitoring efforts.
      However, the use of human resource records could raise significant concerns for privacy. The
      participation of a legal team, including consultation with the senior agency official for privacy,
@@ -11993,7 +11993,7 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
 2. Re-sign access agreements to maintain access to organizational systems when access
    agreements have been updated or [Assignment: organization-defined frequency].
    Discussion: Access agreements include nondisclosure agreements, acceptable use agreements,
-   rules of behavior, and conflict-of-interest agreements. Signed access agreements include an
+   rules of behaviour, and conflict-of-interest agreements. Signed access agreements include an
    acknowledgement that individuals have read, understand, and agree to abide by the constraints
    associated with organizational systems to which access is authorized. Organizations can use
    electronic signatures to acknowledge access agreements unless specifically prohibited by
@@ -12284,7 +12284,7 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      be reasonably expected to understand and accept the privacy risks that arise from their
      authorization. Organizations consider whether other controls may more effectively mitigate
      privacy risk either alone or in conjunction with consent. Organizations also consider any
-     demographic or contextual factors that may influence the understanding or behavior of
+     demographic or contextual factors that may influence the understanding or behaviour of
      individuals with respect to the processing carried out by the system or organization. When
      soliciting consent from individuals, organizations consider the appropriate mechanism for
      obtaining consent, including the type of consent (e.g., opt-in, opt-out), how to properly
@@ -12304,7 +12304,7 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      product or service, other processing may not. In these circumstances, organizations allow
      individuals to select how specific personally identifiable information elements may be
      processed. More tailored consent may help reduce privacy risk, increase individual
-     satisfaction, and avoid adverse behaviors, such as abandonment of the product or service.
+     satisfaction, and avoid adverse behaviours, such as abandonment of the product or service.
      Related Controls: PT-2.
 
 ##### (2) CONSENT | JUST-IN-TIME CONSENT
@@ -13571,7 +13571,7 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Discussion: The principle of clear abstractions states that a system has simple, well-defined
      interfaces and functions that provide a consistent and intuitive view of the data and how the
      data is managed. The clarity, simplicity, necessity, and sufficiency of the system interfaces—
-     combined with a precise definition of their functional behavior—promotes ease of analysis,
+     combined with a precise definition of their functional behaviour—promotes ease of analysis,
      inspection, and testing as well as the correct and secure use of the system. The clarity of an
      abstraction is subjective. Examples that reflect the application of this principle include
      avoidance of redundant, unused interfaces; information hiding; and avoidance of semantic
@@ -13711,7 +13711,7 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      threat environment, and anticipated maintenance and sustainment needs. It is unrealistic to
      expect that complex systems remain secure in contexts not envisioned during development,
      whether such contexts are related to the operational environment or to usage. A system
-     may be secure in some new contexts, but there is no guarantee that its emergent behavior
+     may be secure in some new contexts, but there is no guarantee that its emergent behaviour
      will always be secure. It is easier to build trustworthiness into a system from the outset, and
      it follows that the sustainment of system trustworthiness requires planning for change as
      opposed to adapting in an ad hoc or non-methodical manner. The benefits of this principle
@@ -14059,8 +14059,8 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      are not violated. In addition, when specified, the system is capable of recovering from
      impending or actual failure to resume normal, degraded, or alternative secure operations
      while ensuring that a secure state is maintained such that security policies are not violated.
-     Failure is a condition in which the behavior of a component deviates from its specified or
-     expected behavior for an explicitly documented input. Once a failed security function is
+     Failure is a condition in which the behaviour of a component deviates from its specified or
+     expected behaviour for an explicitly documented input. Once a failed security function is
      detected, the system may reconfigure itself to circumvent the failed component while
      maintaining security and provide all or part of the functionality of the original system, or it
      may completely shut itself down to prevent any further violation of security policies. For this
@@ -14089,7 +14089,7 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      weigh the costs and benefits of such redundancy techniques against increased resource
      usage and adverse effects on the overall system performance. Additional analyses are
      conducted as the complexity of these mechanisms increases, as could be the case for
-     dynamic behaviors. Increased complexity generally reduces trustworthiness. When a
+     dynamic behaviours. Increased complexity generally reduces trustworthiness. When a
      resource cannot be continuously protected, it is critical to detect and repair any security
      breaches before the resource is once again used in a secure context.
      Related Controls: CP-10, CP-12, SC-7, SC-8, SC-24, SI-13.
@@ -14167,7 +14167,7 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      organization-defined systems or system components].
      Discussion: The principle of acceptable security requires that the level of privacy and
      performance that the system provides is consistent with the users’ expectations. The
-     perception of personal privacy may affect user behavior, morale, and effectiveness. Based
+     perception of personal privacy may affect user behaviour, morale, and effectiveness. Based
      on the organizational privacy policy and the system design, users should be able to restrict
      their actions to protect their privacy. When systems fail to provide intuitive interfaces or
      meet privacy and performance expectations, users may either choose to completely avoid
@@ -15042,12 +15042,12 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      (b) Prove that the formal policy model is internally consistent and sufficient to enforce
      the defined elements of the organizational security and privacy policy when
      implemented.
-     Discussion: Formal models describe specific behaviors or security and privacy policies using
-     formal languages, thus enabling the correctness of those behaviors and policies to be
+     Discussion: Formal models describe specific behaviours or security and privacy policies using
+     formal languages, thus enabling the correctness of those behaviours and policies to be
      formally proven. Not all components of systems can be modeled. Generally, formal
-     specifications are scoped to the behaviors or policies of interest, such as nondiscretionary
+     specifications are scoped to the behaviours or policies of interest, such as nondiscretionary
      access control policies. Organizations choose the formal modeling language and approach
-     based on the nature of the behaviors and policies to be described and the available tools.
+     based on the nature of the behaviours and policies to be described and the available tools.
      Related Controls: AC-3, AC-4, AC-25.
 
 ##### (2) DEVELOPER SECURITY AND PRIVACY ARCHITECTURE AND DESIGN | SECURITY-RELEVANT
@@ -15080,7 +15080,7 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Discussion: Correspondence is an important part of the assurance gained through modeling.
      It demonstrates that the implementation is an accurate transformation of the model, and
      that any additional code or implementation details that are present have no impact on the
-     behaviors or policies being modeled. Formal methods can be used to show that the highlevel security properties are satisfied by the formal system description, and that the formal
+     behaviours or policies being modeled. Formal methods can be used to show that the highlevel security properties are satisfied by the formal system description, and that the formal
      system description is correctly implemented by a description of some lower level, including a
      hardware description. Consistency between the formal top-level specification and the formal
      policy models is generally not amenable to being fully proven. Therefore, a combination of
@@ -15109,7 +15109,7 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      addressed in the descriptive top-level specification but strictly internal to the securityrelevant hardware, software, and firmware.
      Discussion: Correspondence is an important part of the assurance gained through modeling.
      It demonstrates that the implementation is an accurate transformation of the model, and
-     that additional code or implementation detail has no impact on the behaviors or policies
+     that additional code or implementation detail has no impact on the behaviours or policies
      being modeled. Consistency between the descriptive top-level specification (i.e., highlevel/low-level design) and the formal policy model is generally not amenable to being fully
      proven. Therefore, a combination of formal and informal methods may be needed to show
      such consistency. Hardware, software, and firmware mechanisms strictly internal to
@@ -15187,11 +15187,11 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
 ##### (8) DEVELOPER SECURITY AND PRIVACY ARCHITECTURE AND DESIGN | ORCHESTRATION
 
      Design [Assignment: organization-defined critical systems or system components] with
-     coordinated behavior to implement the following capabilities: [Assignment: organizationdefined capabilities, by system or component].
+     coordinated behaviour to implement the following capabilities: [Assignment: organizationdefined capabilities, by system or component].
      Discussion: Security resources that are distributed, located at different layers or in different
      system elements, or are implemented to support different aspects of trustworthiness can
      interact in unforeseen or incorrect ways. Adverse consequences can include cascading
-     failures, interference, or coverage gaps. Coordination of the behavior of security resources
+     failures, interference, or coverage gaps. Coordination of the behaviour of security resources
      (e.g., by ensuring that one patch is installed across all resources before making a
      configuration change that assumes that the patch is propagated) can avert such negative
      interactions.
@@ -17576,7 +17576,7 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
    and methods exist to limit or eliminate the effects of malicious code.
    Malicious code protection mechanisms include both signature- and nonsignature-based
    technologies. Nonsignature-based detection mechanisms include artificial intelligence
-   techniques that use heuristics to detect, analyze, and describe the characteristics or behavior of
+   techniques that use heuristics to detect, analyze, and describe the characteristics or behaviour of
    malicious code and to provide controls against such code for which signatures do not yet exist or
    for which existing signatures may not be effective. Malicious code for which active signatures do
    not yet exist or may be ineffective includes polymorphic malicious code (i.e., code that changes
@@ -17658,7 +17658,7 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
 
 ##### (10) MALICIOUS CODE PROTECTION | MALICIOUS CODE ANALYSIS
 
-     (a) Employ the following tools and techniques to analyze the characteristics and behavior
+     (a) Employ the following tools and techniques to analyze the characteristics and behaviour
      of malicious code: [Assignment: organization-defined tools and techniques]; and
      (b) Incorporate the results from malicious code analysis into organizational incident
      response and flaw remediation processes.
@@ -17666,7 +17666,7 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      the functionality and purpose of specific instances of malicious code. Understanding the
      characteristics of malicious code facilitates effective organizational responses to current and
      future threats. Organizations can conduct malicious code analyses by employing reverse
-     engineering techniques or by monitoring the behavior of executing code.
+     engineering techniques or by monitoring the behaviour of executing code.
      Related Controls: None.
      References: [SP 800-83], [SP 800-125B], [SP 800-177].
 
@@ -17974,7 +17974,7 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Discussion: During probationary periods, employees do not have permanent employment
      status within organizations. Without such status or access to information that is resident on
      the system, additional monitoring can help identify any potentially malicious activity or
-     inappropriate behavior.
+     inappropriate behaviour.
      Related Controls: AC-18.
 
 ##### (22) SYSTEM MONITORING | UNAUTHORIZED NETWORK SERVICES
@@ -18411,7 +18411,7 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
 
      Verify that the system behaves in a predictable and documented manner when invalid
      inputs are received.
-     Discussion: A common vulnerability in organizational systems is unpredictable behavior
+     Discussion: A common vulnerability in organizational systems is unpredictable behaviour
      when invalid inputs are received. Verification of system predictability helps ensure that the
      system behaves as expected when invalid inputs are received. This occurs by specifying
      system responses that allow the system to transition to known states without adverse,
@@ -18431,7 +18431,7 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      are due to congestion, while packets lost over 802.11 links are typically dropped due to noise
      or collisions on the link. If TCP makes a congestion response, it takes the wrong action in
      response to a collision event. Adversaries may be able to use what appear to be acceptable
-     individual behaviors of the protocols in concert to achieve adverse effects through suitable
+     individual behaviours of the protocols in concert to achieve adverse effects through suitable
      construction of invalid input. The invalid inputs are those related to the information inputs
      defined by the organization in the base control (SI-10).
      Related Controls: None.
@@ -18686,7 +18686,7 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      unexpected or inconsistent with the output results that would be expected from software
      programs or applications. Information output filtering focuses on detecting extraneous content,
      preventing such extraneous content from being displayed, and then alerting monitoring tools
-     that anomalous behavior has been discovered.
+     that anomalous behaviour has been discovered.
      Related Controls: SI-3, SI-4, SI-11.
      Control Enhancements: None.
      References: None.
@@ -21223,7 +21223,7 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      information security
      architecture
      An embedded, integral part of the enterprise architecture that
-     describes the structure and behavior of the enterprise security
+     describes the structure and behaviour of the enterprise security
      processes, security systems, personnel and organizational
      subunits, showing their alignment with the enterprise’s mission
      and strategic plans.
@@ -21618,7 +21618,7 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      individuals.
      privacy architecture
      An embedded, integral part of the enterprise architecture that
-     describes the structure and behavior for an enterprise’s privacy
+     describes the structure and behaviour for an enterprise’s privacy
      protection processes, technical measures, personnel and
      organizational sub-units, showing their alignment with the
      enterprise’s mission and strategic plans.
@@ -21945,7 +21945,7 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      A set of criteria for the provision of security services.
      [SP 800-160-1 adapted]
      A set of rules that governs all aspects of security-relevant system
-     and system component behavior.
+     and system component behaviour.
      security policy filter
      A hardware and/or software component that performs one or
      more of the following functions: content verification to ensure
@@ -22190,7 +22190,7 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      tampering
      [CNSSI 4009]
      An intentional but unauthorized act resulting in the modification
-     of a system, components of systems, its intended behavior, or
+     of a system, components of systems, its intended behaviour, or
      data.
      [SP 800-37]
      [SP 800-30]
@@ -23247,7 +23247,7 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
 | PL-2(2)        | FUNCTIONAL ARCHITECTURE                                       | W: Incorporated into PL-8. |           |
 | PL-2(3)        | PLAN AND COORDINATE WITH OTHER ORGANIZATIONAL ENTITIES        | W: Incorporated into PL-2. |           |
 | PL-3           | System Security Plan Update                                   | W: Incorporated into PL-2. |           |
-| PL-4           | Rules of Behavior                                             | O                          | √         |
+| PL-4           | Rules of Behaviour                                            | O                          | √         |
 | PL-4(1)        | SOCIAL MEDIA AND EXTERNAL SITE/APPLICATION USAGE RESTRICTIONS | O                          | √         |
 | PL-5           | Privacy Impact Assessment                                     | W: Incorporated into RA-8. |           |
 | PL-6           | Security-Related Activity Planning                            | W: Incorporated into PL-2. |           |

@@ -109,10 +109,10 @@ apply the same decision without concurrent drift. The private unit follows the v
 
 ### Delivery Boundaries
 
-| Phase(s) | Natural cohesive seam                                                                                               | Worktree                                                | Branch                           | Delivery opportunity | Exact resulting `main` / rollback / feature-flag evidence                                                                                                                                                                                                                                               |
-| -------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- | -------------------------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1        | Public script disposition: complete `ose-public` deletion or generic repurpose with its references and verification | `ose-public/worktrees/remove-dead-shadow-diff-script/`  | `remove-dead-shadow-diff-script` | PR at Phase 1        | `ose-public/main` contains no dead resolver path and passes its gates, so it is immediately production-deployable. A feature flag is not applicable: this is a complete developer-tool disposition with no incomplete user-reachable behavior; rollback is a PR revert. Integrate promptly after proof. |
-| 2        | Private script disposition: identical `ose-private` disposition with repository-local verification                  | `ose-private/worktrees/remove-dead-shadow-diff-script/` | `remove-dead-shadow-diff-script` | PR at Phase 2        | `ose-private/main` independently contains the same complete, working disposition and is immediately production-deployable. The same no-flag rationale and PR-revert rollback apply. Integrate promptly rather than batching it with unrelated work.                                                     |
+| Phase(s) | Natural cohesive seam                                                                                               | Worktree                                                | Branch                           | Delivery opportunity | Exact resulting `main` / rollback / feature-flag evidence                                                                                                                                                                                                                                                |
+| -------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- | -------------------------------- | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1        | Public script disposition: complete `ose-public` deletion or generic repurpose with its references and verification | `ose-public/worktrees/remove-dead-shadow-diff-script/`  | `remove-dead-shadow-diff-script` | PR at Phase 1        | `ose-public/main` contains no dead resolver path and passes its gates, so it is immediately production-deployable. A feature flag is not applicable: this is a complete developer-tool disposition with no incomplete user-reachable behaviour; rollback is a PR revert. Integrate promptly after proof. |
+| 2        | Private script disposition: identical `ose-private` disposition with repository-local verification                  | `ose-private/worktrees/remove-dead-shadow-diff-script/` | `remove-dead-shadow-diff-script` | PR at Phase 2        | `ose-private/main` independently contains the same complete, working disposition and is immediately production-deployable. The same no-flag rationale and PR-revert rollback apply. Integrate promptly rather than batching it with unrelated work.                                                      |
 
 Each boundary keeps the chosen script change or deletion, affected references, tests, verification,
 and rollback evidence together. LOC and file counts never create or alter these boundaries.
@@ -134,7 +134,7 @@ Executor legend: `[AI]` = autonomous agent action, `[HUMAN]` = requires human ju
 ### Phase 1 Gate
 
 - [ ] [AI] Full `nx affected -t test:quick` clean in `ose-public`.
-- [ ] [AI] `rhino-cli:specs:behavior:coverage` unaffected (this script is not itself a spec subject).
+- [ ] [AI] `rhino-cli:test:coverage` remains green (this script is not itself a spec subject).
 
 > **Pause Safety**: `ose-public/main` contains a complete, verified, production-deployable script
 > disposition. Safe to stop before beginning the dependent private mirror.
@@ -149,7 +149,7 @@ Executor legend: `[AI]` = autonomous agent action, `[HUMAN]` = requires human ju
 ### Phase 2 Gate
 
 - [ ] [AI] Full `nx affected -t test:quick` clean in `ose-private`.
-- [ ] [AI] `rhino-cli:specs:behavior:coverage` unaffected (this script is not itself a spec subject).
+- [ ] [AI] `rhino-cli:test:coverage` remains green (this script is not itself a spec subject).
 
 > **Pause Safety**: both repositories contain the same complete disposition, each independently
 > verified and production-deployable. Safe to stop and proceed to plan finalization.

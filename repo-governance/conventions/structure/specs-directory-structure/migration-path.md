@@ -22,10 +22,10 @@ Every product and library in this repository completed this migration during the
 `adopt-beavernest-test-automation` plan. The procedure is kept because a product added from
 outside — or restored from an archive — arrives in the retired shape.
 
-1. Decide the owners first. One owner per **deployed** surface, not per behavior folder: two
-   perspectives on one process are one owner whose `behaviors/` nests them.
-2. In ONE atomic commit: `git mv` each `behavior/<product>-<surface>/gherkin/` to its owner's
-   `behaviors/`, move any `containers/contracts/` into the owner that serves it, write each
+1. Decide the owners first. One owner per **deployed** surface, not per behaviour folder: two
+   perspectives on one process are one owner whose `behaviours/` nests them.
+2. In ONE atomic commit: `git mv` each `behaviour/<product>-<surface>/gherkin/` to its owner's
+   `behaviours/`, move any `containers/contracts/` into the owner that serves it, write each
    owner's `README.md` and `architecture.md`, and `git rm -r` the five retired folders. Update
    every path reference in the same commit — Nx `project.json` `inputs`, `repo-config.yml` corpus
    globs, step-file `@covers` references, MSBuild feature-file globs, container bind mounts, and
@@ -38,15 +38,15 @@ outside — or restored from an archive — arrives in the retired shape.
 
 **Path mapping:**
 
-| Old path                                         | New path                                              |
-| ------------------------------------------------ | ----------------------------------------------------- |
-| `specs/apps/<p>/behavior/<p>-<surface>/gherkin/` | `specs/apps/<p>/<owner>/behaviors/`                   |
-| `specs/apps/<p>/containers/contracts/`           | `specs/apps/<p>/<serving-owner>/contracts/`           |
-| `specs/apps/<p>/system-context/context.md`       | a section of `specs/apps/<p>/<owner>/architecture.md` |
-| `specs/apps/<p>/containers/container.md`         | a section of `specs/apps/<p>/<owner>/architecture.md` |
-| `specs/apps/<p>/components/<c>/component-<c>.md` | a section of `specs/apps/<p>/<owner>/architecture.md` |
-| `specs/apps/<p>/product/overview.md`             | `specs/apps/<p>/overview.md`                          |
-| `specs/libs/<l>/behavior/gherkin/`               | `specs/libs/<l>/behaviors/`                           |
+| Old path                                          | New path                                              |
+| ------------------------------------------------- | ----------------------------------------------------- |
+| `specs/apps/<p>/behaviour/<p>-<surface>/gherkin/` | `specs/apps/<p>/<owner>/behaviours/`                  |
+| `specs/apps/<p>/containers/contracts/`            | `specs/apps/<p>/<serving-owner>/contracts/`           |
+| `specs/apps/<p>/system-context/context.md`        | a section of `specs/apps/<p>/<owner>/architecture.md` |
+| `specs/apps/<p>/containers/container.md`          | a section of `specs/apps/<p>/<owner>/architecture.md` |
+| `specs/apps/<p>/components/<c>/component-<c>.md`  | a section of `specs/apps/<p>/<owner>/architecture.md` |
+| `specs/apps/<p>/product/overview.md`              | `specs/apps/<p>/overview.md`                          |
+| `specs/libs/<l>/behaviour/gherkin/`               | `specs/libs/<l>/behaviours/`                          |
 
 The atomic commit is mandatory. A product cannot be half in one shape and half in the other —
 `rhino-cli specs validate-tree` reports a retired folder surviving beside a corpus as a HIGH

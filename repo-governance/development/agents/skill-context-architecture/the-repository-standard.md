@@ -24,13 +24,13 @@ when_to_use: Use when authoring a new Skill and deciding which context mode it d
 **Rationale**:
 
 1. **Universal compatibility** - Work in both main conversation and delegated agent contexts
-2. **Predictable behavior** - agent skills always inject knowledge, never fail
+2. **Predictable behaviour** - agent skills always inject knowledge, never fail
 3. **Composability** - Agents can freely compose multiple skills
 4. **Delegated agent safety** - Delegated agents can use any skill without errors
 
 ## Inline Context Mode
 
-**Default behavior** when `context` field is omitted or set to `inline`:
+**Default behaviour** when `context` field is omitted or set to `inline`:
 
 ```yaml
 ---

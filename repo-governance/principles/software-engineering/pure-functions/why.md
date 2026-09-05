@@ -18,7 +18,7 @@ when_to_use: Use when justifying a choice to isolate side effects and keep logic
 ## Benefits of Pure Functions
 
 1. **Easy to Test**: No mocking, no setup - just input and output
-2. **Easy to Reason About**: No hidden dependencies, behavior is obvious
+2. **Easy to Reason About**: No hidden dependencies, behaviour is obvious
 3. **Cacheable**: Same inputs = same outputs, results can be memoized
 4. **Parallelizable**: No shared state, safe to run concurrently
 5. **Composable**: Combine pure functions to build complex logic

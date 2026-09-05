@@ -1,39 +1,23 @@
 ---
-title: "App-Type-Specific Test Manifestations and Gherkin Consumption Matrix"
-description: How each app type implements test levels and consumes Gherkin.
+title: "Project-Role Testing and Gherkin Matrix"
+description: "Applicable Gherkin adapters by project role and real boundary"
 category: explanation
 subcategory: development
-tags: [ci-cd, testing]
+tags: [ci-cd, testing, gherkin]
 created: 2026-03-31
-when_to_use: Use when implementing tests for an app type.
+when_to_use: "Use when deciding which adapters and targets a project owns."
 ---
 
-# App-Type-Specific Test Manifestations and Gherkin Consumption Matrix
+# Project-Role Testing and Gherkin Matrix
 
-## App-Type-Specific Test Manifestations
+| Project role          | Unit                                  | Integration                                    | E2E                                                               |
+| --------------------- | ------------------------------------- | ---------------------------------------------- | ----------------------------------------------------------------- |
+| Application           | Required against the canonical corpus | Required only for an owned real local boundary | Implemented by a dedicated project for an exposed public boundary |
+| Library               | Required                              | Required only for an owned real local boundary | Never library-owned; prove through a consuming application        |
+| Executable tool       | Required                              | Required for owned local resources             | Required for a public process boundary                            |
+| Dedicated E2E project | Owner's responsibility                | Owner's responsibility                         | Required against the owner's corpus                               |
 
-Each app type implements the three levels according to its domain. The table below shows how each
-app type realises each level.
-
-| App Type                                          | Unit (`test:unit`)                                    | Integration (`test:integration`)                                              | E2E (`test:e2e`)                                     |
-| ------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------- | ---------------------------------------------------- |
-| **BE API** (`organiclever-be`)                    | BDD, mocked repos, calls service fns directly         | Real PostgreSQL via docker-compose, calls service fns directly (no HTTP)      | Playwright, real HTTP + real PostgreSQL              |
-| **FE** (`organiclever-app-web`)                   | Vitest, all API calls mocked (MSW / mock services)    | MSW with real DOM; in-process mocking only                                    | Playwright against running FE + BE                   |
-| **CLI** (`*-cli`)                                 | `cargo test`, all I/O mocked via dependency injection | `cargo test` with real filesystem via tmp fixtures, real HTTP via mock server | Not applicable                                       |
-| **Content platform** (`ayokoding-www`, `ose-www`) | Vitest, components and tRPC routes mocked             | MSW, in-process mocking                                                       | Playwright BE E2E (`*-be-e2e`) + FE E2E (`*-fe-e2e`) |
-| **Library** (`web-ui`, `ts-env-loader`)           | Vitest, dependencies mocked                           | In-process mocking only                                                       | Not applicable                                       |
-| **E2E runner** (`*-e2e`)                          | Not applicable                                        | Not applicable                                                                | Playwright — this project IS the E2E suite           |
-
-## Gherkin Consumption Matrix
-
-All testable projects must consume Gherkin specifications at every applicable test level. E2E
-runner projects ARE the Gherkin consumers at the E2E level.
-
-| App Type                    | Unit consumes Gherkin                              | Integration consumes Gherkin | E2E consumes Gherkin                 |
-| --------------------------- | -------------------------------------------------- | ---------------------------- | ------------------------------------ |
-| BE API (`organiclever-be`)  | Yes — `specs/apps/organiclever/be/behaviors/`      | Yes — same specs             | Yes — same specs                     |
-| FE (`organiclever-app-web`) | Yes — `specs/apps/organiclever/app-web/behaviors/` | Yes — same specs             | Yes — via `organiclever-app-web-e2e` |
-| CLI (`*-cli`)               | Yes — `specs/apps/{domain}/cli/behaviors/`         | Yes — same specs             | Not applicable                       |
-| Content platform            | Yes — project-local specs                          | Yes — same specs             | Yes — via `*-be-e2e` / `*-fe-e2e`    |
-| Library                     | Yes — library-specific specs                       | Yes — same specs             | Not applicable                       |
-| E2E runner                  | Not applicable                                     | Not applicable               | Yes — consumes shared specs          |
+All applicable adapters consume the same recursively discovered `behaviours/` corpus. Unit has no
+exemption. A higher-layer scenario requires implementation or a valid boundary-mismatch exemption;
+both Integration and E2E exemptions may annotate one scenario and are reviewed independently.
+Inapplicable layers are documented and omitted rather than represented by no-op targets.

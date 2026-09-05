@@ -12,7 +12,7 @@ sources before plan authoring begins.
 **Skip condition**: Skip if ALL hold:
 
 1. The objective is a purely internal governance or structural change with no external claims
-2. No harness/vendor conventions, library versions, tool behavior, or cross-repo prior art need
+2. No harness/vendor conventions, library versions, tool behaviour, or cross-repo prior art need
    verification
 3. The invoker confirmed in Step 3 that no research is needed (research-needed flag = no)
 
@@ -22,10 +22,10 @@ If skipping: emit `Step 4 skipped — no external research needed (confirmed in 
 
 Invoke `web-researcher` via the Agent tool. Provide a focused research prompt covering:
 
-- Vendor or harness conventions the objective touches (e.g., CI runner behavior, tool API
+- Vendor or harness conventions the objective touches (e.g., CI runner behaviour, tool API
   contracts, platform-specific constraints)
 - Prior art: has anyone formalized this cross-repo alignment pattern? Known failure modes?
-- Library or tool behavior referenced in the objective (versions, API signatures, caveats)
+- Library or tool behaviour referenced in the objective (versions, API signatures, caveats)
 - Risks or caveats not surfaced in the Step 1 inventories
 
 **Agent**: `web-researcher`

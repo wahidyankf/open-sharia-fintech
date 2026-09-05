@@ -6,7 +6,7 @@ After Step 5e, scan the whole plan for unverified factual claims matching the
 [Plan Anti-Hallucination Convention §Anti-Pattern Catalog](../../../../repo-governance/development/quality/plan-anti-hallucination/anti-pattern-catalog-ap-1-through-ap-4.md#anti-pattern-catalog).
 
 **A. Confidence-label coverage** — every non-trivial claim about a file path, Nx target, package
-version, API signature, agent/skill name, behavior, external standard, or numeric KPI carries
+version, API signature, agent/skill name, behaviour, external standard, or numeric KPI carries
 `[Repo-grounded]`, `[Web-cited]`, `[Judgment call]`, or `[Unverified]` inline, or appears inside a
 repo-file-quoting code fence. Bare unlabeled claims default to `[Unverified]`: **MEDIUM** per claim.
 
@@ -21,7 +21,7 @@ repo-file-quoting code fence. Bare unlabeled claims default to `[Unverified]`: *
 - **AP-7** agent/skill name cited that doesn't resolve via `find .claude/agents -name '<name>.md'`
   (nested role subfolders) or `.claude/skills/<name>/SKILL.md`: **HIGH**
 - **AP-8** CLI flag cited without `<cmd> --help` evidence or repo-doc reference: **MEDIUM**
-- **AP-9** behavior claim cited without a source: **MEDIUM**
+- **AP-9** behaviour claim cited without a source: **MEDIUM**
 - **AP-10** cross-link target resolving to a non-existent file: **HIGH**
 
 (all per occurrence)
@@ -35,7 +35,7 @@ counts as AP-7); the agent's role suits the action (e.g. `swe-fsharp-dev` for a 
 inline; missing any element: **MEDIUM** per occurrence; URL-only citation is forbidden.
 
 **How to audit**: read each file top-to-bottom; for every sentence asserting a file path, Nx target,
-version, API surface, agent/skill name, behavior, or metric, check the corresponding recipe row from
+version, API surface, agent/skill name, behaviour, or metric, check the corresponding recipe row from
 [Plan Anti-Hallucination Convention §Repo-Grounding Rule](../../../../repo-governance/development/quality/plan-anti-hallucination/repo-grounding-rule-hard.md#repo-grounding-rule-hard);
 run the recipe (`Bash test -f`, `Glob`, `Grep`, `jq` against `project.json`, etc.); file a finding
 under the matching Anti-Pattern on failure. For external claims, verify URL/access-date/excerpt; if

@@ -64,48 +64,57 @@
       "inputs": [
         "default",
         "{projectRoot}/src/generated-contracts/**/*",
-        "{workspaceRoot}/specs/apps/organiclever/app-web/behaviors/**/*.feature"
+        "{workspaceRoot}/specs/apps/organiclever/app-web/behaviours/**/*.feature",
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/tests/unit/**/*"
       ],
       "options": {
-        "command": "if grep -rn -E --include='*.ts' --include='*.tsx' --exclude-dir=node_modules --exclude-dir=.next --exclude-dir=dist --exclude-dir=coverage --exclude-dir=storybook-static '\\b(it|test|describe)\\.(skip|only|todo)\\(' .; then echo 'ERROR: .skip()/.only()/.todo() found in test files above - remove before merging'; exit 1; fi && npx vitest run",
+        "command": "node scripts/gen-migrations.mjs && if grep -rn -E --include='*.ts' --include='*.tsx' --exclude-dir=node_modules --exclude-dir=.next --exclude-dir=dist --exclude-dir=coverage --exclude-dir=storybook-static '\\b(it|test|describe)\\.(skip|only|todo)\\(' .; then echo 'ERROR: .skip()/.only()/.todo() found in test files above - remove before merging'; exit 1; fi && npx vitest run --coverage --coverage.thresholds.lines=99",
         "cwd": "apps/organiclever-app-web"
       },
-      "dependsOn": []
-    },
-    "test:coverage": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "node scripts/gen-migrations.mjs && npx vitest run --coverage --coverage.thresholds.lines=99",
-        "cwd": "apps/organiclever-app-web"
-      },
-      "cache": true,
-      "outputs": ["{projectRoot}/coverage"],
-      "inputs": ["{projectRoot}/src/**/*", "{projectRoot}/tests/unit/**/*"]
+      "dependsOn": [],
+      "outputs": ["{projectRoot}/coverage"]
     },
     "test:quick": {
       "executor": "nx:run-commands",
-      "cache": true,
       "options": {
         "commands": [
-          "npx nx run organiclever-app-web:typecheck",
-          "npx nx run organiclever-app-web:lint",
-          "npx nx run organiclever-app-web:test:unit",
-          "npx nx run organiclever-app-web:test:coverage",
-          "npx nx run organiclever-app-web:test:specs",
-          "npx nx run organiclever-app-web:test:layout:validation",
-          "npx nx run organiclever-app-web:coverage:policy:validation",
-          "npx nx run organiclever-app-web:package-manifest:policy:validation"
+          {
+            "command": "npm exec -- nx run organiclever-app-web:typecheck",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run organiclever-app-web:lint",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run organiclever-app-web:test:unit",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run organiclever-app-web:specs:structure-validation",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run organiclever-app-web:test:coverage",
+            "forwardAllArgs": false
+          }
         ],
-        "parallel": false
+        "parallel": false,
+        "forwardAllArgs": false
       },
-      "inputs": ["default", "specs"]
-    },
-    "test:integration": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "echo 'no-op: target not applicable for this project'"
-      },
-      "cache": true
+      "cache": true,
+      "inputs": [
+        "default",
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/apps/organiclever-app-web/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/apps/organiclever/app-web/behaviours/**/*.feature",
+        "{workspaceRoot}/apps/organiclever-app-web/tests/unit/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/apps/organiclever-app-web/vitest.config.ts",
+        "{workspaceRoot}/apps/organiclever-app-web-e2e/steps/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/apps/organiclever-app-web-e2e/playwright.config.ts"
+      ]
     },
     "storybook": {
       "executor": "nx:run-commands",
@@ -122,70 +131,6 @@
         "cwd": "{projectRoot}"
       },
       "outputs": ["{projectRoot}/storybook-static"]
-    },
-    "specs:behavior:coverage": {
-      "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps specs/apps/organiclever/app-web/behaviors apps/organiclever-app-web",
-      "cache": true,
-      "inputs": [
-        "{workspaceRoot}/specs/apps/organiclever/app-web/behaviors/**/*.feature",
-        "{projectRoot}/**/*.{ts,tsx}"
-      ]
-    },
-    "test:behavior:coverage:unit": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract bdd validate --project organiclever-app-web --adapter unit"
-      },
-      "cache": true,
-      "inputs": [
-        "{workspaceRoot}/specs/apps/organiclever/app-web/behaviors/**/*.feature",
-        "{workspaceRoot}/repo-config.yml",
-        "default"
-      ]
-    },
-    "test:behavior:coverage:integration": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract bdd validate --project organiclever-app-web --adapter integration"
-      },
-      "cache": true,
-      "inputs": [
-        "{workspaceRoot}/specs/apps/organiclever/app-web/behaviors/**/*.feature",
-        "{workspaceRoot}/repo-config.yml",
-        "default"
-      ]
-    },
-    "test:behavior:coverage:e2e": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract bdd validate --project organiclever-app-web --adapter e2e"
-      },
-      "cache": true,
-      "inputs": [
-        "{workspaceRoot}/specs/apps/organiclever/app-web/behaviors/**/*.feature",
-        "{workspaceRoot}/repo-config.yml",
-        "default"
-      ]
-    },
-    "test:behavior:coverage": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "npx nx run organiclever-app-web:test:behavior:coverage:unit",
-          "npx nx run organiclever-app-web:test:behavior:coverage:integration",
-          "npx nx run organiclever-app-web:test:behavior:coverage:e2e"
-        ],
-        "parallel": false
-      },
-      "dependsOn": ["test:behavior:coverage:unit", "test:behavior:coverage:integration", "test:behavior:coverage:e2e"],
-      "cache": true
-    },
-    "test:e2e": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "echo 'no-op: target not applicable for this project'"
-      },
-      "cache": true
     },
     "deps:audit": {
       "executor": "nx:run-commands",
@@ -209,45 +154,92 @@
       "cache": true,
       "inputs": ["{workspaceRoot}/specs/apps/!(rhino)/**/*"]
     },
-    "test:specs": {
+    "test:coverage:unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node scripts/behaviour-coverage.mjs --config apps/organiclever-app-web/behaviour-coverage.json --adapter unit"
+      },
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/apps/organiclever-app-web/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/apps/organiclever/app-web/behaviours/**/*.feature",
+        "{workspaceRoot}/apps/organiclever-app-web/tests/unit/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/apps/organiclever-app-web/vitest.config.ts",
+        "{workspaceRoot}/apps/organiclever-app-web-e2e/steps/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/apps/organiclever-app-web-e2e/playwright.config.ts"
+      ]
+    },
+    "test:coverage:e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node scripts/behaviour-coverage.mjs --config apps/organiclever-app-web/behaviour-coverage.json --adapter e2e"
+      },
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/apps/organiclever-app-web/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/apps/organiclever/app-web/behaviours/**/*.feature",
+        "{workspaceRoot}/apps/organiclever-app-web/tests/unit/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/apps/organiclever-app-web/vitest.config.ts",
+        "{workspaceRoot}/apps/organiclever-app-web-e2e/steps/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/apps/organiclever-app-web-e2e/playwright.config.ts"
+      ]
+    },
+    "test:coverage:behaviour": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node scripts/behaviour-coverage.mjs --config apps/organiclever-app-web/behaviour-coverage.json --adapter behaviour"
+      },
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/apps/organiclever-app-web/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/apps/organiclever/app-web/behaviours/**/*.feature",
+        "{workspaceRoot}/apps/organiclever-app-web/tests/unit/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/apps/organiclever-app-web/vitest.config.ts",
+        "{workspaceRoot}/apps/organiclever-app-web-e2e/steps/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/apps/organiclever-app-web-e2e/playwright.config.ts"
+      ]
+    },
+    "test:coverage": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "npx nx run organiclever-app-web:specs:structure-validation",
-          "npx nx run organiclever-app-web:specs:behavior:coverage"
+          {
+            "command": "npm exec -- nx run organiclever-app-web:test:coverage:unit",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run organiclever-app-web:test:coverage:e2e",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run organiclever-app-web:test:coverage:behaviour",
+            "forwardAllArgs": false
+          }
         ],
-        "parallel": false
+        "parallel": false,
+        "forwardAllArgs": false
       },
       "cache": true,
-      "inputs": ["default", "specs"]
-    },
-    "test:layout:validation": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract layout validate --project organiclever-app-web"
-      },
-      "cache": true,
-      "inputs": ["default", "{projectRoot}/project.json"]
-    },
-    "coverage:policy:validation": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract coverage validate --project organiclever-app-web"
-      },
-      "cache": true,
-      "inputs": ["default", "{projectRoot}/project.json"]
-    },
-    "package-manifest:policy:validation": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract manifest validate --project organiclever-app-web"
-      },
-      "cache": true,
-      "inputs": ["default", "{projectRoot}/project.json"]
+      "inputs": [
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/apps/organiclever-app-web/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/apps/organiclever/app-web/behaviours/**/*.feature",
+        "{workspaceRoot}/apps/organiclever-app-web/tests/unit/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/apps/organiclever-app-web/vitest.config.ts",
+        "{workspaceRoot}/apps/organiclever-app-web-e2e/steps/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/apps/organiclever-app-web-e2e/playwright.config.ts"
+      ]
     }
   },
   "namedInputs": {
-    "specs": ["{workspaceRoot}/specs/apps/organiclever/app-web/behaviors/**/*.feature"]
+    "specs": ["{workspaceRoot}/specs/apps/organiclever/app-web/behaviours/**/*.feature"]
   },
   "tags": ["type:app", "platform:nextjs", "lang:ts", "domain:organiclever"],
   "implicitDependencies": ["organiclever-contracts", "web-ui"]

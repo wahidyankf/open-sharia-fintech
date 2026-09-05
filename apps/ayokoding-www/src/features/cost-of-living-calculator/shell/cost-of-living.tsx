@@ -77,6 +77,7 @@ export function CostOfLivingTable({ dataset, household, schoolType, area, locale
       healthcare: scaleAmount(e.healthcare.amount, "healthcare", household, area),
       childcare: childcareLocal(city, household),
       school: schoolLocal(city, country, household, schoolType),
+      lifestyle: e.lifestyle.amount,
       essentials: essentialsLocal(city, country, household, schoolType, area),
       total: expensesLocal(city, country, household, schoolType, area),
       relocation: relocationSunkLocal(city),
@@ -133,6 +134,7 @@ export function CostOfLivingTable({ dataset, household, schoolType, area, locale
                 </TableHead>
                 <TableHead className={tabletHidden}>{t(locale, "colChildcare")}</TableHead>
                 <TableHead className={tabletHidden}>{t(locale, "colSchool")}</TableHead>
+                <TableHead className={tabletHidden}>{t(locale, "colLifestyle")}</TableHead>
                 {/* One-time cost columns */}
                 <TableHead>
                   <abbr title={t(locale, "tooltipRelocationSunk")}>{t(locale, "colRelocationSunk")}</abbr>
@@ -233,6 +235,13 @@ export function CostOfLivingTable({ dataset, household, schoolType, area, locale
                         <ForeignerSchoolFlag cityId={r.city.id} locale={locale} />
                       </span>
                     )}
+                  </TableCell>
+                  <TableCell
+                    data-testid={`col-lifestyle-${r.city.id}`}
+                    data-raw={r.lifestyle}
+                    className={`text-right ${tabletHidden}`}
+                  >
+                    {fmtDualCurrency(r.lifestyle, r.city.currency, r.lifestyle * r.fxRate)}
                   </TableCell>
                   {/* One-time cost cells */}
                   <TableCell className="text-right">

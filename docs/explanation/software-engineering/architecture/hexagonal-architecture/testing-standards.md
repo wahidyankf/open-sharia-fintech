@@ -25,19 +25,22 @@ created: 2026-05-17
 
 ## Purpose
 
-OSE Platform standards for testing hexagonal architecture implementations. The hexagonal structure creates a natural three-tier test strategy: domain tests (pure), port contract tests (adapter verification), and integration tests (full wiring). Each tier maps to a specific Nx target.
+OSE Platform standards for testing hexagonal architecture implementations. The hexagonal structure
+supports Unit proof for pure/application behaviour, Integration proof for real isolated local
+resources without network transport, and E2E proof through a public boundary. Each tier maps to a
+specific Nx target.
 
 ## Standard 1: Nx Target to Test Tier Mapping
 
 **REQUIRED**: Every test MUST run in the correct Nx target. Placing a test in the wrong target is a code review finding.
 
-| Test tier              | Nx target          | Infrastructure | Cacheable | Adapters used         |
-| ---------------------- | ------------------ | -------------- | --------- | --------------------- |
-| Domain unit tests      | `test:unit`        | None           | Yes       | None (pure functions) |
-| Application unit tests | `test:unit`        | None           | Yes       | In-memory adapters    |
-| Port contract tests    | `test:unit`        | None           | Yes       | In-memory adapters    |
-| Adapter integration    | `test:integration` | Docker         | No        | Real adapters         |
-| End-to-end             | `test:e2e`         | Docker + HTTP  | No        | Full stack            |
+| Test tier              | Nx target          | Real boundary                         | Cacheable | Adapters used                  |
+| ---------------------- | ------------------ | ------------------------------------- | --------- | ------------------------------ |
+| Domain Unit tests      | `test:unit`        | None                                  | Yes       | Injected in-process fakes      |
+| Application Unit tests | `test:unit`        | None                                  | Yes       | Injected in-process fakes      |
+| Port contract Unit     | `test:unit`        | None                                  | Yes       | Injected in-process fakes      |
+| Adapter Integration    | `test:integration` | Isolated local resource; no network   | No        | Real non-network adapters      |
+| End-to-end             | `test:e2e`         | Public browser, HTTP, or process path | No        | Full production boundary stack |
 
 **See**: [Nx Target Standards](../../../../../repo-governance/development/infra/nx-targets.md) for caching rules and the three-level testing standard.
 
@@ -81,9 +84,16 @@ let ``submit transitions draft order to awaiting approval`` () =
 
 ## Standard 3: Port Contract Tests
 
-**REQUIRED**: Every output port MUST have a port contract test suite that verifies adapter correctness against the port's behavioural contract. The same contract test suite MUST pass for both the in-memory adapter (run in `test:unit`) and the real adapter (run in `test:integration`).
+**REQUIRED**: Every output port MUST have a port contract test suite that verifies adapter
+correctness against the port's behavioural contract. The contract MUST pass against an injected
+in-memory adapter in `test:unit` and each applicable real non-network local-resource adapter in
+`test:integration`. A networked production adapter is proved only as part of `test:e2e` through the
+application's public boundary.
 
-This is the key hexagonal testing pattern: define the expected behaviour once as an abstract contract, then run it against every adapter implementation.
+This is the key hexagonal testing pattern: define the expected behaviour once as an abstract
+contract, then run it against each adapter at the layer matching its strongest real boundary. An
+in-memory adapter is Unit, a filesystem adapter is Integration, and a PostgreSQL adapter reached
+over TCP is exercised only as part of E2E proof through the application's public boundary.
 
 ### Java — Contract Test Pattern
 
@@ -122,17 +132,16 @@ class InMemoryPurchaseOrderRepositoryAdapterTest
   }
 }
 
-// JPA implementation — runs in test:integration (Docker required)
-@DataJpaTest
-class JpaPurchaseOrderRepositoryAdapterTest
+// Real filesystem implementation — runs in test:integration (no network)
+class FilePurchaseOrderRepositoryAdapterTest
     extends PurchaseOrderRepositoryPortContract {
 
-  @Autowired PurchaseOrderJpaRepository jpaRepo;
-  @Autowired PurchaseOrderMapper mapper;
+  private final PurchaseOrderRepositoryPort fileRepository =
+      FilePurchaseOrderRepositoryAdapter.inTemporaryDirectory();
 
   @Override
   PurchaseOrderRepositoryPort adapter() {
-    return new JpaPurchaseOrderRepositoryAdapter(jpaRepo, mapper);
+    return fileRepository;
   }
 }
 ```
@@ -165,10 +174,11 @@ let ``InMemory satisfies repository port contract`` () =
   let adapter = InMemoryPurchaseOrderRepository.makePort ()
   PurchaseOrderRepositoryPortContract.run adapter
 
-// PostgreSQL run — test:integration
+// Real filesystem run — test:integration, isolated temporary directory, no network
 [<Fact>]
-let ``Postgres satisfies repository port contract`` () =
-  let adapter = PostgresPurchaseOrderRepository.makePort testConnectionString
+let ``File repository satisfies repository port contract`` () =
+  use fixture = TemporaryDirectory.create ()
+  let adapter = FilePurchaseOrderRepository.makePort fixture.Path
   PurchaseOrderRepositoryPortContract.run adapter
 ```
 
@@ -205,23 +215,31 @@ class CreatePurchaseOrderServiceTest {
 
 ## Standard 5: Integration Test Scope
 
-**REQUIRED**: `test:integration` tests MUST use real infrastructure (PostgreSQL via Docker, Kafka via Docker) wired through the production adapter. They MUST NOT use in-memory adapters.
+**REQUIRED**: `test:integration` tests MUST use an isolated real local-resource boundary wired
+through the production adapter, such as a temporary filesystem, embedded database accessed without
+network transport, process environment, or child-process standard streams. They MUST NOT use
+in-memory substitutes for the boundary under proof and MUST NOT use HTTP, TCP, UDP, loopback,
+`localhost`, `127.0.0.1`, or a local server.
 
 **REQUIRED**: `test:integration` targets MUST NOT be cacheable. Add `"cache": false` in `project.json` for these targets.
 
 **Scope of integration tests**:
 
 - Real adapter satisfies port contract (covered by Standard 3 concrete subclass)
-- Full wiring of composition root boots without error
-- Cross-adapter interaction (e.g., save via JPA, read back via JDBC query adapter)
+- Full wiring of a non-network local-resource composition root boots without error
+- Cross-adapter interaction through the same isolated local resource
 
-**Out of scope for `test:integration`**: business logic, domain invariants (those belong in `test:unit`).
+**Out of scope for `test:integration`**: business logic and domain invariants (Unit); PostgreSQL,
+Kafka, NATS, HTTP, and any other network path (E2E through a public boundary).
 
 ## Standard 6: E2E Test Scope
 
-**REQUIRED**: `test:e2e` tests call the application through its HTTP input adapter (via Playwright or curl). They verify the full stack — HTTP adapter → application service → output port → real adapter → database.
+**REQUIRED**: `test:e2e` tests call the application through its public browser, HTTP/API, or process
+boundary. They verify the full stack — public adapter → application service → output port → real
+adapter → controlled resource — using isolated synthetic data and identities.
 
-E2E tests in `organiclever-be-e2e` target the running `organiclever-be` process. They MUST NOT bypass the HTTP layer to call application services directly.
+E2E tests in `organiclever-be-e2e` target the running `organiclever-be` process. They MUST NOT
+bypass the HTTP layer to call application services directly or use uncontrolled external services.
 
 **See**: [Nx Target Standards](../../../../../repo-governance/development/infra/nx-targets.md) for `test:e2e` caching and parallelism rules.
 

@@ -17,7 +17,7 @@ or missing run does not count. Fix and push failures, then wait for the replacem
   named workflow for this PR. Do not infer it from `plans/**`, executable content, risk, or delivery
   mode. Resolve every conversation an invoked review created, but never require a review record
   when no review was requested.
-- Run every finite surface gate required by the shipped UI, API, or other reachable behavior.
+- Run every finite surface gate required by the shipped UI, API, or other reachable behaviour.
   Record an explicit exemption only when no reachable surface exists.
 - Commit the `git mv plans/in-progress/... plans/done/...` move and index updates inside the
   delivering PR, push it, and require a new exact-head `Quality gate` result for that archival

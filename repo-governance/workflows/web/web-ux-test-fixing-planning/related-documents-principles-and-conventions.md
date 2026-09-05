@@ -1,7 +1,7 @@
 ---
 title: "Web UX Test-Fixing Planning — Related Documents, Principles, and Conventions"
 description: "Links to the agents and workflows this workflow composes with, and the principles and conventions it implements — including the systematic-coverage convention it defines canonically."
-when_to_use: "Use when tracing which agent or convention backs a specific behavior in this workflow, or when auditing its principle/convention compliance."
+when_to_use: "Use when tracing which agent or convention backs a specific behaviour in this workflow, or when auditing its principle/convention compliance."
 ---
 
 # Related Documents, Principles, and Conventions

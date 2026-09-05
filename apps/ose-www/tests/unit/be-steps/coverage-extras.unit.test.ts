@@ -1,22 +1,14 @@
 /**
  * Additional unit tests to reach 80% coverage on uncovered code paths.
  */
-import { vi, describe, it, expect } from "vitest";
-
-// createEnv snapshots process.env at module load time; mock it with a live Proxy
-// so that per-test process.env mutations are visible to the service.
-vi.mock("@/env", () => ({
-  env: new Proxy({} as Record<string, string | undefined>, {
-    get: (_, key: string) => process.env[key],
-  }),
-}));
-import { writeFileSync, mkdirSync, rmSync } from "node:fs";
-import { join } from "node:path";
+import { describe, it, expect } from "vitest";
 import { cn } from "@/lib/utils";
 import { InMemoryContentRepository } from "@/features/content/core/repository-memory";
 import { ContentService } from "@/features/content/shell/service";
 import type { SearchDoc } from "@/features/content/shell/service";
 import { createTRPCContext } from "@/lib/trpc/init";
+
+const FIXED_DATE = new Date("2026-01-01T00:00:00Z");
 
 // --- lib/utils.ts ---
 describe("cn utility", () => {
@@ -59,7 +51,7 @@ describe("ContentService with prebuilt search data path", () => {
         meta: {
           title: "Test Page",
           slug: "test",
-          date: new Date(),
+          date: FIXED_DATE,
           draft: false,
           description: "Test",
           tags: [],
@@ -75,9 +67,14 @@ describe("ContentService with prebuilt search data path", () => {
     ]);
 
     // Provide a non-existent searchDataPath — falls back to building from files
-    const service = new ContentService(repo, "/tmp/nonexistent-search-data.json");
+    const service = new ContentService(repo, "missing-search-data.json", {
+      readSearchData: async () => {
+        throw new Error("missing synthetic search data");
+      },
+    });
     const results = await service.search("enterprise", 5);
-    expect(Array.isArray(results)).toBe(true);
+    expect(results).toHaveLength(1);
+    expect(results[0]?.title).toBe("Test Page");
   });
 
   it("isSearchIndexReady returns false before search and true after", async () => {
@@ -86,7 +83,7 @@ describe("ContentService with prebuilt search data path", () => {
         meta: {
           title: "Ready Check",
           slug: "ready",
-          date: new Date(),
+          date: FIXED_DATE,
           draft: false,
           tags: [],
           summary: "Summary",
@@ -115,7 +112,7 @@ describe("ContentService search excerpt", () => {
         meta: {
           title: "Long Page",
           slug: "long",
-          date: new Date(),
+          date: FIXED_DATE,
           draft: false,
           tags: [],
           summary: "Summary",
@@ -132,7 +129,8 @@ describe("ContentService search excerpt", () => {
     // Search for something that exists in title but not in content
     const results = await service.search("long", 5);
     // The excerpt is taken from content where idx === -1 for "long"
-    expect(results.length).toBeGreaterThanOrEqual(0);
+    expect(results).toHaveLength(1);
+    expect(results[0]?.excerpt).toBe(`${"A".repeat(150)}...`);
   });
 
   it("returns excerpt with ellipsis when query is in the middle of content", async () => {
@@ -142,7 +140,7 @@ describe("ContentService search excerpt", () => {
         meta: {
           title: "Middle Page",
           slug: "middle",
-          date: new Date(),
+          date: FIXED_DATE,
           draft: false,
           tags: [],
           summary: "Summary",
@@ -162,13 +160,9 @@ describe("ContentService search excerpt", () => {
   });
 });
 
-// --- service.ts: buildSearchIndexFromDocs via valid prebuilt data file ---
+// --- service.ts: buildSearchIndexFromDocs via an injected data reader ---
 describe("ContentService with valid prebuilt search data", () => {
-  it("loads search index from actual prebuilt data file", async () => {
-    const tmpDir = "/tmp/ose-platform-test-search";
-    const searchDataPath = join(tmpDir, "search-data.json");
-    mkdirSync(tmpDir, { recursive: true });
-
+  it("loads search index from injected prebuilt data", async () => {
     const docs: SearchDoc[] = [
       {
         id: "updates/test-page",
@@ -177,15 +171,16 @@ describe("ContentService with valid prebuilt search data", () => {
         slug: "updates/test-page",
       },
     ];
-    writeFileSync(searchDataPath, JSON.stringify(docs), "utf-8");
-
     const repo = new InMemoryContentRepository([]);
-    const service = new ContentService(repo, searchDataPath);
+    const service = new ContentService(repo, "synthetic-search-data.json", {
+      readSearchData: async (requestedPath) => {
+        expect(requestedPath).toBe("synthetic-search-data.json");
+        return JSON.stringify(docs);
+      },
+    });
     const results = await service.search("enterprise", 5);
     expect(results.length).toBeGreaterThan(0);
     expect(results[0]?.title).toBe("Test Page");
-
-    rmSync(tmpDir, { recursive: true, force: true });
   });
 });
 
@@ -248,7 +243,7 @@ describe("ContentService getBySlug prev/next navigation", () => {
         meta: {
           title: "About",
           slug: "about",
-          date: new Date(),
+          date: FIXED_DATE,
           draft: false,
           tags: [],
           summary: "About",
@@ -277,7 +272,7 @@ describe("ContentService draft visibility", () => {
         meta: {
           title: "Draft Post",
           slug: "updates/draft",
-          date: new Date(),
+          date: FIXED_DATE,
           draft: true,
           tags: [],
           summary: "Draft summary",
@@ -290,12 +285,8 @@ describe("ContentService draft visibility", () => {
         content: "## Draft\n\nDraft content.",
       },
     ]);
-    const service = new ContentService(repo);
-
-    process.env["OSE_WEB_SHOW_DRAFTS"] = "true";
+    const service = new ContentService(repo, undefined, { showDrafts: true });
     const updates = await service.listUpdates();
     expect(updates.some((u) => u.draft)).toBe(true);
-
-    delete process.env["OSE_WEB_SHOW_DRAFTS"];
   });
 });

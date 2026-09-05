@@ -1,7 +1,7 @@
 ---
-title: "Standard 1 — Content Split Rule: Category B (Behavior/Contract/Architecture), and Applying the Rule"
+title: "Standard 1 — Content Split Rule: Category B (Behaviour/Contract/Architecture), and Applying the Rule"
 description: The definition and content table for Category B content that moves to specs/, plus the three-question test for classifying a README paragraph.
-when_to_use: Use when checking whether a piece of README content is behavior/architecture (Category B) and must move to specs/, or when applying the split-rule decision test.
+when_to_use: Use when checking whether a piece of README content is behaviour/architecture (Category B) and must move to specs/, or when applying the split-rule decision test.
 category: explanation
 subcategory: conventions
 status: "Pilot — initial issue"
@@ -17,7 +17,7 @@ created: 2026-05-09
 
 # Standard 1 — Content Split Rule: Category B, and Applying the Rule
 
-**Category B — Behavior, contract, or architecture (moves to `specs/apps/<app-family>/`)**
+**Category B — Behaviour, contract, or architecture (moves to `specs/apps/<app-family>/`)**
 
 Content that describes WHAT the system does — what URLs it exposes, what user flows exist, what API endpoints, what bounded contexts, what design decisions, what integration points. This content is platform-agnostic and survives even if the app were rewritten in a different framework.
 
@@ -34,7 +34,7 @@ Content that describes WHAT the system does — what URLs it exposes, what user 
 | API endpoints table                                                     | `specs/apps/<app-family>/components/be/api.md`                 |
 | Backend architecture diagram (DI, project tree)                         | `specs/apps/<app-family>/components/be/api.md`                 |
 | Backend testing strategy                                                | `specs/apps/<app-family>/components/be/api.md`                 |
-| E2E architecture (bddgen pipeline, feature → spec → test flow)          | `specs/apps/<app-family>/behavior/{web,be}/gherkin/README.md`  |
+| E2E architecture (bddgen pipeline, feature → spec → test flow)          | `specs/apps/<app-family>/<owner>/behaviours/README.md`         |
 
 **Applying the rule — three questions in order:**
 

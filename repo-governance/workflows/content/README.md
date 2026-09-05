@@ -36,7 +36,7 @@ what changed.
 - **[pdf-to-md-checker](../../../.claude/agents/pdf-to-md/pdf-to-md-checker.md)** — Validates Markdown fidelity against source PDF
 - **[pdf-to-md-fixer](../../../.claude/agents/pdf-to-md/pdf-to-md-fixer.md)** — Applies validated fixes from checker audit
 
-## Default Behavior
+## Default Behaviour
 
 By default, the PDF and Markdown file share the same directory and filename, differing only in extension:
 

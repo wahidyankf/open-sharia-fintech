@@ -55,7 +55,7 @@ review_cycle(PR, maximum_passes = 5):
 ```
 
 The cycle preserves its durable ceiling, history, cause tags, probe variation, clean-streak credit,
-fixer, and CI behavior. `pr-review` owns head pinning, risk routing, fan-out, synthesis, the single
+fixer, and CI behaviour. `pr-review` owns head pinning, risk routing, fan-out, synthesis, the single
 `COMMENT` post, and its authenticated `ose-pr-review-pass:v1` record.
 
 The enclosing cycle may invoke a fresh pass after a stale result because the user explicitly chose

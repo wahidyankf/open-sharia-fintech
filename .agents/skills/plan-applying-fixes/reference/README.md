@@ -11,7 +11,7 @@ title: "Reference"
 - [05 Delivery Boundary Step Placement Fixes](./delivery-boundary-step-placement-fixes.md) — repair recipes for delivery-boundary step placement
 - [06 Report Generation And Confidence Examples](./report-generation-and-confidence-examples.md) — fix report generation, re-validation bookkeeping, and confidence examples
 - [07 Operational Readiness Fixes](./operational-readiness-fixes.md) — repair recipes for missing operational readiness sections
-- [08 Manual Behavioral Assertion Fixes](./manual-behavioral-assertion-fixes.md) — repair recipes for missing manual UI/API behavioral assertions
+- [08 Manual Behavioural Assertion Fixes](./manual-behavioural-assertion-fixes.md) — repair recipes for missing manual UI/API behavioural assertions
 - [09 Ui Design Funnel Scaffolding Fixes](./ui-design-funnel-scaffolding-fixes.md) — repair recipes for scaffolding a missing UI-design-funnel section
 - [10 Learning Bearing Syllabus Scaffolding Fixes](./learning-bearing-syllabus-scaffolding-fixes.md) — repair recipes for scaffolding a missing learning-bearing syllabus artefact
 - [11 Diagram Format Fixes](./diagram-format-fixes.md) — repair recipes for converting ASCII art to Mermaid and other diagram-format findings

@@ -5,7 +5,7 @@ Specifications for the AyoKoding product family. AyoKoding ships one logical own
 ## Contents
 
 - [AyoKoding Web](./www/README.md) — the specification corpus for `ayokoding-www`, the multilingual
-  educational site: its architecture and its recursive Gherkin behaviors.
+  educational site: its architecture and its recursive Gherkin behaviours.
 
 ## Related
 

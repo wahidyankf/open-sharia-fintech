@@ -12,7 +12,7 @@ Confidence HIGH only when both passages are quoted verbatim in the finding and g
 irreconcilable (not merely differently scoped). Fix: align the newer/more-specific doc's wording
 into the older/general one, never delete either document.
 
-**Inaccuracies** — a governance document describes tooling/behavior that no longer matches the
+**Inaccuracies** — a governance document describes tooling/behaviour that no longer matches the
 codebase (a renamed command, a removed flag, a changed default). Confidence HIGH only when the
 current codebase state is independently confirmed via Grep/Read, not just asserted by the finding.
 

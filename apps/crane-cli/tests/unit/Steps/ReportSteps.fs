@@ -1,11 +1,11 @@
 module CraneCli.Tests.Unit.Steps.ReportSteps
 
 open System
-open System.IO
 open TickSpec
 open Xunit
 open CraneCore.Logic.ReportManager
 open CraneCli.Tests.Unit.Steps.BddState
+open CraneCli.Tests.Unit.Steps.InMemoryBoundaries
 
 // ---- BDD shared state ----
 let mutable private lastReportPath: string = ""
@@ -16,10 +16,7 @@ let mutable private currentScope: string = "pdf-to-md"
 [<Given>]
 let ``no existing chain file for scope "([^"]*)"`` (scope: string) =
     currentScope <- scope
-    let chainFile = sprintf "local-tmp/.execution-chain-%s" scope
-
-    if File.Exists(chainFile) then
-        File.Delete(chainFile)
+    reset ()
 
 [<Given>]
 let ``a chain file for "([^"]*)" created (\d+) seconds ago with UUID "([^"]*)"``
@@ -28,10 +25,10 @@ let ``a chain file for "([^"]*)" created (\d+) seconds ago with UUID "([^"]*)"``
     (uuid: string)
     =
     currentScope <- scope
-    let chainFile = sprintf "local-tmp/.execution-chain-%s" scope
-    let ts = DateTimeOffset.UtcNow.ToUnixTimeSeconds() - int64 seconds
-    Directory.CreateDirectory("local-tmp") |> ignore
-    File.WriteAllText(chainFile, sprintf "%d %s" ts uuid)
+    reset ()
+    let chainFile = $"local-tmp/.execution-chain-{scope}"
+    let ts = fixedUtcNow.ToUnixTimeSeconds() - int64 seconds
+    writeAllText chainFile $"{ts} {uuid}"
 
 // ---- BDD When steps ----
 
@@ -41,7 +38,7 @@ let ``I run "crane report init" with scope "([^"]*)"`` (scope: string) =
 
     RunWithWriter(fun w ->
         let code =
-            match initReport scope "test.pdf" "test.md" with
+            match initReportWith reportDependencies scope "test.pdf" "test.md" with
             | Ok path ->
                 lastReportPath <- path
                 let opts = System.Text.Json.JsonSerializerOptions()
@@ -58,16 +55,25 @@ let ``I run "crane report init" with scope "([^"]*)"`` (scope: string) =
 
 [<Then>]
 let ``a report file is created in "([^"]*)"`` (dir: string) =
-    Assert.True(File.Exists(lastReportPath), sprintf "Report file should exist: %s" lastReportPath)
-    Assert.True(lastReportPath.StartsWith(dir), sprintf "Path should start with %s" dir)
+    Assert.True(exists lastReportPath, $"Report file should exist: {lastReportPath}")
+    Assert.True(lastReportPath.StartsWith(dir, StringComparison.Ordinal), $"Path should start with {dir}")
 
 [<Then>]
 let ``the filename matches the pattern "([^"]*)"`` (_pattern: string) =
-    let filename = Path.GetFileName(lastReportPath)
-    Assert.True(filename.EndsWith("__audit.md"), sprintf "Filename should end with __audit.md: %s" filename)
-    Assert.True(filename.StartsWith(currentScope + "__"), sprintf "Filename should start with scope: %s" filename)
+    let filename = lastReportPath.Split('/') |> Array.last
+
+    Assert.True(
+        filename.EndsWith("__audit.md", StringComparison.Ordinal),
+        $"Filename should end with __audit.md: {filename}"
+    )
+
+    Assert.True(
+        filename.StartsWith(currentScope + "__", StringComparison.Ordinal),
+        $"Filename should start with scope: {filename}"
+    )
+
     let parts = filename.Replace("__audit.md", "").Split("__")
-    Assert.True(parts.Length >= 3, sprintf "Filename should have at least 3 parts: %s" filename)
+    Assert.True(parts.Length >= 3, $"Filename should have at least 3 parts: {filename}")
     let chain = parts.[1]
     Assert.Matches(@"^[0-9a-f]{6}$", chain)
 
@@ -79,18 +85,10 @@ let ``the JSON output contains the report path`` () =
 
 [<Then>]
 let ``the report filename contains "([^"]*)" followed by a new 6-hex UUID`` (prefix: string) =
-    let filename = Path.GetFileName(lastReportPath)
-    Assert.True(filename.Contains(prefix), sprintf "Filename should contain '%s': %s" prefix filename)
+    let filename = lastReportPath.Split('/') |> Array.last
+    Assert.True(filename.Contains(prefix, StringComparison.Ordinal), $"Filename should contain '{prefix}': {filename}")
 
 [<Then>]
 let ``the report filename contains only the new 6-hex UUID .no "([^"]*)".`` (uuid: string) =
-    let filename = Path.GetFileName(lastReportPath)
+    let filename = lastReportPath.Split('/') |> Array.last
     Assert.DoesNotContain(uuid, filename)
-    // Cleanup
-    if File.Exists(lastReportPath) then
-        File.Delete(lastReportPath)
-
-    let chainFile = sprintf "local-tmp/.execution-chain-%s" currentScope
-
-    if File.Exists(chainFile) then
-        File.Delete(chainFile)

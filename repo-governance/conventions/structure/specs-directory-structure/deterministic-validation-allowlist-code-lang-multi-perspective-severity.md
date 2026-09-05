@@ -33,7 +33,7 @@ These commands run as part of the `specs-quality-gate` workflow deterministic-of
 
 `validate-adoption`, `validate-tree`, `validate-counts`, and `validate-links` all accept the same three calling shapes:
 
-- Positional `<folder>` or `<app>` — single-target legacy behavior preserved.
+- Positional `<folder>` or `<app>` — single-target legacy behaviour preserved.
 - `--apps <csv>` — multi-app validation across an explicit list.
 - No positional, no flag — validates nothing; `specs structure validate` is the wired entry point and discovers every directory under `specs/apps/`.
 

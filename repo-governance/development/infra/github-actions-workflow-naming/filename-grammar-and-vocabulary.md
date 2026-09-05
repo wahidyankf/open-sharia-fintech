@@ -33,15 +33,15 @@ Every workflow filename follows this grammar:
 Compose the `{action-chain}` from this fixed vocabulary, left-to-right in the order the actions
 execute:
 
-| Verb / qualifier    | Meaning                                                                                                                                                                      |
-| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `test-local`        | Run tests against a locally-spun stack (docker-compose: integration + e2e). Never runs in the PR gate.                                                                       |
-| `test-stag`         | Run e2e tests against the **deployed staging** environment (no docker-compose).                                                                                              |
-| `deploy-stag`       | Force-push to the `stag-*` branch. That branch push is the deploy trigger: Vercel builds web apps from it; backends trigger a `{product}-be-build-deploy-stag.yml` workflow. |
-| `deploy-prod`       | Force-push to the `prod-*` branch. Same mechanism as `deploy-stag` for the production target.                                                                                |
-| `build-deploy-stag` | For non-Vercel backends: build the container image, push it to GHCR, and hand the cluster rollout to ose-private `coralpolyp`. Triggered on push to the `stag-*-be` branch.  |
-| `build-deploy-prod` | Same as `build-deploy-stag` for the production target (deferred — see [deploy model](./deploy-model-and-examples.md#deploy-model)).                                          |
-| `quality-gate`      | The PR quality gate: `typecheck`, `lint`, `test:quick`, `specs:coverage`, and cross-language lint jobs. No integration or e2e tests.                                         |
-| `validate`          | A repo-wide validation job (markdown, links, heading hierarchy, Mermaid).                                                                                                    |
-| `env-validate`      | Validate `.env.example` contracts and the `env-injection:` manifest (in `repo-config.yml`) for internal consistency.                                                         |
-| `audit`             | Run a dependency-vulnerability audit outside the PR and registry gate surfaces.                                                                                              |
+| Verb / qualifier    | Meaning                                                                                                                                                                                           |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `test-local`        | Run non-network Integration suites, then E2E against a locally spun Docker Compose stack. Never runs Integration or E2E in the PR gate.                                                           |
+| `test-stag`         | Run e2e tests against the **deployed staging** environment (no docker-compose).                                                                                                                   |
+| `deploy-stag`       | Force-push to the `stag-*` branch. That branch push is the deploy trigger: Vercel builds web apps from it; backends trigger a `{product}-be-build-deploy-stag.yml` workflow.                      |
+| `deploy-prod`       | Force-push to the `prod-*` branch. Same mechanism as `deploy-stag` for the production target.                                                                                                     |
+| `build-deploy-stag` | For non-Vercel backends: build the container image, push it to GHCR, and hand the cluster rollout to ose-private `coralpolyp`. Triggered on push to the `stag-*-be` branch.                       |
+| `build-deploy-prod` | Same as `build-deploy-stag` for the production target (deferred — see [deploy model](./deploy-model-and-examples.md#deploy-model)).                                                               |
+| `quality-gate`      | The PR quality gate: `typecheck`, `lint`, and `test:quick` (Unit runtime plus every applicable static `test:coverage:*` validator), with cross-language lint jobs. No Integration or E2E runtime. |
+| `validate`          | A repo-wide validation job (markdown, links, heading hierarchy, Mermaid).                                                                                                                         |
+| `env-validate`      | Validate `.env.example` contracts and the `env-injection:` manifest (in `repo-config.yml`) for internal consistency.                                                                              |
+| `audit`             | Run a dependency-vulnerability audit outside the PR and registry gate surfaces.                                                                                                                   |

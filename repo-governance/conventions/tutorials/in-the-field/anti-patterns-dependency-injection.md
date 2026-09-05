@@ -34,7 +34,7 @@ public class OrderService {
 - Doesn't understand object lifecycle (when beans created, injected)
 - Can't debug circular dependencies (Spring fails with cryptic error)
 - Doesn't know when to use constructor vs field injection
-- Magic behavior: Doesn't understand what @Autowired does
+- Magic behaviour: Doesn't understand what @Autowired does
 
 **PASS: Learning manual DI first, then Spring**
 

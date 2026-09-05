@@ -1,6 +1,6 @@
 ---
 title: TypeScript Testing
-description: OSE Platform TypeScript testing standards — unit tests with Vitest and vi.fn, integration tests with vitest-cucumber and MSW, E2E tests with Playwright
+description: OSE Platform TypeScript testing standards — in-process Unit, network-free local-resource Integration, and public-boundary E2E tests
 category: explanation
 subcategory: prog-lang
 tags:
@@ -26,23 +26,24 @@ created: 2026-02-22
 
 **REQUIRED**: Read [Three-Tier Testing Model](../../development/test-driven-development-tdd/three-tier-testing.md) before applying these standards. This document covers the TypeScript-specific implementation of each tier.
 
-## The Mocking Boundary
+## The Boundary Contract
 
-**REQUIRED**: Unit and integration tests MUST mock all external I/O.
-
-**REQUIRED**: E2E tests MUST NOT mock anything.
+**REQUIRED**: Unit tests stay in process and replace every operating-system or remote boundary with
+an injected fake. Integration tests use at least one real, isolated same-machine resource but no
+network path, including loopback. E2E tests invoke the real public browser, HTTP/API, or process
+boundary with isolated synthetic data.
 
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
 flowchart TD
     A[TypeScript Testing]
-    A --> B[Unit Tests\nVitest + vi.fn\nAll collaborators mocked]
-    A --> C[Integration Tests\nvitest-cucumber + MSW\nAll external I/O mocked]
-    A --> D[E2E Tests\nPlaywright + playwright-bdd\nNo mocking whatsoever]
+    A --> B[Unit Tests\nVitest + injected fakes\nIn process]
+    A --> C[Integration Tests\nVitest or native runner\nReal local · no network]
+    A --> D[E2E Tests\nPlaywright or public process\nReal public boundary]
 
     B --> B1[Domain logic\nValue objects\nPure functions]
-    C --> C1[Feature flows\nRouting + middleware\nBDD Gherkin scenarios]
-    D --> D1[Real browser\nReal HTTP\nReal backend]
+    C --> C1[Filesystem\nEnvironment\nEmbedded local database]
+    D --> D1[Real browser\nReal HTTP/API\nPublished executable]
 
     style A fill:#0173B2,color:#fff
     style B fill:#029E73,color:#fff
@@ -55,9 +56,9 @@ flowchart TD
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#000','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
 flowchart TD
-    A[E2E Tests\nPlaywright — no mocking\nScheduled CI]
-    B[Integration Tests\nvitest-cucumber + MSW\nPre-push]
-    C[Unit Tests\nVitest + vi.fn\nEvery commit]
+    A[E2E Tests\nReal public boundary\nImpacted manual + scheduled]
+    B[Integration Tests\nReal local · no network\nImpacted manual + scheduled]
+    C[Unit Tests\nIn process\nEvery quick gate]
 
     A --> B
     B --> C
@@ -196,55 +197,21 @@ describe("Breadcrumb", () => {
 
 ## Integration Tests
 
-### Tools
+### Tools and boundary
 
-**REQUIRED**: Vitest + `@amiceli/vitest-cucumber` + MSW (Mock Service Worker) + Testing Library.
-
-**PROHIBITED**: Real network calls, real backend, Testcontainers, `fetch` reaching real servers.
+Use Vitest or the project-native runner plus real isolated resources such as a temporary filesystem,
+process environment snapshot, child process, standard stream, or embedded database. Integration
+must not use HTTP, TCP, UDP, loopback, `localhost`, a local test server, MSW, or another network
+interceptor. An in-memory repository or intercepted `fetch` is Unit proof, not Integration proof.
 
 ### When to write integration tests
 
-- BDD Gherkin scenarios that test a full user-facing feature flow
-- Multiple components wired together (routing, auth, data fetching)
-- Testing HTTP error handling, loading states, and edge cases
-- Verifying that the application wires its layers correctly
+- Env-tier loading from real isolated files
+- Filesystem persistence and cache behaviour
+- Child-process and standard-stream adapters that do not open a network path
+- Embedded local database adapters reached without TCP or another socket
 
-### MSW Server Setup
-
-```typescript
-// src/test/server.ts
-import { setupServer } from "msw/node";
-import { handlers } from "./handlers";
-
-export const server = setupServer(...handlers);
-```
-
-```typescript
-// src/test/setup.ts
-import { beforeAll, afterEach, afterAll } from "vitest";
-import { server } from "./server";
-
-beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
-afterEach(() => server.resetHandlers());
-afterAll(() => server.close());
-```
-
-```typescript
-// src/test/handlers.ts
-import { http, HttpResponse } from "msw";
-import { MOCK_MEMBERS } from "./helpers/mock-data";
-
-export const handlers = [
-  http.get("/api/members", () => HttpResponse.json(MOCK_MEMBERS)),
-  http.post("/api/members", async ({ request }) => {
-    const body = (await request.json()) as { name: string; role: string };
-    return HttpResponse.json({ id: "new-id", ...body }, { status: 201 });
-  }),
-  http.delete("/api/members/:id", () => new HttpResponse(null, { status: 204 })),
-];
-```
-
-### Vitest config (integration project)
+### Vitest config
 
 ```typescript
 // vitest.config.ts
@@ -253,95 +220,33 @@ export const handlers = [
     name: "integration",
     include: ["**/*.integration.{test,spec}.{ts,tsx}"],
     environment: "jsdom",
-    setupFiles: ["./src/test/setup.ts"],  // MSW server wired here
+    fileParallelism: false, // Serialize when the adapter snapshots process-wide state.
   }
 }
 ```
 
-### BDD-driven integration test (vitest-cucumber)
+### Real-filesystem Integration example
 
 ```typescript
-// src/test/integration/member-list.integration.test.tsx
-import { describeFeature, loadFeature } from "@amiceli/vitest-cucumber";
-import { render, screen } from "@testing-library/react/pure";
-import userEvent from "@testing-library/user-event";
-import { AUTHENTICATED } from "../helpers/auth-mock";
-import { server } from "../server";
-import { MOCK_MEMBERS } from "../helpers/mock-data";
-import { http, HttpResponse } from "msw";
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import path from "node:path";
+import { afterEach, expect, it } from "vitest";
+import { loadTierEnv } from "@open-sharia-enterprise/ts-env-loader";
 
-const feature = await loadFeature("../../specs/apps/organiclever/members/member-list.feature");
-
-describeFeature(feature, ({ Scenario }) => {
-  Scenario("Viewing the member list as a logged-in user", ({ Given, When, Then }) => {
-    Given("a user is logged in", () => {
-      document.cookie = `auth=${AUTHENTICATED}`;
-      // ✅ Auth state set in-memory — no real login HTTP call
-    });
-
-    When("they navigate to the members page", () => {
-      render(<MemberListPage />);
-      // ✅ MSW handles GET /api/members, returns MOCK_MEMBERS
-    });
-
-    Then("they see all members in the list", async () => {
-      for (const member of MOCK_MEMBERS) {
-        expect(await screen.findByText(member.name)).toBeInTheDocument();
-      }
-    });
-  });
-
-  Scenario("Handling an API error", ({ Given, When, Then }) => {
-    Given("the members API is unavailable", () => {
-      server.use(
-        http.get("/api/members", () => HttpResponse.json(null, { status: 500 })),
-      );
-      // ✅ Override MSW handler for this scenario — still no real network
-    });
-
-    When("they navigate to the members page", () => {
-      render(<MemberListPage />);
-    });
-
-    Then("they see an error message", async () => {
-      expect(await screen.findByText("Failed to load members")).toBeInTheDocument();
-    });
-  });
+let root: string | undefined;
+afterEach(async () => {
+  if (root) await rm(root, { recursive: true, force: true });
 });
-```
 
-### In-memory state for destructive tests
+it("loads the selected tier from a real isolated file", async () => {
+  root = await mkdtemp(path.join(tmpdir(), "tier-env-"));
+  await writeFile(path.join(root, ".env.stag"), "PUBLIC_NAME=staging\n");
+  const env: Record<string, string | undefined> = { APP_ENV: "stag" };
 
-When tests perform destructive operations (delete, edit), restore state after each scenario
-using MSW handler resets:
+  loadTierEnv({ appDir: root, env });
 
-```typescript
-// src/test/integration/member-deletion.integration.test.tsx
-import { server } from "../server";
-import { MOCK_MEMBERS } from "../helpers/mock-data";
-import { http, HttpResponse } from "msw";
-
-describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
-  AfterEachScenario(() => {
-    server.resetHandlers(); // ✅ Restore default handlers after each scenario
-  });
-
-  Scenario("Deleting a member", ({ Given, When, Then }) => {
-    Given("there is a member named {string}", (name: string) => {
-      server.use(http.get("/api/members", () => HttpResponse.json(MOCK_MEMBERS.filter((m) => m.name === name))));
-    });
-
-    When("the user deletes the member", async () => {
-      const deleteButton = await screen.findByRole("button", { name: /delete/i });
-      await userEvent.click(deleteButton);
-    });
-
-    Then("the member no longer appears in the list", async () => {
-      await waitFor(() => {
-        expect(screen.queryByText("Alice Johnson")).not.toBeInTheDocument();
-      });
-    });
-  });
+  expect(env.PUBLIC_NAME).toBe("staging");
 });
 ```
 
@@ -353,8 +258,10 @@ describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
 
 **REQUIRED**: Playwright + `playwright-bdd`.
 
-**PROHIBITED**: Any form of mocking (`page.route()`, MSW, `vi.mock()`). All network calls must
-reach the real backend.
+Do not replace the public boundary under test with `page.route()`, MSW, `vi.mock()`, or a fake
+process. Fixture-only dependencies may be isolated, but the browser/HTTP/API/process invocation and
+its observable result must be real. Use synthetic accounts and records provisioned for the test;
+never production identity or data.
 
 ### When to write E2E tests
 
@@ -365,41 +272,47 @@ reach the real backend.
 
 ### E2E project structure
 
-```
+```text
+specs/apps/organiclever/app-web/behaviours/
+  auth/
+    login.feature
+
 apps/organiclever-app-web-e2e/
-  tests/
-    steps/
-      auth/
-        login.steps.ts
-        logout.steps.ts
-      members/
-        member-list.steps.ts
-        member-deletion.steps.ts
+  steps/
+    auth/
+      login.steps.ts
+      logout.steps.ts
+    members/
+      member-list.steps.ts
+      member-deletion.steps.ts
   playwright.config.ts
 ```
 
 ### E2E test (no mocking)
 
 ```typescript
-// tests/steps/auth/login.steps.ts
-import { Given, When, Then } from "@cucumber/cucumber";
+// apps/organiclever-app-web-e2e/steps/auth/login.steps.ts
 import { expect } from "@playwright/test";
+import { createBdd } from "playwright-bdd";
 
-let page: Page;
+const { Given, When, Then } = createBdd();
 
-Given("a registered user with email {string} and password {string}", async ({}, email: string, password: string) => {
-  // ✅ Real credentials — real auth server handles this
-  await page.goto("/login");
-  await page.fill("[name=email]", email);
-  await page.fill("[name=password]", password);
-});
+Given(
+  "a registered user with email {string} and password {string}",
+  async ({ page }, email: string, password: string) => {
+    // ✅ Synthetic scenario credentials — the real public auth boundary handles them
+    await page.goto("/login");
+    await page.fill("[name=email]", email);
+    await page.fill("[name=password]", password);
+  },
+);
 
-When("the user submits the login form", async () => {
+When("the user submits the login form", async ({ page }) => {
   await page.click("button[type=submit]");
   // ✅ Real HTTP POST /api/auth — no mocking
 });
 
-Then("the user is redirected to the dashboard", async () => {
+Then("the user is redirected to the dashboard", async ({ page }) => {
   await page.waitForURL("/dashboard");
   await expect(page.getByText("Welcome")).toBeVisible();
   // ✅ Real page rendered by real backend
@@ -417,25 +330,32 @@ nx run organiclever-app-web-e2e:test:e2e:ui     # Playwright UI mode
 
 ## Coverage Requirements
 
-**REQUIRED**: ≥85% code coverage enforced via Vitest coverage.
+**REQUIRED**: ≥99% Unit line coverage enforced by the native `test:unit` Vitest invocation.
 
 ```typescript
 // vitest.config.ts — coverage config
 coverage: {
   provider: "v8",
-  thresholds: { lines: 85, functions: 85, branches: 85, statements: 85 },
+  thresholds: { lines: 99 },
   exclude: ["**/*.integration.test.*", "**/*.e2e.test.*", "node_modules"],
 }
 ```
 
-Coverage is measured on unit tests only. Integration and E2E tests do not contribute to the
-coverage threshold because they test flows, not line-by-line logic.
+Runtime code coverage is collected and enforced by the runtime target that produces it—normally
+`test:unit` for TypeScript projects. Static `test:coverage:unit`,
+`test:coverage:integration`, `test:coverage:e2e`, `test:coverage:behaviour`, and their aggregate
+inspect the corpus/adapters without executing tests or consuming a runtime report.
+Dedicated E2E projects do not own Unit and do not waive the source owner's 99% threshold. Exclude
+an explicitly enumerated boundary adapter from Unit only when it is wholly a resource, process,
+generated-code, or static-data boundary and named Integration or E2E runtime proof exercises it.
+Keep exclusions to named files or narrow functions; broad path globs, mixed core-logic exclusions,
+and boundary code without higher-layer proof are forbidden.
 
 ---
 
 ## Related Standards
 
-- [Three-Tier Testing Model](../../development/test-driven-development-tdd/three-tier-testing.md) — authoritative tier definitions
-- [Integration Testing Standards](../../development/test-driven-development-tdd/integration-testing-standards.md) — in-memory repos, MSW patterns
+- [Three-Level Testing Model](../../development/test-driven-development-tdd/three-tier-testing.md) — authoritative boundary definitions
+- [Integration Testing Standards](../../development/test-driven-development-tdd/integration-testing-standards.md) — real isolated local-resource patterns
 - [TypeScript TDD](./test-driven-development.md) — Red-Green-Refactor cycle, Vitest setup
 - [TypeScript BDD](./behaviour-driven-development.md) — Gherkin, vitest-cucumber, playwright-bdd

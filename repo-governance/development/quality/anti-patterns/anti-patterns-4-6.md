@@ -50,7 +50,7 @@ rm deprecated-guide.md
 
 **Problem**: Pre-push hook runs the entire test suite or uses non-standard target names (slow, and breaks workspace-level automation).
 
-**Note**: `test:integration` and `test:e2e` must never be included in `test:quick`. See [Three-Level Testing Standard](.././three-level-testing-standard.md) for which test level runs where.
+**Note**: `test:integration` and `test:e2e` must never be included in `test:quick`. See [Behaviour-Driven Development](../../behaviour-driven-development.md) for which test level runs where.
 
 **Bad Example:**
 

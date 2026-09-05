@@ -10,7 +10,7 @@ description: Guide for writing Gherkin acceptance criteria using Given-When-Then
 This Skill provides comprehensive guidance for writing **Gherkin acceptance criteria** using Given-When-Then syntax to create clear, testable specifications for features and user stories.
 
 **When to use this Skill:** writing acceptance criteria for user stories, defining testable
-requirements in plans, specifying expected behavior for features, and documenting edge cases and
+requirements in plans, specifying expected behaviour for features, and documenting edge cases and
 error handling.
 
 ## Core Concepts
@@ -41,9 +41,9 @@ Scenario: [Brief description of scenario]
 - **When**: Describes the action or event (user action, system event, trigger)
 - **Then**: Specifies expected outcome (assertions, verification, results)
 
-## Step-Keyword Cardinality (HARD Rule)
+## Journey Coherence
 
-See [Step-Keyword Cardinality (HARD Rule)](./reference/step-keyword-cardinality.md) for the full
+See [Journey Coherence](./reference/step-keyword-cardinality.md) for the full
 rule text, conforming/non-conforming examples, and the canonical convention link.
 
 ## Basic Scenario Patterns
@@ -73,7 +73,7 @@ imperative style — each with good/bad examples.
 
 See [Common Mistakes](./reference/common-mistakes.md) for the four most common Gherkin mistakes —
 too many steps, asserting internal implementation, ambiguous language, and testing multiple
-behaviors — each with a fix.
+behaviours — each with a fix.
 
 ## Phase Gate Acceptance Checks
 

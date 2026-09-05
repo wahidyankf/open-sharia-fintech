@@ -41,11 +41,6 @@ design.
 
 ## Prior art / precedents
 
-- [`rhino-cli-byte-identity-drift-reconciliation`](./rhino-cli-byte-identity-drift-reconciliation.md)
-  — the Rust-era version of this same "apps/rhino-cli byte-identity boundary" concern. Its concrete
-  file list is now moot (Phase 9 of `rewrite-rhino-cli-to-fsharp` deleted the Rust crate entirely),
-  but its general point — that this boundary rests on manual diff discipline with nothing automated
-  reconciling drift — still applies, one language later.
 - `plans/done/2026-08-30__rewrite-rhino-cli-to-fsharp/learnings.md`, Phase 11a entries — the decision
   record for why `GlossaryDddCoverageUnitTests.fs` is `ose-private`-only.
 - `ose-private`'s `apps/rhino-cli/src/tests/unit/Steps/GlossaryDddCoverageUnitTests.fs` header comment
@@ -78,7 +73,7 @@ already passing in both repos); building a general automated cross-repo byte-ide
 - Which approach (allowlist vs. two-pass) fits better if more `ose-private`-only rhino-cli files show
   up in the future — this is the one open design choice. (open)
 - Does anything else consume this workflow's pass/fail status (dashboards, alerts) that a silent
-  behavior change could surprise? Not found in a repo-wide search, but worth a last check at pickup.
+  behaviour change could surprise? Not found in a repo-wide search, but worth a last check at pickup.
   (open)
 
 ## What success looks like + promotion signal

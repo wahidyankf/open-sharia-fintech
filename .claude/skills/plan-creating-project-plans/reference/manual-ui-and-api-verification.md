@@ -1,4 +1,4 @@
-# Manual Behavioral Assertions — UI (Playwright) and API (curl)
+# Manual Behavioural Assertions — UI (Playwright) and API (curl)
 
 When the plan touches web UI or API code, delivery plans MUST include manual assertion sections.
 **Two hard requirements bind every manual-assertion section:**

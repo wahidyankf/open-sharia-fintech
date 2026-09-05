@@ -13,12 +13,7 @@ import { TabBar } from "@/contexts/app-shell/presentation/components/tab-bar";
 import { SideNav } from "@/contexts/app-shell/presentation/components/side-nav";
 import { OverlayTree } from "@/contexts/app-shell/presentation/components/overlay-tree";
 import { AppRuntimeProvider, type AppRuntimeContextValue } from "@/contexts/app-shell/presentation/app-runtime-context";
-
-const MAIN_TAB_PATHS: ReadonlySet<string> = new Set(["/app/home", "/app/history", "/app/progress", "/app/settings"]);
-
-function isMainTabPath(pathname: string | null): boolean {
-  return MAIN_TAB_PATHS.has(pathname ?? "");
-}
+import { isMainTabPath } from "@/contexts/routing/application";
 
 /**
  * Layout for the /app/ route segment.

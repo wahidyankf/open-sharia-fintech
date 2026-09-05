@@ -21,14 +21,14 @@ PR's exact current head SHA and current base branch; stale evidence never author
 the sole default automated PR gate. Do not rerun locally or imitate predicates already owned by
 pre-commit, pre-push, or PR CI merely to satisfy this protocol.
 
-Changed reachable behavior may also require a finite surface gate:
+Changed reachable behaviour may also require a finite surface gate:
 
-| Surface                  | Required result                                              |
-| ------------------------ | ------------------------------------------------------------ |
-| UI                       | The applicable static and running-UI gates pass              |
-| API                      | The API quality gate passes against the running endpoint     |
-| Other reachable behavior | Its interface is exercised and the result recorded           |
-| No reachable behavior    | An explicit exemption identifies why no surface gate applies |
+| Surface                   | Required result                                              |
+| ------------------------- | ------------------------------------------------------------ |
+| UI                        | The applicable static and running-UI gates pass              |
+| API                       | The API quality gate passes against the running endpoint     |
+| Other reachable behaviour | Its interface is exercised and the result recorded           |
+| No reachable behaviour    | An explicit exemption identifies why no surface gate applies |
 
 Every PR also runs one focused [`pr-leak-review`](../../../workflows/pr/pr-leak-review.md) against
 its exact current head. Only authenticated `ose-pr-leak-review:v1` `pass` evidence counts. Missing,
@@ -39,7 +39,7 @@ two-clean streak. Its scope is defined by the canonical
 [machine-specific-path](../../quality/no-machine-specific-commits.md) rules.
 
 `pr-leak-review` is the only universal nondeterministic agent gate. Surface gates remain
-conditional on changed reachable behavior; broad semantic review remains optional.
+conditional on changed reachable behaviour; broad semantic review remains optional.
 
 These gates complement PR CI; they do not create a broad semantic-review requirement. Optional
 [`pr-review`](../../../workflows/pr/pr-review.md) and

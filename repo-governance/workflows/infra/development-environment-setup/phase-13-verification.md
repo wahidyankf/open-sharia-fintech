@@ -35,17 +35,20 @@ apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push
 `test:quick` affected-projects gate) so subsequent pushes are fast. Discover the live gate set
 with `apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=pre-push --format=text`.
 
-## 13.3 Verify integration tests (one backend)
+## 13.3 Verify Integration tests (one backend)
 
 ```bash
-# Pick any backend to validate Docker + PostgreSQL integration
+# Pick any backend to validate its isolated non-network local-resource boundary
 nx run organiclever-be:test:integration
 ```
 
-**Success criteria**: Integration tests pass. Docker starts PostgreSQL, runs migrations, and
-executes Gherkin scenarios against a real database.
+**Success criteria**: Integration tests pass using isolated local files, embedded non-network
+resources, process environment, or child-process streams. They open no HTTP, TCP, UDP, loopback,
+`localhost`, or local-server path.
 
-**On failure**: Ensure Docker is running (`docker info`). Check for port conflicts on 5432.
+**On failure**: Inspect the target's local fixture lifecycle and confirm every resource is isolated
+and cleaned deterministically. Docker-hosted PostgreSQL and other networked services belong to the
+E2E verification in the next section.
 
 ## 13.4 Verify E2E tests (one backend)
 

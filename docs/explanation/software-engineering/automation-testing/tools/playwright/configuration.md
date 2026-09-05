@@ -71,7 +71,7 @@ export default defineConfig({
 
 ### 3. Reproducibility
 
-**How Configuration Implements**: Fixed configurations, version locking, deterministic behavior
+**How Configuration Implements**: Fixed configurations, version locking, deterministic behaviour
 
 **PASS Example**:
 

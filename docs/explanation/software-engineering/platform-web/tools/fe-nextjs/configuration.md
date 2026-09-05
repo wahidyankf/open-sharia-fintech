@@ -42,7 +42,7 @@ created: 2026-01-26
 
 ## Overview
 
-**Configuration** in Next.js is centralized in `next.config.ts` (or `.js`) and covers everything from build behavior to runtime settings. Understanding configuration options is essential for production applications.
+**Configuration** in Next.js is centralized in `next.config.ts` (or `.js`) and covers everything from build behaviour to runtime settings. Understanding configuration options is essential for production applications.
 
 **Configuration Philosophy**:
 

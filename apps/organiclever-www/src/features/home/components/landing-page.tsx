@@ -5,6 +5,7 @@ import { LandingHero } from "./landing-hero";
 import { LandingFeatures } from "./landing-features";
 import { LandingRhythmDemo } from "./landing-rhythm-demo";
 import { LandingPrinciples } from "./landing-principles";
+import { LANDING_ACCESSIBILITY_COLORS } from "../core/accessibility-style";
 
 function AlphaBanner() {
   return (
@@ -48,7 +49,7 @@ function AlphaBanner() {
           >
             OrganicLever is in active early development.{" "}
             <strong style={{ color: "#6b4a00", fontWeight: 700 }}>
-              You will encounter bugs, broken flows, missing features, and occasional unstable behavior.
+              You will encounter bugs, broken flows, missing features, and occasional unstable behaviour.
             </strong>{" "}
             It currently tracks <strong style={{ color: "#6b4a00", fontWeight: 700 }}>five event types</strong> —
             workouts, reading, learning, meals, and focus sessions — plus your own custom types. Data is stored locally
@@ -73,10 +74,12 @@ export function LandingPage() {
 
   return (
     <div
+      data-testid="landing-surface"
+      className="ol-focus-surface"
       style={{
         fontFamily: "var(--font-sans)",
-        background: "oklch(99% 0.005 80)",
-        color: "oklch(18% 0.018 60)",
+        background: LANDING_ACCESSIBILITY_COLORS.background,
+        color: LANDING_ACCESSIBILITY_COLORS.text,
         minHeight: "100vh",
         overflowX: "hidden",
         position: "relative",

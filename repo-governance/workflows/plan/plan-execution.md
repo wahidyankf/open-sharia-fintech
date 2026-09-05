@@ -74,8 +74,8 @@ outputs:
 - [CI Overview](./plan-execution/post-push-ci-verification-overview.md) — monitoring tool.
 - [CI Direct-Push](./plan-execution/post-push-ci-verification-direct-push.md) — main CI.
 - [CI PR-Branch](./plan-execution/post-push-ci-verification-pr-branch.md) — PR checks.
-- [Assertions Web/API](./plan-execution/manual-behavioral-assertions-web-and-api.md) — Playwright/curl.
-- [Assertions Evidence](./plan-execution/manual-behavioral-assertions-full-stack-and-evidence.md) — full-stack.
+- [Assertions Web/API](./plan-execution/manual-behavioural-assertions-web-and-api.md) — Playwright/curl.
+- [Assertions Evidence](./plan-execution/manual-behavioural-assertions-full-stack-and-evidence.md) — full-stack.
 - [Validation](./plan-execution/validation-and-check-for-findings.md) — checker run.
 - [Continue Execution](./plan-execution/continue-execution.md) — fix findings.
 - [Re-validate](./plan-execution/revalidate-and-iteration-control.md) — loop/terminate.

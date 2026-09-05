@@ -5,19 +5,19 @@ description: >
   Orchestrates a user prompt through repo exploration, two grill sessions, optional web research,
   plan-maker delegation, structural review, and the plan-quality-gate into a pushed, validated plan.
 when_to_use: >
-  Use when a user describes a new behavior, pattern, or convention to adopt and needs it turned
+  Use when a user describes a new behaviour, pattern, or convention to adopt and needs it turned
   into a validated, execution-ready plan in plans/in-progress/ or plans/backlog/.
 goal: >
   Create a well-researched, grill-validated project plan in the resolved target stage
   (plans/in-progress/ by default, or plans/backlog/ when target-stage=backlog) from a user prompt
-  describing a desired behavior or change, then push it to the confirmed target
+  describing a desired behaviour or change, then push it to the confirmed target
 termination: >
   Plan exists in the resolved target-stage directory, passes plan-quality-gate at strict mode, and
   is pushed to the confirmed target
 inputs:
   - name: prompt
     type: string
-    description: Description of the behavior, change, or convention to adopt in the repository
+    description: Description of the behaviour, change, or convention to adopt in the repository
     required: true
   - name: push-target
     type: string

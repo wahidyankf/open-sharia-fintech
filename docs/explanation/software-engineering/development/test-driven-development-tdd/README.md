@@ -59,7 +59,7 @@ TDD standards in OSE Platform align with core software engineering principles:
 
 1. **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)** - Red-Green-Refactor cycle automates verification. Tests run constantly (every 1-2 minutes), replacing manual testing entirely. FIRST principles enable continuous automated testing.
 
-2. **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)** - Test-first approach makes requirements explicit before implementation. AAA pattern (Arrange-Act-Assert) explicitly declares test structure. Test names explicitly describe expected behavior.
+2. **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)** - Test-first approach makes requirements explicit before implementation. AAA pattern (Arrange-Act-Assert) explicitly declares test structure. Test names explicitly describe expected behaviour.
 
 3. **[Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)** - FIRST principles (Independent, Repeatable) ensure reproducible test execution. Deterministic tests produce same results across environments and time. No flaky tests.
 
@@ -90,24 +90,26 @@ TDD standards in OSE Platform align with core software engineering principles:
 **[Test Doubles Standards](./test-doubles-standards.md) — OSE Platform standards for mocks, stubs, spies, and fakes**
 
 - REQUIRED: Use in-memory implementations over mocks when possible
-- REQUIRED: Verify interactions only when testing behavior, not implementation
+- REQUIRED: Verify interactions only when testing behaviour, not implementation
 
 ### 4. Three-Tier Testing Model
 
 **[Three-Tier Testing Model](./three-tier-testing.md) — Authoritative OSE Platform definition of unit, integration, and E2E test tiers**
 
-- REQUIRED: Unit and integration tests MUST mock all external I/O
-- REQUIRED: E2E tests MUST NOT mock anything
+- REQUIRED: Unit tests remain in-process and use no real filesystem, environment, process, network, clock, or random boundary
+- REQUIRED: Integration tests may use deterministic local resources and processes but no network, including loopback
+- REQUIRED: E2E tests exercise a public browser, HTTP/API, or process boundary with isolated synthetic data
 - REQUIRED: Separate unit, integration, and E2E tests by directory
 
 ### 5. Integration Testing
 
-**[Integration Testing Standards](./integration-testing-standards.md) — OSE Platform standards for integration testing with mocked external I/O and in-memory repositories**
+**[Integration Testing Standards](./integration-testing-standards.md) — OSE Platform standards for deterministic local-resource and process integration testing**
 
-- REQUIRED: Use in-memory repository implementations (NOT Testcontainers)
-- REQUIRED: Use MSW (TypeScript) or `wiremock-rs` / `mockito` (Rust) for outbound HTTP
+- REQUIRED: Use isolated local fixtures, embedded databases accessed without network transport,
+  filesystems, process environment, or subprocess streams only when the exercised boundary requires them
+- REQUIRED: Replace outbound network dependencies with in-process fakes; loopback HTTP still belongs to E2E
 - REQUIRED: Separate unit tests from integration tests
-- PROHIBITED: Real databases, real network calls in integration tests
+- PROHIBITED: Networked databases, HTTP/TCP/UDP, loopback, local servers, or any other network path in Integration tests
 
 ### 6. TDD with Domain-Driven Design
 
@@ -213,8 +215,8 @@ apps/
     src/
       test/
         unit/          # Fast unit tests
-        integration/   # Database, API tests
-        e2e/          # End-to-end flows
+        integration/   # Real isolated local resources; zero network
+        e2e/           # Public browser, HTTP/API, or process flows
 ```
 
 **REQUIRED Test Naming:**
@@ -227,9 +229,9 @@ apps/
 
 **REQUIRED Coverage Minimums:**
 
-- Unit tests: 85% code coverage
-- Integration tests: Critical paths covered
-- E2E tests: Happy paths + critical error scenarios
+- Unit tests: hard minimum 99% line coverage in `test:unit`
+- Integration tests: every applicable isolated non-network local-resource path covered
+- E2E tests: every applicable public-boundary happy path and critical error scenario covered
 
 **PROHIBITED:**
 
@@ -247,21 +249,21 @@ Before merging code, verify:
 - [ ] **Domain invariants tested**: Aggregate business rules verified
 - [ ] **Value objects immutable**: Tests verify immutability
 - [ ] **Domain events emitted**: Tests verify event emission on domain actions
-- [ ] **85% coverage minimum**: Critical business logic covered
-- [ ] **Integration tests mock external I/O**: In-memory repos and MSW/WireMock — no real DB, no real network
-- [ ] **E2E tests use no mocking**: All external dependencies are real
+- [ ] **99% Unit line coverage minimum**: `test:unit` owns and enforces the native runtime threshold
+- [ ] **Integration boundary is real and non-networked**: Isolated local resources only; no HTTP/TCP/UDP/loopback/local server
+- [ ] **E2E enters through a public boundary**: Browser, HTTP/API, or process path with isolated synthetic data; no uncontrolled external service
 - [ ] **No flaky tests**: All tests pass consistently
 
 ## Related Standards
 
 - **[Domain-Driven Design Standards](../../architecture/domain-driven-design-ddd/README.md)** - Testing DDD tactical patterns
-- **[BDD Standards](../behavior-driven-development-bdd/README.md)** - Acceptance testing with Gherkin
+- **[BDD Standards](../behaviour-driven-development-bdd/README.md)** - Acceptance testing with Gherkin
 - **[TypeScript Coding Standards](../../programming-languages/typescript/README.md)** - TypeScript testing conventions
 
 ## Principles Implemented
 
 - **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)**: By automating verification through Red-Green-Refactor cycles and continuous test execution, TDD eliminates manual testing and provides immediate feedback.
 
-- **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**: By writing tests first, requirements become explicit specifications. AAA pattern and descriptive test names make expected behavior clear.
+- **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**: By writing tests first, requirements become explicit specifications. AAA pattern and descriptive test names make expected behaviour clear.
 
 - **[Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)**: By enforcing FIRST principles (Independent, Repeatable), tests produce consistent results across environments and time, enabling reliable CI/CD pipelines.

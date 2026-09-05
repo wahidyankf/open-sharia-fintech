@@ -539,7 +539,7 @@ npm install react@rc react-dom@rc
 - **Before**: Node.js 18.17+
 - **After**: Node.js 20.0+
 
-**3. fetch Caching Behavior**
+**3. fetch Caching Behaviour**
 
 - **Before**: `fetch` cached by default
 - **After**: `fetch` NOT cached by default (opt-in caching)
@@ -554,7 +554,7 @@ const data = await fetch("https://api.example.com/data", {
 });
 ```
 
-**4. Route Handlers Behavior**
+**4. Route Handlers Behaviour**
 
 - GET route handlers no longer cached by default
 - Must explicitly opt-in to caching
@@ -586,7 +586,7 @@ node --version
 npm install next@15 react@rc react-dom@rc
 ```
 
-#### Step 3: Update Caching Behavior
+#### Step 3: Update Caching Behaviour
 
 Add explicit caching where needed:
 
@@ -1158,7 +1158,7 @@ export default async function CalculatePage() {
 
 - [ ] Review breaking changes for target version
 - [ ] Backup codebase (Git commit/branch)
-- [ ] Document current application behavior
+- [ ] Document current application behaviour
 - [ ] Setup staging environment for testing
 - [ ] Notify team of migration timeline
 - [ ] Plan rollback strategy

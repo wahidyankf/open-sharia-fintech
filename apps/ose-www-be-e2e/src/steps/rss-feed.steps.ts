@@ -20,7 +20,6 @@ Then("the feed has a channel link to the site URL", async () => {
   expect(body).toContain("<link>");
 });
 
-// @covers specs/apps/ose/www/behaviors/backend/rss-feed/rss-feed.feature:RSS feed contains valid structure
 Then("the feed contains item elements for each update", async () => {
   const body = state.rssFeedBody as string;
   expect(body).toContain("<item>");
@@ -53,7 +52,6 @@ Then("the feed entry has a link to the update page", async () => {
   expect(itemMatch).not.toBeNull();
 });
 
-// @covers specs/apps/ose/www/behaviors/backend/rss-feed/rss-feed.feature:RSS feed entries contain required fields
 Then("the feed entry has a description", async () => {
   const body = state.rssFeedBody as string;
   expect(body).toContain("<description>");

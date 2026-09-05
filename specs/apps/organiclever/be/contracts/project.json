@@ -26,47 +26,28 @@
         "command": "echo 'no-op: target not applicable for this project (OpenAPI contract spec only)'"
       }
     },
-    "test:unit": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "echo 'no-op: target not applicable for this project (OpenAPI contract spec only)'"
-      },
-      "cache": true
-    },
-    "test:coverage": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "echo 'no-op: target not applicable for this project (OpenAPI contract spec only)'"
-      },
-      "cache": true
-    },
-    "test:integration": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "echo 'no-op: target not applicable for this project (OpenAPI contract spec only)'"
-      },
-      "cache": true
-    },
-    "test:e2e": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "echo 'no-op: target not applicable for this project (OpenAPI contract spec only)'"
-      },
-      "cache": true
-    },
     "test:quick": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "npx nx run organiclever-contracts:typecheck",
-          "npx nx run organiclever-contracts:lint",
-          "npx nx run organiclever-contracts:test:unit",
-          "npx nx run organiclever-contracts:test:coverage",
-          "npx nx run organiclever-contracts:test:specs"
+          {
+            "command": "npm exec -- nx run organiclever-contracts:typecheck",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run organiclever-contracts:lint",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run organiclever-contracts:specs:structure-validation",
+            "forwardAllArgs": false
+          }
         ],
-        "parallel": false
+        "parallel": false,
+        "forwardAllArgs": false
       },
-      "cache": true
+      "cache": true,
+      "inputs": ["default"]
     },
     "deps:audit": {
       "executor": "nx:run-commands",
@@ -82,49 +63,6 @@
       },
       "cache": true
     },
-    "specs:behavior:coverage": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "echo 'specs:behavior:coverage: no Gherkin behavior specs for this OpenAPI contract project (echo placeholder)'"
-      }
-    },
-    "test:behavior:coverage:unit": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract bdd validate --project organiclever-contracts --adapter unit"
-      },
-      "cache": true,
-      "inputs": ["{workspaceRoot}/repo-config.yml", "default"]
-    },
-    "test:behavior:coverage:integration": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract bdd validate --project organiclever-contracts --adapter integration"
-      },
-      "cache": true,
-      "inputs": ["{workspaceRoot}/repo-config.yml", "default"]
-    },
-    "test:behavior:coverage:e2e": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract bdd validate --project organiclever-contracts --adapter e2e"
-      },
-      "cache": true,
-      "inputs": ["{workspaceRoot}/repo-config.yml", "default"]
-    },
-    "test:behavior:coverage": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "npx nx run organiclever-contracts:test:behavior:coverage:unit",
-          "npx nx run organiclever-contracts:test:behavior:coverage:integration",
-          "npx nx run organiclever-contracts:test:behavior:coverage:e2e"
-        ],
-        "parallel": false
-      },
-      "dependsOn": ["test:behavior:coverage:unit", "test:behavior:coverage:integration", "test:behavior:coverage:e2e"],
-      "cache": true
-    },
     "specs:structure-validation": {
       "executor": "nx:run-commands",
       "options": {
@@ -132,17 +70,6 @@
       },
       "cache": true,
       "inputs": ["{workspaceRoot}/specs/apps/!(rhino)/**/*"]
-    },
-    "test:specs": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "npx nx run organiclever-contracts:specs:structure-validation",
-          "npx nx run organiclever-contracts:specs:behavior:coverage"
-        ],
-        "parallel": false
-      },
-      "cache": true
     }
   },
   "namedInputs": {

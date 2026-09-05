@@ -32,12 +32,12 @@ the BDD+DDD tooling gap-fill plan (2026-05) because reservation-pattern stubs th
 implemented" mislead callers into believing functionality exists. Reintroduction requires a
 dedicated plan implementing real drift logic.
 
-| Current command                                | Validates                                            |
-| ---------------------------------------------- | ---------------------------------------------------- |
-| `rhino-cli specs structure validate [app]`     | Adoption, tree shape, and app-tree counts            |
-| `rhino-cli specs counts validate <folder>`     | Counts for trees outside `specs/apps/`               |
-| `rhino-cli md links validate`                  | Markdown path and fragment integrity                 |
-| `rhino-cli specs gherkin-cardinality validate` | Repeated primary Given/When/Then keyword cardinality |
+| Current command                            | Validates                                                                          |
+| ------------------------------------------ | ---------------------------------------------------------------------------------- |
+| `rhino-cli specs structure validate [app]` | Adoption, tree shape, and app-tree counts                                          |
+| `rhino-cli specs counts validate <folder>` | Counts for trees outside `specs/apps/`                                             |
+| `rhino-cli md links validate`              | Markdown path and fragment integrity                                               |
+| `test:coverage:behaviour`                  | Canonical corpus structure, explicit When/Then, bindings, adapters, and exemptions |
 
 Agents MUST NOT re-implement a delegated predicate with file globs or LLM inference. Outside a
 quality-gate invocation, use the current commands above rather than removed `specs validate-*`

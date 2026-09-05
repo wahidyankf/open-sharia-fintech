@@ -25,7 +25,7 @@ Use this page to choose the explanation page for the testing tool in front of yo
 
 ## Before you choose a tool
 
-Start with the behavior you need confidence in. For an app-level user journey, browser automation may fit. For a business rule or a small code decision, a unit or integration test is usually a clearer and faster signal. [Automation Testing](../README.md) explains how those layers work together.
+Start with the behaviour you need confidence in. For an app-level user journey, browser automation may fit. For a business rule or a small code decision, a unit or integration test is usually a clearer and faster signal. [Automation Testing](../README.md) explains how those layers work together.
 
 ## Related reading
 

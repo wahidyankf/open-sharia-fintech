@@ -85,7 +85,7 @@ PASS: **Explicit (Correct)**:
 }
 ```
 
-**Why this works**: All settings visible. No hidden defaults. Behavior is predictable.
+**Why this works**: All settings visible. No hidden defaults. Behaviour is predictable.
 
 FAIL: **Implicit (Avoid)**:
 
@@ -97,4 +97,4 @@ FAIL: **Implicit (Avoid)**:
 }
 ```
 
-**Why this fails**: What's the timeout? How many retries? Relies on code defaults. Behavior unclear from config.
+**Why this fails**: What's the timeout? How many retries? Relies on code defaults. Behaviour unclear from config.

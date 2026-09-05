@@ -23,4 +23,4 @@ Every non-trivial factual claim written into a plan carries one of four inline l
 - **`[Judgment call]`** — explicitly labeled subjective claim. No verification possible because the claim is opinion or expectation. Numeric KPIs that are gut targets (not measurements) MUST use this label.
 - **`[Unverified]`** — author flagged the claim as needing verification but proceeded under time pressure. `plan-checker` flags `[Unverified]` claims as MEDIUM findings; `plan-fixer` either verifies and re-labels or escalates to manual review.
 
-Bare unlabeled claims about file paths, versions, APIs, or behavior are treated as `[Unverified]` by default. Authors SHOULD label proactively rather than rely on the default.
+Bare unlabeled claims about file paths, versions, APIs, or behaviour are treated as `[Unverified]` by default. Authors SHOULD label proactively rather than rely on the default.

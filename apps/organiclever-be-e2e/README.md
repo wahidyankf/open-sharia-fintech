@@ -1,7 +1,7 @@
 # organiclever-be-e2e
 
 This project checks the OrganicLever backend through its HTTP API. It uses Playwright’s request
-client rather than a browser, so the scenarios stay focused on product behavior at the API boundary.
+client rather than a browser, so the scenarios stay focused on product behaviour at the API boundary.
 🔬
 
 ## Run the API suite
@@ -29,8 +29,14 @@ environment. Do not put credentials or access tokens in this README or any track
 
 ```bash
 npm exec nx -- run organiclever-be-e2e:test:quick
-npm exec nx -- run organiclever-be-e2e:test:specs
+npm exec nx -- run organiclever-be-e2e:test:coverage
+npm exec nx -- run organiclever-be-e2e:test:e2e
 ```
 
-The expected behavior is described in
-[the OrganicLever backend Gherkin specs](../../specs/apps/organiclever/be/behaviors/README.md).
+The expected behaviour is described in
+[the OrganicLever backend Gherkin specs](../../specs/apps/organiclever/be/behaviours/README.md).
+
+This dedicated E2E project owns no independent corpus. Its `test:e2e` adapter observes the backend
+through public HTTP and messaging boundaries; `test:coverage:e2e`, `test:coverage:behaviour`, and
+aggregate `test:coverage` validate it statically. Unit and Integration are omitted because their
+in-process and local-resource boundaries belong to `organiclever-be`.

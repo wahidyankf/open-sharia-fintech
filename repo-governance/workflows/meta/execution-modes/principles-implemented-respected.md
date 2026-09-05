@@ -13,7 +13,7 @@ when_to_use: Use when auditing this convention for traceability back to foundati
 
 # Principles Implemented/Respected
 
-- **Explicit Over Implicit**: Clear description of execution mode behavior
+- **Explicit Over Implicit**: Clear description of execution mode behaviour
 - **Simplicity Over Complexity**: Two clearly defined modes with explicit decision flow
 - **Documentation First**: Document current reality, not ideal future state
 - **No Time Estimates**: Focus on what to do, not how long it takes

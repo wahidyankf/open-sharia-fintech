@@ -24,7 +24,6 @@ Blocks an active plan or documents a live defect, and carries a cross-repo, secu
 - [next-image-builds-cannot-resolve-ts-env-loader](./q1-urgent-important/next-image-builds-cannot-resolve-ts-env-loader.md) — all six Next.js images fail to build; four scheduled workflows have reported it twice daily for days, and the `prod-*` deploy path for four sites is dead.
 - [oxlint-upgrade-and-lint-reproducibility](./q1-urgent-important/oxlint-upgrade-and-lint-reproducibility.md) — 22 lint sites fetched `npx oxlint@latest`, so a publish turned a green PR red on an untouched file; the 1.78.0 pin froze a real `set-state-in-effect` defect and left the wider class unenumerated.
 - [reconcile-rhino-cli-parity-audit-exception](./q1-urgent-important/reconcile-rhino-cli-parity-audit-exception.md) — `ose-private`'s nightly `Rhino CLI Parity Audit` workflow now fails permanently, not transiently, because `rewrite-rhino-cli-to-fsharp` Phase 11a deliberately left one test file (`GlossaryDddCoverageUnitTests.fs`) `ose-private`-only to close a real coverage gap.
-- [rhino-cli-byte-identity-drift-reconciliation](./q1-urgent-important/rhino-cli-byte-identity-drift-reconciliation.md) — the zero-carve-out `apps/rhino-cli` byte-identity boundary is broken against `ose-private` in at least two measured places, with nothing left to propagate either fix automatically.
 - [rhino-cli-governance-tooling-defects](./q1-urgent-important/rhino-cli-governance-tooling-defects.md) — four governance tools that exit 0 while doing less than the caller believes: a mis-paired wrapped code span, a hard-coded `.claude/agents`, basename-keyed rename matching, and an `AUDIT FAILED` line above a green gate.
 
 ### Q2 — Important, Not Urgent
@@ -38,7 +37,6 @@ No active plan waits on these and no live defect is running, but each carries a 
 - [ayokoding-mermaid-diagram-remediation](./q2-not-urgent-important/ayokoding-mermaid-diagram-remediation.md) — 636 mermaid violations exposed by the `detect_kind` fix; remediate and drop the temporary CI exclude.
 - [ayokoding-www-app-shell-tap-targets](./q2-not-urgent-important/ayokoding-www-app-shell-tap-targets.md) — shared header/footer tap targets render 17-20 CSS px tall against WCAG 2.5.8's 24x24 floor, site-wide and unguarded by CI.
 - [bare-repo-landing-method-step-count-drift](./q2-not-urgent-important/bare-repo-landing-method-step-count-drift.md) — the landing method numbers eight steps but is summarized as "seven-step" in nine sites across three repos.
-- [behavior-coverage-json-report-wiring](./q2-not-urgent-important/behavior-coverage-json-report-wiring.md) — wire rhino-cli's JSON-run-report cross-check into project targets + CI.
 - [ci-setup-rust-toolchain-retry](./q2-not-urgent-important/ci-setup-rust-toolchain-retry.md) — `setup-rust` flaked 7× in one phase on the toolchain download; add a retry in both parity repos.
 - [coverage-artifact-relative-paths](./q2-not-urgent-important/coverage-artifact-relative-paths.md) — generated coverage files bake in the last runner's absolute path; most instances are gitignored, but a 2026-08-18 re-check found one finding overstated.
 - [declare-vite-peer-dependency](./q2-not-urgent-important/declare-vite-peer-dependency.md) — ten packages test through a `vite*.config.*` that imports a `vite` none of them declares; it resolves only via npm hoisting, and no gate would notice an eleventh.
@@ -46,7 +44,6 @@ No active plan waits on these and no live defect is running, but each carries a 
 - [doc-command-existence-validation](./q2-not-urgent-important/doc-command-existence-validation.md) — a rhino-cli validator catching doc-cited commands that don't exist.
 - [doctor-fix-polyglot-restore](./q2-not-urgent-important/doctor-fix-polyglot-restore.md) — `doctor --fix` verifies toolchain presence but not per-project restore state (NuGet, npm-workspace hoisting), leaving idle checkouts pre-push-red until manually diagnosed.
 - [extend-byte-identity-to-claude-hooks](./q2-not-urgent-important/extend-byte-identity-to-claude-hooks.md) — `.claude/hooks/block-env-file-access.sh` drifted between the parity repos with nothing to catch it but a plan's manual hash check.
-- [fsharp-env-loader-covers-markers-are-inert](./q2-not-urgent-important/fsharp-env-loader-covers-markers-are-inert.md) — 11 `@covers` markers with no step harness and no coverage target; adding the target alone fails, because the validator matches step text.
 - [governance-command-name-reconciliation](./q2-not-urgent-important/governance-command-name-reconciliation.md) — governance tables, agent files, and npm scripts all name commands that do not exist, including a removed `rhino-cli` subcommand three `sync:*` scripts still invoke.
 - [harness-binding-catalog-drift](./q2-not-urgent-important/harness-binding-catalog-drift.md) — narrowed to one surviving lesson: the 2026-07-20 audit's summary contradicted its own report body, so read the body.
 - [harness-converter-preserve-agent-mode](./q2-not-urgent-important/harness-converter-preserve-agent-mode.md) — the agent converter emits a fixed field set, so OpenCode-only frontmatter like `mode: subagent` is dropped once an agent gains a `.claude/` source.
@@ -59,10 +56,8 @@ No active plan waits on these and no live defect is running, but each carries a 
 - [post-cutoff-dependency-migrations](./q2-not-urgent-important/post-cutoff-dependency-migrations.md) — track and promote the deferred dependency bumps as their soak windows clear.
 - [refresh-agent-illustrative-example-paths](./q2-not-urgent-important/refresh-agent-illustrative-example-paths.md) — 4 generic agent definitions still illustrate usage with example paths naming apps this repo deleted.
 - [rhino-cli-env-backup-scripts](./q2-not-urgent-important/rhino-cli-env-backup-scripts.md) — scripted backup/restore of the gitignored rhino-cli `.env*` files.
-- [rhino-cli-exclude-dir-shared-steps-gap](./q2-not-urgent-important/rhino-cli-exclude-dir-shared-steps-gap.md) — thread `--exclude-dir` through rhino-cli's whole-app step scan so both sides of a `--shared-steps` comparison exclude the same dirs.
 - [rhino-cli-git-env-scrub-widening](./q2-not-urgent-important/rhino-cli-git-env-scrub-widening.md) — `find_root_from` scrubs only `GIT_DIR`/`GIT_WORK_TREE` before invoking `git rev-parse`, leaving `GIT_INDEX_FILE`, `GIT_OBJECT_DIRECTORY`, and `GIT_COMMON_DIR` unscrubbed.
 - [rhino-cli-md-links-json-output-scenario-gap](./q2-not-urgent-important/rhino-cli-md-links-json-output-scenario-gap.md) — the retired CLI link checkers' `Scenario: JSON output produces structured results` has no equivalent in `rhino-cli`'s successor feature, though the behaviour is live and unit-tested.
-- [rhino-cli-test-binaries-run-by-no-gate](./q2-not-urgent-important/rhino-cli-test-binaries-run-by-no-gate.md) — 20 of the 27 test binaries under `apps/rhino-cli/tests/` are executed by no gate on any surface; the `test:unit` allowlist names seven and no workflow ever calls this project's `test:integration`.
 - [rhino-cli-tools-superset-carveout](./q2-not-urgent-important/rhino-cli-tools-superset-carveout.md) — `doctor/tools.rs`'s "zero carve-outs" byte-identity target collides with `ose-private`'s real, needed IaC tool-provisioning extensions.
 - [rust-crate-structural-checklist-promotion](./q2-not-urgent-important/rust-crate-structural-checklist-promotion.md) — promote the Rust crate structural checklist to governance once a 2nd crate exists.
 - [sdlc-gate-standard-property-bound-lag](./q2-not-urgent-important/sdlc-gate-standard-property-bound-lag.md) — `ose-public`'s SDLC gate standard trails both siblings on two name-bound bareness claims; adopt their wording.
@@ -330,11 +325,6 @@ declines are recorded, not just the merges):
   maker-checker-fixer loop over-running its stated iteration budget) and a shared research base, but
   different workflows with different proposed mechanisms. Merging would produce one plan touching two
   unrelated gates. Declined.
-- `rhino-cli-byte-identity-drift-reconciliation` ↔ `rhino-cli-tools-superset-carveout` — the latter
-  argues `doctor/tools.rs`, which is **inside** the former's 17-file union, carries a legitimate
-  `ose-private`-only divergence. Declined because one brief fixes instances and the other changes the
-  rule; the survivor now names the interaction explicitly so neither can be executed without the
-  other being read.
 - `deploy-targets-registry` ↔ `stale-checkout-ref-advance-drift`, and
   `harness-converter-preserve-agent-mode` ↔ `vendor-neutral-canonical-source` — each pair's shared
   terms are a source-plan name or generic git/agent vocabulary, not a shared subject. Declined.

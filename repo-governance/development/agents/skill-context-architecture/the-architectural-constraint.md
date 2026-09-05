@@ -41,4 +41,4 @@ If `.claude/skills/` contains fork skills:
 - ✅ Work in main conversation
 - ❌ Break when used by delegated agents
 - ❌ Reduce skill composability
-- ❌ Create confusing "works sometimes" behavior
+- ❌ Create confusing "works sometimes" behaviour

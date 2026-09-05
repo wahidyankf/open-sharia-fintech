@@ -3,7 +3,9 @@ import path from "path";
 import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
 import { expect, vi } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import React from "react";
+import { axe } from "vitest-axe";
 
 // Mock next/link
 vi.mock("next/link", () => ({
@@ -22,22 +24,6 @@ vi.mock("lucide-react", () => ({
   Sun: () => <svg data-testid="sun-icon" />,
 }));
 
-// Mock @open-sharia-enterprise/web-ui
-vi.mock("@open-sharia-enterprise/web-ui", () => ({
-  Button: ({
-    children,
-    asChild,
-    ...props
-  }: {
-    children: React.ReactNode;
-    asChild?: boolean;
-    [key: string]: unknown;
-  }) => {
-    if (asChild && React.isValidElement(children)) return children;
-    return <button {...props}>{children}</button>;
-  },
-}));
-
 // Mock theme-toggle and mobile-nav
 vi.mock("@/features/app-shell/shell/theme-toggle", () => ({
   ThemeToggle: () => <button aria-label="Toggle theme">Theme</button>,
@@ -53,51 +39,58 @@ vi.mock("@/features/search/shell/use-search", () => ({
 }));
 
 import { Header } from "@/features/app-shell/shell/header";
+import { Hero } from "@/features/landing/shell/hero";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ose/www/behaviors/frontend/app-shell/accessibility.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ose/www/behaviours/frontend/app-shell/accessibility.feature"),
 );
 
 describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
+  let renderedContainer: HTMLElement;
+  let expectedFocusOrder: Element[] = [];
+  let reachedFocusOrder: Element[] = [];
   AfterEachScenario(() => {
     cleanup();
   });
 
   Background(({ Given }) => {
     Given("the app is running", () => {
-      // jsdom environment is ready
+      expect(Header).toBeTypeOf("function");
     });
   });
 
   Scenario("Home page passes axe-core accessibility scan", ({ When, Then }) => {
     When("a visitor opens the home page", () => {
-      render(<Header />);
+      renderedContainer = render(
+        <>
+          <Header />
+          <main>
+            <Hero />
+          </main>
+        </>,
+      ).container;
     });
 
-    // @covers specs/apps/ose/www/behaviors/frontend/app-shell/accessibility.feature:Home page passes axe-core accessibility scan
-    Then("the page should have no accessibility violations", () => {
-      // Full axe-core scan runs in E2E (Playwright). Unit-level: verify ARIA landmark presence.
-      const header = document.querySelector("header");
-      expect(header).toBeInTheDocument();
-      const nav = screen.queryByRole("navigation");
-      expect(nav).toBeDefined();
+    Then("the page should have no accessibility violations", async () => {
+      const results = await axe(renderedContainer);
+      expect(results.violations).toEqual([]);
     });
   });
 
   Scenario("Headings follow a proper hierarchy", ({ When, Then }) => {
     When("a visitor opens the home page", () => {
-      render(
-        <div>
-          <h1>OSE Platform</h1>
-          <h2>Updates</h2>
-        </div>,
-      );
+      render(<Hero />);
     });
 
-    // @covers specs/apps/ose/www/behaviors/frontend/app-shell/accessibility.feature:Headings follow a proper hierarchy
     Then("headings should follow a proper hierarchy starting with a single h1", () => {
       const h1s = document.querySelectorAll("h1");
       expect(h1s.length).toBe(1);
+      const levels = [...document.querySelectorAll("h1, h2, h3, h4, h5, h6")].map((heading) =>
+        Number(heading.tagName.slice(1)),
+      );
+      for (let index = 1; index < levels.length; index += 1) {
+        expect(levels[index]!).toBeLessThanOrEqual(levels[index - 1]! + 1);
+      }
     });
   });
 
@@ -106,50 +99,46 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
       render(<Header />);
     });
 
-    And("the visitor presses Tab repeatedly", () => {
-      // Tab simulation is an E2E concern; unit-level: verify tabIndex or focusable elements
+    And("the visitor presses Tab repeatedly", async () => {
+      const user = userEvent.setup();
+      expectedFocusOrder = [...document.querySelectorAll("a[href], button, input, select, textarea")];
+      reachedFocusOrder = [];
+      for (let index = 0; index < expectedFocusOrder.length; index += 1) {
+        await user.tab();
+        reachedFocusOrder.push(document.activeElement!);
+      }
     });
 
     Then("focus should move through all interactive elements in logical order", () => {
-      const buttons = document.querySelectorAll("button, a, [tabindex]:not([tabindex='-1'])");
-      expect(buttons.length).toBeGreaterThan(0);
+      expect(reachedFocusOrder).toEqual(expectedFocusOrder);
     });
 
-    // @covers specs/apps/ose/www/behaviors/frontend/app-shell/accessibility.feature:All interactive elements are keyboard accessible
     And("no interactive element should be skipped or unreachable by keyboard", () => {
-      // Main navigation elements should be keyboard-reachable (not intentionally skipped)
-      const mainButtons = document.querySelectorAll("nav a, nav button");
-      expect(mainButtons.length).toBeGreaterThan(0);
+      expect(new Set(reachedFocusOrder).size).toBe(expectedFocusOrder.length);
     });
   });
 
   Scenario("Text color contrast meets WCAG AA standard", ({ When, Then, And }) => {
     When("a visitor opens any page on the site", () => {
-      render(
-        <div>
-          <p className="bg-background text-foreground">Body text</p>
-          <h2 className="bg-background text-foreground">Heading text</h2>
-        </div>,
-      );
+      renderedContainer = render(<Hero />).container;
     });
 
-    Then("all body text should meet a minimum contrast ratio of 4.5:1 against its background", () => {
-      // Color contrast testing requires computed styles — use E2E Playwright for actual contrast validation.
-      // Unit-level: verify that text elements exist and have semantic classes.
-      const text = screen.getByText("Body text");
-      expect(text).toBeInTheDocument();
+    Then("all body text should meet a minimum contrast ratio of 4.5:1 against its background", async () => {
+      const results = await axe(renderedContainer, { rules: { "color-contrast": { enabled: true } } });
+      expect(results.violations.filter(({ id }) => id === "color-contrast")).toEqual([]);
     });
 
-    // @covers specs/apps/ose/www/behaviors/frontend/app-shell/accessibility.feature:Text color contrast meets WCAG AA standard
-    And("large text and headings should meet a minimum contrast ratio of 3:1 against their background", () => {
-      const heading = screen.getByText("Heading text");
-      expect(heading).toBeInTheDocument();
+    And("large text and headings should meet a minimum contrast ratio of 3:1 against their background", async () => {
+      const results = await axe(renderedContainer, { rules: { "color-contrast": { enabled: true } } });
+      expect(results.violations.filter(({ id }) => id === "color-contrast")).toEqual([]);
     });
   });
 
   Scenario("Focus indicators are visible on interactive elements", ({ When, Then, And }) => {
-    When("a visitor navigates to an interactive element using the keyboard", () => {
+    When("a visitor navigates to an interactive element using the keyboard", async () => {
       render(<Header />);
+      await userEvent.setup().tab();
+      expect(document.activeElement).not.toBe(document.body);
     });
 
     Then("a visible focus indicator should be displayed on that element", () => {
@@ -162,10 +151,14 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
       }
     });
 
-    // @covers specs/apps/ose/www/behaviors/frontend/app-shell/accessibility.feature:Focus indicators are visible on interactive elements
     And("the focus indicator should have sufficient contrast against the surrounding background", () => {
-      // Contrast ratio validation requires computed styles — E2E responsibility.
-      expect(true).toBe(true);
+      // The browser suite measures the rendered contrast. At Unit level,
+      // prove that the app composes the real shared Button implementation
+      // and therefore applies the contrast-bearing ring token instead of
+      // silently replacing or suppressing its focus style.
+      const navigationButton = screen.getByRole("button", { name: "Open navigation menu" });
+      expect(navigationButton).toHaveClass("focus-visible:ring-[3px]");
+      expect(navigationButton).toHaveClass("focus-visible:ring-ring/50");
     });
   });
 });

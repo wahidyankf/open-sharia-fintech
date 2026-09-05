@@ -1,6 +1,6 @@
 ---
 title: "Autonomous Bug Fixing"
-description: "Defines the expected behavior for autonomous bug fixing, what autonomous means, handling failing CI tests, and preexisting errors found during other work."
+description: "Defines the expected behaviour for autonomous bug fixing, what autonomous means, handling failing CI tests, and preexisting errors found during other work."
 category: explanation
 subcategory: development
 tags:
@@ -17,7 +17,7 @@ when_to_use: Use when an agent discovers a bug or a failing test while doing unr
 
 When given a bug report, fix it. Do not ask for hand-holding.
 
-## Expected Behavior
+## Expected Behaviour
 
 - Point at the error message, log output, or failing test
 - Read the relevant code to understand the cause
@@ -50,7 +50,7 @@ When CI tests fail, fix them without being told how. The steps are:
 
 Autonomous bug fixing applies not only when a bug report is the primary task, but also when broken state is discovered incidentally during any other work. An agent that opens a file to add a feature and finds a broken import, a failing test, or an incorrect configuration is responsible for fixing it.
 
-The required behavior is identical whether the error was assigned or discovered:
+The required behaviour is identical whether the error was assigned or discovered:
 
 1. Diagnose the root cause before proceeding with the primary task
 2. Fix the root cause — not around it, not in a note at the end of a response

@@ -1,7 +1,7 @@
 ---
 title: "Success Criteria (Gherkin) — Part 2"
 description: The remaining four Gherkin scenarios — spec updates, generator-logic escalation, out-of-scope escalation, and double-zero confirmation with bounded iteration.
-when_to_use: Use when verifying or testing this workflow's escalation and iteration-budget behavior against its acceptance criteria.
+when_to_use: Use when verifying or testing this workflow's escalation and iteration-budget behaviour against its acceptance criteria.
 ---
 
 # Success Criteria (Gherkin) — Part 2
@@ -9,11 +9,11 @@ when_to_use: Use when verifying or testing this workflow's escalation and iterat
 **Continued from** [Success Criteria (Gherkin) — Part 1](./success-criteria-gherkin.md).
 
 ```gherkin
-Scenario: Fixer updates rhino specs when a harness change alters documented CLI behavior
+Scenario: Fixer updates rhino specs when a harness change alters documented CLI behaviour
   Given the audit contains a HIGH-confidence finding that a harness changed a convention rhino-cli emits
-  And specs/apps/rhino/ documents the old behavior in a Gherkin scenario
+  And specs/apps/rhino/ documents the old behaviour in a Gherkin scenario
   When repo-harness-compatibility-fixer applies the catalog and binding updates
-  Then it edits the affected specs/apps/rhino/ files to match the new behavior
+  Then it edits the affected specs/apps/rhino/ files to match the new behaviour
   And it preserves the Given-When-Then scenario structure
   And it records each touched spec file in the fix report
 

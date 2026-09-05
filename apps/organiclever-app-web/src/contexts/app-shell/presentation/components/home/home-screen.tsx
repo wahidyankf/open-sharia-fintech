@@ -204,6 +204,7 @@ export function HomeScreen({ runtime, onStartWorkout, onEditRoutine }: HomeScree
           }}
         >
           <button
+            aria-pressed={activeFilter == null}
             onClick={() => {
               setActiveFilter(null);
               setVisibleCount(10);
@@ -232,6 +233,7 @@ export function HomeScreen({ runtime, onStartWorkout, onEditRoutine }: HomeScree
             return (
               <button
                 key={m.id}
+                aria-pressed={active}
                 onClick={() => {
                   setActiveFilter(active ? null : m.id);
                   setVisibleCount(10);

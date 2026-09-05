@@ -1,14 +1,18 @@
 /// TickSpec step definitions binding `gate-validation.feature`'s 26
 /// scenarios [Repo-grounded —
-/// `specs/apps/rhino/cli/behaviors/gate/gate-validation.feature`,
+/// `specs/apps/rhino/cli/behaviours/gate/gate-validation.feature`,
 /// `apps/rhino-cli/tests/gate_specs.rs`].
 ///
-/// Unlike `GateExecutionSteps.fs`, `gate validate`'s production entry point
-/// (`Gate.validateAtRoot`) never re-invokes the current executable — Rust's
-/// own `GateWorld::validate` calls `validate::run_at_root` directly, so these
-/// scenarios call the F# function in-process against a disposable fixture
-/// directory instead of spawning a subprocess.
+/// The scenarios invoke the production validation core over in-memory
+/// documents and explicit executable-hook metadata. Filesystem discovery is
+/// covered by Integration.
 module RhinoCli.Tests.Unit.Steps.GateValidationSteps
+
+/// Explicit static-coverage ownership; the validator scopes this file's
+/// TickSpec bindings to these canonical features.
+let private behaviourFeatureOwnership =
+    [ "specs/apps/rhino/cli/behaviours/gate/gate-validation.feature" ]
+
 
 open System
 open System.IO
@@ -16,10 +20,8 @@ open TickSpec
 open Xunit
 open RhinoCli.Cli.Gate
 
-let private repoRoot: string =
-    match RhinoCli.Infrastructure.GitRoot.findRoot () with
-    | Ok root -> root
-    | Error message -> failwithf "locate repository root: %s" message
+let private repoRoot =
+    Path.GetFullPath(Path.Combine(__SOURCE_DIRECTORY__, "..", "..", "..", "..", ".."))
 
 /// Mirrors `gate_specs.rs::config`.
 let private config (gates: string) : string = "gates:\n" + gates
@@ -34,37 +36,18 @@ let private gate (id: string) (gateType: string) (command: string) (kind: string
         kind
         surfaces
 
-let private makeExecutable (path: string) : unit =
-    File.SetUnixFileMode(
-        path,
-        UnixFileMode.UserRead
-        ||| UnixFileMode.UserWrite
-        ||| UnixFileMode.UserExecute
-        ||| UnixFileMode.GroupRead
-        ||| UnixFileMode.GroupExecute
-        ||| UnixFileMode.OtherRead
-        ||| UnixFileMode.OtherExecute
-    )
-
 /// Instance step-definition container — see `ConventionSteps.fs`'s module doc
 /// comment for the one-instance-per-scenario rationale behind mutable
 /// instance state here.
 type GateValidationSteps() =
-    let root =
-        let dir =
-            Path.Combine(Path.GetTempPath(), "rhino-cli-gate-validation-" + Guid.NewGuid().ToString("N"))
-
-        Directory.CreateDirectory dir |> ignore
-        dir
-
+    let mutable documents: Map<string, string> = Map.empty
+    let mutable executableHooks: Set<string> = Set.empty
     let mutable succeeded: bool option = None
     let mutable output: string = ""
     let mutable listOutput: string = ""
 
     let write (relative: string) (contents: string) =
-        let path = Path.Combine(root, relative)
-        Directory.CreateDirectory(Path.GetDirectoryName path) |> ignore
-        File.WriteAllText(path, contents)
+        documents <- documents |> Map.add relative contents
 
     // Mirrors `GateWorld::new`'s default seeding of all three Husky hooks
     // with valid, delegating content — individual scenarios override one
@@ -73,10 +56,22 @@ type GateValidationSteps() =
         for hook in [ "commit-msg"; "pre-commit"; "pre-push" ] do
             let relative = ".husky/" + hook
             write relative (sprintf "#!/bin/sh\nrhino-cli gate run --surface=%s\n" hook)
-            makeExecutable (Path.Combine(root, relative))
+            executableHooks <- executableHooks.Add relative
 
     let validate () =
-        match validateAtRoot root with
+        let parsed =
+            match documents |> Map.tryFind "repo-config.yml" with
+            | None -> Error "repo-config.yml fixture is missing"
+            | Some text -> RhinoCli.Application.RepoConfig.parse text
+
+        match
+            parsed
+            |> Result.bind (fun registry ->
+                validateDocuments
+                    registry
+                    { Files = documents
+                      ExecutableHooks = executableHooks })
+        with
         | Ok() ->
             succeeded <- Some true
             output <- ""
@@ -454,10 +449,9 @@ type GateValidationSteps() =
     [<Given>]
     member this.``a gate run --surface=ci step declares neither --only= nor --group=``() =
         this.WriteCompliantCiMatrixFixture()
-        let workflowPath = Path.Combine(root, ".github", "workflows", "pr-quality-gate.yml")
 
         let workflow =
-            File.ReadAllText workflowPath
+            documents.[".github/workflows/pr-quality-gate.yml"]
             + "  extra-check:\n    steps:\n      - run: rhino-cli gate run --surface=ci\n"
 
         write ".github/workflows/pr-quality-gate.yml" workflow
@@ -465,10 +459,9 @@ type GateValidationSteps() =
     [<Given>]
     member this.``a gate run --surface=ci step's --group value matches no declared ci_group``() =
         this.WriteCompliantCiMatrixFixture()
-        let workflowPath = Path.Combine(root, ".github", "workflows", "pr-quality-gate.yml")
 
         let workflow =
-            File.ReadAllText workflowPath
+            documents.[".github/workflows/pr-quality-gate.yml"]
             + "  extra-check:\n    steps:\n      - run: rhino-cli gate run --surface=ci --group=unregistered-group\n"
 
         write ".github/workflows/pr-quality-gate.yml" workflow
@@ -653,7 +646,12 @@ type GateValidationSteps() =
     member _.``it succeeds and gate list reports the exemption``() =
         Assert.True(isSuccess (), sprintf "gate validation failed: %s" output)
 
-        match listAtRoot root "pre-commit" RhinoCli.Domain.Types.OutputFormat.Text false with
+        let registry =
+            documents.["repo-config.yml"]
+            |> RhinoCli.Application.RepoConfig.parse
+            |> Result.defaultWith failwith
+
+        match listFromConfig registry "pre-commit" RhinoCli.Domain.Types.OutputFormat.Text false with
         | Ok text -> listOutput <- text
         | Error message -> failwithf "gate list failed: %s" message
 
@@ -746,7 +744,7 @@ type GateValidationSteps() =
 module private FeatureRunner =
 
     let private featurePath: string =
-        Path.Combine(repoRoot, "specs", "apps", "rhino", "cli", "behaviors", "gate", "gate-validation.feature")
+        Path.Combine(repoRoot, "specs", "apps", "rhino", "cli", "behaviours", "gate", "gate-validation.feature")
 
     let private extractScenario (featureLines: string[]) (scenarioTitle: string) : string[] =
         let featureLine =
@@ -771,7 +769,9 @@ module private FeatureRunner =
         Array.append [| featureLine; "" |] featureLines.[startIdx .. endIdx - 1]
 
     let run (scenarioTitle: string) : unit =
-        let allLines = File.ReadAllLines featurePath
+        let allLines =
+            ConventionSteps.FeatureResource.readLines (Path.GetFileName featurePath)
+
         let snippet = extractScenario allLines scenarioTitle
         let definitions = StepDefinitions([| typeof<GateValidationSteps> |])
         let feature = definitions.GenerateFeature(featurePath, snippet)

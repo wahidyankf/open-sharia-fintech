@@ -20,7 +20,7 @@ Create detailed project plans in `plans/` per `plan-creating-project-plans` Skil
 source for plan structure, naming, content-placement rules, Worktree/Delivery-Mode declarations,
 Execution-Grade Clarity, Executor Tagging, Phase Gates, Pre-Write Verification (Anti-Hallucination),
 UI-Design-Funnel and Learning-Bearing Syllabus requirements, Operational Readiness sections, Manual
-Behavioral Assertions, and Knowledge Capture. Plans must be executable via the
+Behavioural Assertions, and Knowledge Capture. Plans must be executable via the
 [plan-execution workflow](../../repo-governance/workflows/plan/plan-execution.md) and validatable by
 `plan-checker` (authoring-time) and `plan-execution-checker` (post-execution).
 

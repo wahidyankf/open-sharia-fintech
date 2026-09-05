@@ -28,7 +28,7 @@ specs/apps/organiclever/
 ├── components/
 │   ├── be/
 │   └── web/
-└── behavior/
+└── behaviour/
     ├── organiclever-be/gherkin/
     ├── organiclever-app-web/gherkin/
     ├── organiclever-www/gherkin/
@@ -44,27 +44,27 @@ specs/apps/organiclever/
 ├── app-web/
 │   ├── README.md
 │   ├── architecture.md
-│   └── behaviors/<domain>/
+│   └── behaviours/<domain>/
 ├── be/
 │   ├── README.md
 │   ├── architecture.md
 │   ├── contracts/          # the OpenAPI spec the backend serves
-│   └── behaviors/<domain>/
+│   └── behaviours/<domain>/
 └── www/
     ├── README.md
     ├── architecture.md
-    └── behaviors/
+    └── behaviours/
         ├── frontend/<domain>/
         └── backend/<domain>/
 ```
 
-Four behavior surfaces became three corpora because one deployed site owns both its frontend and
-its tRPC backend; `behaviors/` nests them rather than splitting the site in two.
+Four behaviour surfaces became three corpora because one deployed site owns both its frontend and
+its tRPC backend; `behaviours/` nests them rather than splitting the site in two.
 
 **Migration checklist**:
 
-1. In one atomic `git mv` commit: move each `behavior/<product>-<surface>/gherkin/` to its owner's
-   `behaviors/`, and any `containers/contracts/` into the owner that serves it. Feature files keep
+1. In one atomic `git mv` commit: move each `behaviour/<product>-<surface>/gherkin/` to its owner's
+   `behaviours/`, and any `containers/contracts/` into the owner that serves it. Feature files keep
    their domain subdirectory.
 2. In the same commit: write each owner's `README.md` and `architecture.md`, then `git rm -r` the
    five legacy folders. A product cannot be half in one shape and half in the other.

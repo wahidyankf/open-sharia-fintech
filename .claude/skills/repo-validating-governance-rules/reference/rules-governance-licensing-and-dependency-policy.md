@@ -1,4 +1,4 @@
-# Step 7 (continued): Licensing, Dependency Bump Policy, Gherkin Cardinality, Report Format
+# Step 7 (continued): Licensing, Dependency Bump Policy, Gherkin Journey Coherence, Report Format
 
 1. **Licensing Compliance** (see [Per-Directory Licensing Convention](../../../../repo-governance/conventions/structure/licensing.md)):
    every product app dir, every `libs/*` dir, and `specs/` root need MIT LICENSE;
@@ -25,15 +25,14 @@
      C urgency — lower path without waiver justification = HIGH.
    - Scope note: for `plans/done/`, flag only CRITICAL/HIGH (historical accuracy); for
      `plans/in-progress/`/`plans/backlog/`, flag all severities.
-3. **Gherkin Step-Keyword Cardinality** (markdown fences — see
-   [Acceptance Criteria Convention §Step-Keyword Cardinality](../../../../repo-governance/development/infra/acceptance-criteria/gherkin-format-and-step-keyword-cardinality.md#step-keyword-cardinality-hard-rule)):
+3. **Gherkin Journey Coherence** (markdown fences — see the
+   [Acceptance Criteria Convention](../../../../repo-governance/development/infra/acceptance-criteria/gherkin-format-and-step-keyword-cardinality.md)):
    scope is ` ```gherkin ` fences in `repo-governance/`, `docs/`, `.claude/skills/`, and active
-   plans (`plans/done/` exempt; tracked `.feature` files use the deterministic
-   `gherkin-keyword-cardinality` linter instead). Per `Scenario`, count primary
-   `Given`/`When`/`Then` lines (`And`/`But`/`*` never count; `Background` and `Examples` tables are
-   exempt) — flag more than one primary keyword of the same type unless the fence carries an
-   explicit deliberate-example label. Unlabeled violation = HIGH; missing label on an intentional
-   counter-example = MEDIUM.
+   plans (`plans/done/` exempt). Project-local `test:coverage:behaviour` owns static corpus,
+   adapter, exemption, and journey-shape checks for tracked `.feature` files. Require an explicit
+   `When` and `Then`; repeated primary keywords are valid when they form one continuous journey.
+   Flag a missing action/outcome or unrelated independently meaningful actions hidden in one
+   scenario as HIGH.
 
 **Report format**: `### Finding: [Contradiction/Inaccuracy/Inconsistency/Traceability
 Violation/Layer Coherence]` with Category, Files Affected, Criticality, Issue, Evidence,

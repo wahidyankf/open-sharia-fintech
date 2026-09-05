@@ -14,7 +14,7 @@ user sees, what is written to the in-browser database, and what survives a reloa
 - [Routes and screens](./routes-and-screens.md) — the URL surface and the screen each route renders.
 - [Design system](./design-system.md) — palette, typography, dark mode, and the shared components
   the screens are built from.
-- [Behaviors](./behaviors/README.md) — the recursive Gherkin corpus, grouped by feature context.
+- [Behaviours](./behaviours/README.md) — the recursive Gherkin corpus, grouped by feature context.
 
 ## Related
 

@@ -2,6 +2,7 @@ namespace FsharpEnvLoader
 
 open System
 open System.IO
+open System.Diagnostics.CodeAnalysis
 
 /// Shared tiered `.env.<APP_ENV>` env-file loader for this repo's F# backends
 /// (`ose-be`, `organiclever-be`) — see the
@@ -20,13 +21,27 @@ open System.IO
 /// with an app's own loader.
 module EnvTier =
 
-    /// Rule 1 of the loader contract — the tier selector: reads APP_ENV
-    /// (default "local").
-    let resolveTier () : string =
-        match Environment.GetEnvironmentVariable("APP_ENV") with
+    /// Side-effect boundary used by the tier loader. Production callers use
+    /// `systemPorts`; Unit tests provide deterministic in-memory ports.
+    type EnvTierPorts =
+        { GetEnvironmentVariable: string -> string
+          SetEnvironmentVariable: string -> string -> unit
+          FileExists: string -> bool
+          ReadLines: string -> seq<string>
+          CombinePath: string -> string -> string }
+
+    /// Resolves a tier through a caller-supplied environment reader.
+    let resolveTierWith (readEnvironment: string -> string) : string =
+        match readEnvironment "APP_ENV" with
         | null
         | "" -> "local"
         | value -> value
+
+    /// Rule 1 of the loader contract — the tier selector: reads APP_ENV
+    /// (default "local").
+    [<ExcludeFromCodeCoverage(Justification = "Real process-environment adapter; covered by Integration tests")>]
+    let resolveTier () : string =
+        resolveTierWith Environment.GetEnvironmentVariable
 
     /// Parses a single ".env" line into a KEY, VALUE pair. Blank lines and
     /// lines starting with "#" (comments) yield None, as do lines with no
@@ -53,24 +68,37 @@ module EnvTier =
     /// loaders' `dotenv({ override: false })` presence semantics (they test
     /// via `hasOwnProperty`, which doesn't care whether an existing value is
     /// empty).
-    let private applyEnvFile (path: string) : unit =
+    let private applyEnvFileWith (ports: EnvTierPorts) (path: string) : unit =
         path
-        |> File.ReadLines
+        |> ports.ReadLines
         |> Seq.choose parseLine
         |> Seq.iter (fun (key, value) ->
-            match Environment.GetEnvironmentVariable(key) with
-            | null -> Environment.SetEnvironmentVariable(key, value)
+            match ports.GetEnvironmentVariable key with
+            | null -> ports.SetEnvironmentVariable key value
             | _ -> ())
+
+    /// Loads one tier through explicit side-effect ports. This is the
+    /// application-facing seam for deterministic in-process Unit proof.
+    let loadEnvTierFromWith (ports: EnvTierPorts) (searchDirs: string list) : unit =
+        let fileName = $".env.%s{resolveTierWith ports.GetEnvironmentVariable}"
+
+        searchDirs
+        |> List.map (fun dir -> ports.CombinePath dir fileName)
+        |> List.tryFind ports.FileExists
+        |> Option.iter (applyEnvFileWith ports)
 
     /// Rules 2 and 4 of the loader contract — one file, and a missing file
     /// is not an error: loads `.env.<APP_ENV>`, searching `searchDirs` in
     /// order for the first tier file that exists and applying it; does
     /// nothing if none of them do (the normal case in CI, where real env
     /// vars are set with no file on disk).
+    [<ExcludeFromCodeCoverage(Justification = "Real filesystem/environment adapter; covered by Integration tests")>]
     let loadEnvTierFrom (searchDirs: string list) : unit =
-        let fileName = $".env.%s{resolveTier ()}"
+        let systemPorts =
+            { GetEnvironmentVariable = Environment.GetEnvironmentVariable
+              SetEnvironmentVariable = fun key value -> Environment.SetEnvironmentVariable(key, value)
+              FileExists = File.Exists
+              ReadLines = File.ReadLines
+              CombinePath = fun directory fileName -> Path.Combine(directory, fileName) }
 
-        searchDirs
-        |> List.map (fun dir -> Path.Combine(dir, fileName))
-        |> List.tryFind File.Exists
-        |> Option.iter applyEnvFile
+        loadEnvTierFromWith systemPorts searchDirs

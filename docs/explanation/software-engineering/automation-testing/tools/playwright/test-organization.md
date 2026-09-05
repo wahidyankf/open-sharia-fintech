@@ -106,7 +106,7 @@ test.describe("Zakat Calculation", () => {
 
 ### 2. Explicit Over Implicit
 
-**Principle**: Choose explicit composition and configuration over magic, convenience, and hidden behavior.
+**Principle**: Choose explicit composition and configuration over magic, convenience, and hidden behaviour.
 
 **How Playwright Test Organization Implements**:
 
@@ -686,7 +686,7 @@ test.describe("Murabaha Contract Validation", () => {
   test("handles server timeout gracefully", async ({ page }) => {
     test.fail(); // Known issue - fails but doesn't block CI
 
-    // Will fail - expected behavior
+    // Will fail - expected behaviour
   });
 });
 ```

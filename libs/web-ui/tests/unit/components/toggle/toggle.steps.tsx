@@ -6,31 +6,35 @@ import { vi, expect } from "vitest";
 import { Toggle } from "../../../../src/components/toggle/toggle";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../specs/libs/web-ui/behaviors/toggle/toggle.feature"),
+  path.resolve(__dirname, "../../../../../../specs/libs/web-ui/behaviours/toggle/toggle.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {
   Scenario("Renders in off state", ({ When, Then }) => {
+    let toggle: HTMLElement;
+
     When("I render a Toggle with value false", () => {
-      // precondition noted
+      cleanup();
+      render(<Toggle value={false} onChange={vi.fn()} />);
+      toggle = screen.getByRole("switch");
     });
 
     Then('the toggle switch should have aria-checked "false"', () => {
-      cleanup();
-      render(<Toggle value={false} onChange={() => {}} />);
-      expect(screen.getByRole("switch").getAttribute("aria-checked")).toBe("false");
+      expect(toggle.getAttribute("aria-checked")).toBe("false");
     });
   });
 
   Scenario("Renders in on state", ({ When, Then }) => {
+    let toggle: HTMLElement;
+
     When("I render a Toggle with value true", () => {
-      // precondition noted
+      cleanup();
+      render(<Toggle value={true} onChange={vi.fn()} />);
+      toggle = screen.getByRole("switch");
     });
 
     Then('the toggle switch should have aria-checked "true"', () => {
-      cleanup();
-      render(<Toggle value={true} onChange={() => {}} />);
-      expect(screen.getByRole("switch").getAttribute("aria-checked")).toBe("true");
+      expect(toggle.getAttribute("aria-checked")).toBe("true");
     });
   });
 
@@ -38,7 +42,9 @@ describeFeature(feature, ({ Scenario }) => {
     const onChangeMock = vi.fn();
 
     Given("I render a Toggle with value false", () => {
-      // precondition noted; render happens in When step to persist mock state
+      cleanup();
+      render(<Toggle value={false} onChange={onChangeMock} />);
+      expect(screen.getByRole("switch").getAttribute("aria-checked")).toBe("false");
     });
 
     When("the user clicks the toggle", () => {
@@ -56,7 +62,9 @@ describeFeature(feature, ({ Scenario }) => {
     const onChangeMock = vi.fn();
 
     Given("I render a Toggle with value false and disabled", () => {
-      // precondition noted; render happens in When step to persist mock state
+      cleanup();
+      render(<Toggle value={false} onChange={onChangeMock} disabled />);
+      expect(screen.getByRole("switch", { hidden: true }).hasAttribute("disabled")).toBe(true);
     });
 
     When("the user clicks the toggle", () => {
@@ -71,14 +79,16 @@ describeFeature(feature, ({ Scenario }) => {
   });
 
   Scenario("Renders with label", ({ When, Then }) => {
+    let label: HTMLElement;
+
     When('I render a Toggle with value false and label "Enable notifications"', () => {
-      // precondition noted
+      cleanup();
+      render(<Toggle value={false} onChange={vi.fn()} label="Enable notifications" />);
+      label = screen.getByText("Enable notifications");
     });
 
     Then('the label "Enable notifications" should be visible', () => {
-      cleanup();
-      render(<Toggle value={false} onChange={() => {}} label="Enable notifications" />);
-      expect(screen.getByText("Enable notifications")).toBeDefined();
+      expect(label.textContent).toBe("Enable notifications");
     });
   });
 });

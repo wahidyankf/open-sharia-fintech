@@ -57,7 +57,7 @@ This guide covers Server Components patterns for Next.js 16+ with enterprise fin
 
 ## Server Components Fundamentals
 
-### Default Behavior
+### Default Behaviour
 
 In the App Router, **all components are Server Components by default**:
 

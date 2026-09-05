@@ -51,19 +51,23 @@ apps/organiclever-be/
 | Runtime   | .NET 10                                                  |
 | Port      | 8202 (development)                                       |
 | API base  | `/api/v1`                                                |
-| Testing   | TickSpec (BDD step runner), xunit, AltCover (coverage)   |
-| Coverage  | ≥90% line coverage enforced by `rhino-cli test-coverage` |
+| Testing   | TickSpec (BDD step runner), xunit, and Coverlet          |
+| Coverage  | At least 99% Unit line coverage, enforced by `test:unit` |
 
 ## BDD test coverage
 
-All tests consume Gherkin specs from
-`specs/apps/organiclever/behavior/organiclever-be/gherkin/`. The same `.feature` files drive:
+The canonical corpus is [`behaviours/`](./behaviours/README.md). Its `.feature` files drive:
 
-- **Unit tests** (`test:unit`) — in-process via `WebApplicationFactory`
-- **Coverage gate** (`test:quick`) — unit tests + AltCover 90% threshold
+- **Unit** (`organiclever-be:test:unit`) — in-process production logic through injected doubles,
+  with a hard 99% line-coverage minimum
+- **Integration** (`organiclever-be:test:integration`) — real isolated local resources without
+  network access
+- **E2E** (`organiclever-be-e2e:test:e2e`) — the real service through its public HTTP boundary
+- **Static coverage** (`test:coverage:*`) — exact Gherkin binding/exemption validation that runs no
+  tests and is mandatory in `test:quick`
 
 ## Related
 
-- [Behavior specs](./behaviors/README.md) — Gherkin acceptance criteria
+- [Behaviour specs](./behaviours/README.md) — Gherkin acceptance criteria
 - [Architecture](./architecture.md) — where this service fits
 - [OpenAPI contract](./contracts/README.md) — the schema this API serves

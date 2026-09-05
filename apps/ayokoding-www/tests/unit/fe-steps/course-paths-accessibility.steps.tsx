@@ -111,7 +111,7 @@ function isKeyboardOperable(el: Element): boolean {
 }
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviors/frontend/course-paths/accessibility.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviours/frontend/course-paths/accessibility.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {
@@ -127,7 +127,9 @@ describeFeature(feature, ({ Scenario }) => {
     });
 
     When("they navigate the path rail, banner, breadcrumb, prerequisite list, and prev/next", () => {
-      // No-op — each landmark is located and exercised directly in the Then step below.
+      const breadcrumbLink = within(screen.getByRole("navigation", { name: "Breadcrumb" })).getAllByRole("link")[0];
+      breadcrumbLink?.focus();
+      expect(document.activeElement).toBe(breadcrumbLink);
     });
 
     Then("each is a labelled landmark reachable and operable by keyboard with visible focus", () => {
@@ -141,7 +143,6 @@ describeFeature(feature, ({ Scenario }) => {
       expect(isKeyboardOperable(within(pageNav).getAllByRole("link")[0] as Element)).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/accessibility.feature:The navigation feature meets accessibility requirements
     And("the document language attribute matches the active locale", () => {
       expect(htmlLang("en")).toBe("en");
     });

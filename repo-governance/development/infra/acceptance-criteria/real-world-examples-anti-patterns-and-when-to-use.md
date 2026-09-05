@@ -49,7 +49,7 @@ Scenario: Tutorial content passes quality validation
 
 ### FAIL: Vague or Ambiguous Language
 
-```gherkin
+```text
 Then the system should work correctly
 Then performance should be acceptable
 Then users should be happy
@@ -59,26 +59,26 @@ Then users should be happy
 
 ### FAIL: Testing Implementation Details
 
-```gherkin
+```text
 Then the Redux store should be updated
 Then the database transaction should commit
 Then the cache should be invalidated
 ```
 
-**Better**: Focus on observable behavior from user perspective
+**Better**: Focus on observable behaviour from user perspective
 
-### FAIL: Multiple Behaviors in One Scenario
+### FAIL: Multiple Behaviours in One Scenario
 
-```gherkin
+```text
 Scenario: Complete user workflow
  [50 lines covering registration, login, profile update, logout]
 ```
 
-**Better**: Split into separate scenarios (one behavior each)
+**Better**: Split into separate scenarios (one behaviour each)
 
 ### FAIL: Missing Context
 
-```gherkin
+```text
 When the button is clicked
 Then something happens
 ```
@@ -95,7 +95,7 @@ Then something happens
 
 ### PASS: Feature Specifications
 
-- **Feature docs**: Describe expected behavior for new features
+- **Feature docs**: Describe expected behaviour for new features
 - **RFC documents**: Define acceptance criteria for proposed changes
 - **ADRs**: Specify outcomes of architectural decisions
 
@@ -103,7 +103,7 @@ Then something happens
 
 - **Endpoint specifications**: Describe request/response scenarios
 - **Error handling**: Define error conditions and responses
-- **Integration scenarios**: Describe cross-service behavior
+- **Integration scenarios**: Describe cross-service behaviour
 
 ### PASS: Test Documentation
 

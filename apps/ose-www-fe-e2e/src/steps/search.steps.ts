@@ -20,12 +20,14 @@ When("a search query {string} is executed with limit {int}", async ({ request },
   backendState.searchResults = extractTrpcData(body);
 });
 
-Then("the results contain pages matching {string}", async ({}, _term: string) => {
-  const results = backendState.searchResults as unknown[];
+Then("the results contain pages matching {string}", async ({}, term: string) => {
+  const results = backendState.searchResults as Array<{ title: string; slug: string; excerpt: string }>;
   expect(results.length).toBeGreaterThan(0);
+  for (const result of results) {
+    expect(`${result.title} ${result.slug} ${result.excerpt}`.toLowerCase()).toContain(term.toLowerCase());
+  }
 });
 
-// @covers specs/apps/ose/www/behaviors/backend/search/search.feature:Search returns matching results
 Then("each result contains a title, slug, and excerpt", async () => {
   const results = backendState.searchResults as Record<string, unknown>[];
   const first = results[0]!;
@@ -34,13 +36,11 @@ Then("each result contains a title, slug, and excerpt", async () => {
   expect(first).toHaveProperty("excerpt");
 });
 
-// @covers specs/apps/ose/www/behaviors/backend/search/search.feature:Search with no matches returns empty results
 Then("the results are empty", async () => {
   const results = backendState.searchResults as unknown[];
   expect(results.length).toBe(0);
 });
 
-// @covers specs/apps/ose/www/behaviors/backend/search/search.feature:Search results respect the limit parameter
 Then("at most {int} results are returned", async ({}, limit: number) => {
   const results = backendState.searchResults as unknown[];
   expect(results.length).toBeLessThanOrEqual(limit);

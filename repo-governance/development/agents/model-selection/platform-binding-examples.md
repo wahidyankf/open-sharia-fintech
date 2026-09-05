@@ -33,7 +33,7 @@ binding's `convert_model()` maps all three tiers to `zai-coding-plan/glm-5.2` vi
 primary provider. The `opencode-go` provider remains configured in `.opencode/opencode.json` for
 `/models` roster access but is not used in agent tier mapping.
 
-Tier assignments govern behavior in primary binding sessions (the primary runtime, where `opus`
+Tier assignments govern behaviour in primary binding sessions (the primary runtime, where `opus`
 genuinely resolves to a stronger model than `sonnet`). The secondary binding collapses every tier
 onto the same GLM Coding Plan model.
 

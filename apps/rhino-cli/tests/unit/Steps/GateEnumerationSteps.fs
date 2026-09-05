@@ -1,9 +1,15 @@
 /// TickSpec step definitions binding `gate-enumeration.feature`'s eight
 /// scenarios to `RhinoCli.Cli.Gate`'s per-surface projection
 /// [Repo-grounded —
-/// `specs/apps/rhino/cli/behaviors/gate/gate-enumeration.feature`,
+/// `specs/apps/rhino/cli/behaviours/gate/gate-enumeration.feature`,
 /// `apps/rhino-cli/tests/gate_specs.rs`].
 module RhinoCli.Tests.Unit.Steps.GateEnumerationSteps
+
+/// Explicit static-coverage ownership; the validator scopes this file's
+/// TickSpec bindings to these canonical features.
+let private behaviourFeatureOwnership =
+    [ "specs/apps/rhino/cli/behaviours/gate/gate-enumeration.feature" ]
+
 
 open System
 open System.IO
@@ -12,10 +18,8 @@ open TickSpec
 open Xunit
 open RhinoCli.Domain.Types
 
-let private repoRoot: string =
-    match RhinoCli.Infrastructure.GitRoot.findRoot () with
-    | Ok root -> root
-    | Error message -> failwithf "locate repository root: %s" message
+let private repoRoot =
+    Path.GetFullPath(Path.Combine(__SOURCE_DIRECTORY__, "..", "..", "..", "..", ".."))
 
 /// Mirrors `gate_specs.rs::config`.
 let private config (gates: string) : string = "gates:\n" + gates
@@ -24,22 +28,22 @@ let private config (gates: string) : string = "gates:\n" + gates
 /// comment for why TickSpec's one-instance-per-scenario lifecycle makes
 /// instance-level mutable fields the idiomatic state-threading mechanism.
 type GateEnumerationSteps() =
-    let root =
-        let dir =
-            Path.Combine(Path.GetTempPath(), "rhino-cli-gate-enumeration-" + Guid.NewGuid().ToString("N"))
-
-        Directory.CreateDirectory dir |> ignore
-        dir
-
+    let mutable configText = ""
     let mutable succeeded: bool option = None
     let mutable output: string = ""
     let mutable jsonOutput: JsonDocument option = None
 
     let write (relative: string) (contents: string) =
-        File.WriteAllText(Path.Combine(root, relative), contents)
+        Assert.Equal("repo-config.yml", relative)
+        configText <- contents
 
     let list (surface: string) (format: OutputFormat) (byGroup: bool) =
-        match RhinoCli.Cli.Gate.listAtRoot root surface format byGroup with
+        let config =
+            match RhinoCli.Application.RepoConfig.parse configText with
+            | Ok value -> value
+            | Error message -> failwithf "parse enumeration fixture registry: %s" message
+
+        match RhinoCli.Cli.Gate.listFromConfig config surface format byGroup with
         | Ok rendered ->
             succeeded <- Some true
             output <- rendered
@@ -233,7 +237,7 @@ type GateEnumerationSteps() =
 module private FeatureRunner =
 
     let private featurePath: string =
-        Path.Combine(repoRoot, "specs", "apps", "rhino", "cli", "behaviors", "gate", "gate-enumeration.feature")
+        Path.Combine(repoRoot, "specs", "apps", "rhino", "cli", "behaviours", "gate", "gate-enumeration.feature")
 
     let private extractScenario (featureLines: string[]) (scenarioTitle: string) : string[] =
         let featureLine =
@@ -258,7 +262,9 @@ module private FeatureRunner =
         Array.append [| featureLine; "" |] featureLines.[startIdx .. endIdx - 1]
 
     let run (scenarioTitle: string) : unit =
-        let allLines = File.ReadAllLines featurePath
+        let allLines =
+            ConventionSteps.FeatureResource.readLines (Path.GetFileName featurePath)
+
         let snippet = extractScenario allLines scenarioTitle
         let definitions = StepDefinitions([| typeof<GateEnumerationSteps> |])
         let feature = definitions.GenerateFeature(featurePath, snippet)

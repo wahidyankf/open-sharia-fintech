@@ -1,4 +1,4 @@
-# Manual Behavioral Assertion Verification (Step 5c continued): Evidence Capture and Retests
+# Manual Behavioural Assertion Verification (Step 5c continued): Evidence Capture and Retests
 
 1. **Evidence Capture**
    - Verify each ticked manual-verification checkbox carries committed evidence: **Screenshots** —

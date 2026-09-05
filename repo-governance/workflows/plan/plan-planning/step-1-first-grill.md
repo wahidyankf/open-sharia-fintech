@@ -19,7 +19,7 @@ Recommended, and use the harness's native interactive multiple-choice tool when 
 
 Resolve ALL of the following:
 
-1. **Scope**: What is the exact behavior to adopt? What is explicitly out-of-scope?
+1. **Scope**: What is the exact behaviour to adopt? What is explicitly out-of-scope?
 2. **Affected files**: Which governance files, agents, or workflows will change?
 3. **Conflicts**: Does any current convention already address this, conflict with it, or need
    updating?
@@ -48,7 +48,7 @@ Resolve ALL of the following:
    broad semantic review appears only on direct user request.
 9. **Definition of done**: What must the finished plan contain for the user to consider it ready?
 10. **Research needed**: Are there external claims (library versions, third-party best practices,
-    API behavior) that require verification before writing?
+    API behaviour) that require verification before writing?
 
 **Do NOT proceed to Step 2** until:
 

@@ -7,7 +7,7 @@ import { expect } from "vitest";
 import { Label } from "../../../../src/components/label/label";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../specs/libs/web-ui/behaviors/label/label.feature"),
+  path.resolve(__dirname, "../../../../../../specs/libs/web-ui/behaviours/label/label.feature"),
 );
 
 function renderLabelWithInput() {
@@ -21,44 +21,48 @@ function renderLabelWithInput() {
 
 describeFeature(feature, ({ Scenario }) => {
   Scenario("Renders with text content", ({ When, Then, And }) => {
+    let label: HTMLElement;
+
     When('the Label is rendered with text "Email"', () => {
-      // precondition noted
+      cleanup();
+      render(<Label>Email</Label>);
+      label = screen.getByText("Email");
     });
 
     Then('the label element with text "Email" should be present', () => {
-      cleanup();
-      render(<Label>Email</Label>);
-      expect(screen.getByText("Email")).toBeDefined();
+      expect(label.textContent).toBe("Email");
     });
 
     And('the label should have data-slot "label"', () => {
-      cleanup();
-      render(<Label>Email</Label>);
-      expect(screen.getByText("Email").getAttribute("data-slot")).toBe("label");
+      expect(label.getAttribute("data-slot")).toBe("label");
     });
   });
 
   Scenario("Associates with form control via htmlFor", ({ When, Then }) => {
+    let container: HTMLElement;
+
     When('the Label is rendered with text "Email" associated to input "email-input"', () => {
-      // precondition noted
+      cleanup();
+      container = renderLabelWithInput().container;
+      expect(screen.getByLabelText("Email").getAttribute("id")).toBe("email-input");
     });
 
     Then("the label and input association should have no accessibility violations", async () => {
-      cleanup();
-      const { container } = renderLabelWithInput();
       const results = await axe(container);
       expect(results).toHaveNoViolations();
     });
   });
 
   Scenario("Has no accessibility violations", ({ When, Then }) => {
+    let container: HTMLElement;
+
     When('the Label is rendered with text "Email" associated to input "email-input"', () => {
-      // precondition noted
+      cleanup();
+      container = renderLabelWithInput().container;
+      expect(screen.getByLabelText("Email")).toBeDefined();
     });
 
     Then("the label and input association should have no accessibility violations", async () => {
-      cleanup();
-      const { container } = renderLabelWithInput();
       const results = await axe(container);
       expect(results).toHaveNoViolations();
     });

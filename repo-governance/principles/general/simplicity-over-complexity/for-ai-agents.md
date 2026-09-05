@@ -8,7 +8,7 @@ tags:
   - simplicity
   - over-engineering
 created: 2025-12-15
-when_to_use: Use when auditing agent behavior against this principle.
+when_to_use: Use when auditing agent behaviour against this principle.
 ---
 
 # For AI Agents

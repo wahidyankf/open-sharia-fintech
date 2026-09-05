@@ -8,7 +8,7 @@ when_to_use: "Use when deciding whether to run this workflow via agent delegatio
 
 **Key Design Principle**: This workflow only validates folders you explicitly list. It does not
 discover or scan the entire specs/ tree. Subfolders are included automatically — listing
-`specs/apps/organiclever` includes `specs/apps/organiclever/be/behaviors/`, etc.
+`specs/apps/organiclever` includes `specs/apps/organiclever/be/behaviours/`, etc.
 When multiple folders are listed, cross-folder consistency is checked between them (contradictions,
 coverage gaps, terminology drift).
 
@@ -17,7 +17,7 @@ coverage gaps, terminology drift).
 This workflow validates **specification files only** in listed folders. It does NOT validate:
 
 - Implementation code in `apps/` (that's per-language developer agents and CI)
-- Test code or step definitions (that's `rhino-cli specs behavior-coverage validate`)
+- Test binding substance (use `gherkin-implementation-review`)
 - Governance docs (that's `repo-rules-checker`)
 - Spec folders NOT in the explicit list
 

@@ -67,7 +67,9 @@ Applicable UI/API surface gates still bind.
 ## Conventions
 
 Follow the [Principles Index](./repo-governance/principles/README.md). Code changes require TDD and
-Specs/Gherkin; bug fixes require regression tests. Create `plans/` artifacts only on literal plan
+the [BDD contract](./repo-governance/development/behaviour-driven-development.md): Gherkin first,
+Unit always, applicable higher layers, static coverage in quick, and semantic review. Bug fixes
+require regression tests. Create `plans/` artifacts only on literal plan
 authorization. Formal plans are comprehensive, junior-readable decision-to-delivery records of
 substantive solution choices, not their own editorial history; they end with Knowledge Capture. PR bodies state new-code cost/benefit;
 tests exempt.
@@ -96,7 +98,7 @@ minutes; never `gh run watch`. If main only polls non-CI background work, update
 
 ## Manual Verification & CI Blockers
 
-Verify UI/API behavior manually; investigate CI failures at the root cause, never bypass.
+Verify UI/API behaviour manually; investigate CI failures at the root cause, never bypass.
 
 **See**: [ci-blocker-resolution.md](./repo-governance/development/quality/ci-blocker-resolution.md)
 

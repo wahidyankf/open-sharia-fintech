@@ -36,7 +36,7 @@ When creating project plans in `plans/` folder:
 ## Overview
 
 All implementation happens on a `worktree-to-pr` plan branch (the repo-wide default -- no
-`## Delivery Mode` field needed). Incomplete behavior reaches `main` only as an internally complete,
+`## Delivery Mode` field needed). Incomplete behaviour reaches `main` only as an internally complete,
 tested, inert increment behind a temporary production-disabled feature flag.
 
 **Feature flags**:

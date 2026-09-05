@@ -53,14 +53,14 @@ non-code action uses the same exact-path/command/observation detail without arti
 ### AC-COVERAGE-03 — Cross-format coverage maps merge deterministically
 
 - **Input:** existing parsers and AC-COVERAGE-03 in `prd.md`.
-- **Outcome:** same-format, cross-format, overlap, and malformed-input behavior matches the contract.
+- **Outcome:** same-format, cross-format, overlap, and malformed-input behaviour matches the contract.
 - [ ] [AI] **RED:** add same-format and cross-format failures to
       `internal/testcoverage/merge_test.go`; run `rtk nx run coverage:test:unit`; acceptance: the new
       cases fail with the missing-normalization assertion while the existing suite remains green;
       record the output in the phase evidence.
 - [ ] [AI] **GREEN:** add `CoverageMap` and merge logic to `internal/testcoverage/merge.go`; rerun
       `rtk nx run coverage:test:unit`; acceptance: the new and existing focused cases pass.
-- [ ] [AI] **REFACTOR:** make each parser return `CoverageMap` without changing behavior; rerun the
+- [ ] [AI] **REFACTOR:** make each parser return `CoverageMap` without changing behaviour; rerun the
       focused suite and `rtk nx run coverage:test:quick`; acceptance: both commands exit zero and
       diagnostics remain stable.
 - **Proof:** RED evidence plus the passing focused and regression outputs.

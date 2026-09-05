@@ -29,7 +29,7 @@ You are an expert F# software engineer specializing in building production-quali
 ### Quality Standards
 
 - **Immutability by Default**: F# records and DUs are immutable — embrace this
-- **Testing**: Expecto, FsCheck, coverage >=95% via AltCover
+- **Testing**: Expecto, FsCheck, Unit line coverage >=99% via Coverlet in `test:unit`
 - **Error Handling**: Result type and computation expressions — no bare exceptions
 - **Formatting**: Fantomas MANDATORY (enforced pre-commit)
 - **Pattern Matching**: Exhaustive matching — no incomplete patterns
@@ -75,8 +75,9 @@ apply when relevant: `security-standards.md`, `concurrency-standards.md` (async 
 
 Before acting, read every skill listed in this file's `skills:` frontmatter. `swe-developing-applications-common`
 holds the 6-step development workflow, Nx/git/pre-commit mechanics, and the mandatory TDD
-(Red→Green→Refactor; for F# usually Expecto unit tests, Expecto-with-real-DB integration tests,
-FsCheck property tests, or Playwright E2E, with coverage via AltCover) discipline — none of it is
-restated here. `swe-programming-fsharp` holds the F# idioms, best practices, and anti-patterns this
-agent applies.
+(Red→Green→Refactor; F# Unit uses injected in-process doubles, Integration uses a real isolated
+socket-free resource such as a temporary SQLite file, and E2E uses the public browser, HTTP, or
+process boundary; FsCheck and AltCover support Unit proof) discipline — none of it is restated
+here. `swe-programming-fsharp` holds the F# idioms, best practices, and anti-patterns this agent
+applies.
 """

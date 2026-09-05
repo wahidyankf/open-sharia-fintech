@@ -28,9 +28,8 @@
  *   5. Fail loudly on required-but-absent config, not on the missing file itself — that's each
  *      app's own validation layer's job (e.g. zod's `createEnv()`), unchanged by this module.
  */
-import { existsSync } from "node:fs";
 import path from "node:path";
-import dotenv from "dotenv";
+import { nodeTierEnvPort } from "./node-tier-env-port";
 
 const DEFAULT_TIER = "local";
 
@@ -56,13 +55,13 @@ export function tierEnvFilePath(tier: string, appDir: string): string {
  * at "local": Next.js auto-loading a bare `.env` alongside an explicit `.env.local` tier file is
  * the one case this convention treats as safe, since local development is never a deploy target.
  */
-function assertNoStrayEnvFile(tier: string, appDir: string): void {
+function assertNoStrayEnvFile(tier: string, appDir: string, port: TierEnvPort): void {
   if (tier === DEFAULT_TIER) {
     return;
   }
 
   for (const strayFilename of STRAY_ENV_FILENAMES) {
-    if (existsSync(path.join(appDir, strayFilename))) {
+    if (port.exists(path.join(appDir, strayFilename))) {
       throw new Error(
         `env-loader: found stray auto-loaded env file "${strayFilename}" beside the tier file for ` +
           `APP_ENV="${tier}". Next.js auto-loads "${strayFilename}" in addition to the explicit ` +
@@ -78,6 +77,16 @@ export interface LoadTierEnvOptions {
   appDir?: string;
   /** The process-env-like record to read `APP_ENV` from and load tier values into. Defaults to `process.env`. */
   env?: EnvRecord;
+  /** Injected file boundary. Unit tests supply an in-memory port; production uses Node/dotenv. */
+  port?: TierEnvPort;
+}
+
+/** Filesystem/dotenv boundary used by {@link loadTierEnv}. */
+export interface TierEnvPort {
+  /** Returns whether an env file exists at the exact absolute path. */
+  exists(filePath: string): boolean;
+  /** Loads values from one env file into `env` without replacing existing keys. */
+  load(filePath: string, env: EnvRecord): void;
 }
 
 /**
@@ -88,9 +97,10 @@ export interface LoadTierEnvOptions {
 export function loadTierEnv(options: LoadTierEnvOptions = {}): void {
   const appDir = options.appDir ?? process.cwd();
   const env = options.env ?? process.env;
+  const port = options.port ?? nodeTierEnvPort;
   const tier = resolveTier(env);
 
-  assertNoStrayEnvFile(tier, appDir);
+  assertNoStrayEnvFile(tier, appDir, port);
 
   // `override: false` is dotenv's default; it's spelled out here so the choice reads as
   // deliberate. Per dotenv's `populate()`, dotenv only overwrites a key already present on the
@@ -107,11 +117,7 @@ export function loadTierEnv(options: LoadTierEnvOptions = {}): void {
   // own `DotenvPopulateInput` type requires `string` values, so the cast below is necessary. It's
   // safe: dotenv only ever assigns to keys it read as strings from the parsed file, and reads via
   // `hasOwnProperty` (which doesn't care whether an existing value is `undefined`).
-  dotenv.config({
-    path: tierEnvFilePath(tier, appDir),
-    override: false,
-    processEnv: env as unknown as Record<string, string>,
-  });
+  port.load(tierEnvFilePath(tier, appDir), env);
 }
 
 /**

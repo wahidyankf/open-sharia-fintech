@@ -9,7 +9,7 @@ tags:
   - project-planning
   - organization
 created: 2025-12-05
-when_to_use: Use when implementing or auditing worktree entry, sync, and cleanup behavior.
+when_to_use: Use when implementing or auditing worktree entry, sync, and cleanup behaviour.
 ---
 
 # Worktree Specification — Executor Lifecycle and Example

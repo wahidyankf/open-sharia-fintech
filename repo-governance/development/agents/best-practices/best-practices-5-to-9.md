@@ -31,7 +31,7 @@ when_to_use: Use when finishing an agent definition and checking its tool-usage 
 
 **Rationale:**
 
-- Transparent behavior
+- Transparent behaviour
 - Easier troubleshooting
 - Clear security model
 
@@ -76,7 +76,7 @@ context: |
 
 - Self-contained agents
 - Reduced need for external documentation
-- Consistent behavior
+- Consistent behaviour
 
 ## Practice 8: Follow Naming Conventions
 

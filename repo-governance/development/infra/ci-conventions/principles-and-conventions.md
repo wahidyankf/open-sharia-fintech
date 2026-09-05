@@ -36,7 +36,7 @@ when_to_use: Use when tracing a rule's source principle or convention.
   (`test:unit`, `test:integration`, `test:e2e`, `test:quick`, `lint`, `typecheck`) use the
   canonical names and caching rules defined in `nx-targets.md`.
 
-- **[Three-Level Testing Standard](../../quality/three-level-testing-standard.md)**: Test level
+- **[Behaviour-Driven Development](../../behaviour-driven-development.md)**: Test level
   definitions (unit, integration, E2E) and the isolation rules enforced here derive from the
   authoritative three-level testing standard.
 

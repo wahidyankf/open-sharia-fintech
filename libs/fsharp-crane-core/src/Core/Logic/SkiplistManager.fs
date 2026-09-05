@@ -14,6 +14,18 @@ let private FalsePositivePrefix = "## FALSE_POSITIVE:"
 [<Literal>]
 let private DefaultReason = "Auto-accepted via crane skiplist --add"
 
+type Dependencies =
+    { FileExists: string -> bool
+      ReadAllLines: string -> string array
+      ReadAllText: string -> string
+      WriteAllText: string -> string -> unit
+      AppendAllText: string -> string -> unit
+      EnsureDirectory: string -> unit
+      GetDirectoryName: string -> string option
+      ResolvePath: unit -> string
+      Now: unit -> DateTime
+      Warn: string -> unit }
+
 /// Resolve the skip-list path. CRANE_SKIPLIST_PATH overrides for tests; otherwise
 /// the canonical repo-wide global markdown file is used.
 let resolveSkiplistPath () : string =
@@ -28,8 +40,17 @@ let stableKey (mdBasename: string) (category: string) (description: string) : st
     let hash = System.Security.Cryptography.SHA256.HashData(bytes)
     BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant().[..15]
 
-let private nowTimestamp () =
-    DateTime.Now.ToString("yyyy-MM-dd--HH-mm")
+let private systemDependencies =
+    { FileExists = File.Exists
+      ReadAllLines = File.ReadAllLines
+      ReadAllText = File.ReadAllText
+      WriteAllText = fun path content -> File.WriteAllText(path, content)
+      AppendAllText = fun path content -> File.AppendAllText(path, content)
+      EnsureDirectory = fun path -> Directory.CreateDirectory(path) |> ignore
+      GetDirectoryName = fun path -> Path.GetDirectoryName(path) |> Option.ofObj
+      ResolvePath = resolveSkiplistPath
+      Now = fun () -> DateTime.Now
+      Warn = fun message -> eprintfn "%s" message }
 
 let private parseHeading (line: string) : (string * string * string) option =
     let body = line.Substring(FalsePositivePrefix.Length).TrimStart()
@@ -58,11 +79,11 @@ let private parseMetadata (block: string list) : Map<string, string> =
             None)
     |> Map.ofList
 
-let private parseEntries (path: string) : SkipListEntry list =
-    if not (File.Exists(path)) then
+let private parseEntriesWith (dependencies: Dependencies) (path: string) : SkipListEntry list =
+    if not (dependencies.FileExists path) then
         []
     else
-        let lines = File.ReadAllLines(path) |> Array.toList
+        let lines = dependencies.ReadAllLines path |> Array.toList
 
         let rec walk (acc: SkipListEntry list) (remaining: string list) =
             match remaining with
@@ -96,7 +117,7 @@ let private parseEntries (path: string) : SkipListEntry list =
 
                     walk (entry :: acc) nextRest
                 | None ->
-                    eprintfn "Warning: skipping malformed FALSE_POSITIVE heading: %s" line
+                    dependencies.Warn $"Warning: skipping malformed FALSE_POSITIVE heading: %s{line}"
                     walk acc nextRest
             | _ :: rest -> walk acc rest
 
@@ -139,30 +160,35 @@ let private renderEntry (entry: SkipListEntry) : string =
 
     sb.ToString()
 
-let private appendEntry (path: string) (entry: SkipListEntry) =
+let private appendEntryWith (dependencies: Dependencies) (path: string) (entry: SkipListEntry) =
     let text = renderEntry entry
 
-    if File.Exists(path) then
-        let existing = File.ReadAllText(path)
+    if dependencies.FileExists path then
+        let existing = dependencies.ReadAllText path
 
         let needsBlankLine =
             not (existing.EndsWith("\n\n", System.StringComparison.Ordinal))
             && existing.Length > 0
 
         let prefix = if needsBlankLine then "\n" else ""
-        File.AppendAllText(path, prefix + text)
+        dependencies.AppendAllText path (prefix + text)
     else
-        match path |> Path.GetDirectoryName |> Option.ofObj with
-        | Some dir when dir.Length > 0 && not (Directory.Exists(dir)) -> Directory.CreateDirectory(dir) |> ignore
+        match dependencies.GetDirectoryName path with
+        | Some dir when dir.Length > 0 -> dependencies.EnsureDirectory dir
         | _ -> ()
 
-        File.WriteAllText(path, text)
+        dependencies.WriteAllText path text
 
-let add (mdBasename: string) (category: string) (description: string) : Result<bool, string> =
+let addWith
+    (dependencies: Dependencies)
+    (mdBasename: string)
+    (category: string)
+    (description: string)
+    : Result<bool, string> =
     try
-        let path = resolveSkiplistPath ()
+        let path = dependencies.ResolvePath()
         let key = stableKey mdBasename category description
-        let existing = parseEntries path
+        let existing = parseEntriesWith dependencies path
 
         if existing |> List.exists (fun e -> e.Key = key) then
             Ok false
@@ -172,21 +198,34 @@ let add (mdBasename: string) (category: string) (description: string) : Result<b
                   Category = category
                   Description = description
                   Key = key
-                  Accepted = nowTimestamp ()
+                  Accepted = dependencies.Now().ToString("yyyy-MM-dd--HH-mm")
                   Reason = DefaultReason }
 
-            appendEntry path entry
+            appendEntryWith dependencies path entry
             Ok true
     with ex ->
-        Error(sprintf "Failed to add entry: %s" ex.Message)
+        Error $"Failed to add entry: %s{ex.Message}"
 
-let check (mdBasename: string) (category: string) (description: string) : Result<bool, string> =
-    let path = resolveSkiplistPath ()
+let add (mdBasename: string) (category: string) (description: string) : Result<bool, string> =
+    addWith systemDependencies mdBasename category description
+
+let checkWith
+    (dependencies: Dependencies)
+    (mdBasename: string)
+    (category: string)
+    (description: string)
+    : Result<bool, string> =
+    let path = dependencies.ResolvePath()
     let key = stableKey mdBasename category description
-    let existing = parseEntries path
+    let existing = parseEntriesWith dependencies path
     Ok(existing |> List.exists (fun e -> e.Key = key))
 
-let list (mdBasename: string) : Result<SkipListEntry list, string> =
-    let path = resolveSkiplistPath ()
-    let all = parseEntries path
+let check (mdBasename: string) (category: string) (description: string) : Result<bool, string> =
+    checkWith systemDependencies mdBasename category description
+
+let listWith (dependencies: Dependencies) (mdBasename: string) : Result<SkipListEntry list, string> =
+    let path = dependencies.ResolvePath()
+    let all = parseEntriesWith dependencies path
     Ok(all |> List.filter (fun e -> e.MdBasename = mdBasename))
+
+let list (mdBasename: string) : Result<SkipListEntry list, string> = listWith systemDependencies mdBasename

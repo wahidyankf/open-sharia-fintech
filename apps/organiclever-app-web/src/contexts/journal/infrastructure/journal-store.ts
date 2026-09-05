@@ -1,7 +1,7 @@
 import { Effect, Schema } from "effect";
 import { PgliteService } from "./runtime";
-import { JournalEntry, EntryId, NewEntryInput, UpdateEntryInput } from "../domain/schema";
-import { EmptyBatch, NotFound, StorageUnavailable, StoreError } from "../domain/errors";
+import { JournalEntry, NewEntryInput } from "../domain/schema";
+import { EmptyBatch, StorageUnavailable, StoreError } from "../domain/errors";
 
 type RawRow = {
   id: string;
@@ -100,82 +100,5 @@ export function listEntries(): Effect.Effect<ReadonlyArray<JournalEntry>, StoreE
     });
 
     return result.rows.map(decodeRow);
-  });
-}
-
-export function updateEntry(
-  id: EntryId,
-  input: UpdateEntryInput,
-): Effect.Effect<JournalEntry, StoreError, PgliteService> {
-  return Effect.gen(function* () {
-    const { db } = yield* PgliteService;
-
-    const result = yield* Effect.tryPromise({
-      try: () =>
-        db.query<RawRow>(
-          `UPDATE journal_entries
-           SET name = COALESCE($2, name),
-               payload = COALESCE($3::jsonb, payload),
-               updated_at = now()
-           WHERE id = $1
-           RETURNING id, name, payload, created_at, updated_at, started_at, finished_at, labels, storage_seq`,
-          [id, input.name ?? null, input.payload != null ? JSON.stringify(input.payload) : null],
-        ),
-      catch: (cause) => new StorageUnavailable({ cause }),
-    });
-
-    if (result.rows.length === 0) {
-      return yield* Effect.fail(new NotFound({ id }));
-    }
-
-    return decodeRow(result.rows[0]);
-  });
-}
-
-export function deleteEntry(id: EntryId): Effect.Effect<boolean, StoreError, PgliteService> {
-  return Effect.gen(function* () {
-    const { db } = yield* PgliteService;
-
-    const result = yield* Effect.tryPromise({
-      try: () => db.query<RawRow>("DELETE FROM journal_entries WHERE id = $1 RETURNING id", [id]),
-      catch: (cause) => new StorageUnavailable({ cause }),
-    });
-
-    return result.rows.length > 0;
-  });
-}
-
-export function bumpEntry(id: EntryId): Effect.Effect<JournalEntry, StoreError, PgliteService> {
-  return Effect.gen(function* () {
-    const { db } = yield* PgliteService;
-
-    const result = yield* Effect.tryPromise({
-      try: () =>
-        db.query<RawRow>(
-          `UPDATE journal_entries
-           SET created_at = now(), updated_at = now()
-           WHERE id = $1
-           RETURNING id, name, payload, created_at, updated_at, started_at, finished_at, labels, storage_seq`,
-          [id],
-        ),
-      catch: (cause) => new StorageUnavailable({ cause }),
-    });
-
-    if (result.rows.length === 0) {
-      return yield* Effect.fail(new NotFound({ id }));
-    }
-
-    return decodeRow(result.rows[0]);
-  });
-}
-
-export function clearEntries(): Effect.Effect<void, StoreError, PgliteService> {
-  return Effect.gen(function* () {
-    const { db } = yield* PgliteService;
-
-    yield* Effect.tryPromise({
-      try: () => db.exec("TRUNCATE journal_entries RESTART IDENTITY"),
-      catch: (cause) => new StorageUnavailable({ cause }),
-    });
   });
 }

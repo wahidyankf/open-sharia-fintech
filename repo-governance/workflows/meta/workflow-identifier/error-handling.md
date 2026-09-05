@@ -1,6 +1,6 @@
 ---
 title: "Error Handling"
-description: How each workflow step defines failure behavior, and the five common error-handling patterns (fail fast, continue, retry, user intervention, fallback).
+description: How each workflow step defines failure behaviour, and the five common error-handling patterns (fail fast, continue, retry, user intervention, fallback).
 category: explanation
 subcategory: workflows
 tags:
@@ -14,7 +14,7 @@ when_to_use: Use when defining what a workflow step should do when it fails.
 
 # Error Handling
 
-Each step defines failure behavior:
+Each step defines failure behaviour:
 
 ```markdown
 **On failure**:

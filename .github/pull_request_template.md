@@ -26,7 +26,7 @@ See repo-governance/conventions/structure/plans/prs-open-at-delivery-boundaries-
 ## Delivery Seam and Deployable State
 
 - **Natural seam:** <!-- Name the cohesive purpose, why these artifacts must land together, and why no unrelated purpose is included. LOC and file counts do not define this boundary. -->
-- **Production-deployable state:** <!-- Confirm the exact resulting main state is safe to deploy immediately. Say whether user-reachable behavior is complete and active or incomplete and inert behind a temporary production-disabled flag. -->
+- **Production-deployable state:** <!-- Confirm the exact resulting main state is safe to deploy immediately. Say whether user-reachable behaviour is complete and active or incomplete and inert behind a temporary production-disabled flag. -->
 - **Feature flag lifecycle:** <!-- If applicable: flag/default, enabled and disabled tests, rollout, rollback, and removal record. Otherwise: Not applicable, with reason. -->
 
 ## Cost/Benefit of Added Code

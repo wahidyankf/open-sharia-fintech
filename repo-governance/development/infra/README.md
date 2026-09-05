@@ -16,7 +16,8 @@ Use these standards to make a local checkout dependable: set up tools, name targ
 
 - [Acceptance Criteria Convention](./acceptance-criteria.md) — Writing testable acceptance criteria using Gherkin format for clarity and automation. Use when writing or reviewing acceptance criteria for a plan, feature spec, or test scenario.
 - [Anti-Patterns in Infrastructure Development](./anti-patterns.md) — Common anti-patterns in infrastructure development — scattered files, placeholder values, missing tools, vague criteria — with problems, examples, and solutions for each. Use when reviewing infrastructure code, checker agents, or Gherkin scenarios for a common mistake before it ships, or when explaining why a pattern is discouraged.
-- [BDD Spec-to-Test Mapping Convention](./bdd-spec-test-mapping.md) — Gherkin spec consumption rules for CLI apps (1:1 command mapping) and demo-be backends (three-level unit/integration/e2e). Use when deciding how a CLI command or demo-be backend should consume its Gherkin specs, or when navigating to the mapping-layer, coverage-enforcement, or backend-consumption detail pages.
+- [Behaviour-Driven Development](../behaviour-driven-development.md) — Canonical recursive Gherkin corpus, project-role adapter boundaries, exemptions, coverage, and execution rules for every behaviour owner. Use when adding or reviewing a scenario, test adapter, target, or gate.
+- [BDD Spec-to-Test Mapping](./bdd-spec-test-mapping.md) — Compatibility entry point for older mapping references; delegates to the canonical BDD standard.
 - [Best Practices for Infrastructure Development](./best-practices.md) — Index of best practices for managing development infrastructure — temporary files, report generation, execution tracking, acceptance criteria, and audit trails — split across focused child documents. Use when looking for best-practice guidance on temporary file handling, report naming/generation, execution tracking, Gherkin acceptance criteria, or audit-trail hygiene, and need to find the right child document.
 - [Build-Artifact Sweeper Convention](./build-artifact-sweeper.md) — An ambient scheduled sweeper deletes gitignored build output and caches on the host machine at any time — a missing artifact is expected environmental behaviour to regenerate and continue from, never an incident to investigate. Use when a build artifact is unexpectedly missing and you need to decide whether it's a defect or expected sweeper behaviour.
 - [CI/CD Conventions](./ci-conventions.md) — Central reference for CI/CD conventions in the multi-language Nx monorepo. Use when writing or reviewing a git hook, CI workflow, Dockerfile, or test setup.
@@ -31,7 +32,7 @@ Use these standards to make a local checkout dependable: set up tools, name targ
 ## Related Documentation
 
 - [Development Index](../README.md) — All development practices
-- [Three-Level Testing Standard](../quality/three-level-testing-standard.md) — Defines `test:unit`/`test:integration`/`test:e2e` per isolation level
+- [Behaviour-Driven Development](../behaviour-driven-development.md) — Defines `test:unit`/`test:integration`/`test:e2e` per isolation level
 - [Explicit Over Implicit Principle](../../principles/software-engineering/explicit-over-implicit.md) — Why clear organization matters
 - [AI Agents Convention](../agents/ai-agents.md) — Agent development standards
 - [Repository Architecture](../../repository-governance-architecture.md) — Six-layer governance model

@@ -1,6 +1,6 @@
 ---
 title: "Proactive Preexisting Error Resolution — Checklist, For AI Agents, and Related Documentation"
-description: The completion checklist for preexisting-error work, the five-point AI agent behavior rules, the relationship to Autonomous Bug Fixing, and links to related documentation
+description: The completion checklist for preexisting-error work, the five-point AI agent behaviour rules, the relationship to Autonomous Bug Fixing, and links to related documentation
 category: explanation
 subcategory: development
 tags:
@@ -11,7 +11,7 @@ tags:
   - bug-fixing
   - ai-agents
 created: 2026-03-28
-when_to_use: Use as a completion checklist before considering preexisting-error work done, or as a quick-reference for AI agent behavior.
+when_to_use: Use as a completion checklist before considering preexisting-error work done, or as a quick-reference for AI agent behaviour.
 ---
 
 # Checklist, For AI Agents, and Related Documentation
@@ -47,9 +47,9 @@ All agents encountering preexisting errors must follow this practice:
 
 ### Relationship to Autonomous Bug Fixing
 
-[Autonomous Bug Fixing](../../agents/agent-workflow-orchestration/autonomous-bug-fixing.md#autonomous-bug-fixing) covers what to do when a bug report is the primary task. This practice covers what to do when a preexisting error is discovered incidentally during other work. Both require the same behavior: diagnose, fix, verify, communicate.
+[Autonomous Bug Fixing](../../agents/agent-workflow-orchestration/autonomous-bug-fixing.md#autonomous-bug-fixing) covers what to do when a bug report is the primary task. This practice covers what to do when a preexisting error is discovered incidentally during other work. Both require the same behaviour: diagnose, fix, verify, communicate.
 
-The distinction is task origin. The behavior is identical.
+The distinction is task origin. The behaviour is identical.
 
 ## Related Documentation
 

@@ -67,11 +67,11 @@ This test applies to both human authors and AI content agents.
 
 The following reference patterns are permitted because they are verifiable:
 
-| Pattern                             | Example                                                                                                           |
-| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| Citable historical fact with source | "Tony Hoare called null references his 'billion-dollar mistake' (QCon 2009)"                                      |
-| Named tool with documented behavior | "Netflix's Hystrix popularized circuit breakers; it is now in maintenance mode"                                   |
-| Well-known community-verified event | "Twitter's Finagle directly influenced the creation of Linkerd (now a CNCF project)"                              |
-| Academic or specification reference | "Dijkstra's seminal 1968 letter, 'Go To Statement Considered Harmful'"                                            |
-| Mathematical property statement     | "N states × M variants without parameterization = N×M total states"                                               |
-| General pattern consequence         | "Without explicit state machine enforcement, nothing prevents an order from being marked 'shipped' before 'paid'" |
+| Pattern                              | Example                                                                                                           |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| Citable historical fact with source  | "Tony Hoare called null references his 'billion-dollar mistake' (QCon 2009)"                                      |
+| Named tool with documented behaviour | "Netflix's Hystrix popularized circuit breakers; it is now in maintenance mode"                                   |
+| Well-known community-verified event  | "Twitter's Finagle directly influenced the creation of Linkerd (now a CNCF project)"                              |
+| Academic or specification reference  | "Dijkstra's seminal 1968 letter, 'Go To Statement Considered Harmful'"                                            |
+| Mathematical property statement      | "N states × M variants without parameterization = N×M total states"                                               |
+| General pattern consequence          | "Without explicit state machine enforcement, nothing prevents an order from being marked 'shipped' before 'paid'" |

@@ -1,7 +1,7 @@
 ---
 title: "Indonesian Content Policy — Agent Guidelines and Migration Notes"
 description: How content-creation and validation agents apply the English-first policy, and the 2026-02-07 removal of mirror-translated tutorials that established this policy.
-when_to_use: Use when an ayokoding-www content or validation agent needs its default language behavior, or to see the history behind this policy's establishment.
+when_to_use: Use when an ayokoding-www content or validation agent needs its default language behaviour, or to see the history behind this policy's establishment.
 category: explanation
 subcategory: conventions
 tags:
@@ -21,7 +21,7 @@ created: 2026-02-07
 
 **apps-ayokoding-www-general-maker**, **apps-ayokoding-www-by-example-maker**, **apps-ayokoding-www-in-the-field-maker**:
 
-- **Default behavior**: Create technical tutorials in English under `/en/learn/`
+- **Default behaviour**: Create technical tutorials in English under `/en/learn/`
 - **Do NOT automatically mirror** to Indonesian (`/id/belajar/`)
 - **Exception**: If user explicitly requests Indonesian translation, create with cross-reference links
 - **Ask if unclear**: When ambiguous, ask user about language preference

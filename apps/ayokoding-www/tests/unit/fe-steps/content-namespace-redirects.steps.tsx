@@ -1,94 +1,90 @@
-import path from "path";
-import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
+import path from "node:path";
+import { describeFeature, loadFeature } from "@amiceli/vitest-cucumber";
 import { expect } from "vitest";
-import "./helpers/test-setup";
+import { contentNamespaceRedirects } from "../../../src/redirects/content-namespace";
 
 const feature = await loadFeature(
   path.resolve(
     process.cwd(),
-    "../../specs/apps/ayokoding/www/behaviors/frontend/navigation/content-namespace-redirects.feature",
+    "../../specs/apps/ayokoding/www/behaviours/frontend/navigation/content-namespace-redirects.feature",
   ),
 );
 
-describeFeature(feature, ({ Scenario, Background }) => {
-  Background(({ Given }) => {
-    Given("the app is running", () => {});
+interface NavigationResult {
+  status: number;
+  location: string;
+}
+
+function navigate(requestPath: string): NavigationResult {
+  const rule = contentNamespaceRedirects.find(({ source }) => {
+    const prefix = source.replace(":path*", "");
+    return requestPath.startsWith(prefix);
   });
+  if (rule === undefined) return { status: 200, location: requestPath };
+  const wildcard = requestPath.slice(rule.source.replace(":path*", "").length);
+  return { status: rule.permanent ? 308 : 307, location: rule.destination.replace(":path*", wildcard) };
+}
+
+describeFeature(feature, ({ Scenario, Background }) => {
+  let appReady = false;
+  let result: NavigationResult = { status: 0, location: "" };
+
+  Background(({ Given }) => {
+    Given("the app is running", () => {
+      appReady = contentNamespaceRedirects.length === 5;
+      result = { status: 0, location: "" };
+    });
+  });
+
+  function visit(requestPath: string): void {
+    expect(appReady).toBe(true);
+    result = navigate(requestPath);
+  }
+
+  function assertTopLevel(pathname: string): void {
+    expect(result).toEqual({ status: 200, location: pathname });
+    expect(result.location).not.toContain("/c/");
+  }
 
   Scenario("Old English learn URL permanently redirects to the /c namespace", ({ When, Then, And }) => {
     When('a raw HTTP GET is made to "/en/c/learn/software-engineering" with redirects disabled', () => {
-      // Redirect config in next.config.ts: contentNamespaceRedirects (inverted, DD-48)
-      expect(true).toBe(true);
+      visit("/en/c/learn/software-engineering");
     });
-
     Then("the response status should be 308", () => {
-      expect(true).toBe(true);
+      expect(result.status).toBe(308);
     });
-
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/content-namespace-redirects.feature:Old English learn URL permanently redirects to the /c namespace
     And('the response Location header should equal "/en/learn/software-engineering"', () => {
-      expect(true).toBe(true);
+      expect(result.location).toBe("/en/learn/software-engineering");
     });
   });
 
   Scenario("Old Indonesian belajar URL permanently redirects to the /c namespace", ({ When, Then, And }) => {
     When('a raw HTTP GET is made to "/id/c/belajar/ikhtisar" with redirects disabled', () => {
-      // Redirect config in next.config.ts: contentNamespaceRedirects (inverted, DD-48)
-      expect(true).toBe(true);
+      visit("/id/c/belajar/ikhtisar");
     });
-
     Then("the response status should be 308", () => {
-      expect(true).toBe(true);
+      expect(result.status).toBe(308);
     });
-
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/content-namespace-redirects.feature:Old Indonesian belajar URL permanently redirects to the /c namespace
     And('the response Location header should equal "/id/belajar/ikhtisar"', () => {
-      expect(true).toBe(true);
+      expect(result.location).toBe("/id/belajar/ikhtisar");
     });
   });
 
   Scenario("About page keeps its top-level URL and is not redirected", ({ When, Then, And }) => {
-    When('a visitor navigates to "/en/about-ayokoding"', () => {
-      expect(true).toBe(true);
-    });
-
-    Then("the page should load successfully", () => {
-      expect(true).toBe(true);
-    });
-
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/content-namespace-redirects.feature:About page keeps its top-level URL and is not redirected
-    And('the current URL should not contain "/c/"', () => {
-      expect(true).toBe(true);
-    });
+    When('a visitor navigates to "/en/about-ayokoding"', () => visit("/en/about-ayokoding"));
+    Then("the page should load successfully", () => expect(result.status).toBe(200));
+    And('the current URL should not contain "/c/"', () => assertTopLevel("/en/about-ayokoding"));
   });
 
   Scenario("Indonesian terms page keeps its top-level URL and is not redirected", ({ When, Then, And }) => {
-    When('a visitor navigates to "/id/syarat-dan-ketentuan"', () => {
-      expect(true).toBe(true);
-    });
-
-    Then("the page should load successfully", () => {
-      expect(true).toBe(true);
-    });
-
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/content-namespace-redirects.feature:Indonesian terms page keeps its top-level URL and is not redirected
-    And('the current URL should not contain "/c/"', () => {
-      expect(true).toBe(true);
-    });
+    When('a visitor navigates to "/id/syarat-dan-ketentuan"', () => visit("/id/syarat-dan-ketentuan"));
+    Then("the page should load successfully", () => expect(result.status).toBe(200));
+    And('the current URL should not contain "/c/"', () => assertTopLevel("/id/syarat-dan-ketentuan"));
   });
 
   Scenario("Tools index keeps its top-level URL and is not redirected", ({ When, Then, And }) => {
-    When('a visitor navigates to "/en/tools"', () => {
-      expect(true).toBe(true);
-    });
-
-    Then("the page should load successfully", () => {
-      expect(true).toBe(true);
-    });
-
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/content-namespace-redirects.feature:Tools index keeps its top-level URL and is not redirected
-    And('the current URL should not contain "/c/"', () => {
-      expect(true).toBe(true);
-    });
+    When('a visitor navigates to "/en/tools"', () => visit("/en/tools"));
+    Then("the page should load successfully", () => expect(result.status).toBe(200));
+    And('the current URL should not contain "/c/"', () => assertTopLevel("/en/tools"));
   });
 });

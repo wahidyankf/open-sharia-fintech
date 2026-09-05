@@ -20,7 +20,7 @@ skill-name/
 └── assets/        # optional reusable material
 ```
 
-## Source and platform behavior
+## Source and platform behaviour
 
 `.claude/skills/` is the hand-authored source for these skill packages.
 OpenCode reads compatible skills here; it needs no copied directory. Never

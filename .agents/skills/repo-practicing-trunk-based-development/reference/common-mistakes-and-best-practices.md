@@ -51,7 +51,7 @@ Before pushing a delivery branch, or using an explicitly eligible direct-main mo
 - [ ] Tests pass for this commit
 - [ ] Commit message follows Conventional Commits
 - [ ] Resulting `main` state is safe to deploy to production immediately
-- [ ] Incomplete behavior is inert behind a temporary production-disabled flag, with both paths
+- [ ] Incomplete behaviour is inert behind a temporary production-disabled flag, with both paths
       tested and rollout, rollback, and removal recorded
 - [ ] No environment branch commits
 - [ ] Working on latest `main` (pulled recently)
@@ -63,7 +63,7 @@ Before pushing a delivery branch, or using an explicitly eligible direct-main mo
 1. **Does each proposed boundary pass the thematic test?** → Keep only independently reviewable
    and revertible purposes separate
 2. **Is the resulting state production-deployable?** → If no, it cannot merge
-3. **Can incomplete behavior be complete-and-inert behind a feature flag?** → If yes, test both
+3. **Can incomplete behaviour be complete-and-inert behind a feature flag?** → If yes, test both
    paths and record rollout, rollback, and removal
 4. **Have I declared the mode in the plan?** → If no, the default `worktree-to-pr` applies
 

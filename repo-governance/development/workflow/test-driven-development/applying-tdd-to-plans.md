@@ -25,20 +25,20 @@ keep the checklist short.
 Write instead:
 
 ```markdown
-### AC-EXAMPLE-01 — [observable behavior]
+### AC-EXAMPLE-01 — [observable behaviour]
 
 - **Input:** canonical scenario AC-EXAMPLE-01 and the current implementation boundary.
-- **Outcome:** [observable behavior] matches the canonical scenario.
+- **Outcome:** [observable behaviour] matches the canonical scenario.
 - [ ] [AI] **RED:** add `[test case]` in `[test path]`; run `[focused command]`; acceptance: it fails
-      for `[expected missing behavior]`; record the output.
+      for `[expected missing behaviour]`; record the output.
 - [ ] [AI] **GREEN:** implement `[symbol]` in `[source path]`; rerun `[focused command]`;
       acceptance: the focused suite passes.
 - [ ] [AI] **REFACTOR:** clean `[specific concern]`; run `[focused command]` and
-      `rtk nx run <project>:test:quick`; acceptance: behavior stays green.
+      `rtk nx run <project>:test:quick`; acceptance: behaviour stays green.
 - **Proof:** RED failure evidence, focused pass, and the project `test:quick` result.
 ```
 
-When one cohesive outcome needs multiple cycles, give every behavior slice its own checkbox trio in
+When one cohesive outcome needs multiple cycles, give every behaviour slice its own checkbox trio in
 the same outcome section:
 
 ```markdown
@@ -53,7 +53,7 @@ the same outcome section:
 - **Proof:** each RED failure and GREEN/refactor pass plus `rtk nx run <project>:test:quick`.
 ```
 
-The TDD actions remain one cohesive delivered behavior, but they are independent checklist progress
+The TDD actions remain one cohesive delivered behaviour, but they are independent checklist progress
 and harness tasks. Outcome cohesion does not erase execution detail.
 
 Acceptance criteria in `prd.md` are written as Gherkin scenarios (per the

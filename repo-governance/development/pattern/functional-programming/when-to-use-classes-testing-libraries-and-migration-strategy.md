@@ -19,7 +19,7 @@ when_to_use: "Use when deciding whether a class is appropriate, or planning an i
 
 **Classes acceptable for**:
 
-- Data containers without behavior (DTOs)
+- Data containers without behaviour (DTOs)
 - Framework requirements (React components, NestJS services)
 - Interface boundaries (dependency injection)
 

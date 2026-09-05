@@ -1,7 +1,7 @@
 ---
 title: "Web UX Test-Fixing Planning — Gherkin Success Criteria (Part 2)"
 description: "The remaining four Gherkin scenarios (of eight) proving merge-mode ID continuation, grilled material decisions, unreachable-target abort, and enforced systematic coverage."
-when_to_use: "Use when verifying merge-mode behavior, grill enforcement, unreachable-target handling, or the systematic-coverage completeness critic's success criteria."
+when_to_use: "Use when verifying merge-mode behaviour, grill enforcement, unreachable-target handling, or the systematic-coverage completeness critic's success criteria."
 ---
 
 # Gherkin Success Criteria — Part 2

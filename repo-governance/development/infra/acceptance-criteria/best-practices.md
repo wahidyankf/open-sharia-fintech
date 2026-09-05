@@ -9,7 +9,7 @@ tags:
   - testing
   - requirements
 created: 2025-12-07
-when_to_use: Use when drafting a Gherkin scenario and wanting to check it against the specific-values, single-behavior, present-tense, behavior-focused, testable, and data-table best practices.
+when_to_use: Use when drafting a Gherkin scenario and wanting to check it against the specific-values, single-behaviour, present-tense, behaviour-focused, testable, and data-table best practices.
 ---
 
 # Best Practices
@@ -32,11 +32,11 @@ When the user applies a discount
 Then the total should be less
 ```
 
-## 2. One Scenario Per Behavior
+## 2. One Scenario Per Behaviour
 
 PASS: **Good**:
 
-```gherkin
+```text
 Scenario: User login succeeds with valid credentials
 Scenario: User login fails with invalid password
 Scenario: User login fails with non-existent email
@@ -44,7 +44,7 @@ Scenario: User login fails with non-existent email
 
 FAIL: **Bad**:
 
-```gherkin
+```text
 Scenario: User login (covers success, wrong password, wrong email, etc.)
 ```
 
@@ -53,7 +53,7 @@ Scenario: User login (covers success, wrong password, wrong email, etc.)
 PASS: **Good**: `When the user clicks the button`
 FAIL: **Bad**: `When the user clicked the button` or `When the user will click`
 
-## 4. Focus on Behavior, Not Implementation
+## 4. Focus on Behaviour, Not Implementation
 
 PASS: **Good**:
 
@@ -73,14 +73,14 @@ Then a POST request to /api/users endpoint should create a database record
 
 PASS: **Good**:
 
-```gherkin
+```text
 Then the success message "Account created!" should be displayed
 And the user should receive a confirmation email within 5 minutes
 ```
 
 FAIL: **Bad**:
 
-```gherkin
+```text
 Then the user should feel confident their account was created
 ```
 
@@ -89,6 +89,7 @@ Then the user should feel confident their account was created
 ```gherkin
 Scenario Outline: Password validation
  Given a user enters password "<password>"
+ When the password is validated
  Then validation should return "<result>"
  And show message "<message>"
 

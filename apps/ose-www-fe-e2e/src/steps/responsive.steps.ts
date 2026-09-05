@@ -16,7 +16,6 @@ Then("the hamburger menu button is visible", async ({ page }) => {
   await expect(hamburger).toBeVisible();
 });
 
-// @covers specs/apps/ose/www/behaviors/frontend/app-shell/responsive.feature:Mobile viewport shows hamburger navigation
 Then("the desktop navigation links are hidden", async ({ page }) => {
   // Desktop nav links should not be visible on mobile
   const desktopNav = page.locator("nav.hidden, nav[class*='hidden']");
@@ -34,7 +33,6 @@ Then("the desktop navigation links are visible", async ({ page }) => {
   await expect(navLinks.first()).toBeVisible();
 });
 
-// @covers specs/apps/ose/www/behaviors/frontend/app-shell/responsive.feature:Desktop viewport shows full navigation
 Then("the hamburger menu button is hidden", async ({ page }) => {
   const hamburger = page.getByRole("button", { name: /menu/i });
   await expect(hamburger).toBeHidden();

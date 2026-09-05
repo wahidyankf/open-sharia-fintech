@@ -140,9 +140,11 @@ For detailed guidance, refer to:
 
 TDD is required for all TypeScript code changes. Write the failing Vitest test first, confirm it
 fails for the right reason, implement the minimum code to pass, then refactor. For TypeScript the
-primary levels are unit (Vitest), integration (MSW for network boundaries), E2E (Playwright), and
-property/fuzz (fast-check for invariants over generated inputs). Pick the cheapest level that
-captures the behavior.
+primary levels are Unit (Vitest with every OS-facing dependency injected), Integration (real
+isolated local resources with no network), E2E (Playwright or another real public boundary), and
+property/fuzz (fast-check for invariants). Every active Gherkin scenario requires Unit proof.
+The owning `test:unit` target collects native line coverage and hard-fails below 99%; only a narrow,
+enumerated boundary adapter with named Integration/E2E runtime proof may leave its denominator.
 
 **Canonical reference**:
 [Test-Driven Development Convention](../../../repo-governance/development/workflow/test-driven-development.md)

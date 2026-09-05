@@ -41,7 +41,7 @@ for its artifact test, primary probe, preserved five concerns, and suppression.
   discipline-scoped findings; none posts to GitHub directly — every specialist's findings feed
   `pr-review-synthesis-maker`. Defined at `.claude/agents/pr-review-<discipline>-maker.md`:
   - `pr-review-architecture-maker` — new tradeoffs, module boundaries, reversibility, blast radius
-  - `pr-review-logic-maker` — behavior vs. domain intent, Gherkin acceptance-criteria conformance
+  - `pr-review-logic-maker` — behaviour vs. domain intent, Gherkin acceptance-criteria conformance
   - `pr-review-governance-maker` — mechanical conformance to documented `repo-governance/` conventions
   - `pr-review-security-maker` — secrets, injection, untrusted-input handling, unsafe git/FS operations
   - `pr-review-integrity-maker` — CI-gaming, weakened/skipped tests, missing regression tests

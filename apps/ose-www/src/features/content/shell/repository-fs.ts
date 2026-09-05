@@ -10,9 +10,11 @@ const DEFAULT_CONTENT_DIR = env.OSE_WEB_CONTENT_DIR ?? path.resolve(process.cwd(
 
 export class FileSystemContentRepository implements ContentRepository {
   private readonly contentDir: string;
+  private readonly showDrafts: boolean;
 
-  constructor(contentDir?: string) {
+  constructor(contentDir?: string, showDrafts: boolean = env.OSE_WEB_SHOW_DRAFTS === "true") {
     this.contentDir = contentDir ?? DEFAULT_CONTENT_DIR;
+    this.showDrafts = showDrafts;
   }
 
   async readAllContent(): Promise<ContentMeta[]> {
@@ -28,7 +30,7 @@ export class FileSystemContentRepository implements ContentRepository {
         if (!parsed.success) continue;
 
         const frontmatter = parsed.data;
-        if (frontmatter.draft && env.OSE_WEB_SHOW_DRAFTS !== "true") continue;
+        if (frontmatter.draft && !this.showDrafts) continue;
 
         const { slug, isSection } = this.deriveSlug(filePath);
         const readingTime = Math.max(1, Math.ceil(content.split(/\s+/).length / 200));

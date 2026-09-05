@@ -6,19 +6,21 @@ import { vi, expect } from "vitest";
 import { HuePicker } from "../../../../src/components/hue-picker/hue-picker";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../specs/libs/web-ui/behaviors/hue-picker/hue-picker.feature"),
+  path.resolve(__dirname, "../../../../../../specs/libs/web-ui/behaviours/hue-picker/hue-picker.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {
   Scenario("Renders 6 swatches", ({ When, Then }) => {
+    let swatches: HTMLElement[];
+
     When('I render a HuePicker with value "teal"', () => {
-      // precondition noted
+      cleanup();
+      render(<HuePicker value="teal" onChange={vi.fn()} />);
+      swatches = screen.getAllByRole("button");
     });
 
     Then("the component should have 6 swatch buttons", () => {
-      cleanup();
-      render(<HuePicker value="teal" onChange={() => {}} />);
-      expect(screen.getAllByRole("button")).toHaveLength(6);
+      expect(swatches).toHaveLength(6);
     });
   });
 
@@ -26,7 +28,9 @@ describeFeature(feature, ({ Scenario }) => {
     const onChangeMock = vi.fn();
 
     Given('I render a HuePicker with value "teal"', () => {
-      // precondition noted; render happens in When step to persist mock state
+      cleanup();
+      render(<HuePicker value="teal" onChange={onChangeMock} />);
+      expect(screen.getByRole("button", { name: "teal" }).getAttribute("aria-pressed")).toBe("true");
     });
 
     When('the user clicks the "sage" swatch', () => {
@@ -41,20 +45,22 @@ describeFeature(feature, ({ Scenario }) => {
   });
 
   Scenario("aria-pressed reflects selection", ({ When, Then, And }) => {
+    let teal: HTMLElement;
+    let sage: HTMLElement;
+
     When('I render a HuePicker with value "teal"', () => {
-      // precondition noted
+      cleanup();
+      render(<HuePicker value="teal" onChange={vi.fn()} />);
+      teal = screen.getByRole("button", { name: "teal" });
+      sage = screen.getByRole("button", { name: "sage" });
     });
 
     Then('the "teal" swatch should have aria-pressed "true"', () => {
-      cleanup();
-      render(<HuePicker value="teal" onChange={() => {}} />);
-      expect(screen.getByRole("button", { name: "teal" }).getAttribute("aria-pressed")).toBe("true");
+      expect(teal.getAttribute("aria-pressed")).toBe("true");
     });
 
     And('the "sage" swatch should have aria-pressed "false"', () => {
-      cleanup();
-      render(<HuePicker value="teal" onChange={() => {}} />);
-      expect(screen.getByRole("button", { name: "sage" }).getAttribute("aria-pressed")).toBe("false");
+      expect(sage.getAttribute("aria-pressed")).toBe("false");
     });
   });
 });

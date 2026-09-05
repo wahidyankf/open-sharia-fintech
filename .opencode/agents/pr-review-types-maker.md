@@ -1,5 +1,5 @@
 ---
-description: Execution-grade PR reviewer scoped to the type-soundness discipline only — type-system soundness beyond what the compiler already enforces, across TypeScript, Rust, F#, and C#. Flags unsound type escapes (unjustified any/unknown, unexplained unsafe blocks, panic-prone unwrap/expect on fallible paths, null-forgiving-operator misuse, non-exhaustive match/switch), never a compile/build failure (already CI-gated) and never whether a well-typed function's behavior is correct (pr-review-logic-maker's charter). One of nine discipline-scoped specialists feeding the pr-review-synthesis-maker coordinator; inherits pr-review-maker's hard rules verbatim, scoped to its own charter and SUPPRESS block.
+description: Execution-grade PR reviewer scoped to the type-soundness discipline only — type-system soundness beyond what the compiler already enforces, across TypeScript, Rust, F#, and C#. Flags unsound type escapes (unjustified any/unknown, unexplained unsafe blocks, panic-prone unwrap/expect on fallible paths, null-forgiving-operator misuse, non-exhaustive match/switch), never a compile/build failure (already CI-gated) and never whether a well-typed function's behaviour is correct (pr-review-logic-maker's charter). One of nine discipline-scoped specialists feeding the pr-review-synthesis-maker coordinator; inherits pr-review-maker's hard rules verbatim, scoped to its own charter and SUPPRESS block.
 model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
@@ -30,7 +30,7 @@ Find where a change compiles cleanly but still defeats the compiler's own soundn
 **See `pr-review-specialist-protocol` Skill** for the shared mechanics every discipline
 specialist inherits verbatim: consuming the scout's context brief, the finding requirements hard
 rules, the scope guard, untrusted-input handling, the no-direct-posting handoff, and cross-cycle
-behavior.
+behaviour.
 
 ## Discipline Charter
 
@@ -45,7 +45,7 @@ genuinely-nullable path.
 
 **Routes elsewhere**: a compile/build failure is not a finding — CI's build step already gates
 it red; whether a new type/module boundary should exist → `pr-review-architecture-maker`;
-whether a well-typed function's behavior is correct → `pr-review-logic-maker`.
+whether a well-typed function's behaviour is correct → `pr-review-logic-maker`.
 
 **Severity definitions**: `CRITICAL` = an unsound type escape on a path handling untrusted input
 with no compensating runtime check; `HIGH` = an unjustified `any`/assertion bypass or a

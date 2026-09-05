@@ -1,7 +1,7 @@
 /**
  * Step definitions for the App Shell Navigation feature.
  *
- * Covers: specs/apps/organiclever/app-web/behaviors/app-shell/navigation.feature
+ * Covers: specs/apps/organiclever/app-web/behaviours/app-shell/navigation.feature
  *
  * Selector notes:
  * - The app lives at /app (AppRoot mounts there). Root / redirects to /app/home
@@ -26,7 +26,6 @@ Given("the app shell is visible", async ({ page }) => {
   await page.waitForLoadState("domcontentloaded");
 });
 
-// @covers specs/apps/organiclever/app-web/behaviors/app-shell/navigation.feature:Default tab is Home on first load
 Then("the Home tab is active", async ({ page }) => {
   // Home screen shows "Good morning" heading — reliable DOM anchor
   await expect(page.getByText("Good morning").or(page.getByText("Last 7 days")).first()).toBeVisible({
@@ -37,12 +36,10 @@ Then("the Home tab is active", async ({ page }) => {
 When("the user taps the History tab", async ({ page }) => {
   // Tab is a <a href="/app/history"> with aria-current — match by role=link.
   const link = page.getByRole("link", { name: "History" }).first();
-  if (await link.isVisible()) {
-    await link.click();
-  }
+  await expect(link).toBeVisible();
+  await link.click();
 });
 
-// @covers specs/apps/organiclever/app-web/behaviors/app-shell/navigation.feature:Navigate to History tab
 Then("the History tab is active", async ({ page }) => {
   // History screen renders an <h1>History</h1> unconditionally
   await expect(page.getByRole("heading", { name: "History" })).toBeVisible({ timeout: 10000 });
@@ -50,12 +47,10 @@ Then("the History tab is active", async ({ page }) => {
 
 When("the user taps the Progress tab", async ({ page }) => {
   const link = page.getByRole("link", { name: "Progress" }).first();
-  if (await link.isVisible()) {
-    await link.click();
-  }
+  await expect(link).toBeVisible();
+  await link.click();
 });
 
-// @covers specs/apps/organiclever/app-web/behaviors/app-shell/navigation.feature:Navigate to Progress tab
 Then("the Progress tab is active", async ({ page }) => {
   // Progress screen renders "Analytics" heading text
   await expect(page.getByText("Analytics").or(page.getByText("Patterns & progress over time")).first()).toBeVisible({
@@ -65,12 +60,10 @@ Then("the Progress tab is active", async ({ page }) => {
 
 When("the user taps the Settings tab", async ({ page }) => {
   const link = page.getByRole("link", { name: "Settings" }).first();
-  if (await link.isVisible()) {
-    await link.click();
-  }
+  await expect(link).toBeVisible();
+  await link.click();
 });
 
-// @covers specs/apps/organiclever/app-web/behaviors/app-shell/navigation.feature:Navigate to Settings tab
 Then("the Settings tab is active", async ({ page }) => {
   // Settings screen has data-testid="settings-screen" on the root div — use testid only
   // to avoid strict mode violations from the SideNav "Settings" button
@@ -80,23 +73,12 @@ Then("the Settings tab is active", async ({ page }) => {
 When("the user taps the FAB button", async ({ page }) => {
   // FAB carries aria-label="Log entry"
   const fab = page.getByRole("button", { name: "Log entry" });
-  if (await fab.isVisible()) {
-    await fab.click();
-  }
+  await expect(fab).toBeVisible();
+  await fab.click();
 });
 
 Then("the Add Entry sheet is open", async ({ page }) => {
-  // Used both as Then (assertion) and Given (precondition).
-  // If the sheet is not already open, navigate to the app and open it.
   const sheetText = page.getByText("Log an entry");
-  if (!(await sheetText.isVisible())) {
-    await page.goto(appPath("home"));
-    await page.waitForLoadState("domcontentloaded");
-    const fab = page.getByRole("button", { name: "Log entry" });
-    if (await fab.isVisible()) {
-      await fab.click();
-    }
-  }
   await expect(sheetText).toBeVisible({ timeout: 10000 });
 });
 
@@ -108,8 +90,6 @@ When("the user closes the Add Entry sheet", async ({ page }) => {
   await page.mouse.click(10, 10);
 });
 
-// @covers specs/apps/organiclever/app-web/behaviors/app-shell/navigation.feature:Open and close Add Entry sheet
-// @covers specs/apps/organiclever/app-web/behaviors/app-shell/entry-loggers.feature:Close Add Entry sheet
 Then("the Add Entry sheet is closed", async ({ page }) => {
   // After dismissal, "Log an entry" heading should no longer be visible
   await expect(page.getByText("Log an entry")).not.toBeVisible({ timeout: 5000 });

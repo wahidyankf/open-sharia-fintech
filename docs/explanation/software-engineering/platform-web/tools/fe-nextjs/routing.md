@@ -641,7 +641,7 @@ export default async function ApplicationModal({ params }: { params: { id: strin
 }
 ```
 
-**Behavior**:
+**Behaviour**:
 
 - **Soft navigation** (Link click) → Shows modal
 - **Hard navigation** (direct URL, refresh) → Shows full page

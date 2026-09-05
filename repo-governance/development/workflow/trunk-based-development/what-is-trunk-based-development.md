@@ -22,7 +22,7 @@ when_to_use: Use when explaining what TBD is or listing its core characteristics
 1. **Single source of truth**: All work converges on one branch (`main`)
 2. **Short-lived branches** (if any): Branches exist for < 1-2 days maximum
 3. **Frequent commits**: Multiple commits per day to `main`
-4. **Feature flags**: Keep incomplete behavior complete-and-inert behind a temporary
+4. **Feature flags**: Keep incomplete behaviour complete-and-inert behind a temporary
    production-disabled toggle, with both paths tested and its rollout, rollback, and removal recorded
 5. **Continuous integration**: Every commit triggers automated testing
 6. **Small changes**: Break work into tiny, mergeable increments

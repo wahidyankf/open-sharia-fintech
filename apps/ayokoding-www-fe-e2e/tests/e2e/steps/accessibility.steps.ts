@@ -1,29 +1,63 @@
 import { createBdd } from "playwright-bdd";
 import { expect } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
 
 const { When, Then } = createBdd();
 
 // Gherkin "And" following a "When" is registered with When
-When("the visitor presses Tab repeatedly", async ({ page }) => {
-  // Focus the first interactive element directly to avoid WebKit keyboard focus quirks.
-  const firstFocusable = page.locator("a[href], button, input, select, textarea").first();
-  if ((await firstFocusable.count()) > 0) {
-    await firstFocusable.focus();
+When("the visitor presses Tab repeatedly", async ({ page, browserName }) => {
+  const interactive = page.locator('a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])');
+  const expected: string[] = [];
+  for (let index = 0; index < (await interactive.count()); index += 1) {
+    const element = interactive.nth(index);
+    const isTabbable = await element.evaluate((node) => {
+      const control = node as HTMLElement & { disabled?: boolean };
+      return (
+        !control.disabled &&
+        control.getAttribute("aria-disabled") !== "true" &&
+        !control.closest("[inert]") &&
+        control.tabIndex >= 0
+      );
+    });
+    if ((await element.isVisible()) && isTabbable) {
+      const marker = `keyboard-order-${index}`;
+      await element.evaluate((node, value) => node.setAttribute("data-e2e-keyboard-order", value), marker);
+      expected.push(marker);
+    }
   }
+  expect(expected.length).toBeGreaterThan(0);
+
+  await page.evaluate(() => {
+    const sentinel = document.createElement("span");
+    sentinel.tabIndex = 0;
+    sentinel.dataset.e2eKeyboardSentinel = "true";
+    document.body.prepend(sentinel);
+    sentinel.focus();
+  });
+  const reached: string[] = [];
+  const tabKey = browserName === "webkit" ? "Alt+Tab" : "Tab";
+  for (let index = 0; index < expected.length; index += 1) {
+    await page.keyboard.press(tabKey);
+    const marker = await page.evaluate(() => document.activeElement?.getAttribute("data-e2e-keyboard-order"));
+    if (marker && !reached.includes(marker)) reached.push(marker);
+  }
+  await page.locator("body").evaluate(
+    (body, traversal) => {
+      body.dataset.keyboardTraversal = JSON.stringify(traversal);
+    },
+    { expected, reached },
+  );
+  await page.locator('[data-e2e-keyboard-sentinel="true"]').evaluate((node) => node.remove());
 });
 
 Then("focus should move through all interactive elements in a logical order", async ({ page }) => {
-  // After tabbing, at least one element should have focus
-  const focusedElement = page.locator(":focus");
-  await expect(focusedElement).toBeAttached({ timeout: 3000 });
+  const traversal = await page.locator("body").evaluate((body) => JSON.parse(body.dataset.keyboardTraversal ?? "{}"));
+  expect(traversal.reached).toEqual(traversal.expected);
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/app-shell/accessibility.feature:Keyboard navigation moves through all interactive elements
 Then("no interactive element should be skipped or unreachable by keyboard", async ({ page }) => {
-  // Verify interactive elements exist and are reachable — buttons, links, inputs
-  const interactiveElements = page.locator("a[href], button, input, select, textarea");
-  const count = await interactiveElements.count();
-  expect(count).toBeGreaterThan(0);
+  const traversal = await page.locator("body").evaluate((body) => JSON.parse(body.dataset.keyboardTraversal ?? "{}"));
+  expect(new Set(traversal.reached).size).toBe(traversal.expected.length);
 });
 
 When(
@@ -52,7 +86,6 @@ Then("each button should have an accessible name via an aria-label or visible la
   }
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/app-shell/accessibility.feature:Buttons and interactive elements have ARIA labels
 Then("each interactive element should be identifiable by assistive technologies", async ({ page }) => {
   // All links should have accessible text
   const links = page.getByRole("link");
@@ -93,46 +126,48 @@ Then("the link should become visible when it receives keyboard focus", async ({ 
   await expect(skipLink).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/app-shell/accessibility.feature:Skip to content link is present
 Then("activating the link should move focus to the main content area", async ({ page }) => {
   const skipLink = page.getByRole("link", {
     name: /skip.*(to |to main )?content/i,
   });
-  await skipLink.click();
-  // After activation, focus moves to main content — the main element should exist
+  await skipLink.press("Enter");
   const main = page.getByRole("main");
-  await expect(main).toBeVisible();
+  await expect(main).toBeFocused();
+  await expect(page).toHaveURL(/#main-content$/u);
 });
 
 Then("all body text should meet a minimum contrast ratio of 4.5:1 against its background", async ({ page }) => {
-  // Basic check: body text color and background are set and the page renders
-  const body = page.locator("body");
-  await expect(body).toBeVisible();
-  const color = await body.evaluate((el) => window.getComputedStyle(el).color);
-  const bg = await body.evaluate((el) => window.getComputedStyle(el).backgroundColor);
-  // Both values should be defined (non-empty)
-  expect(color.length).toBeGreaterThan(0);
-  expect(bg.length).toBeGreaterThan(0);
+  const results = await new AxeBuilder({ page }).withRules(["color-contrast"]).analyze();
+  expect(results.violations).toEqual([]);
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/app-shell/accessibility.feature:Text color contrast meets WCAG AA standard
 Then(
   "large text and headings should meet a minimum contrast ratio of 3:1 against their background",
   async ({ page }) => {
-    const heading = page.getByRole("heading", { level: 1 }).first();
-    await expect(heading).toBeVisible();
-    const color = await heading.evaluate((el) => window.getComputedStyle(el).color);
-    expect(color.length).toBeGreaterThan(0);
+    const results = await new AxeBuilder({ page }).withRules(["color-contrast"]).analyze();
+    expect(results.violations).toEqual([]);
   },
 );
 
-When("a visitor navigates to an interactive element using the keyboard", async ({ page }) => {
+When("a visitor navigates to an interactive element using the keyboard", async ({ page, browserName }) => {
   await page.goto("/en");
-  // Focus the first interactive element directly to avoid WebKit keyboard quirks.
-  const firstFocusable = page.locator("a[href], button, input, select, textarea").first();
-  if ((await firstFocusable.count()) > 0) {
-    await firstFocusable.focus();
+  await page.evaluate(() => {
+    const sentinel = document.createElement("span");
+    sentinel.tabIndex = 0;
+    sentinel.dataset.e2eFocusSentinel = "true";
+    document.body.prepend(sentinel);
+    sentinel.focus();
+  });
+  await page.keyboard.press(browserName === "webkit" ? "Alt+Tab" : "Tab");
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const focusMoved = await page.evaluate(
+      () =>
+        document.activeElement !== document.body && !document.activeElement?.hasAttribute("data-e2e-focus-sentinel"),
+    );
+    if (focusMoved) break;
+    await page.keyboard.press("Tab");
   }
+  await page.locator('[data-e2e-focus-sentinel="true"]').evaluate((node) => node.remove());
 });
 
 Then("a visible focus indicator should be displayed on that element", async ({ page }) => {
@@ -145,23 +180,62 @@ Then("a visible focus indicator should be displayed on that element", async ({ p
   await expect(focused).toBeVisible({ timeout: 5000 });
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/app-shell/accessibility.feature:Focus indicators are visible on interactive elements
 Then("the focus indicator should have sufficient contrast against the surrounding background", async ({ page }) => {
-  // Use a specific focusable element type to avoid body:focus which has no indicator.
-  const focusedLink = page.locator("a:focus, button:focus, input:focus, [tabindex]:focus").first();
-  const fallback = page.locator(":focus").first();
-  const focused = (await focusedLink.count()) > 0 ? focusedLink : fallback;
-  await expect(focused).toBeAttached({ timeout: 5000 });
-  // Verify the element has an outline or box-shadow applied (focus indicator)
-  const outlineStyle = await focused.evaluate((el) => {
-    const style = window.getComputedStyle(el);
+  const result = await page.evaluate(() => {
+    const element = document.activeElement;
+    if (!(element instanceof HTMLElement) || element === document.body) {
+      return { ratio: 0, element: "body", outline: "", boxShadow: "", background: "" };
+    }
+    const rgb = (value: string): [number, number, number] | undefined => {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1;
+      canvas.height = 1;
+      const context = canvas.getContext("2d", { willReadFrequently: true });
+      if (!context) return undefined;
+      context.clearRect(0, 0, 1, 1);
+      context.fillStyle = value;
+      context.fillRect(0, 0, 1, 1);
+      const [red, green, blue, alpha] = context.getImageData(0, 0, 1, 1).data;
+      return alpha === 0 ? undefined : [red!, green!, blue!];
+    };
+    const luminance = (channels: [number, number, number]): number => {
+      const linear = channels.map((channel) => {
+        const value = channel / 255;
+        return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+      });
+      return 0.2126 * linear[0]! + 0.7152 * linear[1]! + 0.0722 * linear[2]!;
+    };
+    const styles = getComputedStyle(element);
+    const indicator =
+      parseFloat(styles.outlineWidth) > 0 && styles.outlineStyle !== "none"
+        ? rgb(styles.outlineColor)
+        : styles.boxShadow === "none"
+          ? undefined
+          : rgb(styles.boxShadow);
+    let ancestor: HTMLElement | null = element.parentElement;
+    let background: [number, number, number] | undefined;
+    while (ancestor && !background) {
+      const candidate = getComputedStyle(ancestor).backgroundColor;
+      if (candidate !== "transparent" && !candidate.endsWith(", 0)")) background = rgb(candidate);
+      ancestor = ancestor.parentElement;
+    }
+    if (!indicator || !background) {
+      return {
+        ratio: 0,
+        element: element.outerHTML,
+        outline: `${styles.outlineWidth} ${styles.outlineStyle} ${styles.outlineColor}`,
+        boxShadow: styles.boxShadow,
+        background: background?.join(",") ?? "",
+      };
+    }
+    const values = [luminance(indicator), luminance(background)].sort((a, b) => b - a);
     return {
-      outline: style.outline,
-      outlineWidth: style.outlineWidth,
-      boxShadow: style.boxShadow,
+      ratio: (values[0]! + 0.05) / (values[1]! + 0.05),
+      element: element.outerHTML,
+      outline: `${styles.outlineWidth} ${styles.outlineStyle} ${styles.outlineColor}`,
+      boxShadow: styles.boxShadow,
+      background: background.join(","),
     };
   });
-  const hasFocusIndicator =
-    (outlineStyle.outline !== "none" && outlineStyle.outlineWidth !== "0px") || outlineStyle.boxShadow !== "none";
-  expect(hasFocusIndicator, "Focused element should have a visible outline or box-shadow").toBe(true);
+  expect(result.ratio, JSON.stringify(result)).toBeGreaterThanOrEqual(3);
 });

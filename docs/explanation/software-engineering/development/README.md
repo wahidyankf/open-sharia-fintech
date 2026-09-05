@@ -1,6 +1,6 @@
 ---
 title: Software Development Practices
-description: Documentation on test-driven and behavior-driven development practices
+description: Documentation on test-driven and behaviour-driven development practices
 category: explanation
 subcategory: development
 tags:
@@ -25,41 +25,43 @@ Good delivery starts by making the desired outcome testable. This guide helps pr
 Writing tests after code can make intent hard to recover, while product context can get lost between a conversation and a change. Test-first practices keep both visible:
 
 1. **Test-Driven Development (TDD)** - Write tests first, then implement code to pass those tests
-2. **Behavior-Driven Development (BDD)** - Specify behavior through examples in collaboration with domain experts
+2. **Behaviour-Driven Development (BDD)** - Specify behaviour through examples in collaboration with domain experts
 
-Both practices emphasize writing tests before implementation, but at different levels of abstraction. TDD focuses on technical correctness at the unit level, while BDD focuses on business behavior at the feature level.
+Both practices emphasize writing tests before implementation. In OSE, every testable application,
+library, and executable tool uses BDD to state observable behaviour in canonical Gherkin, while TDD
+drives the mandatory Unit implementation and each applicable higher-layer adapter. The normative
+contract is the [canonical BDD standard](../../../../repo-governance/development/behaviour-driven-development.md).
 
-## Quick Decision: TDD, BDD, or Both?
+## Quick Decision: How BDD and TDD Combine
 
 ```mermaid
 graph TD
-    A[What are you building?] --> B{Complex business rules?}
-    B -->|Yes + Stakeholder collaboration| C[BDD + TDD]
-    B -->|Yes + Technical only| D[TDD Only]
-    B -->|No + Simple CRUD| E[TDD Only]
+    A[Testable behaviour owner] --> B[Write canonical Gherkin]
+    B --> C[Bind mandatory Unit proof]
+    C --> D{Real local-resource boundary?}
+    D -->|Yes| E[Bind local Integration proof]
+    D -->|No| F[Record Integration exemption]
+    E --> G{Public boundary?}
+    F --> G
+    G -->|Yes| H[Bind E2E proof]
+    G -->|No| I[Record E2E exemption]
 
-    C --> F[Use BDD for acceptance tests<br/>Use TDD for unit tests<br/>Outside-In approach]
-    D --> G[Use TDD for all tests<br/>Focus on domain logic]
-    E --> H[Use TDD for core logic<br/>Integration tests for APIs]
-
+    style B fill:#0173B2,stroke:#000000,color:#FFFFFF
     style C fill:#029E73,stroke:#000000,color:#FFFFFF
-    style D fill:#0173B2,stroke:#000000,color:#FFFFFF
     style E fill:#DE8F05,stroke:#000000,color:#FFFFFF
-    style F fill:#029E73,stroke:#000000,color:#FFFFFF
-    style G fill:#0173B2,stroke:#000000,color:#FFFFFF
-    style H fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style H fill:#CC78BC,stroke:#000000,color:#FFFFFF
 ```
 
 **Decision Matrix**:
 
-| Your Situation                          | Recommended Approach   | Start With                                                                                                                                                |
-| --------------------------------------- | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Complex business rules + domain experts | BDD + TDD              | [BDD Three Amigos](./behavior-driven-development-bdd/README.md) — OSE Platform BDD standards for Gherkin scenarios and Three Amigos collaboration         |
-| Technical library or framework          | TDD Only               | [TDD Red-Green-Refactor](./test-driven-development-tdd/README.md) — OSE Platform TDD standards for Red-Green-Refactor cycle and domain-driven testing     |
-| API with business logic                 | BDD + TDD              | [Outside-In TDD](./test-driven-development-tdd/README.md) — OSE Platform TDD standards for Red-Green-Refactor cycle and domain-driven testing             |
-| Pure functions and algorithms           | TDD Only               | [TDD and FP](./test-driven-development-tdd/README.md) — OSE Platform TDD standards for Red-Green-Refactor cycle and domain-driven testing                 |
-| Legacy code without tests               | TDD (Characterization) | [TDD Characterization Tests](./test-driven-development-tdd/README.md) — OSE Platform TDD standards for Red-Green-Refactor cycle and domain-driven testing |
-| New feature with acceptance criteria    | BDD + TDD              | [BDD Gherkin Scenarios](./behavior-driven-development-bdd/README.md) — OSE Platform BDD standards for Gherkin scenarios and Three Amigos collaboration    |
+| Your Situation                          | Required Approach | Start With                                                                                                                                                            |
+| --------------------------------------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Complex business rules + domain experts | BDD + TDD         | [BDD Three Amigos](./behaviour-driven-development-bdd/README.md) — OSE Platform BDD guidance for Gherkin scenarios and Three Amigos collaboration                     |
+| Technical library or framework          | BDD + TDD         | State observable API behaviour in Gherkin, then use [TDD Red-Green-Refactor](./test-driven-development-tdd/README.md) — OSE TDD standards for its Unit implementation |
+| API with business logic                 | BDD + TDD         | Specify the public contract, then use [Outside-In TDD](./test-driven-development-tdd/README.md) — OSE TDD standards for the inner loop                                |
+| Pure functions and algorithms           | BDD + TDD         | State input/output behaviour in Gherkin, then use [TDD and FP](./test-driven-development-tdd/README.md) — OSE TDD standards for pure Unit implementation              |
+| Legacy code without tests               | BDD + TDD         | Capture current observable behaviour in Gherkin and Unit characterization tests before changing it                                                                    |
+| New feature with acceptance criteria    | BDD + TDD         | [BDD Gherkin Scenarios](./behaviour-driven-development-bdd/README.md) — OSE guidance for applying canonical Gherkin and adapters                                      |
 
 ## Documentation Structure
 
@@ -75,7 +77,7 @@ Test-Driven Development is a software development approach where tests are writt
 - [TDD Cycle Standards](test-driven-development-tdd/tdd-cycle-standards.md) - Red-Green-Refactor requirements
 - [Testing Standards](test-driven-development-tdd/testing-standards.md) - FIRST principles, AAA pattern
 - [Test Doubles Standards](test-driven-development-tdd/test-doubles-standards.md) - When to use mocks, stubs, fakes
-- [Integration Testing Standards](test-driven-development-tdd/integration-testing-standards.md) - Testcontainers requirements
+- [Integration Testing Standards](test-driven-development-tdd/integration-testing-standards.md) - Real isolated local resources with zero network
 - [TDD with DDD Standards](test-driven-development-tdd/tdd-with-ddd-standards.md) - Testing aggregates and domain models
 
 **Use TDD when you want to:**
@@ -83,25 +85,25 @@ Test-Driven Development is a software development approach where tests are writt
 - Build reliable software with high test coverage
 - Design APIs and interfaces from the consumer's perspective
 - Create a safety net for refactoring
-- Document expected behavior through executable examples
+- Document expected behaviour through executable examples
 - Practice disciplined, incremental development
 
-### 🎭 [Behavior-Driven Development (BDD)](./behavior-driven-development-bdd/README.md) — Gherkin scenarios, Three Amigos collaboration, and acceptance testing
+### 🎭 [Behaviour-Driven Development (BDD)](./behaviour-driven-development-bdd/README.md) — Gherkin scenarios, Three Amigos collaboration, and acceptance testing
 
 **Specification by example using Gherkin scenarios**
 
-Behavior-Driven Development extends TDD by focusing on behavior specification through concrete examples written in natural language. BDD emphasizes collaboration between developers, QA, and business stakeholders using a shared vocabulary (Gherkin syntax with Given-When-Then).
+Behaviour-Driven Development extends TDD by focusing on behaviour specification through concrete examples written in natural language. BDD emphasizes collaboration between developers, QA, and business stakeholders using a shared vocabulary (Gherkin syntax with Given-When-Then).
 
 **OSE Platform Standards:**
 
-- [Behavior-Driven Development (BDD)](./behavior-driven-development-bdd/README.md) — OSE Platform BDD standards for Gherkin scenarios, Three Amigos collaboration, and acceptance testing
-- [Gherkin Standards](behavior-driven-development-bdd/gherkin-standards.md) - Feature file structure, Given-When-Then requirements
-- [Scenario Standards](behavior-driven-development-bdd/scenario-standards.md) - Scenario independence, naming conventions
-- [Three Amigos Standards](behavior-driven-development-bdd/three-amigos-standards.md) - Collaborative discovery requirements
-- [Living Documentation Standards](behavior-driven-development-bdd/living-documentation-standards.md) - CI/CD integration requirements
-- [BDD with DDD Standards](behavior-driven-development-bdd/bdd-with-ddd-standards.md) - Ubiquitous language in scenarios
+- [Behaviour-Driven Development (BDD)](./behaviour-driven-development-bdd/README.md) — OSE Platform guidance for applying the canonical Gherkin, adapter, and semantic-review contract
+- [Gherkin Standards](behaviour-driven-development-bdd/gherkin-standards.md) - Feature file structure, Given-When-Then requirements
+- [Scenario Standards](behaviour-driven-development-bdd/scenario-standards.md) - Scenario independence, naming conventions
+- [Three Amigos Standards](behaviour-driven-development-bdd/three-amigos-standards.md) - Collaborative discovery requirements
+- [Living Documentation Standards](behaviour-driven-development-bdd/living-documentation-standards.md) - CI/CD integration requirements
+- [BDD with DDD Standards](behaviour-driven-development-bdd/bdd-with-ddd-standards.md) - Ubiquitous language in scenarios
 
-**Use BDD when you have:**
+**Use BDD for every testable behaviour owner. Collaborative discovery is especially valuable when you have:**
 
 - Complex business rules requiring stakeholder collaboration
 - Need for living documentation that stays synchronized with code
@@ -113,18 +115,18 @@ Behavior-Driven Development extends TDD by focusing on behavior specification th
 
 TDD and BDD complement each other throughout the development process:
 
-| Aspect             | TDD                      | BDD                                  |
-| ------------------ | ------------------------ | ------------------------------------ |
-| **Focus**          | Technical correctness    | Business behavior                    |
-| **Level**          | Unit/Integration         | Feature/Acceptance                   |
-| **Language**       | Programming language     | Natural language (Gherkin)           |
-| **Audience**       | Developers               | Developers + Business + QA           |
-| **When to Write**  | Before implementation    | During requirements discovery        |
-| **Test Structure** | Arrange-Act-Assert       | Given-When-Then                      |
-| **Granularity**    | Fine-grained (functions) | Coarse-grained (user scenarios)      |
-| **Feedback Loop**  | Seconds to minutes       | Minutes to hours                     |
-| **Documentation**  | Code as documentation    | Executable specifications            |
-| **Refactoring**    | Enables safe refactoring | Validates behavior remains unchanged |
+| Aspect             | TDD                          | BDD                                       |
+| ------------------ | ---------------------------- | ----------------------------------------- |
+| **Focus**          | Technical correctness        | Business behaviour                        |
+| **Level**          | Unit and applicable adapters | Observable scenarios across project roles |
+| **Language**       | Programming language         | Natural language (Gherkin)                |
+| **Audience**       | Developers                   | Developers + Business + QA                |
+| **When to Write**  | Before implementation        | During requirements discovery             |
+| **Test Structure** | Arrange-Act-Assert           | Given-When-Then                           |
+| **Granularity**    | Fine-grained (functions)     | Coarse-grained (user scenarios)           |
+| **Feedback Loop**  | Seconds to minutes           | Minutes to hours                          |
+| **Documentation**  | Code as documentation        | Executable specifications                 |
+| **Refactoring**    | Enables safe refactoring     | Validates behaviour remains unchanged     |
 
 **Example workflow (Outside-In TDD with BDD):**
 
@@ -136,7 +138,7 @@ TDD and BDD complement each other throughout the development process:
    - Implement minimal code (GREEN)
    - Refactor (REFACTOR)
    - Repeat until step passes
-5. **Integration** - Run BDD scenario end-to-end (GREEN - passes)
+5. **Applicable adapters** - Run zero-network Integration and public-boundary E2E proof where the scenario can be expressed
 6. **Refactor** - Improve design across all layers
 7. **Living Documentation** - BDD scenarios serve as up-to-date specification
 
@@ -152,7 +154,7 @@ graph TD
     G --> H{More Steps?}
 
     H -->|Yes| D
-    H -->|No| I[Integration: BDD GREEN]
+    H -->|No| I[Applicable adapters GREEN]
     I --> J[Refactor: All Layers]
     J --> K[Living Documentation]
 
@@ -169,7 +171,9 @@ graph TD
 
 **Legend**: 🟢 Teal = Passing tests (GREEN) | 🟠 Orange = Failing tests (RED) | 🟤 Brown = Refactoring
 
-See [TDD Standards](test-driven-development-tdd/README.md) — [BDD Standards](behavior-driven-development-bdd/README.md) for integration patterns and OSE Platform examples.
+See [TDD Standards](test-driven-development-tdd/README.md) — OSE TDD standards; and
+[BDD Guidance](behaviour-driven-development-bdd/README.md) — OSE guidance for applying canonical
+Gherkin and adapters.
 
 ## Applying Standards by Role
 
@@ -180,34 +184,34 @@ See [TDD Standards](test-driven-development-tdd/README.md) — [BDD Standards](b
 1. **TDD Workflow** - Follow [TDD Cycle Standards](test-driven-development-tdd/tdd-cycle-standards.md) for Red-Green-Refactor
 2. **Testing Standards** - Apply [Testing Standards](test-driven-development-tdd/testing-standards.md) for FIRST principles
 3. **Domain Testing** - Follow [TDD with DDD Standards](test-driven-development-tdd/tdd-with-ddd-standards.md) for aggregates
-4. **Integration Tests** - Use [Integration Testing Standards](test-driven-development-tdd/integration-testing-standards.md) for Testcontainers
+4. **Integration Tests** - Use [Integration Testing Standards](test-driven-development-tdd/integration-testing-standards.md) for real isolated local resources with zero network
 
 ### For Teams Adopting BDD
 
 **Prerequisites**: Complete [AyoKoding BDD](../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/development/behavior-driven-development-bdd/) learning path first.
 
-1. **Collaboration** - Follow [Three Amigos Standards](behavior-driven-development-bdd/three-amigos-standards.md) for discovery sessions
-2. **Gherkin Writing** - Apply [Gherkin Standards](behavior-driven-development-bdd/gherkin-standards.md) for feature files
-3. **Scenario Design** - Follow [Scenario Standards](behavior-driven-development-bdd/scenario-standards.md) for independence
-4. **Domain Integration** - Use [BDD with DDD Standards](behavior-driven-development-bdd/bdd-with-ddd-standards.md) for ubiquitous language
+1. **Collaboration** - Follow [Three Amigos Standards](behaviour-driven-development-bdd/three-amigos-standards.md) for discovery sessions
+2. **Gherkin Writing** - Apply [Gherkin Standards](behaviour-driven-development-bdd/gherkin-standards.md) for feature files
+3. **Scenario Design** - Follow [Scenario Standards](behaviour-driven-development-bdd/scenario-standards.md) for independence
+4. **Domain Integration** - Use [BDD with DDD Standards](behaviour-driven-development-bdd/bdd-with-ddd-standards.md) for ubiquitous language
 
 ### For Architects and Technical Leads
 
 **Prerequisites**: Complete [AyoKoding TDD](../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/development/test-driven-development-tdd/) and [AyoKoding BDD](../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/development/behavior-driven-development-bdd/) learning paths first.
 
-1. **Review Complete Standards** - Read [TDD Standards](test-driven-development-tdd/README.md) — [BDD Standards](behavior-driven-development-bdd/README.md)
+1. **Review Complete Standards** - Read [TDD Standards](test-driven-development-tdd/README.md) — OSE TDD standards; and [BDD Guidance](behaviour-driven-development-bdd/README.md) — OSE guidance for applying canonical Gherkin and adapters
 2. **Architecture Integration** - Follow [TDD with DDD Standards](test-driven-development-tdd/tdd-with-ddd-standards.md)
 3. **Testing Strategy** - Use decision matrices above to guide team approach
-4. **Living Documentation** - Implement [Living Documentation Standards](behavior-driven-development-bdd/living-documentation-standards.md)
+4. **Living Documentation** - Implement [Living Documentation Standards](behaviour-driven-development-bdd/living-documentation-standards.md)
 
 ### For QA Engineers and Business Analysts
 
 **Prerequisites**: Complete [AyoKoding BDD](../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/development/behavior-driven-development-bdd/) learning path first.
 
-1. **Collaboration Standards** - Follow [Three Amigos Standards](behavior-driven-development-bdd/three-amigos-standards.md)
-2. **Gherkin Writing** - Apply [Gherkin Standards](behavior-driven-development-bdd/gherkin-standards.md)
-3. **Scenario Design** - Follow [Scenario Standards](behavior-driven-development-bdd/scenario-standards.md)
-4. **Living Documentation** - Maintain [Living Documentation Standards](behavior-driven-development-bdd/living-documentation-standards.md)
+1. **Collaboration Standards** - Follow [Three Amigos Standards](behaviour-driven-development-bdd/three-amigos-standards.md)
+2. **Gherkin Writing** - Apply [Gherkin Standards](behaviour-driven-development-bdd/gherkin-standards.md)
+3. **Scenario Design** - Follow [Scenario Standards](behaviour-driven-development-bdd/scenario-standards.md)
+4. **Living Documentation** - Maintain [Living Documentation Standards](behaviour-driven-development-bdd/living-documentation-standards.md)
 
 ## Practices in This Repository
 
@@ -222,10 +226,12 @@ The open-sharia-enterprise project applies both TDD and BDD:
 
 **BDD Application:**
 
-- Gherkin scenarios for business features (Tax, Loan, Compliance rules)
+- Canonical Gherkin scenarios under each owner's recursive `specs/apps/**/behaviours/` or
+  `specs/libs/**/behaviours/` corpus, including technical libraries and executable tools
 - Ubiquitous Language from DDD used in feature files
 - Three Amigos sessions with domain experts for compliance features
-- Living documentation synchronized with Nx monorepo structure
+- Mandatory Unit bindings, applicable higher-layer adapters, and living documentation synchronized
+  with Nx `test:coverage` and `test:quick`
 
 **Complementary Practices:**
 

@@ -30,18 +30,29 @@ Point `TESSDATA_PREFIX` at your local Tesseract data directory when your install
 ```bash
 npm exec nx -- run crane-cli:build
 npm exec nx -- run crane-cli:test:quick
-npm exec nx -- run crane-cli:test:integration
+npm exec nx -- run crane-cli:test:e2e
 ```
 
-The executable is written to `apps/crane-cli/dist/` by the build target. Its behavior specifications
-live in [the Crane Gherkin suite](../../specs/apps/crane/cli/behaviors/README.md).
+The executable is written to `apps/crane-cli/dist/` by the build target. Its behaviour specifications
+live in [the Crane Gherkin suite](../../specs/apps/crane/cli/behaviours/README.md).
 
 ## Code map
 
-- `src/Core/` — domain types, ports, and pure checking logic
 - `src/Adapters/In/` — command-line parsing and dispatch
-- `src/Adapters/Out/` — PDF and OCR integrations
+- [`../../libs/fsharp-crane-core/src/Core/`](../../libs/fsharp-crane-core/src/Core/) — shared domain
+  types, ports, and checking logic
+- [`../../libs/fsharp-crane-core/src/Adapters/Out/`](../../libs/fsharp-crane-core/src/Adapters/Out/) —
+  shared PDF and OCR integrations
 - `Program.fs` — local composition root
 
 The shape is deliberately ports-and-adapters: the checking logic can stay understandable while file
 and OCR integrations remain at the edge.
+
+## BDD and Testing
+
+The canonical corpus is `specs/apps/crane/cli/behaviours/`. `test:unit` runs in-process adapters
+with injected boundary doubles, and `test:e2e` exercises the built CLI through its public process
+boundary. Matching `test:coverage:unit`, `test:coverage:e2e`, `test:coverage:behaviour`, and
+aggregate `test:coverage` validate closure statically. Integration is omitted because the CLI owns
+the public process adapter while fsharp-crane-core owns and tests the non-networked local-resource
+boundary separately.

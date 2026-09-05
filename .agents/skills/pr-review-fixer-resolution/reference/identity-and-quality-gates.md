@@ -39,7 +39,7 @@ ledger. Do not rerun, tool-imitate, or AI-rederive delegated predicates before p
 `pending`. The workflow then requires successful aggregate PR CI for the pushed head and
 applicable base before covered predicates can restore `verified` or another cycle can begin.
 
-Outside that quality-gate invocation, retain the existing behavior: run relevant local quality
+Outside that quality-gate invocation, retain the existing behaviour: run relevant local quality
 gates before pushing and resolve failures at root cause.
 
 ## Maker-Checker-Fixer Framing (Two-Role Variant)

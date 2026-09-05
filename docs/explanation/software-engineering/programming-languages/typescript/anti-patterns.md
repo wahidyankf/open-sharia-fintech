@@ -366,7 +366,7 @@ Using primitive types (string, number) instead of creating domain-specific value
 - Loses domain semantics and type safety
 - Easy to mix up similar primitives (e.g., amount and fee)
 - No validation at type level
-- Can't attach domain behavior to primitives
+- Can't attach domain behaviour to primitives
 - Makes code less self-documenting
 - In financial code, can cause calculation errors (mixing currencies, negative amounts)
 
@@ -388,7 +388,7 @@ function processDonation(
   // 2. No validation that amount is positive
   // 3. No validation that currency is valid (USD, SAR, EUR)
   // 4. No validation that category is valid (zakat, sadaqah, waqf)
-  // 5. Can't attach domain behavior (e.g., currency conversion)
+  // 5. Can't attach domain behaviour (e.g., currency conversion)
 
   console.log(`Processing donation ${donationId} from ${donorId}`);
   console.log(`Amount: ${amount} ${currency}`);
@@ -607,7 +607,7 @@ In Murabaha contract systems, primitive obsession causes:
 
 #### Description
 
-Domain objects that only contain data with no behavior, pushing all logic into service layers. Violates object-oriented principles and domain-driven design.
+Domain objects that only contain data with no behaviour, pushing all logic into service layers. Violates object-oriented principles and domain-driven design.
 
 #### Why It's Problematic
 
@@ -623,7 +623,7 @@ Domain objects that only contain data with no behavior, pushing all logic into s
 ```typescript
 // ❌ ANTI-PATTERN: Anemic domain model
 
-// Domain object with only getters/setters (no behavior)
+// Domain object with only getters/setters (no behaviour)
 class Donation {
   constructor(
     public id: string,
@@ -634,7 +634,7 @@ class Donation {
     public createdAt: Date,
   ) {}
 
-  // Only getters and setters, no domain behavior
+  // Only getters and setters, no domain behaviour
   getId(): string {
     return this.id;
   }
@@ -698,7 +698,7 @@ class MurabahaContract {
     public status: string,
   ) {}
 
-  // Only data, no behavior
+  // Only data, no behaviour
 }
 
 class MurabahaService {
@@ -717,7 +717,7 @@ class MurabahaService {
 #### Correct Approach (PASS)
 
 ```typescript
-// ✅ SOLUTION: Rich domain model with encapsulated behavior
+// ✅ SOLUTION: Rich domain model with encapsulated behaviour
 
 type DonationStatus = "pending" | "processing" | "completed" | "failed";
 
@@ -742,12 +742,12 @@ class Donation {
     return new Donation(id, donorId, amount, "pending", new Date());
   }
 
-  // ✅ Domain behavior: Can this donation be processed?
+  // ✅ Domain behaviour: Can this donation be processed?
   canProcess(): boolean {
     return this.status === "pending" && this.amount.amount > 0;
   }
 
-  // ✅ Domain behavior: Process donation with state validation
+  // ✅ Domain behaviour: Process donation with state validation
   process(): void {
     if (!this.canProcess()) {
       throw new Error(`Cannot process donation in status: ${this.status}`);
@@ -756,7 +756,7 @@ class Donation {
     this.status = "processing";
   }
 
-  // ✅ Domain behavior: Complete donation with state validation
+  // ✅ Domain behaviour: Complete donation with state validation
   complete(): void {
     if (this.status !== "processing") {
       throw new Error(`Cannot complete donation in status: ${this.status}`);
@@ -765,7 +765,7 @@ class Donation {
     this.status = "completed";
   }
 
-  // ✅ Domain behavior: Fail donation with state validation
+  // ✅ Domain behaviour: Fail donation with state validation
   fail(): void {
     if (this.status === "completed") {
       throw new Error("Cannot fail a completed donation");
@@ -774,7 +774,7 @@ class Donation {
     this.status = "failed";
   }
 
-  // ✅ Domain behavior: Calculate Zakat for this donation
+  // ✅ Domain behaviour: Calculate Zakat for this donation
   calculateZakat(nisabThreshold: Money): Money {
     if (this.amount.currency !== nisabThreshold.currency) {
       throw new Error("Amount and threshold must be in same currency");
@@ -853,12 +853,12 @@ class MurabahaContract {
     return new MurabahaContract(contractId, costPrice, profitMargin, "pending");
   }
 
-  // ✅ Domain behavior: Calculate selling price
+  // ✅ Domain behaviour: Calculate selling price
   calculateSellingPrice(): Money {
     return this.costPrice.multiply(1 + this.profitMargin);
   }
 
-  // ✅ Domain behavior: Approve contract with validation
+  // ✅ Domain behaviour: Approve contract with validation
   approve(): void {
     if (this.status !== "pending") {
       throw new Error(`Cannot approve contract in status: ${this.status}`);
@@ -866,7 +866,7 @@ class MurabahaContract {
     this.status = "approved";
   }
 
-  // ✅ Domain behavior: Activate contract
+  // ✅ Domain behaviour: Activate contract
   activate(): void {
     if (this.status !== "approved") {
       throw new Error(`Cannot activate contract in status: ${this.status}`);
@@ -874,7 +874,7 @@ class MurabahaContract {
     this.status = "active";
   }
 
-  // ✅ Domain behavior: Check if contract is profitable
+  // ✅ Domain behaviour: Check if contract is profitable
   isProfitable(): boolean {
     return this.profitMargin > 0;
   }
@@ -1424,7 +1424,7 @@ Race conditions occur when the order of async operations is not controlled, lead
 
 #### Why It's Problematic
 
-- Unpredictable behavior
+- Unpredictable behaviour
 - Intermittent bugs that are hard to reproduce
 - Data corruption from concurrent writes
 - Incorrect state updates
@@ -1777,7 +1777,7 @@ async function processDonationAsync(id: string) {
 
 ### Mutable State Management Problems
 
-Shared mutable state creates conflicts and unpredictable behavior in concurrent operations.
+Shared mutable state creates conflicts and unpredictable behaviour in concurrent operations.
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
@@ -4121,7 +4121,7 @@ describe("Donation Processing", () => {
 
 **Domain Modeling**:
 
-- [ ] Rich domain models (behavior + data)
+- [ ] Rich domain models (behaviour + data)
 - [ ] Value objects for domain concepts
 - [ ] Validation in constructors
 - [ ] Immutable data structures

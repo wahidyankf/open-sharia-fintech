@@ -32,14 +32,14 @@ Every in-the-field guide follows a **recommended structure**:
 ```markdown
 ## Why Test-Driven Development Matters
 
-Test-Driven Development (TDD) is critical for financial and enterprise systems because it prevents costly bugs, ensures correctness, enables confident refactoring, and documents behavior through executable specifications.
+Test-Driven Development (TDD) is critical for financial and enterprise systems because it prevents costly bugs, ensures correctness, enables confident refactoring, and documents behaviour through executable specifications.
 
 **Core Benefits**:
 
 - Prevents costly bugs: Catch calculation errors before production
 - Ensures correctness: Test-first forces thinking about requirements
 - Enables refactoring: Tests provide safety net for improvements
-- Documents behavior: Tests serve as executable specifications
+- Documents behaviour: Tests serve as executable specifications
 - Builds confidence: High test coverage reduces deployment risk
 
 **Problem**: Without TDD, bugs reach production causing incorrect calculations and financial losses.

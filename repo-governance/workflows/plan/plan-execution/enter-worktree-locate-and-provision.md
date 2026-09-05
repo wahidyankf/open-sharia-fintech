@@ -24,7 +24,7 @@ before re-invoking plan execution.`
    If the plan records the documented authoring-worktree exception with `Provisioning status:
 pending`, treat provisioning and identity initialization below as a blocking gate. No delivery
    packet may begin first.
-4. **Go to the designated worktree — navigate or provision** (default behavior; no user prompt needed):
+4. **Go to the designated worktree — navigate or provision** (default behaviour; no user prompt needed):
    - Check whether the worktree is already registered: `rtk git worktree list --porcelain` from the repo root, and confirm the directory `<repo-root>/worktrees/<plan-identifier>` exists.
    - **If it exists**: make it the execution root. If the current working directory is not already inside it, switch to it (e.g., `cd <repo-root>/worktrees/<plan-identifier>` or the harness's worktree-entry tool). Emit: `Worktree gate: entering existing worktree at worktrees/<plan-identifier>/`.
    - **If it does not exist**: auto-provision it from the latest `origin/main`:

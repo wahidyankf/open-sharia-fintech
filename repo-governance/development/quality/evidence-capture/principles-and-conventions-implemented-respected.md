@@ -31,7 +31,7 @@ when_to_use: "Use when tracing this convention to the principles/conventions beh
 
 ## Conventions Implemented/Respected
 
-- **[Manual Behavioral Verification](.././manual-behavioral-verification.md)**: Evidence capture is the
+- **[Manual Behavioural Verification](.././manual-behavioural-verification.md)**: Evidence capture is the
   persistent record of manual verification. The two conventions are complementary: this one defines the
   storage structure; the other defines the verification actions.
 - **[Plans Organization Convention](../../../conventions/structure/plans.md)**: The `evidence/` subfolder

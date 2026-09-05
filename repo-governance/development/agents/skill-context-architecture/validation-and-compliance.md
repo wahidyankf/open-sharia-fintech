@@ -61,7 +61,7 @@ Run the code-checker agent to validate...
 
 **Right**: Either make it a fork skill (outside the primary binding skills directory) or reference conventions instead of delegating to agents.
 
-### ❌ Mistake 3: Mixing inline and fork behavior
+### ❌ Mistake 3: Mixing inline and fork behaviour
 
 **Wrong**:
 

@@ -25,7 +25,7 @@ conversation handoff evidence.
 **Why**: a code change is bound by the repository's normal engineering gates, and a captured learning
 does not get to bypass them:
 
-- **[Feature Change Completeness](.././feature-change-completeness.md)**: an observable behavior change
+- **[Feature Change Completeness](.././feature-change-completeness.md)**: an observable behaviour change
   in `apps/`/`libs/` ships with companion `specs/` Gherkin, carried by the follow-up plan.
 - **[Regression Test Mandate](.././regression-test-mandate.md)**: if the learning names a bug, its fix
   lands with a reproducing test (failing before, passing after) in the same commit/PR as the fix.

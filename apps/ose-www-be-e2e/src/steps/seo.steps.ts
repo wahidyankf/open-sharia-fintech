@@ -12,8 +12,8 @@ When("the sitemap is generated", async ({ request }) => {
 
 Then("the sitemap contains a URL for the landing page", async () => {
   const body = state.sitemapBody as string;
-  // The landing page URL should be present (root or /)
-  expect(body).toContain("<loc>");
+  const locations = [...body.matchAll(/<loc>([^<]+)<\/loc>/gu)].map((match) => new URL(match[1]!));
+  expect(locations.some((location) => location.pathname === "/")).toBe(true);
 });
 
 Then("the sitemap contains a URL for the about page", async () => {
@@ -21,7 +21,6 @@ Then("the sitemap contains a URL for the about page", async () => {
   expect(body).toContain("/about");
 });
 
-// @covers specs/apps/ose/www/behaviors/backend/seo/seo.feature:Sitemap contains all public pages
 Then("the sitemap contains URLs for all update pages", async () => {
   const body = state.sitemapBody as string;
   expect(body).toContain("/updates/");
@@ -38,7 +37,6 @@ Then("it allows all user agents", async () => {
   expect(body.toLowerCase()).toContain("user-agent");
 });
 
-// @covers specs/apps/ose/www/behaviors/backend/seo/seo.feature:Robots.txt allows all crawlers
 Then("it references the sitemap URL", async () => {
   const body = state.robotsBody as string;
   expect(body.toLowerCase()).toContain("sitemap");

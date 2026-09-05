@@ -24,7 +24,7 @@ missing technical context or compensate for an under-specified delivery checklis
 
 - Treat a **material decision** as a substantive choice that changes the proposed product,
   architecture, implementation contract, delivery boundary, rollout, operation, testing strategy,
-  or recovery behavior. Record why that solution choice was selected.
+  or recovery behaviour. Record why that solution choice was selected.
 - Do not turn the plan into a changelog of its own authoring process. Wording changes, section
   moves, checker/fixer findings, drafting order, rejected phrasing, and other editorial iterations
   are not decision-record alternatives unless they change the delivered contract. Git history and
@@ -42,7 +42,7 @@ missing technical context or compensate for an under-specified delivery checklis
   paths or bounded discovery, copyable commands, expected observations, failure handling, evidence,
   and separate RED/GREEN/REFACTOR tasks where code changes. The same junior engineer must be able to
   execute it without author or chat assistance.
-- Leave no product, security, data, migration, UI, testing, rollout, or rollback behavior for the
+- Leave no product, security, data, migration, UI, testing, rollout, or rollback behaviour for the
   reader to invent. Use exact paths, commands, and contracts where they materially remove ambiguity.
 - For every material decision, record the selected option and at least two viable alternatives,
   including the status quo when it is genuinely viable. Record evidence, constraints, trade-offs,

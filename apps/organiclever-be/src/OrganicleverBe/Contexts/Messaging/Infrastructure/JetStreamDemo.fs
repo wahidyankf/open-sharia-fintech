@@ -12,6 +12,12 @@ open OrganicleverBe.Contexts.Messaging.Domain
 /// durable publish/consume/ack demo proving at-least-once delivery at startup.
 module Infrastructure =
 
+    type JetStreamDemoPorts =
+        { EnsureStream: unit -> Task
+          EnsureConsumer: unit -> Task
+          Publish: unit -> Task
+          ReceiveAndAcknowledge: unit -> Task<bool> }
+
     /// JetStream stream name for the demo.
     [<Literal>]
     let StreamName = "ORGANICLEVER_MESSAGING_DEMO"
@@ -27,33 +33,13 @@ module Infrastructure =
     /// Runs the JetStream durable demo against a connected NATS client: create or
     /// get the stream and durable consumer, publish one demo message, then fetch
     /// and acknowledge it. Returns the outcome.
-    [<ExcludeFromCodeCoverage(Justification = "Requires a live NATS JetStream broker; e2e-tested per the @e2e-tagged specs/apps/organiclever/be/behaviors/messaging/live/jetstream-demo.feature, owned by organiclever-be-e2e")>]
-    let runDemo (conn: NatsConnection) : Task<JetStreamDemoOutcome> =
+    let runDemoWith (ports: JetStreamDemoPorts) : Task<JetStreamDemoOutcome> =
         task {
             try
-                let js = NatsJSContext(conn :> INatsConnection)
-
-                let streamConfig = StreamConfig(name = StreamName, subjects = [| Subject |])
-                let! _stream = js.CreateStreamAsync(streamConfig)
-
-                let consumerConfig = ConsumerConfig(ConsumerName)
-                let! consumer = js.CreateOrUpdateConsumerAsync(StreamName, consumerConfig)
-
-                let payload = Encoding.UTF8.GetBytes("demo message")
-                let! _ack = js.PublishAsync<byte[]>(Subject, payload)
-
-                let opts = NatsJSFetchOpts(MaxMsgs = 1)
-                let messages = consumer.FetchAsync<byte[]>(opts)
-                let enumerator = messages.GetAsyncEnumerator()
-                let mutable acked = false
-
-                let! hasNext = enumerator.MoveNextAsync()
-
-                if hasNext then
-                    do! enumerator.Current.AckAsync()
-                    acked <- true
-
-                do! enumerator.DisposeAsync()
+                do! ports.EnsureStream()
+                do! ports.EnsureConsumer()
+                do! ports.Publish()
+                let! acked = ports.ReceiveAndAcknowledge()
 
                 if acked then
                     return DeliveredAndAcked
@@ -62,3 +48,44 @@ module Infrastructure =
             with ex ->
                 return Failed ex.Message
         }
+
+    [<ExcludeFromCodeCoverage(Justification = "Requires a live NATS JetStream broker; e2e-tested by organiclever-be-e2e")>]
+    let runDemo (conn: NatsConnection) : Task<JetStreamDemoOutcome> =
+        let js = NatsJSContext(conn :> INatsConnection)
+        let mutable consumer: INatsJSConsumer option = None
+
+        let ports =
+            { EnsureStream =
+                fun () ->
+                    task {
+                        let config = StreamConfig(name = StreamName, subjects = [| Subject |])
+                        let! _ = js.CreateStreamAsync(config)
+                        return ()
+                    }
+              EnsureConsumer =
+                fun () ->
+                    task {
+                        let! created = js.CreateOrUpdateConsumerAsync(StreamName, ConsumerConfig(ConsumerName))
+                        consumer <- Some created
+                    }
+              Publish =
+                fun () ->
+                    task {
+                        let! _ = js.PublishAsync<byte[]>(Subject, Encoding.UTF8.GetBytes("demo message"))
+                        return ()
+                    }
+              ReceiveAndAcknowledge =
+                fun () ->
+                    task {
+                        let messages = consumer.Value.FetchAsync<byte[]>(NatsJSFetchOpts(MaxMsgs = 1))
+                        let enumerator = messages.GetAsyncEnumerator()
+                        let! hasNext = enumerator.MoveNextAsync()
+
+                        if hasNext then
+                            do! enumerator.Current.AckAsync()
+
+                        do! enumerator.DisposeAsync()
+                        return hasNext
+                    } }
+
+        runDemoWith ports

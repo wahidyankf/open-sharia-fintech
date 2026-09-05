@@ -55,7 +55,7 @@ dotnet restore --locked-mode
 dotnet build /p:TreatWarningsAsErrors=true
 dotnet format --verify-no-changes
 dotnet test --collect:"XPlat Code Coverage" \
-  /p:Threshold=95 /p:ThresholdType=line /p:ThresholdStat=Total
+  /p:Threshold=99 /p:ThresholdType=line /p:ThresholdStat=Total
 ```
 
 ### 2. Explicit Over Implicit
@@ -269,7 +269,8 @@ public sealed class ZakatService
 
 ## Code Coverage Enforcement
 
-**MUST** achieve >=95% line coverage using Coverlet with enforcement via the native `test:coverage` Nx target.
+**MUST** achieve >=99% line coverage using Coverlet with enforcement during the native `test:unit`
+runtime. Static `test:coverage:*` targets must not invoke Coverlet or a test runner.
 
 ```xml
 <!-- Directory.Build.props - add for test projects -->
@@ -285,7 +286,7 @@ public sealed class ZakatService
 dotnet test --collect:"XPlat Code Coverage" \
     --results-directory ./coverage \
     --configuration Release \
-    /p:Threshold=95 /p:ThresholdType=line /p:ThresholdStat=Total
+    /p:Threshold=99 /p:ThresholdType=line /p:ThresholdStat=Total
 ```
 
 ## SonarAnalyzer Rules
@@ -312,7 +313,7 @@ SonarAnalyzer.CSharp provides additional rules beyond the built-in Roslyn analyz
 - [ ] No Roslyn analyzer warnings in IDE
 - [ ] All nullable warnings resolved (no unjustified `!` operators)
 - [ ] Non-nullable properties initialized in constructor or with `required`
-- [ ] Coverage >=95% maintained
+- [ ] Unit line coverage >=99% maintained
 
 ## Related Standards
 

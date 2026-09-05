@@ -16,13 +16,13 @@ when_to_use: Use when implementing or reviewing how a checker agent writes its a
 
 **PROGRESSIVE WRITING REQUIREMENT**:
 
-**CRITICAL BEHAVIORAL REQUIREMENT**: ALL \*-checker agents MUST write reports PROGRESSIVELY (continuously updating files during execution), NOT buffering findings in memory to write once at the end.
+**CRITICAL BEHAVIOURAL REQUIREMENT**: ALL \*-checker agents MUST write reports PROGRESSIVELY (continuously updating files during execution), NOT buffering findings in memory to write once at the end.
 
 **Why this is mandatory:**
 
 - **Context compaction survival**: During long audits, the AI coding agent may compact/summarize conversation context. If agent only writes at the END, file contents may be lost during compaction.
 - **Real-time persistence**: File continuously updated THROUGHOUT execution ensures findings persist regardless of context compaction.
-- **Behavioral, not optional**: This is a hard requirement for all checker agents.
+- **Behavioural, not optional**: This is a hard requirement for all checker agents.
 
 **Implementation requirement:**
 

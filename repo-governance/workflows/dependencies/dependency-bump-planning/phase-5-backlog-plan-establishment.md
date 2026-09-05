@@ -18,7 +18,8 @@ Invoke the [plan-planning workflow](../../plan/plan-planning.md) with:
   - Post-bump re-audit clean (`npm audit --audit-level=moderate`, `govulncheck ./...`).
   - Post-bump CISA KEV cross-reference clean (no remaining KEV-listed CVEs in pinned versions).
   - All `WAIVER`/`FUNCTIONAL-HOLD`/`KEV-listed` entries propagated to `docs/reference/security-waivers.md` with KEV and EPSS columns populated.
-  - Affected-project quality gates pass (typecheck, lint, test:quick, specs:coverage).
+  - Affected-project quality gates pass (typecheck, lint, and `test:quick`, including Unit runtime
+    and every applicable static `test:coverage:*` validator).
   - The delivery checklist mirrors the policy's [Application Workflow](../../../development/workflow/dependency-bump-policy.md)
     steps 8–12, grouped per ecosystem, TDD-shaped where code changes are required.
 

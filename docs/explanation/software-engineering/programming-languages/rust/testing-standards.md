@@ -51,7 +51,7 @@ Testing MUST be automated through cargo:
 
 ### 2. Explicit Over Implicit
 
-Tests MUST explicitly document expected behavior:
+Tests MUST explicitly document expected behaviour:
 
 - Test names describe the exact scenario and expected outcome
 - Assertions are specific, not general
@@ -370,7 +370,7 @@ pub fn calculate_zakat(wealth: Decimal, nisab: Decimal) -> Decimal {
 
 ## Coverage Requirements
 
-**MUST** achieve >=95% line coverage for all domain logic, measured with `cargo-llvm-cov`.
+**MUST** achieve >=99% Unit line coverage, measured with `cargo-llvm-cov` and enforced by `test:unit`.
 
 ```bash
 # Install coverage tool
@@ -382,8 +382,8 @@ cargo llvm-cov --lcov --output-path coverage.lcov
 # View coverage report
 cargo llvm-cov report
 
-# Enforce minimum coverage threshold
-cargo llvm-cov --fail-under-lines 95
+# Enforce the Unit line-coverage hard gate
+cargo llvm-cov --lib --fail-under-lines 99
 ```
 
 **Coverage configuration in CI**:
@@ -394,13 +394,13 @@ cargo llvm-cov --fail-under-lines 95
   run: cargo llvm-cov --lcov --output-path coverage.lcov
 
 - name: Enforce coverage threshold
-  run: cargo llvm-cov --fail-under-lines 95
+  run: cargo llvm-cov --lib --fail-under-lines 99
 ```
 
 ## Enforcement
 
 - **`cargo test`** - All tests MUST pass
-- **`cargo-llvm-cov`** - Coverage MUST be >=95% for domain logic
+- **`cargo-llvm-cov`** - Unit line coverage MUST be >=99%
 - **CI pipeline** - Coverage threshold enforced on every push
 - **Code reviews** - Reviewers verify test quality, not just quantity
 
@@ -412,7 +412,7 @@ cargo llvm-cov --fail-under-lines 95
 - [ ] Test names follow `test_[subject]_[condition]_[expected]` convention
 - [ ] Domain invariants covered by proptest
 - [ ] Doc tests present for all public functions
-- [ ] Coverage >=95%
+- [ ] Unit line coverage >=99%
 
 ## Related Standards
 

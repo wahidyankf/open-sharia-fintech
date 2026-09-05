@@ -28,7 +28,7 @@ content/
                         ├── _index.md              # Landing page
                         ├── overview.md            # What is in-the-field
                         ├── test-driven-development.md
-                        ├── behavior-driven-development.md
+                        ├── behaviour-driven-development.md
                         ├── build-tools.md
                         ├── ci-cd.md
                         ├── docker-and-kubernetes.md

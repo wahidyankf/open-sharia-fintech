@@ -1,725 +1,125 @@
-/// Plain xunit tests for `RhinoCli.Application.Doctor`'s pure/testable
-/// cargo target-share helpers — behaviour with no dedicated Gherkin scenario,
-/// or exercised only indirectly there (mirrors the rationale
-/// `EnvStagedGuardUnitTests.fs`'s module doc comment states for its own split
-/// from `DoctorSteps.fs`). Ported from
-/// `apps/rhino-cli/src/application/doctor/target_share.rs`'s
-/// `#[cfg(test)] mod tests`.
-///
-/// `sweep_scope_is_repo_namespaced` is not ported: `sweepScope` is a private
-/// helper (not part of `Doctor`'s public surface, unlike Rust's
-/// `pub(crate)`-equivalent test-only visibility), and the property it guards
-/// — the sweep never touching a sibling repo's cache namespace — is already
-/// exercised end-to-end by every `pruneOrphans`/`sweepStale` test below,
-/// which all pass a repo-scoped `cacheRoot/repoName` path.
 module RhinoCli.Tests.Unit.Steps.DoctorUnitTests
 
-open System
-open System.Diagnostics
-open System.IO
 open Xunit
-open RhinoCli.Application.Doctor
+open RhinoCli.Tests.Unit.Steps.DoctorSteps
 
-// ---- isCi ----
-
-[<Fact>]
-let ``isCi is true when either signal is set`` () =
-    Assert.True(isCi true false, "CI set alone must report true")
-    Assert.True(isCi false true, "GITHUB_ACTIONS set alone must report true")
-    Assert.True(isCi true true, "both set must report true")
-    Assert.False(isCi false false, "neither set must report false")
-
-// ---- discoverCrates ----
-
-let private writeCargoToml (dir: string) =
-    Directory.CreateDirectory(dir) |> ignore
-    File.WriteAllText(Path.Combine(dir, "Cargo.toml"), "[package]\nname = \"x\"\n")
+let private world () = CargoTargetWorld()
 
 [<Fact>]
-let ``discoverCrates walks apps and libs`` () =
-    let root =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-discover-" + Guid.NewGuid().ToString("N"))
-
-    try
-        writeCargoToml (Path.Combine(root, "apps", "a"))
-        writeCargoToml (Path.Combine(root, "apps", "b"))
-        writeCargoToml (Path.Combine(root, "libs", "c"))
-        // A non-crate directory (no Cargo.toml) must NOT be discovered.
-        Directory.CreateDirectory(Path.Combine(root, "apps", "not-a-crate")) |> ignore
-
-        let found = discoverCrates root |> List.sort
-
-        let expected =
-            [ Path.Combine(root, "apps", "a")
-              Path.Combine(root, "apps", "b")
-              Path.Combine(root, "libs", "c") ]
-            |> List.sort
-
-        Assert.Equal<string list>(expected, found)
-    finally
-        Directory.Delete(root, true)
-
-// ---- cacheRootFrom / repoName / sharedTargetPath ----
+let ``doctor fix plans a cache link`` () =
+    let w = world () in
+    w.``a Rust crate with a plain target directory exists in a repo checkout outside CI`` ()
+    w.``the developer runs the doctor command with the fix flag`` ()
+    w.``the crate's target becomes a symlink into the shared cargo-target cache`` ()
+    w.``the symlink resolves under the repo's own shared-cache namespace`` ()
 
 [<Fact>]
-let ``cacheRootFrom honors an explicit override`` () =
-    Assert.Equal("/override/dir", cacheRootFrom (Some "/override/dir") None)
+let ``doctor fix is idempotent`` () =
+    let w = world () in
+    w.``a crate's target is already the correct symlink into the shared cache`` ()
+    w.``the developer runs the doctor command with the fix flag a second time`` ()
+    w.``the command exits successfully without recreating or altering the symlink`` ()
 
 [<Fact>]
-let ``cacheRootFrom falls back to home cache dir when no override is given`` () =
-    Assert.Equal(Path.Combine("/home/dev", ".cache", "ose-cargo-target"), cacheRootFrom None (Some "/home/dev"))
+let ``doctor replaces a plain target`` () =
+    let w = world () in
+    w.``a crate's target is a plain rebuildable directory containing stale artifacts`` ()
+    w.``the developer runs the doctor command with the fix flag outside CI`` ()
+    w.``the plain directory is discarded and the target becomes a symlink into the shared cache`` ()
 
 [<Fact>]
-let ``repoName returns the basename of the common dir's parent`` () =
-    Assert.Equal("my-repo", repoName (Path.Combine("/some/path/my-repo", ".git")))
+let ``doctor check is read only`` () =
+    let w = world () in
+    w.``a crate's target is a plain directory not yet symlinked into the shared cache`` ()
+    w.``the developer runs the doctor command without the fix flag`` ()
+    w.``the output reports that crate's target as needing to be shared`` ()
+    w.``the plain target directory is left unchanged`` ()
 
 [<Fact>]
-let ``sharedTargetPath composes cache root, repo name, and crate leaf`` () =
-    Assert.Equal(
-        Path.Combine("/cache", "my-repo", "rhino-cli"),
-        sharedTargetPath "/cache" "my-repo" (Path.Combine("/some/path/my-repo", "apps", "rhino-cli"))
-    )
-
-// ---- git fixture helpers (mirrors ParityUnitTests.fs's own self-contained fixture) ----
-
-let private runGit (cwd: string) (args: string list) : unit =
-    use proc = new Process()
-    proc.StartInfo.FileName <- "git"
-    args |> List.iter proc.StartInfo.ArgumentList.Add
-    proc.StartInfo.WorkingDirectory <- cwd
-    proc.StartInfo.RedirectStandardOutput <- true
-    proc.StartInfo.RedirectStandardError <- true
-    proc.StartInfo.UseShellExecute <- false
-    proc.StartInfo.EnvironmentVariables.Remove("GIT_DIR")
-    proc.StartInfo.EnvironmentVariables.Remove("GIT_WORK_TREE")
-    proc.Start() |> ignore
-    let stderr = proc.StandardError.ReadToEnd()
-    proc.WaitForExit()
-
-    if proc.ExitCode <> 0 then
-        failwithf "git %s failed in %s: %s" (String.concat " " args) cwd stderr
-
-/// A fresh `git init` repository with a committable identity configured
-/// locally (never touches global/user git config).
-let private newGitFixture (prefix: string) : string =
-    let dir =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-" + prefix + "-" + Guid.NewGuid().ToString("N"))
-
-    Directory.CreateDirectory(dir) |> ignore
-    runGit dir [ "init"; "-q"; "-b"; "main" ]
-    runGit dir [ "config"; "user.name"; "Rhino CLI Test" ]
-    runGit dir [ "config"; "user.email"; "rhino-cli-test@example.invalid" ]
-    File.WriteAllText(Path.Combine(dir, "README.md"), "throwaway fixture")
-    runGit dir [ "add"; "." ]
-    runGit dir [ "commit"; "-m"; "init" ]
-    dir
-
-let private addWorktree (repoDir: string) (worktreeDir: string) : unit =
-    runGit repoDir [ "worktree"; "add"; "--detach"; worktreeDir ]
-
-let private makeCrate (repoRoot: string) (name: string) : string =
-    let crateDir = Path.Combine(repoRoot, "apps", name)
-    writeCargoToml crateDir
-    crateDir
-
-// ---- checkTargetShares ----
+let ``doctor fix skips CI`` () =
+    let w = world () in
+    w.``the environment variable CI is set`` ()
+    w.``the developer runs the doctor command with the fix flag`` ()
+    w.``no target symlink is created for any crate`` ()
+    w.``the command exits successfully with a message that CI was detected`` ()
 
 [<Fact>]
-let ``checkTargetShares reports unshared target without mutating it`` () =
-    let repoRoot =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-check-" + Guid.NewGuid().ToString("N"))
-
-    let cacheRoot =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-cache-" + Guid.NewGuid().ToString("N"))
-
-    try
-        let crateDir = makeCrate repoRoot "foo"
-        let targetDir = Path.Combine(crateDir, "target")
-        Directory.CreateDirectory(targetDir) |> ignore
-        File.WriteAllText(Path.Combine(targetDir, "marker.txt"), "stale")
-
-        let report = checkTargetShares repoRoot cacheRoot "myrepo" false
-        Assert.Equal(1, List.length report)
-        Assert.Equal(crateDir, report.[0].CrateDir)
-        Assert.Equal(Path.Combine(cacheRoot, "myrepo", "foo"), report.[0].SharedPath)
-
-        // No mutation: the plain directory and its stale marker file survive.
-        Assert.True(Directory.Exists(targetDir))
-        Assert.True(File.Exists(Path.Combine(targetDir, "marker.txt")))
-
-        let ciReport = checkTargetShares repoRoot cacheRoot "myrepo" true
-        Assert.Empty(ciReport)
-    finally
-        Directory.Delete(repoRoot, true)
-
-        if Directory.Exists(cacheRoot) then
-            Directory.Delete(cacheRoot, true)
-
-// ---- fixTargetShares ----
+let ``doctor discovers every supplied crate`` () =
+    let w = world () in
+    w.``a repo checkout contains multiple Rust crates under apps and libs outside CI`` ()
+    w.``the developer runs the doctor command with the fix flag`` ()
+    w.``every discovered crate's target is a symlink into the shared cache`` ()
+    w.``no crate is skipped due to a hardcoded crate list`` ()
 
 [<Fact>]
-let ``fixTargetShares creates a symlink into the shared cache`` () =
-    let repoRoot =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-fix-" + Guid.NewGuid().ToString("N"))
-
-    let cacheRoot =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-cache-" + Guid.NewGuid().ToString("N"))
-
-    try
-        let crateDir = makeCrate repoRoot "foo"
-
-        let outcome = fixTargetShares repoRoot cacheRoot "myrepo" false
-        Assert.Equal(1, outcome.Created)
-
-        let target = Path.Combine(crateDir, "target")
-        let expectedShared = Path.Combine(cacheRoot, "myrepo", "foo")
-        Assert.NotNull(DirectoryInfo(target).LinkTarget)
-        Assert.Equal(expectedShared, DirectoryInfo(target).LinkTarget)
-    finally
-        Directory.Delete(repoRoot, true)
-
-        if Directory.Exists(cacheRoot) then
-            Directory.Delete(cacheRoot, true)
+let ``worktrees share one plan path`` () =
+    let w = world () in
+    w.``two worktrees of the same repo each have a crate's target symlinked by the doctor`` ()
+    w.``both symlinks are resolved`` ()
+    w.``both point at the same shared-cache directory for that repo and crate`` ()
+    w.``a disk usage measurement across the worktrees counts that directory only once`` ()
 
 [<Fact>]
-let ``fixTargetShares is idempotent on a second run`` () =
-    let repoRoot =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-fix2-" + Guid.NewGuid().ToString("N"))
-
-    let cacheRoot =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-cache-" + Guid.NewGuid().ToString("N"))
-
-    try
-        let crateDir = makeCrate repoRoot "foo"
-
-        let first = fixTargetShares repoRoot cacheRoot "myrepo" false
-        Assert.Equal(1, first.Created)
-
-        let target = Path.Combine(crateDir, "target")
-        let linkBefore = DirectoryInfo(target).LinkTarget
-
-        let second = fixTargetShares repoRoot cacheRoot "myrepo" false
-        Assert.Equal(1, second.AlreadyCorrect)
-        Assert.Equal(0, second.Created)
-
-        Assert.Equal(linkBefore, DirectoryInfo(target).LinkTarget)
-    finally
-        Directory.Delete(repoRoot, true)
-
-        if Directory.Exists(cacheRoot) then
-            Directory.Delete(cacheRoot, true)
+let ``main checkout plan includes linked worktree`` () =
+    let w = world () in
+    w.``a linked worktree holds a crate whose target is still a plain directory outside CI`` ()
+    w.``the developer runs the doctor command with the fix flag from the main checkout`` ()
+    w.``that linked worktree's crate target becomes a symlink into the shared cache`` ()
+    w.``it resolves to the same shared-cache entry as the main checkout's crate`` ()
 
 [<Fact>]
-let ``fixTargetShares replaces a plain target directory with a symlink`` () =
-    let repoRoot =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-fix3-" + Guid.NewGuid().ToString("N"))
-
-    let cacheRoot =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-cache-" + Guid.NewGuid().ToString("N"))
-
-    try
-        let crateDir = makeCrate repoRoot "foo"
-        let target = Path.Combine(crateDir, "target")
-        Directory.CreateDirectory(target) |> ignore
-        File.WriteAllText(Path.Combine(target, "stale.txt"), "stale artifact")
-
-        let outcome = fixTargetShares repoRoot cacheRoot "myrepo" false
-        Assert.Equal(1, outcome.ReplacedPlainDir)
-        Assert.NotNull(DirectoryInfo(target).LinkTarget)
-
-        let sharedPath = Path.Combine(cacheRoot, "myrepo", "foo")
-        Assert.False(File.Exists(Path.Combine(sharedPath, "stale.txt")))
-    finally
-        Directory.Delete(repoRoot, true)
-
-        if Directory.Exists(cacheRoot) then
-            Directory.Delete(cacheRoot, true)
+let ``build path resolves through planned shared target`` () =
+    let w = world () in
+    w.``a crate's target is a symlink into the shared cache`` ()
+    w.``the developer builds and tests that crate through Cargo`` ()
+    w.``the build emits the expected dist binary`` ()
+    w.``the tests pass without reference to a per-worktree target directory`` ()
 
 [<Fact>]
-let ``fixTargetShares no-ops under CI`` () =
-    let repoRoot =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-fixci-" + Guid.NewGuid().ToString("N"))
-
-    let cacheRoot =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-cache-" + Guid.NewGuid().ToString("N"))
-
-    try
-        let crateDir = makeCrate repoRoot "foo"
-        let target = Path.Combine(crateDir, "target")
-        Directory.CreateDirectory(target) |> ignore
-
-        let outcome = fixTargetShares repoRoot cacheRoot "myrepo" true
-        Assert.True(outcome.SkippedCi)
-        Assert.Equal(0, outcome.Created)
-        Assert.Equal(0, outcome.ReplacedPlainDir)
-        Assert.True(Directory.Exists(target))
-        Assert.Null(DirectoryInfo(target).LinkTarget)
-    finally
-        Directory.Delete(repoRoot, true)
-
-        if Directory.Exists(cacheRoot) then
-            Directory.Delete(cacheRoot, true)
+let ``prune removes orphan`` () =
+    let w = world () in
+    w.``the shared cache holds an entry for a crate that no longer exists in the repo outside CI`` ()
+    w.``the developer runs the doctor command with the prune flag`` ()
+    w.``the orphaned cache entry is deleted`` ()
+    w.``every entry still referenced by a live worktree or checkout is preserved`` ()
 
 [<Fact>]
-let ``fixTargetShares run from the main checkout also shares a linked worktree's crate`` () =
-    let repo = newGitFixture "fix-linked"
-
-    let cacheRoot =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-cache-" + Guid.NewGuid().ToString("N"))
-
-    let linked =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-linked-" + Guid.NewGuid().ToString("N"))
-
-    try
-        makeCrate repo "foo" |> ignore
-        addWorktree repo linked
-        let linkedCrate = makeCrate linked "foo"
-        let linkedTarget = Path.Combine(linkedCrate, "target")
-        Directory.CreateDirectory(linkedTarget) |> ignore
-
-        let outcome = fixTargetShares repo cacheRoot "myrepo" false
-        Assert.Equal(2, outcome.Created)
-
-        let shared = Path.Combine(cacheRoot, "myrepo", "foo")
-        Assert.Equal(shared, DirectoryInfo(linkedTarget).LinkTarget)
-        Assert.Equal(shared, DirectoryInfo(Path.Combine(repo, "apps", "foo", "target")).LinkTarget)
-    finally
-        (try
-            runGit repo [ "worktree"; "remove"; "--force"; linked ]
-         with _ ->
-             ())
-
-        Directory.Delete(repo, true)
-
-        if Directory.Exists(linked) then
-            Directory.Delete(linked, true)
-
-        if Directory.Exists(cacheRoot) then
-            Directory.Delete(cacheRoot, true)
-
-// ---- pruneOrphans ----
+let ``prune preserves live entry`` () =
+    let w = world () in
+    w.``a shared-cache entry is the symlink target of a crate in a live worktree`` ()
+    w.``the developer runs the doctor command with the prune flag`` ()
+    w.``that referenced cache entry is left in place`` ()
+    w.``only entries with no live referrer are removed`` ()
 
 [<Fact>]
-let ``pruneOrphans removes an orphaned shared-cache entry`` () =
-    let repo = newGitFixture "prune-orphan"
-
-    let cacheRoot =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-cache-" + Guid.NewGuid().ToString("N"))
-
-    try
-        let orphanDir = Path.Combine(cacheRoot, "myrepo", "orphan-crate")
-        Directory.CreateDirectory(orphanDir) |> ignore
-        File.WriteAllText(Path.Combine(orphanDir, "marker.txt"), "stale")
-
-        let outcome = pruneOrphans repo cacheRoot "myrepo" false false
-        Assert.Equal<string list>([ orphanDir ], outcome.Deleted)
-        Assert.False(Directory.Exists(orphanDir))
-    finally
-        Directory.Delete(repo, true)
-
-        if Directory.Exists(cacheRoot) then
-            Directory.Delete(cacheRoot, true)
+let ``prune preserves linked-only entry`` () =
+    let w = world () in
+    w.``a shared-cache entry is referenced only by a crate in a separate linked worktree`` ()
+    w.``the developer runs the doctor command with the prune flag`` ()
+    w.``the entry referenced only by the linked worktree is left in place`` ()
+    w.``the orphaned cache entry is deleted`` ()
 
 [<Fact>]
-let ``pruneOrphans fails closed when worktree enumeration fails`` () =
-    let nonRepo =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-nonrepo-" + Guid.NewGuid().ToString("N"))
-
-    let cacheRoot =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-cache-" + Guid.NewGuid().ToString("N"))
-
-    Directory.CreateDirectory(nonRepo) |> ignore
-
-    try
-        let entryDir = Path.Combine(cacheRoot, "myrepo", "some-crate")
-        Directory.CreateDirectory(entryDir) |> ignore
-        File.WriteAllText(Path.Combine(entryDir, "marker.txt"), "keep")
-
-        let outcome = pruneOrphans nonRepo cacheRoot "myrepo" false false
-        Assert.True(outcome.EnumerationFailed)
-        Assert.Empty(outcome.Deleted)
-        Assert.True(Directory.Exists(entryDir))
-    finally
-        Directory.Delete(nonRepo, true)
-
-        if Directory.Exists(cacheRoot) then
-            Directory.Delete(cacheRoot, true)
+let ``prune skips CI`` () =
+    let w = world () in
+    w.``the shared cache holds an entry for a crate that no longer exists in the repo outside CI`` ()
+    w.``the environment variable CI is set`` ()
+    w.``the developer runs the doctor command with the prune flag`` ()
+    w.``no cache entry is deleted`` ()
+    w.``the command exits successfully with a message that CI was detected`` ()
 
 [<Fact>]
-let ``pruneOrphans preserves an entry referenced by a live worktree`` () =
-    let repo = newGitFixture "prune-live"
-
-    let cacheRoot =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-cache-" + Guid.NewGuid().ToString("N"))
-
-    try
-        let liveDir = Path.Combine(cacheRoot, "myrepo", "foo")
-        Directory.CreateDirectory(liveDir) |> ignore
-
-        let crateDir = makeCrate repo "foo"
-
-        Directory.CreateSymbolicLink(Path.Combine(crateDir, "target"), liveDir)
-        |> ignore
-
-        let outcome = pruneOrphans repo cacheRoot "myrepo" false false
-        Assert.Empty(outcome.Deleted)
-        Assert.True(Directory.Exists(liveDir))
-    finally
-        Directory.Delete(repo, true)
-
-        if Directory.Exists(cacheRoot) then
-            Directory.Delete(cacheRoot, true)
+let ``prune dry run only reports candidate`` () =
+    let w = world () in
+    w.``the shared cache holds at least one orphaned entry outside CI`` ()
+    w.``the developer runs the doctor command with the prune and dry-run flags`` ()
+    w.``the orphaned entry is reported as a candidate for deletion`` ()
+    w.``no cache entry is actually removed`` ()
 
 [<Fact>]
-let ``pruneOrphans no-ops under CI`` () =
-    let repoRoot =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-pruneci-" + Guid.NewGuid().ToString("N"))
-
-    let cacheRoot =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-cache-" + Guid.NewGuid().ToString("N"))
-
-    Directory.CreateDirectory(repoRoot) |> ignore
-
-    try
-        let orphanDir = Path.Combine(cacheRoot, "myrepo", "orphan-crate")
-        Directory.CreateDirectory(orphanDir) |> ignore
-
-        let outcome = pruneOrphans repoRoot cacheRoot "myrepo" false true
-        Assert.True(outcome.SkippedCi)
-        Assert.Empty(outcome.Deleted)
-        Assert.True(Directory.Exists(orphanDir))
-    finally
-        Directory.Delete(repoRoot, true)
-
-        if Directory.Exists(cacheRoot) then
-            Directory.Delete(cacheRoot, true)
-
-[<Fact>]
-let ``pruneOrphans dry-run reports without deleting`` () =
-    let repo = newGitFixture "prune-dry"
-
-    let cacheRoot =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-cache-" + Guid.NewGuid().ToString("N"))
-
-    try
-        let orphanDir = Path.Combine(cacheRoot, "myrepo", "orphan-crate")
-        Directory.CreateDirectory(orphanDir) |> ignore
-
-        let outcome = pruneOrphans repo cacheRoot "myrepo" true false
-        Assert.Equal<string list>([ orphanDir ], outcome.Candidates)
-        Assert.Empty(outcome.Deleted)
-        Assert.True(Directory.Exists(orphanDir))
-    finally
-        Directory.Delete(repo, true)
-
-        if Directory.Exists(cacheRoot) then
-            Directory.Delete(cacheRoot, true)
-
-// ---- sweepStale ----
-
-[<Fact>]
-let ``sweepStale reports Skipped when cargo-sweep is absent`` () =
-    let cacheRoot =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-sweep-" + Guid.NewGuid().ToString("N"))
-
-    Directory.CreateDirectory(cacheRoot) |> ignore
-
-    try
-        let outcome = sweepStale cacheRoot "myrepo" false false false
-        Assert.True(outcome.Skipped)
-        Assert.False(outcome.Ran)
-    finally
-        if Directory.Exists(cacheRoot) then
-            Directory.Delete(cacheRoot, true)
-
-[<Fact>]
-let ``sweepStale is CI-guarded even when cargo-sweep is present`` () =
-    let cacheRoot =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-sweep2-" + Guid.NewGuid().ToString("N"))
-
-    Directory.CreateDirectory(cacheRoot) |> ignore
-
-    try
-        let outcome = sweepStale cacheRoot "myrepo" false true true
-        Assert.True(outcome.SkippedCi)
-        Assert.False(outcome.Ran)
-        Assert.False(outcome.Skipped)
-    finally
-        if Directory.Exists(cacheRoot) then
-            Directory.Delete(cacheRoot, true)
-
-// ---- format* ----
-
-[<Fact>]
-let ``formatCheckReport reports CI skip`` () =
-    Assert.Contains("CI detected", formatCheckReport [] true)
-
-[<Fact>]
-let ``formatCheckReport reports crates needing sharing`` () =
-    let text =
-        formatCheckReport
-            [ { CrateDir = "apps/foo"
-                SharedPath = "/cache/myrepo/foo" } ]
-            false
-
-    Assert.Contains("1 crate(s) need sharing", text)
-    Assert.Contains("apps/foo", text)
-
-[<Fact>]
-let ``formatFixReport reports the created/already-correct/replaced counts`` () =
-    let text =
-        formatFixReport
-            { Created = 1
-              AlreadyCorrect = 2
-              ReplacedPlainDir = 1
-              SkippedCi = false }
-
-    Assert.Contains("1 created", text)
-    Assert.Contains("2 already correct", text)
-    Assert.Contains("1 plain dir(s) replaced", text)
-
-[<Fact>]
-let ``formatPruneReport reports candidates under dry-run`` () =
-    let text =
-        formatPruneReport
-            { Deleted = []
-              Preserved = []
-              Candidates = [ "/cache/myrepo/orphan" ]
-              SkippedCi = false
-              EnumerationFailed = false }
-            true
-
-    Assert.Contains("candidate", text)
-    Assert.Contains("/cache/myrepo/orphan", text)
-
-[<Fact>]
-let ``formatSweepReport is empty when the sweep ran`` () =
-    Assert.Equal(
-        "",
-        formatSweepReport
-            { Skipped = false
-              SkippedCi = false
-              Ran = true }
-    )
-
-// ---- Additional plain unit tests targeting coverage gaps not reached
-// above: cacheRootFrom's degenerate no-override/no-home case, repoName's
-// no-parent case, removeExistingEntry's symlink and plain-file branches
-// (exercised through fixTargetShares), worktreeRoots' git-spawn-failure
-// branch (exercised through pruneOrphans), fixTargetShares'
-// CreateSymbolicLink exception handler, cargoSweepPresent's null-PATH case,
-// sweepStale's dry-run and real-execution branches, and
-// formatPruneReport's enumeration-failed message.
-
-[<Fact>]
-let ``cacheRootFrom falls back to a relative default when neither override nor home is given`` () =
-    Assert.Equal(Path.Combine(".cache", "ose-cargo-target"), cacheRootFrom None None)
-
-[<Fact>]
-let ``repoName returns empty for a common dir with no parent`` () = Assert.Equal("", repoName "/")
-
-[<Fact>]
-let ``fixTargetShares replaces an incorrectly-targeted symlink without counting it as a plain dir`` () =
-    let repoRoot =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-fixsym-" + Guid.NewGuid().ToString("N"))
-
-    let cacheRoot =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-cache-" + Guid.NewGuid().ToString("N"))
-
-    let wrongDir =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-wrong-" + Guid.NewGuid().ToString("N"))
-
-    try
-        let crateDir = makeCrate repoRoot "foo"
-        let target = Path.Combine(crateDir, "target")
-        Directory.CreateDirectory(wrongDir) |> ignore
-        Directory.CreateSymbolicLink(target, wrongDir) |> ignore
-
-        let outcome = fixTargetShares repoRoot cacheRoot "myrepo" false
-        Assert.Equal(1, outcome.Created)
-        Assert.Equal(0, outcome.ReplacedPlainDir)
-
-        let expectedShared = Path.Combine(cacheRoot, "myrepo", "foo")
-        Assert.Equal(expectedShared, DirectoryInfo(target).LinkTarget)
-    finally
-        Directory.Delete(repoRoot, true)
-
-        if Directory.Exists(cacheRoot) then
-            Directory.Delete(cacheRoot, true)
-
-        if Directory.Exists(wrongDir) then
-            Directory.Delete(wrongDir, true)
-
-[<Fact>]
-let ``fixTargetShares replaces a plain file sitting at the target path`` () =
-    let repoRoot =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-fixfile-" + Guid.NewGuid().ToString("N"))
-
-    let cacheRoot =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-cache-" + Guid.NewGuid().ToString("N"))
-
-    try
-        let crateDir = makeCrate repoRoot "foo"
-        let target = Path.Combine(crateDir, "target")
-        File.WriteAllText(target, "not a directory")
-
-        let outcome = fixTargetShares repoRoot cacheRoot "myrepo" false
-        Assert.Equal(1, outcome.Created)
-        Assert.Equal(0, outcome.ReplacedPlainDir)
-        Assert.NotNull(DirectoryInfo(target).LinkTarget)
-    finally
-        Directory.Delete(repoRoot, true)
-
-        if Directory.Exists(cacheRoot) then
-            Directory.Delete(cacheRoot, true)
-
-[<Fact>]
-let ``fixTargetShares silently skips a crate whose directory cannot be written to`` () =
-    let repoRoot =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-fixperm-" + Guid.NewGuid().ToString("N"))
-
-    let cacheRoot =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-cache-" + Guid.NewGuid().ToString("N"))
-
-    let crateDir = makeCrate repoRoot "foo"
-
-    try
-        File.SetUnixFileMode(crateDir, UnixFileMode.UserRead ||| UnixFileMode.UserExecute)
-
-        let outcome = fixTargetShares repoRoot cacheRoot "myrepo" false
-        Assert.Equal(0, outcome.Created)
-        Assert.Equal(0, outcome.AlreadyCorrect)
-        Assert.Equal(0, outcome.ReplacedPlainDir)
-    finally
-        File.SetUnixFileMode(crateDir, UnixFileMode.UserRead ||| UnixFileMode.UserWrite ||| UnixFileMode.UserExecute)
-
-        Directory.Delete(repoRoot, true)
-
-        if Directory.Exists(cacheRoot) then
-            Directory.Delete(cacheRoot, true)
-
-[<Fact>]
-let ``pruneOrphans fails closed when the git binary cannot be invoked at all`` () =
-    let repo = newGitFixture "prune-nogit"
-
-    let cacheRoot =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-cache-" + Guid.NewGuid().ToString("N"))
-
-    let originalPath = Environment.GetEnvironmentVariable("PATH")
-
-    try
-        let entryDir = Path.Combine(cacheRoot, "myrepo", "some-crate")
-        Directory.CreateDirectory(entryDir) |> ignore
-
-        Environment.SetEnvironmentVariable("PATH", "")
-        let outcome = pruneOrphans repo cacheRoot "myrepo" false false
-        Assert.True(outcome.EnumerationFailed)
-        Assert.Empty(outcome.Deleted)
-    finally
-        Environment.SetEnvironmentVariable("PATH", originalPath)
-        Directory.Delete(repo, true)
-
-        if Directory.Exists(cacheRoot) then
-            Directory.Delete(cacheRoot, true)
-
-// ---- cargoSweepPresent / sweepStale ----
-
-[<Fact>]
-let ``cargoSweepPresent returns false when PATH is unset`` () =
-    let originalPath = Environment.GetEnvironmentVariable("PATH")
-
-    try
-        Environment.SetEnvironmentVariable("PATH", null)
-        Assert.False(cargoSweepPresent ())
-    finally
-        Environment.SetEnvironmentVariable("PATH", originalPath)
-
-[<Fact>]
-let ``sweepStale reports an unstarted run when cargo-sweep is present but dry-run is requested`` () =
-    let cacheRoot =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-sweep3-" + Guid.NewGuid().ToString("N"))
-
-    Directory.CreateDirectory(cacheRoot) |> ignore
-
-    try
-        let outcome = sweepStale cacheRoot "myrepo" true true false
-        Assert.False(outcome.Skipped)
-        Assert.False(outcome.SkippedCi)
-        Assert.False(outcome.Ran)
-    finally
-        Directory.Delete(cacheRoot, true)
-
-[<Fact>]
-let ``sweepStale reports Ran when cargo-sweep is present and a real run is requested`` () =
-    let cacheRoot =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-sweep4-" + Guid.NewGuid().ToString("N"))
-
-    Directory.CreateDirectory(cacheRoot) |> ignore
-
-    try
-        let outcome = sweepStale cacheRoot "myrepo" false true false
-        Assert.True(outcome.Ran)
-        Assert.False(outcome.Skipped)
-        Assert.False(outcome.SkippedCi)
-    finally
-        Directory.Delete(cacheRoot, true)
-
-// ---- formatPruneReport ----
-
-[<Fact>]
-let ``formatPruneReport reports enumeration failure`` () =
-    let text =
-        formatPruneReport
-            { Deleted = []
-              Preserved = []
-              Candidates = []
-              SkippedCi = false
-              EnumerationFailed = true }
-            false
-
-    Assert.Contains("could not enumerate worktrees", text)
-
-// ---- Additional coverage-gap-closing tests: parseLineWord's out-of-range
-// word index, and sweepStale's genuine (non-mocked) subprocess execution
-// path when a real cargo-sweep binary is reachable on PATH. ----
-
-[<Fact>]
-let ``parseLineWord returns empty when the matched line has fewer words than the requested index`` () =
-    Assert.Equal("", parseLineWord "rustc\n" "rustc" 1 "")
-
-[<Fact>]
-let ``sweepStale actually invokes cargo-sweep when a real binary is reachable on PATH`` () =
-    let fakeBinDir =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-fakebin-" + Guid.NewGuid().ToString("N"))
-
-    Directory.CreateDirectory fakeBinDir |> ignore
-    let fakeScript = Path.Combine(fakeBinDir, "cargo-sweep")
-    let markerFile = Path.Combine(fakeBinDir, "ran.marker")
-    File.WriteAllText(fakeScript, sprintf "#!/bin/sh\ntouch \"%s\"\nexit 0\n" markerFile)
-
-    File.SetUnixFileMode(
-        fakeScript,
-        UnixFileMode.UserRead
-        ||| UnixFileMode.UserWrite
-        ||| UnixFileMode.UserExecute
-        ||| UnixFileMode.GroupRead
-        ||| UnixFileMode.GroupExecute
-        ||| UnixFileMode.OtherRead
-        ||| UnixFileMode.OtherExecute
-    )
-
-    let cacheRoot =
-        Path.Combine(Path.GetTempPath(), "rhino-cli-doctor-sweep5-" + Guid.NewGuid().ToString("N"))
-
-    Directory.CreateDirectory cacheRoot |> ignore
-    let originalPath = Environment.GetEnvironmentVariable("PATH")
-
-    try
-        Environment.SetEnvironmentVariable("PATH", fakeBinDir + string Path.PathSeparator + originalPath)
-        let outcome = sweepStale cacheRoot "myrepo" false true false
-        Assert.True(outcome.Ran)
-        Assert.True(File.Exists markerFile, "expected cargo-sweep to actually run and create the marker file")
-    finally
-        Environment.SetEnvironmentVariable("PATH", originalPath)
-        Directory.Delete(fakeBinDir, true)
-        Directory.Delete(cacheRoot, true)
+let ``sweep absence degrades gracefully`` () =
+    let w = world () in
+    w.``cargo-sweep is not installed on the developer's PATH`` ()
+    w.RunSweep()
+    w.``the sweep step is reported as skipped rather than failing the command`` ()
+    w.``the command exits successfully`` ()

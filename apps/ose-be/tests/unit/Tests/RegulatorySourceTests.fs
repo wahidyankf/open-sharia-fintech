@@ -7,7 +7,6 @@ open OseBe.Contexts.RegulatorySource.Domain
 open OseBe.Contexts.RegulatorySource.Api
 open OseBe.Tests.Unit.Steps.BddState
 
-// @covers specs/apps/ose/be/behaviors/regulatory-source/regulatory-source.feature:Regulatory source context is declared
 [<Fact>]
 let ``regulatory-source reports ready to accept regulatory documents`` () =
     let readiness = initializeContext ()

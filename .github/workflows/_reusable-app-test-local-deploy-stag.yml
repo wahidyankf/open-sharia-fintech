@@ -42,16 +42,29 @@ permissions:
 
 jobs:
   specs-coverage:
-    name: Spec coverage
+    name: Static behaviour coverage
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-node
-      - name: Run specs:behavior:coverage for the app group
+      - name: Validate every app-group adapter without running tests
         run: |
-          npx nx run ${{ inputs.be-project }}:specs:behavior:coverage
-          npx nx run ${{ inputs.web-project }}:specs:behavior:coverage
+          npx nx run ${{ inputs.be-project }}:test:coverage
+          npx nx run ${{ inputs.web-project }}:test:coverage
+          npx nx run ${{ inputs.be-project }}-e2e:test:coverage
+          npx nx run ${{ inputs.web-project }}-e2e:test:coverage
+
+  quick:
+    name: Quick gate (Unit + static coverage)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/setup-dotnet
+      - run: npx nx run ${{ inputs.be-project }}:test:quick
+      - run: npx nx run ${{ inputs.web-project }}:test:quick
 
   fe-lint:
     name: FE lint
@@ -64,6 +77,7 @@ jobs:
 
   be-integration:
     name: BE integration tests
+    needs: [quick, specs-coverage]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     environment: ${{ inputs.environment }}
@@ -72,40 +86,16 @@ jobs:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-node
 
-      - name: Generate contract types for backend
-        run: |
-          npx nx run ${{ inputs.contracts-project }}:bundle
-          npx nx run ${{ inputs.be-project }}:codegen
-
       - name: Run integration tests
-        run: |
-          docker compose -f apps/${{ inputs.be-project }}/docker-compose.integration.yml down -v 2>/dev/null || true
-          docker compose -f apps/${{ inputs.be-project }}/docker-compose.integration.yml up --abort-on-container-exit --build
+        run: npx nx run ${{ inputs.be-project }}:test:integration
 
       - name: Teardown integration
         if: always()
         run: docker compose -f apps/${{ inputs.be-project }}/docker-compose.integration.yml down -v
 
-  fe-integration:
-    name: FE integration tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-
-    steps:
-      - uses: actions/checkout@v6
-      - uses: ./.github/actions/setup-node
-
-      - name: Generate contract types
-        run: |
-          npx nx run ${{ inputs.contracts-project }}:bundle
-          npx nx run ${{ inputs.web-project }}:codegen
-
-      - name: Run integration tests
-        run: npx nx run ${{ inputs.web-project }}:test:integration
-
   e2e:
     name: E2E tests (BE + FE)
-    needs: [be-integration, fe-integration]
+    needs: [be-integration]
     runs-on: ubuntu-latest
     timeout-minutes: 35
     environment: ${{ inputs.environment }}
@@ -197,7 +187,7 @@ jobs:
 
   deploy:
     name: Deploy to staging (force-push web + be branches)
-    needs: [specs-coverage, fe-lint, be-integration, fe-integration, e2e, specs-gate]
+    needs: [specs-coverage, quick, fe-lint, be-integration, e2e, specs-gate]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6

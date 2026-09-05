@@ -21,7 +21,7 @@ not for hotfixes.
 
 Choose the test form that matches the defect:
 
-- **Behavioral / functional bug** -- add a Gherkin scenario in `specs/**` plus the unit,
+- **Behavioural / functional bug** -- add a Gherkin scenario in `specs/**` plus the unit,
   integration, or E2E test that consumes it.
 - **Visual / UI regression** -- add a DOM assertion, computed-style assertion, or Playwright
   snapshot assertion.
@@ -41,7 +41,7 @@ test run -- whether you are running one of the three live-site tester agents or 
 exploratory testing:
 
 1. **Shared-control x surface matrix** -- exercise every shared control on every surface it
-   appears on and assert consistent behavior across all of them.
+   appears on and assert consistent behaviour across all of them.
 2. **Per-control URL round-trip** -- change every interactive control, verify the URL updates,
    reload, and verify the state restores.
 3. **Declared-invariant conformance** -- extract invariants from `specs/**`, source comments,
@@ -65,5 +65,5 @@ exploratory testing:
   the SSOT practice the three tester agents and the `web-ux-test-fixing-planning` workflow implement
 - [Feature Change Completeness Convention](../../repo-governance/development/quality/feature-change-completeness.md) --
   the feature-change companion to the regression test mandate
-- [Three-Level Testing Standard](../../repo-governance/development/quality/three-level-testing-standard.md) --
+- [Behaviour-Driven Development](../../repo-governance/development/behaviour-driven-development.md) --
   which test level to use for each defect type

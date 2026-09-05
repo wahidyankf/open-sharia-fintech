@@ -18,7 +18,7 @@ when_to_use: Use when diagnosing a "works on my machine but not CI/others" repro
 
 ## Common Issues
 
-**"Different behavior locally vs CI"**:
+**"Different behaviour locally vs CI"**:
 
 - Check Node.js/npm versions match
 - Verify using npm ci (not npm install)

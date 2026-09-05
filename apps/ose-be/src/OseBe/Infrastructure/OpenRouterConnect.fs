@@ -16,9 +16,8 @@ open OseBe.Infrastructure.OpenRouterClient
 /// Error rather than issuing an unauthenticated request — that guard clause is
 /// unit-tested directly in Tests/OpenRouterClientTests.fs, with no network
 /// required. The live-HTTP branches beyond it require a real OpenRouter
-/// endpoint and are not yet exercised by any e2e spec (ai-orchestration and
-/// gap-analysis are still context-boundary stubs — see their `@unit`-tagged
-/// feature files). Kept in its own file (rather than alongside the pure,
+/// endpoint and are not yet exercised by any E2E spec. Kept in its own file
+/// (rather than alongside the pure,
 /// fully unit-tested `loadConfig`/`isConfigured` in OpenRouterClient.fs) so
 /// the project-level coverage `/p:ExcludeByFile` can exclude exactly this
 /// live-network surface.

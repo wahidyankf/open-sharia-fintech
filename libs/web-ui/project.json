@@ -20,37 +20,53 @@
     "test:unit": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "if grep -rn -E --include='*.ts' --include='*.tsx' --exclude-dir=node_modules --exclude-dir=.next --exclude-dir=dist --exclude-dir=coverage --exclude-dir=storybook-static '\\b(it|test|describe)\\.(skip|only|todo)\\(' .; then echo 'ERROR: .skip()/.only()/.todo() found in test files above - remove before merging'; exit 1; fi && npx vitest run --coverage",
-        "cwd": "libs/web-ui"
-      }
-    },
-    "test:coverage": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "npx vitest run --coverage --coverage.thresholds.lines=99",
+        "command": "if grep -rn -E --include='*.ts' --include='*.tsx' --exclude-dir=node_modules --exclude-dir=.next --exclude-dir=dist --exclude-dir=coverage --exclude-dir=storybook-static '\\b(it|test|describe)\\.(skip|only|todo)\\(' .; then echo 'ERROR: .skip()/.only()/.todo() found in test files above - remove before merging'; exit 1; fi && npx vitest run --coverage --coverage.thresholds.lines=99",
         "cwd": "libs/web-ui"
       },
       "cache": true,
-      "outputs": ["{projectRoot}/coverage"],
-      "inputs": ["{projectRoot}/src/**/*", "{projectRoot}/tests/unit/**/*"]
+      "inputs": ["{projectRoot}/src/**/*", "{projectRoot}/tests/unit/**/*"],
+      "outputs": ["{projectRoot}/coverage"]
     },
     "test:quick": {
       "executor": "nx:run-commands",
-      "cache": true,
       "options": {
         "commands": [
-          "npx nx run web-ui:typecheck",
-          "npx nx run web-ui:lint",
-          "npx nx run web-ui:test:unit",
-          "npx nx run web-ui:test:coverage",
-          "npx nx run web-ui:test:specs",
-          "npx nx run web-ui:test:layout:validation",
-          "npx nx run web-ui:coverage:policy:validation",
-          "npx nx run web-ui:package-manifest:policy:validation"
+          {
+            "command": "npm exec -- nx run web-ui:typecheck",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run web-ui:lint",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run web-ui:test:unit",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run web-ui:specs:structure-validation",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run web-ui:test:coverage",
+            "forwardAllArgs": false
+          }
         ],
-        "parallel": false
+        "parallel": false,
+        "forwardAllArgs": false
       },
-      "inputs": ["default", "specs"]
+      "cache": true,
+      "inputs": [
+        "default",
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/libs/web-ui/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/libs/web-ui/behaviours/**/*.feature",
+        "{workspaceRoot}/libs/web-ui/tests/unit/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/web-ui/vitest.config.ts",
+        "{workspaceRoot}/libs/web-ui/tests/e2e/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/web-ui/tests/e2e/playwright.config.ts"
+      ]
     },
     "storybook": {
       "executor": "nx:run-commands",
@@ -68,79 +84,6 @@
       },
       "outputs": ["{projectRoot}/storybook-static"]
     },
-    "test:integration": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "npx playwright test --config tests/integration/playwright.config.ts",
-        "cwd": "libs/web-ui"
-      },
-      "cache": true,
-      "outputs": ["{projectRoot}/tests/integration/test-results"]
-    },
-    "test:e2e": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "echo 'no-op: target not applicable for this project'"
-      },
-      "cache": true
-    },
-    "specs:behavior:coverage": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate specs/libs/web-ui/behaviors libs/web-ui"
-      },
-      "cache": true,
-      "inputs": ["{workspaceRoot}/specs/libs/web-ui/behaviors/**/*.feature", "{projectRoot}/src/**/*.{ts,tsx}"]
-    },
-    "test:behavior:coverage:unit": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract bdd validate --project web-ui --adapter unit"
-      },
-      "cache": true,
-      "inputs": [
-        "{workspaceRoot}/specs/libs/web-ui/behaviors/**/*.feature",
-        "{workspaceRoot}/repo-config.yml",
-        "default"
-      ]
-    },
-    "test:behavior:coverage:integration": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract bdd validate --project web-ui --adapter integration"
-      },
-      "cache": true,
-      "inputs": [
-        "{workspaceRoot}/specs/libs/web-ui/behaviors/**/*.feature",
-        "{workspaceRoot}/repo-config.yml",
-        "default"
-      ]
-    },
-    "test:behavior:coverage:e2e": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract bdd validate --project web-ui --adapter e2e"
-      },
-      "cache": true,
-      "inputs": [
-        "{workspaceRoot}/specs/libs/web-ui/behaviors/**/*.feature",
-        "{workspaceRoot}/repo-config.yml",
-        "default"
-      ]
-    },
-    "test:behavior:coverage": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "npx nx run web-ui:test:behavior:coverage:unit",
-          "npx nx run web-ui:test:behavior:coverage:integration",
-          "npx nx run web-ui:test:behavior:coverage:e2e"
-        ],
-        "parallel": false
-      },
-      "dependsOn": ["test:behavior:coverage:unit", "test:behavior:coverage:integration", "test:behavior:coverage:e2e"],
-      "cache": true
-    },
     "specs:structure-validation": {
       "executor": "nx:run-commands",
       "options": {
@@ -148,15 +91,6 @@
       },
       "cache": true,
       "inputs": ["{workspaceRoot}/specs/libs/web-ui/**/*"]
-    },
-    "test:specs": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": ["npx nx run web-ui:specs:structure-validation", "npx nx run web-ui:specs:behavior:coverage"],
-        "parallel": false
-      },
-      "cache": true,
-      "inputs": ["{workspaceRoot}/specs/libs/web-ui/**/*", "{projectRoot}/src/**/*.{ts,tsx}", "specs"]
     },
     "deps:audit": {
       "executor": "nx:run-commands",
@@ -172,33 +106,101 @@
       },
       "cache": true
     },
-    "test:layout:validation": {
+    "test:e2e": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract layout validate --project web-ui"
+        "command": "npx bddgen --config tests/e2e/playwright.config.ts && npx playwright test --config tests/e2e/playwright.config.ts",
+        "cwd": "libs/web-ui"
       },
       "cache": true,
-      "inputs": ["default", "{projectRoot}/project.json"]
+      "outputs": ["{projectRoot}/tests/e2e/test-results"]
     },
-    "coverage:policy:validation": {
+    "test:coverage:unit": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract coverage validate --project web-ui"
+        "command": "node scripts/behaviour-coverage.mjs --config libs/web-ui/behaviour-coverage.json --adapter unit"
       },
       "cache": true,
-      "inputs": ["default", "{projectRoot}/project.json"]
+      "inputs": [
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/libs/web-ui/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/libs/web-ui/behaviours/**/*.feature",
+        "{workspaceRoot}/libs/web-ui/tests/unit/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/web-ui/vitest.config.ts",
+        "{workspaceRoot}/libs/web-ui/tests/e2e/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/web-ui/tests/e2e/playwright.config.ts"
+      ]
     },
-    "package-manifest:policy:validation": {
+    "test:coverage:e2e": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract manifest validate --project web-ui"
+        "command": "node scripts/behaviour-coverage.mjs --config libs/web-ui/behaviour-coverage.json --adapter e2e"
       },
       "cache": true,
-      "inputs": ["default", "{projectRoot}/project.json"]
+      "inputs": [
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/libs/web-ui/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/libs/web-ui/behaviours/**/*.feature",
+        "{workspaceRoot}/libs/web-ui/tests/unit/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/web-ui/vitest.config.ts",
+        "{workspaceRoot}/libs/web-ui/tests/e2e/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/web-ui/tests/e2e/playwright.config.ts"
+      ]
+    },
+    "test:coverage:behaviour": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node scripts/behaviour-coverage.mjs --config libs/web-ui/behaviour-coverage.json --adapter behaviour"
+      },
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/libs/web-ui/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/libs/web-ui/behaviours/**/*.feature",
+        "{workspaceRoot}/libs/web-ui/tests/unit/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/web-ui/vitest.config.ts",
+        "{workspaceRoot}/libs/web-ui/tests/e2e/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/web-ui/tests/e2e/playwright.config.ts"
+      ]
+    },
+    "test:coverage": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "npm exec -- nx run web-ui:test:coverage:unit",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run web-ui:test:coverage:e2e",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run web-ui:test:coverage:behaviour",
+            "forwardAllArgs": false
+          }
+        ],
+        "parallel": false,
+        "forwardAllArgs": false
+      },
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/libs/web-ui/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/libs/web-ui/behaviours/**/*.feature",
+        "{workspaceRoot}/libs/web-ui/tests/unit/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/web-ui/vitest.config.ts",
+        "{workspaceRoot}/libs/web-ui/tests/e2e/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/web-ui/tests/e2e/playwright.config.ts"
+      ]
     }
   },
   "namedInputs": {
-    "specs": ["{workspaceRoot}/specs/libs/web-ui/behaviors/**/*.feature"]
+    "specs": ["{workspaceRoot}/specs/libs/web-ui/behaviours/**/*.feature"]
   },
   "tags": ["type:lib", "lang:ts", "domain:ui"]
 }

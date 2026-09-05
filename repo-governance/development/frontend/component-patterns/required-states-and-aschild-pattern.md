@@ -10,7 +10,7 @@ tags:
   - cva
   - shadcn
 created: 2026-03-28
-when_to_use: Use when styling an interactive component's states, or when a component needs to merge its behavior onto an arbitrary consumer element.
+when_to_use: Use when styling an interactive component's states, or when a component needs to merge its behaviour onto an arbitrary consumer element.
 ---
 
 # Required States and the asChild Pattern
@@ -34,7 +34,7 @@ Encode all state styles in the `cva()` base string or in named variants — neve
 
 ## `asChild` Pattern
 
-The `asChild` prop delegates rendering to the consumer's element via `Slot.Root`. Use it when the component must merge its behavior onto an arbitrary element (e.g., wrapping a Next.js `Link` in a `Button`).
+The `asChild` prop delegates rendering to the consumer's element via `Slot.Root`. Use it when the component must merge its behaviour onto an arbitrary element (e.g., wrapping a Next.js `Link` in a `Button`).
 
 ```tsx
 import { Slot } from "radix-ui";

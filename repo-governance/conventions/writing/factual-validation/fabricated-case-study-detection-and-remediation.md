@@ -61,7 +61,7 @@ across 15 service classes were consolidated into domain objects.
 Anemic models lead to scattered business logic that's hard to maintain and test.
 Martin Fowler identified the Anemic Domain Model as an anti-pattern in 2003,
 noting that it violates object-oriented principles by separating data from the
-behavior that operates on it. When business rules live in service classes rather
+behaviour that operates on it. When business rules live in service classes rather
 than domain objects, they become invisible to domain experts, harder to test in
 isolation, and prone to duplication across services.
 ```

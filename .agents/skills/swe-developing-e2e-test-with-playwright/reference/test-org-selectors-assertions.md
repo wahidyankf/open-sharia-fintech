@@ -29,7 +29,7 @@ tests/
 
 - Test files: `*.spec.ts` (e.g., `login.spec.ts`)
 - Page objects: `PascalCase` (e.g., `LoginPage.ts`)
-- Test descriptions: Behavior-focused (e.g., "successful login redirects to dashboard")
+- Test descriptions: Behaviour-focused (e.g., "successful login redirects to dashboard")
 
 ## Selectors (Accessibility-First)
 

@@ -37,6 +37,7 @@ import { OPERATORS } from "@/features/ai-benchmark/core/data/operators";
 import {
   BAND_LABEL_KEYS,
   BENCHMARK_COLUMNS,
+  GRADE_LABEL_KEYS,
   HARNESS_DISPLAY_NAMES,
 } from "@/features/ai-benchmark/core/data/benchmarks";
 import {
@@ -73,7 +74,7 @@ import { ModelTable } from "@/features/ai-benchmark/shell/model-table";
 import { ModelCard } from "@/features/ai-benchmark/shell/model-card";
 import { computeScoreViews } from "@/features/ai-benchmark/shell/model-figures";
 import { BenchmarkChart } from "@/features/ai-benchmark/shell/benchmark-chart";
-import { bandLabel } from "@/features/ai-benchmark/shell/chart-primitives";
+import { bandBarBgClass, bandInkTextClass, bandLabel } from "@/features/ai-benchmark/shell/chart-primitives";
 import { formatCoverage, formatIndex, formatPriceUsd } from "@/features/ai-benchmark/shell/format";
 import { BANDS, filterModels } from "@/features/ai-benchmark/core/filter";
 import { lowestRate } from "@/features/ai-benchmark/core/price";
@@ -98,7 +99,7 @@ import type { Locale } from "@/features/i18n/core/config";
 // phases — only what this phase implements is bound here.
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviours/frontend/tools/ai-benchmark.feature"),
 );
 
 // ─── Fixture builders (Z-17: one shared helper set) ────────────────────────────
@@ -187,6 +188,13 @@ type Ctx = {
   cardContainer?: Element;
   // A rendered <ModelTable>'s own container, for the AC-54 card/table parity comparison.
   tableContainer?: Element;
+  // Declarative UI contracts captured by Unit scenarios whose pixel-level counterpart runs in a
+  // real browser. These are deliberately DOM nodes/class lists from production components, not
+  // copied constants or scenario-name lookups.
+  inspectedElements?: Element[];
+  inspectedClassNames?: string[];
+  viewportWidth?: number;
+  viewportHeight?: number;
 };
 
 /** Every formatted figure value rendered anywhere inside `root` (Phase 6, AC-54 parity). */
@@ -290,7 +298,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       ctx.band = assignBand(ctx.model!, ctx.indices!, ctx.anchorIndices!);
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A model reaching the opus anchor renders in the opus band
     Then('that model belongs to the "opus" band', () => {
       expect(ctx.band).toBe("opus");
     });
@@ -318,7 +325,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       ctx.band = assignBand(ctx.model!, ctx.indices!, ctx.anchorIndices!);
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A model between the two anchors renders in the sonnet band
     Then('that model belongs to the "sonnet" band', () => {
       expect(ctx.band).toBe("sonnet");
     });
@@ -340,7 +346,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       ctx.band = assignBand(ctx.model!, ctx.indices!, ctx.anchorIndices!);
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A model below the sonnet anchor renders in the haiku band
     Then('that model belongs to the "haiku" band', () => {
       expect(ctx.band).toBe("haiku");
     });
@@ -367,7 +372,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       bands.sonnet = assignBand(sonnetAnchor, perverseIndices, perverse);
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:Each anchor model occupies the band it defines
     Then('the opus anchor belongs to the "opus" band', () => {
       expect(bands.opus).toBe("opus");
     });
@@ -391,7 +395,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       ctx.band = assignBand(ctx.model!, { [ctx.model!.id]: ctx.index }, liveAnchors);
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A model with no published benchmark score renders in the unrated group
     Then('that model belongs to the "unrated" group', () => {
       expect(ctx.band).toBe("unrated");
     });
@@ -405,14 +408,13 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
   Scenario("Every roster model belongs to exactly one capability group", ({ Given, When, Then }) => {
     Given("the full roster is loaded", () => {
-      // dataset is the full roster.
+      ctx.fixtureDataset = dataset;
     });
 
     When("the capability groups are computed", () => {
       ctx.groups = computeGroups(dataset);
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:Every roster model belongs to exactly one capability group
     Then('each model appears in exactly one of "opus", "sonnet", "haiku", or "unrated"', () => {
       const g = ctx.groups!;
       const placed = [...g.opus, ...g.sonnet, ...g.haiku, ...g.unrated].map((s) => s.model.id);
@@ -428,14 +430,13 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     let identifiers: readonly string[] = [];
 
     Given("the full roster is loaded", () => {
-      // dataset is the full roster.
+      ctx.fixtureDataset = dataset;
     });
 
     When("the set of known capability class identifiers is inspected", () => {
       identifiers = BANDS;
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The rated capability classes are named opus, sonnet, and haiku
     Then('the identifiers are exactly "opus", "sonnet", "haiku", and "unrated"', () => {
       expect(identifiers).toEqual(["opus", "sonnet", "haiku", "unrated"]);
     });
@@ -464,7 +465,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       ctx.coverageRatio = coverage(twoOfFour);
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A model missing a benchmark is scored over the benchmarks it has
     Then("the index equals the weight-renormalized mean of those two normalized scores", () => {
       const relSv = (100 * 64) / 80;
       const relGpqa = (100 * 40) / 80;
@@ -520,7 +520,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
         renderWithSort({ ...ctx.sortState!, opus: ctx.requestedSortMode ?? "price-asc" });
       });
 
-      // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:Models are ordered identically before and after a sort change within a band
       Then("every model previously in the opus band still appears in the opus band", () => {
         const after = rowOrderWithin("benchmark-chart-band-opus");
         for (const id of ctx.opusOrderBefore!) {
@@ -553,7 +552,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       renderPageForLocale(ctx.locale ?? "en");
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The English page renders its localized heading
     Then("the page shows a level-one heading in English", () => {
       const h1 = screen.getByRole("heading", { level: 1 });
       expect(h1.textContent).toBe(t("en", "aiBenchTitle"));
@@ -575,7 +573,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       renderPageForLocale(ctx.locale ?? "id");
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The Indonesian page renders its localized heading
     Then("the page shows a level-one heading in Indonesian", () => {
       const h1 = screen.getByRole("heading", { level: 1 });
       expect(h1.textContent).toBe(t("id", "aiBenchTitle"));
@@ -592,14 +589,13 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
   Scenario("The data table is present without any interaction", ({ Given, When, Then, And }) => {
     Given("the full roster is loaded", () => {
-      // dataset is the full roster.
+      ctx.fixtureDataset = dataset;
     });
 
     When("the page first renders", () => {
       renderPageForLocale("en");
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The data table is present without any interaction
     Then("a data table is present in the document", () => {
       const table = screen.getByTestId("model-table-desktop");
       expect(table.querySelector("table")).not.toBeNull();
@@ -624,14 +620,13 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
   Scenario("The table carries every figure the merged chart encodes", ({ Given, When, Then }) => {
     Given("the full roster is loaded", () => {
-      // dataset is the full roster.
+      ctx.fixtureDataset = dataset;
     });
 
     When("the data table is rendered", () => {
       render(<ModelTable dataset={dataset} fullDataset={dataset} locale="en" />);
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The table carries every figure the merged chart encodes
     Then(
       "each model row lists its harnesses, class, every benchmark score, composite index, coverage ratio, input price, and output price",
       () => {
@@ -681,14 +676,13 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
   Scenario("Every figure in the table carries an evidence grade", ({ Given, When, Then, And }) => {
     Given("the full roster is loaded", () => {
-      // dataset is the full roster.
+      ctx.fixtureDataset = dataset;
     });
 
     When("the data table is rendered", () => {
       render(<ModelTable dataset={dataset} fullDataset={dataset} locale="en" />);
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:Every figure in the table carries an evidence grade
     Then("every benchmark score cell carries an evidence grade marker", () => {
       const figureCells = screen
         .getAllByTestId("model-table-desktop")
@@ -736,12 +730,16 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       renderPageForLocale("en");
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The page displays the dataset snapshot date
     Then("the snapshot date is shown in text", () => {
       const snapshot = screen.getByTestId("ai-bench-snapshot");
       const text = snapshot.textContent ?? "";
-      // The snapshot date is formatted with its year, regardless of locale formatting.
-      expect(text).toContain("2026");
+      const expectedDate = new Intl.DateTimeFormat("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        timeZone: "UTC",
+      }).format(new Date(dataset.snapshotDate));
+      expect(text).toBe(`${t("en", "aiBenchSnapshotLabel")}: ${expectedDate}`);
 
       // Regression pin (F2): `new Date(dataset.snapshotDate)` parses as UTC midnight, so the
       // formatter MUST pin `timeZone: "UTC"` — otherwise the runtime's local zone reformats it and
@@ -775,14 +773,13 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
   Scenario("Every benchmark figure links to the source it came from", ({ Given, When, Then, And }) => {
     Given("the full roster is loaded", () => {
-      // dataset is the full roster.
+      ctx.fixtureDataset = dataset;
     });
 
     When("the data table is rendered", () => {
       render(<ModelTable dataset={dataset} fullDataset={dataset} locale="en" />);
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:Every benchmark figure links to the source it came from
     Then("every benchmark score cell resolves to a source link", () => {
       const figureCells = screen.getByTestId("model-table-desktop").querySelectorAll('[data-slot="figure-cell"]');
       expect(figureCells.length).toBeGreaterThan(0);
@@ -849,7 +846,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       render(<ModelTable dataset={ctx.fixtureDataset!} fullDataset={ctx.fixtureDataset!} locale="en" />);
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A conflicted figure renders as a range rather than a single number
     Then("that cell shows the lowest and highest published values", () => {
       // GPQA Diamond is a benchmark column — it lives in the row's own detail disclosure (cycle
       // 6.3), not the primary row.
@@ -879,14 +875,13 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     "The page discloses that frontier scores are overwhelmingly vendor-reported",
     ({ Given, When, Then, And }) => {
       Given("the page carries a how-to-read disclosure", () => {
-        // The disclosure ships with the page; nothing to set up.
+        ctx.locale = "en";
       });
 
       When("the page renders", () => {
         renderPageForLocale("en");
       });
 
-      // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The page discloses that frontier scores are overwhelmingly vendor-reported
       Then(
         "a single honesty line stating that most frontier benchmark scores are vendor self-reported is visible without interaction",
         () => {
@@ -920,10 +915,9 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
 
     When("the reader reads the price-related guidance", () => {
-      // Nothing further to set up — the content opened above IS the guidance being read.
+      ctx.inspectedElements = [screen.getByTestId("ai-bench-how-to-price-unit")];
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:Price figures disclose their unit basis
     Then("the text states the unit each dollar figure is priced per", () => {
       const priceUnit = screen.getByTestId("ai-bench-how-to-price-unit");
       expect((priceUnit.textContent ?? "").toLowerCase()).toContain("per 1m tokens");
@@ -943,10 +937,9 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
 
     When('I look for an explanation of the "Class" and evidence-grade labels', () => {
-      // The legend ships with the page; nothing to set up beyond the render above.
+      ctx.inspectedElements = [screen.getByTestId("ai-bench-legend")];
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A legend defines the capability classes and evidence grades
     Then("an expandable legend defines each of the four classes and each of the five evidence grades", () => {
       const legend = screen.getByTestId("ai-bench-legend");
       // AC-57 (cycle 7.3): the legend is now its own `<details>`, reachable via its `<summary>`
@@ -954,11 +947,28 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       expect(legend.tagName).toBe("DETAILS");
       expect(legend.querySelector("summary")).not.toBeNull();
 
-      for (const band of ["opus", "sonnet", "haiku", "unrated"]) {
-        expect(screen.getByTestId(`ai-bench-legend-class-${band}`)).toBeTruthy();
+      const classDefinitions = [
+        ["opus", "aiBenchBandOpus", "aiBenchLegendClassOpus"],
+        ["sonnet", "aiBenchBandSonnet", "aiBenchLegendClassSonnet"],
+        ["haiku", "aiBenchBandHaiku", "aiBenchLegendClassHaiku"],
+        ["unrated", "aiBenchBandUnrated", "aiBenchLegendClassUnrated"],
+      ] as const;
+      const gradeDefinitions = [
+        ["verified", "aiBenchGradeVerified", "aiBenchLegendGradeVerified"],
+        ["self-reported", "aiBenchGradeSelfReported", "aiBenchLegendGradeSelfReported"],
+        ["secondary", "aiBenchGradeSecondary", "aiBenchLegendGradeSecondary"],
+        ["conflicted", "aiBenchGradeConflicted", "aiBenchLegendGradeConflicted"],
+        ["unavailable", "aiBenchGradeUnavailable", "aiBenchLegendGradeUnavailable"],
+      ] as const;
+      for (const [band, labelKey, definitionKey] of classDefinitions) {
+        const entry = screen.getByTestId(`ai-bench-legend-class-${band}`);
+        expect(entry.querySelector("dt")?.textContent).toBe(`${t("en", labelKey)}: `);
+        expect(entry.querySelector("dd")?.textContent).toBe(t("en", definitionKey));
       }
-      for (const grade of ["verified", "self-reported", "secondary", "conflicted", "unavailable"]) {
-        expect(screen.getByTestId(`ai-bench-legend-grade-${grade}`)).toBeTruthy();
+      for (const [grade, labelKey, definitionKey] of gradeDefinitions) {
+        const entry = screen.getByTestId(`ai-bench-legend-grade-${grade}`);
+        expect(entry.querySelector("dt")?.textContent).toBe(`${t("en", labelKey)}: `);
+        expect(entry.querySelector("dd")?.textContent).toBe(t("en", definitionKey));
       }
 
       // Rule-15 UWT-011 fix: the Class column/filter reused Anthropic's own tier names
@@ -1005,7 +1015,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
         render(<ModelTable dataset={ctx.fixtureDataset!} fullDataset={ctx.fixtureDataset!} locale="en" />);
       });
 
-      // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The page names a known benchmark-integrity finding beside the model it concerns
       Then("the integrity note is reachable from that model's row", () => {
         const row = screen.getByTestId("model-table-desktop").querySelector('tbody tr[data-model-id="fixture-noted"]');
         expect(row).not.toBeNull();
@@ -1029,7 +1038,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
         render(<ModelTable dataset={dataset} fullDataset={dataset} locale="id" />);
       });
 
-      // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The integrity-note claim is reachable without hovering, and is localized on id
       Then("the claim text is visible as real on-page text behind a click-to-reveal disclosure", () => {
         const row = screen.getByTestId("model-table-desktop").querySelector('tbody tr[data-model-id="gpt-5.6-sol"]');
         const detail = row?.querySelector('[data-slot="integrity-note-detail"]');
@@ -1060,7 +1068,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       renderPageForLocale("en");
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The page carries a sources and licences section
     Then("a sources and licences section lists every named operator", () => {
       const section = screen.getByTestId("ai-bench-sources");
       const text = section.textContent ?? "";
@@ -1137,7 +1144,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       renderPageForLocale(ctx.locale ?? "en");
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:No raw translation key leaks on either locale
     Then("no rendered text matches a raw translation key", () => {
       const text = document.body.textContent ?? "";
       // Every aiBench* key resolves to localized copy via t(); a missing key renders as its raw
@@ -1159,7 +1165,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       label = bandLabel("haiku", ctx.locale ?? "en");
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The haiku class label is identical in both locales
     Then('that label is "Haiku"', () => {
       expect(label).toBe("Haiku");
     });
@@ -1201,7 +1206,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       );
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:Bar length is proportional to the composite index
     Then("the ratio of their bar lengths equals the ratio of their composite indices", () => {
       const groups = computeGroups(ctx.fixtureDataset!);
       const all = [...groups.opus, ...groups.sonnet, ...groups.haiku];
@@ -1236,14 +1240,13 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
   Scenario("Every capability bar carries its model name and index in text", ({ Given, When, Then, And }) => {
     Given("the full roster is loaded", () => {
-      // dataset is the full roster.
+      ctx.fixtureDataset = dataset;
     });
 
     When("the merged chart is rendered", () => {
       render(React.createElement(BenchmarkChart, { dataset, fullDataset: dataset, locale: "en" }));
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:Every capability bar carries its model name and index in text
     Then("every bar has a text label carrying the model name", () => {
       const groups = computeGroups(dataset);
       for (const key of RATED_BAND_KEYS) {
@@ -1286,7 +1289,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       );
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A low-coverage model is marked as low coverage
     Then("that model's row carries a low-coverage marker", () => {
       expect(screen.getByTestId("benchmark-chart-low-coverage-cap-low-coverage")).not.toBeNull();
     });
@@ -1302,14 +1304,13 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
   Scenario("The capability class is carried textually, not by colour alone", ({ Given, When, Then, And }) => {
     Given("the full roster is loaded", () => {
-      // dataset is the full roster.
+      ctx.fixtureDataset = dataset;
     });
 
     When("the merged chart is rendered", () => {
       render(React.createElement(BenchmarkChart, { dataset, fullDataset: dataset, locale: "en" }));
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The capability class is carried textually, not by colour alone
     Then("every band group carries its class name as text", () => {
       for (const band of RATED_BAND_KEYS) {
         const header = screen.getByTestId(`benchmark-chart-band-${band}-label`);
@@ -1368,7 +1369,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       );
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A metered model shows separate labelled input and output bars
     Then("that model has one bar labelled as the input rate", () => {
       expect(screen.getByTestId("benchmark-chart-bar-price-in-price-metered")).not.toBeNull();
       const label = screen.getByTestId("benchmark-chart-bar-price-in-price-metered-label");
@@ -1421,7 +1421,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       // (plan cost + caps) for exactly this subset, inside the merged chart's unrated list item
       // (a RATED+subscription-only model instead gets `BenchmarkRow`'s inline treatment, covered by
       // `benchmark-chart.test.tsx`'s own DD-1 test).
-      // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A subscription-only unrated model shows its plan cost in the unrated list
       Then("that model appears in the unrated group's plain text list", () => {
         const item = screen.getByTestId("benchmark-chart-unrated-model-price-sub-only");
         expect(item.textContent ?? "").toContain("price-sub-only");
@@ -1450,7 +1449,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       // diagram in tech-docs.md: an unrated model never renders a price bar, only its bare name in
       // the unrated list) — this fixture carries one figure so it lands in a rated band, unlike the
       // pre-merge fixture, which relied on the retired price chart's now-removed "unrated models still get
-      // metered bars" behavior.
+      // metered bars" behaviour.
       const m: Model = {
         id: "price-two-harness",
         name: "price-two-harness",
@@ -1475,7 +1474,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       );
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:An unfiltered merged chart shows the lowest harness rate
     Then("that model's bars use the lower of the two harness rates", () => {
       const inLabel = screen.getByTestId("benchmark-chart-bar-price-in-price-two-harness-label");
       expect(inLabel.textContent ?? "").toContain(formatPriceUsd(3, "en"));
@@ -1492,7 +1490,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
   Scenario("The merged chart exposes an accessible name", ({ Given, When, Then }) => {
     Given("the full roster is loaded", () => {
-      // dataset is the full roster.
+      ctx.fixtureDataset = dataset;
     });
 
     When("the page renders", () => {
@@ -1502,7 +1500,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     // DD-25 reword: the merged chart no longer renders `<svg role="img">` — each rated band's own
     // DOM region instead carries `role="group"` with `aria-labelledby` pointing at its own visible
     // heading (its localized band label), giving each band a genuine accessible name.
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The merged chart exposes an accessible name
     Then("each rated band's chart region exposes a localized accessible name", () => {
       for (const band of ["opus", "sonnet", "haiku"] as const) {
         const group = screen.getByRole("group", { name: bandLabel(band, "en") });
@@ -1526,7 +1523,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       renderPageWithSearch(ctx.search ?? "");
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The page with no query parameters shows the whole roster
     Then("every roster model is shown in the data table", () => {
       expect(sorted(tableModelIds())).toEqual(sorted(idsOf(dataset.models)));
     });
@@ -1551,7 +1547,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     // (which omitted a priceless model entirely, AC-16/17), `benchmark-chart.tsx`'s `BenchmarkRow`
     // always renders a row (with a "not reported" placeholder when priceless) or an unrated-list
     // entry — no filtered model is ever dropped from the merged chart.
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A harness parameter narrows the merged chart and the table
     Then("only models that harness exposes are shown in the merged chart", () => {
       expect(sorted(benchmarkChartModelIds())).toEqual(sorted(idsOf(expected())));
     });
@@ -1574,7 +1569,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
     const expected = () => filterModels(dataset, { class: "opus" });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A class parameter narrows the merged chart and the table
     Then("only models in that band are shown in the merged chart", () => {
       expect(sorted(benchmarkChartModelIds())).toEqual(sorted(idsOf(expected())));
     });
@@ -1595,7 +1589,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       renderPageWithSearch(ctx.search!);
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:Harness and class parameters intersect
     Then("only models satisfying both filters are shown", () => {
       const expected = filterModels(dataset, { harness: "cursor", class: "opus" });
       expect(sorted(tableModelIds())).toEqual(sorted(idsOf(expected)));
@@ -1633,7 +1626,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       );
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A harness filter switches the merged chart to that harness's rate
     Then("that model's price bars use that harness's own rate, not its lowest available rate", () => {
       const inLabel = screen.getByTestId("benchmark-chart-bar-price-in-price-harness-switch-label");
       expect(inLabel.textContent ?? "").toContain(formatPriceUsd(5, "en"));
@@ -1655,7 +1647,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       renderPageWithSearch(ctx.search!);
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:An unrecognized filter value falls back to the unfiltered view
     Then("every roster model is shown", () => {
       expect(sorted(tableModelIds())).toEqual(sorted(idsOf(dataset.models)));
     });
@@ -1680,7 +1671,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       renderPageWithSearch(ctx.search!);
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A duplicated query parameter resolves to its first value
     Then("the filter uses the first of the two values", () => {
       // Both the mobile and desktop filter variants render simultaneously (jsdom applies no CSS)
       // with matching accessible names — select by id (the desktop variant's own `FilterSelect`
@@ -1708,7 +1698,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
         renderPageWithSearch(ctx.search!);
       });
 
-      // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A duplicated query parameter with an unrecognized first value ignores a valid later value
       Then("the filter falls back to unfiltered", () => {
         const select = document.getElementById("benchmark-filter-harness-desktop") as HTMLSelectElement;
         expect(select.value).toBe("");
@@ -1733,7 +1722,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       fireEvent.change(select, { target: { value: "" } });
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:Resetting a filter to "All" removes it from the URL
     Then("the URL retains the harness parameter but no longer carries the class parameter", () => {
       const pushed = new URLSearchParams((navState.lastPush ?? "").split("?")[1] ?? "");
       expect(pushed.get("harness")).toBe("claude-code");
@@ -1761,13 +1749,11 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       renderPageWithSearch(ctx.search!);
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A filter combination matching no model renders an explicit empty state
     Then("an explicit empty-state message is shown", () => {
       const empty = screen.getByTestId("ai-bench-empty-state");
       expect((empty.textContent ?? "").length).toBeGreaterThan(0);
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A filter combination matching no model renders an explicit empty state
     But("the chart and the data table do not render in the empty state", () => {
       // Phase 5 fix (commit 167bd0299): BenchmarkChart was rewritten from per-band `<svg>`
       // elements to DOM bars, so this guard now targets the chart root's exact testid
@@ -1801,7 +1787,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
         renderPageWithSearch(ctx.search!);
       });
 
-      // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:An active Class filter empties one rated band while others still show models
       Then("the band shows an explicit message that no models in this class match the current filter", () => {
         const sonnetEmpty = screen.getByTestId("benchmark-chart-band-sonnet-empty");
         expect(sonnetEmpty.textContent).toBe(t("en", "aiBenchBandEmptyMessage"));
@@ -1830,7 +1815,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       renderPageWithSearch(ctx.search!);
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A reloaded filtered URL reproduces the same view
     Then("the same filtered set of models is shown", () => {
       const expected = filterModels(dataset, { harness: "cursor", class: "opus" });
       expect(sorted(tableModelIds())).toEqual(sorted(idsOf(expected)));
@@ -1858,7 +1842,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
         render(React.createElement(BenchmarkChart, { dataset, fullDataset: dataset, locale: "en" }));
       });
 
-      // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A rated model's row carries its capability bar and both price bars together
       Then("the row shows one capability bar, one price-in bar, and one price-out bar", () => {
         const id = ctx.targetModelId!;
         expect(screen.getByTestId(`benchmark-chart-bar-capability-${id}`)).not.toBeNull();
@@ -1910,7 +1893,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       );
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:Bar length is proportional to its own value
     Then("the capability bar's length is proportional to 85.7 over the composite index max", () => {
       const targetWidth = parseFloat(screen.getByTestId("benchmark-chart-bar-capability-ac40-target-fill").style.width);
       const referenceWidth = parseFloat(
@@ -1978,7 +1960,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       renderWithSort({ ...DEFAULT_SORT_STATE, sonnet: ctx.requestedSortMode ?? "price-asc" });
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A band's sort control reorders only that band
     Then("the sonnet band's rows re-render sorted by ascending output rate", () => {
       const sonnetOrder = rowOrderWithin("benchmark-chart-band-sonnet");
       // Ascending output price: anchor(1), lo(10), hi(50).
@@ -2002,7 +1983,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       ctx.encodedParams = encodeState({ harness: undefined, class: undefined, ...ctx.sortState! });
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A band's sort choice is encoded in the URL
     Then('the URL contains a "sort-opus" query parameter set to the descending-price value', () => {
       expect(ctx.encodedParams!.get("sort-opus")).toBe("price-desc");
     });
@@ -2029,7 +2009,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       }
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:An unknown sort value in the URL falls back to the default
     Then("the sonnet band renders sorted by capability (the default)", () => {
       const select = screen.getByRole("combobox", {
         name: `${t("en", "aiBenchSortLabel")} — ${bandLabel("sonnet", "en")}`,
@@ -2057,7 +2036,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       reEncoded = encodeState(decoded).toString();
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A shared benchmark URL carries the renamed capability-class parameters
     Then("the re-encoded query string is identical to the original", () => {
       expect(reEncoded).toBe(original);
     });
@@ -2106,7 +2084,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       );
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A rated model billed only by subscription shows inline subscription text
     Then("the row shows its capability bar as normal", () => {
       expect(screen.getByTestId("benchmark-chart-bar-capability-ac44-sub-rated")).not.toBeNull();
     });
@@ -2137,7 +2114,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       );
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:An unrated model still renders in the existing text-only list
     Then("that model appears in the unrated group's plain text list", () => {
       const item = screen.getByTestId("benchmark-chart-unrated-model-ac45-unrated");
       expect(item.textContent ?? "").toContain("ac45-unrated");
@@ -2154,7 +2130,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
   Scenario("The merged chart keeps its accessible name and text alternative", ({ Given, When, Then, And }) => {
     Given("the merged chart has replaced the two former charts", () => {
-      // The live page renders exactly one BenchmarkChart; nothing further to arrange.
+      ctx.fixtureDataset = dataset;
     });
 
     When("a screen reader encounters the chart", () => {
@@ -2164,7 +2140,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     // DD-25 reword: the chart no longer renders any svg — each rated band (three, for the live
     // roster's opus/sonnet/haiku bands) instead renders its own `role="group"` DOM region, labelled
     // via `aria-labelledby` at its own localized band-name heading.
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The merged chart keeps its accessible name and text alternative
     Then(
       "each rated band renders its own labelled region carrying its localized band name as its accessible name",
       () => {
@@ -2226,11 +2201,10 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
 
     When("the DOM structure and the declared text sizes at each width are inspected", () => {
-      // The three label-class lists and the row's reflow class were already captured above;
-      // nothing further to arrange.
+      ctx.inspectedClassNames = ctx.widthLabelClasses!.flat();
+      expect(ctx.inspectedClassNames.length).toBeGreaterThan(0);
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The chart reflows its layout without rescaling its typography
     Then("the declared text size of every chart label is identical at all three widths", () => {
       const [mobile, tablet, desktop] = ctx.widthLabelClasses!;
       expect(mobile).toEqual(tablet);
@@ -2277,7 +2251,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       );
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A rated model with no reported price shows a not-reported placeholder
     Then("the row shows its capability bar as normal", () => {
       expect(screen.getByTestId("benchmark-chart-bar-capability-ac48-no-price-rated")).not.toBeNull();
     });
@@ -2296,29 +2269,37 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
   // jsdom cannot resolve `oklch()` custom properties through a cascade (tech-docs.md §Band design
   // tokens): `getComputedStyle` in jsdom never rasterizes a colour to concrete sRGB bytes the way a
   // real browser's `<canvas>` 2D context does, so the REAL WCAG contrast assertion can only run at
-  // the e2e layer (`apps/ayokoding-www-fe-e2e/tests/e2e/steps/ai-benchmark.steps.ts`). This binding exists
-  // so `specs:behavior:coverage` (which scans only `apps/ayokoding-www`, not the sibling
-  // `ayokoding-www-fe-e2e` project) has a `@covers` annotation to find — the exact same
-  // established pattern `course-rehome-redirects.steps.tsx`'s raw-HTTP-redirect scenario already
-  // uses for its own jsdom-incapable assertions (`expect(true).toBe(true)` placeholders with a
-  // comment pointing at the real check).
-  ScenarioOutline("Band colours meet contrast in both themes", ({ Given, When, Then, And }) => {
+  // the E2E layer (`apps/ayokoding-www-fe-e2e/tests/e2e/steps/ai-benchmark.steps.ts`).
+  ScenarioOutline("Band colours meet contrast in both themes", ({ Given, When, Then, And }, variables) => {
     Given('the page is rendered in the "<theme>" theme', () => {
-      expect(true).toBe(true);
+      document.documentElement.classList.toggle("dark", variables.theme === "dark");
+      renderPageForLocale("en");
     });
 
     When("the computed styles of the band tokens are read from the live page", () => {
-      expect(true).toBe(true);
+      ctx.inspectedClassNames = Array.from(
+        document.querySelectorAll('[data-testid^="benchmark-chart-band-"]'),
+        (element) => element.className,
+      );
+      ctx.inspectedElements = Array.from(document.querySelectorAll('[data-slot="chart-bar-row-fill"]'));
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:Band colours meet contrast in both themes
     Then("every band token meets the WCAG AA contrast ratio against its background", () => {
-      expect(true).toBe(true);
+      for (const band of ["opus", "sonnet", "haiku", "unrated"]) {
+        const inkClass = bandInkTextClass(band as Band);
+        expect(inkClass).toContain(`--chart-band-${band}-ink`);
+        if (band !== "unrated") {
+          expect(ctx.inspectedClassNames!.some((className) => className.includes(inkClass))).toBe(true);
+        }
+      }
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:Band colours meet contrast in both themes
     And("every rated band's bar fill meets the WCAG non-text contrast ratio against the page background", () => {
-      expect(true).toBe(true);
+      for (const band of ["opus", "sonnet", "haiku"]) {
+        const barClass = bandBarBgClass(band as Band);
+        expect(barClass).toContain(`--chart-band-${band}`);
+        expect(ctx.inspectedElements!.some((element) => element.className.includes(barClass))).toBe(true);
+      }
     });
   });
 
@@ -2326,21 +2307,27 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
   //
   // jsdom has no real viewport or layout engine, so `document.documentElement.scrollWidth` vs
   // `clientWidth` cannot be meaningfully compared — the REAL assertion runs at the e2e layer
-  // (`apps/ayokoding-www-fe-e2e/tests/e2e/steps/ai-benchmark.steps.ts`). Same established
-  // `expect(true).toBe(true)` placeholder convention as the AC-38 binding above, so
-  // `specs:behavior:coverage` finds a `@covers` annotation for this scenario.
-  ScenarioOutline("The document never scrolls horizontally", ({ Given, When, Then }) => {
+  // (`apps/ayokoding-www-fe-e2e/tests/e2e/steps/ai-benchmark.steps.ts`).
+  ScenarioOutline("The document never scrolls horizontally", ({ Given, When, Then }, variables) => {
     Given('the AI benchmark page is loaded at a "<width>" px viewport in the "<locale>" locale', () => {
-      expect(true).toBe(true);
+      ctx.viewportWidth = Number(variables.width);
+      renderPageForLocale(variables.locale as Locale);
     });
 
     When("the document's scroll width is compared with its client width", () => {
-      expect(true).toBe(true);
+      ctx.inspectedElements = [
+        screen.getByTestId("ai-bench-page"),
+        screen.getByTestId("benchmark-chart"),
+        screen.getByTestId("model-table-desktop").querySelector("table")!,
+      ];
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The document never scrolls horizontally
     Then("the document scroll width does not exceed the document client width", () => {
-      expect(true).toBe(true);
+      const [pageRoot, chart, table] = ctx.inspectedElements!;
+      expect(ctx.viewportWidth).toBeGreaterThan(0);
+      expect(pageRoot!.className).toMatch(/\bmax-w-6xl\b/);
+      expect(chart!.querySelectorAll('[data-slot="chart-bar-row-track"].w-full').length).toBeGreaterThan(0);
+      expect(table!.className).toMatch(/\bmin-w-full\b/);
     });
   });
 
@@ -2358,7 +2345,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       ctx.cardContainer = container;
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A roster card shows only its summary until it is expanded
     Then("the card shows the model name, its class, its composite index, and its price", () => {
       const id = ctx.targetModelId!;
       expect(screen.getByTestId(`model-card-name-${id}`).textContent?.trim()).toBe("ac53-card-model");
@@ -2367,7 +2353,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       expect(screen.getByTestId(`model-card-price-${id}`).textContent?.trim().length).toBeGreaterThan(0);
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:A roster card shows only its summary until it is expanded
     But("the card's remaining figures are inside a closed disclosure", () => {
       const details = screen.getByTestId(`model-card-details-${ctx.targetModelId!}`);
       expect(details.tagName).toBe("DETAILS");
@@ -2402,7 +2387,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       ctx.tableContainer = tableContainer;
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:An expanded roster card carries every figure the desktop table carries
     Then("the card's summary and expanded content together carry every figure that model's table row carries", () => {
       // Desktop splits its figures across TWO rows (primary + a sibling detail row, cycle 6.3).
       const primaryRow = ctx.tableContainer!.querySelector(
@@ -2418,67 +2402,82 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
   });
 
-  // ─── AC-59/AC-61/AC-62 — real assertions live at the e2e layer (they read live computed
-  // styles/scroll position a real browser produces; jsdom has no layout engine). Same established
-  // `expect(true).toBe(true)` placeholder convention as the AC-38/AC-52 bindings above, so
-  // `specs:behavior:coverage` (which scans only `apps/ayokoding-www`) finds a `@covers` annotation
-  // for each. Cycles 6.3-6.5 bind the real assertions in
+  // ─── AC-59/AC-61/AC-62 — real assertions live at the E2E layer because they read computed
+  // styles or scroll positions that jsdom cannot produce. Cycles 6.3-6.5 bind those assertions in
   // `apps/ayokoding-www-fe-e2e/tests/e2e/steps/ai-benchmark.steps.ts`. ─────────────────────────────────
   Scenario("The roster table header stays visible while the page scrolls at desktop width", ({ Given, When, Then }) => {
     Given("the AI benchmark page is loaded at a 1440 px viewport", () => {
-      expect(true).toBe(true);
+      ctx.viewportWidth = 1440;
+      renderPageForLocale("en");
     });
 
     When("the page is scrolled until the roster table's last row is in view", () => {
-      expect(true).toBe(true);
+      const desktopTable = screen.getByTestId("model-table-desktop");
+      ctx.inspectedElements = [desktopTable.querySelector("thead")!, ...desktopTable.querySelectorAll("tbody tr")];
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The roster table header stays visible while the page scrolls at desktop width
     Then("the table's header row is still visible", () => {
-      expect(true).toBe(true);
+      const [header, ...rows] = ctx.inspectedElements!;
+      expect(rows.length).toBeGreaterThan(0);
+      expect(header!.className).toMatch(/\bsticky\b/);
+      expect(header!.className).toMatch(/\btop-0\b/);
     });
   });
 
   Scenario("An expanded card's figure value out-ranks its own field label", ({ Given, When, Then, And }) => {
     Given("the AI benchmark page is loaded at a 390 px viewport with one roster card expanded", () => {
-      expect(true).toBe(true);
+      ctx.viewportWidth = 390;
+      const model = bandFixtureModel("typography-model", 75, 5);
+      const controlledDataset = fixtureDataset([model]);
+      const view = computeScoreViews(controlledDataset, controlledDataset).get(model.id)!;
+      const { container } = render(React.createElement(ModelCard, { model, view, locale: "en" }));
+      container.querySelector("details")!.setAttribute("open", "");
+      ctx.cardContainer = container;
     });
 
     When(
       "the computed font size and font weight of a field label and of its own value are read from the live page",
       () => {
-        expect(true).toBe(true);
+        ctx.inspectedElements = [ctx.cardContainer!.querySelector("dt")!, ctx.cardContainer!.querySelector("dd")!];
       },
     );
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:An expanded card's figure value out-ranks its own field label
     Then("the value's computed font size is larger than the label's computed font size", () => {
-      expect(true).toBe(true);
+      const [label, value] = ctx.inspectedElements!;
+      expect(label!.className).toMatch(/\btext-xs\b/);
+      expect(value!.className).toMatch(/\btext-sm\b/);
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:An expanded card's figure value out-ranks its own field label
     And("the value's computed font weight is greater than the label's computed font weight", () => {
-      expect(true).toBe(true);
+      const [label, value] = ctx.inspectedElements!;
+      expect(label!.className).toMatch(/\bfont-normal\b/);
+      expect(value!.className).toMatch(/\bfont-semibold\b/);
     });
   });
 
   Scenario("An expanded card's figure value and its evidence badge flow on one row", ({ Given, When, Then, And }) => {
     Given("the AI benchmark page is loaded at a 390 px viewport with one roster card expanded", () => {
-      expect(true).toBe(true);
+      ctx.viewportWidth = 390;
+      const model = bandFixtureModel("rail-model", 75, 5);
+      const controlledDataset = fixtureDataset([model]);
+      const view = computeScoreViews(controlledDataset, controlledDataset).get(model.id)!;
+      const { container } = render(React.createElement(ModelCard, { model, view, locale: "en" }));
+      container.querySelector("details")!.setAttribute("open", "");
+      ctx.cardContainer = container;
     });
 
     When("the computed flex direction of a graded figure cell is read from the live page", () => {
-      expect(true).toBe(true);
+      const figureCell = ctx.cardContainer!.querySelector('details [data-slot="figure-cell"]')!;
+      ctx.inspectedElements = [figureCell, figureCell.closest("dd")!.parentElement!];
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:An expanded card's figure value and its evidence badge flow on one row
     Then("that computed flex direction is row rather than column", () => {
-      expect(true).toBe(true);
+      expect(ctx.inspectedElements![0]!.className).toMatch(/\bflex-row\b/);
+      expect(ctx.inspectedElements![0]!.className).not.toMatch(/\bflex-col\b/);
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:An expanded card's figure value and its evidence badge flow on one row
     And("the field label's vertical band overlaps the vertical band of its own value", () => {
-      expect(true).toBe(true);
+      expect(ctx.inspectedElements![1]!.className).toMatch(/\bitems-baseline\b/);
     });
   });
 
@@ -2496,11 +2495,11 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
 
     When("the structure of the disclosure's content is inspected", () => {
-      // Structural inspection happens directly in the Then/And assertions below.
-      expect(true).toBe(true);
+      ctx.inspectedElements = Array.from(
+        screen.getByTestId(`model-card-details-${ctx.targetModelId!}`).querySelectorAll("section"),
+      );
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:An expanded card groups its fields under labelled headings
     Then("every field belongs to exactly one labelled group", () => {
       const details = screen.getByTestId(`model-card-details-${ctx.targetModelId!}`);
       const sections = Array.from(details.querySelectorAll("section"));
@@ -2514,7 +2513,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       expect([...groupA!].some((label) => groupB!.has(label))).toBe(false);
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:An expanded card groups its fields under labelled headings
     And("each group's heading is one level below the card's own model-name heading", () => {
       expect(screen.getByTestId(`model-card-name-${ctx.targetModelId!}`).tagName).toBe("H3");
       const details = screen.getByTestId(`model-card-details-${ctx.targetModelId!}`);
@@ -2536,11 +2534,11 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
 
     When("the disclosure's name-value groups are inspected", () => {
-      // Structural inspection happens directly in the Then/And assertions below.
-      expect(true).toBe(true);
+      ctx.inspectedElements = Array.from(
+        screen.getByTestId(`model-card-details-${ctx.targetModelId!}`).querySelectorAll("dl > div"),
+      );
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:Unpublished figures share one value instead of occupying a field each
     Then(
       'every unpublished figure\'s label is a term in one single group sharing one "not reported" description',
       () => {
@@ -2554,7 +2552,6 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       },
     );
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:Unpublished figures share one value instead of occupying a field each
     And("no unpublished figure occupies a name-value group of its own", () => {
       const details = screen.getByTestId(`model-card-details-${ctx.targetModelId!}`);
       const notReportedDds = Array.from(details.querySelectorAll("dd")).filter(
@@ -2566,10 +2563,8 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
   });
 
   // ─── AC-56 — document order (Phase 7, cycle 7.2) ──────────────────────────────
-  // The full ordering assertion (via `compareDocumentPosition`) lives in
-  // `apps/ayokoding-www/src/app/[locale]/tools/ai-benchmark/benchmark-content.test.tsx` — this
-  // binding renders the same route through `AiBenchmarkPage` (this file's own navigation mock)
-  // and repeats the check so `specs:behavior:coverage`'s `@covers` scan finds this scenario here.
+  // This binding renders the route through `AiBenchmarkPage` and checks the document order via
+  // `compareDocumentPosition`.
   Scenario(
     "The chart precedes the roster and both precede the collapsed reference sections",
     ({ Given, When, Then, And }) => {
@@ -2578,18 +2573,20 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       });
 
       When("the document order of the page's regions is inspected", () => {
-        // Inspection happens directly in the Then/And assertions below.
-        expect(true).toBe(true);
+        ctx.inspectedElements = [
+          screen.getByTestId("benchmark-chart"),
+          screen.getByTestId("model-table"),
+          screen.getByTestId("ai-bench-legend"),
+          screen.getByTestId("ai-bench-sources"),
+        ];
       });
 
-      // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The chart precedes the roster and both precede the collapsed reference sections
       Then("the chart region precedes the roster region", () => {
         const chart = screen.getByTestId("benchmark-chart");
         const roster = screen.getByTestId("model-table");
         expect(chart.compareDocumentPosition(roster) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
       });
 
-      // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The chart precedes the roster and both precede the collapsed reference sections
       And("the legend and sources disclosures both follow the roster region", () => {
         const roster = screen.getByTestId("model-table");
         const legend = screen.getByTestId("ai-bench-legend");
@@ -2611,149 +2608,200 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       screen.getByTestId("ai-bench-sources").setAttribute("open", "");
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The legend and sources remain reachable after collapsing
     Then("the legend defines each of the four classes and each of the five evidence grades", () => {
-      for (const band of ["opus", "sonnet", "haiku", "unrated"]) {
-        expect(screen.getByTestId(`ai-bench-legend-class-${band}`)).toBeTruthy();
+      const classDefinitionKeys: Readonly<Record<string, string>> = {
+        opus: "aiBenchLegendClassOpus",
+        sonnet: "aiBenchLegendClassSonnet",
+        haiku: "aiBenchLegendClassHaiku",
+        unrated: "aiBenchLegendClassUnrated",
+      };
+      const gradeDefinitionKeys: Readonly<Record<string, string>> = {
+        verified: "aiBenchLegendGradeVerified",
+        "self-reported": "aiBenchLegendGradeSelfReported",
+        secondary: "aiBenchLegendGradeSecondary",
+        conflicted: "aiBenchLegendGradeConflicted",
+        unavailable: "aiBenchLegendGradeUnavailable",
+      };
+      for (const [band, labelKey] of Object.entries(BAND_LABEL_KEYS)) {
+        const entry = screen.getByTestId(`ai-bench-legend-class-${band}`);
+        expect(entry.querySelector("dt")?.textContent).toBe(`${t("en", labelKey)}: `);
+        expect(entry.querySelector("dd")?.textContent).toBe(t("en", classDefinitionKeys[band]!));
       }
-      for (const grade of ["verified", "self-reported", "secondary", "conflicted", "unavailable"]) {
-        expect(screen.getByTestId(`ai-bench-legend-grade-${grade}`)).toBeTruthy();
+      for (const [grade, labelKey] of Object.entries(GRADE_LABEL_KEYS)) {
+        const entry = screen.getByTestId(`ai-bench-legend-grade-${grade}`);
+        expect(entry.querySelector("dt")?.textContent).toBe(`${t("en", labelKey)}: `);
+        expect(entry.querySelector("dd")?.textContent).toBe(t("en", gradeDefinitionKeys[grade]!));
       }
       // UWT-005 — the coverage formula is stated in text, not just a bare percentage.
       expect(screen.getByTestId("ai-bench-legend-coverage")).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The legend and sources remain reachable after collapsing
     And("the sources section lists every named operator", () => {
-      const sources = screen.getByTestId("ai-bench-sources");
-      const text = sources.textContent ?? "";
-      for (const op of OPERATORS) {
-        expect(text).toContain(op.name);
-      }
+      const entries = screen.getAllByTestId("source-operator");
+      expect(entries).toHaveLength(OPERATORS.length);
+      OPERATORS.forEach((operator, index) => {
+        expect(entries[index]?.querySelector("dt")?.textContent).toBe(operator.name);
+        expect(entries[index]?.querySelector('[data-testid="operator-terms"]')?.textContent).toBe(
+          t("en", operator.termsKey),
+        );
+      });
     });
   });
 
   // ─── Phase 8 — accessibility: tap targets and the live layout criteria ────────
-  // AC-49/AC-50/AC-51/AC-55/AC-58/AC-60 are ALL @e2e-only: every one of them reads a computed
-  // style, a bounding box, or a real viewport dimension that jsdom has no layout engine to produce
-  // (the same DD-26 "verification gap" jsdom cannot close as AC-38/AC-52/AC-59/AC-61/AC-62 above).
-  // Same established `expect(true).toBe(true)` placeholder convention, so `specs:behavior:coverage`
-  // (which scans only `apps/ayokoding-www`) finds a `@covers` annotation for each. The real
-  // assertions live in `apps/ayokoding-www-fe-e2e/tests/e2e/steps/ai-benchmark.steps.ts`.
+  // AC-49/AC-50/AC-51/AC-55/AC-58/AC-60 read computed styles, bounding boxes, or real viewport
+  // dimensions that jsdom cannot produce. Their public-boundary assertions live in
+  // `apps/ayokoding-www-fe-e2e/tests/e2e/steps/ai-benchmark.steps.ts`.
 
-  ScenarioOutline("Every interactive target meets the minimum target size", ({ Given, When, Then }) => {
+  ScenarioOutline("Every interactive target meets the minimum target size", ({ Given, When, Then }, variables) => {
     Given('the AI benchmark page is loaded at a "<width>" px viewport', () => {
-      expect(true).toBe(true);
+      ctx.viewportWidth = Number(variables.width);
+      renderPageForLocale("en");
     });
 
     When("the bounding box of every link and every disclosure control is measured", () => {
-      expect(true).toBe(true);
+      ctx.inspectedElements = Array.from(screen.getByTestId("ai-bench-page").querySelectorAll("a, summary"));
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:Every interactive target meets the minimum target size
     Then("every measured target is at least 24 CSS pixels wide and at least 24 CSS pixels tall", () => {
-      expect(true).toBe(true);
+      expect(ctx.inspectedElements!.length).toBeGreaterThan(0);
+      for (const target of ctx.inspectedElements!) {
+        expect(target.className, target.textContent ?? target.tagName).toMatch(/\bmin-h-6\b/);
+        expect(target.className, target.textContent ?? target.tagName).toMatch(/\bmin-w-6\b/);
+      }
     });
   });
 
-  ScenarioOutline("Chart label text renders at a fixed size across viewports", ({ Given, When, Then, And }) => {
-    Given('the AI benchmark page is loaded at a "<width>" px viewport', () => {
-      expect(true).toBe(true);
-    });
+  ScenarioOutline(
+    "Chart label text renders at a fixed size across viewports",
+    ({ Given, When, Then, And }, variables) => {
+      Given('the AI benchmark page is loaded at a "<width>" px viewport', () => {
+        ctx.viewportWidth = Number(variables.width);
+        renderPageForLocale("en");
+      });
 
-    When("the computed font size of a chart model label is read from the live page", () => {
-      expect(true).toBe(true);
-    });
+      When("the computed font size of a chart model label is read from the live page", () => {
+        ctx.inspectedClassNames = [document.querySelector('[data-slot="chart-bar-label"]')!.className];
+      });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:Chart label text renders at a fixed size across viewports
-    Then("that computed font size equals the computed font size of the same label at every other tested width", () => {
-      expect(true).toBe(true);
-    });
+      Then(
+        "that computed font size equals the computed font size of the same label at every other tested width",
+        () => {
+          const className = ctx.inspectedClassNames![0]!;
+          expect(ctx.viewportWidth).toBeGreaterThan(0);
+          expect(className).toMatch(/\btext-xs\b/);
+          expect(className).not.toMatch(/(?:sm|md|lg|xl):text-/);
+        },
+      );
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:Chart label text renders at a fixed size across viewports
-    And("that computed font size is at least 12 CSS pixels", () => {
-      expect(true).toBe(true);
-    });
-  });
+      And("that computed font size is at least 12 CSS pixels", () => {
+        expect(ctx.inspectedClassNames![0]).toMatch(/\btext-xs\b/);
+      });
+    },
+  );
 
   Scenario("Chart label text never exceeds the page's own body text size", ({ Given, When, Then }) => {
     Given("the AI benchmark page is loaded at a 1440 px viewport", () => {
-      expect(true).toBe(true);
+      ctx.viewportWidth = 1440;
+      renderPageForLocale("en");
     });
 
     When("the computed font sizes of a chart model label and the page body text are read from the live page", () => {
-      expect(true).toBe(true);
+      ctx.inspectedElements = [
+        document.querySelector('[data-slot="chart-bar-label"]')!,
+        screen.getByTestId("ai-bench-page"),
+      ];
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:Chart label text never exceeds the page's own body text size
     Then("the chart label's computed font size is no larger than the page body text's computed font size", () => {
-      expect(true).toBe(true);
+      const [label, pageRoot] = ctx.inspectedElements!;
+      expect(label!.className).toMatch(/\btext-xs\b/);
+      expect(pageRoot!.className).not.toMatch(/\btext-(?:\[\d+px\]|2xs|3xs)\b/);
     });
   });
 
   Scenario("The chart plot occupies the full container width on a phone", ({ Given, When, Then, And }) => {
     Given("the AI benchmark page is loaded at a 320 px viewport", () => {
-      expect(true).toBe(true);
+      ctx.viewportWidth = 320;
+      renderPageForLocale("en");
     });
 
     When("the width of a capability bar's track is compared with the width of its containing chart region", () => {
-      expect(true).toBe(true);
+      const row = document.querySelector('[data-testid^="benchmark-chart-row-"]')!;
+      ctx.inspectedElements = [row, row.querySelector('[data-slot="chart-bar-row-track"]')!];
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The chart plot occupies the full container width on a phone
     Then("the bar track spans the full width of that region", () => {
-      expect(true).toBe(true);
+      expect(ctx.inspectedElements![1]!.className).toMatch(/\bw-full\b/);
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The chart plot occupies the full container width on a phone
     And("no reserved label column is present at that width", () => {
-      expect(true).toBe(true);
+      const rowClass = ctx.inspectedElements![0]!.className;
+      expect(rowClass).not.toMatch(/(?:^|\s)grid(?:\s|$)/);
+      expect(rowClass).toMatch(/\blg:grid-cols-/);
     });
   });
 
   // Rule-15 UWT-007 regression fix (Phase 12 PR review, finding F2): mirrors the Scenario Outline
   // the `.feature` file now carries (retargeted from a fixed 390x844 viewport to the two realistic
   // breakpoints `delivery.md`'s UWT-007 retest actually measured — this mock binding is unaffected
-  // by which breakpoint is substituted since every step body is a no-op `expect(true).toBe(true)`,
-  // but the step TEXT must still match the `.feature` file's quoted-parameter Given for the shared
-  // spec-coverage validator to resolve this as a bound step rather than an orphan).
-  ScenarioOutline("The chart is visible above the fold on a phone", ({ Given, When, Then }) => {
+  // by which breakpoint is substituted because Unit verifies the responsive document-order and
+  // compact-spacing contracts while the browser binding performs the pixel offset measurement).
+  ScenarioOutline("The chart is visible above the fold on a phone", ({ Given, When, Then }, variables) => {
     Given('the AI benchmark page is loaded at a "<width>" px wide, "<height>" px tall viewport', () => {
-      expect(true).toBe(true);
+      ctx.viewportWidth = Number(variables.width);
+      ctx.viewportHeight = Number(variables.height);
+      renderPageForLocale("en");
     });
 
     When("the vertical offset of the first chart element is read from the live page", () => {
-      expect(true).toBe(true);
+      ctx.inspectedElements = [screen.getByTestId("ai-bench-page"), screen.getByTestId("benchmark-chart")];
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The chart is visible above the fold on a phone
     Then("that offset is less than the viewport height", () => {
-      expect(true).toBe(true);
+      const [pageRoot, chart] = ctx.inspectedElements!;
+      expect(ctx.viewportWidth).toBeGreaterThan(0);
+      expect(ctx.viewportHeight).toBeGreaterThan(0);
+      expect(pageRoot!.className).toMatch(/\bspace-y-4\b/);
+      expect(pageRoot!.className).toMatch(/\bpy-4\b/);
+      expect(pageRoot!.compareDocumentPosition(chart!) & Node.DOCUMENT_POSITION_CONTAINED_BY).toBeTruthy();
+      expect(screen.getByTestId("ai-bench-subtitle").className).toMatch(/\bhidden\b.*\bsm:block\b/);
     });
   });
 
-  ScenarioOutline("The overhauled page behaves identically in both locales", ({ Given, When, Then, And }) => {
-    Given('the AI benchmark page is loaded in the "<locale>" locale at a 390 px viewport', () => {
-      expect(true).toBe(true);
-    });
+  ScenarioOutline(
+    "The overhauled page behaves identically in both locales",
+    ({ Given, When, Then, And }, variables) => {
+      Given('the AI benchmark page is loaded in the "<locale>" locale at a 390 px viewport', () => {
+        ctx.viewportWidth = 390;
+        ctx.locale = variables.locale as Locale;
+        renderPageForLocale(ctx.locale);
+      });
 
-    When("the page renders", () => {
-      expect(true).toBe(true);
-    });
+      When("the page renders", () => {
+        ctx.inspectedElements = [
+          screen.getByTestId("ai-bench-page"),
+          screen.getByTestId("benchmark-chart"),
+          screen.getByTestId("model-table-mobile"),
+        ];
+      });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The overhauled page behaves identically in both locales
-    Then("the chart is present above the fold", () => {
-      expect(true).toBe(true);
-    });
+      Then("the chart is present above the fold", () => {
+        const [pageRoot, chart] = ctx.inspectedElements!;
+        expect(pageRoot!.compareDocumentPosition(chart!) & Node.DOCUMENT_POSITION_CONTAINED_BY).toBeTruthy();
+        expect(pageRoot!.className).toMatch(/\bspace-y-4\b/);
+      });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The overhauled page behaves identically in both locales
-    And("every roster card is collapsed", () => {
-      expect(true).toBe(true);
-    });
+      And("every roster card is collapsed", () => {
+        const cards = ctx.inspectedElements![2]!.querySelectorAll("details");
+        expect(cards.length).toBeGreaterThan(0);
+        expect(Array.from(cards).every((card) => !card.hasAttribute("open"))).toBe(true);
+      });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/tools/ai-benchmark.feature:The overhauled page behaves identically in both locales
-    And("no raw translation key is rendered", () => {
-      expect(true).toBe(true);
-    });
-  });
+      And("no raw translation key is rendered", () => {
+        expect(ctx.inspectedElements![0]!.textContent).not.toMatch(/aiBench/);
+        expect(document.documentElement.lang).toBe(ctx.locale);
+      });
+    },
+  );
 });

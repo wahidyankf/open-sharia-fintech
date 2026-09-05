@@ -40,7 +40,7 @@ validation at the end.
 
 ## Workflows
 
-- [plan-planning](./plan-planning.md) — Orchestrates a user prompt through repo exploration, two grill sessions, optional web research, plan-maker delegation, structural review, and the plan-quality-gate into a pushed, validated plan. Use when a user describes a new behavior, pattern, or convention to adopt and needs it turned into a validated, execution-ready plan in plans/in-progress/ or plans/backlog/.
+- [plan-planning](./plan-planning.md) — Orchestrates a user prompt through repo exploration, two grill sessions, optional web research, plan-maker delegation, structural review, and the plan-quality-gate into a pushed, validated plan. Use when a user describes a new behaviour, pattern, or convention to adopt and needs it turned into a validated, execution-ready plan in plans/in-progress/ or plans/backlog/.
 - [plan-idea-promotion-planning](./plan-idea-promotion-planning.md) — Promotes one ripe two-pager idea brief into a mature-core backlog plan, gated, researched, and retired atomically. Use when a two-pager in plans/ideas/ has matured and should become a scheduled backlog plan.
 - [plan-handover-execution](./plan-handover-execution.md) — Writes a structured handover document capturing an in-progress plan's state for the next agent, session, or human. Use when stepping away from an in-progress plan and prior session context would otherwise be lost.
 - [plan-takeover-execution](./plan-takeover-execution.md) — Discovers, reconciles, and takes over a plan's in-flight state across repos before handing off to plan-execution.md. Use before plan-execution.md when the plan might already be worked somewhere; skip for a brand-new plan.

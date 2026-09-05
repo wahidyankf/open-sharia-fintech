@@ -7,328 +7,353 @@ import { expect } from "vitest";
 import { Button } from "../../../../src/components/button/button";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../specs/libs/web-ui/behaviors/button/button.feature"),
+  path.resolve(__dirname, "../../../../../../specs/libs/web-ui/behaviours/button/button.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {
   Scenario("Renders with default variant and size", ({ When, Then, And }) => {
+    let button: HTMLElement;
+
     When('the Button is rendered with label "Click me"', () => {
-      // precondition noted; render happens in assertion steps
+      cleanup();
+      render(<Button>Click me</Button>);
+      button = screen.getByRole("button", { name: "Click me" });
     });
 
     Then("the button element should be present in the document", () => {
-      cleanup();
-      render(<Button>Click me</Button>);
-      expect(screen.getByRole("button", { name: "Click me" })).toBeDefined();
+      expect(button.textContent).toBe("Click me");
     });
 
     And('the button should have data-variant "default"', () => {
-      cleanup();
-      render(<Button>Click me</Button>);
-      expect(screen.getByRole("button", { name: "Click me" }).getAttribute("data-variant")).toBe("default");
+      expect(button.getAttribute("data-variant")).toBe("default");
     });
 
     And('the button should have data-size "default"', () => {
-      cleanup();
-      render(<Button>Click me</Button>);
-      expect(screen.getByRole("button", { name: "Click me" }).getAttribute("data-size")).toBe("default");
+      expect(button.getAttribute("data-size")).toBe("default");
     });
   });
 
   Scenario("Renders variant default", ({ When, Then }) => {
+    let button: HTMLElement;
+
     When('the Button is rendered with variant "default" and label "default"', () => {
-      // precondition noted
+      cleanup();
+      render(<Button variant="default">default</Button>);
+      button = screen.getByRole("button", { name: "default" });
     });
 
     Then('the button element with label "default" should be present', () => {
-      cleanup();
-      render(<Button variant="default">default</Button>);
-      expect(screen.getByRole("button", { name: "default" })).toBeDefined();
+      expect(button.getAttribute("data-variant")).toBe("default");
     });
   });
 
   Scenario("Renders variant destructive", ({ When, Then }) => {
+    let button: HTMLElement;
+
     When('the Button is rendered with variant "destructive" and label "destructive"', () => {
-      // precondition noted
+      cleanup();
+      render(<Button variant="destructive">destructive</Button>);
+      button = screen.getByRole("button", { name: "destructive" });
     });
 
     Then('the button element with label "destructive" should be present', () => {
-      cleanup();
-      render(<Button variant="destructive">destructive</Button>);
-      expect(screen.getByRole("button", { name: "destructive" })).toBeDefined();
+      expect(button.getAttribute("data-variant")).toBe("destructive");
     });
   });
 
   Scenario("Renders variant outline", ({ When, Then }) => {
+    let button: HTMLElement;
+
     When('the Button is rendered with variant "outline" and label "outline"', () => {
-      // precondition noted
+      cleanup();
+      render(<Button variant="outline">outline</Button>);
+      button = screen.getByRole("button", { name: "outline" });
     });
 
     Then('the button element with label "outline" should be present', () => {
-      cleanup();
-      render(<Button variant="outline">outline</Button>);
-      expect(screen.getByRole("button", { name: "outline" })).toBeDefined();
+      expect(button.getAttribute("data-variant")).toBe("outline");
     });
   });
 
   Scenario("Renders variant secondary", ({ When, Then }) => {
+    let button: HTMLElement;
+
     When('the Button is rendered with variant "secondary" and label "secondary"', () => {
-      // precondition noted
+      cleanup();
+      render(<Button variant="secondary">secondary</Button>);
+      button = screen.getByRole("button", { name: "secondary" });
     });
 
     Then('the button element with label "secondary" should be present', () => {
-      cleanup();
-      render(<Button variant="secondary">secondary</Button>);
-      expect(screen.getByRole("button", { name: "secondary" })).toBeDefined();
+      expect(button.getAttribute("data-variant")).toBe("secondary");
     });
   });
 
   Scenario("Renders variant ghost", ({ When, Then }) => {
+    let button: HTMLElement;
+
     When('the Button is rendered with variant "ghost" and label "ghost"', () => {
-      // precondition noted
+      cleanup();
+      render(<Button variant="ghost">ghost</Button>);
+      button = screen.getByRole("button", { name: "ghost" });
     });
 
     Then('the button element with label "ghost" should be present', () => {
-      cleanup();
-      render(<Button variant="ghost">ghost</Button>);
-      expect(screen.getByRole("button", { name: "ghost" })).toBeDefined();
+      expect(button.getAttribute("data-variant")).toBe("ghost");
     });
   });
 
   Scenario("Renders variant link", ({ When, Then }) => {
+    let button: HTMLElement;
+
     When('the Button is rendered with variant "link" and label "link"', () => {
-      // precondition noted
+      cleanup();
+      render(<Button variant="link">link</Button>);
+      button = screen.getByRole("button", { name: "link" });
     });
 
     Then('the button element with label "link" should be present', () => {
-      cleanup();
-      render(<Button variant="link">link</Button>);
-      expect(screen.getByRole("button", { name: "link" })).toBeDefined();
+      expect(button.getAttribute("data-variant")).toBe("link");
     });
   });
 
   Scenario("Renders size default", ({ When, Then }) => {
-    When('the Button is rendered with size "default" and aria-label "button-default"', () => {
-      // precondition noted
-    });
+    let button: HTMLElement;
 
-    Then('the button element with aria-label "button-default" should be present', () => {
+    When('the Button is rendered with size "default" and aria-label "button-default"', () => {
       cleanup();
       render(
         <Button size="default" aria-label="button-default">
           X
         </Button>,
       );
-      expect(screen.getByRole("button", { name: "button-default" })).toBeDefined();
+      button = screen.getByRole("button", { name: "button-default" });
+    });
+
+    Then('the button element with aria-label "button-default" should be present', () => {
+      expect(button.getAttribute("data-size")).toBe("default");
     });
   });
 
   Scenario("Renders size xs", ({ When, Then }) => {
-    When('the Button is rendered with size "xs" and aria-label "button-xs"', () => {
-      // precondition noted
-    });
+    let button: HTMLElement;
 
-    Then('the button element with aria-label "button-xs" should be present', () => {
+    When('the Button is rendered with size "xs" and aria-label "button-xs"', () => {
       cleanup();
       render(
         <Button size="xs" aria-label="button-xs">
           X
         </Button>,
       );
-      expect(screen.getByRole("button", { name: "button-xs" })).toBeDefined();
+      button = screen.getByRole("button", { name: "button-xs" });
+    });
+
+    Then('the button element with aria-label "button-xs" should be present', () => {
+      expect(button.getAttribute("data-size")).toBe("xs");
     });
   });
 
   Scenario("Renders size sm", ({ When, Then }) => {
-    When('the Button is rendered with size "sm" and aria-label "button-sm"', () => {
-      // precondition noted
-    });
+    let button: HTMLElement;
 
-    Then('the button element with aria-label "button-sm" should be present', () => {
+    When('the Button is rendered with size "sm" and aria-label "button-sm"', () => {
       cleanup();
       render(
         <Button size="sm" aria-label="button-sm">
           X
         </Button>,
       );
-      expect(screen.getByRole("button", { name: "button-sm" })).toBeDefined();
+      button = screen.getByRole("button", { name: "button-sm" });
+    });
+
+    Then('the button element with aria-label "button-sm" should be present', () => {
+      expect(button.getAttribute("data-size")).toBe("sm");
     });
   });
 
   Scenario("Renders size lg", ({ When, Then }) => {
-    When('the Button is rendered with size "lg" and aria-label "button-lg"', () => {
-      // precondition noted
-    });
+    let button: HTMLElement;
 
-    Then('the button element with aria-label "button-lg" should be present', () => {
+    When('the Button is rendered with size "lg" and aria-label "button-lg"', () => {
       cleanup();
       render(
         <Button size="lg" aria-label="button-lg">
           X
         </Button>,
       );
-      expect(screen.getByRole("button", { name: "button-lg" })).toBeDefined();
+      button = screen.getByRole("button", { name: "button-lg" });
+    });
+
+    Then('the button element with aria-label "button-lg" should be present', () => {
+      expect(button.getAttribute("data-size")).toBe("lg");
     });
   });
 
   Scenario("Renders size icon", ({ When, Then }) => {
-    When('the Button is rendered with size "icon" and aria-label "button-icon"', () => {
-      // precondition noted
-    });
+    let button: HTMLElement;
 
-    Then('the button element with aria-label "button-icon" should be present', () => {
+    When('the Button is rendered with size "icon" and aria-label "button-icon"', () => {
       cleanup();
       render(
         <Button size="icon" aria-label="button-icon">
           X
         </Button>,
       );
-      expect(screen.getByRole("button", { name: "button-icon" })).toBeDefined();
+      button = screen.getByRole("button", { name: "button-icon" });
+    });
+
+    Then('the button element with aria-label "button-icon" should be present', () => {
+      expect(button.getAttribute("data-size")).toBe("icon");
     });
   });
 
   Scenario("Renders size icon-xs", ({ When, Then }) => {
-    When('the Button is rendered with size "icon-xs" and aria-label "button-icon-xs"', () => {
-      // precondition noted
-    });
+    let button: HTMLElement;
 
-    Then('the button element with aria-label "button-icon-xs" should be present', () => {
+    When('the Button is rendered with size "icon-xs" and aria-label "button-icon-xs"', () => {
       cleanup();
       render(
         <Button size="icon-xs" aria-label="button-icon-xs">
           X
         </Button>,
       );
-      expect(screen.getByRole("button", { name: "button-icon-xs" })).toBeDefined();
+      button = screen.getByRole("button", { name: "button-icon-xs" });
+    });
+
+    Then('the button element with aria-label "button-icon-xs" should be present', () => {
+      expect(button.getAttribute("data-size")).toBe("icon-xs");
     });
   });
 
   Scenario("Renders size icon-sm", ({ When, Then }) => {
-    When('the Button is rendered with size "icon-sm" and aria-label "button-icon-sm"', () => {
-      // precondition noted
-    });
+    let button: HTMLElement;
 
-    Then('the button element with aria-label "button-icon-sm" should be present', () => {
+    When('the Button is rendered with size "icon-sm" and aria-label "button-icon-sm"', () => {
       cleanup();
       render(
         <Button size="icon-sm" aria-label="button-icon-sm">
           X
         </Button>,
       );
-      expect(screen.getByRole("button", { name: "button-icon-sm" })).toBeDefined();
+      button = screen.getByRole("button", { name: "button-icon-sm" });
+    });
+
+    Then('the button element with aria-label "button-icon-sm" should be present', () => {
+      expect(button.getAttribute("data-size")).toBe("icon-sm");
     });
   });
 
   Scenario("Renders size icon-lg", ({ When, Then }) => {
-    When('the Button is rendered with size "icon-lg" and aria-label "button-icon-lg"', () => {
-      // precondition noted
-    });
+    let button: HTMLElement;
 
-    Then('the button element with aria-label "button-icon-lg" should be present', () => {
+    When('the Button is rendered with size "icon-lg" and aria-label "button-icon-lg"', () => {
       cleanup();
       render(
         <Button size="icon-lg" aria-label="button-icon-lg">
           X
         </Button>,
       );
-      expect(screen.getByRole("button", { name: "button-icon-lg" })).toBeDefined();
+      button = screen.getByRole("button", { name: "button-icon-lg" });
+    });
+
+    Then('the button element with aria-label "button-icon-lg" should be present', () => {
+      expect(button.getAttribute("data-size")).toBe("icon-lg");
     });
   });
 
   Scenario("Supports disabled state", ({ When, Then }) => {
+    let button: HTMLElement;
+
     When('the Button is rendered as disabled with label "Disabled"', () => {
-      // precondition noted
+      cleanup();
+      render(<Button disabled>Disabled</Button>);
+      button = screen.getByRole("button", { name: "Disabled" });
     });
 
     Then("the button element should have the disabled attribute", () => {
-      cleanup();
-      render(<Button disabled>Disabled</Button>);
-      expect(screen.getByRole("button", { name: "Disabled" }).hasAttribute("disabled")).toBe(true);
+      expect(button.hasAttribute("disabled")).toBe(true);
     });
   });
 
   Scenario("Renders as child element when asChild is true", ({ When, Then, And }) => {
+    let link: HTMLElement;
+
     When('the Button is rendered with asChild wrapping an anchor to "/test" with label "Link Button"', () => {
-      // precondition noted
+      cleanup();
+      render(
+        <Button asChild>
+          <a href="/test">Link Button</a>
+        </Button>,
+      );
+      link = screen.getByRole("link", { name: "Link Button" });
     });
 
     Then('a link element with label "Link Button" should be present', () => {
-      cleanup();
-      render(
-        <Button asChild>
-          <a href="/test">Link Button</a>
-        </Button>,
-      );
-      expect(screen.getByRole("link", { name: "Link Button" })).toBeDefined();
+      expect(link.textContent).toBe("Link Button");
     });
 
     And('the link should have href "/test"', () => {
-      cleanup();
-      render(
-        <Button asChild>
-          <a href="/test">Link Button</a>
-        </Button>,
-      );
-      expect(screen.getByRole("link", { name: "Link Button" }).getAttribute("href")).toBe("/test");
+      expect(link.getAttribute("href")).toBe("/test");
     });
   });
 
   Scenario("Has no accessibility violations", ({ When, Then }) => {
+    let container: HTMLElement;
+
     When('the Button is rendered with label "Accessible Button"', () => {
-      // precondition noted
+      cleanup();
+      container = render(<Button>Accessible Button</Button>).container;
     });
 
     Then("the button should have no accessibility violations", async () => {
-      cleanup();
-      const { container } = render(<Button>Accessible Button</Button>);
       const results = await axe(container);
       expect(results).toHaveNoViolations();
     });
   });
 
   Scenario("Renders variant teal", ({ When, Then }) => {
-    let variantValue: string;
+    let button: HTMLElement;
 
     When('I render a Button with variant "teal"', () => {
-      variantValue = "teal";
+      cleanup();
+      render(<Button variant="teal">teal</Button>);
+      button = screen.getByRole("button", { name: "teal" });
     });
 
     Then('the button should have data-variant "teal"', () => {
-      cleanup();
-      render(<Button variant={variantValue as "teal"}>{variantValue}</Button>);
-      expect(screen.getByRole("button", { name: variantValue }).getAttribute("data-variant")).toBe(variantValue);
+      expect(button.getAttribute("data-variant")).toBe("teal");
     });
   });
 
   Scenario("Renders variant sage", ({ When, Then }) => {
-    let variantValue: string;
+    let button: HTMLElement;
 
     When('I render a Button with variant "sage"', () => {
-      variantValue = "sage";
+      cleanup();
+      render(<Button variant="sage">sage</Button>);
+      button = screen.getByRole("button", { name: "sage" });
     });
 
     Then('the button should have data-variant "sage"', () => {
-      cleanup();
-      render(<Button variant={variantValue as "sage"}>{variantValue}</Button>);
-      expect(screen.getByRole("button", { name: variantValue }).getAttribute("data-variant")).toBe(variantValue);
+      expect(button.getAttribute("data-variant")).toBe("sage");
     });
   });
 
   Scenario("Renders size xl", ({ When, Then }) => {
-    let sizeValue: string;
+    let button: HTMLElement;
 
     When('I render a Button with size "xl"', () => {
-      sizeValue = "xl";
-    });
-
-    Then('the button should have data-size "xl"', () => {
       cleanup();
       render(
-        <Button size={sizeValue as "xl"} aria-label={`button-${sizeValue}`}>
+        <Button size="xl" aria-label="button-xl">
           X
         </Button>,
       );
-      expect(screen.getByRole("button", { name: `button-${sizeValue}` }).getAttribute("data-size")).toBe(sizeValue);
+      button = screen.getByRole("button", { name: "button-xl" });
+    });
+
+    Then('the button should have data-size "xl"', () => {
+      expect(button.getAttribute("data-size")).toBe("xl");
     });
   });
 });

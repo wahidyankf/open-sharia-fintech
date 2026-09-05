@@ -1,7 +1,7 @@
 ---
 title: "PR Review Cycle — Success Criteria"
 description: "Defines explicit invocation, clean-streak exit, and default-delivery non-applicability."
-when_to_use: "Use when validating the optional cycle's observable behavior."
+when_to_use: "Use when validating the optional cycle's observable behaviour."
 ---
 
 # PR Review Cycle — Success Criteria

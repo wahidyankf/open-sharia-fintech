@@ -28,7 +28,6 @@ When("the visitor opens the mobile navigation menu", async ({ page }) => {
 // Header primary nav assertions
 // ---------------------------------------------------------------------------
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/ia-navigation-revamp.feature:Header shows primary nav links on desktop
 Then(
   "the header primary nav should contain a link to {string} labelled {string}",
   async ({ page }, href: string, label: string) => {
@@ -44,7 +43,6 @@ Then(
 // Mobile nav assertions
 // ---------------------------------------------------------------------------
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/ia-navigation-revamp.feature:Mobile navigation mirrors the header links
 Then(
   "the mobile nav should contain a link to {string} labelled {string}",
   async ({ page }, href: string, label: string) => {
@@ -98,7 +96,6 @@ Then("the footer should display an {string} column", async ({ page }, columnName
   await expect(link).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/ia-navigation-revamp.feature:Footer shows grouped navigation with localized labels
 Then("the footer {string} column should link to {string}", async ({ page }, _columnName: string, href: string) => {
   const footer = page.getByRole("navigation", { name: "Footer" });
   await expect(footer).toBeVisible();

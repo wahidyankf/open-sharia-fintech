@@ -18,9 +18,9 @@ GitHub Actions, and naming.
 - [Principles and Conventions Implemented/Respected](./ci-conventions/principles-and-conventions.md) — Principles and conventions this CI/CD series implements. Use when tracing a rule's source principle or convention.
 - [Git Hooks Standard — Pre-Commit and Commit-msg](./ci-conventions/git-hooks-standard-pre-commit-and-commit-msg.md) — Pre-commit gate steps and the commit-msg format. Use when debugging the pre-commit hook or commit format.
 - [Git Hooks Standard — Pre-Push](./ci-conventions/git-hooks-standard-pre-push.md) — The registry-driven pre-push hook and its live gate set. Use when debugging or speeding up the pre-push hook.
-- [Nx Target Naming and Three-Level Testing Definitions](./ci-conventions/nx-target-naming-and-three-level-testing-definitions.md) — Key Nx target names and the three test-level isolation rules. Use when checking which target or isolation rule applies.
-- [Test Manifestations and Gherkin Consumption Matrix](./ci-conventions/test-manifestations-and-gherkin-consumption-matrix.md) — How each app type implements test levels and consumes Gherkin. Use when implementing tests for an app type.
-- [Coverage Threshold Rationale](./ci-conventions/coverage-threshold-rationale.md) — Why coverage thresholds differ by project type. Use when checking a project's required coverage threshold.
+- [Nx Testing Targets and Boundaries](./ci-conventions/nx-target-naming-and-three-level-testing-definitions.md) — Runtime, static coverage, and three-layer boundaries. Use when classifying a test.
+- [Project-Role Testing and Gherkin Matrix](./ci-conventions/test-manifestations-and-gherkin-consumption-matrix.md) — Applicable adapters by role. Use when implementing project tests.
+- [Runtime and Static Coverage Responsibilities](./ci-conventions/coverage-threshold-rationale.md) — Separates runtime measurement from static coverage validation.
 
 ## Docker and GitHub Actions
 
@@ -38,6 +38,6 @@ GitHub Actions, and naming.
 ## CI/toolchain Parity Checklist
 
 - [Parity Checklist — Invariants A and B](./ci-conventions/ci-toolchain-parity-checklist-invariants-a-and-b.md) — Requirement tables for CI Workflow Shape and Git Hook Lifecycle. Use when auditing a workflow's shape or a hook's steps.
-- [Parity Checklist — Invariants B2, C, and D](./ci-conventions/ci-toolchain-parity-checklist-invariants-b2-c-and-d.md) — No-heavy-tests, hexagonal layout, and command-surface rules. Use when checking a test target's gate or rhino-cli's layers.
+- [Parity Checklist — Test Execution Boundaries and Command Surfaces](./ci-conventions/ci-toolchain-parity-checklist-invariants-b2-c-and-d.md) — Fast-gate, coverage, architecture, and command invariants.
 - [Parity Checklist — Invariants E, F, and G](./ci-conventions/ci-toolchain-parity-checklist-invariants-e-f-and-g.md) — Nx naming scheme, governance-currency checklist, Mermaid rules. Use when naming a target or writing a state diagram.
 - [Parity Checklist — Affected-First PR-Gate Principle](./ci-conventions/ci-toolchain-parity-checklist-affected-first-pr-gate-principle.md) — Why PR checks scope to `nx affected`, and the exceptions. Use when adding a PR-gate check and deciding its scope.

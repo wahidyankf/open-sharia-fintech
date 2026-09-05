@@ -42,7 +42,7 @@ function isValidEmail(email: string): boolean {
 **Ensure tests pass before "Make It Right"**:
 
 ```typescript
-// PASS: Tests lock in behavior before refactoring
+// PASS: Tests lock in behaviour before refactoring
 describe("calculateOrderTotal", () => {
   it("calculates total for multiple items", () => {
     const items = [

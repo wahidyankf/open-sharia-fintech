@@ -1,6 +1,6 @@
 ---
 title: "Surface-Conditional Tester Gates"
-description: Routes a plan's surface (UI, API/backend, CLI/library, or no reachable behavior) to the quality gates its delivery checklist must run, and explains why the three UI gates are complementary.
+description: Routes a plan's surface (UI, API/backend, CLI/library, or no reachable behaviour) to the quality gates its delivery checklist must run, and explains why the three UI gates are complementary.
 when_to_use: Use when deciding at plan-authoring time which quality gates a plan's delivery checklist must carry for the surfaces it changes.
 ---
 
@@ -10,7 +10,7 @@ Which quality gates a plan must run depends on **what surface it ships**. Decide
 time and write the result into the delivery checklist — it binds again at execution, and again as a
 merge precondition.
 
-The rule is: **a plan that changes behavior a user or caller can reach must exercise that behavior
+The rule is: **a plan that changes behaviour a user or caller can reach must exercise that behaviour
 before it merges.** The list below routes the common surfaces to their gates. It is a routing table,
 never the boundary of the rule — a surface absent from it does not become exempt by omission.
 
@@ -22,10 +22,10 @@ never the boundary of the rule — a surface absent from it does not become exem
 - **Several of these** → run each set.
 - **A reachable surface with no gate listed above** — a CLI such as `apps/rhino-cli/**`, a library
   under `libs/`, a git hook, a CI workflow — is **not exempt**. The plan states in its chosen technical form
-  how the changed behavior will be exercised through its own interface (for a CLI: which subcommands
+  how the changed behaviour will be exercised through its own interface (for a CLI: which subcommands
   get invoked and what output is recorded; for a library: which consuming caller exercises it, not
   only its unit tests), and the delivery checklist carries that as a step.
-- **Genuinely no reachable behavior** — docs, comments, or a pure refactor with no behavioral delta —
+- **Genuinely no reachable behaviour** — docs, comments, or a pure refactor with no behavioural delta —
   → the plan **MUST state the exemption explicitly in its chosen technical form**, with the justification.
   An unstated exemption is indistinguishable from an oversight, which is exactly what this rule
   exists to prevent.

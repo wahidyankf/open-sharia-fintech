@@ -55,6 +55,7 @@ describe("Command primitive", () => {
     );
     expect(screen.getByText("Command Palette")).toBeTruthy();
     expect(screen.getByText("Search for a command to run...")).toBeTruthy();
+    expect(screen.getByText("Command Palette").closest('[role="dialog"]')).not.toBeNull();
     expect(screen.getByPlaceholderText("Type a command...")).toBeTruthy();
   });
 

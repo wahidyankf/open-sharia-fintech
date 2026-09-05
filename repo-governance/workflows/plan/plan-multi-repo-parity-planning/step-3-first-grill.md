@@ -32,7 +32,7 @@ decision. "We didn't discuss it" is a workflow failure.
 
 **Research-needed flag**: Before closing this grill, establish whether external research is
 required before authoring. Ask explicitly: are there harness or vendor conventions, library or
-tool behavior claims, or cross-repo prior art that need verification? Record the invoker's answer
+tool behaviour claims, or cross-repo prior art that need verification? Record the invoker's answer
 as the research-needed flag (yes / no). This flag governs whether Step 4 runs or is skipped.
 
 **Continues in** [Step 3 — First Grill (Mandatory Meta-Questions)](./step-3-first-grill-meta-questions.md).

@@ -10,9 +10,10 @@
 
   <ItemGroup>
     <Compile Include="TestCollections.fs" />
-    <Compile Include="Steps/DbMigrationSteps.fs" />
-    <Compile Include="DatabaseBootTests.fs" />
-    <Compile Include="JournalRepositoryTests.fs" />
+    <Compile Include="Steps/EnvTierSteps.fs" />
+    <Compile Include="Steps/NatsConfigSteps.fs" />
+    <Compile Include="Tests/EnvTierLoaderIntegrationTests.fs" />
+    <Compile Include="Tests/NatsConfigIntegrationTests.fs" />
   </ItemGroup>
 
   <ItemGroup>

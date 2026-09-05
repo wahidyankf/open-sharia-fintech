@@ -1,43 +1,27 @@
 ---
-title: "Mandatory Targets — Summary Matrix"
-description: The per-project-type summary matrix of which mandatory targets are real versus echo, plus backend typecheck examples and CI schedules.
+title: "Applicable Testing Targets — Summary Matrix"
+description: "Project-role applicability for runtime and static test-coverage targets"
 category: explanation
 subcategory: development
-tags:
-  - nx
-  - targets
-  - project-json
-  - build
-  - scripts
+tags: [nx, targets, testing, coverage]
 created: 2026-02-23
-when_to_use: Use when checking at a glance which targets a given project type (API backend, Web UI, CLI, library, E2E runner) must declare.
+when_to_use: "Use to determine which real testing targets a project role must expose."
 ---
 
-# Mandatory Targets — Summary Matrix
+# Applicable Testing Targets — Summary Matrix
 
-## Summary Matrix
+Projects declare only real, applicable targets. Never use echo/no-op targets for symmetry.
 
-Per the mandatory-six rule, every project declares all six targets (`test:unit`, `test:integration`,
-`test:e2e`, `test:quick`, `lint`, `typecheck`). In this matrix, **"echo"** means the target is
-declared as a no-op echo placeholder — it is present but does no real work. `specs:behavior:coverage`
-is compulsory for all apps and E2E runners.
+| Project role          | Runtime targets                                                                                         | Static coverage targets                                                                                            |
+| --------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| Application           | `test:unit`; `test:integration` for an owned local boundary                                             | `test:coverage:unit`, applicable `test:coverage:integration`, `test:coverage:behaviour`, aggregate `test:coverage` |
+| Library               | `test:unit`; Integration for an owned local boundary; E2E for a genuine public browser/runtime boundary | Matching coverage for every applicable layer plus `test:coverage:behaviour` and aggregate                          |
+| Executable tool       | `test:unit`; Integration for local resources; E2E for a public process boundary                         | Matching layer coverage plus `test:coverage:behaviour` and aggregate                                               |
+| Dedicated E2E project | `test:e2e` for its owner                                                                                | `test:coverage:e2e`, `test:coverage:behaviour`, and aggregate `test:coverage`                                      |
 
-| Project Type | `test:unit` | `test:integration` | `test:e2e` | `test:quick` | `specs:behavior:coverage` | `lint` | `build` | `typecheck`  |
-| ------------ | ----------- | ------------------ | ---------- | ------------ | ------------------------- | ------ | ------- | ------------ |
-| API Backend  | Yes         | Yes (PG)           | echo (†)   | Yes          | Yes                       | Yes    | Yes     | Yes (all 11) |
-| Web UI App   | Yes         | Yes (MSW)          | echo (†)   | Yes          | Yes                       | Yes    | Yes     | If typed     |
-| Demo-fe FE   | Yes         | echo               | echo (†)   | Yes          | Yes                       | Yes    | Yes     | If typed     |
-| Fullstack    | Yes         | Yes                | echo (†)   | Yes          | Yes                       | Yes    | Yes     | If typed     |
-| CLI App      | Yes         | Yes                | echo       | Yes          | Yes                       | Yes    | Yes     | If typed     |
-| Library      | Yes         | Optional / echo    | echo       | Yes          | Yes                       | Yes    | —       | If typed     |
-| E2E Runner   | echo        | echo               | Yes        | Yes          | Yes                       | Yes    | —       | If typed     |
+Every owner project exposes `test:quick`. It runs type checking and linting where applicable,
+Unit runtime, and every applicable static coverage validator. A dedicated E2E project omits Unit
+runtime from quick. Integration and E2E runtime remain manual-impacted and scheduled-full only.
+Every owner `test:unit` enforces a hard minimum of 99% line coverage.
 
-† E2E tests live in dedicated `*-e2e` runner projects; non-e2e projects declare `test:e2e: echo "no e2e tests"`.
-
-**Product backend `typecheck` examples** (all statically typed backends use `typecheck` with `dependsOn: ["codegen"]` where codegen applies):
-
-| Backend           | `typecheck` command                                                   |
-| ----------------- | --------------------------------------------------------------------- |
-| `organiclever-be` | `dotnet build apps/organiclever-be/organiclever-be.fsproj -c Release` |
-
-**CI schedules**: Per-service "Test" workflows run 2× daily (WIB 06, 18) combining `test:integration` and `test:e2e` for each service. `typecheck`, `lint`, and `test:quick` run on every PR event and on every push to `main` through `pr-quality-gate.yml`; its CI matrix is derived from the gate registry. Heavy integration and E2E tiers remain scheduled-only and are never gate-surface entries.
+See the [BDD standard](../../behaviour-driven-development.md) for boundary and exemption rules.

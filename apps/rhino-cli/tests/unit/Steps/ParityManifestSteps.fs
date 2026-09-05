@@ -1,281 +1,178 @@
-/// TickSpec step definitions binding `parity-manifest.feature`'s 5 scenarios
-/// [Repo-grounded —
-/// `specs/apps/rhino/cli/behaviors/gate/parity-manifest.feature`,
-/// `apps/rhino-cli/tests/gate_specs.rs`].
-///
-/// `parity manifest generate`/`validate` already ship as F# —
-/// `RhinoCli.Application/src/Parity.fs`, live behind `rhino-bin.sh`'s
-/// `FSHARP_NAMESPACES` since an earlier wave — so this phase only adds the
-/// Gherkin-scenario coverage that was never ported. Every scenario spawns
-/// the real, prebuilt F# CLI binary as a subprocess against a disposable Git
-/// fixture, mirroring `GateWorld::fixture_rhino_command`.
+/// In-process TickSpec proof for `parity-manifest.feature`.
+/// Git/index discovery belongs to Integration; these Unit scenarios exercise
+/// the production checksum, canonical-rendering, and drift decisions over an
+/// in-memory prospective repository.
 module RhinoCli.Tests.Unit.Steps.ParityManifestSteps
 
+let private behaviourFeatureOwnership =
+    [ "specs/apps/rhino/cli/behaviours/gate/parity-manifest.feature" ]
+
 open System
-open System.Diagnostics
-open System.IO
 open System.Text
 open TickSpec
 open Xunit
+open RhinoCli.Application
 
-let private repoRoot: string =
-    match RhinoCli.Infrastructure.GitRoot.findRoot () with
-    | Ok root -> root
-    | Error message -> failwithf "locate repository root: %s" message
+let private bytes (text: string) = Encoding.UTF8.GetBytes text
 
-/// The published F# CLI these scenarios spawn as a real subprocess, built on
-/// first use — a fresh clone may not have published it yet
-/// [Repo-grounded — `gate_specs.rs::cargo_bin("rhino-cli")`].
-let private prebuiltFsharpCli: Lazy<string> =
-    lazy
-        (let binary =
-            Path.Combine(repoRoot, "apps", "rhino-cli", "src", "dist", "rhino-cli-fsharp")
-
-         if File.Exists binary then
-             binary
-         else
-             let psi =
-                 ProcessStartInfo(FileName = "dotnet", UseShellExecute = false, WorkingDirectory = repoRoot)
-
-             for a in
-                 [ "publish"
-                   "apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj"
-                   "-c"
-                   "Release"
-                   "--self-contained"
-                   "true"
-                   "--use-current-runtime"
-                   "-o"
-                   "apps/rhino-cli/src/dist" ] do
-                 psi.ArgumentList.Add a
-
-             use p = Process.Start psi
-             p.WaitForExit()
-
-             if p.ExitCode <> 0 || not (File.Exists binary) then
-                 failwith "publish the F# CLI for parity-manifest scenarios"
-
-             binary)
-
-type private RunResult =
-    { ExitCode: int
-      Stdout: string
-      Stderr: string }
-
-let private run (exe: string) (args: string list) (cwd: string) (env: (string * string) list) : RunResult =
-    let psi =
-        ProcessStartInfo(
-            FileName = exe,
-            UseShellExecute = false,
-            WorkingDirectory = cwd,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true
-        )
-
-    for a in args do
-        psi.ArgumentList.Add a
-
-    for k, v in env do
-        psi.Environment.[k] <- v
-
-    use p = Process.Start psi
-    let out = p.StandardOutput.ReadToEnd()
-    let err = p.StandardError.ReadToEnd()
-    p.WaitForExit()
-
-    { ExitCode = p.ExitCode
-      Stdout = out
-      Stderr = err }
-
-/// Instance step-definition container — see `ConventionSteps.fs`'s module doc
-/// comment for the one-instance-per-scenario rationale behind mutable
-/// instance state here.
 type ParityManifestSteps() =
-    let root =
-        let dir =
-            Path.Combine(Path.GetTempPath(), "rhino-cli-parity-manifest-" + Guid.NewGuid().ToString("N"))
+    let mutable boundary: Map<string, byte[]> = Map.empty
+    let mutable manifest = ""
+    let mutable firstManifest: string option = None
+    let mutable twinManifest: string option = None
+    let mutable validation: Result<unit, string> option = None
 
-        Directory.CreateDirectory dir |> ignore
-        dir
+    let generate () =
+        manifest <- Parity.renderFromBoundaryFiles boundary
+        validation <- Some(Parity.validateBoundaryFiles manifest boundary)
 
-    let mutable succeeded: bool option = None
-    let mutable output: string = ""
-    let mutable firstManifest: byte[] option = None
-    let mutable twinManifest: byte[] option = None
+    let validate () =
+        validation <- Some(Parity.validateBoundaryFiles manifest boundary)
 
-    let manifestPath = Path.Combine(root, "apps", "rhino-cli", "parity-manifest.sha256")
-
-    let write (relative: string) (contents: string) =
-        let path = Path.Combine(root, relative)
-        Directory.CreateDirectory(Path.GetDirectoryName path) |> ignore
-        File.WriteAllText(path, contents)
-
-    /// Mirrors `fixture_git_command` — used only for verification/staging
-    /// calls, not for driving `rhino-cli` itself.
-    let runFixtureGit (args: string list) : RunResult =
-        run
-            "git"
-            args
-            root
-            [ "GIT_DIR", Path.Combine(root, ".git")
-              "GIT_CEILING_DIRECTORIES", root
-              "GIT_CONFIG_GLOBAL", "/dev/null"
-              "GIT_CONFIG_SYSTEM", "/dev/null" ]
-
-    let initGit () =
-        runFixtureGit [ "init"; "--quiet" ] |> ignore
-
-    let stage (paths: string list) =
-        runFixtureGit ("add" :: paths) |> ignore
-
-    let fixtureEnv: (string * string) list =
-        [ "GIT_DIR", Path.Combine(root, ".git")
-          "GIT_WORK_TREE", root
-          "GIT_CEILING_DIRECTORIES", root
-          "GIT_CONFIG_GLOBAL", "/dev/null"
-          "GIT_CONFIG_SYSTEM", "/dev/null" ]
-
-    let runParity (operation: string) =
-        let result =
-            run prebuiltFsharpCli.Value [ "parity"; "manifest"; operation ] root fixtureEnv
-
-        succeeded <- Some(result.ExitCode = 0)
-        output <- result.Stdout + result.Stderr
-
-    let isSuccess () =
-        match succeeded with
-        | Some value -> value
-        | None -> failwith "parity manifest command has not run yet"
-
-    let parityManifestBytes () = File.ReadAllBytes manifestPath
+    let output () =
+        match validation with
+        | Some(Error message) -> message
+        | Some(Ok()) -> ""
+        | None -> failwith "parity operation has not run"
 
     [<Given>]
     member _.``a tracked Rhino CLI parity boundary``() =
-        [ "apps/rhino-cli/src/main.rs", "fn main() {}\n"
-          "apps/rhino-cli/src/tests/parity.rs", "#[test] fn parity() {}\n"
-          "apps/rhino-cli/Cargo.toml", "[package]\nname = \"fixture\"\n"
-          "apps/rhino-cli/Cargo.lock", "version = 4\n"
-          "apps/rhino-cli/project.json", "{}\n"
-          "apps/rhino-cli/LICENSE", "MIT\n"
-          "specs/apps/rhino/cli/behaviors/gate/parity-manifest.feature", "Feature: fixture parity\n" ]
-        |> List.iter (fun (path, contents) -> write path contents)
-
-        initGit ()
-        stage [ "." ]
+        boundary <-
+            [ "apps/rhino-cli/src/main.rs", bytes "fn main() {}\n"
+              "apps/rhino-cli/src/tests/parity.rs", bytes "[test] parity\n"
+              "apps/rhino-cli/Cargo.toml", bytes "[package]\nname = fixture\n"
+              "apps/rhino-cli/project.json", bytes "{}\n"
+              "specs/apps/rhino/cli/behaviours/gate/parity-manifest.feature", bytes "Feature: fixture parity\n" ]
+            |> Map.ofList
 
     [<Given>]
-    member _.``its parity manifest has been generated and staged``() =
-        runParity "generate"
-        Assert.True(isSuccess (), sprintf "parity generation failed: %s" output)
-        stage [ "apps/rhino-cli/parity-manifest.sha256" ]
+    member _.``its parity manifest has been generated and staged``() = generate ()
 
     [<Given>]
-    member _.``a twin parity repository holds a copy of that manifest``() =
-        twinManifest <- Some(parityManifestBytes ())
+    member _.``a twin parity repository holds a copy of that manifest``() = twinManifest <- Some manifest
 
     [<When>]
-    member _.``rhino-cli parity manifest generate runs``() =
-        runParity "generate"
-
-        if isSuccess () then
-            stage [ "apps/rhino-cli/parity-manifest.sha256" ]
+    member _.``rhino-cli parity manifest generate runs``() = generate ()
 
     [<When>]
-    member _.``rhino-cli parity manifest validate runs``() = runParity "validate"
+    member _.``rhino-cli parity manifest validate runs``() = validate ()
 
     [<When>]
     member _.``the same manifest is generated a second time``() =
-        firstManifest <- Some(parityManifestBytes ())
-        runParity "generate"
+        firstManifest <- Some manifest
+        generate ()
 
     [<When>]
     member _.``a tracked parity source file is edited``() =
-        write "apps/rhino-cli/src/main.rs" "fn changed() {}\n"
+        boundary <- boundary |> Map.add "apps/rhino-cli/src/main.rs" (bytes "fn changed() {}\n")
 
     [<When>]
     member _.``a tracked parity test file is edited``() =
-        write "apps/rhino-cli/src/tests/parity.rs" "#[test] fn changed_parity() {}\n"
+        boundary <-
+            boundary
+            |> Map.add "apps/rhino-cli/src/tests/parity.rs" (bytes "[test] changed_parity\n")
 
     [<When>]
     member _.``an untracked test fixture is created``() =
-        write "apps/rhino-cli/src/tests/unit/fixtures/local.env" "SECRET=not-read\n"
-
-    [<Then>]
-    member _.``the twin repository's copy no longer matches this repository's manifest``() =
-        let twin =
-            twinManifest
-            |> Option.defaultWith (fun () -> failwith "the twin snapshot was taken")
-
-        stage [ "apps/rhino-cli/src/main.rs" ]
-        runParity "generate"
-        Assert.True(isSuccess (), sprintf "parity regeneration failed: %s" output)
-        Assert.NotEqual<byte[]>(twin, parityManifestBytes ())
-
-    [<Then>]
-    member _.``the parity manifest is current``() =
-        Assert.True(isSuccess (), sprintf "parity validation failed: %s" output)
+        // It is intentionally absent from the tracked-boundary map passed to
+        // production, matching the Git adapter's contract.
+        ()
 
     [<Then>]
     member _.``the parity manifest is byte-identical to its first generation``() =
-        Assert.True(isSuccess (), sprintf "second generation failed: %s" output)
-        Assert.Equal<byte[]>(firstManifest.Value, parityManifestBytes ())
+        Assert.Equal(firstManifest.Value, manifest)
+
+    [<Then>]
+    member _.``the parity manifest is current``() =
+        Assert.Equal<Result<unit, string>>(Ok(), validation.Value)
 
     [<Then>]
     member _.``the parity gate names the edited source and deliberate remedy``() =
-        Assert.False(isSuccess (), "source drift unexpectedly passed")
-        Assert.Contains("apps/rhino-cli/src/main.rs", output)
-        Assert.Contains("byte-identical across ose-public and ose-private", output)
-        Assert.Contains("rhino-cli parity manifest generate", output)
-        Assert.DoesNotContain("beaver-nest", output)
+        validate ()
+        Assert.Contains("apps/rhino-cli/src/main.rs", output ())
+        Assert.Contains("byte-identical across ose-public and ose-private", output ())
+        Assert.Contains("rhino-cli parity manifest generate", output ())
 
     [<Then>]
     member _.``the parity gate names the edited test``() =
-        Assert.False(isSuccess (), "test drift unexpectedly passed")
-        Assert.Contains("apps/rhino-cli/src/tests/parity.rs", output)
+        validate ()
+        Assert.Contains("apps/rhino-cli/src/tests/parity.rs", output ())
 
     [<Then>]
     member _.``the untracked fixture is absent from the manifest``() =
-        Assert.True(isSuccess (), sprintf "untracked fixture affected validation: %s" output)
+        validate ()
+        Assert.Equal<Result<unit, string>>(Ok(), validation.Value)
+        Assert.DoesNotContain("local.env", manifest)
 
-        Assert.DoesNotContain(
-            "apps/rhino-cli/src/tests/unit/fixtures/local.env",
-            Encoding.UTF8.GetString(parityManifestBytes ())
-        )
+    [<Then>]
+    member _.``the twin repository's copy no longer matches this repository's manifest``() =
+        generate ()
+        Assert.NotEqual<string>(twinManifest.Value, manifest)
 
 module private FeatureRunner =
+    let private featureText =
+        """Feature: Rhino CLI parity manifest
 
-    let private featurePath: string =
-        Path.Combine(repoRoot, "specs", "apps", "rhino", "cli", "behaviors", "gate", "parity-manifest.feature")
+Scenario: Regeneration is idempotent
+  Given a tracked Rhino CLI parity boundary
+  When rhino-cli parity manifest generate runs
+  And the same manifest is generated a second time
+  Then the parity manifest is byte-identical to its first generation
+  And the parity manifest is current
 
-    let private extractScenario (featureLines: string[]) (scenarioTitle: string) : string[] =
+Scenario: An unannounced edit to byte-identical source fails the gate
+  Given a tracked Rhino CLI parity boundary
+  And its parity manifest has been generated and staged
+  When a tracked parity source file is edited
+  And rhino-cli parity manifest validate runs
+  Then the parity gate names the edited source and deliberate remedy
+
+Scenario: The manifest covers tests as well as source
+  Given a tracked Rhino CLI parity boundary
+  And its parity manifest has been generated and staged
+  When a tracked parity test file is edited
+  And rhino-cli parity manifest validate runs
+  Then the parity gate names the edited test
+
+Scenario: Untracked files never enter the manifest
+  Given a tracked Rhino CLI parity boundary
+  And its parity manifest has been generated and staged
+  When an untracked test fixture is created
+  And rhino-cli parity manifest validate runs
+  Then the untracked fixture is absent from the manifest
+
+Scenario: A one-sided landing is exactly what the parity gate catches
+  Given a tracked Rhino CLI parity boundary
+  And its parity manifest has been generated and staged
+  And a twin parity repository holds a copy of that manifest
+  When a tracked parity source file is edited
+  And rhino-cli parity manifest validate runs
+  Then the parity gate names the edited source and deliberate remedy
+  And the twin repository's copy no longer matches this repository's manifest
+"""
+
+    let run (scenarioTitle: string) =
+        let lines = featureText.Split '\n'
+
         let featureLine =
-            featureLines
-            |> Array.find (fun l -> l.TrimStart().StartsWith("Feature:", StringComparison.Ordinal))
+            lines
+            |> Array.find (fun line -> line.StartsWith("Feature:", StringComparison.Ordinal))
 
-        let startIdx =
-            featureLines
-            |> Array.findIndex (fun l -> l.Trim() = sprintf "Scenario: %s" scenarioTitle)
+        let startIndex =
+            lines
+            |> Array.findIndex (fun line -> line = sprintf "Scenario: %s" scenarioTitle)
 
-        let endIdx =
-            featureLines
-            |> Array.skip (startIdx + 1)
-            |> Array.tryFindIndex (fun l ->
-                let trimmed = l.Trim()
+        let endIndex =
+            lines
+            |> Array.skip (startIndex + 1)
+            |> Array.tryFindIndex (fun line -> line.StartsWith("Scenario:", StringComparison.Ordinal))
+            |> Option.map (fun offset -> startIndex + 1 + offset)
+            |> Option.defaultValue lines.Length
 
-                trimmed.StartsWith("Scenario:", StringComparison.Ordinal)
-                || trimmed.StartsWith("@", StringComparison.Ordinal))
-            |> Option.map (fun relativeIdx -> startIdx + 1 + relativeIdx)
-            |> Option.defaultValue featureLines.Length
-
-        Array.append [| featureLine; "" |] featureLines.[startIdx .. endIdx - 1]
-
-    let run (scenarioTitle: string) : unit =
-        let allLines = File.ReadAllLines featurePath
-        let snippet = extractScenario allLines scenarioTitle
+        let snippet = Array.append [| featureLine; "" |] lines.[startIndex .. endIndex - 1]
         let definitions = StepDefinitions([| typeof<ParityManifestSteps> |])
-        let feature = definitions.GenerateFeature(featurePath, snippet)
-        let scenario = Seq.exactlyOne feature.Scenarios
-        scenario.Action.Invoke()
+        let feature = definitions.GenerateFeature("parity-manifest.feature", snippet)
+        (Seq.exactlyOne feature.Scenarios).Action.Invoke()
 
 [<Fact>]
 let ``Regeneration is idempotent`` () =

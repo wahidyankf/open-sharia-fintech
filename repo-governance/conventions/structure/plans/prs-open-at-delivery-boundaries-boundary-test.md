@@ -22,7 +22,7 @@ Continues [PRs Open at Delivery Boundaries — Rules 5-7 and \*-to-pr Scope](./p
   migration step, a governance rule), not half a refactor.
 - **(b) Green standalone** — every quality gate passes on the increment alone.
 - **(c) Production-deployable on `main`** — the exact resulting state is safe to deploy to
-  production immediately. Complete user-reachable behavior may be active. Incomplete behavior is
+  production immediately. Complete user-reachable behaviour may be active. Incomplete behaviour is
   complete-and-inert behind a temporary feature flag disabled in production by default, with both
   paths tested and rollout, rollback, and flag removal recorded.
 - **(d) Reviewable whole** — a reviewer can judge it without reading phases that do not exist yet.

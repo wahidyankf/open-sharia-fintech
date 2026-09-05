@@ -1,6 +1,6 @@
 ---
 title: "Logical Owner Corpus"
-description: "The adopted specs shape — one corpus per logical owner, carrying an index, a canonical as-built architecture.md, and a recursive behaviors/ tree"
+description: "The adopted specs shape — one corpus per logical owner, carrying an index, a canonical as-built architecture.md, and a recursive behaviours/ tree"
 when_to_use: "Read this when creating or validating a specs corpus for a logical owner, or when checking whether a spec area has adopted the shape."
 category: explanation
 subcategory: conventions
@@ -24,7 +24,7 @@ family. Each owner carries exactly three required entries:
 specs/apps/<product>/<owner>/
 ├── README.md          # index for the corpus
 ├── architecture.md    # canonical, current, as-built C4
-└── behaviors/
+└── behaviours/
     ├── README.md
     ├── <domain>/      # optional grouping
     └── *.feature
@@ -33,13 +33,13 @@ specs/apps/<product>/<owner>/
 Libraries use the same three entries directly under `specs/libs/<library>/`.
 
 `architecture.md` describes only the current as-built system and is updated in the same delivery
-unit as the change that alters it. `behaviors/` is recursive: a feature file may sit at its root or
+unit as the change that alters it. `behaviours/` is recursive: a feature file may sit at its root or
 inside a domain directory.
 
 ## The Only Shape
 
 This is the one shape a spec area is measured against. The retired five-folder C4 tree
-(`product/`, `system-context/`, `containers/`, `components/`, `behavior/`) is no longer a valid
+(`product/`, `system-context/`, `containers/`, `components/`, `behaviour/`) is no longer a valid
 layout in this repository, and no product is measured against it.
 
 Adoption is detected positively. A product directory has adopted this shape as soon as one of its
@@ -53,19 +53,19 @@ two together make the migration atomic per product.
 A product family often ships several independent surfaces — a site, its backend, and a build tool.
 Grouping their specifications under one product tree forces unrelated readers through the same
 index and makes a single `architecture.md` describe systems that deploy separately. One corpus per
-logical owner keeps each reader's entry point, C4 view, and behavior corpus together, and lets a
+logical owner keeps each reader's entry point, C4 view, and behaviour corpus together, and lets a
 dedicated E2E project link to its owner's corpus instead of growing a parallel tree.
 
 ## Enforcement
 
 **Enforcement disposition — enforced.** `rhino-cli specs structure validate` reports a missing
-`README.md`, `architecture.md`, or `behaviors/` entry, an empty `behaviors/` tree, a missing
-`behaviors/README.md`, and any surviving legacy folder beside a corpus. The command runs in
-`rhino-cli:test:specs`, which `test:quick` and the pre-push gate both include.
+`README.md`, `architecture.md`, or `behaviours/` entry, an empty `behaviours/` tree, a missing
+`behaviours/README.md`, and any surviving legacy folder beside a corpus. The command runs in
+each owner's `test:coverage:behaviour`, which pre-push reaches through `test:quick`.
 
 ## Related
 
 - [Canonical App Spec Tree](./canonical-app-spec-tree.md) — how many corpora a product holds, and
   what each entry answers.
 - [Gherkin Feature File Placement and Lib Spec Structure](./gherkin-feature-file-placement-and-lib-spec-structure.md) —
-  where a feature file goes inside `behaviors/`.
+  where a feature file goes inside `behaviours/`.

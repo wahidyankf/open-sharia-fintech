@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # E2E test runner for ose-be.
-# Brings up PostgreSQL + NATS via docker-compose, starts the F# backend on
-# port 8302, runs the ose-be-e2e Playwright suite against it, then tears down.
+# Brings up PostgreSQL + NATS via docker-compose and lets the Playwright harness
+# own backend process lifecycle so startup behaviours can observe real transitions.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
@@ -18,13 +18,8 @@ COMPOSE_FILE="${ROOT}/apps/ose-be/docker-compose.e2e.yml"
 PROJECT_NAME="ose-be-e2e"
 PORT=8302
 FSPROJ="${ROOT}/apps/ose-be/src/OseBe/OseBe.fsproj"
-BE_PID=""
 
 cleanup() {
-	if [[ -n "${BE_PID}" ]]; then
-		kill "${BE_PID}" 2>/dev/null || true
-		wait "${BE_PID}" 2>/dev/null || true
-	fi
 	docker compose -p "${PROJECT_NAME}" -f "${COMPOSE_FILE}" down -v >/dev/null 2>&1 || true
 }
 trap cleanup EXIT
@@ -45,23 +40,7 @@ export OSE_BE_OPENROUTER_API_KEY=""
 export OSE_BE_OPENROUTER_MODEL="openrouter/auto"
 export OSE_BE_OPENROUTER_BASE_URL="https://openrouter.ai/api/v1"
 
-dotnet run --project "${FSPROJ}" --no-build --configuration Release &
-BE_PID="$!"
-
-# Wait until the health endpoint responds (up to 60 s)
-echo "Waiting for ose-be on port ${PORT}..."
-for i in $(seq 1 60); do
-	if curl -sf "http://localhost:${PORT}/api/v1/health" >/dev/null 2>&1; then
-		echo "ose-be is ready (${i}s)"
-		break
-	fi
-	if [[ "${i}" -eq 60 ]]; then
-		echo "ERROR: ose-be did not start within 60 seconds" >&2
-		exit 1
-	fi
-	sleep 1
-done
-
-# Run the Playwright e2e suite
+# Run the Playwright e2e suite. Its shared process harness starts/stops the
+# backend inside scenario steps and performs final worker cleanup.
 cd "${ROOT}/apps/ose-be-e2e"
 npx bddgen && npx playwright test

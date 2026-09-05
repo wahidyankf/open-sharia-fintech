@@ -26,7 +26,7 @@ not here — see [`local-tmp/`](./local-tmp-directory.md).
 
 ## Progressive Writing Requirement for Checker Agents
 
-**CRITICAL BEHAVIORAL REQUIREMENT**: All \*-checker agents MUST write their validation reports PROGRESSIVELY (continuously updating files during execution), NOT buffering findings in memory to write once at the end.
+**CRITICAL BEHAVIOURAL REQUIREMENT**: All \*-checker agents MUST write their validation reports PROGRESSIVELY (continuously updating files during execution), NOT buffering findings in memory to write once at the end.
 
 **Why This is Critical:**
 
@@ -35,7 +35,7 @@ Progressive writing ensures reports survive context compaction:
 - During long audits, conversation context may be compacted/summarized by the AI assistant
 - If agent only writes report at the END, file contents may be lost during compaction
 - If file is continuously updated THROUGHOUT execution, findings persist regardless of context compaction
-- This is a **behavioral requirement**, not optional
+- This is a **behavioural requirement**, not optional
 
 **What Progressive Writing Means:**
 

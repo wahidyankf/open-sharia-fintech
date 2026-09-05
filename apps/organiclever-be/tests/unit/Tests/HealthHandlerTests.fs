@@ -11,7 +11,6 @@ let ``health handler returns 200`` () =
     let resp = client.GetAsync("/health").Result
     Assert.Equal(HttpStatusCode.OK, resp.StatusCode)
 
-// @covers specs/apps/organiclever/be/behaviors/health/health-check.feature:Health endpoint reports the service as UP
 [<Fact>]
 let ``health handler returns JSON status ok`` () =
     let client = buildClient webApp
@@ -21,7 +20,6 @@ let ``health handler returns JSON status ok`` () =
     Assert.Contains("ok", body)
     Assert.Equal("application/json", resp.Content.Headers.ContentType.MediaType)
 
-// @covers specs/apps/organiclever/be/behaviors/health/health-check.feature:Anonymous health check does not expose component details
 [<Fact>]
 let ``health handler does not expose component details`` () =
     let client = buildClient webApp

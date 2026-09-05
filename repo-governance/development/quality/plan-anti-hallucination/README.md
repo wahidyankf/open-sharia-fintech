@@ -21,7 +21,7 @@ when_to_use: "Read this index to find the right Plan Anti-Hallucination Conventi
 - [Refuse-on-Uncertainty and Web Research](./refuse-on-uncertainty-rule-and-web-research-delegation.md) — The refuse-on-uncertainty rule; the web-research threshold. Use when uncertain about a plan claim.
 - [Anti-Patterns: AP-1 - AP-4](./anti-pattern-catalog-ap-1-through-ap-4.md) — Version/path/target/name fabrication. Use as a checklist for AP-1 - AP-4.
 - [Anti-Patterns: AP-5 - AP-8](./anti-pattern-catalog-ap-5-through-ap-8.md) — KPI, test name, agent, CLI flag fabrication. Use as a checklist for AP-5 - AP-8.
-- [Anti-Patterns: AP-9 - AP-11](./anti-pattern-catalog-ap-9-through-ap-11.md) — Behavior claim, cross-link, absence-search fabrication. Use as a checklist for AP-9 - AP-11.
+- [Anti-Patterns: AP-9 - AP-11](./anti-pattern-catalog-ap-9-through-ap-11.md) — Behaviour claim, cross-link, absence-search fabrication. Use as a checklist for AP-9 - AP-11.
 - [Anti-Patterns: AP-12 - AP-14](./anti-pattern-catalog-ap-12-through-ap-14.md) — Completeness, concept-sweep, validator-invocation fabrication. Use as a checklist for AP-12 - AP-14.
 - [Delegation and Validation Rituals](./specialized-agent-delegation-and-validation-rituals.md) — Delegating to specialized agents; per-agent validation rituals. Use when deciding whether to delegate research.
 - [Workflow, Examples, and Validation](./workflow-integration-examples-and-validation.md) — Workflow fit, worked examples, and how this is validated. Use for a worked example of this convention.

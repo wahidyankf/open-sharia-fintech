@@ -8,21 +8,21 @@ length. Write for a junior engineer fresh from bootcamp with no professional wor
 repository or stack context.
 
 ```markdown
-### AC-### — [cohesive behavior outcome]
+### AC-### — [cohesive behaviour outcome]
 
 - **Input:** canonical AC, prerequisites, and affected scope.
-- **Outcome:** [observable contracted behavior].
+- **Outcome:** [observable contracted behaviour].
 - [ ] [AI] **RED:** write `[exact test path/case]`; run `[copyable command]`; acceptance: it fails
-      for `[expected missing behavior]`; save output at `[evidence destination]`.
+      for `[expected missing behaviour]`; save output at `[evidence destination]`.
 - [ ] [AI] **GREEN:** implement `[exact symbol/path]`; rerun `[copyable command]`; acceptance: the
       new and existing focused cases pass.
 - [ ] [AI] **REFACTOR:** clean `[specific concern/path]`; run `[focused and regression commands]`;
-      acceptance: behavior and diagnostics remain unchanged.
+      acceptance: behaviour and diagnostics remain unchanged.
 - **Proof:** RED evidence plus the passing focused/regression outputs.
 - _Suggested executor: `swe-[lang]-dev`._
 ```
 
-Use another RED/GREEN/REFACTOR trio for every independently testable behavior slice inside the same
+Use another RED/GREEN/REFACTOR trio for every independently testable behaviour slice inside the same
 outcome. `plan-checker` flags combined or missing cycle actions, or missing paths, commands, expected
 observations, and evidence, as HIGH. Canonical Gherkin stays in PRD/spec files and is referenced by
 ID/title; never copy full scenarios into `delivery.md`.

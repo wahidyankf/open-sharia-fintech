@@ -1,5 +1,10 @@
 # Standardize App Spec Trees — Parity Decisions
 
+**Historical decision record.** The current canonical corpus uses recursive `behaviours/` trees as
+defined by the [BDD standard](../../repo-governance/development/behaviour-driven-development.md).
+Legacy `behavior/.../gherkin/` paths below are preserved as historical evidence, not current
+authoring guidance.
+
 > **Audience**: Engineers, Technical Product/Project Managers
 >
 > **Plain-language summary**: This document records the architectural decisions made
@@ -24,10 +29,10 @@ specs/apps/ose-platform/behavior/cli/gherkin/
 
 When navigating or grepping across families, bare slugs produced ambiguous matches and
 made it impossible to identify which product a path belonged to without walking up the
-directory tree. The plan standardized all behavior surface directories to the
+directory tree. The plan standardized all behaviour surface directories to the
 `<product>-<surface>` compound form.
 
-## Decision 1: Flat `<product>-<surface>` Naming for Behavior Directories
+## Decision 1: Flat `<product>-<surface>` Naming for Behaviour Directories
 
 **Decision**: Rename all `behavior/<surface>/gherkin/` directories to
 `behavior/<product>-<surface>/gherkin/`. The product name is the Nx project-family
@@ -38,7 +43,7 @@ identifier (e.g. `organiclever`, `ayokoding`, `ose`).
 - **Unambiguous at any depth**: `specs/apps/organiclever/behavior/organiclever-be/gherkin/`
   is self-identifying. A developer who lands there via search knows the product without
   reading parent directories.
-- **Single naming rule, zero exceptions**: Every behavior directory follows the same
+- **Single naming rule, zero exceptions**: Every behaviour directory follows the same
   `<product>-<surface>` pattern regardless of whether it is a backend, frontend, CLI,
   or build-time surface. No special cases for single-surface apps.
 - **Consistent with existing compound naming**: The Nx project convention already uses
@@ -53,7 +58,7 @@ identifier (e.g. `organiclever`, `ayokoding`, `ose`).
   validator (`rhino-cli validate:specs-tree`) unable to enforce family isolation.
 - _Nest under a product directory inside behavior_: e.g.
   `behavior/organiclever/be/gherkin/`. Rejected because it adds a third level of
-  indirection without enabling the self-identifying property at the behavior-surface
+  indirection without enabling the self-identifying property at the behaviour-surface
   level.
 
 ## Decision 2: Merge `ose-app` + `ose-platform` into a Single `ose/` Tree

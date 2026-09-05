@@ -360,8 +360,8 @@ When opening an issue, include:
 
 - **Description**: what broke, in one or two sentences
 - **Steps to reproduce**: the exact commands or clicks, numbered, starting from a clean checkout
-- **Expected behavior**: what the documentation or the command's own output led you to expect
-- **Actual behavior**: what happened instead, quoted rather than paraphrased
+- **Expected behaviour**: what the documentation or the command's own output led you to expect
+- **Actual behaviour**: what happened instead, quoted rather than paraphrased
 - **Environment**: OS, Node.js version, browser (if applicable)
 - **Logs/screenshots**: the error text itself, pasted rather than described, and a picture only
   where the problem is visual
@@ -376,7 +376,7 @@ or contribution pull request expecting project intake.
 
 When maintaining a fork or doing internal work:
 
-- **Update docs** if your changes affect user-facing behavior
+- **Update docs** if your changes affect user-facing behaviour
 - **Follow Diátaxis**: a documentation taxonomy that sorts every page into one of four categories —
   tutorial, how-to, reference, or explanation. Write each page as exactly one of them.
 - **Follow conventions**: See [Documentation Standards](./repo-governance/conventions/README.md)

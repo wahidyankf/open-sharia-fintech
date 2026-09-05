@@ -56,7 +56,7 @@ deployable applications and shared libraries while Nx coordinates their developm
 | [`apps/`](./apps/README.md)   | Product apps, public sites, command-line tools, and end-to-end test suites |
 | [`libs/`](./libs/README.md)   | Shared code used by applications                                           |
 | [`docs/`](./docs/README.md)   | Tutorials, how-to guides, technical reference, and explanations            |
-| [`specs/`](./specs/README.md) | Product and behavior specifications                                        |
+| [`specs/`](./specs/README.md) | Product and behaviour specifications                                       |
 | [`plans/`](./plans/README.md) | Current and completed planning records                                     |
 
 ## 🧰 Run OSE locally

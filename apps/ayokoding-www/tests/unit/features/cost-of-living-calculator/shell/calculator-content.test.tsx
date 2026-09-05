@@ -64,7 +64,7 @@ vi.mock("next/navigation", () => ({
 }));
 
 // NavigationWrapper: wrapper that holds URL params as React state so that
-// router.push/replace trigger re-renders (simulates Next.js router behavior).
+// router.push/replace trigger re-renders (simulates Next.js router behaviour).
 function NavigationWrapper({ children }: { children: React.ReactNode }) {
   const [, setTick] = React.useState(0);
 

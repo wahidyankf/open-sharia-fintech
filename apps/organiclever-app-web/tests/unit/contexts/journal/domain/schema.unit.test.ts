@@ -7,7 +7,6 @@ import {
   EntryName,
   JournalEntry,
   NewEntryInput,
-  PayloadFromJsonString,
 } from "../../../../../src/contexts/journal/domain/schema";
 
 describe("schema - EntryId", () => {
@@ -112,21 +111,6 @@ describe("schema - JournalEntry", () => {
       labels: [],
     };
     expect(() => Schema.decodeUnknownSync(JournalEntry)(raw)).toThrow();
-  });
-});
-
-describe("schema - PayloadFromJsonString", () => {
-  it("accepts valid JSON string representing a record", () => {
-    const result = Schema.decodeUnknownSync(PayloadFromJsonString)('{"reps":12}');
-    expect(result).toEqual({ reps: 12 });
-  });
-
-  it("rejects non-JSON string", () => {
-    expect(() => Schema.decodeUnknownSync(PayloadFromJsonString)("not json")).toThrow();
-  });
-
-  it("rejects JSON array (not a record)", () => {
-    expect(() => Schema.decodeUnknownSync(PayloadFromJsonString)("[1,2,3]")).toThrow();
   });
 });
 

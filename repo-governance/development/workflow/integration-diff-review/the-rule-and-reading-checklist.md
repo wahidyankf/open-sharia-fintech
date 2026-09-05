@@ -51,6 +51,6 @@ When reading the incoming diff, look specifically for:
   your current task is following
 - Dependency, lockfile, or toolchain version changes that could invalidate an assumption your task
   made about available tools or APIs
-- Test files that now cover — or now conflict with — the behavior your current task is changing
+- Test files that now cover — or now conflict with — the behaviour your current task is changing
 - Completed verification whose result depended on files, configuration, dependencies, or the old
   `HEAD` changed by the incoming range

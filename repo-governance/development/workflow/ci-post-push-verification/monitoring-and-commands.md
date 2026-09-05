@@ -22,7 +22,7 @@ Check every **2 minutes** using a scheduled wakeup plus one `gh run view <run-id
 
 See [CI Monitoring Convention](../../workflow/ci-monitoring.md) for:
 
-- Full rate limit budget facts and window behavior
+- Full rate limit budget facts and window behaviour
 - Required approach: one scheduled status check every 2 minutes; never `gh run watch`
 - Trigger discipline (never trigger the same workflow more than once every 10 minutes)
 - Recovery procedure when rate-limited (HTTP 403): `ScheduleWakeup(delaySeconds=2100)`, not retry loop

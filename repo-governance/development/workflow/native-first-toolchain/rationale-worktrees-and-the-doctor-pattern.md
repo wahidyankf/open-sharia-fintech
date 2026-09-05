@@ -42,7 +42,8 @@ Config files serve as the desired state declarations:
 - Use `rhino-cli doctor` for toolchain verification and auto-install
 - Use version managers (Volta, rustup, dotnet-install) for language version pinning
 - Use `Brewfile` for declarative Homebrew dependencies
-- Use Docker for integration tests (PostgreSQL via docker-compose) and CI pipelines
+- Use Docker for networked E2E stacks and CI pipelines; keep Integration on isolated local
+  resources with no network path
 
 ### DO NOT
 

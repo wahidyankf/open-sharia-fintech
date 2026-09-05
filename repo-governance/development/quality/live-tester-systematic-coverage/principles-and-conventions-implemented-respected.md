@@ -25,7 +25,7 @@ when_to_use: "Use to trace this practice's rationale."
 - **[Explicit Over Implicit](../../../principles/software-engineering/explicit-over-implicit.md)**:
   Each forcing-function states exactly what must be enumerated and what property must be asserted
   for each item. "I tested the controls" is implicit. "I exercised each of the N shared controls
-  on each of the M tabs it appears on and asserted consistent behavior" is explicit.
+  on each of the M tabs it appears on and asserted consistent behaviour" is explicit.
 
 - **[Automation Over Manual](../../../principles/software-engineering/automation-over-manual.md)**:
   Where a systematic check can be automated -- computed-style tuples for visual consistency,
@@ -40,7 +40,7 @@ when_to_use: "Use to trace this practice's rationale."
   archival. This document defines what "thorough" means for those runs so the retest is
   systematic, not selective.
 
-- **[Manual Behavioral Verification Convention](.././manual-behavioral-verification.md)**: That
+- **[Manual Behavioural Verification Convention](.././manual-behavioural-verification.md)**: That
   convention defines _what_ to verify (page renders, interactions, console errors, network
   requests, all locales, all breakpoints). This document defines _how_ to achieve completeness
   across all elements on all surfaces -- the enumeration discipline that complements the

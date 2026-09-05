@@ -13,7 +13,7 @@
    documentation. Write findings immediately.
 6. **Step 5: Assess Code Quality** — Review implementation for quality, testing, documentation. Write
    findings immediately.
-7. **Step 5b-5i**: Operational Readiness, Manual Behavioral Assertions, Plan Archival, Worktree Usage,
+7. **Step 5b-5i**: Operational Readiness, Manual Behavioural Assertions, Plan Archival, Worktree Usage,
    Phase Gate/Execution Marker, Anti-Hallucination, Knowledge Capture, Delivery Mode/PR CI —
    see the other reference modules in this skill.
 8. **Step 6: Test Integration** — Verify end-to-end functionality and integration points. Write

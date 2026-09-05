@@ -3,7 +3,7 @@
 /// prints
 /// [Repo-grounded — `apps/rhino-cli/src/application/repo_governance/layer_coherence.rs`,
 /// `apps/rhino-cli/src/commands/governance_layer_coherence.rs`], binding
-/// `specs/apps/rhino/cli/behaviors/repo-governance/repo-governance-layer-coherence.feature`.
+/// `specs/apps/rhino/cli/behaviours/repo-governance/repo-governance-layer-coherence.feature`.
 module RhinoCli.Application.RepoGovernance
 
 open System
@@ -65,11 +65,13 @@ let private failFinding (file: string) (kind: string) (message: string) : LayerC
 
 /// Reads one document's layer declarations. Returns `None` for the map when
 /// the file is absent, alongside the `missing-doc` finding that records it.
-let private readLayerMap (path: string) : Map<int64, string> option * LayerCoherenceFinding list =
-    if not (File.Exists path) then
-        None, [ failFinding path KindMissingDoc (sprintf "governance doc \"%s\" does not exist" path) ]
-    else
-        let data = File.ReadAllText path
+let private readLayerMapContent
+    (path: string)
+    (content: string option)
+    : Map<int64, string> option * LayerCoherenceFinding list =
+    match content with
+    | None -> None, [ failFinding path KindMissingDoc (sprintf "governance doc \"%s\" does not exist" path) ]
+    | Some data ->
         let layers = Collections.Generic.Dictionary<int64, string>()
         let findings = ResizeArray<LayerCoherenceFinding>()
 
@@ -102,6 +104,15 @@ let private readLayerMap (path: string) : Map<int64, string> option * LayerCoher
 
         let map = layers |> Seq.map (fun kv -> kv.Key, kv.Value) |> Map.ofSeq
         Some map, List.ofSeq findings
+
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
+let private readLayerMap (path: string) : Map<int64, string> option * LayerCoherenceFinding list =
+    readLayerMapContent
+        path
+        (if File.Exists path then
+             Some(File.ReadAllText path)
+         else
+             None)
 
 /// Cross-checks the two layer maps for numbers present in only one document
 /// and for numbers whose names disagree.
@@ -171,6 +182,7 @@ let private checkNumberingGap
 /// Audits that the two governance index documents agree on layer numbering and
 /// names, and that the numbering is contiguous. Findings sort by file, then
 /// kind.
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let auditLayerCoherence (repoRoot: string) : LayerCoherenceFinding list =
     let archPath = Path.Combine(repoRoot, ArchPath)
     let readmePath = Path.Combine(repoRoot, ReadmePath)
@@ -188,6 +200,27 @@ let auditLayerCoherence (repoRoot: string) : LayerCoherenceFinding list =
     |> List.sortWith (fun a b ->
         match String.CompareOrdinal(a.File, b.File) with
         | 0 -> String.CompareOrdinal(a.Kind, b.Kind)
+        | other -> other)
+
+/// Audits layer coherence entirely from repository-relative document text.
+let auditLayerCoherenceDocuments (documents: Map<string, string>) : LayerCoherenceFinding list =
+    let archMap, archFindings =
+        readLayerMapContent ArchPath (Map.tryFind ArchPath documents)
+
+    let readmeMap, readmeFindings =
+        readLayerMapContent ReadmePath (Map.tryFind ReadmePath documents)
+
+    let crossFindings =
+        match archMap, readmeMap with
+        | Some arch, Some readme ->
+            compareLayerMaps arch readme ArchPath ReadmePath
+            @ checkNumberingGap arch readme ArchPath ReadmePath
+        | _ -> []
+
+    archFindings @ readmeFindings @ crossFindings
+    |> List.sortWith (fun left right ->
+        match String.CompareOrdinal(left.File, right.File) with
+        | 0 -> String.CompareOrdinal(left.Kind, right.Kind)
         | other -> other)
 
 /// Renders layer coherence findings the way the CLI's text output does.
@@ -261,6 +294,7 @@ let private metaExempt =
 
 /// Recursively lists every file under `root`, sorted. Empty when `root` does
 /// not exist.
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let rec private walkAllFiles (root: string) : string list =
     if not (Directory.Exists root) then
         []
@@ -272,6 +306,7 @@ let rec private walkAllFiles (root: string) : string list =
         (files @ (subdirs |> List.collect walkAllFiles))
         |> List.sortWith (fun a b -> String.CompareOrdinal(a, b))
 
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let private isFile (path: string) : bool = File.Exists path
 
 /// `true` when `path` is a progressive-disclosure split child: it sits
@@ -280,6 +315,7 @@ let private isFile (path: string) : bool = File.Exists path
 /// nested fragments belong to the same parent family, which
 /// [`readDocumentFamily`] reads whole, so auditing them standalone would
 /// double-report.
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let private isSplitChild (path: string) : bool =
     let mutable ancestor = Path.GetDirectoryName path
     let mutable found = false
@@ -303,6 +339,7 @@ let private isSplitChild (path: string) : bool =
 /// Reads a progressively disclosed document as one traceability unit: the
 /// parent plus, when an indexed same-named child directory exists, every
 /// non-README child. The parent stays the finding location.
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let private readDocumentFamily (parent: string) : string =
     let data = File.ReadAllText parent
     let stem = Path.GetFileNameWithoutExtension parent
@@ -326,6 +363,7 @@ let private readDocumentFamily (parent: string) : string =
 
 /// Sorted `.md` files under `root`, excluding `README.md` and every
 /// progressive-disclosure split child.
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let private listGovernanceMarkdown (root: string) : string list =
     walkAllFiles root
     |> List.filter (fun p ->
@@ -346,6 +384,121 @@ let private traceFinding (path: string) (line: int) (kind: string) (message: str
       Kind = kind
       Message = message }
 
+let private normalizeGovernancePath (path: string) : string = path.Replace('\\', '/').Trim('/')
+
+let private isSplitChildDocument (documents: Map<string, string>) (path: string) : bool =
+    let normalized = normalizeGovernancePath path
+    let segments = normalized.Split('/')
+
+    [ 1 .. segments.Length - 2 ]
+    |> List.exists (fun endIndex ->
+        let ancestor = String.Join("/", segments.[0..endIndex])
+        let parentDir = String.Join("/", segments.[0 .. endIndex - 1])
+        let dirName = segments.[endIndex]
+
+        Map.containsKey (ancestor + "/README.md") documents
+        && Map.containsKey (parentDir + "/" + dirName + ".md") documents)
+
+let private readDocumentFamilyContent (documents: Map<string, string>) (parent: string) : string =
+    let data = Map.find parent documents
+    let stem = Path.GetFileNameWithoutExtension parent
+    let parentDir = Path.GetDirectoryName(parent).Replace('\\', '/')
+    let childDir = parentDir + "/" + stem
+
+    if stem = "" || not (Map.containsKey (childDir + "/README.md") documents) then
+        data
+    else
+        documents
+        |> Map.toList
+        |> List.filter (fun (path, _) ->
+            path.StartsWith(childDir + "/", StringComparison.Ordinal)
+            && path.EndsWith(".md", StringComparison.Ordinal)
+            && Path.GetFileName path <> "README.md")
+        |> List.sortBy fst
+        |> List.fold (fun content (_, child) -> content + "\n" + child) data
+
+let private governanceDocumentsUnder (documents: Map<string, string>) (root: string) : string list =
+    documents
+    |> Map.keys
+    |> Seq.filter (fun path ->
+        path.StartsWith(root + "/", StringComparison.Ordinal)
+        && path.EndsWith(".md", StringComparison.Ordinal)
+        && Path.GetFileName path <> "README.md"
+        && not (isSplitChildDocument documents path))
+    |> Seq.sortWith (fun left right -> String.CompareOrdinal(left, right))
+    |> List.ofSeq
+
+/// Audits traceability over an in-memory repository document map.
+let auditTraceabilityDocuments (inputDocuments: Map<string, string>) : TraceabilityFinding list =
+    let documents =
+        inputDocuments
+        |> Map.toList
+        |> List.map (fun (path, content) -> normalizeGovernancePath path, content)
+        |> Map.ofList
+
+    let auditRequired root (regex: Regex) kind message =
+        governanceDocumentsUnder documents root
+        |> List.choose (fun path ->
+            if regex.IsMatch(readDocumentFamilyContent documents path) then
+                None
+            else
+                Some(traceFinding path 1 kind message))
+
+    let development =
+        governanceDocumentsUnder documents "repo-governance/development"
+        |> List.collect (fun path ->
+            let content = readDocumentFamilyContent documents path
+
+            [ if not (principlesRe.IsMatch content) then
+                  yield
+                      traceFinding
+                          path
+                          1
+                          KindMissingPrinciplesImplemented
+                          "development doc is missing its required Principles Implemented/Respected traceability section"
+              if not (conventionsRe.IsMatch content) then
+                  yield
+                      traceFinding
+                          path
+                          1
+                          KindMissingConventionsImplemented
+                          "development doc is missing its required Conventions Implemented/Respected traceability section" ])
+
+    let workflows =
+        governanceDocumentsUnder documents "repo-governance/workflows"
+        |> List.choose (fun path ->
+            let relative = path.Substring("repo-governance/workflows/".Length)
+            let content = readDocumentFamilyContent documents path
+
+            if List.contains relative metaExempt || agentRefRe.IsMatch content then
+                None
+            else
+                Some(
+                    traceFinding
+                        path
+                        (firstNonEmptyLine content)
+                        KindMissingAgentReference
+                        "workflow does not reference any .claude/agents/<name>.md file"
+                ))
+
+    auditRequired
+        "repo-governance/principles"
+        visionRe
+        KindMissingVisionSupported
+        "principle is missing its required Vision Supported traceability section"
+    @ auditRequired
+        "repo-governance/conventions"
+        principlesRe
+        KindMissingPrinciplesImplemented
+        "convention is missing its required Principles Implemented/Respected traceability section"
+    @ development
+    @ workflows
+    |> List.sortWith (fun left right ->
+        match String.CompareOrdinal(left.Path, right.Path) with
+        | 0 -> compare left.Line right.Line
+        | other -> other)
+
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let private auditPrinciples (root: string) : TraceabilityFinding list =
     listGovernanceMarkdown root
     |> List.choose (fun path ->
@@ -360,6 +513,7 @@ let private auditPrinciples (root: string) : TraceabilityFinding list =
                     "principle is missing its required Vision Supported traceability section"
             ))
 
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let private auditConventions (root: string) : TraceabilityFinding list =
     listGovernanceMarkdown root
     |> List.choose (fun path ->
@@ -374,6 +528,7 @@ let private auditConventions (root: string) : TraceabilityFinding list =
                     "convention is missing its required Principles Implemented/Respected traceability section"
             ))
 
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let private auditDevelopment (root: string) : TraceabilityFinding list =
     listGovernanceMarkdown root
     |> List.collect (fun path ->
@@ -394,6 +549,7 @@ let private auditDevelopment (root: string) : TraceabilityFinding list =
                       KindMissingConventionsImplemented
                       "development doc is missing its required Conventions Implemented/Respected traceability section" ])
 
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let private auditWorkflows (root: string) : TraceabilityFinding list =
     listGovernanceMarkdown root
     |> List.choose (fun path ->
@@ -430,14 +586,12 @@ let private auditWorkflows (root: string) : TraceabilityFinding list =
 
 /// Audits traceability across the principles, conventions, development, and
 /// workflows families. Findings sort by path, then line.
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let auditTraceability (repoRoot: string) : TraceabilityFinding list =
-    let under (name: string) =
-        Path.Combine(repoRoot, "repo-governance", name)
-
-    auditPrinciples (under "principles")
-    @ auditConventions (under "conventions")
-    @ auditDevelopment (under "development")
-    @ auditWorkflows (under "workflows")
+    auditPrinciples (Path.Combine(repoRoot, "repo-governance", "principles"))
+    @ auditConventions (Path.Combine(repoRoot, "repo-governance", "conventions"))
+    @ auditDevelopment (Path.Combine(repoRoot, "repo-governance", "development"))
+    @ auditWorkflows (Path.Combine(repoRoot, "repo-governance", "workflows"))
     |> List.sortWith (fun a b ->
         match String.CompareOrdinal(a.Path, b.Path) with
         | 0 -> compare a.Line b.Line
@@ -651,11 +805,13 @@ let scanVendorLines (path: string) (content: string) : VendorFinding list =
     List.ofSeq findings
 
 /// Reads and scans one Markdown file.
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let scanVendorFile (path: string) : VendorFinding list =
     scanVendorLines path (File.ReadAllText path)
 
 /// Recursively scans every `.md` file under `root`, skipping the
 /// convention-definition file and its split children.
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let walkVendor (root: string) : VendorFinding list =
     walkAllFiles root
     |> List.filter (fun p -> p.EndsWith(".md", StringComparison.Ordinal))
@@ -672,10 +828,24 @@ let walkVendor (root: string) : VendorFinding list =
 /// subtree.
 let private rootInstructionSurfaces = [ "AGENTS.md"; "CLAUDE.md" ]
 
+/// Scans the canonical governance scope from an in-memory repository map.
+let scanVendorGovernanceDocuments (documents: Map<string, string>) : VendorFinding list =
+    documents
+    |> Map.toList
+    |> List.filter (fun (path, _) ->
+        let normalized = path.Replace('\\', '/')
+
+        normalized.StartsWith("repo-governance/", StringComparison.Ordinal)
+        || List.contains normalized rootInstructionSurfaces)
+    |> List.filter (fun (path, _) -> path.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
+    |> List.collect (fun (path, content) -> scanVendorLines path content)
+    |> List.sortBy (fun finding -> finding.Path, finding.Line, finding.Match)
+
 /// Walks the canonical governance audit scope: every `.md` file under
 /// `repo-governance/` plus the root instruction surfaces. Narrower than a
 /// whole-repo walk, so build caches, app content, worktrees, and vendored
 /// third-party skills are never scanned.
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let walkVendorGovernanceScope (repoRoot: string) : VendorFinding list =
     walkVendor (Path.Combine(repoRoot, "repo-governance"))
     @ (rootInstructionSurfaces
@@ -800,7 +970,9 @@ let private buildAuditKey (category: string) (file: string) (message: string) : 
 
     sprintf "%s|%s|%s" category file hex
 
-let private newAuditFinding (category: string) (file: string) (line: int) (message: string) =
+/// Creates one deterministic normalized finding without consulting resources.
+/// This is the pure boundary used by Unit tests and category adapters alike.
+let createAuditFinding (category: string) (file: string) (line: int) (message: string) =
     { Key = buildAuditKey category file message
       Severity = AuditSeverityHigh
       Criticality = AuditCriticalityHigh
@@ -884,6 +1056,7 @@ let private knownFalsePositiveRe =
     Regex(@"^\s*-\s+`([^`]+)`", RegexOptions.Multiline)
 
 /// Loads the suppression keys; an absent file yields an empty set.
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let private loadKnownFalsePositives (opts: AuditOptions) : Set<string> =
     let path =
         opts.KnownFalsePositivesPath
@@ -922,6 +1095,7 @@ let private partitionFalsePositives
     |> List.sortWith (fun a b -> String.CompareOrdinal(a.Key, b.Key))
 
 /// Short `HEAD` SHA, or `"unknown"` when git cannot answer.
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let private readGitSha (repoRoot: string) : string =
     try
         let psi =
@@ -948,6 +1122,7 @@ let private readGitSha (repoRoot: string) : string =
 
 /// Only hard `Fail` word-budget findings block this preflight — `Warn` is
 /// advisory, matching `governance word-budget validate`'s own exit gating.
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let private auditWordBudget (repoRoot: string) : AuditFinding list =
     match Governance.mergedBudgetConfig repoRoot with
     | Error _
@@ -961,33 +1136,35 @@ let private auditWordBudget (repoRoot: string) : AuditFinding list =
 
         findings
         |> List.filter (fun f -> f.Severity = Governance.WordBudgetSeverity.Fail)
-        |> List.map (fun f -> newAuditFinding "governance-word-budget" f.Path 0 f.Message)
+        |> List.map (fun f -> createAuditFinding "governance-word-budget" f.Path 0 f.Message)
 
 /// Runs one category and normalises its findings.
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let runAuditCategory (name: string) (opts: AuditOptions) : AuditFinding list =
     match name with
     | "layer-coherence" ->
         auditLayerCoherence opts.RepoRoot
-        |> List.map (fun f -> newAuditFinding name f.File 0 f.Message)
+        |> List.map (fun f -> createAuditFinding name f.File 0 f.Message)
     | "traceability-audit" ->
         auditTraceability opts.RepoRoot
-        |> List.map (fun f -> newAuditFinding name f.Path f.Line f.Message)
+        |> List.map (fun f -> createAuditFinding name f.Path f.Line f.Message)
     | "vendor-audit" ->
         walkVendorGovernanceScope opts.RepoRoot
         |> List.map (fun f ->
-            newAuditFinding name f.Path f.Line (sprintf "forbidden term '%s' → use '%s'" f.Match f.Replacement))
+            createAuditFinding name f.Path f.Line (sprintf "forbidden term '%s' → use '%s'" f.Match f.Replacement))
     | "governance-word-budget" -> auditWordBudget opts.RepoRoot
     | other -> failwithf "unknown category %s" other
 
-/// Runs every selected governance audit and returns one consolidated
-/// envelope. `runCategory` is the category runner — the real one by default;
-/// scenarios inject a fixed finding set through [`runAuditWith`].
-let runAuditWith (runCategory: string -> AuditOptions -> AuditFinding list) (opts: AuditOptions) : AuditEnvelope =
-    let ranAt =
-        opts.Now
-        |> Option.defaultWith (fun () ->
-            DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ", Globalization.CultureInfo.InvariantCulture))
-
+/// Pure audit orchestration over supplied category results and environmental
+/// values. Mandatory Unit tests call this function without filesystem,
+/// process, clock, or network access.
+let runAuditCore
+    (runCategory: string -> AuditOptions -> AuditFinding list)
+    (knownFalsePositives: Set<string>)
+    (gitSha: string)
+    (ranAt: string)
+    (opts: AuditOptions)
+    : AuditEnvelope =
     let categories =
         auditCategoryOrder
         |> List.filter (fun name ->
@@ -1002,8 +1179,7 @@ let runAuditWith (runCategory: string -> AuditOptions -> AuditFinding list) (opt
               Passed = List.isEmpty findings
               Findings = findings })
 
-    let categories, skipped =
-        partitionFalsePositives categories (loadKnownFalsePositives opts)
+    let categories, skipped = partitionFalsePositives categories knownFalsePositives
 
     let total = categories |> List.sumBy (fun c -> List.length c.Findings)
 
@@ -1019,7 +1195,7 @@ let runAuditWith (runCategory: string -> AuditOptions -> AuditFinding list) (opt
     { Schema = AuditEnvelopeSchema
       Status = (if total > 0 then "failed" else "ok")
       Result =
-        { GitSha = readGitSha opts.RepoRoot
+        { GitSha = gitSha
           RanAt = ranAt
           TotalFindings = total
           BySeverity = bySeverity
@@ -1027,7 +1203,20 @@ let runAuditWith (runCategory: string -> AuditOptions -> AuditFinding list) (opt
           Categories = categories
           SkippedFalsePositives = skipped } }
 
+/// Runs every selected governance audit and returns one consolidated
+/// envelope. `runCategory` is the category runner — the real one by default;
+/// scenarios inject a fixed finding set through [`runAuditWith`].
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
+let runAuditWith (runCategory: string -> AuditOptions -> AuditFinding list) (opts: AuditOptions) : AuditEnvelope =
+    let ranAt =
+        opts.Now
+        |> Option.defaultWith (fun () ->
+            DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ", Globalization.CultureInfo.InvariantCulture))
+
+    runAuditCore runCategory (loadKnownFalsePositives opts) (readGitSha opts.RepoRoot) ranAt opts
+
 /// Runs every selected governance audit against the real repository tree.
+[<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let runAudit (opts: AuditOptions) : AuditEnvelope = runAuditWith runAuditCategory opts
 
 let private auditJsonOptions =

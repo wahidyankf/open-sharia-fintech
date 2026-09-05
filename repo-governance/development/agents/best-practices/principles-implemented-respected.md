@@ -17,6 +17,6 @@ when_to_use: Use when checking which principles justify a recommended best pract
 This companion document respects:
 
 - **[Automation Over Manual](../../../principles/software-engineering/automation-over-manual.md)**: Agents automate repetitive tasks, reducing manual effort.
-- **[Explicit Over Implicit](../../../principles/software-engineering/explicit-over-implicit.md)**: Clear permissions and behavior — minimum necessary tool access.
+- **[Explicit Over Implicit](../../../principles/software-engineering/explicit-over-implicit.md)**: Clear permissions and behaviour — minimum necessary tool access.
 - **[Simplicity Over Complexity](../../../principles/general/simplicity-over-complexity.md)**: Single responsibility, focused agents.
-- **[Deliberate Problem-Solving](../../../principles/general/deliberate-problem-solving.md)**: Test edge cases and verify behavior before declaring agents production-ready.
+- **[Deliberate Problem-Solving](../../../principles/general/deliberate-problem-solving.md)**: Test edge cases and verify behaviour before declaring agents production-ready.

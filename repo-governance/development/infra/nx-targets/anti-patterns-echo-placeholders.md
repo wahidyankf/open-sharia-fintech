@@ -1,28 +1,20 @@
 ---
-title: "Anti-Patterns — Echo Placeholders"
-description: Clarifies that echo placeholders for test:unit/test:integration/test:e2e are required, not an anti-pattern -- omitting the mandatory-six is.
+title: "Anti-Pattern — Echo and No-Op Test Targets"
+description: "Why an inapplicable test boundary must be omitted instead of represented by a placeholder"
 category: explanation
 subcategory: development
-tags:
-  - nx
-  - targets
-  - project-json
-  - build
-  - scripts
+tags: [nx, targets, testing]
 created: 2026-02-23
-when_to_use: Use when deciding whether a project without real integration or E2E tests still needs the target declared.
+when_to_use: "Use when a project lacks an applicable runtime or coverage layer."
 ---
 
-# Anti-Patterns — Echo Placeholders
+# Anti-Pattern — Echo and No-Op Test Targets
 
-## Echo Placeholders vs. Omitted Targets
+An echo, no-op, literal-success, or duplicate target falsely reports that a test boundary exists.
+Omit an inapplicable `test:integration`, `test:e2e`, or matching static coverage target and document
+the reason in the project README.
 
-`test:unit: echo "no unit tests"`, `test:integration: echo "no integration tests"`, and
-`test:e2e: echo "no e2e tests"` declared as mandatory placeholder targets are **required** — they are
-**not anti-patterns**. The anti-pattern is _omitting_ the mandatory-six targets entirely. Echo
-placeholders enable `nx affected -t test:unit` (and similar) to run workspace-wide without
-special-casing any project.
-
-The `build` no-op rule still stands: do not add a no-op `build` to interpreted-language projects that
-have no compile step. Only the three test targets (`test:unit`, `test:integration`, `test:e2e`) and
-`typecheck` use echo placeholders as the required pattern when the real implementation does not apply.
+Unit is different: every behaviour owner must provide real Unit proof. A dedicated E2E project is
+not a behaviour owner and therefore omits Unit rather than adding a placeholder. Workspace-wide
+commands rely on Nx's normal target selection; they do not require every project to declare every
+target.

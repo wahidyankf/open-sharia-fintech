@@ -25,7 +25,7 @@ This convention implements/respects the following core principles:
   call into a documented lookup every specialist and the coordinator apply the same way.
 - **[Root Cause Orientation](../../../principles/general/root-cause-orientation.md)**: separating the
   CI-gaming/test-integrity discipline from correctness lets a reviewer trace a defect to its real
-  root cause (a weakened test versus a genuinely wrong behavior) instead of one generalist
+  root cause (a weakened test versus a genuinely wrong behaviour) instead of one generalist
   conflating the two into a single vague finding.
 - **[Simplicity Over Complexity](../../../principles/general/simplicity-over-complexity.md)**: the
   risk-tier fan-out keeps a trivial PR's review as simple as a single coordinator pass, reserving
@@ -50,7 +50,7 @@ This convention implements/respects the following conventions:
   review time, not just at author time.
 - **[Regression Test Mandate](.././regression-test-mandate.md)**: the missing-regression-test check
   lives inside the CI-gaming/test-integrity discipline's owned scope, not correctness — a fix that
-  lacks a pinning test is a test-integrity defect, not a behavioral one.
+  lacks a pinning test is a test-integrity defect, not a behavioural one.
 - **[Feature Change Completeness Convention](.././feature-change-completeness.md)**: the
   spec-file-presence-versus-scenario-completeness grey zone (ruling (d) below) exists precisely
   because that convention requires both a companion artifact to exist AND to be substantively

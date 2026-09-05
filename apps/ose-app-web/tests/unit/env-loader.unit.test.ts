@@ -1,9 +1,23 @@
-import { describe, it, expect } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+const loaderSpies = vi.hoisted(() => ({
+  loadTierEnv: vi.fn(),
+  resolveTier: vi.fn(),
+  tierEnvFilePath: vi.fn(),
+}));
+
+vi.mock("@open-sharia-enterprise/ts-env-loader", () => loaderSpies);
 
 describe("env-loader wrapper", () => {
-  it("calling loadTierEnv() on import does not throw, and re-exports the shared loader API", async () => {
+  beforeEach(() => {
+    vi.resetModules();
+    loaderSpies.loadTierEnv.mockClear();
+  });
+
+  it("invokes the injected shared loader at composition-root import and re-exports its API", async () => {
     const mod = await import("../../src/env-loader");
 
+    expect(loaderSpies.loadTierEnv).toHaveBeenCalledOnce();
     expect(mod.loadTierEnv).toBeTypeOf("function");
     expect(mod.resolveTier).toBeTypeOf("function");
     expect(mod.tierEnvFilePath).toBeTypeOf("function");

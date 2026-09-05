@@ -8,13 +8,6 @@ import { StorageUnavailable, NotFound } from "@/shared/runtime";
 // directly.
 export { StorageUnavailable, NotFound };
 
-export class InvalidPayload extends Data.TaggedError("InvalidPayload")<{
-  readonly issues: ReadonlyArray<{
-    readonly path: string;
-    readonly message: string;
-  }>;
-}> {}
-
 export class EmptyBatch extends Data.TaggedError("EmptyBatch")<{}> {}
 
-export type StoreError = NotFound | StorageUnavailable | InvalidPayload | EmptyBatch;
+export type StoreError = StorageUnavailable | EmptyBatch;

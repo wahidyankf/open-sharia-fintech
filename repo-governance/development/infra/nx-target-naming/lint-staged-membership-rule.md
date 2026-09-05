@@ -32,7 +32,8 @@ The following checks satisfy both criteria and belong in `lint-staged`:
   `actionlint` (`.github/workflows/*.{yml,yaml}`).
 - **Per-file markdown validators**: `markdownlint-cli2`, `md mermaid validate`,
   `md heading-hierarchy validate`.
-- **Gherkin cardinality**: `specs gherkin-cardinality validate` (`*.feature`).
+- **Gherkin formatting**: deterministic staged-file formatting only; corpus/adapter validation runs
+  through affected `test:quick`.
 
 ## Non-Qualifying Checks
 

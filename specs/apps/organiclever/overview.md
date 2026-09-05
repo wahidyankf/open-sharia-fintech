@@ -105,5 +105,5 @@ graph TD
 - [App client architecture](./app-web/architecture.md) — how OrganicLever fits into the
   broader technical landscape
 - [Backend architecture](./be/architecture.md) — web app + backend health diagnostic
-- [Behavior specs](./app-web/behaviors/README.md) — Gherkin acceptance criteria per
+- [Behaviour specs](./app-web/behaviours/README.md) — Gherkin acceptance criteria per
   feature context

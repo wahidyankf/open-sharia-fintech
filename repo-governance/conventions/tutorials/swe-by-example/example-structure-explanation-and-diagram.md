@@ -43,7 +43,7 @@ Go's `context` package provides a standardized way to pass cancellation signals,
 - State transitions need visualization
 - Concurrency patterns involve multiple goroutines/processes
 - Request/response cycles span multiple layers
-- Memory layout or pointer relationships clarify behavior
+- Memory layout or pointer relationships clarify behaviour
 - Architecture patterns benefit from visual representation
 
 **When NOT to include**:

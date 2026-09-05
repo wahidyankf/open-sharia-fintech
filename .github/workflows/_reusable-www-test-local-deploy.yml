@@ -34,7 +34,7 @@ jobs:
       - run: npx nx run ${{ inputs.app-name }}:lint
 
   unit:
-    name: Unit tests
+    name: Quick gate (Unit + static coverage)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -42,32 +42,33 @@ jobs:
       - run: npx nx run ${{ inputs.app-name }}:test:quick
 
   specs-coverage:
-    name: Spec coverage
+    name: Static behaviour coverage
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-node
-      - name: Run specs:behavior:coverage for app and E2E runners
+      - name: Validate app and E2E behaviour coverage without running tests
         run: |
-          npx nx run ${{ inputs.app-name }}:specs:behavior:coverage
-          # Run E2E runner specs:behavior:coverage if the target exists on the project
-          for suffix in be-e2e fe-e2e; do
-            proj="${{ inputs.app-name }}-${suffix}"
-            if npx nx show project "$proj" --json 2>/dev/null | grep -q '"specs:behavior:coverage"'; then
-              npx nx run "${proj}:specs:behavior:coverage"
-            fi
-          done
+          npx nx run ${{ inputs.app-name }}:test:coverage
+          be_project="${{ inputs.app-name }}-be-e2e"
+          if npx nx show project "$be_project" --json > /dev/null 2>&1; then
+            npx nx run "${be_project}:test:coverage"
+          fi
+          npx nx run ${{ inputs.app-name }}-fe-e2e:test:coverage
 
   integration:
     name: Integration tests
+    needs: [unit, specs-coverage]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-node
-      - run: npx nx run ${{ inputs.app-name }}:test:integration
+      - name: Run the app Integration target when the project owns one
+        run: npx nx run-many -t test:integration --projects=${{ inputs.app-name }}
 
   e2e:
     name: E2E tests
+    needs: [unit, specs-coverage, integration]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -96,7 +97,10 @@ jobs:
           docker cp "$container_id:/app/apps/${{ inputs.app-name }}/.next/prerender-manifest.json" "$artifact_dir/prerender-manifest.json"
       # Run E2E
       - run: |
-          npx nx run ${{ inputs.app-name }}-be-e2e:test:e2e || true
+          be_project="${{ inputs.app-name }}-be-e2e"
+          if npx nx show project "$be_project" --json > /dev/null 2>&1; then
+            npx nx run "${be_project}:test:e2e"
+          fi
           npx nx run ${{ inputs.app-name }}-fe-e2e:test:e2e
       - if: always()
         run: docker compose -f infra/dev/${{ inputs.app-name }}/docker-compose.yml down -v
@@ -130,7 +134,7 @@ jobs:
 
   deploy:
     name: Deploy to production
-    needs: [lint, unit, integration, e2e, detect-changes, specs-gate]
+    needs: [lint, unit, specs-coverage, e2e, detect-changes, specs-gate]
     if: needs.detect-changes.outputs.has-changes == 'true'
     runs-on: ubuntu-latest
     steps:

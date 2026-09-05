@@ -29,7 +29,11 @@ fewest build-valid, independently reviewable/revertible thematic commits. See
 
 ## Pre-commit Automation
 
-Husky + lint-staged auto-run Prettier, markdown lint, and link validation on commit; commit-msg validates Conventional Commits; pre-push runs `nx affected -t test:quick` (`test:e2e` runs on a scheduled cron instead). Trust the automation. See [Pre-commit Automation](./reference/pre-commit-automation.md) for the full hook list and common-failure fixes.
+Husky + lint-staged auto-run Prettier, markdown lint, and link validation on commit; commit-msg
+validates Conventional Commits; pre-push runs `nx affected -t test:quick`. Integration and E2E
+remain manual-and-impacted during development/review and scheduled-and-complete in CI. See
+[Pre-commit Automation](./reference/pre-commit-automation.md) for the full hook list and
+common-failure fixes.
 
 ## Development Environment Setup
 
@@ -45,7 +49,7 @@ All language developers follow the same 6-step pattern (requirements, design, im
 
 ## Reference Documentation Patterns and TDD
 
-Language developers reference CLAUDE.md, monorepo structure, and workflow/quality conventions; each language also has coding standards under `docs/explanation/software-engineering/programming-languages/[language]/README.md`. TDD is required for all code changes at every test level. See [Reference Documentation Patterns and TDD](./reference/reference-docs-and-tdd.md) for the full list, TDD cycle, and canonical references.
+Language developers reference CLAUDE.md, monorepo structure, and workflow/quality conventions; each language also has coding standards under `docs/explanation/software-engineering/programming-languages/[language]/README.md`. TDD is required for all code changes: Unit is mandatory, while Integration/E2E start red when their real boundary applies. See [Reference Documentation Patterns and TDD](./reference/reference-docs-and-tdd.md) for the full list, TDD cycle, and canonical references.
 
 ## Related Conventions
 

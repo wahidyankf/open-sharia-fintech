@@ -25,13 +25,20 @@ This practice respects the following core principles:
 
 - **[Explicit Over Implicit](../../../principles/software-engineering/explicit-over-implicit.md)**: Merge authority rests on exact-head/base CI, branch currency, conversation state, surface-gate evidence, and secret hygiene rather than subjective review-loop convergence. The merge actor is likewise explicit: `[AI]` by default, `[HUMAN]` only where a plan says so.
 
-- **[Automation Over Manual](../../../principles/software-engineering/automation-over-manual.md)**: Quality gates (typecheck, lint, test:quick, specs:coverage, CI workflows) run automatically, and the merge decision is derived from their outcome rather than re-litigated by hand each time. Encoding readiness as preconditions is what makes automating the merge safe.
+- **[Automation Over Manual](../../../principles/software-engineering/automation-over-manual.md)**:
+  Quality gates (typecheck, lint, `test:quick` with Unit and all applicable static coverage, and CI
+  workflows) run automatically, and the merge decision is derived from their outcome rather than
+  re-litigated by hand each time. Encoding readiness as preconditions is what makes automating the
+  merge safe.
 
 ## Conventions Implemented/Respected
 
 This practice implements/respects the following conventions:
 
-- **[Code Quality Convention](../../quality/code.md)**: The quality gates enforced by this protocol (typecheck, lint, test:quick, specs:coverage) are the same gates enforced by the pre-push hook. This convention extends the same standard to the PR merge boundary.
+- **[Code Quality Convention](../../quality/code.md)**: The quality gates enforced by this protocol
+  are the same registry-defined gates enforced by pre-push. Affected `test:quick` includes Unit
+  runtime and every applicable static `test:coverage:*` validator. This convention extends the
+  same standard to the PR merge boundary.
 
 - **[Trunk Based Development Convention](../trunk-based-development.md)**: `worktree-to-pr` -- a short-lived plan branch pushed to a PR -- is the repo-wide default TBD flavor. PRs also exist for `main-to-pr`, code review, and external contributions. This protocol governs the merge step for all of them.
 

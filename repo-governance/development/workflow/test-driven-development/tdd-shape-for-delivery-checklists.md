@@ -20,22 +20,22 @@ observable outcome; the checkboxes keep progress, commands, and evidence visible
 engineer with no professional experience.
 
 ```markdown
-### AC-### — [cohesive behavior outcome]
+### AC-### — [cohesive behaviour outcome]
 
 - **Input:** canonical acceptance-criterion reference, prerequisites, and affected scope.
-- **Outcome:** [observable behavior].
+- **Outcome:** [observable behaviour].
 - [ ] [AI] **RED:** write `[test path and exact case]`; run `[copyable focused command]`;
-      acceptance: it fails for `[expected missing behavior or diagnostic]` and existing unrelated tests
+      acceptance: it fails for `[expected missing behaviour or diagnostic]` and existing unrelated tests
       remain green; save output at `[evidence destination]`.
 - [ ] [AI] **GREEN:** implement `[exact symbol]` in `[source path]`; run `[copyable focused command]`;
       acceptance: the new test passes and no unrelated focused case regresses.
 - [ ] [AI] **REFACTOR:** clean up `[specific concern/path]`; run `[focused and regression commands]`;
-      acceptance: behavior, public contract, and expected diagnostics remain unchanged.
+      acceptance: behaviour, public contract, and expected diagnostics remain unchanged.
 - **Proof:** RED evidence plus the passing focused and regression outputs.
 ```
 
 If one outcome needs several TDD cycles, write a separate RED/GREEN/REFACTOR checkbox trio for each
-independently testable behavior slice inside that outcome section. Do not collapse cycles to keep the
+independently testable behaviour slice inside that outcome section. Do not collapse cycles to keep the
 checklist short. Every RED checkbox names what must fail and why; “test fails” alone is insufficient.
 
 Non-code outcome sections do not require RED-GREEN-REFACTOR. Each independently verifiable action is

@@ -17,7 +17,7 @@ not disappear into a generic final cleanup task.
 
 ## Standards
 
-- Plan authoring MUST automatically classify rule impact from both the intended behavior and the
+- Plan authoring MUST automatically classify rule impact from both the intended behaviour and the
   annotated file-impact tree. A plan is rule-affecting when delivery may add, change, supersede, or
   delete any normative surface—including instructions, governance conventions/workflows,
   repository configuration, enforcement code, targets, hooks, CI, style guides, or generated

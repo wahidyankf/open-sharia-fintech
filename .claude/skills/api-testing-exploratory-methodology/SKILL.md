@@ -52,7 +52,7 @@ in scope. See the
 
 The API gate uses the complete methodology once for discovery. After its single fix and
 rebuild/redeployment pass, verification reproduces only the original in-threshold findings and
-smoke-tests affected API behavior. It does not repeat mandatory full-discovery sweeps or probe
+smoke-tests affected API behaviour. It does not repeat mandatory full-discovery sweeps or probe
 unrelated endpoints. A clean discovery passes immediately; no result automatically starts another
 run.
 

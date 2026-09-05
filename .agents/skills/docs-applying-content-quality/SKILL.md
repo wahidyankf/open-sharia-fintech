@@ -12,7 +12,7 @@ Checker/fixer invocations may receive `delegated-gate-ids` and `lifecycle-eviden
 Suppress only predicates matched by an exact gate ID or declared `verifies` relationship; an empty
 set suppresses nothing. Checkers return the evidence unchanged. After edits, fixers intersect
 changed files with delegated gate scopes and return `updated-lifecycle-evidence`, invalidating only
-affected entries. Omitted handoff preserves standalone full behavior.
+affected entries. Omitted handoff preserves standalone full behaviour.
 
 ## Purpose
 

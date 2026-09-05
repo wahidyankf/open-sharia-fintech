@@ -11,11 +11,11 @@ logical owners.
 - [Deployment topology](./deployment.md) — the environments each deployable runs in.
 
 - [OSE App Web](./app-web/README.md) — the specification corpus for `ose-app-web`, the compliance
-  gap-analysis client: its architecture and its behaviors.
+  gap-analysis client: its architecture and its behaviours.
 - [OSE BE](./be/README.md) — the specification corpus for `ose-be`, the gap-analysis API: its
-  architecture, its behaviors, and the OpenAPI contract both sides generate from.
+  architecture, its behaviours, and the OpenAPI contract both sides generate from.
 - [OSE Web](./www/README.md) — the specification corpus for `ose-www`, the platform's public site:
-  its architecture and its behaviors.
+  its architecture and its behaviours.
 
 ## Related
 

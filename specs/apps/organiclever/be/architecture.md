@@ -27,7 +27,7 @@ than a backend detail.
 
 | Container         | Technology  | Persistence | Coverage floor |
 | ----------------- | ----------- | ----------- | -------------- |
-| `organiclever-be` | F#, Giraffe | none        | 90%            |
+| `organiclever-be` | F#, Giraffe | none        | 99% Unit lines |
 
 There is no database, no migration set, and no repository layer today. That absence is deliberate:
 the journal lives in the user's browser, so the service holds no user state at all.
@@ -54,6 +54,6 @@ service stores nothing about a user. The first non-public route changes that and
 
 ## Related
 
-- [Behaviors](./behaviors/README.md) — the scenarios this system must satisfy.
+- [Behaviours](./behaviours/README.md) — the scenarios this system must satisfy.
 - [Contracts](./contracts/README.md) — the OpenAPI document this service generates from.
 - [`apps/organiclever-be/README.md`](../../../../apps/organiclever-be/README.md) — the implementing project.

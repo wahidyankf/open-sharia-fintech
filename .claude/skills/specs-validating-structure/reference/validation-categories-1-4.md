@@ -5,8 +5,8 @@
 When `governance-readme-index` is delegated, do not check or infer README existence/index
 membership. For READMEs that exist, retain semantic assessment of useful overview and contents.
 Without delegation, the lifecycle command owns existence for each owner corpus's three required
-entries (`README.md`, `architecture.md`, `behaviors/`), the `behaviors/README.md` index, all
-domain subdirectories under `behaviors/<domain>/`, and `contracts/` when present.
+entries (`README.md`, `architecture.md`, `behaviours/`), the `behaviours/README.md` index, all
+domain subdirectories under `behaviours/<domain>/`, and `contracts/` when present.
 Check semantic quality recursively. **HIGH**: README exists but is empty or lacks required
 overview/contents information.
 
@@ -22,7 +22,7 @@ Without delegation, use current structure/count commands rather than LLM countin
 want / So that); Background step inconsistent within a folder. **MEDIUM**: filename not
 kebab-case. **LOW**: scenario names not sentence case.
 
-Repeated primary Given/When/Then cardinality belongs to `specs-gherkin-cardinality`; never
+Repeated primary Given/When/Then steps are valid for one continuous journey; never
 re-derive it when that exact ID is delegated.
 
 ## Category 4: Cross-Folder Consistency [LLM] — 2+ folders only

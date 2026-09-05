@@ -1055,57 +1055,9 @@ let governanceAuditMarkdown (envelope: RepoGovernance.AuditEnvelope) : string =
     sb.ToString()
 
 // ---------------------------------------------------------------------------
-// specs gherkin-cardinality / scaffold dart
-// [Repo-grounded — `specs_gherkin_cardinality.rs`, `specs_scaffold_dart.rs`]
+// specs scaffold dart
+// [Repo-grounded — `specs_scaffold_dart.rs`]
 // ---------------------------------------------------------------------------
-
-type CardinalityFindingJson =
-    { file: string
-      line: int
-      scenario: string
-      keyword: string
-      count: int
-      severity: string }
-
-type CardinalityEnvelope =
-    { schema: string
-      status: string
-      result: CardinalityFindingJson list }
-
-let cardinalityText (findings: Specs.GherkinCardinalityFinding list) : string = Specs.formatCardinalityText findings
-
-let cardinalityJson (findings: Specs.GherkinCardinalityFinding list) : string =
-    let env: CardinalityEnvelope =
-        { schema = "rhino-cli/gherkin-keyword-cardinality/v1"
-          status = (if List.isEmpty findings then "passed" else "failed")
-          result =
-            findings
-            |> List.map (fun f ->
-                { file = f.File
-                  line = f.Line
-                  scenario = f.Scenario
-                  keyword = f.Keyword
-                  count = f.Count
-                  severity = f.Severity }) }
-
-    JsonSerializer.Serialize(env, jsonOptions) + "\n"
-
-let cardinalityMarkdown (findings: Specs.GherkinCardinalityFinding list) : string =
-    if List.isEmpty findings then
-        "## Gherkin Keyword Cardinality Audit\n\n**PASSED**: every scenario uses each primary keyword at most once\n"
-    else
-        let header =
-            sprintf
-                "## Gherkin Keyword Cardinality Audit\n\n**FAILED**: %d violation(s) found\n\n| File | Line | Scenario | Keyword | Count | Severity |\n|------|------|----------|---------|------:|----------|\n"
-                (List.length findings)
-
-        let rows =
-            findings
-            |> List.map (fun f ->
-                sprintf "| %s | %d | %s | %s | %d | %s |\n" f.File f.Line f.Scenario f.Keyword f.Count f.Severity)
-            |> String.concat ""
-
-        header + rows
 
 type DartScaffoldJson =
     { status: string
@@ -1144,100 +1096,6 @@ let dartScaffoldMarkdown (result: Contracts.DartScaffoldResult) : string =
         header
         + "\n## Model Files\n\n"
         + (result.ModelFiles |> List.map (sprintf "- `%s`\n") |> String.concat "")
-
-// ---------------------------------------------------------------------------
-// specs behavior-coverage
-// [Repo-grounded — `application/speccoverage/reporter.rs`]
-// ---------------------------------------------------------------------------
-
-type CoverageGapJson = { spec_file: string; stem: string }
-
-type CoverageScenarioGapJson =
-    { spec_file: string
-      scenario_title: string }
-
-type CoverageStepGapJson =
-    { spec_file: string
-      scenario_title: string
-      keyword: string
-      step_text: string }
-
-type CoverageOrphanImplJson =
-    { file: string
-      matcher_kind: string
-      matcher_text: string }
-
-type CoverageJsonOutput =
-    { status: string
-      timestamp: string
-      total_specs: int
-      total_scenarios: int
-      total_steps: int
-      gap_count: int
-      scenario_gap_count: int
-      step_gap_count: int
-      orphan_step_impl_count: int
-      duration_ms: int64
-      gaps: CoverageGapJson list
-      scenario_gaps: CoverageScenarioGapJson list
-      step_gaps: CoverageStepGapJson list
-      orphan_step_impls: CoverageOrphanImplJson list }
-
-let coverageText (result: Specs.CheckResult) : string = Specs.formatCoverageText result false
-
-/// `duration_ms` is emitted as `0`: `shadow-diff.sh` masks both it and
-/// `timestamp` precisely because they cannot be byte-stable across two runs,
-/// and the F# `CheckResult` carries no scan duration.
-let coverageJson (result: Specs.CheckResult) : string =
-    let status =
-        if
-            List.isEmpty result.Gaps
-            && List.isEmpty result.ScenarioGaps
-            && List.isEmpty result.StepGaps
-            && List.isEmpty result.OrphanStepImpls
-        then
-            "success"
-        else
-            "failure"
-
-    let out: CoverageJsonOutput =
-        { status = status
-          timestamp = DateTimeOffset.Now.ToString("yyyy-MM-ddTHH:mm:ssK")
-          total_specs = result.TotalSpecs
-          total_scenarios = result.TotalScenarios
-          total_steps = result.TotalSteps
-          gap_count = List.length result.Gaps
-          scenario_gap_count = List.length result.ScenarioGaps
-          step_gap_count = List.length result.StepGaps
-          orphan_step_impl_count = List.length result.OrphanStepImpls
-          duration_ms = 0L
-          gaps =
-            result.Gaps
-            |> List.map (fun g ->
-                { spec_file = g.SpecFile
-                  stem = g.Stem })
-          scenario_gaps =
-            result.ScenarioGaps
-            |> List.map (fun g ->
-                { spec_file = g.SpecFile
-                  scenario_title = g.ScenarioTitle })
-          step_gaps =
-            result.StepGaps
-            |> List.map (fun g ->
-                { spec_file = g.SpecFile
-                  scenario_title = g.ScenarioTitle
-                  keyword = g.StepKeyword
-                  step_text = g.StepText })
-          orphan_step_impls =
-            result.OrphanStepImpls
-            |> List.map (fun o ->
-                { file = o.File
-                  matcher_kind = o.MatcherKind
-                  matcher_text = o.MatcherText }) }
-
-    JsonSerializer.Serialize(out, jsonOptions)
-
-let coverageMarkdown (result: Specs.CheckResult) : string = coverageText result
 
 // ---------------------------------------------------------------------------
 // Shared harness validation reporter

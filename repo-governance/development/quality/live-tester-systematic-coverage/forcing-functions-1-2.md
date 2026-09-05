@@ -19,7 +19,7 @@ when_to_use: "Use when applying the shared-control or round-trip forcing-functio
 ## 1. Shared-Control x Surface Matrix
 
 **Obligation**: Identify every control that appears on more than one tab, view, or surface.
-For each such control, exercise it on every surface it appears on and assert that the behavior
+For each such control, exercise it on every surface it appears on and assert that the behaviour
 is identical across surfaces. A control that triggers a change on one surface but no-ops on
 another is a consistency defect (Nielsen Heuristic 4: Consistency and Standards; WCAG 2.2 SC
 3.2.4 Consistent Identification, technique G197).
@@ -54,6 +54,6 @@ state. A control whose value does not survive a reload is a statelessness defect
 5. Assert the control shows the value it held before reload.
 
 If any step fails, record a finding with the control name, the expected URL parameter, and
-the observed behavior.
+the observed behaviour.
 
 **Ground**: MDN History API state contract; Nielsen Heuristics 1 and 3.

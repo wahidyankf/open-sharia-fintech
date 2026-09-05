@@ -79,7 +79,7 @@ export function Header({ locale, pathData = EMPTY_COURSE_PATH_CLIENT_DATA }: Hea
           variant="outline"
           size="sm"
           className="hidden gap-2 text-muted-foreground sm:flex"
-          onClick={() => setSearchOpen(true)}
+          onClick={(event) => setSearchOpen(true, event.currentTarget)}
           aria-label="Search"
         >
           <Search className="h-4 w-4" />
@@ -97,7 +97,7 @@ export function Header({ locale, pathData = EMPTY_COURSE_PATH_CLIENT_DATA }: Hea
           variant="ghost"
           size="icon"
           className="sm:hidden"
-          onClick={() => setSearchOpen(true)}
+          onClick={(event) => setSearchOpen(true, event.currentTarget)}
           aria-label="Search"
         >
           <Search className="h-5 w-5" />
@@ -109,12 +109,7 @@ export function Header({ locale, pathData = EMPTY_COURSE_PATH_CLIENT_DATA }: Hea
         <ThemeToggle />
 
         <Suspense fallback={null}>
-          <MobileNav
-            locale={locale}
-            open={mobileOpen}
-            onOpenChange={setMobileOpen}
-            pathData={pathData}
-          />
+          <MobileNav locale={locale} open={mobileOpen} onOpenChange={setMobileOpen} pathData={pathData} />
         </Suspense>
       </div>
     </header>

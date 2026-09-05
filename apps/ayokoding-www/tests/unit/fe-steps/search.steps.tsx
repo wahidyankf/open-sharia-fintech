@@ -1,162 +1,199 @@
 import path from "path";
 import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
-import { expect } from "vitest";
+import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { useState } from "react";
+import { expect, vi } from "vitest";
 import "./helpers/test-setup";
 
+const routerPush = vi.hoisted(() => vi.fn());
+const searchQuery = vi.hoisted(() => vi.fn());
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: routerPush }),
+}));
+vi.mock("@/features/i18n/shell/use-locale", () => ({
+  useLocale: () => "en",
+}));
+vi.mock("@/lib/trpc/client", () => ({
+  trpcClient: { search: { query: { query: searchQuery } } },
+}));
+
+import { SearchDialog, formatSectionPath } from "@/features/search/shell/search-dialog";
+import { SearchContext } from "@/features/search/shell/use-search";
+
+globalThis.ResizeObserver = class ResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+} as unknown as typeof ResizeObserver;
+
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviors/frontend/search/search.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviours/frontend/search/search.feature"),
 );
 
-// SearchDialog depends on Radix Dialog portals, cmdk, tRPC client, and Next.js router.
-// Radix portals do not function correctly in jsdom, so interactive scenarios
-// are structurally mapped here for spec-coverage and fully validated at E2E level.
-//
-// The formatSectionPath pure function is tested inline to ensure section-path
-// derivation from slugs works correctly.
+const programmingResult = {
+  title: "Getting Started with Go",
+  slug: "learn/software-engineering/programming-languages/golang/overview",
+  excerpt: "Learn Go programming from its foundations.",
+};
 
-function formatSectionPath(slug: string): string {
-  const parts = slug.split("/");
-  if (parts.length <= 1) return "";
-  return parts
-    .slice(0, -1)
-    .map((part) =>
-      part
-        .split("-")
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" "),
-    )
-    .join(" / ");
+function SearchHarness({ initiallyOpen = false }: { initiallyOpen?: boolean }) {
+  const [open, setOpen] = useState(initiallyOpen);
+  return (
+    <>
+      <button type="button">Page trigger</button>
+      <output data-testid="search-open">{String(open)}</output>
+      <SearchContext.Provider value={{ open, setOpen }}>
+        <SearchDialog />
+      </SearchContext.Provider>
+    </>
+  );
 }
 
-describeFeature(feature, ({ Scenario, Background }) => {
+function renderOpenSearch() {
+  render(<SearchHarness initiallyOpen />);
+  return screen.getByPlaceholderText("Search...");
+}
+
+describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
+  AfterEachScenario(() => {
+    cleanup();
+    searchQuery.mockReset();
+    routerPush.mockReset();
+  });
+
   Background(({ Given }) => {
-    Given("the app is running", () => {});
+    Given("the app is running", () => {
+      expect(SearchDialog).toBeTypeOf("function");
+    });
   });
 
   Scenario("Cmd+K keyboard shortcut opens the search dialog", ({ When, Then, And }) => {
     When("a visitor presses Cmd+K on the page", () => {
-      // SearchDialog registers a keydown listener for Meta+K / Ctrl+K
-      // Verified at E2E level with real browser events
+      render(<SearchHarness />);
+      fireEvent.keyDown(document, { key: "k", metaKey: true });
     });
 
     Then("the search dialog should open", () => {
-      // Radix Dialog portal does not render in jsdom; verified at E2E level
-      expect(true).toBe(true);
+      expect(screen.getByTestId("search-open").textContent).toBe("true");
+      expect(screen.getByRole("dialog")).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/search/search.feature:Cmd+K keyboard shortcut opens the search dialog
-    And("the search input should have focus", () => {
-      // Focus management handled by Radix Dialog; verified at E2E level
-      expect(true).toBe(true);
+    And("the search input should have focus", async () => {
+      await waitFor(() => expect(document.activeElement).toBe(screen.getByPlaceholderText("Search...")));
     });
   });
 
   Scenario("Typing in the search input shows debounced results", ({ Given, When, Then, And }) => {
-    Given("the search dialog is open", () => {});
+    let input: HTMLElement;
+    Given("the search dialog is open", () => {
+      searchQuery.mockResolvedValue([programmingResult]);
+      input = renderOpenSearch();
+    });
 
     When("the visitor types a query into the search input", () => {
-      // Debounced tRPC call triggered 200ms after input change
+      fireEvent.change(input, { target: { value: "Go" } });
     });
 
-    Then("search results should appear after a debounce delay", () => {
-      // Debounce uses setTimeout(200ms) → trpcClient.search.query.query()
-      // Verified at E2E level with real network calls
-      expect(true).toBe(true);
+    Then("search results should appear after a debounce delay", async () => {
+      await waitFor(() => expect(searchQuery).toHaveBeenCalledWith({ query: "Go", locale: "en", limit: 10 }));
+      expect(await screen.findByText(programmingResult.title)).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/search/search.feature:Typing in the search input shows debounced results
-    And("results should update when the visitor changes the query", () => {
-      // Previous timer cleared, new 200ms debounce started
-      expect(true).toBe(true);
+    And("results should update when the visitor changes the query", async () => {
+      searchQuery.mockResolvedValue([{ ...programmingResult, title: "Advanced Go" }]);
+      fireEvent.change(input, { target: { value: "Advanced" } });
+      await waitFor(() => expect(searchQuery).toHaveBeenLastCalledWith({ query: "Advanced", locale: "en", limit: 10 }));
+      expect(await screen.findByText("Advanced Go")).toBeTruthy();
     });
   });
 
   Scenario("Clicking a search result navigates to that page", ({ Given, When, Then, And }) => {
-    Given("the search dialog is open", () => {});
-    And("the visitor has typed a query that returns at least one result", () => {});
+    let input: HTMLElement;
+    Given("the search dialog is open", () => {
+      searchQuery.mockResolvedValue([programmingResult]);
+      input = renderOpenSearch();
+    });
+    And("the visitor has typed a query that returns at least one result", async () => {
+      fireEvent.change(input, { target: { value: "Go" } });
+      expect(await screen.findByText(programmingResult.title)).toBeTruthy();
+    });
 
     When("the visitor clicks a search result", () => {
-      // cmdk CommandItem.onSelect → router.push(`/${locale}/${slug}`)
+      fireEvent.click(screen.getByText(programmingResult.title));
     });
 
     Then("the search dialog should close", () => {
-      // setOpen(false) called in handleSelect callback
-      expect(true).toBe(true);
+      expect(screen.getByTestId("search-open").textContent).toBe("false");
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/search/search.feature:Clicking a search result navigates to that page
     And("the visitor should be navigated to the page for that result", () => {
-      // router.push verified at E2E level
-      expect(true).toBe(true);
+      expect(routerPush).toHaveBeenCalledWith(`/en/${programmingResult.slug}`);
     });
   });
 
   Scenario("Escape key closes the search dialog", ({ Given, When, Then, And }) => {
-    Given("the search dialog is open", () => {});
+    let trigger: HTMLElement;
+    Given("the search dialog is open", async () => {
+      render(<SearchHarness initiallyOpen />);
+      trigger = screen.getByRole("button", { name: "Page trigger", hidden: true });
+      trigger.focus();
+      await waitFor(() => expect(screen.getByRole("dialog")).toBeTruthy());
+    });
 
     When("the visitor presses Escape", () => {
-      // Radix Dialog handles Escape key natively
+      fireEvent.keyDown(document, { key: "Escape", code: "Escape" });
     });
 
-    Then("the search dialog should close", () => {
-      // Radix Dialog onOpenChange(false) triggered by Escape
-      expect(true).toBe(true);
+    Then("the search dialog should close", async () => {
+      await waitFor(() => expect(screen.getByTestId("search-open").textContent).toBe("false"));
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/search/search.feature:Escape key closes the search dialog
-    And("focus should return to the page behind the dialog", () => {
-      // Radix Dialog restores focus to trigger element
-      expect(true).toBe(true);
+    And("focus should return to the page behind the dialog", async () => {
+      await act(async () => Promise.resolve());
+      expect(document.activeElement === trigger || document.activeElement === document.body).toBe(true);
     });
   });
 
   Scenario("Search results show title, section path, and excerpt", ({ Given, When, Then, And }) => {
-    Given("the search dialog is open", () => {});
-
-    When("the visitor types a query that returns results", () => {
-      // Results rendered via CommandItem with title, formatSectionPath(slug), and excerpt
+    let input: HTMLElement;
+    Given("the search dialog is open", () => {
+      searchQuery.mockResolvedValue([programmingResult]);
+      input = renderOpenSearch();
     });
 
-    Then("each result should display the page title", () => {
-      // result.title rendered in <span className="font-medium">
-      expect(true).toBe(true);
+    When("the visitor types a query that returns results", () => {
+      fireEvent.change(input, { target: { value: "programming" } });
+    });
+
+    Then("each result should display the page title", async () => {
+      expect(await screen.findByText(programmingResult.title)).toBeTruthy();
     });
 
     And("each result should display the section path indicating where the page lives", () => {
-      // Section path derived from slug via formatSectionPath
-      expect(formatSectionPath("learn/software-engineering/programming-languages/golang/overview")).toBe(
-        "Learn / Software Engineering / Programming Languages / Golang",
-      );
-      expect(formatSectionPath("learn/overview")).toBe("Learn");
-      expect(formatSectionPath("about-ayokoding")).toBe("");
-      expect(formatSectionPath("learn/ai/security/basics")).toBe("Learn / Ai / Security");
+      expect(screen.getByText(formatSectionPath(programmingResult.slug))).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/search/search.feature:Search results show title, section path, and excerpt
     And("each result should display a text excerpt showing the matching content", () => {
-      // result.excerpt rendered in <span className="text-xs text-muted-foreground">
-      expect(true).toBe(true);
+      expect(screen.getByText(programmingResult.excerpt)).toBeTruthy();
     });
   });
 
-  // USS-001 (Rule-15 fix): the real network/tRPC round trip that proves the Tools pages are now
-  // indexed is exercised at the e2e layer (real dev server, real `ContentService.search()`); the
-  // pure per-doc data that makes this possible (`staticSearchDocs()`) already has its own direct
-  // unit test at `content/core/static-search-docs.test.ts`. This binding is present only so
-  // `specs:behavior:coverage` (which scans `apps/ayokoding-www`, not the sibling
-  // `ayokoding-www-fe-e2e` project) finds a `@covers` annotation for this scenario — same
-  // established convention `course-rehome-redirects.steps.tsx` already uses for its own e2e-only
-  // assertions.
   Scenario("Global search surfaces the Tools pages", ({ Given, When, Then }) => {
-    Given("the search dialog is open", () => {});
-
-    When("the visitor types a query naming the AI Model Benchmark tool", () => {
-      // Debounced tRPC call → ContentService.search(), verified at E2E level with the real server.
+    let input: HTMLElement;
+    Given("the search dialog is open", () => {
+      searchQuery.mockResolvedValue([
+        { title: "AI Model Benchmark", slug: "tools/ai-benchmark", excerpt: "Compare AI models." },
+      ]);
+      input = renderOpenSearch();
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/search/search.feature:Global search surfaces the Tools pages
-    Then("a result linking to the AI Model Benchmark tool page is shown", () => {
-      expect(true).toBe(true);
+    When("the visitor types a query naming the AI Model Benchmark tool", () => {
+      fireEvent.change(input, { target: { value: "AI Model Benchmark" } });
+    });
+
+    Then("a result linking to the AI Model Benchmark tool page is shown", async () => {
+      const result = await screen.findByText("AI Model Benchmark");
+      expect(result.closest("[cmdk-item]")?.getAttribute("data-value")).toContain("tools/ai-benchmark");
     });
   });
 });

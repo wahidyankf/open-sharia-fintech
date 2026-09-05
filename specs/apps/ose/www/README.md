@@ -14,7 +14,7 @@ returns.
   a visitor interacts with.
 - [API components](./api-components.md) — the tRPC router, its procedures, and the content pipeline
   behind them.
-- [Behaviors](./behaviors/README.md) — the recursive Gherkin corpus, split by the perspective a
+- [Behaviours](./behaviours/README.md) — the recursive Gherkin corpus, split by the perspective a
   scenario takes.
 
 ## Related

@@ -9,7 +9,7 @@ tags:
   - verification
   - quality-gates
   - workflow
-when_to_use: Use when you need a concrete example of correct or incorrect CI post-push verification behavior.
+when_to_use: Use when you need a concrete example of correct or incorrect CI post-push verification behaviour.
 ---
 
 # Examples
@@ -45,7 +45,7 @@ No CI verification was performed. This is wrong — the pre-push hook passing is
 ## FAIL: Skipping CI because pre-push passed
 
 ```
-Agent: Pre-push hook passed (typecheck, lint, test:quick, specs:coverage).
+Agent: Pre-push hook passed (including affected test:quick with Unit and static coverage).
        CI verification skipped — local gates passed.
 
 Work is complete.

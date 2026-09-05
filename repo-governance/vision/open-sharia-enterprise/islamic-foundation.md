@@ -26,7 +26,7 @@ This vision serves Islamic values and principles in several ways:
 **Justice and Fairness (`'Adl`):**
 
 - Equal access to Islamic finance technology for all
-- No artificial monopolies or rent-seeking behavior
+- No artificial monopolies or rent-seeking behaviour
 - Fair pricing (free and open-source)
 
 **Benefit to the Ummah (`Maslahah`):**

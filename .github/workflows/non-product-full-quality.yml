@@ -1,0 +1,62 @@
+name: non-product-full-quality
+
+on:
+  schedule:
+    - cron: "0 1 * * *"
+    - cron: "0 13 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: non-product-full-quality-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  unit-and-static:
+    name: Unit and static behaviour coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/setup-dotnet
+      - uses: ./.github/actions/setup-rust
+      - name: Run complete non-product quick gates serially
+        run: >-
+          npx nx run-many -t test:quick
+          --projects=crane-cli,fsharp-crane-core,fsharp-env-loader,rhino-cli,ts-env-loader,web-ui,web-ui-token
+          --parallel=1
+
+  integration:
+    name: Complete local-resource Integration suites
+    needs: unit-and-static
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/setup-dotnet
+      - uses: ./.github/actions/setup-rust
+      - name: Run every applicable non-product Integration target
+        run: >-
+          npx nx run-many -t test:integration
+          --projects=fsharp-crane-core,fsharp-env-loader,rhino-cli,ts-env-loader
+          --parallel=1
+
+  e2e:
+    name: Complete public-boundary E2E suites
+    needs: integration
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/setup-dotnet
+      - uses: ./.github/actions/setup-playwright
+      - name: Run every applicable non-product E2E target
+        run: >-
+          npx nx run-many -t test:e2e
+          --projects=crane-cli,rhino-cli,ts-env-loader,web-ui
+          --parallel=1

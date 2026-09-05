@@ -37,11 +37,11 @@ Each owner's `specs/apps/<product>/<owner>/architecture.md` documents that surfa
 
 ## Gherkin Feature Files
 
-Gherkin feature files define the observable behavior of the system from a stakeholder perspective. They must describe what the system actually does.
+Gherkin feature files define the observable behaviour of the system from a stakeholder perspective. They must describe what the system actually does.
 
 **Update Gherkin specs when:**
 
-- Adding a new REST endpoint or tRPC procedure — add a scenario describing its behavior
+- Adding a new REST endpoint or tRPC procedure — add a scenario describing its behaviour
 - Removing an endpoint or procedure — remove or archive the corresponding scenario
 - Changing the HTTP method, path, request shape, or response shape of an existing endpoint
 - Changing authentication or authorization requirements for an endpoint
@@ -51,7 +51,7 @@ Gherkin feature files define the observable behavior of the system from a stakeh
 **Do not add Gherkin scenarios for:**
 
 - Internal implementation details (private functions, internal state machines)
-- Framework-level behavior that is not part of the application's acceptance criteria
+- Framework-level behaviour that is not part of the application's acceptance criteria
 
 ## specs/ README Files
 

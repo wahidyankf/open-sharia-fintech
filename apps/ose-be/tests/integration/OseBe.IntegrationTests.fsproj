@@ -9,8 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Steps/DbMigrationSteps.fs" />
-    <Compile Include="DatabaseBootTests.fs" />
+    <Compile Include="Steps/EnvTierSteps.fs" />
+    <Compile Include="Steps/NatsConfigSteps.fs" />
+    <Compile Include="Tests/EnvTierIntegrationTests.fs" />
+    <Compile Include="Tests/NatsConfigIntegrationTests.fs" />
+    <Compile Include="Tests/OpenRouterConfigIntegrationTests.fs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,7 +24,6 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="TickSpec" Version="2.0.5" />
-    <PackageReference Include="Npgsql" Version="10.0.2" />
     <PackageReference Update="FSharp.Core" Version="10.1.302" />
   </ItemGroup>
 

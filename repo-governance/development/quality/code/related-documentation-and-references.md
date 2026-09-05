@@ -25,7 +25,7 @@ when_to_use: "Use for a related convention or reference."
 - [Git Push Safety Convention](../../workflow/git-push-safety.md) - Requires explicit per-instance user approval before any agent or automation runs `git push --force`, `--force-with-lease`, or `--no-verify`
 - [Nx Target Standards](../infra/nx-targets.md) - Canonical target names, `test:quick` composition rules, and caching configuration that the pre-push hook depends on
 - [Rust Unsafe Code Policy](../../../../docs/explanation/software-engineering/programming-languages/rust/code-quality-standards.md#unsafe-code-policy) - MUST clause: all OSE application Rust crates MUST use `#![forbid(unsafe_code)]` in every crate root (`lib.rs` and `main.rs`)
-- [Three-Level Testing Standard](.././three-level-testing-standard.md) - Mandatory unit/integration/E2E testing architecture for all projects; defines what `test:unit`, `test:integration`, and `test:e2e` must do at each level
+- [Behaviour-Driven Development](../../behaviour-driven-development.md) - Mandatory Unit proof, higher-layer applicability, and the boundary owned by each runtime target
 
 ## References
 

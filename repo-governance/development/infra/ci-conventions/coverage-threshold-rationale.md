@@ -1,25 +1,26 @@
 ---
-title: "Coverage Threshold Rationale"
-description: Why coverage thresholds differ by project type.
+title: "Runtime and Static Coverage Responsibilities"
+description: "Separates runtime code coverage from static scenario and adapter coverage"
 category: explanation
 subcategory: development
 tags: [ci-cd, testing, coverage]
 created: 2026-03-31
-when_to_use: Use when checking a project's required coverage threshold.
+when_to_use: "Use when assigning coverage work to a test or coverage target."
 ---
 
-# Coverage Threshold Rationale
+# Runtime and Static Coverage Responsibilities
 
-Coverage thresholds are enforced by the native `test:coverage` Nx target as part of `test:quick`.
-Thresholds differ by project type to reflect the realistic upper bound achievable through mocked
-unit tests.
+`test:unit`, `test:integration`, and `test:e2e` execute tests. When a runtime layer measures code
+coverage, its native instrumentation and threshold belong to that same runtime target.
 
-| Threshold | App Types                                                | Rationale                                                                                                                                                                       |
-| --------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **90%**   | BE API backends (`organiclever-be`), CLI apps, Rust libs | Core business logic with high mock isolation. Service functions operate on pure data structures; 90% is achievable without heroic effort.                                       |
-| **80%**   | Content platforms (`ayokoding-www`, `ose-www`)           | Significant UI rendering code and Next.js route handlers that are harder to unit-test. Some RSC rendering paths are excluded by design.                                         |
-| **70%**   | FE apps (`organiclever-app-web`)                         | API, auth, and query layers are mocked by design; the mock boundaries limit what can be covered by unit tests. Lower threshold reflects this intentional architecture decision. |
+`test:coverage:*` has a different meaning: it statically validates whether tests cover the
+canonical scenario/adapter contract. It must not start a test runner, invoke another runtime target,
+or require a prior runtime report. `test:coverage` only aggregates these static validators, and
+every applicable validator is mandatory in `test:quick`.
 
-Coverage is measured via the appropriate reporter for each language and converted to LCOV or
-JaCoCo XML. Coverage enforcement runs inside each project's native `test:coverage` Nx target. See
-`CLAUDE.md` for the exact command per language.
+Never satisfy either responsibility with a no-op, hardcoded count, stale report, or exclusion that
+leaves behaviour without an owning proof.
+
+A Unit numeric exclusion must enumerate a whole boundary file or a narrow boundary function and
+name the Integration or E2E runtime proof that exercises it. Broad path globs, mixed core-logic
+exclusions, and unproved boundary code are coverage gaming.

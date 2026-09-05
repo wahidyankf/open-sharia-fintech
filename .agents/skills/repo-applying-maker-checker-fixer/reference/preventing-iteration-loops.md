@@ -8,9 +8,9 @@ Without explicit mechanisms to track accepted decisions, checker-fixer workflows
 
 **Solution**: Fixer writes all accepted FALSE_POSITIVE findings to `local-tmp/.known-false-positives.md`. Checker reads this file at the start of every run and skips matching entries.
 
-**Checker behavior**: Match findings using stable key `[category] | [file] | [brief-description]`. If matched, log as `[PREVIOUSLY ACCEPTED FALSE_POSITIVE — skipped]`, do NOT count in findings total.
+**Checker behaviour**: Match findings using stable key `[category] | [file] | [brief-description]`. If matched, log as `[PREVIOUSLY ACCEPTED FALSE_POSITIVE — skipped]`, do NOT count in findings total.
 
-**Fixer behavior**: After every fix run, append each FALSE_POSITIVE to `.known-false-positives.md`:
+**Fixer behaviour**: After every fix run, append each FALSE_POSITIVE to `.known-false-positives.md`:
 
 ```bash
 cat >> local-tmp/.known-false-positives.md << 'EOF'

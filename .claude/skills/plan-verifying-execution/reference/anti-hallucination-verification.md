@@ -3,7 +3,7 @@
 ## 2. Anti-Hallucination Post-Execution Validation (Step 5f — MANDATORY HARD RULE)
 
 After Step 5f-gates, verify every factual claim in `delivery.md` (paths, Nx targets, versions,
-function/agent/test names, behavior claims) still holds against the post-execution repo state. This
+function/agent/test names, behaviour claims) still holds against the post-execution repo state. This
 catches hallucinated claims the executor fabricated silently.
 
 ### What to Validate
@@ -27,7 +27,7 @@ occurrence (may be legitimate version bump during execution; flag for review).
 annotations): `find .claude/agents -name '<name>.md'` returns a match — definitions live in nested
 role subfolders, so a flat path test always fails. Missing: **HIGH** (AP-7).
 
-**F. Behavior claims** — for every claim about library or framework behavior in the chosen technical form: verify
+**F. Behaviour claims** — for every claim about library or framework behaviour in the chosen technical form: verify
 it is backed by a `[Web-cited]` inline excerpt + URL + access date, or by a repo-doc reference.
 Missing source: **MEDIUM** per occurrence.
 
@@ -45,7 +45,7 @@ Broken: **HIGH** per occurrence (Anti-Pattern AP-10).
    [Plan Anti-Hallucination Convention §Repo-Grounding Rule](../../../../repo-governance/development/quality/plan-anti-hallucination/repo-grounding-rule-hard.md#repo-grounding-rule-hard).
 3. Compare results against the post-execution repo state.
 4. File findings per severity table below.
-5. For external behavior claims, delegate multi-page verification to `web-researcher` per the lower
+5. For external behaviour claims, delegate multi-page verification to `web-researcher` per the lower
    threshold in
    [Plan Anti-Hallucination Convention §Web-Research Delegation](../../../../repo-governance/development/quality/plan-anti-hallucination/refuse-on-uncertainty-rule-and-web-research-delegation.md#web-research-delegation-lower-threshold-for-plans).
 
@@ -53,7 +53,7 @@ Broken: **HIGH** per occurrence (Anti-Pattern AP-10).
 
 - Missing file path / missing Nx target / missing test / missing agent / unlabeled KPI / broken
   cross-link: **HIGH** per occurrence
-- Version mismatch / behavior claim without source / suggested-executor mismatch: **MEDIUM** per
+- Version mismatch / behaviour claim without source / suggested-executor mismatch: **MEDIUM** per
   occurrence
 - Stale `[Unverified]` labels remaining post-execution: **MEDIUM** per occurrence (plan-execution
   should have resolved them)

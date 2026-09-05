@@ -1,31 +1,30 @@
 import { createBdd } from "playwright-bdd";
-import { expect } from "@playwright/test";
+import { expect, type Page, type Response } from "@playwright/test";
 
-const { When, Then } = createBdd();
+const { Given, When, Then } = createBdd();
+const navigationResponses = new WeakMap<Page, Response>();
 
 When("a visitor navigates to {string}", async ({ page }, url: string) => {
-  await page.goto(url);
+  const response = await page.goto(url);
+  expect(response, `navigation to ${url} should return an HTTP response`).not.toBeNull();
+  navigationResponses.set(page, response!);
 });
 
 Then("the page should respond with HTTP 200", async ({ page }) => {
-  const response = await page.waitForLoadState("networkidle").then(() => page.evaluate(() => document.readyState));
-  // Verify we landed on a real page (not a 404/500 error page) by checking the
-  // document is fully interactive. Playwright's goto throws on network-level
-  // errors; application-level 404 pages are caught by asserting the article
-  // region is visible (the site renders a content article on every valid page).
+  const response = navigationResponses.get(page);
+  expect(response, "the navigation step should capture its main-document response").toBeDefined();
+  expect(response!.status()).toBe(200);
+  await page.waitForLoadState("networkidle");
   await expect(page.getByRole("article")).toBeVisible();
-  expect(response).toBe("complete");
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/architecture-cases-routes.feature:In FP case route is reachable
-// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/architecture-cases-routes.feature:In OOP case route is reachable
-// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/architecture-cases-routes.feature:In Procedural case route is reachable
 Then("the page should contain a heading with text {string}", async ({ page }, headingText: string) => {
   await expect(page.getByRole("heading", { name: headingText })).toBeVisible();
 });
 
 When("a visitor opens a content page that has child sections", async ({ page }) => {
-  await page.goto("/en/learn/overview");
+  await page.goto("/en/learn/courses");
+  await page.waitForLoadState("networkidle");
 });
 
 Then("the sidebar should display the section tree", async ({ page }) => {
@@ -35,23 +34,28 @@ Then("the sidebar should display the section tree", async ({ page }) => {
 
 Then("parent nodes should be expandable and collapsible", async ({ page }) => {
   const sidebar = page.getByRole("navigation", { name: /sidebar/i });
-  const links = sidebar.getByRole("link");
-  await expect(links.first()).toBeVisible();
+  await expect(sidebar.getByRole("button", { name: /Expand section|Collapse section/ }).first()).toBeVisible();
 });
 
 When("the visitor clicks a collapsed parent node", async ({ page }) => {
-  // Collapse/expand interaction verified at page level
-  await expect(page.getByRole("article")).toBeVisible();
+  const button = page
+    .getByRole("navigation", { name: /sidebar/i })
+    .getByRole("button", { name: "Expand section" })
+    .first();
+  await expect(button).toBeVisible();
+  await button.evaluate((node) => node.setAttribute("data-e2e-expanded-node", "true"));
+  await button.click();
+  await expect(page.locator('[data-e2e-expanded-node="true"]')).toHaveAttribute("aria-label", "Collapse section");
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/navigation.feature:Sidebar shows section tree with collapsible nodes
 Then("its child items should become visible", async ({ page }) => {
-  const sidebar = page.getByRole("navigation", { name: /sidebar/i });
-  await expect(sidebar).toBeVisible();
+  const expanded = page.locator('[data-e2e-expanded-node="true"]');
+  await expect(expanded.locator("xpath=ancestor::li[1]//ul").first()).toBeVisible();
 });
 
 When("a visitor opens a nested content page", async ({ page }) => {
-  await page.goto("/en/learn/overview");
+  await page.goto("/en/learn/courses/just-enough-python/learning/beginner");
+  await page.waitForLoadState("networkidle");
 });
 
 Then("a breadcrumb trail should be displayed above the page title", async ({ page }) => {
@@ -61,26 +65,34 @@ Then("a breadcrumb trail should be displayed above the page title", async ({ pag
 
 Then("each breadcrumb segment should reflect an ancestor level of the URL hierarchy", async ({ page }) => {
   const breadcrumb = page.getByRole("navigation", { name: /breadcrumb/i });
-  const links = breadcrumb.getByRole("link");
-  const count = await links.count();
-  expect(count).toBeGreaterThanOrEqual(1);
+  const visibleHrefs = await breadcrumb
+    .locator("a:visible")
+    .evaluateAll((links) => links.map((link) => link.getAttribute("href")));
+  expect(visibleHrefs).toEqual([
+    "/en",
+    "/en/browse",
+    "/en/learn",
+    "/en/learn/courses",
+    "/en/learn/courses/just-enough-python",
+    "/en/learn/courses/just-enough-python/learning",
+  ]);
 });
 
 Then("the current page should not appear in the breadcrumb", async ({ page }) => {
   const breadcrumb = page.getByRole("navigation", { name: /breadcrumb/i });
-  // The breadcrumb should only contain links (ancestor segments), no plain text spans for current page
-  const spans = breadcrumb.locator("span:not(:has(*))");
-  const count = await spans.count();
-  expect(count).toBe(0);
+  await expect(breadcrumb.getByText("Beginner Examples", { exact: true })).toHaveCount(0);
+  await expect(breadcrumb.locator('[aria-current="page"]')).toHaveCount(0);
 });
 
 Then("all breadcrumb segments should be clickable links", async ({ page }) => {
   const breadcrumb = page.getByRole("navigation", { name: /breadcrumb/i });
   const links = breadcrumb.getByRole("link");
-  await expect(links.first()).toBeAttached();
+  expect(await links.count()).toBeGreaterThan(1);
+  for (const link of await links.all()) {
+    await expect(link).toHaveAttribute("href", /^\/en(?:\/|$)/);
+  }
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/navigation.feature:Breadcrumb shows ancestor path hierarchy without current page
 Then("the breadcrumb should render on a single row without horizontally truncating link text", async ({ page }) => {
   const breadcrumb = page.getByRole("navigation", { name: /breadcrumb/i });
   const ol = breadcrumb.locator("ol");
@@ -90,57 +102,118 @@ Then("the breadcrumb should render on a single row without horizontally truncati
 });
 
 When("a visitor opens a content page with multiple headings", async ({ page }) => {
-  await page.goto("/en/learn/overview");
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/en/learn/courses/just-enough-python/learning/beginner");
+  await page.waitForLoadState("networkidle");
 });
 
 Then("a table of contents should be visible on the page", async ({ page }) => {
-  // TOC is only visible on xl viewport — verify page loaded
-  await expect(page.getByRole("article")).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Table of contents" })).toBeVisible();
 });
 
 Then("the table of contents should list all H2, H3, and H4 headings as anchor links", async ({ page }) => {
-  await expect(page.getByRole("article")).toBeVisible();
+  const articleHeadings = page.getByRole("article").locator("h2[id], h3[id], h4[id]");
+  const tocLinks = page.getByRole("navigation", { name: "Table of contents" }).getByRole("link");
+  expect(await articleHeadings.count()).toBeGreaterThan(0);
+  await expect(tocLinks).toHaveCount(await articleHeadings.count());
+  for (const heading of await articleHeadings.all()) {
+    const id = await heading.getAttribute("id");
+    await expect(tocLinks.filter({ hasText: (await heading.textContent()) ?? "" }).first()).toHaveAttribute(
+      "href",
+      `#${id}`,
+    );
+  }
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/navigation.feature:Table of contents shows heading links for H2 to H4
 Then("H1 headings should not appear in the table of contents", async ({ page }) => {
-  await expect(page.getByRole("article")).toBeVisible();
+  const h1Text = await page.getByRole("article").getByRole("heading", { level: 1 }).textContent();
+  await expect(
+    page.getByRole("navigation", { name: "Table of contents" }).getByRole("link", { name: h1Text ?? "" }),
+  ).toHaveCount(0);
 });
 
 When("a visitor is on a content page that has sibling pages", async ({ page }) => {
-  await page.goto("/en/learn/overview");
+  await page.goto("/en/learn/courses/just-enough-python/learning/beginner");
+  await page.waitForLoadState("networkidle");
 });
 
 Then("a previous link should point to the preceding sibling page", async ({ page }) => {
-  // Prev/next nav may not exist for the overview page (no siblings)
-  await expect(page.getByRole("article")).toBeVisible();
+  const navigation = page.getByRole("navigation", { name: "Page navigation" });
+  await expect(navigation.getByRole("link", { name: /Overview/i })).toHaveAttribute(
+    "href",
+    "/en/learn/courses/just-enough-python/learning/overview",
+  );
 });
 
 Then("a next link should point to the following sibling page", async ({ page }) => {
-  await expect(page.getByRole("article")).toBeVisible();
+  const navigation = page.getByRole("navigation", { name: "Page navigation" });
+  await expect(navigation.getByRole("link", { name: /Intermediate Examples/i })).toHaveAttribute(
+    "href",
+    "/en/learn/courses/just-enough-python/learning/intermediate",
+  );
 });
 
 When("the visitor clicks the next link", async ({ page }) => {
-  // Navigation click deferred to detailed E2E testing
-  await expect(page.getByRole("article")).toBeVisible();
+  await page
+    .getByRole("navigation", { name: "Page navigation" })
+    .getByRole("link", { name: /Intermediate Examples/i })
+    .click();
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/navigation.feature:Previous and Next links navigate between siblings
 Then("they should be taken to the next sibling page", async ({ page }) => {
-  await expect(page.getByRole("article")).toBeVisible();
+  await expect(page).toHaveURL(/\/en\/learn\/courses\/just-enough-python\/learning\/intermediate$/);
+  await expect(page.getByRole("heading", { level: 1, name: /Intermediate/i })).toBeVisible();
 });
 
 When("a visitor is on a specific content page", async ({ page }) => {
-  await page.goto("/en/learn/overview");
+  await page.goto("/en/learn/courses/just-enough-python/learning/beginner");
+  await page.waitForLoadState("networkidle");
 });
 
 Then("the corresponding item in the sidebar should be visually highlighted as active", async ({ page }) => {
   const sidebar = page.getByRole("navigation", { name: /sidebar/i });
-  await expect(sidebar).toBeVisible();
+  const active = sidebar.locator('a[href="/en/learn/courses/just-enough-python/learning/beginner"]');
+  await expect(active).toHaveCount(1);
+  await expect(active).toHaveClass(/bg-primary\/10/);
+  await expect(active).toHaveClass(/font-medium/);
+  await expect(active).toHaveClass(/text-primary/);
 });
 
-// @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/navigation.feature:Active page is highlighted in the sidebar
 Then("no other sidebar item should be highlighted as active", async ({ page }) => {
   const sidebar = page.getByRole("navigation", { name: /sidebar/i });
-  await expect(sidebar).toBeVisible();
+  await expect(sidebar.locator("a.bg-primary\\/10.font-medium.text-primary")).toHaveCount(1);
+});
+
+Given("a content page's markdown body contains a relative link to another content file", async ({ page }) => {
+  await page.goto("/en/learn/courses/actor-model-concurrency/overview");
+  await page.waitForLoadState("networkidle");
+});
+
+When("the page is rendered to HTML", async ({ page }) => {
+  await expect(page.getByRole("article")).toBeVisible();
+});
+
+Then("the rendered link's href should be the linked page's real site URL", async ({ page }) => {
+  await expect(page.getByRole("article").getByRole("link", { name: "Just Enough Elixir" }).first()).toHaveAttribute(
+    "href",
+    "/en/learn/courses/just-enough-elixir/learning/overview",
+  );
+});
+
+Then('the href should not contain a literal ".md" extension', async ({ page }) => {
+  const href = await page
+    .getByRole("article")
+    .getByRole("link", { name: "Just Enough Elixir" })
+    .first()
+    .getAttribute("href");
+  expect(href).not.toContain(".md");
+});
+
+Then("the href should not be a raw filesystem-relative path", async ({ page }) => {
+  const href = await page
+    .getByRole("article")
+    .getByRole("link", { name: "Just Enough Elixir" })
+    .first()
+    .getAttribute("href");
+  expect(href).not.toMatch(/^\.\.?(?:\/|$)/);
 });

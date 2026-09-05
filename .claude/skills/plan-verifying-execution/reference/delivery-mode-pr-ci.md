@@ -25,7 +25,7 @@ PR to be merged.
    - **Semantic review is optional** — no review record is a valid default. If the user explicitly
      requested `pr-review` or `pr-review-cycle`, verify it ran at the PR boundary and every resulting
      conversation is resolved. An unrequested semantic-review step: **HIGH**.
-   - **Applicable finite surface gates pass** — missing or failed UI/API/other reachable-behavior
+   - **Applicable finite surface gates pass** — missing or failed UI/API/other reachable-behaviour
      evidence is **CRITICAL**; a genuinely unreachable surface requires an explicit exemption.
    - **Archival-in-PR present** — the archival commit (`git mv` to `plans/done/` + README updates) is
      part of the delivering PR's own commit history, not deferred to a separate post-merge commit.

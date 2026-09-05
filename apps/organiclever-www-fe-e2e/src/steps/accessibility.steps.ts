@@ -1,7 +1,7 @@
 /**
  * Step definitions for the Accessibility Compliance feature.
  *
- * Covers: specs/apps/organiclever/app-web/behaviors/layout/accessibility.feature
+ * Covers: specs/apps/organiclever/app-web/behaviours/layout/accessibility.feature
  *
  * Uses axe-core via @axe-core/playwright to validate WCAG AA compliance and
  * supplements automated scanning with targeted assertions for heading hierarchy,
@@ -12,9 +12,11 @@ import { expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
 const { Given, When, Then } = createBdd();
+let keyboardFocusOrderIsComplete = false;
 
-Given("the app is running", async () => {
-  // No-op: server is assumed running for all e2e scenarios
+Given("the app is running", async ({ request }) => {
+  const response = await request.get("/");
+  expect(response.status(), "the public landing page must be reachable").toBeLessThan(400);
 });
 
 When("I navigate to any page", async ({ page }) => {
@@ -25,8 +27,7 @@ When("I navigate to any page", async ({ page }) => {
 When("I navigate to the landing page", async ({ page }) => {
   await page.goto("/");
   await page.waitForLoadState("load");
-  // Focus the page body to establish a keyboard starting point.
-  await page.locator("body").press("Tab");
+  keyboardFocusOrderIsComplete = false;
 });
 
 Then("each page should have exactly one h1 element", async ({ page }) => {
@@ -34,7 +35,6 @@ Then("each page should have exactly one h1 element", async ({ page }) => {
   expect(h1Count).toBe(1);
 });
 
-// @covers specs/apps/organiclever/www/behaviors/frontend/accessibility/accessibility.feature:Pages have proper heading hierarchy
 Then(/^heading levels should not skip \(no h1 followed by h3\)$/, async ({ page }) => {
   // Collect all heading levels in document order and verify no level is skipped.
   const headingLevels = await page.evaluate(() => {
@@ -51,36 +51,43 @@ Then(/^heading levels should not skip \(no h1 followed by h3\)$/, async ({ page 
   }
 });
 
-Then("I should be able to tab to all interactive elements", async ({ page }) => {
-  // Press Tab multiple times and verify focus management works (no focus
-  // traps, body is reachable, tabindex is not broken).
-  for (let i = 0; i < 5; i++) {
-    await page.keyboard.press("Tab");
-  }
-  const isDocumentAccessible = await page.evaluate(() => {
-    return document.activeElement !== null && document.readyState === "complete";
+Then("I should be able to tab to all interactive elements", async ({ page, browserName }) => {
+  const interactive = page.locator(
+    'a[href]:visible, button:not([disabled]):visible, input:not([disabled]):visible, select:not([disabled]):visible, textarea:not([disabled]):visible, [tabindex]:not([tabindex="-1"]):visible',
+  );
+  const count = await interactive.count();
+  expect(count).toBeGreaterThan(0);
+  await page.locator("body").evaluate((body) => {
+    body.tabIndex = -1;
+    body.focus();
   });
-  expect(isDocumentAccessible, "Document should remain accessible after tabbing").toBe(true);
+  const tabKey = browserName === "webkit" ? "Alt+Tab" : "Tab";
+  for (let index = 0; index < count; index += 1) {
+    await page.keyboard.press(tabKey);
+    expect(
+      await interactive.nth(index).evaluate((element) => element === document.activeElement),
+      `interactive element ${index + 1} should receive focus in document order`,
+    ).toBe(true);
+  }
+  keyboardFocusOrderIsComplete = true;
 });
 
-// @covers specs/apps/organiclever/www/behaviors/frontend/accessibility/accessibility.feature:Keyboard navigation works throughout the app
 Then("focus indicators should be visible", async ({ page }) => {
+  expect(keyboardFocusOrderIsComplete).toBe(true);
   const hasFocused = await page
     .locator(":focus")
     .count()
     .catch(() => 0);
-  if (hasFocused > 0) {
-    // Use .first() to handle Next.js Shadow DOM exposing multiple :focus matches.
-    const outline = await page
-      .locator(":focus")
-      .first()
-      .evaluate((el) => {
-        const style = window.getComputedStyle(el);
-        return style.outline !== "none" || style.outlineWidth !== "0px";
-      });
-    expect(outline).toBe(true);
-  }
-  // Vacuous pass when no focusable elements exist.
+  expect(hasFocused, "keyboard navigation must leave a visible element focused").toBeGreaterThan(0);
+  // Use .first() to handle Next.js Shadow DOM exposing multiple :focus matches.
+  const outline = await page
+    .locator(":focus")
+    .first()
+    .evaluate((el) => {
+      const style = window.getComputedStyle(el);
+      return style.outline !== "none" || style.outlineWidth !== "0px";
+    });
+  expect(outline).toBe(true);
 });
 
 Then(/^all text should meet WCAG AA contrast ratio \(4\.5:1 for normal text\)$/, async ({ page }) => {
@@ -88,7 +95,6 @@ Then(/^all text should meet WCAG AA contrast ratio \(4\.5:1 for normal text\)$/,
   expect(results.violations).toHaveLength(0);
 });
 
-// @covers specs/apps/organiclever/www/behaviors/frontend/accessibility/accessibility.feature:Color contrast meets WCAG AA requirements
 Then("all interactive elements should have sufficient contrast", async ({ page }) => {
   const results = await new AxeBuilder({ page }).withRules(["color-contrast"]).analyze();
   expect(results.violations).toHaveLength(0);
@@ -103,20 +109,12 @@ Then("images should have alt attributes", async ({ page }) => {
   }
 });
 
-// @covers specs/apps/organiclever/www/behaviors/frontend/accessibility/accessibility.feature:ARIA attributes are properly used
 Then("navigation landmarks should be properly labeled", async ({ page }) => {
-  // Every <nav> element must have an accessible label to distinguish multiple
-  // navigation regions from one another (WCAG 2.4.1 bypass blocks).
   const navElements = await page.getByRole("navigation").all();
-  if (navElements.length > 1) {
-    for (const nav of navElements) {
-      const ariaLabel = await nav.getAttribute("aria-label");
-      const ariaLabelledBy = await nav.getAttribute("aria-labelledby");
-      expect(
-        !!(ariaLabel ?? ariaLabelledBy),
-        "Navigation landmark must have an accessible label when multiple navs exist",
-      ).toBe(true);
-    }
+  expect(navElements.length).toBeGreaterThan(0);
+  for (const nav of navElements) {
+    const ariaLabel = await nav.getAttribute("aria-label");
+    const ariaLabelledBy = await nav.getAttribute("aria-labelledby");
+    expect(Boolean(ariaLabel ?? ariaLabelledBy), "Navigation landmark must expose an accessible label").toBe(true);
   }
-  // A single nav is allowed without an aria-label per WCAG technique ARIA11.
 });

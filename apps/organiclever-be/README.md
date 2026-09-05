@@ -61,24 +61,24 @@ development placeholders; do not put real credentials in tracked files.
 | `GET`                  | `/api/v1/system/status/messaging` | Result of the startup JetStream demo.      |
 
 The [OpenAPI contract](../../specs/apps/organiclever/be/contracts/openapi.yaml) and
-[behavior specifications](../../specs/apps/organiclever/be/behaviors/README.md)
-are the durable references for intended API behavior.
+[behaviour specifications](../../specs/apps/organiclever/be/behaviours/README.md)
+are the durable references for intended API behaviour.
 
 ## Everyday commands
 
-| Command                                               | Use                                                               |
-| ----------------------------------------------------- | ----------------------------------------------------------------- |
-| `npm exec nx -- run organiclever-be:dev`              | Run with `dotnet watch`.                                          |
-| `npm exec nx -- build organiclever-be`                | Generate contract types and publish a release build.              |
-| `npm exec nx -- run organiclever-be:test:quick`       | Typecheck, lint, unit-test, coverage, and specification checks.   |
-| `npm exec nx -- run organiclever-be:test:unit`        | Run the TickSpec/xUnit unit suite.                                |
-| `npm exec nx -- run organiclever-be:test:integration` | Run integration tests against Docker-managed PostgreSQL and NATS. |
-| `npm exec nx -- run organiclever-be:lint`             | Check Fantomas formatting and strict F# analysis.                 |
-| `npm exec nx -- run organiclever-be:fmt`              | Apply Fantomas formatting to service source files.                |
-| `npm exec nx -- run organiclever-be:codegen`          | Regenerate F# contract types from the bundled OpenAPI spec.       |
+| Command                                               | Use                                                                            |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `npm exec nx -- run organiclever-be:dev`              | Run with `dotnet watch`.                                                       |
+| `npm exec nx -- build organiclever-be`                | Generate contract types and publish a release build.                           |
+| `npm exec nx -- run organiclever-be:test:quick`       | Typecheck, lint, unit-test, coverage, and specification checks.                |
+| `npm exec nx -- run organiclever-be:test:unit`        | Run the TickSpec/xUnit unit suite.                                             |
+| `npm exec nx -- run organiclever-be:test:integration` | Run isolated filesystem/process-environment Integration tests without network. |
+| `npm exec nx -- run organiclever-be:lint`             | Check Fantomas formatting and strict F# analysis.                              |
+| `npm exec nx -- run organiclever-be:fmt`              | Apply Fantomas formatting to service source files.                             |
+| `npm exec nx -- run organiclever-be:codegen`          | Regenerate F# contract types from the bundled OpenAPI spec.                    |
 
-The app-level `test:e2e` target is deliberately a no-op. Backend API E2E tests
-belong to [organiclever-be-e2e](../organiclever-be-e2e/README.md).
+The app-level E2E target is omitted. Backend API E2E tests belong to
+[organiclever-be-e2e](../organiclever-be-e2e/README.md).
 
 ## Project layout
 
@@ -91,7 +91,7 @@ apps/organiclever-be/
 │   └── Program.fs      # Startup, migrations, and host configuration
 ├── db/migrations/      # SQL applied on startup
 ├── tests/unit/         # TickSpec/xUnit unit tests
-└── tests/integration/  # PostgreSQL-backed integration tests
+└── tests/integration/  # Isolated local-resource tests; no network
 ```
 
 `generated-contracts/` is generated from the OpenAPI bundle and is intentionally
@@ -103,5 +103,13 @@ unit-test targets.
 - [Backend architecture](../../specs/apps/organiclever/be/architecture.md)
 - [API reference](../../specs/apps/organiclever/be/api.md)
 - [OpenAPI contract](../../specs/apps/organiclever/be/contracts/README.md)
-- [Backend behavior specifications](../../specs/apps/organiclever/be/behaviors/README.md)
+- [Backend behaviour specifications](../../specs/apps/organiclever/be/behaviours/README.md)
 - [Backend E2E suite](../organiclever-be-e2e/README.md)
+
+## BDD and Testing
+
+The canonical corpus is `specs/apps/organiclever/be/behaviours/`. `test:unit` uses injected
+boundary doubles; `test:integration` exercises owned non-networked local resources; and the
+dedicated `organiclever-be-e2e:test:e2e` target owns public HTTP/messaging proof. Matching
+`test:coverage:*` targets validate all applicable adapters statically. Owner-local E2E runtime is
+omitted because the dedicated project owns that boundary.

@@ -12,10 +12,7 @@ Then("the hero section displays the title {string}", async ({ page }, title: str
 });
 
 Then("the hero section displays a description of the platform mission", async ({ page }) => {
-  const main = page.getByRole("main");
-  await expect(main).toBeVisible();
-  const text = await main.textContent();
-  expect(text!.length).toBeGreaterThan(0);
+  await expect(page.getByText(/Open-source \(MIT\) platform for Sharia-compliant enterprise solutions/i)).toBeVisible();
 });
 
 Then("the hero section contains a {string} link to {string}", async ({ page }, linkText: string, href: string) => {
@@ -26,7 +23,6 @@ Then("the hero section contains a {string} link to {string}", async ({ page }, l
   expect(actual!.replace(/\/$/, "")).toBe(href.replace(/\/$/, ""));
 });
 
-// @covers specs/apps/ose/www/behaviors/frontend/landing/landing-page.feature:Hero section displays platform information
 Then("the hero section contains a {string} link", async ({ page }, linkText: string) => {
   const link = page.getByRole("link", { name: new RegExp(linkText, "i") });
   await expect(link.first()).toBeVisible();
@@ -37,7 +33,6 @@ Then("a GitHub icon link is visible", async ({ page }) => {
   await expect(githubLinks.first()).toBeVisible();
 });
 
-// @covers specs/apps/ose/www/behaviors/frontend/landing/landing-page.feature:Social icons are displayed
 Then("an RSS feed icon link is visible", async ({ page }) => {
   const rssLinks = page.getByRole("link", { name: /rss|feed/i });
   await expect(rssLinks.first()).toBeVisible();

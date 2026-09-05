@@ -31,5 +31,5 @@ matching the service's implementing language applies the fixes. There is no `api
 - [UI Workflows](../ui/README.md) — The static component-source counterpart to this category
 - [Web Workflows](../web/README.md) — The running-UI tester triad, this category's UI-side analogue
 - [PR Merge Protocol](../../development/workflow/pr-merge-protocol.md) — Keeps applicable surface gates merge-blocking
-- [Manual Behavioral Verification](../../development/quality/manual-behavioral-verification.md) — Standards these workflows enforce
+- [Manual Behavioural Verification](../../development/quality/manual-behavioural-verification.md) — Standards these workflows enforce
 - [Workflows Index](../README.md) — All available workflows

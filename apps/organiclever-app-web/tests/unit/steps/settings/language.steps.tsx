@@ -1,74 +1,72 @@
-/**
- * Step definitions for the Language Setting feature.
- *
- * Covers: specs/apps/organiclever/app-web/behaviors/settings/language.feature
- *
- * Tests language selection via pure settings store logic.
- * Avoids window.location.reload() — tests the settings state mutation only.
- */
-
 import path from "path";
 import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
-import { expect } from "vitest";
+import { cleanup, fireEvent, render, screen, waitFor, type RenderResult } from "@testing-library/react";
+import { expect, vi } from "vitest";
+import type { AppRuntime } from "@/shared/runtime";
 import type { AppSettings, Lang } from "@/contexts/settings/application";
 
-// ---------------------------------------------------------------------------
-// Pure logic helpers mirroring SettingsScreen language handling
-// ---------------------------------------------------------------------------
+const languageHarness = vi.hoisted(() => ({
+  settings: { name: "Tester", restSeconds: 60, darkMode: false, lang: "en" } as AppSettings,
+  runPromise: vi.fn(),
+}));
 
-function makeSettings(lang: Lang): AppSettings {
-  return {
-    name: "Tester",
-    restSeconds: 60,
-    darkMode: false,
-    lang,
-  };
-}
+vi.mock("@/contexts/settings/presentation/use-settings", () => ({
+  useSettings: () => ({
+    state: { status: "ready", settings: languageHarness.settings },
+    update: vi.fn().mockResolvedValue(undefined),
+  }),
+}));
 
-function applyLang(settings: AppSettings, lang: Lang): AppSettings {
-  return { ...settings, lang };
-}
-
-// ---------------------------------------------------------------------------
-// Feature
-// ---------------------------------------------------------------------------
+import { SettingsScreen } from "@/contexts/settings/presentation/components/settings-screen";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../specs/apps/organiclever/app-web/behaviors/settings/language.feature"),
+  path.resolve(__dirname, "../../../../../../specs/apps/organiclever/app-web/behaviours/settings/language.feature"),
 );
 
-describeFeature(feature, ({ Scenario }) => {
-  let settings: AppSettings;
+let rendered: RenderResult;
+languageHarness.runPromise.mockResolvedValue(undefined);
+const runtime = { runPromise: languageHarness.runPromise } as unknown as AppRuntime;
+
+function renderLanguage(lang: Lang) {
+  languageHarness.settings = { ...languageHarness.settings, lang };
+  rendered = render(<SettingsScreen runtime={runtime} darkMode={false} onToggleDarkMode={vi.fn()} />);
+}
+
+describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
+  AfterEachScenario(() => {
+    cleanup();
+    languageHarness.runPromise.mockReset().mockResolvedValue(undefined);
+  });
 
   Scenario("Switch to Bahasa Indonesia", ({ Given, When, Then }) => {
     Given("the settings screen shows language is English", () => {
-      settings = makeSettings("en");
-      expect(settings.lang).toBe("en");
+      renderLanguage("en");
+      expect(screen.getByTestId("lang-btn-en")).toHaveAttribute("data-active", "true");
     });
-
-    When("the user selects Indonesian language", () => {
-      settings = applyLang(settings, "id");
+    When("the user selects Indonesian language", async () => {
+      fireEvent.click(screen.getByTestId("lang-btn-id"));
+      await waitFor(() => expect(languageHarness.runPromise).toHaveBeenCalled());
+      languageHarness.settings = { ...languageHarness.settings, lang: "id" };
+      rendered.rerender(<SettingsScreen runtime={runtime} darkMode={false} onToggleDarkMode={vi.fn()} />);
     });
-
-    // @covers specs/apps/organiclever/app-web/behaviors/settings/language.feature:Switch to Bahasa Indonesia
     Then("the language is set to Indonesian", () => {
-      expect(settings.lang).toBe("id");
+      expect(screen.getByTestId("lang-btn-id")).toHaveAttribute("data-active", "true");
     });
   });
 
   Scenario("Switch back to English", ({ Given, When, Then }) => {
     Given("the settings screen shows language is Indonesian", () => {
-      settings = makeSettings("id");
-      expect(settings.lang).toBe("id");
+      renderLanguage("id");
+      expect(screen.getByTestId("lang-btn-id")).toHaveAttribute("data-active", "true");
     });
-
-    When("the user selects English language", () => {
-      settings = applyLang(settings, "en");
+    When("the user selects English language", async () => {
+      fireEvent.click(screen.getByTestId("lang-btn-en"));
+      await waitFor(() => expect(languageHarness.runPromise).toHaveBeenCalled());
+      languageHarness.settings = { ...languageHarness.settings, lang: "en" };
+      rendered.rerender(<SettingsScreen runtime={runtime} darkMode={false} onToggleDarkMode={vi.fn()} />);
     });
-
-    // @covers specs/apps/organiclever/app-web/behaviors/settings/language.feature:Switch back to English
     Then("the language is set to English", () => {
-      expect(settings.lang).toBe("en");
+      expect(screen.getByTestId("lang-btn-en")).toHaveAttribute("data-active", "true");
     });
   });
 });

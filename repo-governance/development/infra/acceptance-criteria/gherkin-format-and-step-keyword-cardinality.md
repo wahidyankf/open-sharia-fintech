@@ -1,109 +1,37 @@
 ---
-title: "Gherkin Format and Step-Keyword Cardinality"
-description: The Gherkin keyword syntax used to write scenarios, plus the HARD rule limiting every scenario to one primary Given/When/Then line.
+title: "Gherkin Format and Journey Coherence"
+description: "Gherkin keyword syntax and the coherent-journey rule for repeated primary steps"
 category: explanation
 subcategory: development
-tags:
-  - acceptance-criteria
-  - gherkin
-  - testing
-  - requirements
-created: 2025-12-07
-when_to_use: Use when looking up the Gherkin Given-When-Then keyword syntax, or checking that a scenario follows the one-primary-keyword-per-Scenario rule.
+tags: [acceptance-criteria, gherkin, bdd]
+created: 2026-01-04
+when_to_use: "Use when writing or reviewing a Gherkin scenario."
 ---
 
-# Gherkin Format and Step-Keyword Cardinality
+# Gherkin Format and Journey Coherence
 
-## Gherkin Format
+Use `Feature` for the capability, optional `Rule` blocks for business-rule groupings, `Background`
+for shared preconditions, and `Scenario`/`Scenario Outline` for observable examples.
 
-Gherkin uses natural language with specific keywords to structure acceptance criteria as scenarios.
+Every scenario must contain an explicit `When` and `Then`. Use `Given` for preconditions, `When`
+for actions/events, and `Then` for independently observable outcomes. `And` and `But` may improve
+readability when a step continues the previous semantic phase.
 
-### Core Keywords
+A scenario may repeat `Given`, `When`, or `Then` when the steps form one continuous user journey.
+Do not force `And`/`But` or split an existing journey merely to satisfy keyword uniformity. Split
+only when actions or outcomes are independently meaningful, can pass/fail separately, or describe
+unrelated behaviour.
 
-**Scenario**: Describes a specific behavior or outcome
-
-```gherkin
-Scenario: User successfully logs in with valid credentials
-```
-
-**Given**: Sets up the initial context or preconditions
-
-```gherkin
-Given a user with email "user@example.com" and password "securepass123"
-And the user is on the login page
-```
-
-**When**: Describes the action or event being tested
+`Scenario Outline` examples expand into separate executable scenarios. Each expanded row must map
+to every applicable adapter under the
+[BDD standard](../../behaviour-driven-development.md); syntax/cardinality cannot substitute for
+semantic implementation review.
 
 ```gherkin
-When the user enters their email and password
-And clicks the "Login" button
+Scenario: A member completes one continuous recovery journey
+  Given a member has an expired session
+  When the member requests a recovery code
+  Then the service records the request
+  When the member submits the valid code
+  Then the service restores the session
 ```
-
-**Then**: Specifies the expected outcome or result
-
-```gherkin
-Then the user should be redirected to the dashboard
-And see a welcome message "Welcome back, User!"
-And the session should be authenticated
-```
-
-**And/But**: Connects multiple conditions (same semantic level as previous keyword)
-
-```gherkin
-Given a user is logged in
-And has admin privileges
-But has not completed onboarding
-```
-
-### Complete Syntax
-
-```gherkin
-Scenario: [Concise description of behavior]
- Given [initial context]
- And [additional context]
- When [action occurs]
- And [additional action]
- Then [expected outcome]
- And [additional outcome]
- But [constraint or exception]
-```
-
-## Step-Keyword Cardinality (HARD Rule)
-
-> **HARD rule — one primary keyword each**: Every `Scenario` MUST use exactly **one**
-> primary `Given` line, exactly **one** primary `When` line, and exactly **one** primary
-> `Then` line. Every additional precondition, action, or outcome MUST be chained with
-> `And` or `But` — never a repeated `Given` / `When` / `Then` keyword. This reinforces
-> the "one action / one behavior per scenario" norm.
->
-> **Exemptions**: `Background` blocks and `Scenario Outline` `Examples` tables are
-> exempt from the one-each constraint.
-
-**Conforming example**:
-
-```gherkin
-Scenario: Login succeeds
-  Given a registered user
-  And the login page is open
-  When the user submits valid credentials
-  Then the dashboard is shown
-  And a session token is set
-```
-
-**Non-conforming example** (violates — two primary `When` keyword lines):
-
-```gherkin
-# NON-CONFORMING EXAMPLE — deliberate illustration of the violation
-Scenario: Login succeeds
-  Given a registered user
-  When the user opens the login page
-  When the user submits valid credentials
-  Then the dashboard is shown
-```
-
-(The fix replaces the second `When` with `And`.)
-
-**Enforcement**: The deterministic `rhino-cli specs gherkin-cardinality validate`
-audit flags every `.feature` file that violates this rule. `plan-checker` and
-`repo-rules-checker` apply the same rule to Gherkin fences in plan markdown.

@@ -33,7 +33,7 @@ In a quality-gate invocation, the report has three top-level sections in fixed o
 3. **`## Lifecycle Evidence`** — exact delegated IDs, owner surface, evidence coordinates, and
    `verified`/`pending`/`not-applicable`; never copied into the domain finding total.
 
-Standalone invocation retains its existing preflight/fallback report behavior.
+Standalone invocation retains its existing preflight/fallback report behaviour.
 
 ## Important Notes
 

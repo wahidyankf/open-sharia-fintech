@@ -39,7 +39,7 @@
     "test:unit": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "if grep -rn -E --include='*.fs' 'Skip\\s*=' libs/fsharp-env-loader/tests/unit; then echo 'ERROR: xunit Skip= attribute found in test files above'; exit 1; fi && dotnet test libs/fsharp-env-loader/tests/unit/fsharp-env-loader-unit-tests.fsproj"
+        "command": "if grep -rn -E --include='*.fs' 'Skip\\s*=' libs/fsharp-env-loader/tests/unit; then echo 'ERROR: xunit Skip= attribute found in test files above'; exit 1; fi && dotnet test libs/fsharp-env-loader/tests/unit/fsharp-env-loader-unit-tests.fsproj /p:CollectCoverage=true /p:Threshold=99 /p:ThresholdType=line"
       },
       "cache": true,
       "inputs": [
@@ -48,15 +48,15 @@
         "{projectRoot}/fsharp-env-loader.fsproj"
       ]
     },
-    "test:coverage": {
+    "test:integration": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet test libs/fsharp-env-loader/tests/unit/fsharp-env-loader-unit-tests.fsproj /p:CollectCoverage=true /p:Threshold=99 /p:ThresholdType=line"
+        "command": "if grep -rn -E --include='*.fs' 'Skip\\s*=' libs/fsharp-env-loader/tests/integration; then echo 'ERROR: xunit Skip= attribute found in integration tests above'; exit 1; fi && dotnet test libs/fsharp-env-loader/tests/integration/fsharp-env-loader-integration-tests.fsproj"
       },
       "cache": true,
       "inputs": [
         "{projectRoot}/src/**/*.fs",
-        "{projectRoot}/tests/unit/**/*.fs",
+        "{projectRoot}/tests/integration/**/*.fs",
         "{projectRoot}/fsharp-env-loader.fsproj"
       ]
     },
@@ -68,135 +68,46 @@
       "cache": true,
       "inputs": ["{workspaceRoot}/specs/libs/fsharp-env-loader/**/*"]
     },
-    "specs:behavior:coverage": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs behavior-coverage validate --shared-steps specs/libs/fsharp-env-loader/behaviors libs/fsharp-env-loader"
-      },
-      "cache": true,
-      "inputs": [
-        "{workspaceRoot}/specs/libs/fsharp-env-loader/behaviors/**/*.feature",
-        "{projectRoot}/src/**/*.fs",
-        "{projectRoot}/tests/**/*.fs"
-      ]
-    },
-    "test:behavior:coverage:unit": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract bdd validate --project fsharp-env-loader --adapter unit"
-      },
-      "cache": true,
-      "inputs": [
-        "{workspaceRoot}/specs/libs/fsharp-env-loader/behaviors/**/*.feature",
-        "{workspaceRoot}/repo-config.yml",
-        "default"
-      ]
-    },
-    "test:behavior:coverage:integration": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract bdd validate --project fsharp-env-loader --adapter integration"
-      },
-      "cache": true,
-      "inputs": [
-        "{workspaceRoot}/specs/libs/fsharp-env-loader/behaviors/**/*.feature",
-        "{workspaceRoot}/repo-config.yml",
-        "default"
-      ]
-    },
-    "test:behavior:coverage:e2e": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract bdd validate --project fsharp-env-loader --adapter e2e"
-      },
-      "cache": true,
-      "inputs": [
-        "{workspaceRoot}/specs/libs/fsharp-env-loader/behaviors/**/*.feature",
-        "{workspaceRoot}/repo-config.yml",
-        "default"
-      ]
-    },
-    "test:behavior:coverage": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "npx nx run fsharp-env-loader:test:behavior:coverage:unit",
-          "npx nx run fsharp-env-loader:test:behavior:coverage:integration",
-          "npx nx run fsharp-env-loader:test:behavior:coverage:e2e"
-        ],
-        "parallel": false
-      },
-      "dependsOn": ["test:behavior:coverage:unit", "test:behavior:coverage:integration", "test:behavior:coverage:e2e"],
-      "cache": true
-    },
-    "test:specs": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "npx nx run fsharp-env-loader:specs:structure-validation",
-          "npx nx run fsharp-env-loader:specs:behavior:coverage"
-        ],
-        "parallel": false
-      },
-      "cache": true,
-      "inputs": ["{workspaceRoot}/specs/libs/fsharp-env-loader/**/*", "{projectRoot}/src/**/*.fs", "specs"]
-    },
-    "test:layout:validation": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract layout validate --project fsharp-env-loader"
-      },
-      "cache": true,
-      "inputs": ["default", "{projectRoot}/project.json"]
-    },
-    "coverage:policy:validation": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract coverage validate --project fsharp-env-loader"
-      },
-      "cache": true,
-      "inputs": ["default", "{projectRoot}/project.json"]
-    },
-    "package-manifest:policy:validation": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "apps/rhino-cli/scripts/rhino-bin.sh test-contract manifest validate --project fsharp-env-loader"
-      },
-      "cache": true,
-      "inputs": ["default", "{projectRoot}/project.json"]
-    },
     "test:quick": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "npx nx run fsharp-env-loader:typecheck",
-          "npx nx run fsharp-env-loader:lint",
-          "npx nx run fsharp-env-loader:test:unit",
-          "npx nx run fsharp-env-loader:test:coverage",
-          "npx nx run fsharp-env-loader:test:specs",
-          "npx nx run fsharp-env-loader:test:layout:validation",
-          "npx nx run fsharp-env-loader:coverage:policy:validation",
-          "npx nx run fsharp-env-loader:package-manifest:policy:validation"
+          {
+            "command": "npm exec -- nx run fsharp-env-loader:typecheck",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run fsharp-env-loader:lint",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run fsharp-env-loader:test:unit",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run fsharp-env-loader:specs:structure-validation",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run fsharp-env-loader:test:coverage",
+            "forwardAllArgs": false
+          }
         ],
-        "parallel": false
+        "parallel": false,
+        "forwardAllArgs": false
       },
-      "dependsOn": ["typecheck", "lint"],
       "cache": true,
-      "inputs": ["default", "specs"]
-    },
-    "test:integration": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "echo 'no-op: target not applicable for this project'"
-      },
-      "cache": true
-    },
-    "test:e2e": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "echo 'no-op: target not applicable for this project'"
-      },
-      "cache": true
+      "inputs": [
+        "default",
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/libs/fsharp-env-loader/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/libs/fsharp-env-loader/behaviours/**/*.feature",
+        "{workspaceRoot}/libs/fsharp-env-loader/tests/unit/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/fsharp-env-loader/tests/unit/fsharp-env-loader-unit-tests.fsproj",
+        "{workspaceRoot}/libs/fsharp-env-loader/tests/integration/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/fsharp-env-loader/tests/integration/fsharp-env-loader-integration-tests.fsproj"
+      ]
     },
     "deps:audit": {
       "executor": "nx:run-commands",
@@ -211,10 +122,89 @@
         "command": "echo 'compat:min-version: no standard min-version floor for F#'"
       },
       "cache": true
+    },
+    "test:coverage:unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node scripts/behaviour-coverage.mjs --config libs/fsharp-env-loader/behaviour-coverage.json --adapter unit"
+      },
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/libs/fsharp-env-loader/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/libs/fsharp-env-loader/behaviours/**/*.feature",
+        "{workspaceRoot}/libs/fsharp-env-loader/tests/unit/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/fsharp-env-loader/tests/unit/fsharp-env-loader-unit-tests.fsproj"
+      ]
+    },
+    "test:coverage:integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node scripts/behaviour-coverage.mjs --config libs/fsharp-env-loader/behaviour-coverage.json --adapter integration"
+      },
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/libs/fsharp-env-loader/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/libs/fsharp-env-loader/behaviours/**/*.feature",
+        "{workspaceRoot}/libs/fsharp-env-loader/tests/integration/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/fsharp-env-loader/tests/integration/fsharp-env-loader-integration-tests.fsproj"
+      ]
+    },
+    "test:coverage:behaviour": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node scripts/behaviour-coverage.mjs --config libs/fsharp-env-loader/behaviour-coverage.json --adapter behaviour"
+      },
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/libs/fsharp-env-loader/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/libs/fsharp-env-loader/behaviours/**/*.feature",
+        "{workspaceRoot}/libs/fsharp-env-loader/tests/unit/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/fsharp-env-loader/tests/unit/fsharp-env-loader-unit-tests.fsproj",
+        "{workspaceRoot}/libs/fsharp-env-loader/tests/integration/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/fsharp-env-loader/tests/integration/fsharp-env-loader-integration-tests.fsproj"
+      ]
+    },
+    "test:coverage": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "npm exec -- nx run fsharp-env-loader:test:coverage:unit",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run fsharp-env-loader:test:coverage:integration",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "npm exec -- nx run fsharp-env-loader:test:coverage:behaviour",
+            "forwardAllArgs": false
+          }
+        ],
+        "parallel": false,
+        "forwardAllArgs": false
+      },
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/libs/fsharp-env-loader/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/libs/fsharp-env-loader/behaviours/**/*.feature",
+        "{workspaceRoot}/libs/fsharp-env-loader/tests/unit/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/fsharp-env-loader/tests/unit/fsharp-env-loader-unit-tests.fsproj",
+        "{workspaceRoot}/libs/fsharp-env-loader/tests/integration/**/*.{ts,tsx,fs}",
+        "{workspaceRoot}/libs/fsharp-env-loader/tests/integration/fsharp-env-loader-integration-tests.fsproj"
+      ]
     }
   },
   "namedInputs": {
-    "specs": ["{workspaceRoot}/specs/libs/fsharp-env-loader/behaviors/**/*.feature"]
+    "specs": ["{workspaceRoot}/specs/libs/fsharp-env-loader/behaviours/**/*.feature"]
   },
   "tags": ["type:lib", "domain:config", "lang:fsharp"],
   "implicitDependencies": []

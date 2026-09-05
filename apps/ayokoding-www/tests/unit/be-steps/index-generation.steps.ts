@@ -1,29 +1,25 @@
-import path from "path";
-import fs from "node:fs/promises";
-import os from "node:os";
-import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
+import path from "node:path";
+import { describeFeature, loadFeature } from "@amiceli/vitest-cucumber";
 import { expect } from "vitest";
-import { processAllIndexFiles } from "../../../src/features/content/shell/index-generator";
+import type { ContentMeta } from "../../../src/features/content/core/types";
+import {
+  processAllIndexFiles,
+  type IndexGeneratorPort,
+  type ProcessResult,
+} from "../../../src/features/content/shell/index-generator";
 
 const feature = await loadFeature(
   path.resolve(
     process.cwd(),
-    "../../specs/apps/ayokoding/www/behaviors/build-tools/index-generation/index-generation.feature",
+    "../../specs/apps/ayokoding/www/behaviours/build-tools/index-generation/index-generation.feature",
   ),
 );
 
-async function createTmpContentDir(): Promise<string> {
-  return fs.mkdtemp(path.join(os.tmpdir(), "idx-test-"));
-}
+const FIXED_NOW = new Date("2026-01-01T00:00:00.000Z");
+const CONTENT_ROOT = "/virtual-content";
 
-async function writeIndexFile(dir: string, relativePath: string, content: string): Promise<void> {
-  const fullPath = path.join(dir, relativePath);
-  await fs.mkdir(path.dirname(fullPath), { recursive: true });
-  await fs.writeFile(fullPath, content, "utf-8");
-}
-
-function makeIndex(title: string, weight: number, extra?: string): string {
-  const extraFields = extra ? `\n${extra}` : "";
+function makeIndex(title: string, weight: number, extra = ""): string {
+  const extraFields = extra.length > 0 ? `\n${extra}` : "";
   return `---\ntitle: "${title}"\nweight: ${weight}\ndate: 2026-01-01T00:00:00+07:00\ndraft: false${extraFields}\n---\n`;
 }
 
@@ -31,138 +27,166 @@ function makePage(title: string, weight: number): string {
   return `---\ntitle: "${title}"\nweight: ${weight}\ndate: 2026-01-01T00:00:00+07:00\ndraft: false\n---\n\nSome content.\n`;
 }
 
+function createMemoryPort(): IndexGeneratorPort & {
+  files: Map<string, string>;
+  add(relativePath: string, title: string, weight: number, content: string): void;
+} {
+  const files = new Map<string, string>();
+  const metadata: ContentMeta[] = [];
+
+  return {
+    files,
+    add(relativePath, title, weight, content) {
+      const filePath = `${CONTENT_ROOT}/${relativePath}`;
+      const [locale = "", ...restParts] = relativePath.split("/");
+      const rest = restParts.join("/");
+      const isSection = rest.endsWith("_index.md");
+      let slug = rest.replace(/\.md$/u, "").replace(/\/_index$/u, "");
+      if (slug === "_index") slug = "";
+      files.set(filePath, content);
+      metadata.push({
+        title,
+        slug,
+        locale,
+        weight,
+        date: FIXED_NOW,
+        tags: [],
+        draft: false,
+        isSection,
+        filePath,
+      });
+    },
+    repository: {
+      async readAllContent() {
+        return metadata;
+      },
+      async readFileContent(filePath) {
+        return { content: files.get(filePath) ?? "", frontmatter: {} };
+      },
+    },
+    async readText(filePath) {
+      const content = files.get(filePath);
+      if (content === undefined) throw new Error(`Missing in-memory file: ${filePath}`);
+      return content;
+    },
+    async writeText(filePath, content) {
+      files.set(filePath, content);
+    },
+    now() {
+      return FIXED_NOW;
+    },
+  };
+}
+
 describeFeature(feature, ({ Scenario, Background }) => {
-  let tmpDir: string;
+  let port = createMemoryPort();
+  let result: ProcessResult;
 
   Background(({ Given }) => {
-    Given("a temporary content directory", async () => {
-      tmpDir = await createTmpContentDir();
+    Given("a temporary content directory", () => {
+      port = createMemoryPort();
+      result = { changed: [], errors: [] };
     });
   });
 
   Scenario("Section _index.md lists direct children sorted by weight", ({ Given, When, Then }) => {
-    Given('a section "tools" with children weighted 300, 100, and 200', async () => {
-      await writeIndexFile(tmpDir, "en/_index.md", makeIndex("English", 1));
-      await writeIndexFile(tmpDir, "en/tools/_index.md", makeIndex("Tools", 10));
-      await writeIndexFile(tmpDir, "en/tools/alpha.md", makePage("Alpha", 300));
-      await writeIndexFile(tmpDir, "en/tools/beta.md", makePage("Beta", 100));
-      await writeIndexFile(tmpDir, "en/tools/gamma.md", makePage("Gamma", 200));
+    Given('a section "tools" with children weighted 300, 100, and 200', () => {
+      port.add("en/_index.md", "English", 1, makeIndex("English", 1));
+      port.add("en/tools/_index.md", "Tools", 10, makeIndex("Tools", 10));
+      port.add("en/tools/alpha.md", "Alpha", 300, makePage("Alpha", 300));
+      port.add("en/tools/beta.md", "Beta", 100, makePage("Beta", 100));
+      port.add("en/tools/gamma.md", "Gamma", 200, makePage("Gamma", 200));
     });
-
     When("the index generator runs in generate mode", async () => {
-      await processAllIndexFiles(tmpDir, "generate");
+      result = await processAllIndexFiles(CONTENT_ROOT, "generate", port);
     });
-
-    // @covers specs/apps/ayokoding/www/behaviors/build-tools/index-generation/index-generation.feature:Section _index.md lists direct children sorted by weight
-    Then("the tools _index.md should list children in weight order 100, 200, 300", async () => {
-      const content = await fs.readFile(path.join(tmpDir, "en/tools/_index.md"), "utf-8");
-      const lines = content.split("\n").filter((l) => l.startsWith("- ["));
-      expect(lines[0]).toContain("Beta");
-      expect(lines[1]).toContain("Gamma");
-      expect(lines[2]).toContain("Alpha");
+    Then("the tools _index.md should list children in weight order 100, 200, 300", () => {
+      const content = port.files.get(`${CONTENT_ROOT}/en/tools/_index.md`) ?? "";
+      const links = content.split("\n").filter((line) => line.startsWith("- ["));
+      expect(links).toEqual(["- [Beta](/en/tools/beta)", "- [Gamma](/en/tools/gamma)", "- [Alpha](/en/tools/alpha)"]);
+      expect(result.errors).toEqual([]);
     });
   });
 
   Scenario("Nested sections render with indentation", ({ Given, When, Then }) => {
-    Given('a section "tools" containing a child section "react" with leaf page "overview"', async () => {
-      await writeIndexFile(tmpDir, "en/_index.md", makeIndex("English", 1));
-      await writeIndexFile(tmpDir, "en/tools/_index.md", makeIndex("Tools", 10));
-      await writeIndexFile(tmpDir, "en/tools/react/_index.md", makeIndex("React", 100));
-      await writeIndexFile(tmpDir, "en/tools/react/overview.md", makePage("Overview", 10));
+    Given('a section "tools" containing a child section "react" with leaf page "overview"', () => {
+      port.add("en/_index.md", "English", 1, makeIndex("English", 1));
+      port.add("en/tools/_index.md", "Tools", 10, makeIndex("Tools", 10));
+      port.add("en/tools/react/_index.md", "React", 100, makeIndex("React", 100));
+      port.add("en/tools/react/overview.md", "Overview", 10, makePage("Overview", 10));
     });
-
     When("the index generator runs in generate mode", async () => {
-      await processAllIndexFiles(tmpDir, "generate");
+      result = await processAllIndexFiles(CONTENT_ROOT, "generate", port);
     });
-
-    // @covers specs/apps/ayokoding/www/behaviors/build-tools/index-generation/index-generation.feature:Nested sections render with indentation
-    Then('the tools _index.md should show "overview" indented under "react"', async () => {
-      const content = await fs.readFile(path.join(tmpDir, "en/tools/_index.md"), "utf-8");
+    Then('the tools _index.md should show "overview" indented under "react"', () => {
+      const content = port.files.get(`${CONTENT_ROOT}/en/tools/_index.md`) ?? "";
       expect(content).toContain("- [React](/en/tools/react)");
       expect(content).toContain("  - [Overview](/en/tools/react/overview)");
+      expect(result.errors).toEqual([]);
     });
   });
 
   Scenario("Existing frontmatter is preserved during generation", ({ Given, When, Then }) => {
-    Given('a _index.md with frontmatter title "My Tools" and weight 500', async () => {
-      await writeIndexFile(tmpDir, "en/_index.md", makeIndex("English", 1));
-      await writeIndexFile(tmpDir, "en/tools/_index.md", makeIndex("My Tools", 500));
-      await writeIndexFile(tmpDir, "en/tools/page.md", makePage("Page", 10));
+    Given('a _index.md with frontmatter title "My Tools" and weight 500', () => {
+      port.add("en/_index.md", "English", 1, makeIndex("English", 1));
+      port.add("en/tools/_index.md", "My Tools", 500, makeIndex("My Tools", 500));
+      port.add("en/tools/page.md", "Page", 10, makePage("Page", 10));
     });
-
     When("the index generator runs in generate mode", async () => {
-      await processAllIndexFiles(tmpDir, "generate");
+      result = await processAllIndexFiles(CONTENT_ROOT, "generate", port);
     });
-
-    // @covers specs/apps/ayokoding/www/behaviors/build-tools/index-generation/index-generation.feature:Existing frontmatter is preserved during generation
-    Then('the frontmatter should contain title "My Tools" and weight 500', async () => {
-      const content = await fs.readFile(path.join(tmpDir, "en/tools/_index.md"), "utf-8");
+    Then('the frontmatter should contain title "My Tools" and weight 500', () => {
+      const content = port.files.get(`${CONTENT_ROOT}/en/tools/_index.md`) ?? "";
       expect(content).toContain('title: "My Tools"');
       expect(content).toContain("weight: 500");
+      expect(result.errors).toEqual([]);
     });
   });
 
   Scenario("Validate mode detects stale _index.md", ({ Given, When, Then }) => {
-    let result: Awaited<ReturnType<typeof processAllIndexFiles>>;
-
-    Given("a section with a child page not listed in its _index.md", async () => {
-      await writeIndexFile(tmpDir, "en/_index.md", makeIndex("English", 1));
-      await writeIndexFile(tmpDir, "en/tools/_index.md", makeIndex("Tools", 10));
-      await writeIndexFile(tmpDir, "en/tools/new-page.md", makePage("New Page", 10));
+    Given("a section with a child page not listed in its _index.md", () => {
+      port.add("en/_index.md", "English", 1, makeIndex("English", 1));
+      port.add("en/tools/_index.md", "Tools", 10, makeIndex("Tools", 10));
+      port.add("en/tools/new-page.md", "New Page", 10, makePage("New Page", 10));
     });
-
     When("the index generator runs in validate mode", async () => {
-      result = await processAllIndexFiles(tmpDir, "validate");
+      result = await processAllIndexFiles(CONTENT_ROOT, "validate", port);
     });
-
-    // @covers specs/apps/ayokoding/www/behaviors/build-tools/index-generation/index-generation.feature:Validate mode detects stale _index.md
     Then("it should report the _index.md as out of date", () => {
-      expect(result.changed.length).toBeGreaterThan(0);
-      expect(result.changed.some((f) => f.includes("tools/_index.md"))).toBe(true);
+      expect(result.changed).toContain(`${CONTENT_ROOT}/en/tools/_index.md`);
     });
   });
 
   Scenario("Generate mode is idempotent", ({ Given, When, Then }) => {
-    let result: Awaited<ReturnType<typeof processAllIndexFiles>>;
-
     Given("a section with up-to-date _index.md files", async () => {
-      await writeIndexFile(tmpDir, "en/_index.md", makeIndex("English", 1));
-      await writeIndexFile(tmpDir, "en/tools/_index.md", makeIndex("Tools", 10));
-      await writeIndexFile(tmpDir, "en/tools/page.md", makePage("Page", 10));
-      await processAllIndexFiles(tmpDir, "generate");
+      port.add("en/_index.md", "English", 1, makeIndex("English", 1));
+      port.add("en/tools/_index.md", "Tools", 10, makeIndex("Tools", 10));
+      port.add("en/tools/page.md", "Page", 10, makePage("Page", 10));
+      await processAllIndexFiles(CONTENT_ROOT, "generate", port);
     });
-
     When("the index generator runs in generate mode", async () => {
-      result = await processAllIndexFiles(tmpDir, "generate");
+      result = await processAllIndexFiles(CONTENT_ROOT, "generate", port);
     });
-
-    // @covers specs/apps/ayokoding/www/behaviors/build-tools/index-generation/index-generation.feature:Generate mode is idempotent
     Then("no files should be reported as changed", () => {
-      expect(result.changed.length).toBe(0);
+      expect(result).toEqual({ changed: [], errors: [] });
     });
   });
 
   Scenario("Missing frontmatter fields are added", ({ Given, When, Then, And }) => {
-    Given("a _index.md without date or draft fields", async () => {
-      await writeIndexFile(tmpDir, "en/_index.md", makeIndex("English", 1));
-      const minimalFm = '---\ntitle: "Minimal"\nweight: 10\n---\n';
-      await writeIndexFile(tmpDir, "en/section/_index.md", minimalFm);
-      await writeIndexFile(tmpDir, "en/section/page.md", makePage("Page", 10));
+    Given("a _index.md without date or draft fields", () => {
+      port.add("en/_index.md", "English", 1, makeIndex("English", 1));
+      port.add("en/section/_index.md", "Minimal", 10, '---\ntitle: "Minimal"\nweight: 10\n---\n');
+      port.add("en/section/page.md", "Page", 10, makePage("Page", 10));
     });
-
     When("the index generator runs in generate mode", async () => {
-      await processAllIndexFiles(tmpDir, "generate");
+      result = await processAllIndexFiles(CONTENT_ROOT, "generate", port);
     });
-
-    Then("the _index.md should contain a date field", async () => {
-      const content = await fs.readFile(path.join(tmpDir, "en/section/_index.md"), "utf-8");
-      expect(content).toContain("date:");
+    Then("the _index.md should contain a date field", () => {
+      expect(port.files.get(`${CONTENT_ROOT}/en/section/_index.md`)).toContain(`date: ${FIXED_NOW.toISOString()}`);
     });
-
-    // @covers specs/apps/ayokoding/www/behaviors/build-tools/index-generation/index-generation.feature:Missing frontmatter fields are added
-    And("the _index.md should contain draft set to false", async () => {
-      const content = await fs.readFile(path.join(tmpDir, "en/section/_index.md"), "utf-8");
-      expect(content).toContain("draft: false");
+    And("the _index.md should contain draft set to false", () => {
+      expect(port.files.get(`${CONTENT_ROOT}/en/section/_index.md`)).toContain("draft: false");
+      expect(result.errors).toEqual([]);
     });
   });
 });

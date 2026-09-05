@@ -23,7 +23,7 @@ when_to_use: Use when closing out the First Grill, to confirm every mandatory me
    each repo?).
 3. Any repo-specific constraint flagged in Step 2 that forces a deviation.
 4. Research-needed flag: are there external claims (harness/vendor conventions, library/tool
-   behavior, prior art) that require verification before authoring the plans?
+   behaviour, prior art) that require verification before authoring the plans?
 
 **Output**: A fully resolved deviation matrix. Every row has a recorded decision and — for
 deviations — a recorded justification. Research-needed flag recorded. This matrix is the source

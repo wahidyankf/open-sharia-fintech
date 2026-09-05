@@ -17,7 +17,7 @@ when_to_use: Use when looking for further reading on subagent orchestration.
 **Related Principles:**
 
 - [Deliberate Problem-Solving](../../../principles/general/deliberate-problem-solving.md) - Bounded, pre-decided constraints over reactive improvisation
-- [Root Cause Orientation](../../../principles/general/root-cause-orientation.md) - Relaunch addresses the actual cause of stuck behavior
+- [Root Cause Orientation](../../../principles/general/root-cause-orientation.md) - Relaunch addresses the actual cause of stuck behaviour
 - [Simplicity Over Complexity](../../../principles/general/simplicity-over-complexity.md) - Fixed cap and concrete threshold over adaptive scheduling
 - [Explicit Over Implicit](../../../principles/software-engineering/explicit-over-implicit.md) - Documented constants, not inferred limits
 

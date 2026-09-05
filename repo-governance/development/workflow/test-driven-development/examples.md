@@ -63,7 +63,7 @@ func calculateDiscount(price float64, rate float64) float64 {
 
 ## Gherkin-to-Test Chain (BDD)
 
-For behavior driven by a Gherkin scenario in `prd.md`:
+For behaviour driven by a Gherkin scenario in `prd.md`:
 
 ```gherkin
 Scenario: 10% discount reduces price

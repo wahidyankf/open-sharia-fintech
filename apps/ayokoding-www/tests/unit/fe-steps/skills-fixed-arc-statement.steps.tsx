@@ -37,14 +37,14 @@ const subjectB: PathManifest = {
 const feature = await loadFeature(
   path.resolve(
     process.cwd(),
-    "../../specs/apps/ayokoding/www/behaviors/frontend/course-paths/skills-fixed-arc-statement.feature",
+    "../../specs/apps/ayokoding/www/behaviours/frontend/course-paths/skills-fixed-arc-statement.feature",
   ),
 );
 
 describeFeature(feature, ({ Scenario }) => {
   Scenario("The skills category landing states its fixed arc once, with no chooser", ({ Given, When, Then, And }) => {
     Given("a fixture skills manifest set is loaded", () => {
-      // Fixture: `subjectA`/`subjectB` above.
+      expect([subjectA, subjectB].every(({ pathId }) => pathId.startsWith("skills/"))).toBe(true);
     });
 
     When("a reader opens the skills category landing at /en/learn/paths/skills/", () => {
@@ -56,7 +56,6 @@ describeFeature(feature, ({ Scenario }) => {
       expect(screen.getByRole("navigation", { name: "Skills paths" })).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/course-paths/skills-fixed-arc-statement.feature:The skills category landing states its fixed arc once, with no chooser
     And("no arc-selection control is present anywhere on the page", () => {
       expect(screen.queryByRole("navigation", { name: "Careers arcs" })).toBeNull();
       expect(screen.queryByRole("combobox")).toBeNull();

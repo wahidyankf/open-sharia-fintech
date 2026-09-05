@@ -1114,14 +1114,14 @@ graph TD
     Interface["Component<br/>Interface"]:::blue
     Concrete["ConcreteComponent<br/>#40;Base#41;"]:::orange
     Decorator["Decorator<br/>#40;Wraps component#41;"]:::teal
-    Enhanced["Enhanced behavior"]:::purple
+    Enhanced["Enhanced behaviour"]:::purple
 
     Interface -.->|implements| Concrete
     Interface -.->|implements| Decorator
     Decorator -->|wraps| Concrete
     Decorator --> Enhanced
 
-    Note1["Decorator adds<br/>behavior dynamically<br/>without modifying<br/>original class"]
+    Note1["Decorator adds<br/>behaviour dynamically<br/>without modifying<br/>original class"]
 
     classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px

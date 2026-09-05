@@ -127,7 +127,7 @@ jobs:
       # to the branch, and it self-corrects on rebase against a current
       # `main`. A second, head-sha-pinned artifact built solely for this job
       # was judged not worth the extra CI job for that bound; revisit if a
-      # validator invoked here ever gains file-mutating behavior.
+      # validator invoked here ever gains file-mutating behaviour.
       RHINO_CLI_FSHARP_BIN: ${{ github.workspace }}/apps/rhino-cli/src/dist/rhino-cli-fsharp
     steps:
       - uses: actions/checkout@v6
@@ -297,7 +297,9 @@ jobs:
       - uses: ./.github/actions/setup-node
       # --parallel=2 bounds peak memory when many TS projects are affected at once (e.g. a
       # shared-lib change).
-      - run: npx nx affected -t typecheck lint test:quick specs:behavior:coverage --exclude='tag:lang:fsharp,tag:lang:csharp,tag:lang:rust,tag:lang:dart' --parallel=2
+      # test:quick owns Unit runtime plus every applicable static test:coverage:*
+      # validator. Integration and E2E remain manual/scheduled-only.
+      - run: npx nx affected -t typecheck lint test:quick compat:min-version --exclude='tag:lang:fsharp,tag:lang:csharp,tag:lang:rust,tag:lang:dart' --parallel=2
 
   dotnet:
     name: .NET quality gate
@@ -305,7 +307,7 @@ jobs:
     if: needs.detect.outputs.has-dotnet-projects == 'true'
     runs-on: ubuntu-latest
     # `rhino-cli`'s Elixir formatter-wrapper tests assert real `mix format`
-    # behavior — Phase 9c ported the crate to F#, so this job (not the former
+    # behaviour — Phase 9c ported the crate to F#, so this job (not the former
     # `rust` job, deleted in Phase 9d) is now the only place `rhino-cli`'s
     # test:quick runs, and therefore the only place that can provision the
     # toolchain these assertions need. RHINO_REQUIRE_ELIXIR/erlef/setup-beam
@@ -329,11 +331,7 @@ jobs:
       - run: npx nx affected -t install --exclude='tag:lang:ts,tag:lang:dart' --parallel=1
       # Both affected F# backends invoke OpenAPI Generator during codegen. It initializes a shared
       # downloaded JAR, so serial execution prevents a first-run download race.
-      - run: npx nx affected -t typecheck lint test:quick specs:behavior:coverage --exclude='tag:lang:ts,tag:lang:dart' --parallel=1
-      # test:coverage carries each project's own coverage threshold (e.g. rhino-cli's
-      # coverlet `/p:Threshold=90 /p:ThresholdType=line`). Without this step the threshold is
-      # declared but never enforced by CI.
-      - run: npx nx affected -t test:coverage --exclude='tag:lang:ts,tag:lang:dart' --parallel=1
+      - run: npx nx affected -t typecheck lint test:quick compat:min-version --exclude='tag:lang:ts,tag:lang:dart' --parallel=1
 
   flutter:
     name: Flutter quality gate
@@ -357,7 +355,7 @@ jobs:
           echo "$HOME/.pub-cache/bin" >> "$GITHUB_PATH"
       - name: Install the repository Flutter SDK
         run: fvm install
-      - run: npx nx affected -t typecheck lint test:quick specs:behavior:coverage --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:rust' --parallel=1
+      - run: npx nx affected -t typecheck lint test:quick --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:rust' --parallel=1
 
   specs-structure:
     name: Specs structure validation (all affected)

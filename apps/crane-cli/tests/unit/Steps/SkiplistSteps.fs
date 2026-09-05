@@ -1,24 +1,21 @@
 module CraneCli.Tests.Unit.Steps.SkiplistSteps
 
 open System
-open System.IO
 open TickSpec
 open Xunit
 open CraneCore.Logic.SkiplistManager
 open CraneCli.Tests.Unit.Steps.BddState
+open CraneCli.Tests.Unit.Steps.InMemoryBoundaries
 
 // ---- BDD shared state ----
 let mutable private currentMdBasename: string = "nist-sp-800-53"
-let mutable private currentTempPath: string = ""
+let mutable private currentPath: string = "memory/skiplist.md"
 
-let private resetTempPath () =
-    currentTempPath <-
-        Path.Combine(Path.GetTempPath(), sprintf "crane-skiplist-bdd-%s.md" (Guid.NewGuid().ToString("N").[..11]))
+let private resetStore () =
+    reset ()
+    currentPath <- "memory/skiplist.md"
 
-    Environment.SetEnvironmentVariable("CRANE_SKIPLIST_PATH", currentTempPath)
-
-    if File.Exists(currentTempPath) then
-        File.Delete(currentTempPath)
+let private dependencies () = skiplistDependencies currentPath
 
 let private serializeJson value =
     let opts = System.Text.Json.JsonSerializerOptions()
@@ -30,7 +27,7 @@ let private serializeJson value =
 [<Given>]
 let ``no existing skip list for "([^"]*)"`` (mdBasename: string) =
     currentMdBasename <- mdBasename
-    resetTempPath ()
+    resetStore ()
 
 [<Given>]
 let ``a skip list for "([^"]*)" already containing the entry for text-completeness "([^"]*)"``
@@ -38,8 +35,8 @@ let ``a skip list for "([^"]*)" already containing the entry for text-completene
     (description: string)
     =
     currentMdBasename <- mdBasename
-    resetTempPath ()
-    add mdBasename "text-completeness" description |> ignore
+    resetStore ()
+    addWith (dependencies ()) mdBasename "text-completeness" description |> ignore
 
 [<Given>]
 let ``a skip list containing "([^|]*)\| ([^|]*)\| ([^"]*)"``
@@ -48,15 +45,17 @@ let ``a skip list containing "([^|]*)\| ([^|]*)\| ([^"]*)"``
     (description: string)
     =
     currentMdBasename <- mdBasename.Trim()
-    resetTempPath ()
-    add (mdBasename.Trim()) (category.Trim()) (description.Trim()) |> ignore
+    resetStore ()
+
+    addWith (dependencies ()) (mdBasename.Trim()) (category.Trim()) (description.Trim())
+    |> ignore
 
 // ---- BDD When steps ----
 
 [<When>]
 let ``I run "crane skiplist add nist-sp-800-53 text-completeness '([^']*)'"`` (description: string) =
     RunWithWriter(fun w ->
-        match add currentMdBasename "text-completeness" description with
+        match addWith (dependencies ()) currentMdBasename "text-completeness" description with
         | Ok added ->
             w.WriteLine(serializeJson {| added = added |})
             0
@@ -67,7 +66,7 @@ let ``I run "crane skiplist add nist-sp-800-53 text-completeness '([^']*)'"`` (d
 [<When>]
 let ``I run "crane skiplist add" with the same arguments`` () =
     RunWithWriter(fun w ->
-        match add currentMdBasename "text-completeness" "Page header on p.3" with
+        match addWith (dependencies ()) currentMdBasename "text-completeness" "Page header on p.3" with
         | Ok added ->
             w.WriteLine(serializeJson {| added = added |})
             0
@@ -78,7 +77,7 @@ let ``I run "crane skiplist add" with the same arguments`` () =
 [<When>]
 let ``I run "crane skiplist check nist-sp-800-53 mermaid-syntax '([^']*)'"`` (description: string) =
     RunWithWriter(fun w ->
-        match check currentMdBasename "mermaid-syntax" description with
+        match checkWith (dependencies ()) currentMdBasename "mermaid-syntax" description with
         | Ok found ->
             w.WriteLine(serializeJson {| ``match`` = found |})
             if found then 0 else 1
@@ -88,8 +87,10 @@ let ``I run "crane skiplist check nist-sp-800-53 mermaid-syntax '([^']*)'"`` (de
 
 [<When>]
 let ``I run "crane skiplist check nist-sp-800-53 text-completeness '([^']*)'"`` (description: string) =
+    resetStore ()
+
     RunWithWriter(fun w ->
-        match check currentMdBasename "text-completeness" description with
+        match checkWith (dependencies ()) currentMdBasename "text-completeness" description with
         | Ok found ->
             w.WriteLine(serializeJson {| ``match`` = found |})
             if found then 0 else 1
@@ -101,24 +102,19 @@ let ``I run "crane skiplist check nist-sp-800-53 text-completeness '([^']*)'"`` 
 
 [<Then>]
 let ``the skip list file is created`` () =
-    Assert.True(File.Exists(currentTempPath), sprintf "Skip list file should exist: %s" currentTempPath)
+    Assert.True(exists currentPath, $"Skip list file should exist: {currentPath}")
 
 [<Then>]
 let ``it contains one entry with category "([^"]*)"`` (category: string) =
-    Assert.True(File.Exists(currentTempPath))
-    let content = File.ReadAllText(currentTempPath)
-    Assert.Contains(sprintf "## FALSE_POSITIVE: %s |" category, content)
-    // Cleanup
-    File.Delete(currentTempPath)
+    Assert.True(exists currentPath)
+    let content = readAllText currentPath
+    Assert.Contains($"## FALSE_POSITIVE: {category} |", content)
 
 [<Then>]
 let ``the skip list file contains exactly one matching entry`` () =
-    match list currentMdBasename with
+    match listWith (dependencies ()) currentMdBasename with
     | Ok entries -> Assert.Equal(1, entries.Length)
     | Error msg -> Assert.Fail(msg)
-
-    if File.Exists(currentTempPath) then
-        File.Delete(currentTempPath)
 
 [<Then>]
 let ``the JSON output contains match true`` () =

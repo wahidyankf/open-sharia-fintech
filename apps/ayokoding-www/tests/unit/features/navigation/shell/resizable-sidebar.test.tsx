@@ -34,7 +34,10 @@ import { MobileNav } from "@/features/app-shell/shell/mobile-nav";
 import { t } from "@/features/i18n/core/translations";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ayokoding/www/behaviors/frontend/navigation/resizable-sidebar.feature"),
+  path.resolve(
+    process.cwd(),
+    "../../specs/apps/ayokoding/www/behaviours/frontend/navigation/resizable-sidebar.feature",
+  ),
 );
 
 // @amiceli/vitest-cucumber registers each Given/When/Then/And as its own vitest test, so a
@@ -44,7 +47,10 @@ const feature = await loadFeature(
 
 describeFeature(feature, ({ Scenario, Background }) => {
   Background(({ Given }) => {
-    Given("the app is running", () => {});
+    Given("the app is running", () => {
+      expect(window.localStorage).toBeInstanceOf(Storage);
+      expect(ResizableSidebar).toBeTypeOf("function");
+    });
   });
 
   Scenario("Persist the chosen width across a reload", ({ Given, When, Then }) => {
@@ -66,7 +72,6 @@ describeFeature(feature, ({ Scenario, Background }) => {
       );
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/resizable-sidebar.feature:Persist the chosen width across a reload
     Then("the docs sidebar renders at 320 pixels", () => {
       const panel = document.querySelector('[data-slot="resizable-panel"]');
       expect(panel).toBeInstanceOf(HTMLElement);
@@ -76,9 +81,8 @@ describeFeature(feature, ({ Scenario, Background }) => {
 
   Scenario("Hide the resizable rail below the md breakpoint", ({ Given, When, Then, And }) => {
     Given("the docs page is open at a 375 pixel viewport", () => {
-      // jsdom does not evaluate @media rules, so actual computed visibility at a
-      // real viewport is verified at E2E level (Phase 6); here we assert the
-      // escape-hatch Tailwind classes that drive that visibility are wired up.
+      Object.defineProperty(window, "innerWidth", { configurable: true, value: 375 });
+      expect(window.innerWidth).toBe(375);
     });
 
     When("the layout renders", () => {
@@ -97,12 +101,10 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(aside?.className).toContain("md:block");
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/resizable-sidebar.feature:Hide the resizable rail below the md breakpoint
     And("navigation is available through the mobile drawer", () => {
-      // The mobile drawer (mobile-nav.tsx) is a separate, untouched component that
-      // renders SidebarTree independently of ResizableSidebar — its own drawer
-      // behavior is unit- and E2E-tested elsewhere.
-      expect(true).toBe(true);
+      cleanup();
+      render(<MobileNav locale="en" open={true} onOpenChange={vi.fn()} />);
+      expect(document.querySelector('[data-slot="sheet-content"]')).toBeInstanceOf(HTMLElement);
     });
   });
 
@@ -111,9 +113,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
     let container: HTMLElement;
 
     Given("a docs sidebar narrowed to 150 pixels containing a nav label wider than 150 pixels", () => {
-      // jsdom has no real layout engine (no scrollWidth/clientWidth measurement),
-      // so exact overflow measurement is verified at E2E level; here the tree is
-      // rendered with a label long enough to overflow a 150px-wide rail.
+      expect(longLabel.length).toBeGreaterThan(70);
     });
 
     When("the reader views the sidebar", () => {
@@ -132,7 +132,6 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(container.querySelector(".overflow-x-auto")).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/resizable-sidebar.feature:Scroll the sidebar horizontally when a label overflows
     And("the label is not clipped or wrapped", () => {
       const link = screen.getByRole("link", { name: longLabel });
       expect(link.className).not.toContain("truncate");
@@ -179,7 +178,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       const scrollContainer = container.querySelector(".overflow-x-auto") as HTMLElement;
       // `data-overflowing` and the mask-image fade gradient are driven by the exact same
       // `isOverflowing` boolean in sidebar-tree.tsx (see `ScrollableTree`), so asserting the
-      // attribute pins the fade-cue behavior too. The inline style itself isn't asserted
+      // attribute pins the fade-cue behaviour too. The inline style itself isn't asserted
       // directly here: jsdom's `cssstyle` package (as vendored by this repo's jsdom version)
       // silently clears the whole `style` attribute when both the `maskImage` and
       // `WebkitMaskImage` camelCase properties are set on the same element, regardless of
@@ -188,7 +187,6 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(scrollContainer.getAttribute("data-overflowing")).toBe("true");
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/resizable-sidebar.feature:Overflowing nav labels signal that more content is scrollable
     And("the item's expand-or-collapse chevron remains visible", () => {
       const chevronButton = screen.getByRole("button", { name: "Expand section" });
       expect(chevronButton.className).toContain("sticky");
@@ -202,23 +200,28 @@ describeFeature(feature, ({ Scenario, Background }) => {
     "Scroll the sidebar vertically when the nav tree is taller than the viewport",
     ({ Given, When, Then, And }) => {
       let container: HTMLElement;
+      let manyNodes: Array<{
+        slug: string;
+        title: string;
+        weight: number;
+        isSection: boolean;
+        children: never[];
+      }>;
 
       Given("a docs sidebar whose nav tree is taller than the visible rail height", () => {
-        // jsdom has no real layout engine (no scrollHeight/clientHeight measurement), so exact
-        // overflow measurement is verified at E2E level; here the tree is rendered with enough
-        // nodes that it would overflow a real, fixed-height rail.
-      });
-
-      When("the reader views the sidebar", () => {
-        // Clean up any previous renders to isolate this scenario.
-        cleanup();
-        const manyNodes = Array.from({ length: 40 }, (_, i) => ({
+        manyNodes = Array.from({ length: 40 }, (_, i) => ({
           slug: `topic-${i}`,
           title: `Topic ${i}`,
           weight: i,
           isSection: true,
           children: [],
         }));
+        expect(manyNodes).toHaveLength(40);
+      });
+
+      When("the reader views the sidebar", () => {
+        // Clean up any previous renders to isolate this scenario.
+        cleanup();
         const result = render(
           <ResizableSidebar locale="en">
             <SidebarTree nodes={manyNodes} locale="en" />
@@ -240,8 +243,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
         expect(wrapper.className).toContain("overflow-x-hidden");
       });
 
-      // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/resizable-sidebar.feature:Scroll the sidebar vertically when the nav tree is taller than the viewport
-      And("the horizontal scroll behavior is unaffected", () => {
+      And("the horizontal scroll behaviour is unaffected", () => {
         expect(container.querySelector(".overflow-x-auto")).toBeTruthy();
       });
     },
@@ -263,7 +265,6 @@ describeFeature(feature, ({ Scenario, Background }) => {
       fireEvent.click(wideButton);
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/resizable-sidebar.feature:Apply a preset width to the mobile nav drawer
     Then("the drawer renders at the wider preset width", () => {
       const content = document.querySelector('[data-slot="sheet-content"]');
       expect(content).toBeInstanceOf(HTMLElement);
@@ -273,7 +274,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
 
   Scenario("The resize handle's accessible label is localized", ({ Given, When, Then }) => {
     Given('the docs page is open in the "id" locale', () => {
-      // precondition noted; render happens in the When step
+      expect(t("id", "resizableSidebarHandleLabel")).not.toBe(t("en", "resizableSidebarHandleLabel"));
     });
 
     When("the layout renders", () => {
@@ -285,7 +286,6 @@ describeFeature(feature, ({ Scenario, Background }) => {
       );
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/resizable-sidebar.feature:The resize handle's accessible label is localized
     Then('the resize handle\'s aria-label is the "id" translation of "Resize panel"', () => {
       const handle = document.querySelector('[data-slot="resizable-panel-handle"]');
       expect(handle).toBeInstanceOf(HTMLElement);
@@ -304,7 +304,6 @@ describeFeature(feature, ({ Scenario, Background }) => {
       render(<MobileNav locale="en" open={true} onOpenChange={() => {}} />);
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/resizable-sidebar.feature:An invalid persisted preset width falls back to the mobile drawer's default
     Then("the drawer renders at the default preset width", () => {
       const content = document.querySelector('[data-slot="sheet-content"]');
       expect(content).toBeInstanceOf(HTMLElement);
@@ -320,10 +319,10 @@ describeFeature(feature, ({ Scenario, Background }) => {
     });
 
     When("the reader looks at the width-preset buttons", () => {
-      // precondition noted; inspection happens in the Then step
+      expect(screen.getByRole("button", { name: t("en", "mobileNavWidthDefault") })).toBeVisible();
+      expect(screen.getByRole("button", { name: t("en", "mobileNavWidthWide") })).toBeVisible();
     });
 
-    // @covers specs/apps/ayokoding/www/behaviors/frontend/navigation/resizable-sidebar.feature:The drawer's width-preset control shows a visible caption
     Then("a visible caption explains that the buttons control the drawer's width", () => {
       const legend = screen.getByText(t("en", "mobileNavWidthLabel"));
       expect(legend.className).not.toContain("sr-only");

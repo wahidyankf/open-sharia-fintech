@@ -6,7 +6,7 @@
 - Write from user perspective
 - Focus on WHAT, not HOW
 - Keep scenarios independent
-- Make scenarios atomic (one behavior per scenario)
+- Make scenarios atomic (one behaviour per scenario)
 - Use concrete examples (not abstract concepts)
 
 **DON'T**:
@@ -15,12 +15,12 @@
 - Create scenario dependencies
 - Write implementation details
 - Use ambiguous language
-- Combine multiple behaviors in one scenario
+- Combine multiple behaviours in one scenario
 
 **Example**:
 
 ```gherkin
-# ✅ Good - Business language, clear behavior
+# ✅ Good - Business language, clear behaviour
 Scenario: Purchase item with sufficient balance
   Given customer has account balance of $100
   When customer purchases item for $30

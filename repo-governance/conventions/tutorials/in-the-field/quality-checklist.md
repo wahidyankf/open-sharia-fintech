@@ -37,7 +37,7 @@ Before publishing in-the-field content, verify:
 ## Code Quality
 
 - [ ] Annotation density meets target PER CODE BLOCK (1.0-2.25 comment lines per code line)
-- [ ] `// =>` or `# =>` notation shows framework behavior
+- [ ] `// =>` or `# =>` notation shows framework behaviour
 - [ ] Configuration impact documented
 - [ ] Integration points explained
 - [ ] Security implications noted

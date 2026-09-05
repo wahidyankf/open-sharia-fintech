@@ -32,7 +32,7 @@ Determine whether to continue fixing or finalize.
 
 **Notes**:
 
-- **Default behavior**: Runs up to 7 iterations (default max-iterations). Override with higher value for more attempts
+- **Default behaviour**: Runs up to 7 iterations (default max-iterations). Override with higher value for more attempts
 - **Consecutive pass requirement**: Zero findings must be confirmed by a second independent check before declaring success
 - **Optional min-iterations**: Prevents premature termination before sufficient iterations
 - Each iteration gets fresh validation report

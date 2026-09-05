@@ -219,24 +219,6 @@ let ``governanceAuditMarkdown reports failures and skipped false-positives`` () 
     Assert.Contains("skipped false-positive(s)", markdown)
 
 // ---------------------------------------------------------------------------
-// cardinalityMarkdown — non-empty findings
-// ---------------------------------------------------------------------------
-
-[<Fact>]
-let ``cardinalityMarkdown reports a violation`` () =
-    let finding: Specs.GherkinCardinalityFinding =
-        { File = "specs/foo.feature"
-          Line = 3
-          Scenario = "Does the thing"
-          Keyword = "Given"
-          Count = 2
-          Severity = "high" }
-
-    let markdown = cardinalityMarkdown [ finding ]
-    Assert.Contains("**FAILED**: 1 violation", markdown)
-    Assert.Contains("specs/foo.feature", markdown)
-
-// ---------------------------------------------------------------------------
 // dartScaffoldText / dartScaffoldJson / dartScaffoldMarkdown
 // ---------------------------------------------------------------------------
 
@@ -343,30 +325,6 @@ let ``syncMarkdown reports success when nothing failed`` () =
     Assert.Contains("SUCCESS", markdown)
 
 // ---------------------------------------------------------------------------
-// coverageJson / coverageMarkdown — direct calls, since the CLI's own
-// behavior-coverage leaves only render Text in this file's fixtures
-// ---------------------------------------------------------------------------
-
-let private emptyCheckResult: RhinoCli.Application.Specs.CheckResult =
-    { TotalSpecs = 1
-      TotalScenarios = 1
-      TotalSteps = 1
-      Gaps = []
-      ScenarioGaps = []
-      StepGaps = []
-      OrphanStepImpls = [] }
-
-[<Fact>]
-let ``coverageJson renders a clean result`` () =
-    let json = coverageJson emptyCheckResult
-    Assert.Contains("\"success\"", json)
-
-[<Fact>]
-let ``coverageMarkdown renders a clean result`` () =
-    let markdown = coverageMarkdown emptyCheckResult
-    Assert.NotEmpty markdown
-
-// ---------------------------------------------------------------------------
 // statusJson / statusBanner (via validationText) — the warning-only branch,
 // never hit by `mixedValidationResult` since it also carries a failed check
 // ---------------------------------------------------------------------------
@@ -380,27 +338,6 @@ let private warningOnlyValidationResult: Harness.ValidationResult =
 let ``validationText reports a warnings-only banner`` () =
     let text = validationText warningOnlyValidationResult false false
     Assert.Contains("VALIDATION PASSED WITH WARNINGS", text)
-
-// ---------------------------------------------------------------------------
-// coverageJson's "failure" branch — a non-empty gap list
-// ---------------------------------------------------------------------------
-
-let private checkResultWithGap: RhinoCli.Application.Specs.CheckResult =
-    { TotalSpecs = 1
-      TotalScenarios = 1
-      TotalSteps = 1
-      Gaps =
-        [ { RhinoCli.Application.Specs.SpecFile = "specs/example.feature"
-            RhinoCli.Application.Specs.Stem = "example" } ]
-      ScenarioGaps = []
-      StepGaps = []
-      OrphanStepImpls = [] }
-
-[<Fact>]
-let ``coverageJson renders a failure status when gaps are present`` () =
-    let json = coverageJson checkResultWithGap
-    Assert.Contains("\"failure\"", json)
-    Assert.Contains("specs/example.feature", json)
 
 // ---------------------------------------------------------------------------
 // validationJson / statusJson — a direct-call fixture per branch, since

@@ -60,10 +60,9 @@ $ git commit -m "added new feature"
    `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`)
 3. `gate run --surface=pre-push` orchestrates every registry-declared `pre-push`-surface gate in
    declaration order, failing fast. The gate set is registry-driven and changes as `repo-config.yml`
-   changes — it is **not** the fixed `typecheck`/`lint`/`test:quick`/`specs:coverage` list an
-   earlier version of this doc hardcoded (that list is stale: `specs:coverage` is no longer even a
-   live Nx target, and the live surface runs 14 distinct gates, mixing affected-project checks,
-   always-run checks, and path-gated checks). Discover the live inventory rather than trusting
+   changes — it is **not** a hand-maintained fixed command list. The affected-project quick gate
+   owns Unit runtime and every applicable static `test:coverage:*` validator; other registry
+   entries add always-run and path-gated checks. Discover the live inventory rather than trusting
    prose here:
 
    ```bash

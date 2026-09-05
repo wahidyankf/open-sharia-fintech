@@ -18,7 +18,7 @@ For complete model selection standards, see the [Model Selection Convention](../
 
 **Three tiers**:
 
-- **Planning-grade** (default): Omit the `model` field. For creative reasoning, code generation, architectural decisions, and nuanced content creation (creative makers, language developers). Omitting `model` is budget-adaptive: the agent inherits the session's active model tier. Do NOT add a concrete model name — that overrides budget-adaptive behavior. See [model-selection.md](../model-selection.md) for the full design rationale.
+- **Planning-grade** (default): Omit the `model` field. For creative reasoning, code generation, architectural decisions, and nuanced content creation (creative makers, language developers). Omitting `model` is budget-adaptive: the agent inherits the session's active model tier. Do NOT add a concrete model name — that overrides budget-adaptive behaviour. See [model-selection.md](../model-selection.md) for the full design rationale.
 - **Execution-grade** (`model: sonnet`): For rule-based validation, applying validated fixes, template-driven output, and structured pattern-following tasks (checkers, fixers, structured makers, swe-e2e-dev).
 - **Fast** (`model: haiku`): For purely mechanical tasks with no reasoning required -- URL validation, deployment scripts, deterministic file operations, simple command execution (deployers, link checkers, docs-file-manager).
 

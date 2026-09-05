@@ -74,7 +74,7 @@ Standards for creating, structuring, and managing AI agents in the platform bind
 - [Verification Principles](./ai-agents/information-accuracy-verification-principles.md) — principles.
 - [Worktree Awareness](./ai-agents/information-accuracy-verification-git-worktree-awareness.md) — rel. paths.
 - [Toolchain Init Rule](./ai-agents/information-accuracy-verification-git-worktree-toolchain-init.md) — init rule.
-- [Default Push Behavior](./ai-agents/information-accuracy-verification-git-worktree-awareness-continued.md) — push rule.
+- [Default Push Behaviour](./ai-agents/information-accuracy-verification-git-worktree-awareness-continued.md) — push rule.
 - [Verification Checklist](./ai-agents/information-accuracy-verification-checklist.md) — checklist.
 - [When to Create](./ai-agents/creating-new-agents-when-to-create.md) — criteria.
 - [Creation Checklist](./ai-agents/creating-new-agents-checklist.md) — checklist.

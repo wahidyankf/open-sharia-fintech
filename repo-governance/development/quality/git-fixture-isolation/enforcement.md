@@ -46,6 +46,6 @@ when_to_use: "Use when locating the automated enforcement for git-fixture isolat
 
 - **`repo-rules-checker`**: May additionally audit that this convention itself stays cross-referenced
   from [Regression Test Mandate](.././regression-test-mandate.md),
-  [Three-Level Testing Standard](.././three-level-testing-standard.md), and
+  [Behaviour-Driven Development](../../behaviour-driven-development.md), and
   [Reproducible Environments Convention](../../workflow/reproducible-environments.md), per
   the standard convention-integration checklist.
