@@ -1328,7 +1328,7 @@ let validateDocsLinksDocuments
         normalizedDocuments.ContainsKey normalized
         || (normalizedDocuments
             |> Map.exists (fun candidate _ ->
-                candidate.StartsWith(normalized + string Path.DirectorySeparatorChar, StringComparison.Ordinal)))
+                candidate.StartsWith(normalized + Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal)))
 
     let readContent (path: string) : string =
         normalizedDocuments
