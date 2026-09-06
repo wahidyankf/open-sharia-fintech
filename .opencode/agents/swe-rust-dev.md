@@ -21,9 +21,14 @@ skills:
 
 - **Role**: Implementor (purple)
 
-**Model Selection Justification**: `model: sonnet` — Rust's ownership/borrowing architecture, its
-type system (traits, generics, lifetimes), the Axum/Tokio async stack, and lifetime-conflict/unsafe
-code review all need more than mechanical pattern-following.
+**Model Selection Justification**: `model: opus` (planning grade) — this agent requires:
+
+- Architectural reasoning about ownership and borrowing, where a lifetime decision made early
+  constrains every later call site
+- Original code generation across traits, generics, and the Axum/Tokio async stack, plus review of
+  `unsafe` blocks whose failure mode is memory unsafety rather than a failing test
+- Multi-step design→implement→test→refactor orchestration on production systems code, where a wrong
+  structural call is expensive to detect and expensive to undo
 
 ## Core Expertise
 
