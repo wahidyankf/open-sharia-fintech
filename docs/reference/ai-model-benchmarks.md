@@ -328,10 +328,17 @@ higher limit = lighter/faster model.
 
 ### The thinking/execution/fast tier design and the Opus comparison bar
 
-This repo's `convert_model()` (see [AI Agent Model Selection Convention](../../repo-governance/development/agents/model-selection.md))
-maps Claude Code's `opus`/`sonnet`/`haiku` aliases to three tiers — **thinking**, **execution**,
-**fast**. As of this 2026-07-05 refresh: thinking (`opus`) and execution (`sonnet`/omitted) both
-resolve to `opencode-go/glm-5.2`; fast (`haiku`) resolves to `opencode-go/minimax-m3`.
+**Superseded as of 2026-09-06**: the OpenCode mirror no longer pins a model at any grade. The
+`opencode` entry in `repo-config.yml` declares no `model-map:`, so the emitted agent carries no
+`model` key and the developer's own OpenCode configuration decides — see
+[AI Agent Model Selection Convention](../../repo-governance/development/agents/model-selection.md).
+The tier design described below is retained because the roster comparison that follows was the
+evidence behind it, and because it still records why no `opencode-go` model was treated as an
+Opus-grade substitute.
+
+As of the 2026-07-05 refresh this repo mapped Claude Code's `opus`/`sonnet`/`haiku` aliases to three
+tiers — **thinking**, **execution**, **fast**: thinking (`opus`) and execution (`sonnet`/omitted)
+both resolved to `opencode-go/glm-5.2`; fast (`haiku`) resolved to `opencode-go/minimax-m3`.
 
 **Claude Opus 5 shipped 2026-07-24** and is the current Opus generation — it is the dataset's `opus`
 anchor (`claude-opus-5`, SWE-bench Verified 96.0% `[Self-reported]`), per [Anthropic's model

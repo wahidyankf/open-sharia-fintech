@@ -1,6 +1,5 @@
 ---
 description: Execution-grade PR reviewer scoped to the architecture discipline only — new tradeoffs, module boundaries, reversibility, blast radius, quality-attribute effects, and novel dependencies. One of nine discipline-scoped specialists feeding the pr-review-synthesis-maker coordinator; inherits pr-review-maker's hard rules verbatim, scoped to its own charter and SUPPRESS block.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   glob: allow

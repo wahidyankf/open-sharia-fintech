@@ -55,3 +55,15 @@ Feature: Claude Code Agent and Skill Configuration Validation
     Given a .claude/ directory where skills are valid but agents have issues
     When the developer runs agents validate-claude with the --skills-only flag
     Then the command exits successfully
+
+  Scenario: An agent whose effort contradicts its grade fails validation
+    Given a .claude/ directory where one agent declares an effort its grade does not
+    When the developer runs agents validate-claude
+    Then the command exits with a failure code
+    And the output reports the effort the grade declares
+
+  Scenario: A registry declaring no grade vocabulary fails closed
+    Given a .claude/ directory whose repo-config.yml declares no model-map for claude-code
+    When the developer runs agents validate-claude
+    Then the command exits with a failure code
+    And the output reports that no grade vocabulary is declared

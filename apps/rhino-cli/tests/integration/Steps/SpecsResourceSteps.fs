@@ -164,6 +164,7 @@ type SpecsSteps() =
           SkillsDir = None
           SkillsMirrors = None
           Vendored = []
+          ModelMap = Map.empty
           Catalog = None
           Ownership = [] }
 

@@ -71,8 +71,10 @@ type HarnessProcessSteps() =
     let validatedAgent name =
         write
             (Path.Combine(".claude", "agents", name + ".md"))
+            // `sonnet` is the execution grade, whose declared effort is `xhigh`;
+            // a fixture that omitted it would contradict its own grade.
             (sprintf
-                "---\nname: %s\ndescription: fixture agent\ntools: Read, Write\nmodel: sonnet\ncolor: blue\n---\nBody.\n"
+                "---\nname: %s\ndescription: fixture agent\ntools: Read, Write\nmodel: sonnet\neffort: xhigh\ncolor: blue\n---\nBody.\n"
                 name)
 
     let validatedSkill name =
@@ -83,8 +85,16 @@ type HarnessProcessSteps() =
     let writeBindingRegistry () =
         write
             "repo-config.yml"
-            """harness:
-  - { name: claude-code, tier: source, agent-dir: .claude/agents }
+            """model-grades:
+  ultra: { effort: high }
+  planning: { effort: high }
+  execution: { effort: xhigh }
+  fast: { effort: xhigh }
+harness:
+  - name: claude-code
+    tier: source
+    agent-dir: .claude/agents
+    model-map: { ultra: fable, planning: opus, execution: sonnet, fast: haiku }
   - name: opencode
     tier: generated
     agent-dir: .opencode/agents
@@ -94,8 +104,28 @@ type HarnessProcessSteps() =
     agent-dir: .codex/agents
     mirrors: .claude/agents
     config: .codex/config.toml
+    model-map: { ultra: gpt-6-astra, planning: gpt-5.6-sol, execution: gpt-5.6-terra, fast: gpt-5.6-luna }
 coverage:
   projects: []
+"""
+
+    /// The grade vocabulary the Claude validator reads from `repo-config.yml`
+    /// at runtime. A fixture repository without it makes the validator fail
+    /// closed, so every validate-claude scenario seeds one just as a real
+    /// repository carries one.
+    let writeGradeRegistry () =
+        write
+            "repo-config.yml"
+            """model-grades:
+  ultra: { effort: high }
+  planning: { effort: high }
+  execution: { effort: xhigh }
+  fast: { effort: xhigh }
+harness:
+  - name: claude-code
+    tier: source
+    agent-dir: .claude/agents
+    model-map: { ultra: fable, planning: opus, execution: sonnet, fast: haiku }
 """
 
     let writeSkillsRegistry () =
@@ -407,25 +437,30 @@ coverage:
 
     [<Given>]
     member _.``a \.claude/ directory where all agents and skills are valid``() =
+        writeGradeRegistry ()
         validatedAgent "valid-agent"
         validatedSkill "valid-skill"
 
     [<Given>]
     member _.``a \.claude/ directory where one agent is missing the required "description" field``() =
+        writeGradeRegistry ()
+
         write
             (Path.Combine(".claude", "agents", "missing-description.md"))
             "---\nname: missing-description\ntools: Read\nmodel: sonnet\ncolor: blue\n---\nBody.\n"
 
     [<Given>]
     member _.``a \.claude/ directory where one agent declares the "fable" model alias``() =
+        writeGradeRegistry ()
         validatedSkill "valid-skill"
 
         write
             (Path.Combine(".claude", "agents", "ultra-agent.md"))
-            "---\nname: ultra-agent\ndescription: ultra fixture\ntools: Read\nmodel: fable\ncolor: blue\n---\nBody.\n"
+            "---\nname: ultra-agent\ndescription: ultra fixture\ntools: Read\nmodel: fable\neffort: high\ncolor: blue\n---\nBody.\n"
 
     [<Given>]
     member _.``a \.claude/ directory where one agent declares the "gpt-4" model alias``() =
+        writeGradeRegistry ()
         claudeRejectedAgent <- "foreign-model-agent"
         claudeRejectedModel <- "gpt-4"
 
@@ -438,6 +473,7 @@ coverage:
     /// exactly the false zero the recursive walk fixes.
     [<Given>]
     member _.``a \.claude/ directory where the only agent sits in a role subfolder``() =
+        writeGradeRegistry ()
         claudeRejectedAgent <- "nested-agent"
         claudeRejectedModel <- "gpt-4"
 
@@ -447,6 +483,7 @@ coverage:
 
     [<Given>]
     member _.``a \.claude/ directory where one agent declares no model field``() =
+        writeGradeRegistry ()
         claudeRejectedAgent <- "no-model-agent"
         claudeRejectedModel <- ""
 
@@ -455,7 +492,26 @@ coverage:
             "---\nname: no-model-agent\ndescription: no-model fixture\ntools: Read\ncolor: blue\n---\nBody.\n"
 
     [<Given>]
+    member _.``a \.claude/ directory where one agent declares an effort its grade does not``() =
+        writeGradeRegistry ()
+
+        // `sonnet` is the execution grade, whose declared effort is `xhigh`.
+        write
+            (Path.Combine(".claude", "agents", "wrong-effort-agent.md"))
+            "---\nname: wrong-effort-agent\ndescription: effort fixture\ntools: Read\nmodel: sonnet\neffort: low\ncolor: blue\n---\nBody.\n"
+
+    /// A registry whose claude-code entry declares no `model-map` leaves the
+    /// validator with an empty vocabulary — the state it must refuse rather
+    /// than wave through.
+    [<Given>]
+    member _.``a \.claude/ directory whose repo-config\.yml declares no model-map for claude-code``() =
+        write "repo-config.yml" "harness:\n  - { name: claude-code, tier: source, agent-dir: .claude/agents }\n"
+        validatedAgent "no-vocabulary-agent"
+
+    [<Given>]
     member _.``a \.claude/ directory containing two agent files declaring the same name``() =
+        writeGradeRegistry ()
+
         for suffix in [ "a"; "b" ] do
             write
                 (Path.Combine(".claude", "agents", "duplicate-" + suffix + ".md"))
@@ -463,6 +519,7 @@ coverage:
 
     [<Given>]
     member _.``a \.claude/ directory where agents are valid but skills have issues``() =
+        writeGradeRegistry ()
         validatedAgent "valid-agent"
 
         Directory.CreateDirectory(Path.Combine(root, ".claude", "skills", "broken-skill"))
@@ -470,6 +527,7 @@ coverage:
 
     [<Given>]
     member _.``a \.claude/ directory where skills are valid but agents have issues``() =
+        writeGradeRegistry ()
         validatedSkill "valid-skill"
 
         write
@@ -505,6 +563,15 @@ coverage:
 
     [<Then>]
     member _.``the output identifies the nested agent``() = Assert.Contains("nested-agent", output)
+
+    [<Then>]
+    member _.``the output reports the effort the grade declares``() =
+        Assert.Contains("wrong-effort-agent", output)
+        Assert.Contains("effort: xhigh (the execution grade)", output)
+
+    [<Then>]
+    member _.``the output reports that no grade vocabulary is declared``() =
+        Assert.Contains("no grade vocabulary declared", output)
 
     [<Then>]
     member _.``the output reports the duplicate agent name``() =
@@ -1408,8 +1475,8 @@ coverage:
         Assert.False(Directory.Exists(Path.Combine(root, ".opencode", "skills")))
 
     [<Then>]
-    member _.``the corresponding \.opencode/ agent uses the "([^"]+)" model identifier``(model: string) =
-        Assert.Contains("model: " + model, File.ReadAllText(Path.Combine(root, ".opencode", "agents", "fixture.md")))
+    member _.``the corresponding \.opencode/ agent declares no model identifier``() =
+        Assert.DoesNotContain("model:", File.ReadAllText(Path.Combine(root, ".opencode", "agents", "fixture.md")))
 
     [<Then>]
     member _.``the output reports all sync checks as passing``() = Assert.Contains("PASSED", output)
@@ -1525,6 +1592,8 @@ module private ClaudeFeatureRunner =
 [<InlineData("Two agents with the same name fail validation")>]
 [<InlineData("--agents-only validates agents without checking skills")>]
 [<InlineData("--skills-only validates skills without checking agents")>]
+[<InlineData("An agent whose effort contradicts its grade fails validation")>]
+[<InlineData("A registry declaring no grade vocabulary fails closed")>]
 let ``Claude validation scenarios cross the published process`` title = ClaudeFeatureRunner.run title
 
 module private AdditionalFeatureRunner =
@@ -1641,8 +1710,8 @@ let ``triage scenarios cross the published process`` title =
 [<InlineData("Syncing converts Claude agents to OpenCode format and leaves skills in place")>]
 [<InlineData("The --dry-run flag previews changes without modifying files")>]
 [<InlineData("The --agents-only flag syncs agents without touching skills")>]
-[<InlineData("Model names are correctly translated to OpenCode equivalents")>]
-[<InlineData("The opus model name is translated to the same OpenCode equivalent as sonnet")>]
+[<InlineData("An OpenCode mirror pins no model, so the developer's active model applies")>]
+[<InlineData("A mirror pins no model whatever grade the source declares")>]
 [<InlineData("Directories that are in sync pass validation")>]
 [<InlineData("A description mismatch between directories fails validation")>]
 [<InlineData("A count mismatch between directories fails validation")>]

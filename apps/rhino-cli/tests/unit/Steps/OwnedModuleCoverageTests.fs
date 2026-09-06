@@ -707,3 +707,42 @@ let ``Gate package validation accepts the exact non-empty lint-staged projection
               ExecutableHooks = set [ ".husky/pre-commit" ] }
 
     Assert.True(Result.isOk result)
+
+[<Fact>]
+let ``RepoConfig parses the grade vocabulary and each harness's model map`` () =
+    // A grade whose `effort` is absent, and a grade whose whole entry is null,
+    // both drop out rather than landing in the map with an empty effort — an
+    // empty effort would read as "this grade declares no effort requirement".
+    let text =
+        String.Join(
+            "\n",
+            [ "model-grades:"
+              "  planning: { effort: high }"
+              "  execution: { effort: xhigh }"
+              "  effortless: {}"
+              "  absent:"
+              "harness:"
+              "  - name: claude-code"
+              "    tier: source"
+              "    model-map: { planning: opus, execution: sonnet }"
+              "  - name: opencode"
+              "    tier: generated"
+              "" ]
+        )
+
+    match parse text with
+    | Error message -> Assert.Fail message
+    | Ok parsed ->
+        Assert.Equal<Map<string, string>>(Map.ofList [ "planning", "high"; "execution", "xhigh" ], parsed.ModelGrades)
+
+        let byName name =
+            parsed.Harness |> List.find (fun entry -> entry.Name = name)
+
+        Assert.Equal<Map<string, string>>(
+            Map.ofList [ "planning", "opus"; "execution", "sonnet" ],
+            (byName "claude-code").ModelMap
+        )
+
+        // An entry declaring no `model-map:` is the state that makes a mirror
+        // pin no model at all, so it must parse to an empty map, not a failure.
+        Assert.True((byName "opencode").ModelMap.IsEmpty)

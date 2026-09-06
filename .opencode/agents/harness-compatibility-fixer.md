@@ -1,6 +1,5 @@
 ---
 description: Applies validated fixes from a harness-compatibility-checker audit report. Auto-remediates Phase 0 parity sync drift (Invariant 3 via npm run generate:bindings) and Phase 1 catalog/binding updates. Also updates specs/apps/rhino/ when harness changes alter documented CLI behaviour. Flags all other findings for human resolution.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow

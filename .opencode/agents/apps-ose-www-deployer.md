@@ -1,6 +1,5 @@
 ---
 description: Deploys ose-web to production environment branch (prod-ose-www) after validation. Vercel listens to production branch for automatic builds.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   grep: allow

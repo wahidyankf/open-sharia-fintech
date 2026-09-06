@@ -18,13 +18,14 @@ let private sourceMapping (description: string) (model: string) : Dictionary<str
     result.["tools"] <- "Read, Write"
     result
 
-let private mirrorMapping (description: string) (model: string) : Dictionary<string, obj> =
+/// No `model` key: the opencode registry entry declares no `model-map:`, so a
+/// conforming mirror pins no model and lets OpenCode resolve one.
+let private mirrorMapping (description: string) : Dictionary<string, obj> =
     let permissions = Dictionary<obj, obj>()
     permissions.["read"] <- "allow"
     permissions.["write"] <- "allow"
     let result = Dictionary<string, obj>()
     result.["description"] <- description
-    result.["model"] <- model
     result.["permission"] <- permissions
     result
 
@@ -63,7 +64,7 @@ type HarnessSyncSteps() =
                   validateAgentYaml
                       "fixture"
                       (sourceMapping sourceDescription "sonnet")
-                      (mirrorMapping mirrorDescription (convertModel "sonnet"))
+                      (mirrorMapping mirrorDescription)
                       "Agent body.\n"
                       "Agent body.\n"
                       "body mismatch" ]
@@ -142,8 +143,8 @@ type HarnessSyncSteps() =
         Assert.Equal<string list>([ ".opencode/agents/fixture.md" ], writtenPaths)
 
     [<Then>]
-    member _.``the corresponding \.opencode/ agent uses the "([^"]+)" model identifier``(model: string) =
-        Assert.Contains($"model: {model}", converted.Value.Content)
+    member _.``the corresponding \.opencode/ agent declares no model identifier``() =
+        Assert.DoesNotContain("model:", converted.Value.Content)
 
     [<Then>]
     member _.``the output reports all sync checks as passing``() =
@@ -185,7 +186,7 @@ module private HarnessSyncScenarios =
         steps.``a \.claude/ agent configured with the "([^"]+)" model`` (sourceModel)
         steps.``the developer runs rhino-cli harness bindings generate`` ()
         steps.``the command exits successfully`` ()
-        steps.``the corresponding \.opencode/ agent uses the "([^"]+)" model identifier`` ("zai-coding-plan/glm-5.2")
+        steps.``the corresponding \.opencode/ agent declares no model identifier`` ()
 
     let validate () =
         let steps = HarnessSyncSteps()
@@ -220,7 +221,7 @@ let ``agents-only skips skills`` () = HarnessSyncScenarios.agentsOnly ()
 [<Theory>]
 [<InlineData("sonnet")>]
 [<InlineData("opus")>]
-let ``model aliases map to OpenCode`` model = HarnessSyncScenarios.model model ()
+let ``mirrors pin no model whatever grade the source declares`` model = HarnessSyncScenarios.model model ()
 
 [<Fact>]
 let ``synchronised agents validate`` () = HarnessSyncScenarios.validate ()

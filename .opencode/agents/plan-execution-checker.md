@@ -1,6 +1,5 @@
 ---
 description: Validates completed plan implementation by verifying all requirements met, code quality standards followed, and acceptance criteria satisfied. Final quality gate before marking plan complete.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   glob: allow

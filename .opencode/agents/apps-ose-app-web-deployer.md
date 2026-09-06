@@ -1,6 +1,5 @@
 ---
 description: Deploys the OSE Application app group to staging via the scheduled ose-app-test-local-deploy-stag.yml GitHub Actions workflow. The workflow runs the full local-stack test suite, then force-pushes the stag-ose-app-web and stag-ose-be branches. Vercel listens to stag-ose-app-web for automatic builds. Production promotion is deferred — no production-CD workflow exists yet.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   grep: allow

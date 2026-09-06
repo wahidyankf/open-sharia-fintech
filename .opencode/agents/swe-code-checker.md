@@ -1,6 +1,5 @@
 ---
 description: Validates that application and library projects conform to platform coding standards, Nx target conventions, and language-specific best practices. Outputs to local-tmp/swe-code/ with progressive streaming.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   glob: allow

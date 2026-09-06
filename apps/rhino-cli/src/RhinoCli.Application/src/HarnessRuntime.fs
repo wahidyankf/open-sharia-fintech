@@ -1442,7 +1442,7 @@ let private opencodeFieldPolicyTable: (string * FieldAction * string) list =
     [ "name", Drop, "filename carries the agent name"
       "description", Preserve, ""
       "tools", Translate, ""
-      "model", Translate, ""
+      "model", Drop, "the opencode registry entry declares no model-map, so the mirror pins no model"
       "color", Translate, ""
       "skills", Preserve, ""
       "maxTurns", Translate, ""
@@ -1490,11 +1490,6 @@ let convertPermission (claudeTools: string list) : Map<string, string> =
     |> List.filter (fun t -> t <> "")
     |> List.map (fun t -> t, "allow")
     |> Map.ofList
-
-/// Every Claude model tier resolves to the same OpenCode model ID — the
-/// `zai-coding-plan` binding has one tier, so `sonnet`/`opus`/anything else
-/// all translate identically [Repo-grounded — `converter.rs::convert_model`].
-let convertModel (_claudeModel: string) : string = "zai-coding-plan/glm-5.2"
 
 /// The source filename's stem, used to label a `ConversionWarning`
 /// [Repo-grounded — `converter.rs::agent_name_from_path`].
@@ -1622,21 +1617,6 @@ let private applyField (agent: OpenCodeAgent) (action: FieldAction) (key: string
     | Translate, "tools" ->
         { agent with
             Permission = convertPermission (parseClaudeTools value) }
-    | Translate, "model" ->
-        // Unlike `color` (guard, no fallback below), Rust's `apply_translate`
-        // reads `model` via `value.as_str().unwrap_or("")` — translation
-        // always runs, even when the frontmatter value is absent or not a
-        // string (e.g. a bare `model:` scalar parses as YAML null). Since
-        // `convertModel` ignores its argument entirely, the only observable
-        // effect of skipping this call was leaving `agent.Model` at its
-        // empty-string default instead of the translated value every other
-        // agent gets.
-        let s =
-            match value with
-            | :? string as s -> s
-            | _ -> ""
-
-        { agent with Model = convertModel s }
     | Translate, "color" ->
         match value with
         | :? string as s -> { agent with Color = convertColor s }
@@ -1682,14 +1662,22 @@ let private yamlString (s: string) : string =
     else
         s
 
-/// Hand-rolled Go-`yaml.v3`-compatible encoder: `description`/`model` always
-/// emit, `permission` emits `{}` when empty else one entry per line sorted by
-/// key, `color`/`steps`/`skills` are omitted when at their zero value
+/// Hand-rolled Go-`yaml.v3`-compatible encoder: `description` always emits,
+/// `model` emits only when the target harness declared one, `permission`
+/// emits `{}` when empty else one entry per line sorted by key, and
+/// `color`/`steps`/`skills` are omitted when at their zero value
 /// [Repo-grounded — `converter.rs::encode_opencode_agent`].
+///
+/// An omitted `model` is not a degraded emission. OpenCode resolves the model
+/// itself — a primary agent takes the globally configured model, a subagent
+/// takes the model of the primary that invoked it — so writing no key is what
+/// lets a mirror follow whatever the developer is running.
 let private encodeOpenCodeAgent (agent: OpenCodeAgent) : string =
     let lines = ResizeArray<string>()
     lines.Add(sprintf "description: %s" (yamlString agent.Description))
-    lines.Add(sprintf "model: %s" (yamlString agent.Model))
+
+    if agent.Model <> "" then
+        lines.Add(sprintf "model: %s" (yamlString agent.Model))
 
     if Map.isEmpty agent.Permission then
         lines.Add "permission: {}"
@@ -1953,17 +1941,59 @@ let private describeYamlValueKind (value: obj) : string =
 /// four-grade tier vocabulary. The pairing follows each vendor's own published
 /// positioning of its lineup rather than a benchmark ranking.
 ///
+/// The capability-grade translation resolved from `repo-config.yml`.
+///
+/// The grade is the pivot rather than the Claude alias: an agent declares a
+/// `model:` alias, the `claude-code` entry's `model-map:` resolves it to a
+/// grade, and each other harness realizes that grade through its own
+/// `model-map:`. A harness that declares no map yields an empty
+/// [`ModelOfGrade`], which is how "emit no model key at all" is expressed as
+/// data instead of as a branch in the emitter.
+type GradeMaps =
+    {
+        /// Claude `model:` alias -> capability grade
+        GradeOfAlias: Map<string, string>
+        /// Capability grade -> the reasoning effort its agents declare
+        EffortOfGrade: Map<string, string>
+        /// Capability grade -> the target harness's model identifier
+        ModelOfGrade: Map<string, string>
+    }
+
+let emptyGradeMaps: GradeMaps =
+    { GradeOfAlias = Map.empty
+      EffortOfGrade = Map.empty
+      ModelOfGrade = Map.empty }
+
+let private harnessModelMap (config: RepoConfig.RepoConfig) (harnessName: string) : Map<string, string> =
+    config.Harness
+    |> List.tryFind (fun entry -> entry.Name = harnessName)
+    |> Option.map (fun entry -> entry.ModelMap)
+    |> Option.defaultValue Map.empty
+
+/// Builds the translation targeting `harnessName`. The `claude-code` entry is
+/// always the source of the alias vocabulary, whatever the target.
+let gradeMapsFor (config: RepoConfig.RepoConfig) (harnessName: string) : GradeMaps =
+    { GradeOfAlias =
+        harnessModelMap config "claude-code"
+        |> Map.toList
+        |> List.map (fun (grade, alias) -> alias, grade)
+        |> Map.ofList
+      EffortOfGrade = config.ModelGrades
+      ModelOfGrade = harnessModelMap config harnessName }
+
+let loadGradeMaps (repoRoot: string) (harnessName: string) : GradeMaps =
+    gradeMapsFor (RepoConfig.loadOrDefault repoRoot) harnessName
+
 /// Returns `""` for a tier with no Codex counterpart — an empty alias,
-/// `inherit`, or a pinned `claude-*` ID. The encoder then omits the `model`
-/// key and Codex applies its own default, which is the honest outcome: there
-/// is no Codex model that means "whatever the caller is running".
-let convertCodexModel (claudeModel: string) : string =
-    match claudeModel with
-    | "fable" -> "gpt-6-astra"
-    | "opus" -> "gpt-5.6-sol"
-    | "sonnet" -> "gpt-5.6-terra"
-    | "haiku" -> "gpt-5.6-luna"
-    | _ -> ""
+/// `inherit`, a pinned `claude-*` ID, or a grade the target harness declares
+/// no model for. The encoder then omits the `model` key and the harness
+/// applies its own default, which is the honest outcome: there is no Codex
+/// model that means "whatever the caller is running".
+let convertCodexModel (maps: GradeMaps) (claudeModel: string) : string =
+    maps.GradeOfAlias
+    |> Map.tryFind claudeModel
+    |> Option.bind (fun grade -> Map.tryFind grade maps.ModelOfGrade)
+    |> Option.defaultValue ""
 
 /// Maps a Claude `effort` level onto Codex's `model_reasoning_effort`.
 ///
@@ -2010,7 +2040,12 @@ let private applyCodexPreserve (agent: CodexAgent) (key: string) (value: obj) : 
 /// has no Codex counterpart, so a tier that silently vanished from the mirror
 /// still surfaces a `ConversionWarning` — the same signal `DropWarn` gave
 /// before these two fields became translatable.
-let private applyCodexTranslate (agent: CodexAgent) (key: string) (value: obj) : CodexAgent * (string * string) option =
+let private applyCodexTranslate
+    (maps: GradeMaps)
+    (agent: CodexAgent)
+    (key: string)
+    (value: obj)
+    : CodexAgent * (string * string) option =
     let asString =
         match value with
         | :? string as s -> s.Trim()
@@ -2018,7 +2053,7 @@ let private applyCodexTranslate (agent: CodexAgent) (key: string) (value: obj) :
 
     match key with
     | "model" ->
-        let mapped = convertCodexModel asString
+        let mapped = convertCodexModel maps asString
 
         if mapped <> "" then
             { agent with Model = mapped }, None
@@ -2071,6 +2106,7 @@ let private codexAgentFieldPolicy: Map<string, FieldPolicy> =
 /// the body from `claudeDir` to `mirrorDir`
 /// [Repo-grounded — `codex.rs::convert_codex_agent_inner`].
 let convertCodexAgentContent
+    (maps: GradeMaps)
     (inputPath: string)
     (agentName: string)
     (claudeDir: string)
@@ -2099,7 +2135,7 @@ let convertCodexAgentContent
                         out <- next
                         finding |> Option.iter preserveFindings.Add
                     | Translate ->
-                        let next, finding = applyCodexTranslate out key value
+                        let next, finding = applyCodexTranslate maps out key value
                         out <- next
                         finding |> Option.iter preserveFindings.Add
                     | _ -> ()
@@ -2125,13 +2161,14 @@ let convertCodexAgentContent
         Error(sprintf "failed to convert %s: %s" inputPath ex.Message)
 
 let private convertCodexAgentInner
+    (maps: GradeMaps)
     (inputPath: string)
     (agentName: string)
     (claudeDir: string)
     (mirrorDir: string)
     : Result<CodexAgent * string * ConversionWarning list, string> =
     try
-        convertCodexAgentContent inputPath agentName claudeDir mirrorDir (File.ReadAllText inputPath)
+        convertCodexAgentContent maps inputPath agentName claudeDir mirrorDir (File.ReadAllText inputPath)
     with ex ->
         Error(sprintf "failed to convert %s: %s" inputPath ex.Message)
 
@@ -2145,6 +2182,7 @@ let private convertCodexAgentInner
 /// [`convertAllCodexAgents`] instead of the per-file `Failed`/`FailedFiles`
 /// accounting every other conversion failure gets.
 let convertCodexAgent
+    (maps: GradeMaps)
     (inputPath: string)
     (outputPath: string)
     (agentName: string)
@@ -2157,7 +2195,7 @@ let convertCodexAgent
         | "" -> "."
         | d -> d
 
-    convertCodexAgentInner inputPath agentName claudeDir mirrorDir
+    convertCodexAgentInner maps inputPath agentName claudeDir mirrorDir
     |> Result.bind (fun (agent, output, warnings) ->
         try
             if not dryRun then
@@ -2177,6 +2215,7 @@ let convertCodexAgent
 let convertAllCodexAgents (repoRoot: string) (dryRun: bool) : Result<CodexEmitResult, string> =
     let claudeDir = Path.Combine(repoRoot, ".claude", "agents")
     let codexDir = Path.Combine(repoRoot, codexAgentDir)
+    let maps = loadGradeMaps repoRoot "codex"
 
     discoverAgentSources claudeDir
     |> Result.map (fun sources ->
@@ -2186,7 +2225,7 @@ let convertAllCodexAgents (repoRoot: string) (dryRun: bool) : Result<CodexEmitRe
                 let filename = name + "." + codexAgentExtension
                 let output = Path.Combine(codexDir, filename)
 
-                match convertCodexAgent input output name claudeDir dryRun with
+                match convertCodexAgent maps input output name claudeDir dryRun with
                 | Ok(agent, warnings) ->
                     { acc with
                         Result =
@@ -2445,18 +2484,18 @@ let validateAgentYaml
     if claudeDescription <> opencodeDescription then
         ValidationCheck.failed checkName claudeDescription opencodeDescription "description mismatch"
     else
-        let expectedModel =
-            match tryGetField claudeMapping "model" with
-            | Some(:? string as s) -> convertModel s
-            | _ -> convertModel ""
-
+        // The opencode registry entry declares no `model-map:`, so the mirror
+        // must pin no model and let OpenCode resolve one. Asserting the
+        // absence is what makes that enforceable: a hand-edited mirror that
+        // re-adds a `model:` key is caught here rather than silently
+        // overriding the developer's active model.
         let actualModel =
             match tryGetField opencodeMapping "model" with
             | Some(:? string as s) -> s
             | _ -> ""
 
-        if expectedModel <> actualModel then
-            ValidationCheck.failed checkName expectedModel actualModel "model mismatch"
+        if actualModel <> "" then
+            ValidationCheck.failed checkName "no model key" actualModel "opencode mirrors pin no model"
         else
             let expectedPermission =
                 tryGetField claudeMapping "tools"
@@ -2683,6 +2722,7 @@ let validateSync (repoRoot: string) : ValidationResult =
 /// [Repo-grounded — `bindings.rs::expected_bindings`].
 let expectedBindings (repoRoot: string) : Result<BindingFile list, string> =
     let claudeDir = Path.Combine(repoRoot, ".claude", "agents")
+    let maps = loadGradeMaps repoRoot "codex"
 
     if not (Directory.Exists claudeDir) then
         Ok []
@@ -2697,7 +2737,7 @@ let expectedBindings (repoRoot: string) : Result<BindingFile list, string> =
                     match acc with
                     | Error e -> Error e
                     | Ok bindings ->
-                        match convertCodexAgentInner input name claudeDir mirrorDir with
+                        match convertCodexAgentInner maps input name claudeDir mirrorDir with
                         | Error e -> Error e
                         | Ok(_agent, content, _warnings) ->
                             Ok(
@@ -2749,6 +2789,7 @@ let private validateBindingFile (repoRoot: string) (binding: BindingFile) : Vali
 /// hand-maintained and deliberately unguarded
 /// [Repo-grounded — `bindings.rs::validate_codex_config_region`].
 let private validateCodexConfigRegion (repoRoot: string) : ValidationCheck =
+    let maps = loadGradeMaps repoRoot "codex"
     let checkName = sprintf "Codex Config Region: %s" codexConfigFile
     let claudeDir = Path.Combine(repoRoot, ".claude", "agents")
     let configPath = joinRel repoRoot codexConfigFile
@@ -2772,7 +2813,7 @@ let private validateCodexConfigRegion (repoRoot: string) : ValidationCheck =
 
                     sources
                     |> List.choose (fun (input, name) ->
-                        match convertCodexAgentInner input name claudeDir mirrorDir with
+                        match convertCodexAgentInner maps input name claudeDir mirrorDir with
                         | Ok(agent, _, _) ->
                             Some
                                 { Name = agent.Name
@@ -2974,6 +3015,7 @@ type ClaudeAgentFull =
       Description: string
       Tools: string list
       Model: string
+      Effort: string
       Color: string
       Skills: string list }
 
@@ -2982,6 +3024,7 @@ let private claudeAgentFullEmpty: ClaudeAgentFull =
       Description = ""
       Tools = []
       Model = ""
+      Effort = ""
       Color = ""
       Skills = [] }
 
@@ -3021,10 +3064,19 @@ let validTools: Set<string> =
 /// [Repo-grounded — `agents/types.rs::valid_tools_sorted`].
 let validToolsSorted: string list = validTools |> Set.toList |> List.sort
 
-/// Allow-list of accepted Claude model alias strings; a grade must be declared
-/// [Repo-grounded — `agents/types.rs::valid_model_alias`].
-let validModelAlias: Set<string> =
-    set [ "sonnet"; "opus"; "haiku"; "fable"; "inherit" ]
+/// Accepted `model:` aliases for a validation run.
+///
+/// Derived from the `claude-code` registry entry's `model-map:` rather than
+/// hardcoded, so the grade vocabulary has one source of truth: renaming a
+/// grade in `repo-config.yml` moves the validator with it. `inherit` is added
+/// on top because it is a Claude Code semantic rather than a grade — it names
+/// no capability, it defers to the caller.
+let validModelAliasesFrom (maps: GradeMaps) : Set<string> =
+    maps.GradeOfAlias
+    |> Map.toList
+    |> List.map fst
+    |> Set.ofList
+    |> Set.add "inherit"
 
 /// Matches full Claude model IDs (e.g. `claude-sonnet-4-6`)
 /// [Repo-grounded — `agents/types.rs::valid_model_id_pattern`].
@@ -3167,6 +3219,7 @@ let private parseAgentYaml (frontmatter: string) : Result<ClaudeAgentFull, strin
                 { Name = str "name"
                   Description = str "description"
                   Model = str "model"
+                  Effort = str "effort"
                   Color = str "color"
                   Tools =
                     tryGetField mapping "tools"
@@ -3297,15 +3350,59 @@ let private validateToolsCheck (filename: string) (tools: string list) : Validat
 
 /// Checks that `model` is a valid alias or a full `claude-*` model ID
 /// [Repo-grounded — `agent_validator.rs::validate_model_check`].
-let private validateModelCheck (filename: string) (model: string) : ValidationCheck =
-    if validModelAlias.Contains model || validModelIdPattern.IsMatch model then
-        ValidationCheck.passed (sprintf "Agent: %s - Valid Model" filename) "Model valid"
+let private validateModelCheck (maps: GradeMaps) (filename: string) (model: string) : ValidationCheck =
+    let accepted = validModelAliasesFrom maps
+    let name = sprintf "Agent: %s - Valid Model" filename
+
+    if Map.isEmpty maps.GradeOfAlias then
+        // Fail closed. An empty vocabulary means the registry could not be
+        // read, and passing every model in that state would be the same false
+        // zero as validating no agents at all.
+        ValidationCheck.failed
+            name
+            "a claude-code model-map in repo-config.yml"
+            "no grade vocabulary declared"
+            "Cannot validate models: the claude-code registry entry declares no model-map"
+    elif accepted.Contains model || validModelIdPattern.IsMatch model then
+        ValidationCheck.passed name "Model valid"
     else
         ValidationCheck.failed
-            (sprintf "Agent: %s - Valid Model" filename)
-            "sonnet|opus|haiku|fable|inherit|claude-*"
+            name
+            (String.Join("|", Set.toList accepted) + "|claude-*")
             (sprintf "Model: %s" model)
             "Invalid model"
+
+/// Checks that an agent's `effort` matches the effort its grade declares.
+///
+/// Effort is a property of the capability grade, not of the individual agent:
+/// a weaker model is compensated with more reasoning effort, so the pairing is
+/// a repository-wide rule rather than a per-agent judgement. Agents that name
+/// no grade — `inherit` or a pinned `claude-*` ID — are skipped, because there
+/// is no grade whose effort they could contradict.
+let private validateEffortCheck
+    (maps: GradeMaps)
+    (filename: string)
+    (model: string)
+    (effort: string)
+    : ValidationCheck option =
+    match Map.tryFind model maps.GradeOfAlias with
+    | None -> None
+    | Some grade ->
+        match Map.tryFind grade maps.EffortOfGrade with
+        | None -> None
+        | Some expected ->
+            let name = sprintf "Agent: %s - Grade Effort" filename
+
+            if effort = expected then
+                Some(ValidationCheck.passed name (sprintf "effort matches the %s grade" grade))
+            else
+                Some(
+                    ValidationCheck.failed
+                        name
+                        (sprintf "effort: %s (the %s grade)" expected grade)
+                        (sprintf "effort: %s" (if effort = "" then "<absent>" else effort))
+                        (sprintf "effort contradicts the %s grade declared in repo-config.yml" grade)
+                )
 
 /// Checks that `color` is in the allow-list of named color tokens
 /// [Repo-grounded — `agent_validator.rs::validate_color_check`].
@@ -3401,6 +3498,7 @@ let private validateGeneratedReportsTools (filename: string) (tools: string list
 /// agent-name set updated with `agent.Name` when uniqueness passed
 /// [Repo-grounded — `agent_validator.rs::validate_agent`].
 let validateAgentDocument
+    (maps: GradeMaps)
     (agentPath: string)
     (filename: string)
     (content: string)
@@ -3440,7 +3538,10 @@ let validateAgentDocument
                 else
                     let fieldOrderChecks = validateFieldOrder filename frontmatter
                     let toolsCheck = validateToolsCheck filename agent.Tools
-                    let modelCheck = validateModelCheck filename agent.Model
+                    let modelCheck = validateModelCheck maps filename agent.Model
+
+                    let effortChecks =
+                        validateEffortCheck maps filename agent.Model agent.Effort |> Option.toList
 
                     let colorChecks =
                         if agent.Color <> "" then
@@ -3470,6 +3571,7 @@ let validateAgentDocument
                         [ formattingCheck; syntaxCheck; requiredCheck ]
                         @ fieldOrderChecks
                         @ [ toolsCheck; modelCheck ]
+                        @ effortChecks
                         @ colorChecks
                         @ [ filenameCheck; uniqueCheck; skillsCheck; noCommentsCheck ]
                         @ generatedReportsChecks
@@ -3477,13 +3579,14 @@ let validateAgentDocument
                     allChecks, updatedNames
 
 let private validateAgent
+    (maps: GradeMaps)
     (agentPath: string)
     (filename: string)
     (agentNames: Set<string>)
     (skillNames: Set<string>)
     : ValidationCheck list * Set<string> =
     try
-        validateAgentDocument agentPath filename (File.ReadAllText agentPath) agentNames skillNames
+        validateAgentDocument maps agentPath filename (File.ReadAllText agentPath) agentNames skillNames
     with ex ->
         [ ValidationCheck.failedMsg
               (sprintf "Agent: %s - Read File" filename)
@@ -3495,6 +3598,7 @@ let private validateAgent
 /// [Repo-grounded — `agent_validator.rs::validate_all_agents`].
 let private validateAllAgents (repoRoot: string) (skillNames: Set<string>) : ValidationCheck list =
     let agentsDir = Path.Combine(repoRoot, ".claude", "agents")
+    let maps = loadGradeMaps repoRoot "claude-code"
 
     if not (Directory.Exists agentsDir) then
         [ ValidationCheck.failedMsg "Read Agents Directory" "Failed to read agents directory: directory not found" ]
@@ -3512,7 +3616,7 @@ let private validateAllAgents (repoRoot: string) (skillNames: Set<string>) : Val
         |> Array.fold
             (fun (checks, names) path ->
                 let name = Path.GetFileName path
-                let newChecks, updatedNames = validateAgent path name names skillNames
+                let newChecks, updatedNames = validateAgent maps path name names skillNames
                 checks @ newChecks, updatedNames)
             ([], Set.empty)
         |> fst

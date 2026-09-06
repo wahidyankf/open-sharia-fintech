@@ -1,6 +1,5 @@
 ---
 description: Validates software engineering documentation separation between OSE Platform style guides (docs/explanation/) and AyoKoding educational content (apps/ayokoding-www/). Ensures NO DUPLICATION between platforms, proper prerequisite statements, and style guide focus on repository-specific conventions only (not language tutorials).
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   glob: allow

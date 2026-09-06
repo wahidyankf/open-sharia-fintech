@@ -1,6 +1,5 @@
 ---
 description: Creates project plans with requirements, technical documentation, and delivery checklists. Returns unresolved pre-write and post-write decisions to the calling root orchestrator for grilling, then resumes with resolved answers. Structures plans for systematic execution via the plan-execution workflow (orchestrated by the calling context).
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow

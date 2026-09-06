@@ -1,6 +1,5 @@
 ---
 description: Planning-grade PR-review coordinator — the mandatory synthesizer atop nine discipline specialists. Consumes the scout's risk tier, specialist set, shared context, probe class and prior-use state, then deduplicates, re-categorizes, reasonableness-filters, tool-verifies, and posts exactly ONE consolidated review.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   glob: allow

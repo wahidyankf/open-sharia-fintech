@@ -1,6 +1,5 @@
 ---
 description: Creates Primer ("Just Enough X") tutorial content for ayokoding-web — fast language/tool on-ramps with 75-85 heavily annotated code examples authored at By-Example pace, scoped to just-enough breadth for productive use rather than comprehensive language coverage. Ensures bilingual content and quality compliance.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow

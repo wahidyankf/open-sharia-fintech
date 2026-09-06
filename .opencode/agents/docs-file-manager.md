@@ -1,6 +1,5 @@
 ---
 description: Expert at managing files and directories in docs/ directory. Use for renaming, moving, or deleting files/directories while maintaining kebab-case conventions, fixing links, and preserving git history.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow

@@ -1,6 +1,5 @@
 ---
 description: Validates links in ayokoding-web content. Checks internal and external links for correctness and accessibility.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow

@@ -1,6 +1,5 @@
 ---
 description: Tests live REST/GraphQL APIs against contracts and specs, then writes reproducible findings to a plan, delivery record, or local-tmp. Never drives a browser or fixes defects.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow

@@ -74,16 +74,22 @@ type CatalogEntry =
 /// repo-config-validate scenarios read
 /// [Repo-grounded — `repo_config/mod.rs::HarnessEntry`].
 type HarnessEntry =
-    { Name: string
-      Tier: Tier
-      AgentDir: string option
-      Mirrors: string option
-      ForbidDir: string option
-      SkillsDir: string option
-      SkillsMirrors: string option
-      Vendored: string list
-      Catalog: CatalogEntry option
-      Ownership: OwnershipEntry list }
+    {
+        Name: string
+        Tier: Tier
+        AgentDir: string option
+        Mirrors: string option
+        ForbidDir: string option
+        SkillsDir: string option
+        SkillsMirrors: string option
+        Vendored: string list
+        /// Capability grade -> this harness's model identifier. Empty when the
+        /// harness declares no `model-map:`, which is what tells the emitter to
+        /// write no `model` key at all rather than to guess one.
+        ModelMap: Map<string, string>
+        Catalog: CatalogEntry option
+        Ownership: OwnershipEntry list
+    }
 
 /// Whether a gate validates or mutates repository content
 /// [Repo-grounded — `repo_config/mod.rs::GateType`].
@@ -209,11 +215,15 @@ type HarnessCatalog = { Document: string; Verified: string }
 /// Parsed `repo-config.yml`, trimmed to this port's scope (see module doc
 /// comment) [Repo-grounded — `repo_config/mod.rs::RepoConfig`].
 type RepoConfig =
-    { Harness: HarnessEntry list
-      Gates: GateEntry list
-      GateSurfaceGuards: Map<GateSurface, GateSurfaceGuard>
-      Doctor: DoctorConfig
-      HarnessCatalog: HarnessCatalog option }
+    {
+        Harness: HarnessEntry list
+        Gates: GateEntry list
+        GateSurfaceGuards: Map<GateSurface, GateSurfaceGuard>
+        Doctor: DoctorConfig
+        /// Capability grade -> the reasoning effort its agents declare.
+        ModelGrades: Map<string, string>
+        HarnessCatalog: HarnessCatalog option
+    }
 
 /// The value `load`/`loadOptional` never produce on their own but that
 /// `loadOrDefault` falls back to on any load failure
@@ -225,6 +235,7 @@ let empty: RepoConfig =
       Doctor =
         { DotnetGlobalJson = None
           SkipTools = [] }
+      ModelGrades = Map.empty
       HarnessCatalog = None }
 
 /// Raw YAML-shaped intermediate records. `[<CLIMutable>]` gives each record a
@@ -267,6 +278,7 @@ type HarnessEntryDto =
       SkillsDir: string | null
       SkillsMirrors: string | null
       Vendored: ResizeArray<string>
+      ModelMap: Dictionary<string, string>
       Catalog: CatalogEntryDto
       Ownership: ResizeArray<OwnershipEntryDto> }
 
@@ -312,11 +324,15 @@ type DoctorConfigDto =
 type HarnessCatalogDto = { Document: string; Verified: string }
 
 [<CLIMutable>]
+type ModelGradeDto = { Effort: string | null }
+
+[<CLIMutable>]
 type RepoConfigDto =
     { Harness: ResizeArray<HarnessEntryDto>
       Gates: ResizeArray<GateEntryDto>
       GateSurfaceGuards: Dictionary<string, GateSurfaceGuardDto>
       Doctor: DoctorConfigDto
+      ModelGrades: Dictionary<string, ModelGradeDto>
       HarnessCatalog: HarnessCatalogDto }
 
 /// Matches `repo-config.yml`'s kebab-case keys (`agent-dir`,
@@ -325,6 +341,13 @@ type RepoConfigDto =
 /// `repo-config.yml` key this port does not model (see module doc comment).
 let private deserializer: IDeserializer =
     DeserializerBuilder().WithNamingConvention(HyphenatedNamingConvention.Instance).IgnoreUnmatchedProperties().Build()
+
+/// A `null` YAML mapping and an absent one are the same thing here: a harness
+/// that declares no map.
+let private toOptionMap (items: Dictionary<string, string>) : Map<string, string> =
+    match items with
+    | null -> Map.empty
+    | items -> items |> Seq.map (fun kv -> kv.Key, kv.Value) |> Map.ofSeq
 
 let private toOptionList (items: ResizeArray<'a>) : 'a list =
     match items with
@@ -409,6 +432,7 @@ let private toHarnessEntry (index: int) (dto: HarnessEntryDto) : Result<HarnessE
               SkillsDir = Option.ofObj dto.SkillsDir
               SkillsMirrors = Option.ofObj dto.SkillsMirrors
               Vendored = toOptionList dto.Vendored
+              ModelMap = toOptionMap dto.ModelMap
               Catalog =
                 match box dto.Catalog with
                 | null -> None
@@ -562,6 +586,7 @@ let private allowedHarnessKeys: Set<string> =
           "mirrors"
           "skills-mirrors"
           "vendored"
+          "model-map"
           "config"
           "forbid-dir"
           "shadow"
@@ -829,6 +854,19 @@ let private parseRepoConfig (data: string) : Result<RepoConfig, string> =
                           Gates = toOptionList dto.Gates |> List.map toGateEntry
                           GateSurfaceGuards = gateSurfaceGuards
                           Doctor = toDoctorConfig dto.Doctor
+                          ModelGrades =
+                            match dto.ModelGrades with
+                            | null -> Map.empty
+                            | grades ->
+                                grades
+                                |> Seq.choose (fun kv ->
+                                    match box kv.Value with
+                                    | null -> None
+                                    | _ ->
+                                        match kv.Value.Effort with
+                                        | null -> None
+                                        | effort -> Some(kv.Key, effort))
+                                |> Map.ofSeq
                           HarnessCatalog =
                             match box dto.HarnessCatalog with
                             | null -> None

@@ -17,6 +17,7 @@ let private harnessEntry name : RepoConfig.HarnessEntry =
       SkillsDir = None
       SkillsMirrors = None
       Vendored = []
+      ModelMap = Map.empty
       Catalog = None
       Ownership = [] }
 

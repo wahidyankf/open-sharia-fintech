@@ -1,6 +1,5 @@
 ---
 description: Applies validated fixes from repository rules audit reports including agent-Skill duplication removal, Skills coverage gap remediation, rules governance fixes (contradictions, inaccuracies, inconsistencies), licensing convention fixes, and software-documentation fixes.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow

@@ -1,6 +1,5 @@
 ---
 description: Validates ose-web content quality including Next.js content layer compliance and landing page standards.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   glob: allow

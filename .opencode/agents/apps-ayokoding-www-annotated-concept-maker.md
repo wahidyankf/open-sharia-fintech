@@ -1,6 +1,5 @@
 ---
 description: Creates Annotated-concept tutorial content for ayokoding-web with 45-60 concept-centric worked examples plus accessible Mermaid diagrams. Supports a validated no-code sub-mode (leadership topics — 20-30 worked scenarios, zero code). Ensures bilingual content and quality compliance.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow

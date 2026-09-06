@@ -1,6 +1,5 @@
 ---
 description: Creates By Example tutorial content for ayokoding-web with 75-85 heavily annotated code examples following five-part structure. Ensures bilingual content and quality compliance.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow

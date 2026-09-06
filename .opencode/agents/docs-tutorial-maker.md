@@ -1,6 +1,5 @@
 ---
 description: Creates and updates tutorial documentation following Diátaxis framework and tutorial conventions
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow

@@ -1,6 +1,5 @@
 ---
 description: Validates cross-vendor parity invariants (Phase 0, deterministic) and detects external drift between each supported coding-agent harness's current upstream configuration conventions and the platform-binding catalog (Phase 1, web-research-backed). Emits a combined dual-labelled audit report to local-tmp/harness-compat/.
-model: zai-coding-plan/glm-5.2
 permission:
   agent: allow
   bash: allow

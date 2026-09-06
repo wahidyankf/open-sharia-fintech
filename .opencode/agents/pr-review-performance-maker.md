@@ -1,6 +1,5 @@
 ---
 description: Execution-grade PR reviewer scoped to the performance discipline only — concrete or likely performance regressions, hot-path changes, algorithmic-complexity growth, and resource (memory/IO/alloc) concerns. One of nine discipline-scoped specialists feeding the pr-review-synthesis-maker coordinator; inherits pr-review-maker's hard rules verbatim, scoped to its own charter and SUPPRESS block.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   glob: allow

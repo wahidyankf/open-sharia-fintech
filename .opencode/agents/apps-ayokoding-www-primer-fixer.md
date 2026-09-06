@@ -1,6 +1,5 @@
 ---
 description: Applies validated fixes from apps-ayokoding-www-primer-checker audit reports. Re-validates Primer findings (density, structure, scope discipline) before applying changes. Use after reviewing checker output.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow

@@ -41,7 +41,7 @@ The `.claude/agents/plan/plan-maker.md` frontmatter sets `model: claude-sonnet-4
 
 ### OpenCode
 
-The `.opencode/agents/plan-maker.md` sets `model: zai-coding-plan/glm-5.2`.
+The `.opencode/agents/plan-maker.md` declares a `permission:` object rather than a `tools:` array.
 ```
 
 **Precedence**: the fence mechanism wins for any line inside both a fence and a heading scope.

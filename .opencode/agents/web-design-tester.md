@@ -1,6 +1,5 @@
 ---
 description: Performs design-aware evaluation of a live website and records findings in local-tmp by default. The design-team advocate of the live-site tester triad; output-mode plan or delivery must be explicit.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow

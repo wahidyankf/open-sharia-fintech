@@ -1,6 +1,5 @@
 ---
 description: Execution-grade PR reviewer scoped to the governance/rules-conformance discipline only — mechanical conformance to already-documented repo-governance/ conventions, naming/structure, ADRs, and spec-file presence. One of nine discipline-scoped specialists feeding the pr-review-synthesis-maker coordinator; inherits pr-review-maker's hard rules verbatim, scoped to its own charter and SUPPRESS block.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   glob: allow

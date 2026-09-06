@@ -1,6 +1,5 @@
 ---
 description: Creates repository rules and conventions in repo-governance/ directories. Documents standards, patterns, and quality requirements.
-model: zai-coding-plan/glm-5.2
 permission:
   edit: allow
   glob: allow

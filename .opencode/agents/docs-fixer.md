@@ -1,6 +1,5 @@
 ---
 description: Applies validated fixes from docs-checker audit reports. Re-validates factual accuracy findings before applying changes. Use after reviewing docs-checker output.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow

@@ -10,6 +10,19 @@ let private behaviourFeatureOwnership =
 let private agentContent name description =
     $"---\nname: {name}\ndescription: {description}\ntools: Read\nmodel: sonnet\n---\nInstructions for {name}.\n"
 
+/// The grade translation the emitter reads from `repo-config.yml` at runtime,
+/// declared here so a unit test exercises the mapping without depending on the
+/// repository's own registry.
+let private testGradeMaps: GradeMaps =
+    { GradeOfAlias = Map.ofList [ "fable", "ultra"; "opus", "planning"; "sonnet", "execution"; "haiku", "fast" ]
+      EffortOfGrade = Map.ofList [ "ultra", "high"; "planning", "high"; "execution", "xhigh"; "fast", "xhigh" ]
+      ModelOfGrade =
+        Map.ofList
+            [ "ultra", "gpt-6-astra"
+              "planning", "gpt-5.6-sol"
+              "execution", "gpt-5.6-terra"
+              "fast", "gpt-5.6-luna" ] }
+
 let private tieredAgentContent name model effort =
     $"---\nname: {name}\ndescription: {name} agent\ntools: Read\nmodel: {model}\neffort: {effort}\n---\nInstructions for {name}.\n"
 
@@ -67,7 +80,7 @@ type HarnessCodexBindingSteps() =
             sources
             |> List.map (fun (path, name, content) ->
                 let agent, rendered, _ =
-                    convertCodexAgentContent path name ".claude/agents" ".codex/agents" content
+                    convertCodexAgentContent testGradeMaps path name ".claude/agents" ".codex/agents" content
                     |> Result.defaultWith failwith
 
                 agent, rendered)

@@ -1,6 +1,5 @@
 ---
 description: "Executes Phase 0 of a plan delivery checklist: uses HIPPO for dependency and toolchain convergence, then runs scoped baselines and resolves preexisting failures before plan work begins."
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   glob: allow

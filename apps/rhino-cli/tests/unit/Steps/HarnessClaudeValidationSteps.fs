@@ -8,8 +8,22 @@ open Xunit
 let private behaviourFeatureOwnership =
     [ "specs/apps/rhino/cli/behaviours/harness/agents-validate-claude.feature" ]
 
+/// The grade translation the validator reads from `repo-config.yml` at
+/// runtime, declared here so a unit test exercises the vocabulary without
+/// depending on the repository's own registry.
+let private testGradeMaps: GradeMaps =
+    { GradeOfAlias = Map.ofList [ "fable", "ultra"; "opus", "planning"; "sonnet", "execution"; "haiku", "fast" ]
+      EffortOfGrade = Map.ofList [ "ultra", "high"; "planning", "high"; "execution", "xhigh"; "fast", "xhigh" ]
+      ModelOfGrade = Map.empty }
+
+/// Fixtures carry the effort their grade declares, because effort is a
+/// property of the grade rather than of the agent: `sonnet` is the execution
+/// grade, which sits at `xhigh`.
 let private validAgent name =
-    $"---\nname: {name}\ndescription: fixture agent\ntools: Read, Write\nmodel: sonnet\ncolor: blue\n---\nBody.\n"
+    $"---\nname: {name}\ndescription: fixture agent\ntools: Read, Write\nmodel: sonnet\neffort: xhigh\ncolor: blue\n---\nBody.\n"
+
+let private agentWithModelAndEffort name model effort =
+    $"---\nname: {name}\ndescription: fixture agent\ntools: Read, Write\nmodel: {model}\neffort: {effort}\ncolor: blue\n---\nBody.\n"
 
 let private agentWithModel name model =
     $"---\nname: {name}\ndescription: fixture agent\ntools: Read, Write\nmodel: {model}\ncolor: blue\n---\nBody.\n"
@@ -25,6 +39,7 @@ type HarnessClaudeValidationSteps() =
     let mutable declaredModel = ""
     let mutable declaredAgent = ""
     let mutable skillChecks: ValidationCheck list = [ passedSkill ]
+    let mutable maps = testGradeMaps
     let mutable agentsOnly = false
     let mutable skillsOnly = false
     let mutable result = ValidationResult.empty
@@ -34,7 +49,7 @@ type HarnessClaudeValidationSteps() =
         |> List.fold
             (fun (checks, names) (path, content) ->
                 let filename = Path.GetFileName path
-                let current, next = validateAgentDocument path filename content names Set.empty
+                let current, next = validateAgentDocument maps path filename content names Set.empty
                 checks @ current, next)
             ([], Set.empty)
         |> fst
@@ -47,11 +62,11 @@ type HarnessClaudeValidationSteps() =
     member _.``a \.claude/ directory where one agent is missing the required "description" field``() =
         agents <-
             [ "missing-description.md",
-              "---\nname: missing-description\ntools: Read, Write\nmodel: sonnet\ncolor: blue\n---\nBody.\n" ]
+              "---\nname: missing-description\ntools: Read, Write\nmodel: sonnet\neffort: xhigh\ncolor: blue\n---\nBody.\n" ]
 
     [<Given>]
     member _.``a \.claude/ directory where one agent declares the "fable" model alias``() =
-        agents <- [ "ultra-agent.md", agentWithModel "ultra-agent" "fable" ]
+        agents <- [ "ultra-agent.md", agentWithModelAndEffort "ultra-agent" "fable" "high" ]
 
     [<Given>]
     member _.``a \.claude/ directory where one agent declares the "gpt-4" model alias``() =
@@ -70,6 +85,22 @@ type HarnessClaudeValidationSteps() =
         declaredAgent <- "no-model-agent"
         declaredModel <- ""
         agents <- [ "no-model-agent.md", agentWithoutModel "no-model-agent" ]
+
+    [<Given>]
+    member _.``a \.claude/ directory where one agent declares an effort its grade does not``() =
+        // `sonnet` is the execution grade, whose declared effort is `xhigh`.
+        agents <- [ "wrong-effort-agent.md", agentWithModelAndEffort "wrong-effort-agent" "sonnet" "low" ]
+
+    /// An unreadable or model-map-less registry deserializes to an empty
+    /// vocabulary, which is the state the validator must refuse rather than
+    /// wave through.
+    [<Given>]
+    member _.``a \.claude/ directory whose repo-config\.yml declares no model-map for claude-code``() =
+        maps <-
+            { emptyGradeMaps with
+                EffortOfGrade = testGradeMaps.EffortOfGrade }
+
+        agents <- [ "valid-agent.md", validAgent "valid-agent" ]
 
     [<Given>]
     member _.``a \.claude/ directory containing two agent files declaring the same name``() =
@@ -120,17 +151,39 @@ type HarnessClaudeValidationSteps() =
 
     [<Then>]
     member _.``the output reports the rejected model value``() =
+        // The accepted vocabulary is compared as a set: it is assembled from
+        // the registry, so its rendering order is an implementation detail.
+        let expectedVocabulary =
+            Set.ofList [ "fable"; "opus"; "sonnet"; "haiku"; "inherit"; "claude-*" ]
+
         Assert.Contains(
             result.Checks,
             fun check ->
                 check.Name.Contains(declaredAgent)
                 && check.Actual = $"Model: {declaredModel}"
-                && check.Expected = "sonnet|opus|haiku|fable|inherit|claude-*"
+                && Set.ofArray (check.Expected.Split('|')) = expectedVocabulary
         )
 
     [<Then>]
     member _.``the output identifies the nested agent``() =
         Assert.Contains(result.Checks, fun check -> check.Name.Contains("nested-agent"))
+
+    [<Then>]
+    member _.``the output reports the effort the grade declares``() =
+        Assert.Contains(
+            result.Checks,
+            fun check ->
+                check.Name.Contains("wrong-effort-agent")
+                && check.Expected = "effort: xhigh (the execution grade)"
+                && check.Actual = "effort: low"
+        )
+
+    [<Then>]
+    member _.``the output reports that no grade vocabulary is declared``() =
+        Assert.Contains(
+            result.Checks,
+            fun check -> check.Status = "failed" && check.Actual = "no grade vocabulary declared"
+        )
 
     [<Then>]
     member _.``the output reports the duplicate agent name``() =
@@ -194,6 +247,24 @@ let ``agent declaring no model fails`` () =
         (fun s ->
             s.``the command exits with a failure code`` ()
             s.``the output reports the rejected model value`` ())
+
+[<Fact>]
+let ``effort contradicting the grade fails`` () =
+    HarnessClaudeScenarios.run
+        (fun s -> s.``a \.claude/ directory where one agent declares an effort its grade does not`` ())
+        (fun s -> s.``the developer runs agents validate-claude`` ())
+        (fun s ->
+            s.``the command exits with a failure code`` ()
+            s.``the output reports the effort the grade declares`` ())
+
+[<Fact>]
+let ``a registry with no grade vocabulary fails closed`` () =
+    HarnessClaudeScenarios.run
+        (fun s -> s.``a \.claude/ directory whose repo-config\.yml declares no model-map for claude-code`` ())
+        (fun s -> s.``the developer runs agents validate-claude`` ())
+        (fun s ->
+            s.``the command exits with a failure code`` ()
+            s.``the output reports that no grade vocabulary is declared`` ())
 
 [<Fact>]
 let ``duplicate agent name fails`` () =

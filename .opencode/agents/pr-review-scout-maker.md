@@ -1,6 +1,5 @@
 ---
 description: Planning-grade PR-review pass stage 0. Pins one head, selects the risk-routed specialist set, assembles shared context, and records the probe before one fan-out. Never discovers or posts findings.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   glob: allow

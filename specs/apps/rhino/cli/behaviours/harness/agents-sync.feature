@@ -26,17 +26,17 @@ Feature: Agent Configuration Synchronisation
       Then the command exits successfully
       And only agent files are written to the .opencode/ directory
 
-    Scenario: Model names are correctly translated to OpenCode equivalents
+    Scenario: An OpenCode mirror pins no model, so the developer's active model applies
       Given a .claude/ agent configured with the "sonnet" model
       When the developer runs rhino-cli harness bindings generate
       Then the command exits successfully
-      And the corresponding .opencode/ agent uses the "zai-coding-plan/glm-5.2" model identifier
+      And the corresponding .opencode/ agent declares no model identifier
 
-    Scenario: The opus model name is translated to the same OpenCode equivalent as sonnet
+    Scenario: A mirror pins no model whatever grade the source declares
       Given a .claude/ agent configured with the "opus" model
       When the developer runs rhino-cli harness bindings generate
       Then the command exits successfully
-      And the corresponding .opencode/ agent uses the "zai-coding-plan/glm-5.2" model identifier
+      And the corresponding .opencode/ agent declares no model identifier
 
   @agents-validate-sync
   Rule: agents validate-sync confirms .claude/ and .opencode/ are semantically equivalent

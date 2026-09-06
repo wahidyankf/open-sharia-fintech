@@ -101,7 +101,7 @@ Claude Code:
   # a blank model: is not a grade — always declare one
 
 OpenCode:
-  model: zai-coding-plan/glm-5.2 # every canonical grade maps to this model
+  # no model key at any grade — the developer's active OpenCode model applies
 
 Codex:
   model = "gpt-6-astra"   # ultra

@@ -1,6 +1,6 @@
 ---
 title: "Platform Binding Examples"
-description: "Covers the per-harness model-ID mapping tables for all four grades, the secondary binding's tier collapse, and the caveats that make a grade mean different things per vendor."
+description: "Covers the registry-driven per-harness model-ID mapping for all four grades, why one generated mirror pins no model, and the caveats that make a grade mean different things per vendor."
 category: explanation
 subcategory: development
 tags:
@@ -23,11 +23,16 @@ regenerate.
 
 | Grade     | Claude Code (`.claude/agents/`) | OpenCode (`.opencode/agents/`) | Codex (`.codex/agents/*.toml`) |
 | --------- | ------------------------------- | ------------------------------ | ------------------------------ |
-| Ultra     | `model: fable`                  | `zai-coding-plan/glm-5.2`      | `model = "gpt-6-astra"`        |
-| Planning  | `model: opus`                   | `zai-coding-plan/glm-5.2`      | `model = "gpt-5.6-sol"`        |
-| Execution | `model: sonnet`                 | `zai-coding-plan/glm-5.2`      | `model = "gpt-5.6-terra"`      |
-| Fast      | `model: haiku`                  | `zai-coding-plan/glm-5.2`      | `model = "gpt-5.6-luna"`       |
-| `inherit` | `model: inherit`                | `zai-coding-plan/glm-5.2`      | key omitted — vendor default   |
+| Ultra     | `model: fable`                  | key omitted                    | `model = "gpt-6-astra"`        |
+| Planning  | `model: opus`                   | key omitted                    | `model = "gpt-5.6-sol"`        |
+| Execution | `model: sonnet`                 | key omitted                    | `model = "gpt-5.6-terra"`      |
+| Fast      | `model: haiku`                  | key omitted                    | `model = "gpt-5.6-luna"`       |
+| `inherit` | `model: inherit`                | key omitted                    | key omitted — vendor default   |
+
+Every column is read from `repo-config.yml` at generate time: `model-grades:` names the four
+grades, and each `harness:` entry's `model-map:` gives its ID per grade. An entry declaring no
+`model-map:` emits no `model` key. Changing an ID is a registry edit plus
+`npm run generate:bindings` — never a code change.
 
 The Codex column pairs each grade with the model the vendor's own catalog positions at that level:
 its top-of-lineup model for ultra, its most capable current-generation model for planning, its
@@ -49,18 +54,13 @@ Claude Code's `effort` also reaches the Codex binding, as `model_reasoning_effor
 Codex additionally accepts `minimal`, which has no Claude Code counterpart and is never emitted.
 OpenCode declares no per-agent effort, so the field is dropped there.
 
-## Tier Collapse on the Secondary Binding
+## Why One Mirror Pins No Model
 
-The secondary binding's `convertModel` maps all four grades to `zai-coding-plan/glm-5.2` via the
-GLM Coding Plan primary provider. This is an intentional full-grade collapse, not an oversight: that
-plan exposes one model. Grade assignments therefore govern behaviour on the primary and Codex
-bindings, where a grade genuinely resolves to a different model. The `opencode-go` provider remains
-configured in `.opencode/opencode.json` for `/models` roster access but takes no part in grade
-mapping.
-
-If the provider or model changes, update `convertModel` in
-`apps/rhino-cli/src/RhinoCli.Application/src/HarnessRuntime.fs` and re-run
-`npm run generate:bindings`.
+The `opencode` entry declares no `model-map:` deliberately. That harness treats `model:` as
+optional and resolves an omitted one from the developer's own configuration; it has no `inherit`
+sentinel, so omission is the only way to express inheritance. Pinning an ID would override every
+developer's choice and would need re-verifying on each vendor roster change. A grade still travels
+to that mirror — it stays visible in the `.claude/` source — but it selects nothing.
 
 ## Where a Grade Does Not Mean the Same Thing
 

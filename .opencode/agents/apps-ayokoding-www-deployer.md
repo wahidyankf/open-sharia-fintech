@@ -1,6 +1,5 @@
 ---
 description: Deploys ayokoding-web (Next.js) to production environment branch (prod-ayokoding-www) after validation. Vercel listens to production branch for automatic builds.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   grep: allow

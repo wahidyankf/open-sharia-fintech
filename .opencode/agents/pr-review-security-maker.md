@@ -1,6 +1,5 @@
 ---
 description: Reviews injection and unsafe git/FS behaviour in semantic passes; in leak-only mode reviews sensitive values, protected environment properties, and machine paths.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   glob: allow
