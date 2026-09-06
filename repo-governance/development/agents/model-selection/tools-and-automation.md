@@ -19,9 +19,15 @@ when_to_use: Use when looking for what validates an agent's model-tier declarati
 `harness-claude` (`harness claude validate`) is the registered gate. Per agent it checks that the
 declared `model` is in the grade vocabulary or a pinned `claude-*` ID, that the declared `effort`
 matches the effort its grade declares, and that the body carries a **Model Selection Justification**
-block. Only the block's presence is checked: whether its argument is a good one is a judgement no
-validator can make, but its absence is not — an agent nobody argued a grade for is how the grade
-stops meaning anything.
+block whose first named grade is the one the frontmatter declares.
+
+Whether the argument is a _good_ one is a judgement no validator can make. That it exists, and that
+it argues for the grade actually declared, both are. The second check exists because a promotion
+that edits frontmatter and leaves prose behind produces a file arguing against its own
+configuration, and stale prose reads as a standing case for undoing the change. It compares only
+backticked grade names, and only the first one in the block, so a later sentence contrasting with
+another grade stays legal — which also means prose naming a grade without backticks is invisible to
+it. The gate is a floor, not a substitute for reading.
 
 Both the vocabulary and the effort pairing come from `repo-config.yml` — the `claude-code` entry's
 `model-map:` and the top-level `model-grades:` block — never from the validator's own source. If
