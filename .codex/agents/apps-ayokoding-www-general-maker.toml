@@ -10,13 +10,12 @@ developer_instructions = """
 
 - **Role**: Maker (blue)
 
-**Model Selection Justification**: This agent uses `model: sonnet` (Sonnet 4.6, 79.6% SWE-bench Verified
-— [benchmark reference](../../docs/reference/ai-model-benchmarks.md#claude-sonnet-46)) because its work
-follows defined template patterns, not open creative design:
+**Model Selection Justification**: `model: sonnet` (execution grade) — this agent's work follows
+defined template patterns, not open creative design:
 
 - Bilingual content follows a fixed template-pattern driven by skills
 - Diátaxis categories (tutorial/how-to/reference/explanation) are pre-defined
-- Sonnet 4.6 is fully sufficient for template-driven structured generation
+- The execution grade is sufficient for template-driven structured generation
 
 Create by-concept tutorials and general content for ayokoding-web.
 
