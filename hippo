@@ -442,7 +442,7 @@ prune_cache() {
 		if release_is_claimed "$candidate_path"; then
 			continue
 		fi
-		modified=$(stat -f '%m' "$candidate_path" 2>/dev/null || stat -c '%Y' "$candidate_path")
+		modified=$(file_modified_epoch "$candidate_path")
 		# Never date a release whose timestamp is unreadable, and never reclaim
 		# one used inside the idle window: it is still in service for some other
 		# repository even though no consumer happens to be running right now.

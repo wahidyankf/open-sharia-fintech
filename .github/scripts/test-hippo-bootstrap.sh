@@ -10,6 +10,18 @@ trap 'rm -rf -- "$temporary_root"' EXIT HUP INT TERM
 subject="$temporary_root/consumer/hippo"
 mkdir -p "$temporary_root/consumer" "$temporary_root/fake-bin" "$temporary_root/payload"
 cp "$repository_root/hippo" "$subject"
+
+# Timestamp reads must go through the platform-branching helper. The BSD form
+# `stat -f` means "filesystem status" to GNU coreutils, which writes a block of
+# filesystem detail to stdout before failing, so a `stat -f ... || stat -c ...`
+# fallback chain captures that detail alongside the real value and yields a
+# non-numeric result. Retention then silently treats every release as undatable
+# and reclaims nothing. That failure is invisible on macOS, so assert the shape
+# here rather than waiting for a Linux-only run to catch it.
+if grep -qE "stat -[fc] .*\|\| *stat -[fc] " "$repository_root/hippo"; then
+	echo "hippo must read timestamps through file_modified_epoch, not a stat fallback chain" >&2
+	exit 1
+fi
 chmod 755 "$subject"
 
 # The suite runs on both Linux and macOS runners. Pinning the fake uname to one

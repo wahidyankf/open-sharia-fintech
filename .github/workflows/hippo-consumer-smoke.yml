@@ -1,6 +1,18 @@
 name: HIPPO Consumer Smoke
 
 on:
+  # A Linux-only retention defect once reached main through a green pull request
+  # because this suite ran on no pull-request surface at all. The path filter
+  # keeps unrelated pull requests free of the job while every change to the
+  # consumer boundary is proved on both operating systems before it merges.
+  pull_request:
+    paths:
+      - hippo
+      - hippo.lock
+      - hippo.local.json.example
+      - .github/scripts/test-hippo-bootstrap.sh
+      - .github/scripts/test-hippo-consumer.sh
+      - .github/workflows/hippo-consumer-smoke.yml
   schedule:
     - cron: "0 6,18 * * *"
   workflow_dispatch:
@@ -52,13 +64,23 @@ jobs:
           ./hippo status --json --disk-path . > "${RUNNER_TEMP}/hippo-status.json"
           node -e '
           const value = JSON.parse(require("fs").readFileSync(process.env.RUNNER_TEMP + "/hippo-status.json", "utf8"));
-          if (value.schemaVersion !== 4 || value.profile?.resolvedProfile !== "local-constrained" || !value.configHash) process.exit(1);
-          const coordination = value.coordination;
-          if (coordination?.mode !== "reservation" || coordination.schemaVersion !== 4) process.exit(1);
+          const problems = [];
+          if (value.schemaVersion !== 4) problems.push("status schemaVersion " + value.schemaVersion);
+          if (!value.configHash) problems.push("missing configHash");
+          const profile = value.profile ?? {};
+          // resolvedProfile is pressure-dependent by design: the config declares a fallback and
+          // strict false, so a busy runner legitimately resolves to the fallback instead. Pin the
+          // config-derived request, and require only that the outcome stays on its declared chain.
+          if (profile.requestedProfile !== "local-constrained") problems.push("requestedProfile " + profile.requestedProfile);
+          if (!Array.isArray(profile.fallbackChain) || !profile.fallbackChain.includes(profile.resolvedProfile)) problems.push("resolvedProfile " + profile.resolvedProfile + " is outside its declared chain " + JSON.stringify(profile.fallbackChain));
+          const coordination = value.coordination ?? {};
+          if (coordination.mode !== "reservation") problems.push("coordination mode " + coordination.mode);
+          if (coordination.schemaVersion !== 4) problems.push("coordination schemaVersion " + coordination.schemaVersion);
           for (const field of ["capacity", "allocated", "waiting"]) {
             const vector = coordination[field];
-            if (typeof vector?.cpu !== "number" || typeof vector?.memoryBytes !== "number") process.exit(1);
+            if (typeof vector?.cpu !== "number" || typeof vector?.memoryBytes !== "number") problems.push(field + " vector " + JSON.stringify(vector));
           }
+          if (problems.length) { console.error("hippo status contract violated: " + problems.join("; ")); process.exit(1); }
           '
 
       - name: Verify shared root and OSE worker mappings
