@@ -67,3 +67,8 @@ Feature: Generated Harness Binding Files
       Given a repository whose generated agent mirrors each have a source agent
       When the developer runs harness bindings validate
       Then the command exits successfully
+
+    Scenario: A mirror the registry declares vendored is exempt from the orphan check
+      Given a repository whose generated agent directory holds a vendored mirror with no source agent
+      When the developer runs harness bindings validate
+      Then the command exits successfully

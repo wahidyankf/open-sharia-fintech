@@ -2980,13 +2980,17 @@ let private validateColorTierMaps (repoRoot: string) : ValidationCheck list =
 /// directory looking for files the source tree no longer accounts for, so the
 /// stale mirror survives regeneration and passes every other binding check.
 /// `README.md` is excluded because it documents the directory rather than
-/// mirroring an agent. Matching is on the file stem, which is what the emitter
-/// uses as the mirror's name for every generated harness.
-let mirrorOrphanNames (mirrorNames: string list) (sourceNames: string list) : string list =
+/// mirroring an agent, and so is any file the registry declares `vendored` —
+/// a hand-maintained file inside a generated tree has no source by design.
+/// Matching is on the file stem, which is what the emitter uses as the
+/// mirror's name for every generated harness.
+let mirrorOrphanNames (mirrorNames: string list) (sourceNames: string list) (vendored: string list) : string list =
     let sources = Set.ofList sourceNames
+    let exempt = Set.ofList vendored
 
     mirrorNames
     |> List.filter (fun name -> name <> "README.md")
+    |> List.filter (fun name -> not (exempt.Contains name))
     |> List.filter (fun name -> not (sources.Contains(Path.GetFileNameWithoutExtension name)))
     |> List.sort
 
@@ -2996,13 +3000,14 @@ let validateMirrorOrphanState
     (agentDir: string)
     (mirrorNames: Result<string list, string>)
     (sourceNames: string list)
+    (vendored: string list)
     : ValidationCheck =
     let checkName = sprintf "Mirror Orphans: %s" agentDir
 
     match mirrorNames with
     | Error e -> ValidationCheck.failedMsg checkName e
     | Ok names ->
-        match mirrorOrphanNames names sourceNames with
+        match mirrorOrphanNames names sourceNames vendored with
         | [] -> ValidationCheck.passed checkName (sprintf "every mirror under %s has a source agent" agentDir)
         | offenders ->
             let joined = String.Join(", ", offenders)
@@ -3038,7 +3043,18 @@ let private validateMirrorOrphansForEntry (repoRoot: string) (entry: RepoConfig.
                 | Error _ -> []
                 | Ok sources -> sources |> List.map snd
 
-            Some(validateMirrorOrphanState agentDir mirrorNames sourceNames)
+            // A path the entry's own `ownership:` list declares vendored is
+            // hand-maintained inside a generated tree, so it is exempt by
+            // declaration rather than by the check guessing at intent.
+            let vendored =
+                entry.Ownership
+                |> List.filter (fun o -> o.Class = RepoConfig.OwnershipClass.ClassVendored)
+                |> List.choose (fun o ->
+                    match stripDir (o.Path.TrimStart('/')) agentDir with
+                    | Some suffix when not (suffix.Contains "/") -> Some suffix
+                    | _ -> None)
+
+            Some(validateMirrorOrphanState agentDir mirrorNames sourceNames vendored)
     | _ -> None
 
 /// [`validateMirrorOrphansForEntry`] across every generated-tier registry entry,

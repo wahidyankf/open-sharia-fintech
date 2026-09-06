@@ -36,6 +36,7 @@ type HarnessBindingsSteps() =
     let mutable codexFiles: Result<string list, unit> = Ok []
     let mutable mirrorNames: Result<string list, string> = Ok [ "demo.md" ]
     let mutable sourceNames: string list = [ "demo" ]
+    let mutable vendoredMirrors: string list = []
     let mutable checks: ValidationCheck list = []
     let mutable nameResult: Result<unit, string> = Ok()
 
@@ -90,6 +91,12 @@ type HarnessBindingsSteps() =
         mirrorNames <- Ok [ "README.md"; "rules-maker.md" ]
         sourceNames <- [ "rules-maker" ]
 
+    [<Given>]
+    member _.``a repository whose generated agent directory holds a vendored mirror with no source agent``() =
+        mirrorNames <- Ok [ "README.md"; "rules-maker.md"; "ci-monitor-subagent.md" ]
+        sourceNames <- [ "rules-maker" ]
+        vendoredMirrors <- [ "ci-monitor-subagent.md" ]
+
     [<When>]
     member _.``the developer runs harness bindings generate for codex``() =
         requested <- "codex"
@@ -106,7 +113,7 @@ type HarnessBindingsSteps() =
             [ validateBindingContent binding bindingActual "regenerate the binding"
               validateCatalogCoverageState presentDirectory directoryExists catalog
               validateCodexAgentFilenames true codexFiles
-              validateMirrorOrphanState ".opencode/agents" mirrorNames sourceNames ]
+              validateMirrorOrphanState ".opencode/agents" mirrorNames sourceNames vendoredMirrors ]
 
     [<Then>]
     member _.``the harness name is not rejected as unknown``() =
@@ -206,6 +213,14 @@ module private HarnessBindingScenarios =
         steps.``the command exits with a failure code`` ()
         steps.``the output names the orphaned mirror and the source that no longer exists`` ()
 
+    let vendoredMirror () =
+        let steps = HarnessBindingsSteps()
+
+        steps.``a repository whose generated agent directory holds a vendored mirror with no source agent`` ()
+
+        steps.``the developer runs harness bindings validate`` ()
+        steps.``the command exits successfully`` ()
+
     let sourcedMirrors () =
         let steps = HarnessBindingsSteps()
         steps.``a repository whose generated agent mirrors each have a source agent`` ()
@@ -251,3 +266,7 @@ let ``orphaned generated mirror fails`` () =
 [<Fact>]
 let ``generated mirrors with sources pass`` () =
     HarnessBindingScenarios.sourcedMirrors ()
+
+[<Fact>]
+let ``vendored generated mirror is exempt`` () =
+    HarnessBindingScenarios.vendoredMirror ()

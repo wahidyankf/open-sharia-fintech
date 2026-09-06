@@ -33,6 +33,9 @@ the commit-discipline rule for their output.
     the mirrors a source produces, never the mirrors a source no longer produces. Renaming an agent
     therefore left the old mirror in place, and generation does not remove it — the emitter writes
     the files it can derive and never deletes the ones it cannot.
+  - A file the entry's own `ownership:` list declares `vendored` is exempt: a hand-maintained
+    tooling agent living inside a generated directory has no source by design. The exemption is a
+    declaration, never an inference — an undeclared file with no source is still an orphan.
 - **`harness:bindings-validation`** npm script — wraps `rhino-cli harness bindings validate`; invoked
   from the pre-push hook when binding surfaces change (AD8).
 - **`harness-compatibility-checker`** / **`harness-compatibility-fixer`** agents — run on

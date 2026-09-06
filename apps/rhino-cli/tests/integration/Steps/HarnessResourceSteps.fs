@@ -343,6 +343,33 @@ type HarnessResourceSteps() =
             )
         )
 
+    /// The same registry, with the codex entry additionally declaring one file
+    /// inside its generated agent directory as `vendored` — the shape a real
+    /// repository uses for a hand-maintained tooling agent that has no
+    /// `.claude/agents/` source and never will.
+    let writeThreeHarnessConfigWithVendoredMirror (root: string) : unit =
+        File.WriteAllText(
+            Path.Combine(root, "repo-config.yml"),
+            String.Join(
+                "\n",
+                [ "harness:"
+                  "  - { name: claude-code, tier: source, agent-dir: .claude/agents }"
+                  "  - name: opencode"
+                  "    tier: generated"
+                  "    agent-dir: .opencode/agents"
+                  "    mirrors: .claude/agents"
+                  "  - name: codex"
+                  "    tier: generated"
+                  "    agent-dir: .codex/agents"
+                  "    mirrors: .claude/agents"
+                  "    ownership:"
+                  "      - { path: .codex/agents/vendored-probe.toml, class: vendored, reason: hand-maintained tooling agent }"
+                  "coverage:"
+                  "  projects: []"
+                  "" ]
+            )
+        )
+
     /// The same registry, with the codex entry additionally declaring a
     /// skills-directory mirror alongside its existing agent-directory mirror
     /// — the shape `mirror_jobs` reads to build a [`Harness.MirrorJob`]
@@ -1724,6 +1751,22 @@ type HarnessResourceSteps() =
         writeOwnershipSupportingDocs root
         writeValidatedAgent root "probe-maker" [] |> ignore
         Harness.runHarnessBindingsGenerate root |> ignore
+
+    /// The vendored file is deliberately given a stem no source agent carries,
+    /// so it would be reported as an orphan if the declaration were ignored.
+    [<Given>]
+    member _.``a repository whose generated agent directory holds a vendored mirror with no source agent``() =
+        let root = scenarioRoot ()
+        writeThreeHarnessConfigWithVendoredMirror root
+        writeEmptyMirrorPair root
+        Directory.CreateDirectory(Path.Combine(root, ".github")) |> ignore
+        writeOwnershipSupportingDocs root
+        writeValidatedAgent root "probe-maker" [] |> ignore
+        Harness.runHarnessBindingsGenerate root |> ignore
+
+        let agentsDir = Path.Combine(root, ".codex", "agents")
+        let generated = File.ReadAllText(Path.Combine(agentsDir, "probe-maker.toml"))
+        File.WriteAllText(Path.Combine(agentsDir, "vendored-probe.toml"), generated)
 
     [<Then>]
     member _.``the output names the orphaned mirror and the source that no longer exists``() =
@@ -3403,6 +3446,10 @@ let ``A mirror whose source agent was renamed away fails validation`` () =
 [<Fact>]
 let ``A generated agent directory whose mirrors all have sources passes validation`` () =
     FeatureRunner.run "A generated agent directory whose mirrors all have sources passes validation"
+
+[<Fact>]
+let ``A mirror the registry declares vendored is exempt from the orphan check`` () =
+    FeatureRunner.run "A mirror the registry declares vendored is exempt from the orphan check"
 
 [<Fact>]
 let ``A .md file under .codex/agents fails validation`` () =

@@ -130,6 +130,39 @@ coverage:
   projects: []
 """
 
+    /// The same registry, with the codex entry declaring one file inside its
+    /// generated agent directory as `vendored` — the shape a real repository
+    /// uses for a hand-maintained tooling agent that has no `.claude/agents/`
+    /// source and never will.
+    let writeBindingRegistryWithVendoredMirror () =
+        write
+            "repo-config.yml"
+            """model-grades:
+  ultra: { effort: high }
+  planning: { effort: high }
+  execution: { effort: xhigh }
+  fast: { effort: xhigh }
+harness:
+  - name: claude-code
+    tier: source
+    agent-dir: .claude/agents
+    model-map: { ultra: fable, planning: opus, execution: sonnet, fast: haiku }
+  - name: opencode
+    tier: generated
+    agent-dir: .opencode/agents
+    mirrors: .claude/agents
+  - name: codex
+    tier: generated
+    agent-dir: .codex/agents
+    mirrors: .claude/agents
+    config: .codex/config.toml
+    model-map: { ultra: gpt-6-astra, planning: gpt-5.6-sol, execution: gpt-5.6-terra, fast: gpt-5.6-luna }
+    ownership:
+      - { path: .codex/agents/vendored-probe.toml, class: vendored, reason: hand-maintained tooling agent }
+coverage:
+  projects: []
+"""
+
     /// The grade vocabulary the Claude validator reads from `repo-config.yml`
     /// at runtime. A fixture repository without it makes the validator fail
     /// closed, so every validate-claude scenario seeds one just as a real
@@ -1008,6 +1041,23 @@ coverage:
         validatedAgent "probe-maker"
         run [ "harness"; "bindings"; "generate" ] |> ignore
 
+    /// The vendored file carries a stem no source agent has, so it would be
+    /// reported as an orphan if the declaration were ignored.
+    [<Given>]
+    member _.``a repository whose generated agent directory holds a vendored mirror with no source agent``() =
+        writeBindingRegistryWithVendoredMirror ()
+        emptyMirrorPair ()
+        Directory.CreateDirectory(Path.Combine(root, ".github")) |> ignore
+        writeCatalog [ ".claude"; ".opencode"; ".codex"; ".agents"; ".github" ]
+        writeGovernanceMaps ()
+        validatedAgent "probe-maker"
+        run [ "harness"; "bindings"; "generate" ] |> ignore
+
+        let generated =
+            File.ReadAllText(Path.Combine(root, ".codex", "agents", "probe-maker.toml"))
+
+        write (Path.Combine(".codex", "agents", "vendored-probe.toml")) generated
+
     [<Then>]
     member _.``the output names the orphaned mirror and the source that no longer exists``() =
         Assert.Contains("Mirror Orphans: .codex/agents", output)
@@ -1771,6 +1821,7 @@ let ``word-budget audit envelope crosses the published process`` () =
 [<InlineData("A .md file under .codex/agents fails validation")>]
 [<InlineData("A mirror whose source agent was renamed away fails validation")>]
 [<InlineData("A generated agent directory whose mirrors all have sources passes validation")>]
+[<InlineData("A mirror the registry declares vendored is exempt from the orphan check")>]
 let ``binding validation scenarios cross the published process`` title =
     AdditionalFeatureRunner.run "agents-bindings.feature" title
 
