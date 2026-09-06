@@ -28,6 +28,18 @@ Feature: Claude Code Agent and Skill Configuration Validation
     Then the command exits with a failure code
     And the output reports the rejected model value
 
+  Scenario: An agent nested in a role subfolder is validated
+    Given a .claude/ directory where the only agent sits in a role subfolder
+    When the developer runs agents validate-claude
+    Then the command exits with a failure code
+    And the output identifies the nested agent
+
+  Scenario: An agent declaring no model fails validation
+    Given a .claude/ directory where one agent declares no model field
+    When the developer runs agents validate-claude
+    Then the command exits with a failure code
+    And the output reports the rejected model value
+
   Scenario: Two agents with the same name fail validation
     Given a .claude/ directory containing two agent files declaring the same name
     When the developer runs agents validate-claude

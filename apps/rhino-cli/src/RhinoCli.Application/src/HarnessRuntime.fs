@@ -2844,8 +2844,8 @@ let private readWithSplitChildren (path: string) : string =
             head
     | _ -> head
 
-/// Checks that every `color:` and `model:` value used by a top-level
-/// `.claude/agents/*.md` resolves in its governance translation map
+/// Checks that every `color:` and `model:` value used by any
+/// `.claude/agents/**/*.md` resolves in its governance translation map
 /// [Repo-grounded — `bindings.rs::validate_color_tier_maps`].
 let private validateColorTierMaps (repoRoot: string) : ValidationCheck list =
     let agentsDir = Path.Combine(repoRoot, ".claude", "agents")
@@ -2860,7 +2860,7 @@ let private validateColorTierMaps (repoRoot: string) : ValidationCheck list =
             readWithSplitChildren (Path.Combine(repoRoot, "repo-governance/development/agents/model-selection.md"))
 
         let scalars (prefix: string) =
-            Directory.GetFiles(agentsDir, "*.md")
+            Directory.GetFiles(agentsDir, "*.md", SearchOption.AllDirectories)
             |> Array.collect (fun path ->
                 try
                     File.ReadAllText(path).Split('\n')
@@ -3021,10 +3021,10 @@ let validTools: Set<string> =
 /// [Repo-grounded — `agents/types.rs::valid_tools_sorted`].
 let validToolsSorted: string list = validTools |> Set.toList |> List.sort
 
-/// Allow-list of accepted Claude model alias strings (empty means default)
+/// Allow-list of accepted Claude model alias strings; a grade must be declared
 /// [Repo-grounded — `agents/types.rs::valid_model_alias`].
 let validModelAlias: Set<string> =
-    set [ ""; "sonnet"; "opus"; "haiku"; "fable"; "inherit" ]
+    set [ "sonnet"; "opus"; "haiku"; "fable"; "inherit" ]
 
 /// Matches full Claude model IDs (e.g. `claude-sonnet-4-6`)
 /// [Repo-grounded — `agents/types.rs::valid_model_id_pattern`].
@@ -3303,7 +3303,7 @@ let private validateModelCheck (filename: string) (model: string) : ValidationCh
     else
         ValidationCheck.failed
             (sprintf "Agent: %s - Valid Model" filename)
-            "<empty>|sonnet|opus|haiku|fable|inherit|claude-*"
+            "sonnet|opus|haiku|fable|inherit|claude-*"
             (sprintf "Model: %s" model)
             "Invalid model"
 
@@ -3490,7 +3490,7 @@ let private validateAgent
               (sprintf "Failed to read file: %s" ex.Message) ],
         agentNames
 
-/// Validates all `.md` agent files in `.claude/agents/` (skipping `README.md`)
+/// Validates all `.md` agent files under `.claude/agents/` recursively (skipping `README.md`)
 /// and returns every check result
 /// [Repo-grounded — `agent_validator.rs::validate_all_agents`].
 let private validateAllAgents (repoRoot: string) (skillNames: Set<string>) : ValidationCheck list =
@@ -3500,15 +3500,18 @@ let private validateAllAgents (repoRoot: string) (skillNames: Set<string>) : Val
         [ ValidationCheck.failedMsg "Read Agents Directory" "Failed to read agents directory: directory not found" ]
     else
         let files =
-            Directory.GetFiles agentsDir
-            |> Array.map Path.GetFileName
-            |> Array.filter (fun name -> name.EndsWith(".md", StringComparison.Ordinal) && name <> "README.md")
+            Directory.GetFiles(agentsDir, "*.md", SearchOption.AllDirectories)
+            |> Array.filter (fun path ->
+                let name = Path.GetFileName path
+                // The "*.md" pattern alone is not enough: on Windows it also
+                // matches longer extensions such as ".mdx".
+                name.EndsWith(".md", StringComparison.Ordinal) && name <> "README.md")
             |> Array.sort
 
         files
         |> Array.fold
-            (fun (checks, names) name ->
-                let path = Path.Combine(agentsDir, name)
+            (fun (checks, names) path ->
+                let name = Path.GetFileName path
                 let newChecks, updatedNames = validateAgent path name names skillNames
                 checks @ newChecks, updatedNames)
             ([], Set.empty)

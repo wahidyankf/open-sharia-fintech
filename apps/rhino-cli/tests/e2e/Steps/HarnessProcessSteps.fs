@@ -39,6 +39,8 @@ type HarnessProcessSteps() =
     /// One agent per grade of the four-grade vocabulary, paired with the Codex
     /// model and reasoning effort its mirror must carry.
     let mutable codexTiers: (string * string * string) list = []
+    let mutable claudeRejectedAgent = ""
+    let mutable claudeRejectedModel = ""
     let mutable firstConfig = ""
     let mutable secondConfig = ""
     let mutable mirrorSnapshot: (string * string) list = []
@@ -424,9 +426,33 @@ coverage:
 
     [<Given>]
     member _.``a \.claude/ directory where one agent declares the "gpt-4" model alias``() =
+        claudeRejectedAgent <- "foreign-model-agent"
+        claudeRejectedModel <- "gpt-4"
+
         write
             (Path.Combine(".claude", "agents", "foreign-model-agent.md"))
             "---\nname: foreign-model-agent\ndescription: foreign fixture\ntools: Read\nmodel: gpt-4\ncolor: blue\n---\nBody.\n"
+
+    /// The fixture is deliberately INVALID: a passing result would be
+    /// indistinguishable from the file never having been discovered, which is
+    /// exactly the false zero the recursive walk fixes.
+    [<Given>]
+    member _.``a \.claude/ directory where the only agent sits in a role subfolder``() =
+        claudeRejectedAgent <- "nested-agent"
+        claudeRejectedModel <- "gpt-4"
+
+        write
+            (Path.Combine(".claude", "agents", "swe", "nested-agent.md"))
+            "---\nname: nested-agent\ndescription: nested fixture\ntools: Read\nmodel: gpt-4\ncolor: blue\n---\nBody.\n"
+
+    [<Given>]
+    member _.``a \.claude/ directory where one agent declares no model field``() =
+        claudeRejectedAgent <- "no-model-agent"
+        claudeRejectedModel <- ""
+
+        write
+            (Path.Combine(".claude", "agents", "no-model-agent.md"))
+            "---\nname: no-model-agent\ndescription: no-model fixture\ntools: Read\ncolor: blue\n---\nBody.\n"
 
     [<Given>]
     member _.``a \.claude/ directory containing two agent files declaring the same name``() =
@@ -471,8 +497,14 @@ coverage:
 
     [<Then>]
     member _.``the output reports the rejected model value``() =
-        Assert.Contains("foreign-model-agent", output)
-        Assert.Contains("gpt-4", output)
+        Assert.Contains(claudeRejectedAgent, output)
+        Assert.Contains("Valid Model", output)
+
+        if claudeRejectedModel <> "" then
+            Assert.Contains(claudeRejectedModel, output)
+
+    [<Then>]
+    member _.``the output identifies the nested agent``() = Assert.Contains("nested-agent", output)
 
     [<Then>]
     member _.``the output reports the duplicate agent name``() =
@@ -1488,6 +1520,8 @@ module private ClaudeFeatureRunner =
 [<InlineData("An agent file missing a required frontmatter field fails validation")>]
 [<InlineData("An agent declaring the ultra-tier fable model alias passes validation")>]
 [<InlineData("An agent declaring a model outside the tier vocabulary fails validation")>]
+[<InlineData("An agent nested in a role subfolder is validated")>]
+[<InlineData("An agent declaring no model fails validation")>]
 [<InlineData("Two agents with the same name fail validation")>]
 [<InlineData("--agents-only validates agents without checking skills")>]
 [<InlineData("--skills-only validates skills without checking agents")>]

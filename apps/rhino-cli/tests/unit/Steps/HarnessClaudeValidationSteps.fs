@@ -1,5 +1,6 @@
 module RhinoCli.Tests.Unit.Steps.HarnessClaudeValidationSteps
 
+open System.IO
 open RhinoCli.Application.Harness
 open TickSpec
 open Xunit
@@ -13,11 +14,16 @@ let private validAgent name =
 let private agentWithModel name model =
     $"---\nname: {name}\ndescription: fixture agent\ntools: Read, Write\nmodel: {model}\ncolor: blue\n---\nBody.\n"
 
+let private agentWithoutModel name =
+    $"---\nname: {name}\ndescription: fixture agent\ntools: Read, Write\ncolor: blue\n---\nBody.\n"
+
 let private passedSkill = ValidationCheck.passed "Skill: fixture" "valid"
 let private failedSkill = ValidationCheck.failedMsg "Skill: fixture" "invalid"
 
 type HarnessClaudeValidationSteps() =
     let mutable agents: (string * string) list = []
+    let mutable declaredModel = ""
+    let mutable declaredAgent = ""
     let mutable skillChecks: ValidationCheck list = [ passedSkill ]
     let mutable agentsOnly = false
     let mutable skillsOnly = false
@@ -26,8 +32,9 @@ type HarnessClaudeValidationSteps() =
     let agentChecks () =
         agents
         |> List.fold
-            (fun (checks, names) (filename, content) ->
-                let current, next = validateAgentDocument filename filename content names Set.empty
+            (fun (checks, names) (path, content) ->
+                let filename = Path.GetFileName path
+                let current, next = validateAgentDocument path filename content names Set.empty
                 checks @ current, next)
             ([], Set.empty)
         |> fst
@@ -48,7 +55,21 @@ type HarnessClaudeValidationSteps() =
 
     [<Given>]
     member _.``a \.claude/ directory where one agent declares the "gpt-4" model alias``() =
+        declaredAgent <- "foreign-model-agent"
+        declaredModel <- "gpt-4"
         agents <- [ "foreign-model-agent.md", agentWithModel "foreign-model-agent" "gpt-4" ]
+
+    [<Given>]
+    member _.``a \.claude/ directory where the only agent sits in a role subfolder``() =
+        declaredAgent <- "nested-agent"
+        declaredModel <- "gpt-4"
+        agents <- [ "swe/nested-agent.md", agentWithModel "nested-agent" "gpt-4" ]
+
+    [<Given>]
+    member _.``a \.claude/ directory where one agent declares no model field``() =
+        declaredAgent <- "no-model-agent"
+        declaredModel <- ""
+        agents <- [ "no-model-agent.md", agentWithoutModel "no-model-agent" ]
 
     [<Given>]
     member _.``a \.claude/ directory containing two agent files declaring the same name``() =
@@ -102,10 +123,14 @@ type HarnessClaudeValidationSteps() =
         Assert.Contains(
             result.Checks,
             fun check ->
-                check.Name.Contains("foreign-model-agent")
-                && check.Actual = "Model: gpt-4"
-                && check.Expected = "<empty>|sonnet|opus|haiku|fable|inherit|claude-*"
+                check.Name.Contains(declaredAgent)
+                && check.Actual = $"Model: {declaredModel}"
+                && check.Expected = "sonnet|opus|haiku|fable|inherit|claude-*"
         )
+
+    [<Then>]
+    member _.``the output identifies the nested agent``() =
+        Assert.Contains(result.Checks, fun check -> check.Name.Contains("nested-agent"))
 
     [<Then>]
     member _.``the output reports the duplicate agent name``() =
@@ -147,6 +172,24 @@ let ``ultra-tier fable alias passes`` () =
 let ``model outside the tier vocabulary fails`` () =
     HarnessClaudeScenarios.run
         (fun s -> s.``a \.claude/ directory where one agent declares the "gpt-4" model alias`` ())
+        (fun s -> s.``the developer runs agents validate-claude`` ())
+        (fun s ->
+            s.``the command exits with a failure code`` ()
+            s.``the output reports the rejected model value`` ())
+
+[<Fact>]
+let ``agent nested in a role subfolder is validated`` () =
+    HarnessClaudeScenarios.run
+        (fun s -> s.``a \.claude/ directory where the only agent sits in a role subfolder`` ())
+        (fun s -> s.``the developer runs agents validate-claude`` ())
+        (fun s ->
+            s.``the command exits with a failure code`` ()
+            s.``the output identifies the nested agent`` ())
+
+[<Fact>]
+let ``agent declaring no model fails`` () =
+    HarnessClaudeScenarios.run
+        (fun s -> s.``a \.claude/ directory where one agent declares no model field`` ())
         (fun s -> s.``the developer runs agents validate-claude`` ())
         (fun s ->
             s.``the command exits with a failure code`` ()

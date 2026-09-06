@@ -1011,6 +1011,29 @@ gates:
           - repo-governance/
       ci: { scope: other }
 
+  # `harness bindings validate` proves each mirror matches its source; it says
+  # nothing about whether the source itself is well-formed. Until this entry
+  # existed, `harness claude validate` was reachable only as the
+  # `npm run validate:claude` script and as a member of `harness audit`, which
+  # the `harness-catalog` note above already records as invoked by nothing — so
+  # the agent frontmatter checks (grade vocabulary, tools, colors, filename
+  # match, duplicate names, skill references) ran on no surface at all.
+  # Path-gated on the binding source and the governance maps the tier and color
+  # checks resolve against: a commit touching none of them cannot change the
+  # verdict.
+  - id: harness-claude
+    type: check
+    command: harness claude validate
+    kind: rhino-cli
+    ci-group: governance
+    surfaces:
+      pre-push:
+        scope: path-gated
+        trigger:
+          - .claude/
+          - repo-governance/development/agents/
+      ci: { scope: other }
+
   # Path-gating is correct here, unlike a time-based check: this gate reads the
   # git index for the declared binding trees, so a commit touching none of them
   # cannot change its verdict. Every trigger below is a path whose contents the

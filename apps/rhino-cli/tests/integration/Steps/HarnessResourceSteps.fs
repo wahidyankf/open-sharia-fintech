@@ -245,6 +245,8 @@ type HarnessResourceSteps() =
     let mutable lastSyncOutcome: Result<Harness.SyncResult, string> option = None
     let mutable fixtureCodexAgentNames: string list = []
     let mutable fixtureRoleSubfolders: string list = []
+    let mutable claudeRejectedAgent: string = ""
+    let mutable claudeRejectedModel: string = ""
 
     /// One agent per grade of the four-grade vocabulary, paired with the Codex
     /// model and reasoning effort its mirror must carry.
@@ -1234,10 +1236,41 @@ type HarnessResourceSteps() =
         let root = scenarioRoot ()
         let dir = Path.Combine(root, ".claude", "agents")
         Directory.CreateDirectory dir |> ignore
+        claudeRejectedAgent <- "validate-claude-foreign-model"
+        claudeRejectedModel <- "gpt-4"
 
         File.WriteAllText(
             Path.Combine(dir, "validate-claude-foreign-model.md"),
             "---\nname: validate-claude-foreign-model\ndescription: fixture agent\ntools: Read, Write\nmodel: gpt-4\ncolor: blue\n---\nBody.\n"
+        )
+
+    /// The fixture is deliberately INVALID: a passing result would be
+    /// indistinguishable from the file never having been discovered, which is
+    /// exactly the false zero the recursive walk fixes.
+    [<Given>]
+    member _.``a \.claude/ directory where the only agent sits in a role subfolder``() =
+        let root = scenarioRoot ()
+        let dir = Path.Combine(root, ".claude", "agents", "swe")
+        Directory.CreateDirectory dir |> ignore
+        claudeRejectedAgent <- "validate-claude-nested"
+        claudeRejectedModel <- "gpt-4"
+
+        File.WriteAllText(
+            Path.Combine(dir, "validate-claude-nested.md"),
+            "---\nname: validate-claude-nested\ndescription: fixture agent\ntools: Read, Write\nmodel: gpt-4\ncolor: blue\n---\nBody.\n"
+        )
+
+    [<Given>]
+    member _.``a \.claude/ directory where one agent declares no model field``() =
+        let root = scenarioRoot ()
+        let dir = Path.Combine(root, ".claude", "agents")
+        Directory.CreateDirectory dir |> ignore
+        claudeRejectedAgent <- "validate-claude-no-model"
+        claudeRejectedModel <- ""
+
+        File.WriteAllText(
+            Path.Combine(dir, "validate-claude-no-model.md"),
+            "---\nname: validate-claude-no-model\ndescription: fixture agent\ntools: Read, Write\ncolor: blue\n---\nBody.\n"
         )
 
     [<Given>]
@@ -1323,10 +1356,18 @@ type HarnessResourceSteps() =
             (result ()).Checks
             |> List.tryFind (fun c ->
                 c.Status = "failed"
-                && c.Name.Contains("validate-claude-foreign-model", StringComparison.Ordinal)
-                && c.Actual = "Model: gpt-4")
+                && c.Name.Contains(claudeRejectedAgent, StringComparison.Ordinal)
+                && c.Actual = $"Model: {claudeRejectedModel}")
 
         Assert.True(rejected.IsSome)
+
+    [<Then>]
+    member _.``the output identifies the nested agent``() =
+        let nested =
+            (result ()).Checks
+            |> List.tryFind (fun c -> c.Name.Contains("validate-claude-nested", StringComparison.Ordinal))
+
+        Assert.True(nested.IsSome)
 
     [<Then>]
     member _.``the output reports the duplicate agent name``() =
@@ -3248,6 +3289,14 @@ let ``An agent declaring the ultra-tier fable model alias passes validation`` ()
 [<Fact>]
 let ``An agent declaring a model outside the tier vocabulary fails validation`` () =
     FeatureRunner.runValidateClaude "An agent declaring a model outside the tier vocabulary fails validation"
+
+[<Fact>]
+let ``An agent nested in a role subfolder is validated`` () =
+    FeatureRunner.runValidateClaude "An agent nested in a role subfolder is validated"
+
+[<Fact>]
+let ``An agent declaring no model fails validation`` () =
+    FeatureRunner.runValidateClaude "An agent declaring no model fails validation"
 
 [<Fact>]
 let ``Two agents with the same name fail validation`` () =
