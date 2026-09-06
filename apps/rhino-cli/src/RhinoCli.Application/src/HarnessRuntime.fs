@@ -2974,6 +2974,83 @@ let private validateColorTierMaps (repoRoot: string) : ValidationCheck list =
 
         colorChecks @ colorFallback @ tierChecks @ tierFallback
 
+/// The mirror file names under a generated agent directory that no source
+/// agent explains. Renaming a `.claude/agents/` file makes the emitter write
+/// the new mirror but leaves the old one behind: nothing enumerates the mirror
+/// directory looking for files the source tree no longer accounts for, so the
+/// stale mirror survives regeneration and passes every other binding check.
+/// `README.md` is excluded because it documents the directory rather than
+/// mirroring an agent. Matching is on the file stem, which is what the emitter
+/// uses as the mirror's name for every generated harness.
+let mirrorOrphanNames (mirrorNames: string list) (sourceNames: string list) : string list =
+    let sources = Set.ofList sourceNames
+
+    mirrorNames
+    |> List.filter (fun name -> name <> "README.md")
+    |> List.filter (fun name -> not (sources.Contains(Path.GetFileNameWithoutExtension name)))
+    |> List.sort
+
+/// The orphan check for one generated agent directory, over already-read
+/// directory contents so the decision is testable without a filesystem.
+let validateMirrorOrphanState
+    (agentDir: string)
+    (mirrorNames: Result<string list, string>)
+    (sourceNames: string list)
+    : ValidationCheck =
+    let checkName = sprintf "Mirror Orphans: %s" agentDir
+
+    match mirrorNames with
+    | Error e -> ValidationCheck.failedMsg checkName e
+    | Ok names ->
+        match mirrorOrphanNames names sourceNames with
+        | [] -> ValidationCheck.passed checkName (sprintf "every mirror under %s has a source agent" agentDir)
+        | offenders ->
+            let joined = String.Join(", ", offenders)
+
+            ValidationCheck.failed
+                checkName
+                (sprintf "every mirror under %s resolves to a .claude/agents/ source" agentDir)
+                (sprintf "orphaned mirror(s): %s" joined)
+                (sprintf
+                    "%s under %s: no .claude/agents/ source explains %s, so the agent was renamed or removed and the mirror was left behind. Delete the stale file; `rhino-cli harness bindings generate` writes new mirrors but never removes orphaned ones."
+                    joined
+                    agentDir
+                    (if List.length offenders = 1 then "it" else "them"))
+
+/// [`validateMirrorOrphanState`] for one registry entry, reading the mirror
+/// directory and its declared source tree from disk.
+let private validateMirrorOrphansForEntry (repoRoot: string) (entry: RepoConfig.HarnessEntry) : ValidationCheck option =
+    match entry.AgentDir, entry.Mirrors with
+    | Some agentDir, Some sourceDir ->
+        let dirPath = joinRel repoRoot agentDir
+
+        if not (Directory.Exists dirPath) then
+            None
+        else
+            let mirrorNames =
+                try
+                    Ok(Directory.GetFiles dirPath |> Array.toList |> List.map Path.GetFileName)
+                with ex ->
+                    Error(sprintf "failed to read %s: %s" agentDir ex.Message)
+
+            let sourceNames =
+                match discoverAgentSources (Path.Combine(repoRoot, sourceDir)) with
+                | Error _ -> []
+                | Ok sources -> sources |> List.map snd
+
+            Some(validateMirrorOrphanState agentDir mirrorNames sourceNames)
+    | _ -> None
+
+/// [`validateMirrorOrphansForEntry`] across every generated-tier registry entry,
+/// so a fourth harness is covered by its own entry rather than a code change.
+let validateMirrorOrphans (repoRoot: string) : ValidationCheck list =
+    match RepoConfig.load repoRoot with
+    | Error e -> [ ValidationCheck.failedMsg "Mirror Orphans" e ]
+    | Ok config ->
+        config.Harness
+        |> List.filter (fun entry -> entry.Tier = RepoConfig.Tier.Generated)
+        |> List.choose (validateMirrorOrphansForEntry repoRoot)
+
 /// Validates all 3 supported harnesses: static Codex binding files against the
 /// emitter's own bytes, the OpenCode and Skills mirrors (via `validateSync`),
 /// catalog coverage for every present binding directory, the Codex agent-file
@@ -2992,6 +3069,7 @@ let validateBindings (repoRoot: string) : ValidationResult =
         @ (validateSync repoRoot).Checks
         @ (knownBindingDirs |> List.map (validateCatalogCoverage repoRoot))
         @ [ validateCodexAgentsDir repoRoot; validateCodexConfigRegion repoRoot ]
+        @ validateMirrorOrphans repoRoot
         @ validateColorTierMaps repoRoot
         @ [ skillsMirrorAuditCheck (auditSkillsMirrors repoRoot) ]
 

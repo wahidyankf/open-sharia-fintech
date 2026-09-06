@@ -53,3 +53,17 @@ Feature: Generated Harness Binding Files
       When the developer runs harness bindings validate
       Then the command exits with a failure code
       And the output names .toml as the officially-correct extension
+
+  @mirror-orphans
+  Rule: a generated agent mirror whose source agent no longer exists fails validation
+
+    Scenario: A mirror whose source agent was renamed away fails validation
+      Given a repository whose generated agent directory holds a mirror with no source agent
+      When the developer runs harness bindings validate
+      Then the command exits with a failure code
+      And the output names the orphaned mirror and the source that no longer exists
+
+    Scenario: A generated agent directory whose mirrors all have sources passes validation
+      Given a repository whose generated agent mirrors each have a source agent
+      When the developer runs harness bindings validate
+      Then the command exits successfully

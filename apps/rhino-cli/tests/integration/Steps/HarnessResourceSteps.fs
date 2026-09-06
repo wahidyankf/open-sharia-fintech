@@ -1667,29 +1667,73 @@ type HarnessResourceSteps() =
 
     // ---- @codex-agents-extension ----
 
+    /// The `.toml` file is the emitter's own output for a real source agent
+    /// rather than a hand-written stub: since the orphan check landed, a mirror
+    /// with no `.claude/agents/` source fails validation, so a stub would have
+    /// made this scenario assert the wrong thing.
     [<Given>]
     member _.``a repository whose \.codex/agents directory holds a standalone \.toml agent file``() =
         let root = scenarioRoot ()
         writeThreeHarnessConfig root
         writeEmptyMirrorPair root
         Directory.CreateDirectory(Path.Combine(root, ".github")) |> ignore
-        writeCatalog root (fullCatalog ())
+        writeOwnershipSupportingDocs root
+        writeValidatedAgent root "probe-maker" [] |> ignore
+        Harness.runHarnessBindingsGenerate root |> ignore
 
-        let agentsDir = Path.Combine(root, ".codex", "agents")
-        Directory.CreateDirectory agentsDir |> ignore
-        File.WriteAllText(Path.Combine(agentsDir, "probe-maker.toml"), "description = \"probe\"\n")
-
+    /// The `.md` file shares the stem of a real source agent, so it is a wrong
+    /// extension rather than an orphan — this scenario is about the extension
+    /// check alone.
     [<Given>]
     member _.``a repository whose \.codex/agents directory holds a \.md agent file``() =
         let root = scenarioRoot ()
         writeThreeHarnessConfig root
         writeEmptyMirrorPair root
         Directory.CreateDirectory(Path.Combine(root, ".github")) |> ignore
-        writeCatalog root (fullCatalog ())
+        writeOwnershipSupportingDocs root
+        writeValidatedAgent root "probe-maker" [] |> ignore
+        Harness.runHarnessBindingsGenerate root |> ignore
 
         let agentsDir = Path.Combine(root, ".codex", "agents")
-        Directory.CreateDirectory agentsDir |> ignore
         File.WriteAllText(Path.Combine(agentsDir, "probe-maker.md"), "# probe\n")
+
+    // ---- @mirror-orphans ----
+
+    /// Reproduces the observed defect exactly: an agent is renamed, the emitter
+    /// writes the new mirror, and the mirror under the old name is left behind.
+    [<Given>]
+    member _.``a repository whose generated agent directory holds a mirror with no source agent``() =
+        let root = scenarioRoot ()
+        writeThreeHarnessConfig root
+        writeEmptyMirrorPair root
+        Directory.CreateDirectory(Path.Combine(root, ".github")) |> ignore
+        writeOwnershipSupportingDocs root
+        writeValidatedAgent root "probe-maker" [] |> ignore
+        Harness.runHarnessBindingsGenerate root |> ignore
+
+        let agentsDir = Path.Combine(root, ".codex", "agents")
+        let generated = File.ReadAllText(Path.Combine(agentsDir, "probe-maker.toml"))
+        File.WriteAllText(Path.Combine(agentsDir, "repo-probe-maker.toml"), generated)
+
+    [<Given>]
+    member _.``a repository whose generated agent mirrors each have a source agent``() =
+        let root = scenarioRoot ()
+        writeThreeHarnessConfig root
+        writeEmptyMirrorPair root
+        Directory.CreateDirectory(Path.Combine(root, ".github")) |> ignore
+        writeOwnershipSupportingDocs root
+        writeValidatedAgent root "probe-maker" [] |> ignore
+        Harness.runHarnessBindingsGenerate root |> ignore
+
+    [<Then>]
+    member _.``the output names the orphaned mirror and the source that no longer exists``() =
+        let check =
+            (result ()).Checks
+            |> List.find (fun (check: Harness.ValidationCheck) -> check.Name = "Mirror Orphans: .codex/agents")
+
+        Assert.Equal("failed", check.Status)
+        Assert.Equal("orphaned mirror(s): repo-probe-maker.toml", check.Actual)
+        Assert.Contains("no .claude/agents/ source explains it", check.Message)
 
     [<Then>]
     member _.``the output names \.toml as the officially-correct extension``() =
@@ -3351,6 +3395,14 @@ let ``Absent binding directories require no catalog row`` () =
 [<Fact>]
 let ``A .codex/agents directory holding only .toml files passes validation`` () =
     FeatureRunner.run "A .codex/agents directory holding only .toml files passes validation"
+
+[<Fact>]
+let ``A mirror whose source agent was renamed away fails validation`` () =
+    FeatureRunner.run "A mirror whose source agent was renamed away fails validation"
+
+[<Fact>]
+let ``A generated agent directory whose mirrors all have sources passes validation`` () =
+    FeatureRunner.run "A generated agent directory whose mirrors all have sources passes validation"
 
 [<Fact>]
 let ``A .md file under .codex/agents fails validation`` () =

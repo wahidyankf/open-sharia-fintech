@@ -91,6 +91,18 @@ type HarnessProcessSteps() =
             (Path.Combine(".claude", "skills", name, "SKILL.md"))
             (sprintf "---\nname: %s\ndescription: fixture skill\n---\nBody.\n" name)
 
+    /// `harness bindings validate` resolves every agent `color:` and `model:`
+    /// against a governance map, so a fixture that materializes a real agent
+    /// needs both docs or it fails for an unrelated reason.
+    let writeGovernanceMaps () =
+        write
+            (Path.Combine("repo-governance", "development", "agents", "ai-agents.md"))
+            "# AI Agents\n\nColor translation: `blue`\n"
+
+        write
+            (Path.Combine("repo-governance", "development", "agents", "model-selection.md"))
+            "# Model Selection\n\nCapability tiers: `sonnet`, `haiku`, `opus`\n"
+
     let writeBindingRegistry () =
         write
             "repo-config.yml"
@@ -945,21 +957,62 @@ coverage:
     [<Then>]
     member _.``no catalog row is required for the absent binding directories``() = Assert.Equal(0, exitCode)
 
+    /// The `.toml` mirror is the published binary's own output for a real
+    /// source agent rather than a stub: since the orphan check landed, a mirror
+    /// with no `.claude/agents/` source fails validation.
     [<Given>]
     member _.``a repository whose \.codex/agents directory holds a standalone \.toml agent file``() =
         writeBindingRegistry ()
         emptyMirrorPair ()
         Directory.CreateDirectory(Path.Combine(root, ".github")) |> ignore
         writeCatalog [ ".claude"; ".opencode"; ".codex"; ".agents"; ".github" ]
-        write (Path.Combine(".codex", "agents", "probe-maker.toml")) "description = \"probe\"\n"
+        writeGovernanceMaps ()
+        validatedAgent "probe-maker"
+        run [ "harness"; "bindings"; "generate" ] |> ignore
 
+    /// The `.md` file shares a real source agent's stem, so it is a wrong
+    /// extension rather than an orphan.
     [<Given>]
     member _.``a repository whose \.codex/agents directory holds a \.md agent file``() =
         writeBindingRegistry ()
         emptyMirrorPair ()
         Directory.CreateDirectory(Path.Combine(root, ".github")) |> ignore
         writeCatalog [ ".claude"; ".opencode"; ".codex"; ".agents"; ".github" ]
+        writeGovernanceMaps ()
+        validatedAgent "probe-maker"
+        run [ "harness"; "bindings"; "generate" ] |> ignore
         write (Path.Combine(".codex", "agents", "probe-maker.md")) "# probe\n"
+
+    [<Given>]
+    member _.``a repository whose generated agent directory holds a mirror with no source agent``() =
+        writeBindingRegistry ()
+        emptyMirrorPair ()
+        Directory.CreateDirectory(Path.Combine(root, ".github")) |> ignore
+        writeCatalog [ ".claude"; ".opencode"; ".codex"; ".agents"; ".github" ]
+        writeGovernanceMaps ()
+        validatedAgent "probe-maker"
+        run [ "harness"; "bindings"; "generate" ] |> ignore
+
+        let generated =
+            File.ReadAllText(Path.Combine(root, ".codex", "agents", "probe-maker.toml"))
+
+        write (Path.Combine(".codex", "agents", "repo-probe-maker.toml")) generated
+
+    [<Given>]
+    member _.``a repository whose generated agent mirrors each have a source agent``() =
+        writeBindingRegistry ()
+        emptyMirrorPair ()
+        Directory.CreateDirectory(Path.Combine(root, ".github")) |> ignore
+        writeCatalog [ ".claude"; ".opencode"; ".codex"; ".agents"; ".github" ]
+        writeGovernanceMaps ()
+        validatedAgent "probe-maker"
+        run [ "harness"; "bindings"; "generate" ] |> ignore
+
+    [<Then>]
+    member _.``the output names the orphaned mirror and the source that no longer exists``() =
+        Assert.Contains("Mirror Orphans: .codex/agents", output)
+        Assert.Contains("repo-probe-maker.toml", output)
+        Assert.Contains("no .claude/agents/ source explains it", output)
 
     [<Then>]
     member _.``the output names \.toml as the officially-correct extension``() =
@@ -1564,12 +1617,14 @@ module private FeatureRunner =
             |> Array.tryFindIndex (fun line ->
                 let trimmed = line.TrimStart()
 
+                // Any tag opens a new block. Enumerating known tag prefixes
+                // instead made a new `Rule:` invisible to the slicer, which
+                // then ran the following rule header into the scenario and
+                // failed to parse.
                 trimmed.StartsWith("Scenario:")
                 || trimmed.StartsWith("# Exemption(")
-                || trimmed.StartsWith("@e2e-exempt")
                 || trimmed.StartsWith("Rule:")
-                || trimmed.StartsWith("@agents-")
-                || trimmed.StartsWith("@codex-"))
+                || trimmed.StartsWith("@"))
             |> Option.map (fun offset -> start + 1 + offset)
             |> Option.defaultValue lines.Length
 
@@ -1608,10 +1663,18 @@ module private ClaudeFeatureRunner =
         let start =
             lines |> Array.findIndex (fun line -> line.Trim() = "Scenario: " + title)
 
+        // A scenario ends at the next block, which is not always another
+        // `Scenario:` — a following `Rule:` and its tag line would otherwise be
+        // sliced in, and TickSpec rejects a rule with no scenario under it.
         let finish =
             lines
             |> Array.skip (start + 1)
-            |> Array.tryFindIndex (fun line -> line.TrimStart().StartsWith("Scenario:"))
+            |> Array.tryFindIndex (fun line ->
+                let trimmed = line.TrimStart()
+
+                trimmed.StartsWith("Scenario:")
+                || trimmed.StartsWith("Rule:")
+                || trimmed.StartsWith("@"))
             |> Option.map (fun offset -> start + 1 + offset)
             |> Option.defaultValue lines.Length
 
@@ -1656,12 +1719,14 @@ module private AdditionalFeatureRunner =
             |> Array.tryFindIndex (fun line ->
                 let trimmed = line.TrimStart()
 
+                // Any tag opens a new block. Enumerating known tag prefixes
+                // instead made a new `Rule:` invisible to the slicer, which
+                // then ran the following rule header into the scenario and
+                // failed to parse.
                 trimmed.StartsWith("Scenario:")
                 || trimmed.StartsWith("# Exemption(")
-                || trimmed.StartsWith("@e2e-exempt")
                 || trimmed.StartsWith("Rule:")
-                || trimmed.StartsWith("@agents-")
-                || trimmed.StartsWith("@codex-"))
+                || trimmed.StartsWith("@"))
             |> Option.map (fun offset -> start + 1 + offset)
             |> Option.defaultValue lines.Length
 
@@ -1704,6 +1769,8 @@ let ``word-budget audit envelope crosses the published process`` () =
 [<InlineData("Absent binding directories require no catalog row")>]
 [<InlineData("A .codex/agents directory holding only .toml files passes validation")>]
 [<InlineData("A .md file under .codex/agents fails validation")>]
+[<InlineData("A mirror whose source agent was renamed away fails validation")>]
+[<InlineData("A generated agent directory whose mirrors all have sources passes validation")>]
 let ``binding validation scenarios cross the published process`` title =
     AdditionalFeatureRunner.run "agents-bindings.feature" title
 

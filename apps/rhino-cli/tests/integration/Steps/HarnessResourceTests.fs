@@ -323,7 +323,12 @@ let ``validateBindings folds in the sync checks, catalog coverage, and both code
 
     Assert.Contains(sprintf "Codex Agent Files: %s" codexAgentDir, names)
     Assert.Contains(sprintf "Codex Config Region: %s" codexConfigFile, names)
-    Assert.Equal(List.length syncNames + List.length knownBindingDirs + 3, result.TotalChecks)
+
+    // The orphan family fails closed rather than abstaining: a scratch repo
+    // declares no `harness:` registry, so there is no list of generated agent
+    // directories to walk and the check says so instead of reporting nothing.
+    Assert.Contains("Mirror Orphans", names)
+    Assert.Equal(List.length syncNames + List.length knownBindingDirs + 4, result.TotalChecks)
 
 // ---------------------------------------------------------------------------
 // `--harness` name acceptance

@@ -26,8 +26,13 @@ the commit-discipline rule for their output.
 - **`generate:bindings`** npm script — harness-neutral name for the single binding-generation
   operation (AD8). Runs `rhino-cli harness bindings generate`; re-run whenever binding sources change.
 - **`rhino-cli harness bindings validate`** — deterministic subcommand (AD7); re-derives each
-  generated binding in memory, asserts byte-equality, asserts catalog completeness. Exits non-zero on
+  generated binding in memory, asserts byte-equality, asserts catalog completeness, and asserts that
+  every file in a generated agent directory still resolves to a source agent. Exits non-zero on
   any mismatch.
+  - The orphan assertion exists because byte-equality alone is blind in one direction: it compares
+    the mirrors a source produces, never the mirrors a source no longer produces. Renaming an agent
+    therefore left the old mirror in place, and generation does not remove it — the emitter writes
+    the files it can derive and never deletes the ones it cannot.
 - **`harness:bindings-validation`** npm script — wraps `rhino-cli harness bindings validate`; invoked
   from the pre-push hook when binding surfaces change (AD8).
 - **`harness-compatibility-checker`** / **`harness-compatibility-fixer`** agents — run on

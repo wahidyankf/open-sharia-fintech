@@ -10,7 +10,7 @@ fe3b0fa079bad46272ecd289e2b04e227f07441285dc7c4a2cc001f32de88360  apps/rhino-cli
 b52a8b26f31676f54e2bfed81d4635c01ce51685db53231c32853acf96a1dab9  apps/rhino-cli/src/RhinoCli.Application/src/Git.fs
 61b2a1a6778bf8e5163749a3bcc3f09075cb79490fdb0e6dafbe6db94c754add  apps/rhino-cli/src/RhinoCli.Application/src/Governance.fs
 258eed854c668e3bc23bf7fd51c43d9bac649110e30ba5e90c208fa4e5b4c942  apps/rhino-cli/src/RhinoCli.Application/src/HarnessPolicy.fs
-534f7df695088e99adff54ef7899bc74e82e8f0ee7ac927129fc107c7dda8df6  apps/rhino-cli/src/RhinoCli.Application/src/HarnessRuntime.fs
+cc8d7f1a5834987f36eff67efb24860670f0ad48f420d78112c722a35c9dbb0c  apps/rhino-cli/src/RhinoCli.Application/src/HarnessRuntime.fs
 2f0d6f7c5ef9b99b0acc736a22959116c4c61d080cda8b6580bfd674893bd750  apps/rhino-cli/src/RhinoCli.Application/src/Md.fs
 e33cfdd05369f5b9f22540a066f866548adf9287380a270d345e58ebcd49a605  apps/rhino-cli/src/RhinoCli.Application/src/Parity.fs
 81baf8387a9b933ceea719a6adf52d47ec1275e4a4f696870c797e62272d16a2  apps/rhino-cli/src/RhinoCli.Application/src/RepoConfig.fs
@@ -59,7 +59,7 @@ b84936d25b271a6047dac1fdb6bba73c7a457088c1674eef4401a7b1fef6a8ac  specs/apps/rhi
 2d562b93bd3b10916c9c7a6d0298ef600dcd6b4b6f933a9821a5dbda4e89e8da  specs/apps/rhino/cli/behaviours/governance/governance-readme-index.feature
 939210fee7db8e63bd19bd28a485d0817a264fe62bde8790bf20894b11e2c1d7  specs/apps/rhino/cli/behaviours/governance/governance-word-budget.feature
 9b5aae9308842633551046c75ae57531c6f2c958b80e2b37613c2467b7c4c020  specs/apps/rhino/cli/behaviours/harness/README.md
-ebd08effa581628d754afbc5566a928fc6a8528c1820a4aff0f72a331a90da9f  specs/apps/rhino/cli/behaviours/harness/agents-bindings.feature
+01db2b228a4e5042fb3be1ff4a9dc0e67b6aa550d11397900367f5721b4c744d  specs/apps/rhino/cli/behaviours/harness/agents-bindings.feature
 de8c721980d1577c2a2eb4e8c0dcd41e857137b41cef5b60392d7955bd41c5da  specs/apps/rhino/cli/behaviours/harness/agents-detect-duplication.feature
 693a8c26eab706876d7e8b0e928832a4f39454566c06cce5479342fabc968e55  specs/apps/rhino/cli/behaviours/harness/agents-skills-mirror.feature
 dcd1f0f5990bab88b79b864392adc714fff9447adf1a03cf903ce782a0700aed  specs/apps/rhino/cli/behaviours/harness/agents-sync.feature
