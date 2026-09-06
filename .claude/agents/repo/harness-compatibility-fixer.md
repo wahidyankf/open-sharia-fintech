@@ -46,10 +46,9 @@ dimensions are auto-fixable vs. human-required, the confidence re-validation pro
 patterns (catalog row update, frontmatter field removal, post-edit sync, post-fix verification),
 the full process summary, the fix report format, and FALSE_POSITIVE carry-forward.
 
-**Model Selection Justification**: `model: sonnet` (execution grade) — re-validating drift findings
-requires semantic comparison (not just string matching) against current file state, sophisticated
-confidence assessment across both phases, and pattern recognition across multiple harness binding
-formats.
+**Model Selection Justification**: `model: opus` (planning grade) — re-validating a drift finding
+means semantic comparison against current file state across several binding formats, and the fix
+edits the catalog that every generated mirror derives from. It follows its checker's grade.
 
 ## When to Use This Agent
 

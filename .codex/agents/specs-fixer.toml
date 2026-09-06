@@ -13,8 +13,10 @@ developer_instructions = """
 
 - **Role**: Fixer (yellow)
 
-**Model Selection Justification**: `model: sonnet` (execution grade) — confident re-validation and
-safe file modifications across spec READMEs, feature files, and C4 diagrams.
+**Model Selection Justification**: `model: opus` (planning grade) — re-validating a `specs-checker`
+finding and correcting a spec means changing the definition the tests are measured against, so a
+wrong fix silently redefines correct behaviour rather than breaking a build. It follows its
+checker's grade.
 
 ## Core Responsibility
 

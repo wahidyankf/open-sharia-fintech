@@ -3413,8 +3413,9 @@ let private justificationMarker = "**Model Selection Justification**"
 /// Justification block. Without it a reader cannot tell a deliberate grade
 /// assignment from an author who copied another agent's frontmatter, and a
 /// grade nobody argued for is exactly what the decision tree exists to
-/// prevent. Only the marker is checked: whether the prose beneath it is a good
-/// argument is a judgement no validator can make, but its absence is not.
+/// prevent. Whether the prose beneath it is a *good* argument is a judgement
+/// no validator can make; that it is present, and that it argues for the grade
+/// the frontmatter actually declares, both are.
 let private validateJustificationCheck (filename: string) (body: string) : ValidationCheck =
     let name = sprintf "Agent: %s - Model Selection Justification" filename
 
@@ -3426,6 +3427,70 @@ let private validateJustificationCheck (filename: string) (body: string) : Valid
             (sprintf "a %s block in the agent body" justificationMarker)
             "no justification block"
             "Agent does not state why its model grade was chosen"
+
+/// The grade alias a justification block argues for, if it names one.
+///
+/// Only the block's own region is read — from the marker to the next `##`
+/// heading — so a later paragraph contrasting with another grade is not
+/// mistaken for the block's claim. The *first* alias is the claim: the block
+/// opens by naming the grade it argues for, and anything after that is
+/// comparison.
+let private justificationGrade (maps: GradeMaps) (body: string) : string option =
+    let markerAt = body.IndexOf(justificationMarker, StringComparison.Ordinal)
+
+    if markerAt < 0 then
+        None
+    else
+        let rest = body.Substring markerAt
+
+        let region =
+            match rest.IndexOf("\n## ", StringComparison.Ordinal) with
+            | -1 -> rest
+            | stop -> rest.Substring(0, stop)
+
+        // Aliases are quoted in the prose, so an unquoted mention of the same
+        // word in ordinary text cannot be read as the block's claim.
+        let quoted =
+            maps.GradeOfAlias
+            |> Map.toList
+            |> List.collect (fun (alias, _) -> [ sprintf "`model: %s`" alias, alias; sprintf "`%s`" alias, alias ])
+            |> List.choose (fun (needle, alias) ->
+                match region.IndexOf(needle, StringComparison.Ordinal) with
+                | -1 -> None
+                | at -> Some(at, alias))
+
+        quoted |> List.sortBy fst |> List.tryHead |> Option.map snd
+
+/// Checks that the justification argues for the grade the frontmatter declares.
+///
+/// A block that argues one grade while the frontmatter declares another is the
+/// drift a presence-only check cannot see: it happens whenever a promotion
+/// edits the frontmatter and leaves the prose behind, and the stale prose then
+/// reads as an argument to undo the promotion. Agents naming no grade in the
+/// block, and agents whose declared model is outside the vocabulary, are
+/// skipped — the model check already owns the latter.
+let private validateJustificationGradeCheck
+    (maps: GradeMaps)
+    (filename: string)
+    (model: string)
+    (body: string)
+    : ValidationCheck option =
+    let name = sprintf "Agent: %s - Justification Grade" filename
+
+    match justificationGrade maps body with
+    | None -> None
+    | Some argued when argued = model -> Some(ValidationCheck.passed name "Justification argues the declared grade")
+    | Some argued ->
+        if not (maps.GradeOfAlias.ContainsKey model) then
+            None
+        else
+            Some(
+                ValidationCheck.failed
+                    name
+                    (sprintf "a justification for `%s`" model)
+                    (sprintf "argues for `%s`" argued)
+                    "Justification argues for a grade the frontmatter does not declare"
+            )
 
 /// Checks that `color` is in the allow-list of named color tokens
 /// [Repo-grounded — `agent_validator.rs::validate_color_check`].
@@ -3573,6 +3638,10 @@ let validateAgentDocument
                             []
 
                     let justificationCheck = validateJustificationCheck filename body
+
+                    let justificationGradeChecks =
+                        validateJustificationGradeCheck maps filename agent.Model body |> Option.toList
+
                     let filenameCheck = validateFilenameCheck filename agent.Name
                     let uniqueCheck = validateUniqueness filename agent.Name agentNames
 
@@ -3597,7 +3666,9 @@ let validateAgentDocument
                         @ [ toolsCheck; modelCheck ]
                         @ effortChecks
                         @ colorChecks
-                        @ [ justificationCheck; filenameCheck; uniqueCheck; skillsCheck; noCommentsCheck ]
+                        @ [ justificationCheck ]
+                        @ justificationGradeChecks
+                        @ [ filenameCheck; uniqueCheck; skillsCheck; noCommentsCheck ]
                         @ generatedReportsChecks
 
                     allChecks, updatedNames

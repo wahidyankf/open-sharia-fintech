@@ -27,9 +27,10 @@ skills:
 
 - **Role**: Checker (green)
 
-**Model Selection Justification**: `model: sonnet` — repository-wide contradiction detection,
-multi-layer governance analysis, agent-Skill duplication/consolidation pattern recognition, and
-semantic analysis of Skill descriptions for consolidation need advanced reasoning.
+**Model Selection Justification**: `model: opus` (planning grade) — repository-wide contradiction
+detection, multi-layer governance analysis, and semantic consolidation judgement over agents and
+Skills are open-ended: two rules can conflict without sharing a word, so the finding cannot be
+reached by pattern matching. A governance call that lands wrong propagates across every layer.
 
 Validate repository-wide consistency across all repository layers.
 

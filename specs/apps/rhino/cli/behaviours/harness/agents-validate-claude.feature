@@ -73,3 +73,9 @@ Feature: Claude Code Agent and Skill Configuration Validation
     When the developer runs agents validate-claude
     Then the command exits with a failure code
     And the output reports the missing justification block
+
+  Scenario: An agent whose justification argues for a grade it does not declare fails validation
+    Given a .claude/ directory where one agent's justification names a grade its frontmatter does not
+    When the developer runs agents validate-claude
+    Then the command exits with a failure code
+    And the output reports the grade the justification argues for

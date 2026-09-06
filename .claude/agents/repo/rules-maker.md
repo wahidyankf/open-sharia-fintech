@@ -18,14 +18,10 @@ skills:
 
 - **Role**: Maker (blue)
 
-**Model Selection Justification**: This agent uses `model: sonnet` (Sonnet 4.6, 79.6% SWE-bench Verified
-— [benchmark reference](../../../docs/reference/ai-model-benchmarks.md#claude-sonnet-46)) because its work
-is driven by the six-layer governance hierarchy template, not open creative reasoning:
-
-- Conventions follow a fixed Diátaxis + governance layer structure defined in skills
-- Rule format and cross-reference patterns are pre-specified in the governance architecture
-- Output is document-in-a-template work, not novel system design
-- Sonnet 4.6 is fully sufficient for governance-layer-driven documentation generation
+**Model Selection Justification**: `model: opus` (planning grade) — authoring a rule means deciding
+what it must forbid, where in the six-layer hierarchy it binds, and how it reads against every rule
+already there. The template fixes the shape, not the content, and a rule placed on the wrong layer
+binds nobody while appearing to have landed.
 
 Create repository rules and conventions.
 

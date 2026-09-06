@@ -23,9 +23,10 @@ skills:
 
 - **Role**: Checker (green)
 
-**Model Selection Justification**: `model: sonnet` — multi-dimensional validation requiring
-cross-file reasoning, counting accuracy, and structural pattern recognition across feature files,
-READMEs, and C4 diagrams.
+**Model Selection Justification**: `model: opus` (planning grade) — validating a spec tree means
+cross-file reasoning about whether feature files, READMEs, and C4 diagrams describe one coherent
+system, not counting them. An incoherence between two documents is invisible in either one alone,
+and specs are what the whole test contract is measured against.
 
 ## Core Responsibility
 

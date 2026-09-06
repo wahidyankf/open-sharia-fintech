@@ -20,23 +20,36 @@ let private testGradeMaps: GradeMaps =
 /// Agents Convention requires. A fixture without it fails on that ground
 /// alone, which would make each scenario pass or fail for a reason it is not
 /// about.
-let private justifiedBody =
-    "**Model Selection Justification**: `model: sonnet` (execution grade) — fixture.\n"
+let private justifiedBody model =
+    $"**Model Selection Justification**: `model: {model}` — fixture.\n"
+
+let private sonnetBody = justifiedBody "sonnet"
 
 /// Fixtures carry the effort their grade declares, because effort is a
 /// property of the grade rather than of the agent: `sonnet` is the execution
 /// grade, which sits at `xhigh`.
 let private validAgent name =
-    $"---\nname: {name}\ndescription: fixture agent\ntools: Read, Write\nmodel: sonnet\neffort: xhigh\ncolor: blue\n---\n{justifiedBody}"
+    $"---\nname: {name}\ndescription: fixture agent\ntools: Read, Write\nmodel: sonnet\neffort: xhigh\ncolor: blue\n---\n{sonnetBody}"
 
+/// The block argues the grade the frontmatter declares, so a scenario about
+/// effort or vocabulary is not also a scenario about justification drift.
 let private agentWithModelAndEffort name model effort =
-    $"---\nname: {name}\ndescription: fixture agent\ntools: Read, Write\nmodel: {model}\neffort: {effort}\ncolor: blue\n---\n{justifiedBody}"
+    let body = justifiedBody model
+
+    $"---\nname: {name}\ndescription: fixture agent\ntools: Read, Write\nmodel: {model}\neffort: {effort}\ncolor: blue\n---\n{body}"
 
 let private agentWithModel name model =
-    $"---\nname: {name}\ndescription: fixture agent\ntools: Read, Write\nmodel: {model}\ncolor: blue\n---\n{justifiedBody}"
+    let body = justifiedBody model
+
+    $"---\nname: {name}\ndescription: fixture agent\ntools: Read, Write\nmodel: {model}\ncolor: blue\n---\n{body}"
 
 let private agentWithoutModel name =
-    $"---\nname: {name}\ndescription: fixture agent\ntools: Read, Write\ncolor: blue\n---\n{justifiedBody}"
+    $"---\nname: {name}\ndescription: fixture agent\ntools: Read, Write\ncolor: blue\n---\n{sonnetBody}"
+
+/// Conforming frontmatter whose block argues for a different grade — the drift
+/// a promotion leaves behind when it edits the frontmatter and not the prose.
+let private agentArguingAnotherGrade name =
+    $"---\nname: {name}\ndescription: fixture agent\ntools: Read, Write\nmodel: opus\neffort: high\ncolor: blue\n---\n{sonnetBody}"
 
 /// The same conforming frontmatter with a body that argues nothing.
 let private agentWithoutJustification name =
@@ -116,6 +129,10 @@ type HarnessClaudeValidationSteps() =
     [<Given>]
     member _.``a \.claude/ directory where one agent's body states no model selection justification``() =
         agents <- [ "unargued-agent.md", agentWithoutJustification "unargued-agent" ]
+
+    [<Given>]
+    member _.``a \.claude/ directory where one agent's justification names a grade its frontmatter does not``() =
+        agents <- [ "drifted-agent.md", agentArguingAnotherGrade "drifted-agent" ]
 
     [<Given>]
     member _.``a \.claude/ directory containing two agent files declaring the same name``() =
@@ -208,6 +225,16 @@ type HarnessClaudeValidationSteps() =
         )
 
     [<Then>]
+    member _.``the output reports the grade the justification argues for``() =
+        Assert.Contains(
+            result.Checks,
+            fun check ->
+                check.Name.Contains("drifted-agent")
+                && check.Expected = "a justification for `opus`"
+                && check.Actual = "argues for `sonnet`"
+        )
+
+    [<Then>]
     member _.``the output reports the duplicate agent name``() =
         Assert.Contains(result.Checks, fun check -> check.Actual.Contains("Duplicate name: duplicate"))
 
@@ -296,6 +323,15 @@ let ``agent stating no justification fails`` () =
         (fun s ->
             s.``the command exits with a failure code`` ()
             s.``the output reports the missing justification block`` ())
+
+[<Fact>]
+let ``justification arguing another grade fails`` () =
+    HarnessClaudeScenarios.run
+        (fun s -> s.``a \.claude/ directory where one agent's justification names a grade its frontmatter does not`` ())
+        (fun s -> s.``the developer runs agents validate-claude`` ())
+        (fun s ->
+            s.``the command exits with a failure code`` ()
+            s.``the output reports the grade the justification argues for`` ())
 
 [<Fact>]
 let ``duplicate agent name fails`` () =

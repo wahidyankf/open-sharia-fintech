@@ -1002,8 +1002,10 @@ type HarnessResourceSteps() =
     /// The block the AI Agents Convention requires in every agent body. A
     /// fixture that omitted it would fail validation on that ground alone,
     /// masking whatever its scenario is actually about.
-    let justifiedBody =
-        "**Model Selection Justification**: `model: sonnet` (execution grade) — fixture.\n"
+    let justifiedBodyFor (model: string) =
+        sprintf "**Model Selection Justification**: `model: %s` — fixture.\n" model
+
+    let justifiedBody = justifiedBodyFor "sonnet"
 
     /// Writes a fully valid agent: every required and known optional field
     /// present, so it triggers neither a failed nor a warning check.
@@ -1269,7 +1271,7 @@ type HarnessResourceSteps() =
         File.WriteAllText(
             Path.Combine(dir, "validate-claude-ultra.md"),
             "---\nname: validate-claude-ultra\ndescription: fixture agent\ntools: Read, Write\nmodel: fable\neffort: high\ncolor: blue\n---\n"
-            + justifiedBody
+            + justifiedBodyFor "fable"
         )
 
         writeValidatedSkill root "validate-claude-ultra-skill" |> ignore
@@ -1357,6 +1359,21 @@ type HarnessResourceSteps() =
         File.WriteAllText(
             Path.Combine(dir, "validate-claude-unargued.md"),
             "---\nname: validate-claude-unargued\ndescription: fixture agent\ntools: Read, Write\nmodel: sonnet\neffort: xhigh\ncolor: blue\n---\nBody.\n"
+        )
+
+    /// Conforming frontmatter whose block argues for a different grade — the
+    /// drift a promotion leaves behind when it edits the frontmatter only.
+    [<Given>]
+    member _.``a \.claude/ directory where one agent's justification names a grade its frontmatter does not``() =
+        let root = scenarioRoot ()
+        writeGradeRegistry root
+        let dir = Path.Combine(root, ".claude", "agents")
+        Directory.CreateDirectory dir |> ignore
+
+        File.WriteAllText(
+            Path.Combine(dir, "validate-claude-drifted.md"),
+            "---\nname: validate-claude-drifted\ndescription: fixture agent\ntools: Read, Write\nmodel: opus\neffort: high\ncolor: blue\n---\n"
+            + justifiedBodyFor "sonnet"
         )
 
     [<Given>]
@@ -1469,6 +1486,18 @@ type HarnessResourceSteps() =
                 && c.Actual = "effort: low")
 
         Assert.True(contradiction.IsSome)
+
+    [<Then>]
+    member _.``the output reports the grade the justification argues for``() =
+        let drifted =
+            (result ()).Checks
+            |> List.tryFind (fun c ->
+                c.Status = "failed"
+                && c.Name.Contains("validate-claude-drifted", StringComparison.Ordinal)
+                && c.Expected = "a justification for `opus`"
+                && c.Actual = "argues for `sonnet`")
+
+        Assert.True(drifted.IsSome)
 
     [<Then>]
     member _.``the output reports the missing justification block``() =
@@ -3435,6 +3464,11 @@ let ``--skills-only validates skills without checking agents`` () =
 [<Fact>]
 let ``An agent whose effort contradicts its grade fails validation`` () =
     FeatureRunner.runValidateClaude "An agent whose effort contradicts its grade fails validation"
+
+[<Fact>]
+let ``An agent whose justification argues for a grade it does not declare fails validation`` () =
+    FeatureRunner.runValidateClaude
+        "An agent whose justification argues for a grade it does not declare fails validation"
 
 [<Fact>]
 let ``An agent stating no model selection justification fails validation`` () =

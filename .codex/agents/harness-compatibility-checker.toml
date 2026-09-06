@@ -33,10 +33,10 @@ lifecycle evidence ledger. Do not rerun or AI-rederive an exact registered predi
 stale evidence is `pending`. Continue unregistered semantic parity and upstream web drift. This
 conditional delegation does not change a standalone invocation's full protocol.
 
-**Model Selection Justification**: `model: sonnet` (execution grade) — Phase 0 interprets
-deterministic tool output; Phase 1 requires advanced reasoning to compare fetched harness
-documentation against committed catalog rows, with sophisticated confidence assessment when web
-sources conflict.
+**Model Selection Justification**: `model: opus` (planning grade) — Phase 1 compares fetched
+upstream harness documentation against committed catalog rows and judges which differences are real
+drift, with confidence assessment when web sources disagree. A false drift call rewrites the
+binding catalog every harness is generated from.
 
 ## When to Use This Agent
 

@@ -71,8 +71,10 @@ type HarnessProcessSteps() =
     /// The block the AI Agents Convention requires in every agent body. A
     /// fixture that omitted it would fail validation on that ground alone,
     /// masking whatever its scenario is actually about.
-    let justifiedBody =
-        "**Model Selection Justification**: `model: sonnet` (execution grade) — fixture.\n"
+    let justifiedBodyFor (model: string) =
+        sprintf "**Model Selection Justification**: `model: %s` — fixture.\n" model
+
+    let justifiedBody = justifiedBodyFor "sonnet"
 
     let validatedAgent name =
         write
@@ -464,7 +466,7 @@ coverage:
         write
             (Path.Combine(".claude", "agents", "ultra-agent.md"))
             ("---\nname: ultra-agent\ndescription: ultra fixture\ntools: Read\nmodel: fable\neffort: high\ncolor: blue\n---\n"
-             + justifiedBody)
+             + justifiedBodyFor "fable")
 
     [<Given>]
     member _.``a \.claude/ directory where one agent declares the "gpt-4" model alias``() =
@@ -526,6 +528,16 @@ coverage:
             "---\nname: unargued-agent\ndescription: unargued fixture\ntools: Read\nmodel: sonnet\neffort: xhigh\ncolor: blue\n---\nBody.\n"
 
     [<Given>]
+    member _.``a \.claude/ directory where one agent's justification names a grade its frontmatter does not``() =
+        writeGradeRegistry ()
+
+        // Conforming frontmatter, a block arguing for a grade it does not declare.
+        write
+            (Path.Combine(".claude", "agents", "drifted-agent.md"))
+            ("---\nname: drifted-agent\ndescription: drifted fixture\ntools: Read\nmodel: opus\neffort: high\ncolor: blue\n---\n"
+             + justifiedBodyFor "sonnet")
+
+    [<Given>]
     member _.``a \.claude/ directory containing two agent files declaring the same name``() =
         writeGradeRegistry ()
 
@@ -585,6 +597,11 @@ coverage:
     member _.``the output reports the effort the grade declares``() =
         Assert.Contains("wrong-effort-agent", output)
         Assert.Contains("effort: xhigh (the execution grade)", output)
+
+    [<Then>]
+    member _.``the output reports the grade the justification argues for``() =
+        Assert.Contains("drifted-agent", output)
+        Assert.Contains("argues for `sonnet`", output)
 
     [<Then>]
     member _.``the output reports the missing justification block``() =
@@ -1617,6 +1634,7 @@ module private ClaudeFeatureRunner =
 [<InlineData("An agent whose effort contradicts its grade fails validation")>]
 [<InlineData("A registry declaring no grade vocabulary fails closed")>]
 [<InlineData("An agent stating no model selection justification fails validation")>]
+[<InlineData("An agent whose justification argues for a grade it does not declare fails validation")>]
 let ``Claude validation scenarios cross the published process`` title = ClaudeFeatureRunner.run title
 
 module private AdditionalFeatureRunner =

@@ -36,9 +36,10 @@ under `docs/explanation/software-engineering/`).
 Python-for-multi-line-edits, confidence re-validation, changed-file capture, FALSE_POSITIVE
 carry-forward, mode handling, and the fix procedures for every category above.
 
-**Model Selection Justification**: `model: sonnet` (execution grade) — re-validating findings against
-current file state, applying multi-line edits safely, and judging governance/licensing/documentation
-fixes each require semantic comparison, not just pattern matching.
+**Model Selection Justification**: `model: opus` (planning grade) — deciding whether a
+`rules-checker` finding is a real contradiction, then correcting governance, licensing, or
+documentation text without widening its scope, is semantic judgement over normative prose. It
+follows its checker's grade: a governance fix that lands wrong propagates across the repository.
 
 ## Critical Requirements
 
