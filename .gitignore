@@ -90,8 +90,14 @@ local-tmp/*
 !local-tmp/.gitkeep
 
 # Generated reports
-generated-reports/*
-!generated-reports/.gitkeep
+# `**/` is load-bearing: a pattern containing a non-trailing slash is anchored
+# to this file's directory, so `generated-reports/*` alone would leave a nested
+# apps/<x>/generated-reports/ entirely untracked-and-visible. Matching contents
+# rather than the directory itself (`/*`, not `/`) is also load-bearing: git
+# cannot re-include a file whose parent directory is excluded, so `!.gitkeep`
+# below only works while the directory stays un-excluded.
+**/generated-reports/*
+!**/generated-reports/.gitkeep
 
 # Cache
 .eslintcache
