@@ -21,7 +21,7 @@ Before submitting a new agent, verify:
 - [ ] `name` matches filename (kebab-case, no `.md`)
 - [ ] `description` clearly states when to use this agent
 - [ ] `tools` explicitly lists required tools only (least privilege)
-- [ ] `model` left empty for planning-grade (or `sonnet`/`haiku` if execution-grade/fast tier is justified)
+- [ ] `model` declares one of `fable`/`opus`/`sonnet`/`haiku`/`inherit` — never left blank
 - [ ] `color` assigned based on agent role (blue/green/yellow/purple) - required
 - [ ] `skills` field present (can be empty `[]` or list actual agent skills) - required
 

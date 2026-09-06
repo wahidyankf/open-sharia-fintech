@@ -139,8 +139,11 @@ Every generated-tier harness in `repo-config.yml` receives its binding mechanica
 - **`.opencode/agents/*.md`** — mirrors of `.claude/agents/**/*.md`, flattened to one level, with
   color, model, and tool frontmatter translated (see Translation Artifacts below).
 - **`.codex/agents/*.toml`** — one flat TOML file per Claude agent, keyed on the agent's `name`
-  frontmatter rather than its filename or role subfolder, carrying `name`, `description`, and
-  `developer_instructions`.
+  frontmatter rather than its filename or role subfolder, carrying `name`, `description`, `model`,
+  `model_reasoning_effort`, and `developer_instructions`. Codex reads a role's `config_file` as a
+  full config layer, so a `model` set there takes precedence over the session model; a grade with no
+  Codex counterpart (`inherit`, a pinned vendor ID) omits the key and raises a conversion warning
+  rather than guessing.
 - **`.codex/config.toml`** — only the region between the `rhino-cli generated` markers is
   generator-owned. The hand-maintained `mcp_servers`, `features`, and vendored agent tables outside
   that region are preserved across regeneration.

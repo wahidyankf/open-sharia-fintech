@@ -20,7 +20,7 @@ Some agents straddle tier boundaries. When uncertain:
 
 1. **Analyze the core loop** -- what does the agent do repeatedly? If the core loop is rule application, use execution-grade even if setup requires some reasoning.
 2. **Consider the failure mode** -- if the agent picks a wrong approach, how bad is the outcome? Higher-stakes failures justify a higher tier.
-3. **Start lower, promote if needed** -- begin with execution-grade; promote to planning-grade only if quality issues emerge in practice.
+3. **Start lower, promote if needed** -- begin with execution-grade; promote to planning-grade only if quality issues emerge in practice, and to ultra only on the recorded evidence the ultra grade requires.
 
 ## Link Checkers as Fast-Tier
 
@@ -32,7 +32,7 @@ The social-linkedin-post-maker uses execution-grade despite being a "maker" agen
 
 ## Structured Makers as Execution-Grade
 
-Several maker agents use execution-grade because their output is structured by tight skills with well-defined rubrics (docs-maker, readme-maker, agent-maker, specs-maker, repo-workflow-maker, apps-ose-www-content-maker, apps-ayokoding-www-by-example-maker, apps-ayokoding-www-general-maker, apps-ayokoding-www-in-the-field-maker, rules-maker). Each has an execution-grade checker and execution-grade fixer in its maker-checker-fixer trio, and the skill pins down most decisions. Contrast with planning-grade makers (plan-maker, docs-tutorial-maker, swe-ui-maker) where the creative work is open-ended, pedagogically demanding, or multi-concern.
+Several maker agents use execution-grade because their output is structured by tight skills with well-defined rubrics (docs-maker, readme-maker, agent-maker, repo-workflow-maker, apps-ose-www-content-maker, apps-ayokoding-www-by-example-maker, apps-ayokoding-www-general-maker, apps-ayokoding-www-in-the-field-maker). Each has an execution-grade checker and execution-grade fixer in its maker-checker-fixer trio, and the skill pins down most decisions. The governance trios -- `rules-*`, `specs-*`, `plan-*` -- sit a grade higher for the reason given under Model Tiers — Execution-Grade. Contrast with planning-grade makers (plan-maker, docs-tutorial-maker, swe-ui-maker) where the creative work is open-ended, pedagogically demanding, or multi-concern.
 
 ## E2E Test Developer as Execution-Grade
 

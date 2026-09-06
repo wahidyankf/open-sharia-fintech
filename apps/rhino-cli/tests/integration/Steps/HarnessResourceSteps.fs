@@ -245,6 +245,10 @@ type HarnessResourceSteps() =
     let mutable lastSyncOutcome: Result<Harness.SyncResult, string> option = None
     let mutable fixtureCodexAgentNames: string list = []
     let mutable fixtureRoleSubfolders: string list = []
+
+    /// One agent per grade of the four-grade vocabulary, paired with the Codex
+    /// model and reasoning effort its mirror must carry.
+    let mutable fixtureCodexTiers: (string * string * string) list = []
     let mutable configAfterFirstRun: string option = None
     let mutable configAfterSecondRun: string option = None
     let mutable pushRangePaths: string list = []
@@ -1017,6 +1021,27 @@ type HarnessResourceSteps() =
         File.WriteAllText(path, sprintf "---\nname: %s\ndescription: %s\n---\n%s" name description body)
         path
 
+    /// As `writeCodexAgentUnderSubfolder`, plus the `model` and `effort`
+    /// frontmatter the Codex mirror translates onto `model` and
+    /// `model_reasoning_effort`.
+    let writeTieredCodexAgent
+        (root: string)
+        (subfolder: string)
+        (name: string)
+        (model: string)
+        (effort: string)
+        : string =
+        let dir = Path.Combine(root, ".claude", "agents", subfolder)
+        Directory.CreateDirectory dir |> ignore
+        let path = Path.Combine(dir, name + ".md")
+
+        File.WriteAllText(
+            path,
+            sprintf "---\nname: %s\ndescription: %s fixture\nmodel: %s\neffort: %s\n---\nBody.\n" name name model effort
+        )
+
+        path
+
     /// Mirrors the live `governance-word-budget:` surfaces for `AGENTS.md` and
     /// `RTK.md` in `repo-config.yml` (650/750/750), scoped to just the two
     /// surfaces this feature's scenarios name — not the full 9-surface table
@@ -1192,6 +1217,30 @@ type HarnessResourceSteps() =
         )
 
     [<Given>]
+    member _.``a \.claude/ directory where one agent declares the "fable" model alias``() =
+        let root = scenarioRoot ()
+        let dir = Path.Combine(root, ".claude", "agents")
+        Directory.CreateDirectory dir |> ignore
+
+        File.WriteAllText(
+            Path.Combine(dir, "validate-claude-ultra.md"),
+            "---\nname: validate-claude-ultra\ndescription: fixture agent\ntools: Read, Write\nmodel: fable\ncolor: blue\n---\nBody.\n"
+        )
+
+        writeValidatedSkill root "validate-claude-ultra-skill" |> ignore
+
+    [<Given>]
+    member _.``a \.claude/ directory where one agent declares the "gpt-4" model alias``() =
+        let root = scenarioRoot ()
+        let dir = Path.Combine(root, ".claude", "agents")
+        Directory.CreateDirectory dir |> ignore
+
+        File.WriteAllText(
+            Path.Combine(dir, "validate-claude-foreign-model.md"),
+            "---\nname: validate-claude-foreign-model\ndescription: fixture agent\ntools: Read, Write\nmodel: gpt-4\ncolor: blue\n---\nBody.\n"
+        )
+
+    [<Given>]
     member _.``a \.claude/ directory containing two agent files declaring the same name``() =
         let root = scenarioRoot ()
         let dir = Path.Combine(root, ".claude", "agents")
@@ -1267,6 +1316,17 @@ type HarnessResourceSteps() =
                 && c.Actual.Contains("description", StringComparison.Ordinal))
 
         Assert.True(identifies.IsSome)
+
+    [<Then>]
+    member _.``the output reports the rejected model value``() =
+        let rejected =
+            (result ()).Checks
+            |> List.tryFind (fun c ->
+                c.Status = "failed"
+                && c.Name.Contains("validate-claude-foreign-model", StringComparison.Ordinal)
+                && c.Actual = "Model: gpt-4")
+
+        Assert.True(rejected.IsSome)
 
     [<Then>]
     member _.``the output reports the duplicate agent name``() =
@@ -1493,6 +1553,31 @@ type HarnessResourceSteps() =
         fixtureRoleSubfolders <- [ "reviewers"; "makers" ]
 
     [<Given>]
+    member _.``a repository whose \.claude/agents/ holds one agent per model tier``() =
+        let root = scenarioRoot ()
+
+        let tiers =
+            [ "ultra-agent", "fable", "high", "gpt-6-astra", "high"
+              "planning-agent", "opus", "high", "gpt-5.6-sol", "high"
+              "execution-agent", "sonnet", "xhigh", "gpt-5.6-terra", "xhigh"
+              "fast-agent", "haiku", "max", "gpt-5.6-luna", "xhigh" ]
+
+        for name, model, effort, _, _ in tiers do
+            writeTieredCodexAgent root "roles" name model effort |> ignore
+
+        fixtureCodexAgentNames <- tiers |> List.map (fun (name, _, _, _, _) -> name)
+
+        fixtureCodexTiers <-
+            tiers
+            |> List.map (fun (name, _, _, codexModel, codexEffort) -> name, codexModel, codexEffort)
+
+    [<Given>]
+    member _.``a repository whose \.claude/agents/ holds one agent declaring model inherit``() =
+        let root = scenarioRoot ()
+        writeTieredCodexAgent root "roles" "inheriting" "inherit" "high" |> ignore
+        fixtureCodexAgentNames <- [ "inheriting" ]
+
+    [<Given>]
     member _.``a repository whose \.codex/config\.toml carries hand-maintained mcp_servers, features, and ci-monitor-subagent tables``
         ()
         =
@@ -1578,6 +1663,26 @@ type HarnessResourceSteps() =
 
         let content = File.ReadAllText path
         Assert.DoesNotContain("model = ", content)
+
+    [<Then>]
+    member _.``each emitted Codex agent declares the Codex model at the same tier``() =
+        let root = scenarioRoot ()
+
+        for name, codexModel, _ in fixtureCodexTiers do
+            let content =
+                File.ReadAllText(Path.Combine(root, ".codex", "agents", name + ".toml"))
+
+            Assert.Contains(sprintf "model = \"%s\"" codexModel, content)
+
+    [<Then>]
+    member _.``each emitted Codex agent declares model_reasoning_effort matching its Claude effort``() =
+        let root = scenarioRoot ()
+
+        for name, _, codexEffort in fixtureCodexTiers do
+            let content =
+                File.ReadAllText(Path.Combine(root, ".codex", "agents", name + ".toml"))
+
+            Assert.Contains(sprintf "model_reasoning_effort = \"%s\"" codexEffort, content)
 
     [<Then>]
     member _.``\.codex/agents/ holds one flat TOML file per agent keyed on the name frontmatter``() =
@@ -3137,6 +3242,14 @@ let ``An agent file missing a required frontmatter field fails validation`` () =
     FeatureRunner.runValidateClaude "An agent file missing a required frontmatter field fails validation"
 
 [<Fact>]
+let ``An agent declaring the ultra-tier fable model alias passes validation`` () =
+    FeatureRunner.runValidateClaude "An agent declaring the ultra-tier fable model alias passes validation"
+
+[<Fact>]
+let ``An agent declaring a model outside the tier vocabulary fails validation`` () =
+    FeatureRunner.runValidateClaude "An agent declaring a model outside the tier vocabulary fails validation"
+
+[<Fact>]
 let ``Two agents with the same name fail validation`` () =
     FeatureRunner.runValidateClaude "Two agents with the same name fail validation"
 
@@ -3151,6 +3264,14 @@ let ``--skills-only validates skills without checking agents`` () =
 [<Fact>]
 let ``A Claude agent under a role subfolder gets a flat Codex TOML counterpart`` () =
     FeatureRunner.runCodexBinding "A Claude agent under a role subfolder gets a flat Codex TOML counterpart"
+
+[<Fact>]
+let ``An agent's model and effort tier is carried onto its Codex counterparts`` () =
+    FeatureRunner.runCodexBinding "An agent's model and effort tier is carried onto its Codex counterparts"
+
+[<Fact>]
+let ``A tier with no Codex counterpart is omitted rather than guessed`` () =
+    FeatureRunner.runCodexBinding "A tier with no Codex counterpart is omitted rather than guessed"
 
 [<Fact>]
 let ``Agent identity comes from the name frontmatter, not the source subfolder`` () =

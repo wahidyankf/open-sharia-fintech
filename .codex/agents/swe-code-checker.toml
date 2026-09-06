@@ -1,5 +1,7 @@
 name = "swe-code-checker"
 description = "Validates that application and library projects conform to platform coding standards, Nx target conventions, and language-specific best practices. Outputs to local-tmp/swe-code/ with progressive streaming."
+model = "gpt-5.6-terra"
+model_reasoning_effort = "xhigh"
 developer_instructions = """
 
 # Code Checker Agent

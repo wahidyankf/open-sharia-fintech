@@ -1,5 +1,7 @@
 name = "apps-ayokoding-www-primer-fixer"
 description = "Applies validated fixes from apps-ayokoding-www-primer-checker audit reports. Re-validates Primer findings (density, structure, scope discipline) before applying changes. Use after reviewing checker output."
+model = "gpt-5.6-terra"
+model_reasoning_effort = "xhigh"
 developer_instructions = """
 
 # Primer Tutorial Fixer for ayokoding-web

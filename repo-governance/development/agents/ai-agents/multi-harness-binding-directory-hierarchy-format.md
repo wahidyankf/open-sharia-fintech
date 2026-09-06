@@ -83,23 +83,32 @@ OpenCode (.opencode/agents/) — SECONDARY:
 Codex (.codex/agents/) — SECONDARY:
   name = "agent-name"
   description = "..."
+  model = "gpt-5.6-terra"
+  model_reasoning_effort = "xhigh"
   developer_instructions = """..."""
-  (TOML; canonical tool and model frontmatter are not emitted)
+  (TOML; canonical tool frontmatter is not emitted — Codex governs
+   tool access through sandbox and approval policy, not per agent)
 ```
 
 ### Model References
 
 ```binding-example
 Claude Code:
+  model: fable   # ultra
+  model: opus    # planning-grade
   model: sonnet  # execution-grade
   model: haiku   # fast
-  model:         # planning-grade (omit for budget-adaptive inheritance)
+  # a blank model: is not a grade — always declare one
 
 OpenCode:
-  model: zai-coding-plan/glm-5.2 # every canonical tier maps to this model
+  model: zai-coding-plan/glm-5.2 # every canonical grade maps to this model
 
 Codex:
-  # model is omitted from generated per-agent TOML
+  model = "gpt-6-astra"   # ultra
+  model = "gpt-5.6-sol"   # planning-grade
+  model = "gpt-5.6-terra" # execution-grade
+  model = "gpt-5.6-luna"  # fast
+  # inherit and pinned vendor IDs emit no model key at all
 ```
 
 ### Agent skills format

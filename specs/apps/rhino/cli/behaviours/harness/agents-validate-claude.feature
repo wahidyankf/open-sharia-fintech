@@ -17,6 +17,17 @@ Feature: Claude Code Agent and Skill Configuration Validation
     Then the command exits with a failure code
     And the output identifies the agent and the missing field
 
+  Scenario: An agent declaring the ultra-tier fable model alias passes validation
+    Given a .claude/ directory where one agent declares the "fable" model alias
+    When the developer runs agents validate-claude
+    Then the command exits successfully
+
+  Scenario: An agent declaring a model outside the tier vocabulary fails validation
+    Given a .claude/ directory where one agent declares the "gpt-4" model alias
+    When the developer runs agents validate-claude
+    Then the command exits with a failure code
+    And the output reports the rejected model value
+
   Scenario: Two agents with the same name fail validation
     Given a .claude/ directory containing two agent files declaring the same name
     When the developer runs agents validate-claude

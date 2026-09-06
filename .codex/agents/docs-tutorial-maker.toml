@@ -1,5 +1,7 @@
 name = "docs-tutorial-maker"
 description = "Creates and updates tutorial documentation following Diátaxis framework and tutorial conventions"
+model = "gpt-5.6-sol"
+model_reasoning_effort = "high"
 developer_instructions = """
 
 # Tutorial Documentation Maker Agent

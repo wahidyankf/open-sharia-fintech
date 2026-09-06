@@ -1,5 +1,7 @@
 name = "repo-workflow-fixer"
 description = "Applies validated fixes from workflow-checker audit reports. Re-validates before applying changes."
+model = "gpt-5.6-terra"
+model_reasoning_effort = "xhigh"
 developer_instructions = """
 
 # Workflow Fixer Agent

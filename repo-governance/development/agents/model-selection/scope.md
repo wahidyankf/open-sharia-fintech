@@ -16,9 +16,10 @@ when_to_use: Use when checking whether a model-selection question is in scope fo
 
 ## What This Convention Covers
 
-- Model tier definitions and their cognitive capabilities
-- Decision criteria for selecting each tier
-- Task-to-tier mapping with concrete examples
+- Model grade definitions and their cognitive capabilities
+- Decision criteria for selecting each grade
+- Task-to-grade mapping with concrete examples
+- Per-harness translation of a grade to a concrete model ID
 - Justification requirements for model selection
 
 ## What This Convention Does NOT Cover

@@ -1,5 +1,7 @@
 name = "apps-ayokoding-www-general-maker"
 description = "Creates general ayokoding-web content (by-concept tutorials, guides, references). Ensures bilingual completeness and content quality compliance."
+model = "gpt-5.6-terra"
+model_reasoning_effort = "xhigh"
 developer_instructions = """
 
 # General Content Maker for ayokoding-web

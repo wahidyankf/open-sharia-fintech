@@ -1,5 +1,7 @@
 name = "apps-ayokoding-www-general-checker"
 description = "Validates general ayokoding-web content quality including bilingual completeness and content quality."
+model = "gpt-5.6-terra"
+model_reasoning_effort = "xhigh"
 developer_instructions = """
 
 # General Content Checker for ayokoding-web

@@ -1,6 +1,6 @@
 ---
 title: "AI Agent Model Selection Convention"
-description: "Standards for selecting the appropriate model tier (planning-grade, execution-grade, fast) for AI agents based on task complexity"
+description: "Standards for selecting the appropriate model grade (ultra, planning-grade, execution-grade, fast) for AI agents based on task complexity"
 category: explanation
 subcategory: development
 tags:
@@ -25,9 +25,12 @@ This document defines the standards for selecting the appropriate model tier whe
 
 ## Model Tiers
 
-- [Planning-Grade (Inherit / No Model Specified)](./model-selection/model-tiers-planning-grade.md) — budget-adaptive tier.
-- [Execution-Grade](./model-selection/model-tiers-execution-grade.md) — sonnet tier.
-- [Fast](./model-selection/model-tiers-fast.md) — haiku tier.
+Four grades, cheapest first: **fast**, **execution-grade**, **planning-grade**, **ultra**.
+
+- [Ultra](./model-selection/model-tiers-ultra.md) — fable grade; defined, currently unpopulated.
+- [Planning-Grade](./model-selection/model-tiers-planning-grade.md) — opus grade.
+- [Execution-Grade](./model-selection/model-tiers-execution-grade.md) — sonnet grade.
+- [Fast](./model-selection/model-tiers-fast.md) — haiku grade.
 - [Model Selection Decision Tree](./model-selection/model-selection-decision-tree.md) — the decision tree.
 - [Justification Requirement](./model-selection/justification-requirement.md) — the required block.
 
@@ -35,11 +38,11 @@ This document defines the standards for selecting the appropriate model tier whe
 
 - [Tier Comparison Summary](./model-selection/tier-comparison-summary.md) — side-by-side table.
 - [Common Mistakes](./model-selection/common-mistakes.md) — mistakes to avoid.
-- [Current Model Versions (April 2026)](./model-selection/current-model-versions.md) — version strings.
+- [Current Model Versions (September 2026)](./model-selection/current-model-versions.md) — version strings.
 
 ## Platform Bindings and Special Cases
 
-- [Platform Binding Examples](./model-selection/platform-binding-examples.md) — source-tier to generated-tier model mappings.
+- [Platform Binding Examples](./model-selection/platform-binding-examples.md) — per-harness grade-to-model-ID mappings.
 - [Special Considerations — Borderline Cases and Tier Assignments](./model-selection/special-considerations-borderline-and-tier-cases.md) — edge cases.
 - [Special Considerations — Link Fixer as Fast-Tier](./model-selection/special-considerations-link-fixer.md) — link-fixer case.
 - [Tools and Automation](./model-selection/tools-and-automation.md) — validation tools.

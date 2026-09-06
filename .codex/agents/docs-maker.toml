@@ -1,5 +1,7 @@
 name = "docs-maker"
 description = "Expert documentation writer specializing in GitHub-compatible markdown and Diátaxis framework. Use when creating, editing, or organizing project documentation."
+model = "gpt-5.6-terra"
+model_reasoning_effort = "xhigh"
 developer_instructions = """
 
 # Documentation Writer Agent

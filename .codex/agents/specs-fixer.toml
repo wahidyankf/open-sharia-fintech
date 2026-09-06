@@ -1,5 +1,7 @@
 name = "specs-fixer"
 description = "Applies validated fixes from specs-checker audit reports for explicitly listed spec folders. Re-validates findings before applying. Use after reviewing specs-checker output."
+model = "gpt-5.6-sol"
+model_reasoning_effort = "high"
 developer_instructions = """
 
 # Specs Fixer Agent

@@ -1,5 +1,7 @@
 name = "apps-ayokoding-www-facts-fixer"
 description = "Applies validated fixes from facts-checker audit reports. Re-validates factual findings before applying changes."
+model = "gpt-5.6-terra"
+model_reasoning_effort = "xhigh"
 developer_instructions = """
 
 # Facts Fixer for ayokoding-web

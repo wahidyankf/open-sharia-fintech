@@ -35,6 +35,10 @@ type HarnessProcessSteps() =
     let mutable catalogBefore = ""
     let mutable codexAgentNames: string list = []
     let mutable roleSubfolders: string list = []
+
+    /// One agent per grade of the four-grade vocabulary, paired with the Codex
+    /// model and reasoning effort its mirror must carry.
+    let mutable codexTiers: (string * string * string) list = []
     let mutable firstConfig = ""
     let mutable secondConfig = ""
     let mutable mirrorSnapshot: (string * string) list = []
@@ -115,6 +119,18 @@ coverage:
         write
             (Path.Combine(".claude", "agents", subfolder, fileStem + ".md"))
             (sprintf "---\nname: %s\ndescription: %s\n---\n%s" name description body)
+
+    /// As `codexAgent`, plus the `model` and `effort` frontmatter the Codex
+    /// mirror translates onto `model` and `model_reasoning_effort`.
+    let tieredCodexAgent subfolder name model effort =
+        write
+            (Path.Combine(".claude", "agents", subfolder, name + ".md"))
+            (sprintf
+                "---\nname: %s\ndescription: %s fixture\nmodel: %s\neffort: %s\n---\nBody.\n"
+                name
+                name
+                model
+                effort)
 
     let writeCatalog directories =
         write
@@ -399,6 +415,20 @@ coverage:
             "---\nname: missing-description\ntools: Read\nmodel: sonnet\ncolor: blue\n---\nBody.\n"
 
     [<Given>]
+    member _.``a \.claude/ directory where one agent declares the "fable" model alias``() =
+        validatedSkill "valid-skill"
+
+        write
+            (Path.Combine(".claude", "agents", "ultra-agent.md"))
+            "---\nname: ultra-agent\ndescription: ultra fixture\ntools: Read\nmodel: fable\ncolor: blue\n---\nBody.\n"
+
+    [<Given>]
+    member _.``a \.claude/ directory where one agent declares the "gpt-4" model alias``() =
+        write
+            (Path.Combine(".claude", "agents", "foreign-model-agent.md"))
+            "---\nname: foreign-model-agent\ndescription: foreign fixture\ntools: Read\nmodel: gpt-4\ncolor: blue\n---\nBody.\n"
+
+    [<Given>]
     member _.``a \.claude/ directory containing two agent files declaring the same name``() =
         for suffix in [ "a"; "b" ] do
             write
@@ -438,6 +468,11 @@ coverage:
     member _.``the output identifies the agent and the missing field``() =
         Assert.Contains("missing-description", output)
         Assert.Contains("description", output)
+
+    [<Then>]
+    member _.``the output reports the rejected model value``() =
+        Assert.Contains("foreign-model-agent", output)
+        Assert.Contains("gpt-4", output)
 
     [<Then>]
     member _.``the output reports the duplicate agent name``() =
@@ -560,6 +595,31 @@ coverage:
         roleSubfolders <- [ "reviewers"; "makers" ]
 
     [<Given>]
+    member _.``a repository whose \.claude/agents/ holds one agent per model tier``() =
+        writeBindingRegistry ()
+
+        let tiers =
+            [ "ultra-agent", "fable", "high", "gpt-6-astra", "high"
+              "planning-agent", "opus", "high", "gpt-5.6-sol", "high"
+              "execution-agent", "sonnet", "xhigh", "gpt-5.6-terra", "xhigh"
+              "fast-agent", "haiku", "max", "gpt-5.6-luna", "xhigh" ]
+
+        for name, model, effort, _, _ in tiers do
+            tieredCodexAgent "roles" name model effort
+
+        codexAgentNames <- tiers |> List.map (fun (name, _, _, _, _) -> name)
+
+        codexTiers <-
+            tiers
+            |> List.map (fun (name, _, _, codexModel, codexEffort) -> name, codexModel, codexEffort)
+
+    [<Given>]
+    member _.``a repository whose \.claude/agents/ holds one agent declaring model inherit``() =
+        writeBindingRegistry ()
+        tieredCodexAgent "roles" "inheriting" "inherit" "high"
+        codexAgentNames <- [ "inheriting" ]
+
+    [<Given>]
     member _.``a repository whose \.codex/config\.toml carries hand-maintained mcp_servers, features, and ci-monitor-subagent tables``
         ()
         =
@@ -605,6 +665,20 @@ coverage:
             File.ReadAllText(Path.Combine(root, ".codex", "agents", codexAgentNames.Head + ".toml"))
 
         Assert.DoesNotContain("model = ", body)
+
+    [<Then>]
+    member _.``each emitted Codex agent declares the Codex model at the same tier``() =
+        for name, codexModel, _ in codexTiers do
+            let body = File.ReadAllText(Path.Combine(root, ".codex", "agents", name + ".toml"))
+
+            Assert.Contains(sprintf "model = \"%s\"" codexModel, body)
+
+    [<Then>]
+    member _.``each emitted Codex agent declares model_reasoning_effort matching its Claude effort``() =
+        for name, _, codexEffort in codexTiers do
+            let body = File.ReadAllText(Path.Combine(root, ".codex", "agents", name + ".toml"))
+
+            Assert.Contains(sprintf "model_reasoning_effort = \"%s\"" codexEffort, body)
 
     [<Then>]
     member _.``\.codex/agents/ holds one flat TOML file per agent keyed on the name frontmatter``() =
@@ -1412,6 +1486,8 @@ module private ClaudeFeatureRunner =
 [<Theory>]
 [<InlineData("A directory with all agents and skills correctly configured passes validation")>]
 [<InlineData("An agent file missing a required frontmatter field fails validation")>]
+[<InlineData("An agent declaring the ultra-tier fable model alias passes validation")>]
+[<InlineData("An agent declaring a model outside the tier vocabulary fails validation")>]
 [<InlineData("Two agents with the same name fail validation")>]
 [<InlineData("--agents-only validates agents without checking skills")>]
 [<InlineData("--skills-only validates skills without checking agents")>]
@@ -1463,6 +1539,8 @@ let ``catalog scenarios cross the published process`` title =
 
 [<Theory>]
 [<InlineData("A Claude agent under a role subfolder gets a flat Codex TOML counterpart")>]
+[<InlineData("An agent's model and effort tier is carried onto its Codex counterparts")>]
+[<InlineData("A tier with no Codex counterpart is omitted rather than guessed")>]
 [<InlineData("Agent identity comes from the name frontmatter, not the source subfolder")>]
 [<InlineData("Regenerating rewrites only the delimited region of .codex/config.toml")>]
 let ``Codex binding scenarios cross the published process`` title =

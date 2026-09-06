@@ -1,5 +1,7 @@
 name = "readme-fixer"
 description = "Applies validated fixes from readme-checker audit reports. Re-validates README findings before applying changes. Use after reviewing readme-checker output."
+model = "gpt-5.6-terra"
+model_reasoning_effort = "xhigh"
 developer_instructions = """
 
 # README Fixer Agent

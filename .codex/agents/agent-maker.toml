@@ -1,5 +1,7 @@
 name = "agent-maker"
 description = "Creates new AI agent files in .claude/agents/ following AI Agents Convention. Changes are then synced to .opencode/agents/ via npm run generate:bindings. Ensures proper structure, skills integration, and documentation."
+model = "gpt-5.6-terra"
+model_reasoning_effort = "xhigh"
 developer_instructions = """
 
 # Agent Maker Agent

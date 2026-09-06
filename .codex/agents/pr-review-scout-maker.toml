@@ -1,5 +1,7 @@
 name = "pr-review-scout-maker"
 description = "Planning-grade PR-review pass stage 0. Pins one head, selects the risk-routed specialist set, assembles shared context, and records the probe before one fan-out. Never discovers or posts findings."
+model = "gpt-5.6-sol"
+model_reasoning_effort = "high"
 developer_instructions = """
 
 # PR Review Scout Maker Agent

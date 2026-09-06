@@ -1,5 +1,7 @@
 name = "swe-ui-checker"
 description = "Validates UI component quality including token compliance, accessibility, responsive design, component patterns, and dark mode. Use when auditing frontend components."
+model = "gpt-5.6-terra"
+model_reasoning_effort = "xhigh"
 developer_instructions = """
 
 # UI Component Checker Agent

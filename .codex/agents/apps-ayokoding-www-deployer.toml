@@ -1,5 +1,7 @@
 name = "apps-ayokoding-www-deployer"
 description = "Deploys ayokoding-web (Next.js) to production environment branch (prod-ayokoding-www) after validation. Vercel listens to production branch for automatic builds."
+model = "gpt-5.6-luna"
+model_reasoning_effort = "xhigh"
 developer_instructions = """
 
 # Deployer for ayokoding-web

@@ -1,5 +1,7 @@
 name = "apps-ose-www-deployer"
 description = "Deploys ose-web to production environment branch (prod-ose-www) after validation. Vercel listens to production branch for automatic builds."
+model = "gpt-5.6-luna"
+model_reasoning_effort = "xhigh"
 developer_instructions = """
 
 # Deployer for ose-web

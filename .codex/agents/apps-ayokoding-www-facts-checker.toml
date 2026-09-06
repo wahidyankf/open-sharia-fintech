@@ -1,5 +1,7 @@
 name = "apps-ayokoding-www-facts-checker"
 description = "Validates factual accuracy of ayokoding-web content using WebSearch/WebFetch. Verifies command syntax, versions, code examples, external references with confidence classification."
+model = "gpt-5.6-terra"
+model_reasoning_effort = "xhigh"
 developer_instructions = """
 
 # Facts Checker for ayokoding-web

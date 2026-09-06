@@ -1,5 +1,7 @@
 name = "swe-typescript-dev"
 description = "Develops TypeScript applications following type safety principles, modern patterns, and platform coding standards. Use when implementing TypeScript code for OSE Platform."
+model = "gpt-5.6-terra"
+model_reasoning_effort = "xhigh"
 developer_instructions = """
 
 # TypeScript Developer Agent

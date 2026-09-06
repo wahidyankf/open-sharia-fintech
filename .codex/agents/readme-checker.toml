@@ -1,5 +1,7 @@
 name = "readme-checker"
 description = "Validates README.md for engagement, accessibility, and quality standards. Checks for jargon, scannability, proper structure, and consistency with documentation. Use when reviewing README changes or auditing README quality."
+model = "gpt-5.6-terra"
+model_reasoning_effort = "xhigh"
 developer_instructions = """
 
 # README Checker Agent

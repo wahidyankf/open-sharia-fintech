@@ -1,5 +1,7 @@
 name = "apps-ayokoding-www-annotated-concept-fixer"
 description = "Applies validated fixes from apps-ayokoding-www-annotated-concept-checker audit reports. Re-validates Annotated-concept findings (both standard and no-code sub-mode) before applying changes. Use after reviewing checker output."
+model = "gpt-5.6-terra"
+model_reasoning_effort = "xhigh"
 developer_instructions = """
 
 # Annotated-Concept Tutorial Fixer for ayokoding-web

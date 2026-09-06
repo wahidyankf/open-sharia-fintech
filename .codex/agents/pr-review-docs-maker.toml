@@ -1,5 +1,7 @@
 name = "pr-review-docs-maker"
 description = "Execution-grade PR reviewer scoped to the documentation-quality discipline only — substantive README/docs/Diátaxis fit, doc drift vs. code, clarity, and doc alt-text/accessibility. One of nine discipline-scoped specialists feeding the pr-review-synthesis-maker coordinator; inherits pr-review-maker's hard rules verbatim, scoped to its own charter and SUPPRESS block."
+model = "gpt-5.6-terra"
+model_reasoning_effort = "xhigh"
 developer_instructions = """
 
 # PR Review Docs Maker Agent

@@ -1842,16 +1842,23 @@ let generatedRegionStart =
 /// [Repo-grounded — `codex.rs::GENERATED_REGION_END`].
 let generatedRegionEnd = "# <<< rhino-cli generated: codex agents"
 
-/// Codex agent emit shape: `name`, `description`, `developer_instructions`
-/// [Repo-grounded — `codex.rs::CodexAgent`].
+/// Codex agent emit shape: `name`, `description`, `model`,
+/// `model_reasoning_effort`, `developer_instructions`. `Model` and
+/// `ModelReasoningEffort` are empty when the Claude source declares a tier
+/// Codex has no counterpart for; the encoder then omits the key so Codex falls
+/// back to its own default [Repo-grounded — `codex.rs::CodexAgent`].
 type CodexAgent =
     { Name: string
       Description: string
+      Model: string
+      ModelReasoningEffort: string
       DeveloperInstructions: string }
 
 let private codexAgentEmpty: CodexAgent =
     { Name = ""
       Description = ""
+      Model = ""
+      ModelReasoningEffort = ""
       DeveloperInstructions = "" }
 
 /// One generated agent as the `.codex/config.toml` region needs it
@@ -1907,12 +1914,21 @@ let private escapeTomlMultiline (s: string) : string =
     out.ToString()
 
 /// Renders a [`CodexAgent`] as the bytes of a standalone `.codex/agents/*.toml`
-/// file, emitting `name`, `description`, `developer_instructions` in that
-/// fixed order [Repo-grounded — `codex.rs::encode_codex_agent`].
+/// file, emitting `name`, `description`, `model`, `model_reasoning_effort`,
+/// `developer_instructions` in that fixed order. An empty `Model` or
+/// `ModelReasoningEffort` omits its key entirely rather than emitting `""`,
+/// which Codex would reject as an unknown model or effort level
+/// [Repo-grounded — `codex.rs::encode_codex_agent`].
 let encodeCodexAgent (agent: CodexAgent) : string =
     let lines = ResizeArray<string>()
     lines.Add(sprintf "name = \"%s\"" (escapeTomlBasic agent.Name))
     lines.Add(sprintf "description = \"%s\"" (escapeTomlBasic agent.Description))
+
+    if agent.Model <> "" then
+        lines.Add(sprintf "model = \"%s\"" (escapeTomlBasic agent.Model))
+
+    if agent.ModelReasoningEffort <> "" then
+        lines.Add(sprintf "model_reasoning_effort = \"%s\"" (escapeTomlBasic agent.ModelReasoningEffort))
 
     lines.Add(sprintf "developer_instructions = \"\"\"\n%s\"\"\"" (escapeTomlMultiline agent.DeveloperInstructions))
 
@@ -1932,6 +1948,37 @@ let private describeYamlValueKind (value: obj) : string =
     | :? Collections.IDictionary -> "a mapping"
     | :? Collections.IEnumerable -> "a sequence"
     | _ -> "a tagged value"
+
+/// Maps a Claude model alias onto the Codex model ID at the same grade of the
+/// four-grade tier vocabulary. The pairing follows each vendor's own published
+/// positioning of its lineup rather than a benchmark ranking.
+///
+/// Returns `""` for a tier with no Codex counterpart — an empty alias,
+/// `inherit`, or a pinned `claude-*` ID. The encoder then omits the `model`
+/// key and Codex applies its own default, which is the honest outcome: there
+/// is no Codex model that means "whatever the caller is running".
+let convertCodexModel (claudeModel: string) : string =
+    match claudeModel with
+    | "fable" -> "gpt-6-astra"
+    | "opus" -> "gpt-5.6-sol"
+    | "sonnet" -> "gpt-5.6-terra"
+    | "haiku" -> "gpt-5.6-luna"
+    | _ -> ""
+
+/// Maps a Claude `effort` level onto Codex's `model_reasoning_effort`.
+///
+/// Codex accepts `minimal|low|medium|high|xhigh`; Claude accepts
+/// `low|medium|high|xhigh|max`. The overlap passes straight through and
+/// Claude's `max` saturates at Codex's `xhigh` ceiling. Anything else returns
+/// `""` so the encoder omits the key.
+let convertCodexEffort (claudeEffort: string) : string =
+    match claudeEffort with
+    | "low"
+    | "medium"
+    | "high"
+    | "xhigh" -> claudeEffort
+    | "max" -> "xhigh"
+    | _ -> ""
 
 /// Copies a `description` frontmatter value into the Codex output. `name` is
 /// already resolved from the discovery walk, so a frontmatter `name` copy is
@@ -1957,20 +2004,56 @@ let private applyCodexPreserve (agent: CodexAgent) (key: string) (value: obj) : 
     else
         agent, None
 
-/// Codex field policy: everything except `name`/`description` is dropped,
-/// most with a conversion warning explaining why it has no Codex counterpart
-/// [Repo-grounded — `codex.rs::CODEX_FIELD_POLICY_TABLE`].
+/// Applies one `Translate` field onto an in-progress [`CodexAgent`].
+///
+/// Returns `Some((field, reason))` when the value is present and non-empty but
+/// has no Codex counterpart, so a tier that silently vanished from the mirror
+/// still surfaces a `ConversionWarning` — the same signal `DropWarn` gave
+/// before these two fields became translatable.
+let private applyCodexTranslate (agent: CodexAgent) (key: string) (value: obj) : CodexAgent * (string * string) option =
+    let asString =
+        match value with
+        | :? string as s -> s.Trim()
+        | _ -> ""
+
+    match key with
+    | "model" ->
+        let mapped = convertCodexModel asString
+
+        if mapped <> "" then
+            { agent with Model = mapped }, None
+        elif asString = "" || asString = "inherit" then
+            agent, None
+        else
+            agent, Some(key, sprintf "no codex counterpart for model %s; codex applies its own default" asString)
+    | "effort" ->
+        let mapped = convertCodexEffort asString
+
+        if mapped <> "" then
+            { agent with
+                ModelReasoningEffort = mapped },
+            None
+        elif asString = "" then
+            agent, None
+        else
+            agent, Some(key, sprintf "no codex counterpart for effort %s; codex applies its own default" asString)
+    | _ -> agent, None
+
+/// Codex field policy: `name`/`description` are preserved, `model`/`effort`
+/// are translated onto their Codex counterparts, and everything else is
+/// dropped — most with a conversion warning explaining why it has no Codex
+/// counterpart [Repo-grounded — `codex.rs::CODEX_FIELD_POLICY_TABLE`].
 let private codexFieldPolicyTable: (string * FieldAction * string) list =
     [ "name", Preserve, ""
       "description", Preserve, ""
-      "model", DropWarn, "no verified claude-to-codex model mapping; codex applies its own default"
+      "model", Translate, ""
       "color", DropWarn, "codex agent files declare no color"
       "tools", DropWarn, "codex governs tool access through sandbox and approval policy, not per agent"
       "skills", DropWarn, "codex discovers skills from .agents/skills, not from an agent file"
       "maxTurns", DropWarn, "no codex equivalent"
       "disallowedTools", DropWarn, "no codex equivalent"
       "permissionMode", DropWarn, "codex declares sandbox_mode at config level"
-      "effort", DropWarn, "claude-only"
+      "effort", Translate, ""
       "memory", DropWarn, "claude-only"
       "isolation", DropWarn, "claude-only"
       "background", DropWarn, "claude-only"
@@ -2013,6 +2096,10 @@ let convertCodexAgentContent
                     match action with
                     | Preserve ->
                         let next, finding = applyCodexPreserve out key value
+                        out <- next
+                        finding |> Option.iter preserveFindings.Add
+                    | Translate ->
+                        let next, finding = applyCodexTranslate out key value
                         out <- next
                         finding |> Option.iter preserveFindings.Add
                     | _ -> ()
@@ -2936,7 +3023,8 @@ let validToolsSorted: string list = validTools |> Set.toList |> List.sort
 
 /// Allow-list of accepted Claude model alias strings (empty means default)
 /// [Repo-grounded — `agents/types.rs::valid_model_alias`].
-let validModelAlias: Set<string> = set [ ""; "sonnet"; "opus"; "haiku"; "inherit" ]
+let validModelAlias: Set<string> =
+    set [ ""; "sonnet"; "opus"; "haiku"; "fable"; "inherit" ]
 
 /// Matches full Claude model IDs (e.g. `claude-sonnet-4-6`)
 /// [Repo-grounded — `agents/types.rs::valid_model_id_pattern`].
@@ -3215,7 +3303,7 @@ let private validateModelCheck (filename: string) (model: string) : ValidationCh
     else
         ValidationCheck.failed
             (sprintf "Agent: %s - Valid Model" filename)
-            "<empty>|sonnet|opus|haiku|inherit|claude-*"
+            "<empty>|sonnet|opus|haiku|fable|inherit|claude-*"
             (sprintf "Model: %s" model)
             "Invalid model"
 

@@ -1,5 +1,7 @@
 name = "harness-compatibility-checker"
 description = "Validates cross-vendor parity invariants (Phase 0, deterministic) and detects external drift between each supported coding-agent harness's current upstream configuration conventions and the platform-binding catalog (Phase 1, web-research-backed). Emits a combined dual-labelled audit report to local-tmp/harness-compat/."
+model = "gpt-5.6-sol"
+model_reasoning_effort = "high"
 developer_instructions = """
 
 # Repository Harness Compatibility Checker Agent

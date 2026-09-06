@@ -1,5 +1,7 @@
 name = "docs-link-checker"
 description = "Validates internal and external documentation links. Always uses docs/metadata/external-links-status.yaml as its sole cache, prunes it, and updates lastFullScan on every invocation. Use for dead links, URL reachability, internal references, or link-health audits."
+model = "gpt-5.6-luna"
+model_reasoning_effort = "xhigh"
 developer_instructions = """
 
 # Documentation Links Checker Agent

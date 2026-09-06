@@ -945,6 +945,17 @@ let ``validateClaude fails an agent with an invalid model`` () =
     Assert.True((failedCheck result "Valid Model").IsSome)
 
 [<Fact>]
+let ``validateClaude accepts the ultra-tier fable alias`` () =
+    let root = scratch ()
+
+    writeFile
+        (Path.Combine(root, ".claude", "agents", "ultra-model-agent.md"))
+        "---\nname: ultra-model-agent\ndescription: fixture\ntools: Read\nmodel: fable\ncolor: blue\n---\nBody.\n"
+
+    let result = validateClaude (fullOpts root)
+    Assert.True((passedCheck result "Valid Model").IsSome)
+
+[<Fact>]
 let ``validateClaude accepts a full claude-* model id`` () =
     let root = scratch ()
 
@@ -1742,6 +1753,42 @@ let ``convertCodexAgent records a warning and leaves description empty when it i
         Assert.True(
             warnings
             |> List.exists (fun w -> w.Field = "description" && w.Reason.Contains("must be a string"))
+        )
+
+[<Fact>]
+let ``convertCodexAgent writes the tier model and reasoning effort into the emitted toml`` () =
+    let root = scratch ()
+    let claudeDir = Path.Combine(root, ".claude", "agents")
+    let inputPath = Path.Combine(claudeDir, "tiered.md")
+    writeFile inputPath "---\nname: tiered\ndescription: fixture\ntools: Read\nmodel: fable\neffort: high\n---\nBody.\n"
+    let outputPath = Path.Combine(root, ".codex", "agents", "tiered.toml")
+
+    match convertCodexAgent inputPath outputPath "tiered" claudeDir false with
+    | Error e -> failwith e
+    | Ok(_, warnings) ->
+        let emitted = File.ReadAllText outputPath
+        Assert.Contains("model = \"gpt-6-astra\"", emitted)
+        Assert.Contains("model_reasoning_effort = \"high\"", emitted)
+        Assert.DoesNotContain(warnings, fun w -> w.Field = "model" || w.Field = "effort")
+
+[<Fact>]
+let ``convertCodexAgent warns and omits the key when a model has no codex counterpart`` () =
+    let root = scratch ()
+    let claudeDir = Path.Combine(root, ".claude", "agents")
+    let inputPath = Path.Combine(claudeDir, "pinned.md")
+    writeFile inputPath "---\nname: pinned\ndescription: fixture\nmodel: claude-opus-5\n---\nBody.\n"
+    let outputPath = Path.Combine(root, ".codex", "agents", "pinned.toml")
+
+    match convertCodexAgent inputPath outputPath "pinned" claudeDir false with
+    | Error e -> failwith e
+    | Ok(_, warnings) ->
+        Assert.DoesNotContain("model = ", File.ReadAllText outputPath)
+
+        Assert.Contains(
+            warnings,
+            fun w ->
+                w.Field = "model"
+                && w.Reason.Contains("no codex counterpart for model claude-opus-5")
         )
 
 [<Fact>]

@@ -1,5 +1,7 @@
 name = "swe-csharp-dev"
 description = "Develops C# applications following nullable reference type principles, async/await patterns, and platform coding standards. Use when implementing C# code for OSE Platform."
+model = "gpt-5.6-terra"
+model_reasoning_effort = "xhigh"
 developer_instructions = """
 
 # C# Developer Agent

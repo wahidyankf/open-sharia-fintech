@@ -1,5 +1,7 @@
 name = "swe-fsharp-dev"
 description = "Develops F# applications following functional programming principles, railway-oriented error handling, and platform coding standards. Use when implementing F# code for OSE Platform."
+model = "gpt-5.6-terra"
+model_reasoning_effort = "xhigh"
 developer_instructions = """
 
 # F# Developer Agent

@@ -10,6 +10,9 @@ let private behaviourFeatureOwnership =
 let private validAgent name =
     $"---\nname: {name}\ndescription: fixture agent\ntools: Read, Write\nmodel: sonnet\ncolor: blue\n---\nBody.\n"
 
+let private agentWithModel name model =
+    $"---\nname: {name}\ndescription: fixture agent\ntools: Read, Write\nmodel: {model}\ncolor: blue\n---\nBody.\n"
+
 let private passedSkill = ValidationCheck.passed "Skill: fixture" "valid"
 let private failedSkill = ValidationCheck.failedMsg "Skill: fixture" "invalid"
 
@@ -38,6 +41,14 @@ type HarnessClaudeValidationSteps() =
         agents <-
             [ "missing-description.md",
               "---\nname: missing-description\ntools: Read, Write\nmodel: sonnet\ncolor: blue\n---\nBody.\n" ]
+
+    [<Given>]
+    member _.``a \.claude/ directory where one agent declares the "fable" model alias``() =
+        agents <- [ "ultra-agent.md", agentWithModel "ultra-agent" "fable" ]
+
+    [<Given>]
+    member _.``a \.claude/ directory where one agent declares the "gpt-4" model alias``() =
+        agents <- [ "foreign-model-agent.md", agentWithModel "foreign-model-agent" "gpt-4" ]
 
     [<Given>]
     member _.``a \.claude/ directory containing two agent files declaring the same name``() =
@@ -87,6 +98,16 @@ type HarnessClaudeValidationSteps() =
         )
 
     [<Then>]
+    member _.``the output reports the rejected model value``() =
+        Assert.Contains(
+            result.Checks,
+            fun check ->
+                check.Name.Contains("foreign-model-agent")
+                && check.Actual = "Model: gpt-4"
+                && check.Expected = "<empty>|sonnet|opus|haiku|fable|inherit|claude-*"
+        )
+
+    [<Then>]
     member _.``the output reports the duplicate agent name``() =
         Assert.Contains(result.Checks, fun check -> check.Actual.Contains("Duplicate name: duplicate"))
 
@@ -114,6 +135,22 @@ let ``missing description fails`` () =
         (fun s ->
             s.``the command exits with a failure code`` ()
             s.``the output identifies the agent and the missing field`` ())
+
+[<Fact>]
+let ``ultra-tier fable alias passes`` () =
+    HarnessClaudeScenarios.run
+        (fun s -> s.``a \.claude/ directory where one agent declares the "fable" model alias`` ())
+        (fun s -> s.``the developer runs agents validate-claude`` ())
+        (fun s -> s.``the command exits successfully`` ())
+
+[<Fact>]
+let ``model outside the tier vocabulary fails`` () =
+    HarnessClaudeScenarios.run
+        (fun s -> s.``a \.claude/ directory where one agent declares the "gpt-4" model alias`` ())
+        (fun s -> s.``the developer runs agents validate-claude`` ())
+        (fun s ->
+            s.``the command exits with a failure code`` ()
+            s.``the output reports the rejected model value`` ())
 
 [<Fact>]
 let ``duplicate agent name fails`` () =

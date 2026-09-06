@@ -1,5 +1,7 @@
 name = "apps-ose-www-content-fixer"
 description = "Applies validated fixes from content-checker audit reports. Re-validates before applying changes."
+model = "gpt-5.6-terra"
+model_reasoning_effort = "xhigh"
 developer_instructions = """
 
 # Content Fixer for ose-web

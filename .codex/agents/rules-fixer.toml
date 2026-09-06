@@ -1,5 +1,7 @@
 name = "rules-fixer"
 description = "Applies validated fixes from repository rules audit reports including agent-Skill duplication removal, Skills coverage gap remediation, rules governance fixes (contradictions, inaccuracies, inconsistencies), licensing convention fixes, and software-documentation fixes."
+model = "gpt-5.6-sol"
+model_reasoning_effort = "high"
 developer_instructions = """
 
 # Repository Rules Fixer Agent

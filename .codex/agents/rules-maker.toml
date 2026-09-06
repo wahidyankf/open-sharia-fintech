@@ -1,5 +1,7 @@
 name = "rules-maker"
 description = "Creates repository rules and conventions in repo-governance/ directories. Documents standards, patterns, and quality requirements."
+model = "gpt-5.6-sol"
+model_reasoning_effort = "high"
 developer_instructions = """
 
 # Repository Governance Maker Agent

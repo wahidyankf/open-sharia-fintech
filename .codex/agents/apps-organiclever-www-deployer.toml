@@ -1,5 +1,7 @@
 name = "apps-organiclever-www-deployer"
 description = "Deploys organiclever-www (OrganicLever marketing website) to production environment branch (prod-organiclever-www) after validation. Vercel listens to the production branch for automatic builds."
+model = "gpt-5.6-luna"
+model_reasoning_effort = "xhigh"
 developer_instructions = """
 
 # Deployer for organiclever-www

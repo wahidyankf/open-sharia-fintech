@@ -1,5 +1,7 @@
 name = "apps-ose-www-content-maker"
 description = "Creates content for ose-web Next.js 16 content platform. English-only with date-based organization."
+model = "gpt-5.6-terra"
+model_reasoning_effort = "xhigh"
 developer_instructions = """
 
 # Content Maker for ose-web
