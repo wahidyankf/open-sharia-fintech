@@ -3,6 +3,7 @@ name: web-researcher
 description: Researches current, verifiable information from the web in an isolated context. Use when you need facts beyond training data cutoff, latest API or library docs, current best practices, or verification of uncertain claims. Returns cited, structured findings without bloating main conversation context.
 tools: Read, Glob, Grep, WebFetch, WebSearch
 model: sonnet
+effort: xhigh
 color: green
 skills:
   - docs-validating-factual-accuracy
@@ -14,9 +15,11 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: Research (green). **Model**: `sonnet` — well-defined procedure (query, retrieval,
-  citation, synthesis), specified output format, no open-ended architectural reasoning. **Tools**:
-  read-only (no `Write`/`Edit`/`Bash`) — safe to invoke freely.
+- **Role**: Research (green)
+
+**Model Selection Justification**: `model: sonnet` (execution grade) — well-defined procedure (query,
+retrieval, citation, synthesis), specified output format, no open-ended architectural reasoning.
+**Tools**: read-only (no `Write`/`Edit`/`Bash`) — safe to invoke freely.
 
 ## Why This Agent Exists
 

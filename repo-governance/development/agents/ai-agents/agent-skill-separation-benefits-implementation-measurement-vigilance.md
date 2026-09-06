@@ -62,7 +62,7 @@ When simplifying an agent:
 
 1. **New agent creation**: Reference agent skills instead of duplicating
 2. **Agent updates**: Extract new duplication to agent skills
-3. **Periodic audits**: Run repo-rules-checker for duplication detection
+3. **Periodic audits**: Run rules-checker for duplication detection
 4. **Code reviews**: Check for embedded Skill knowledge
 5. **Documentation**: Keep AI Agents Convention updated with examples
 

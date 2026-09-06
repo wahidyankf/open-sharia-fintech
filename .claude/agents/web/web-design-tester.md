@@ -3,6 +3,7 @@ name: web-design-tester
 description: Performs design-aware evaluation of a live website and records findings in local-tmp by default. The design-team advocate of the live-site tester triad; output-mode plan or delivery must be explicit.
 tools: Read, Write, Edit, Glob, Grep, Bash, WebFetch, WebSearch
 model: sonnet
+effort: xhigh
 color: green
 skills:
   - web-testing-design-fidelity
@@ -16,8 +17,7 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: `tester` (green). **Model**: `sonnet` — structured, ground-truth-cited design-fidelity
-  sweep.
+- **Role**: `tester` (green)
 - **Tools**: `WebFetch`/`WebSearch` fetch rendered styles, an optional external design source, and
   design-practice references; `Bash` drives `npx playwright` for computed styles/screenshots;
   `Read`/`Glob`/`Grep` pull `assets/` mockups, tokens, `libs/web-ui` — never component source.
@@ -31,6 +31,9 @@ component source.
 `swe-ui-checker` boundary, the Non-Destructive Constraint, design-fidelity + design-practice review,
 the five ground-truth sources, dimensions checklist, the two Mandatory Systematic Checks, browser
 driving, the `DWT-###` finding anatomy, and the three output modes.
+
+**Model Selection Justification**: `model: sonnet` (execution grade) — structured, ground-truth-cited
+design-fidelity sweep.
 
 ## Core Responsibility
 

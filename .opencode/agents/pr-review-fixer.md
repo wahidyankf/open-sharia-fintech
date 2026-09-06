@@ -1,6 +1,5 @@
 ---
 description: Resolves unresolved GitHub PR review threads posted by pr-review-synthesis-maker's single consolidated review. Enumerates every unresolved thread via the GitHub Reviews API, applies a 4-way triage (fix / reject-with-reason / defer-with-reason / clarify), pushes fixes to the PR branch, replies to every thread, and resolves only the threads it actually addressed. Use as the fixer half of the explicit PR-Review Maker→Fixer Cycle workflow (`repo-governance/workflows/pr/pr-review-cycle.md`), never standalone.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow
@@ -19,7 +18,10 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: Fixer (yellow). **Model**: `sonnet` — evidence-based triage and implementation.
+- **Role**: Fixer (yellow)
+
+**Model Selection Justification**: `model: sonnet` (execution grade) — evidence-based triage and
+implementation.
 
 ## Core Responsibility
 

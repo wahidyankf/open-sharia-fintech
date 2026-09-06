@@ -90,7 +90,8 @@ local-tmp/*
 !local-tmp/.gitkeep
 
 # Generated reports
-generated-reports/
+generated-reports/*
+!generated-reports/.gitkeep
 
 # Cache
 .eslintcache

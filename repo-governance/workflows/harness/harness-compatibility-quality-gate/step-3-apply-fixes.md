@@ -8,7 +8,7 @@ when_to_use: Use when determining what the fixer can safely apply automatically 
 
 Apply validated fixes from the audit report based on mode level.
 
-**Agent**: `repo-harness-compatibility-fixer`
+**Agent**: `harness-compatibility-fixer`
 
 - **Args**: `report: {audit-report-N}, approved: all, mode: {input.mode},
 EXECUTION_SCOPE: harness-compat,

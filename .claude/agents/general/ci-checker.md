@@ -3,6 +3,7 @@ name: ci-checker
 description: Validates project-role Nx targets, static BDD coverage, runtime boundaries, hook/PR isolation, scheduled suites, and CI safety
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
+effort: xhigh
 color: green
 skills:
   - ci-standards

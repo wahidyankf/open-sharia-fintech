@@ -245,6 +245,12 @@ type HarnessResourceSteps() =
     let mutable lastSyncOutcome: Result<Harness.SyncResult, string> option = None
     let mutable fixtureCodexAgentNames: string list = []
     let mutable fixtureRoleSubfolders: string list = []
+    let mutable claudeRejectedAgent: string = ""
+    let mutable claudeRejectedModel: string = ""
+
+    /// One agent per grade of the four-grade vocabulary, paired with the Codex
+    /// model and reasoning effort its mirror must carry.
+    let mutable fixtureCodexTiers: (string * string * string) list = []
     let mutable configAfterFirstRun: string option = None
     let mutable configAfterSecondRun: string option = None
     let mutable pushRangePaths: string list = []
@@ -283,6 +289,36 @@ type HarnessResourceSteps() =
             scenarioRootDir <- Some dir
             dir
 
+    /// The grade vocabulary both the Claude validator and the Codex emitter
+    /// read from `repo-config.yml` at runtime. A fixture repository without it
+    /// makes the validator fail closed and the emitter pin no Codex model, so
+    /// every scenario that exercises a grade seeds one just as a real
+    /// repository carries one.
+    let writeGradeRegistry (root: string) : unit =
+        File.WriteAllText(
+            Path.Combine(root, "repo-config.yml"),
+            String.Join(
+                "\n",
+                [ "model-grades:"
+                  "  ultra: { effort: high }"
+                  "  planning: { effort: high }"
+                  "  execution: { effort: xhigh }"
+                  "  fast: { effort: xhigh }"
+                  "harness:"
+                  "  - name: claude-code"
+                  "    tier: source"
+                  "    agent-dir: .claude/agents"
+                  "    model-map: { ultra: fable, planning: opus, execution: sonnet, fast: haiku }"
+                  "  - name: codex"
+                  "    tier: generated"
+                  "    agent-dir: .codex/agents"
+                  "    mirrors: .claude/agents"
+                  "    model-map: { ultra: gpt-6-astra, planning: gpt-5.6-sol, execution: gpt-5.6-terra, fast: gpt-5.6-luna }"
+                  "" ]
+            )
+        )
+
+
     /// The smallest registry a fixture repository needs: a source tier plus the
     /// two generated mirrors, matching the shape production carries
     /// [Repo-grounded — `bindings.rs`'s `write_three_harness_config`].
@@ -301,6 +337,33 @@ type HarnessResourceSteps() =
                   "    tier: generated"
                   "    agent-dir: .codex/agents"
                   "    mirrors: .claude/agents"
+                  "coverage:"
+                  "  projects: []"
+                  "" ]
+            )
+        )
+
+    /// The same registry, with the codex entry additionally declaring one file
+    /// inside its generated agent directory as `vendored` — the shape a real
+    /// repository uses for a hand-maintained tooling agent that has no
+    /// `.claude/agents/` source and never will.
+    let writeThreeHarnessConfigWithVendoredMirror (root: string) : unit =
+        File.WriteAllText(
+            Path.Combine(root, "repo-config.yml"),
+            String.Join(
+                "\n",
+                [ "harness:"
+                  "  - { name: claude-code, tier: source, agent-dir: .claude/agents }"
+                  "  - name: opencode"
+                  "    tier: generated"
+                  "    agent-dir: .opencode/agents"
+                  "    mirrors: .claude/agents"
+                  "  - name: codex"
+                  "    tier: generated"
+                  "    agent-dir: .codex/agents"
+                  "    mirrors: .claude/agents"
+                  "    ownership:"
+                  "      - { path: .codex/agents/vendored-probe.toml, class: vendored, reason: hand-maintained tooling agent }"
                   "coverage:"
                   "  projects: []"
                   "" ]
@@ -963,6 +1026,14 @@ type HarnessResourceSteps() =
                 | Error _ -> 1
             )
 
+    /// The block the AI Agents Convention requires in every agent body. A
+    /// fixture that omitted it would fail validation on that ground alone,
+    /// masking whatever its scenario is actually about.
+    let justifiedBodyFor (model: string) =
+        sprintf "**Model Selection Justification**: `model: %s` — fixture.\n" model
+
+    let justifiedBody = justifiedBodyFor "sonnet"
+
     /// Writes a fully valid agent: every required and known optional field
     /// present, so it triggers neither a failed nor a warning check.
     let writeValidatedAgent (root: string) (name: string) (skills: string list) : string =
@@ -979,9 +1050,12 @@ type HarnessResourceSteps() =
         File.WriteAllText(
             path,
             sprintf
-                "---\nname: %s\ndescription: fixture agent\ntools: Read, Write\nmodel: sonnet\ncolor: blue\n%s---\nBody.\n"
+                // `sonnet` is the execution grade, whose declared effort is
+                // `xhigh`; a fixture that omitted it would contradict its own grade.
+                "---\nname: %s\ndescription: fixture agent\ntools: Read, Write\nmodel: sonnet\neffort: xhigh\ncolor: blue\n%s---\n%s"
                 name
                 skillsBlock
+                justifiedBody
         )
 
         path
@@ -1015,6 +1089,27 @@ type HarnessResourceSteps() =
         Directory.CreateDirectory dir |> ignore
         let path = Path.Combine(dir, fileStem + ".md")
         File.WriteAllText(path, sprintf "---\nname: %s\ndescription: %s\n---\n%s" name description body)
+        path
+
+    /// As `writeCodexAgentUnderSubfolder`, plus the `model` and `effort`
+    /// frontmatter the Codex mirror translates onto `model` and
+    /// `model_reasoning_effort`.
+    let writeTieredCodexAgent
+        (root: string)
+        (subfolder: string)
+        (name: string)
+        (model: string)
+        (effort: string)
+        : string =
+        let dir = Path.Combine(root, ".claude", "agents", subfolder)
+        Directory.CreateDirectory dir |> ignore
+        let path = Path.Combine(dir, name + ".md")
+
+        File.WriteAllText(
+            path,
+            sprintf "---\nname: %s\ndescription: %s fixture\nmodel: %s\neffort: %s\n---\nBody.\n" name name model effort
+        )
+
         path
 
     /// Mirrors the live `governance-word-budget:` surfaces for `AGENTS.md` and
@@ -1144,13 +1239,13 @@ type HarnessResourceSteps() =
         Assert.False(Directory.Exists(Path.Combine(root, ".opencode", "skills")))
 
     [<Then>]
-    member _.``the corresponding \.opencode/ agent uses the "([^"]+)" model identifier``(modelId: string) =
+    member _.``the corresponding \.opencode/ agent declares no model identifier``() =
         let mirrorPath =
             Path.Combine(scenarioRoot (), ".opencode", "agents", "sync-model-agent.md")
 
         match readFrontmatterField mirrorPath "model" with
-        | Some m -> Assert.Equal(modelId, m)
-        | None -> failwith "mirror has no model field"
+        | Some m -> failwithf "mirror pins model %s; it should declare none" m
+        | None -> ()
 
     [<Then>]
     member _.``the output reports all sync checks as passing``() =
@@ -1177,12 +1272,14 @@ type HarnessResourceSteps() =
     [<Given>]
     member _.``a \.claude/ directory where all agents and skills are valid``() =
         let root = scenarioRoot ()
+        writeGradeRegistry root
         writeValidatedAgent root "validate-claude-ok-agent" [] |> ignore
         writeValidatedSkill root "validate-claude-ok-skill" |> ignore
 
     [<Given>]
     member _.``a \.claude/ directory where one agent is missing the required "description" field``() =
         let root = scenarioRoot ()
+        writeGradeRegistry root
         let dir = Path.Combine(root, ".claude", "agents")
         Directory.CreateDirectory dir |> ignore
 
@@ -1192,8 +1289,124 @@ type HarnessResourceSteps() =
         )
 
     [<Given>]
+    member _.``a \.claude/ directory where one agent declares the "fable" model alias``() =
+        let root = scenarioRoot ()
+        writeGradeRegistry root
+        let dir = Path.Combine(root, ".claude", "agents")
+        Directory.CreateDirectory dir |> ignore
+
+        File.WriteAllText(
+            Path.Combine(dir, "validate-claude-ultra.md"),
+            "---\nname: validate-claude-ultra\ndescription: fixture agent\ntools: Read, Write\nmodel: fable\neffort: high\ncolor: blue\n---\n"
+            + justifiedBodyFor "fable"
+        )
+
+        writeValidatedSkill root "validate-claude-ultra-skill" |> ignore
+
+    [<Given>]
+    member _.``a \.claude/ directory where one agent declares the "gpt-4" model alias``() =
+        let root = scenarioRoot ()
+        writeGradeRegistry root
+        let dir = Path.Combine(root, ".claude", "agents")
+        Directory.CreateDirectory dir |> ignore
+        claudeRejectedAgent <- "validate-claude-foreign-model"
+        claudeRejectedModel <- "gpt-4"
+
+        File.WriteAllText(
+            Path.Combine(dir, "validate-claude-foreign-model.md"),
+            "---\nname: validate-claude-foreign-model\ndescription: fixture agent\ntools: Read, Write\nmodel: gpt-4\ncolor: blue\n---\nBody.\n"
+        )
+
+    /// The fixture is deliberately INVALID: a passing result would be
+    /// indistinguishable from the file never having been discovered, which is
+    /// exactly the false zero the recursive walk fixes.
+    [<Given>]
+    member _.``a \.claude/ directory where the only agent sits in a role subfolder``() =
+        let root = scenarioRoot ()
+        writeGradeRegistry root
+        let dir = Path.Combine(root, ".claude", "agents", "swe")
+        Directory.CreateDirectory dir |> ignore
+        claudeRejectedAgent <- "validate-claude-nested"
+        claudeRejectedModel <- "gpt-4"
+
+        File.WriteAllText(
+            Path.Combine(dir, "validate-claude-nested.md"),
+            "---\nname: validate-claude-nested\ndescription: fixture agent\ntools: Read, Write\nmodel: gpt-4\ncolor: blue\n---\nBody.\n"
+        )
+
+    [<Given>]
+    member _.``a \.claude/ directory where one agent declares no model field``() =
+        let root = scenarioRoot ()
+        writeGradeRegistry root
+        let dir = Path.Combine(root, ".claude", "agents")
+        Directory.CreateDirectory dir |> ignore
+        claudeRejectedAgent <- "validate-claude-no-model"
+        claudeRejectedModel <- ""
+
+        File.WriteAllText(
+            Path.Combine(dir, "validate-claude-no-model.md"),
+            "---\nname: validate-claude-no-model\ndescription: fixture agent\ntools: Read, Write\ncolor: blue\n---\nBody.\n"
+        )
+
+    [<Given>]
+    member _.``a \.claude/ directory where one agent declares an effort its grade does not``() =
+        let root = scenarioRoot ()
+        writeGradeRegistry root
+        let dir = Path.Combine(root, ".claude", "agents")
+        Directory.CreateDirectory dir |> ignore
+
+        // `sonnet` is the execution grade, whose declared effort is `xhigh`.
+        File.WriteAllText(
+            Path.Combine(dir, "validate-claude-wrong-effort.md"),
+            "---\nname: validate-claude-wrong-effort\ndescription: fixture agent\ntools: Read, Write\nmodel: sonnet\neffort: low\ncolor: blue\n---\nBody.\n"
+        )
+
+    /// A registry whose claude-code entry declares no `model-map` leaves the
+    /// validator with an empty vocabulary — the state it must refuse rather
+    /// than wave through.
+    [<Given>]
+    member _.``a \.claude/ directory whose repo-config\.yml declares no model-map for claude-code``() =
+        let root = scenarioRoot ()
+
+        File.WriteAllText(
+            Path.Combine(root, "repo-config.yml"),
+            "harness:\n  - { name: claude-code, tier: source, agent-dir: .claude/agents }\n"
+        )
+
+        writeValidatedAgent root "validate-claude-no-vocabulary" [] |> ignore
+
+    [<Given>]
+    member _.``a \.claude/ directory where one agent's body states no model selection justification``() =
+        let root = scenarioRoot ()
+        writeGradeRegistry root
+        let dir = Path.Combine(root, ".claude", "agents")
+        Directory.CreateDirectory dir |> ignore
+
+        // Conforming frontmatter, a body that argues nothing.
+        File.WriteAllText(
+            Path.Combine(dir, "validate-claude-unargued.md"),
+            "---\nname: validate-claude-unargued\ndescription: fixture agent\ntools: Read, Write\nmodel: sonnet\neffort: xhigh\ncolor: blue\n---\nBody.\n"
+        )
+
+    /// Conforming frontmatter whose block argues for a different grade — the
+    /// drift a promotion leaves behind when it edits the frontmatter only.
+    [<Given>]
+    member _.``a \.claude/ directory where one agent's justification names a grade its frontmatter does not``() =
+        let root = scenarioRoot ()
+        writeGradeRegistry root
+        let dir = Path.Combine(root, ".claude", "agents")
+        Directory.CreateDirectory dir |> ignore
+
+        File.WriteAllText(
+            Path.Combine(dir, "validate-claude-drifted.md"),
+            "---\nname: validate-claude-drifted\ndescription: fixture agent\ntools: Read, Write\nmodel: opus\neffort: high\ncolor: blue\n---\n"
+            + justifiedBodyFor "sonnet"
+        )
+
+    [<Given>]
     member _.``a \.claude/ directory containing two agent files declaring the same name``() =
         let root = scenarioRoot ()
+        writeGradeRegistry root
         let dir = Path.Combine(root, ".claude", "agents")
         Directory.CreateDirectory dir |> ignore
 
@@ -1206,6 +1419,7 @@ type HarnessResourceSteps() =
     [<Given>]
     member _.``a \.claude/ directory where agents are valid but skills have issues``() =
         let root = scenarioRoot ()
+        writeGradeRegistry root
         writeValidatedAgent root "validate-claude-agents-only-ok" [] |> ignore
         // Deliberately no SKILL.md — a skill-side failure --agents-only must not surface.
         Directory.CreateDirectory(Path.Combine(root, ".claude", "skills", "validate-claude-broken-skill"))
@@ -1214,6 +1428,7 @@ type HarnessResourceSteps() =
     [<Given>]
     member _.``a \.claude/ directory where skills are valid but agents have issues``() =
         let root = scenarioRoot ()
+        writeGradeRegistry root
         writeValidatedSkill root "validate-claude-skills-only-ok" |> ignore
         let dir = Path.Combine(root, ".claude", "agents")
         Directory.CreateDirectory dir |> ignore
@@ -1267,6 +1482,68 @@ type HarnessResourceSteps() =
                 && c.Actual.Contains("description", StringComparison.Ordinal))
 
         Assert.True(identifies.IsSome)
+
+    [<Then>]
+    member _.``the output reports the rejected model value``() =
+        let rejected =
+            (result ()).Checks
+            |> List.tryFind (fun c ->
+                c.Status = "failed"
+                && c.Name.Contains(claudeRejectedAgent, StringComparison.Ordinal)
+                && c.Actual = $"Model: {claudeRejectedModel}")
+
+        Assert.True(rejected.IsSome)
+
+    [<Then>]
+    member _.``the output identifies the nested agent``() =
+        let nested =
+            (result ()).Checks
+            |> List.tryFind (fun c -> c.Name.Contains("validate-claude-nested", StringComparison.Ordinal))
+
+        Assert.True(nested.IsSome)
+
+    [<Then>]
+    member _.``the output reports the effort the grade declares``() =
+        let contradiction =
+            (result ()).Checks
+            |> List.tryFind (fun c ->
+                c.Status = "failed"
+                && c.Name.Contains("validate-claude-wrong-effort", StringComparison.Ordinal)
+                && c.Expected = "effort: xhigh (the execution grade)"
+                && c.Actual = "effort: low")
+
+        Assert.True(contradiction.IsSome)
+
+    [<Then>]
+    member _.``the output reports the grade the justification argues for``() =
+        let drifted =
+            (result ()).Checks
+            |> List.tryFind (fun c ->
+                c.Status = "failed"
+                && c.Name.Contains("validate-claude-drifted", StringComparison.Ordinal)
+                && c.Expected = "a justification for `opus`"
+                && c.Actual = "argues for `sonnet`")
+
+        Assert.True(drifted.IsSome)
+
+    [<Then>]
+    member _.``the output reports the missing justification block``() =
+        let unargued =
+            (result ()).Checks
+            |> List.tryFind (fun c ->
+                c.Status = "failed"
+                && c.Name.Contains("validate-claude-unargued", StringComparison.Ordinal)
+                && c.Actual = "no justification block")
+
+        Assert.True(unargued.IsSome)
+
+    [<Then>]
+    member _.``the output reports that no grade vocabulary is declared``() =
+        let failClosed =
+            (result ()).Checks
+            |> List.tryFind (fun c -> c.Status = "failed" && c.Actual = "no grade vocabulary declared")
+
+        Assert.True(failClosed.IsSome)
 
     [<Then>]
     member _.``the output reports the duplicate agent name``() =
@@ -1417,29 +1694,89 @@ type HarnessResourceSteps() =
 
     // ---- @codex-agents-extension ----
 
+    /// The `.toml` file is the emitter's own output for a real source agent
+    /// rather than a hand-written stub: since the orphan check landed, a mirror
+    /// with no `.claude/agents/` source fails validation, so a stub would have
+    /// made this scenario assert the wrong thing.
     [<Given>]
     member _.``a repository whose \.codex/agents directory holds a standalone \.toml agent file``() =
         let root = scenarioRoot ()
         writeThreeHarnessConfig root
         writeEmptyMirrorPair root
         Directory.CreateDirectory(Path.Combine(root, ".github")) |> ignore
-        writeCatalog root (fullCatalog ())
+        writeOwnershipSupportingDocs root
+        writeValidatedAgent root "probe-maker" [] |> ignore
+        Harness.runHarnessBindingsGenerate root |> ignore
 
-        let agentsDir = Path.Combine(root, ".codex", "agents")
-        Directory.CreateDirectory agentsDir |> ignore
-        File.WriteAllText(Path.Combine(agentsDir, "probe-maker.toml"), "description = \"probe\"\n")
-
+    /// The `.md` file shares the stem of a real source agent, so it is a wrong
+    /// extension rather than an orphan — this scenario is about the extension
+    /// check alone.
     [<Given>]
     member _.``a repository whose \.codex/agents directory holds a \.md agent file``() =
         let root = scenarioRoot ()
         writeThreeHarnessConfig root
         writeEmptyMirrorPair root
         Directory.CreateDirectory(Path.Combine(root, ".github")) |> ignore
-        writeCatalog root (fullCatalog ())
+        writeOwnershipSupportingDocs root
+        writeValidatedAgent root "probe-maker" [] |> ignore
+        Harness.runHarnessBindingsGenerate root |> ignore
 
         let agentsDir = Path.Combine(root, ".codex", "agents")
-        Directory.CreateDirectory agentsDir |> ignore
         File.WriteAllText(Path.Combine(agentsDir, "probe-maker.md"), "# probe\n")
+
+    // ---- @mirror-orphans ----
+
+    /// Reproduces the observed defect exactly: an agent is renamed, the emitter
+    /// writes the new mirror, and the mirror under the old name is left behind.
+    [<Given>]
+    member _.``a repository whose generated agent directory holds a mirror with no source agent``() =
+        let root = scenarioRoot ()
+        writeThreeHarnessConfig root
+        writeEmptyMirrorPair root
+        Directory.CreateDirectory(Path.Combine(root, ".github")) |> ignore
+        writeOwnershipSupportingDocs root
+        writeValidatedAgent root "probe-maker" [] |> ignore
+        Harness.runHarnessBindingsGenerate root |> ignore
+
+        let agentsDir = Path.Combine(root, ".codex", "agents")
+        let generated = File.ReadAllText(Path.Combine(agentsDir, "probe-maker.toml"))
+        File.WriteAllText(Path.Combine(agentsDir, "repo-probe-maker.toml"), generated)
+
+    [<Given>]
+    member _.``a repository whose generated agent mirrors each have a source agent``() =
+        let root = scenarioRoot ()
+        writeThreeHarnessConfig root
+        writeEmptyMirrorPair root
+        Directory.CreateDirectory(Path.Combine(root, ".github")) |> ignore
+        writeOwnershipSupportingDocs root
+        writeValidatedAgent root "probe-maker" [] |> ignore
+        Harness.runHarnessBindingsGenerate root |> ignore
+
+    /// The vendored file is deliberately given a stem no source agent carries,
+    /// so it would be reported as an orphan if the declaration were ignored.
+    [<Given>]
+    member _.``a repository whose generated agent directory holds a vendored mirror with no source agent``() =
+        let root = scenarioRoot ()
+        writeThreeHarnessConfigWithVendoredMirror root
+        writeEmptyMirrorPair root
+        Directory.CreateDirectory(Path.Combine(root, ".github")) |> ignore
+        writeOwnershipSupportingDocs root
+        writeValidatedAgent root "probe-maker" [] |> ignore
+        Harness.runHarnessBindingsGenerate root |> ignore
+
+        let agentsDir = Path.Combine(root, ".codex", "agents")
+        let generated = File.ReadAllText(Path.Combine(agentsDir, "probe-maker.toml"))
+        File.WriteAllText(Path.Combine(agentsDir, "vendored-probe.toml"), generated)
+
+    [<Then>]
+    member _.``the output names the orphaned mirror and the source that no longer exists``() =
+        let check =
+            (result ()).Checks
+            |> List.find (fun (check: Harness.ValidationCheck) -> check.Name = "Mirror Orphans: .codex/agents")
+
+        Assert.Equal("failed", check.Status)
+        Assert.Equal("orphaned mirror(s): repo-probe-maker.toml", check.Actual)
+        Assert.Contains("no .claude/agents/ source explains it", check.Message)
 
     [<Then>]
     member _.``the output names \.toml as the officially-correct extension``() =
@@ -1491,6 +1828,33 @@ type HarnessResourceSteps() =
 
         fixtureCodexAgentNames <- [ "reviewer-identity"; "maker-identity" ]
         fixtureRoleSubfolders <- [ "reviewers"; "makers" ]
+
+    [<Given>]
+    member _.``a repository whose \.claude/agents/ holds one agent per model tier``() =
+        let root = scenarioRoot ()
+        writeGradeRegistry root
+
+        let tiers =
+            [ "ultra-agent", "fable", "high", "gpt-6-astra", "high"
+              "planning-agent", "opus", "high", "gpt-5.6-sol", "high"
+              "execution-agent", "sonnet", "xhigh", "gpt-5.6-terra", "xhigh"
+              "fast-agent", "haiku", "max", "gpt-5.6-luna", "xhigh" ]
+
+        for name, model, effort, _, _ in tiers do
+            writeTieredCodexAgent root "roles" name model effort |> ignore
+
+        fixtureCodexAgentNames <- tiers |> List.map (fun (name, _, _, _, _) -> name)
+
+        fixtureCodexTiers <-
+            tiers
+            |> List.map (fun (name, _, _, codexModel, codexEffort) -> name, codexModel, codexEffort)
+
+    [<Given>]
+    member _.``a repository whose \.claude/agents/ holds one agent declaring model inherit``() =
+        let root = scenarioRoot ()
+        writeGradeRegistry root
+        writeTieredCodexAgent root "roles" "inheriting" "inherit" "high" |> ignore
+        fixtureCodexAgentNames <- [ "inheriting" ]
 
     [<Given>]
     member _.``a repository whose \.codex/config\.toml carries hand-maintained mcp_servers, features, and ci-monitor-subagent tables``
@@ -1578,6 +1942,26 @@ type HarnessResourceSteps() =
 
         let content = File.ReadAllText path
         Assert.DoesNotContain("model = ", content)
+
+    [<Then>]
+    member _.``each emitted Codex agent declares the Codex model at the same tier``() =
+        let root = scenarioRoot ()
+
+        for name, codexModel, _ in fixtureCodexTiers do
+            let content =
+                File.ReadAllText(Path.Combine(root, ".codex", "agents", name + ".toml"))
+
+            Assert.Contains(sprintf "model = \"%s\"" codexModel, content)
+
+    [<Then>]
+    member _.``each emitted Codex agent declares model_reasoning_effort matching its Claude effort``() =
+        let root = scenarioRoot ()
+
+        for name, _, codexEffort in fixtureCodexTiers do
+            let content =
+                File.ReadAllText(Path.Combine(root, ".codex", "agents", name + ".toml"))
+
+            Assert.Contains(sprintf "model_reasoning_effort = \"%s\"" codexEffort, content)
 
     [<Then>]
     member _.``\.codex/agents/ holds one flat TOML file per agent keyed on the name frontmatter``() =
@@ -1705,9 +2089,9 @@ type HarnessResourceSteps() =
         Assert.Contains("Enforcement Points", lookupFileContent)
 
     [<When>]
-    member _.``"repo-rules-checker" runs Step 6``() =
+    member _.``"rules-checker" runs Step 6``() =
         Assert.Equal(Complete, planStatus)
-        lookupFileContent <- readAgentSurface ".claude/agents/repo/repo-rules-checker.md"
+        lookupFileContent <- readAgentSurface ".claude/agents/repo/rules-checker.md"
 
     [<Then>]
     member _.``it reports qualitative bloat concerns across the whole instruction-file class``() =
@@ -1773,9 +2157,9 @@ type HarnessResourceSteps() =
         lifecycleEvidence <- Map.ofList [ "governance-word-budget", "passed" ]
 
     [<When>]
-    member _.``"repo-rules-checker" runs Step 0\.5``() =
+    member _.``"rules-checker" runs Step 0\.5``() =
         Assert.Equal(Some "passed", Map.tryFind "governance-word-budget" lifecycleEvidence)
-        lookupFileContent <- readAgentSurface ".claude/agents/repo/repo-rules-checker.md"
+        lookupFileContent <- readAgentSurface ".claude/agents/repo/rules-checker.md"
 
     [<Then>]
     member _.``it consumes the exact delegated gate ID "governance-word-budget"``() =
@@ -3056,6 +3440,18 @@ let ``A .codex/agents directory holding only .toml files passes validation`` () 
     FeatureRunner.run "A .codex/agents directory holding only .toml files passes validation"
 
 [<Fact>]
+let ``A mirror whose source agent was renamed away fails validation`` () =
+    FeatureRunner.run "A mirror whose source agent was renamed away fails validation"
+
+[<Fact>]
+let ``A generated agent directory whose mirrors all have sources passes validation`` () =
+    FeatureRunner.run "A generated agent directory whose mirrors all have sources passes validation"
+
+[<Fact>]
+let ``A mirror the registry declares vendored is exempt from the orphan check`` () =
+    FeatureRunner.run "A mirror the registry declares vendored is exempt from the orphan check"
+
+[<Fact>]
 let ``A .md file under .codex/agents fails validation`` () =
     FeatureRunner.run "A .md file under .codex/agents fails validation"
 
@@ -3109,12 +3505,12 @@ let ``The --agents-only flag syncs agents without touching skills`` () =
     FeatureRunner.runSync "The --agents-only flag syncs agents without touching skills"
 
 [<Fact>]
-let ``Model names are correctly translated to OpenCode equivalents`` () =
-    FeatureRunner.runSync "Model names are correctly translated to OpenCode equivalents"
+let ``An OpenCode mirror pins no model, so the developer's active model applies`` () =
+    FeatureRunner.runSync "An OpenCode mirror pins no model, so the developer's active model applies"
 
 [<Fact>]
-let ``The opus model name is translated to the same OpenCode equivalent as sonnet`` () =
-    FeatureRunner.runSync "The opus model name is translated to the same OpenCode equivalent as sonnet"
+let ``A mirror pins no model whatever grade the source declares`` () =
+    FeatureRunner.runSync "A mirror pins no model whatever grade the source declares"
 
 [<Fact>]
 let ``Directories that are in sync pass validation`` () =
@@ -3137,6 +3533,22 @@ let ``An agent file missing a required frontmatter field fails validation`` () =
     FeatureRunner.runValidateClaude "An agent file missing a required frontmatter field fails validation"
 
 [<Fact>]
+let ``An agent declaring the ultra-tier fable model alias passes validation`` () =
+    FeatureRunner.runValidateClaude "An agent declaring the ultra-tier fable model alias passes validation"
+
+[<Fact>]
+let ``An agent declaring a model outside the tier vocabulary fails validation`` () =
+    FeatureRunner.runValidateClaude "An agent declaring a model outside the tier vocabulary fails validation"
+
+[<Fact>]
+let ``An agent nested in a role subfolder is validated`` () =
+    FeatureRunner.runValidateClaude "An agent nested in a role subfolder is validated"
+
+[<Fact>]
+let ``An agent declaring no model fails validation`` () =
+    FeatureRunner.runValidateClaude "An agent declaring no model fails validation"
+
+[<Fact>]
 let ``Two agents with the same name fail validation`` () =
     FeatureRunner.runValidateClaude "Two agents with the same name fail validation"
 
@@ -3149,8 +3561,33 @@ let ``--skills-only validates skills without checking agents`` () =
     FeatureRunner.runValidateClaude "--skills-only validates skills without checking agents"
 
 [<Fact>]
+let ``An agent whose effort contradicts its grade fails validation`` () =
+    FeatureRunner.runValidateClaude "An agent whose effort contradicts its grade fails validation"
+
+[<Fact>]
+let ``An agent whose justification argues for a grade it does not declare fails validation`` () =
+    FeatureRunner.runValidateClaude
+        "An agent whose justification argues for a grade it does not declare fails validation"
+
+[<Fact>]
+let ``An agent stating no model selection justification fails validation`` () =
+    FeatureRunner.runValidateClaude "An agent stating no model selection justification fails validation"
+
+[<Fact>]
+let ``A registry declaring no grade vocabulary fails closed`` () =
+    FeatureRunner.runValidateClaude "A registry declaring no grade vocabulary fails closed"
+
+[<Fact>]
 let ``A Claude agent under a role subfolder gets a flat Codex TOML counterpart`` () =
     FeatureRunner.runCodexBinding "A Claude agent under a role subfolder gets a flat Codex TOML counterpart"
+
+[<Fact>]
+let ``An agent's model and effort tier is carried onto its Codex counterparts`` () =
+    FeatureRunner.runCodexBinding "An agent's model and effort tier is carried onto its Codex counterparts"
+
+[<Fact>]
+let ``A tier with no Codex counterpart is omitted rather than guessed`` () =
+    FeatureRunner.runCodexBinding "A tier with no Codex counterpart is omitted rather than guessed"
 
 [<Fact>]
 let ``Agent identity comes from the name frontmatter, not the source subfolder`` () =
@@ -3181,8 +3618,8 @@ let ``The rule is documented as a convention`` () =
     FeatureRunner.runWordBudgetRule "The rule is documented as a convention"
 
 [<Fact>]
-let ``repo-rules-checker validates the budget qualitatively`` () =
-    FeatureRunner.runWordBudgetRule "repo-rules-checker validates the budget qualitatively"
+let ``rules-checker validates the budget qualitatively`` () =
+    FeatureRunner.runWordBudgetRule "rules-checker validates the budget qualitatively"
 
 [<Fact>]
 let ``The quality-gate workflow delegates the validator by exact gate ID`` () =

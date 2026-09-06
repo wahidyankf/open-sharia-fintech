@@ -28,15 +28,15 @@ when_to_use: Use when creating or auditing a checker agent's frontmatter tools l
 
 **Applies to these agent types**:
 
-- All `*-checker` agents (repo-rules-checker, docs-checker, plan-checker, plan-execution-checker, etc.)
-- `repo-rules-fixer` (generates fix reports)
+- All `*-checker` agents (rules-checker, docs-checker, plan-checker, plan-execution-checker, etc.)
+- `rules-fixer` (generates fix reports)
 - Any agent creating validation, audit, or verification reports
 
 **MANDATORY REQUIREMENT FOR ALL \*-CHECKER AGENTS**:
 
 ALL checker agents MUST write their validation/audit reports to their own `local-tmp/<agent-family>/` directory, creating it with `mkdir -p` before the first write. This is a hard requirement with NO EXCEPTIONS. The following checker agents are subject to this rule:
 
-1. repo-rules-checker
+1. rules-checker
 2. repo-workflow-checker
 3. apps-ayokoding-www-general-checker
 4. apps-ayokoding-www-by-example-checker
@@ -56,10 +56,10 @@ ALL checker agents MUST write their validation/audit reports to their own `local
 18. swe-code-checker
 19. ci-checker
 20. swe-ui-checker
-21. repo-harness-compatibility-checker
+21. harness-compatibility-checker
 
-> **Harness compatibility (Phase 0 + Phase 1)**: `repo-harness-compatibility-checker`
-> (green) and `repo-harness-compatibility-fixer` (yellow) validate both internal
+> **Harness compatibility (Phase 0 + Phase 1)**: `harness-compatibility-checker`
+> (green) and `harness-compatibility-fixer` (yellow) validate both internal
 > cross-vendor parity invariants (Phase 0: governance prose vendor-neutrality;
 > AGENTS.md / CLAUDE.md vendor-neutrality; binding sync no-op; agent inventory parity;
 > color-translation map and capability-tier map coverage) and external harness drift

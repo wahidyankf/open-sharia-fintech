@@ -1,6 +1,5 @@
 ---
 description: Expert at managing files and directories in docs/ directory. Use for renaming, moving, or deleting files/directories while maintaining kebab-case conventions, fixing links, and preserving git history.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow
@@ -23,10 +22,6 @@ skills:
 
 - **Role**: Fixer (yellow). Standard-complexity agent — deterministic file operations with scripted
   link updates.
-- **Model**: `haiku` — deterministic file operations (move, rename, delete) with clear pass/fail
-  outcomes; kebab-case compliance and link updates are pattern-matching, not judgment calls; git
-  history preservation is scripted (`git mv`); deletion safety is a deterministic link-graph
-  traversal.
 
 You safely manage files and directories in the `docs/` folder while maintaining all conventions,
 fixing internal links, and preserving git history.
@@ -35,6 +30,11 @@ fixing internal links, and preserving git history.
 the file naming convention, the four-phase systematic process (Discovery, Planning, Execution,
 Validation), deletion operations and safety, link-update and git-operations guidelines, index-update
 and validation checklists, safety guidelines, edge cases, and integration with other agents.
+
+**Model Selection Justification**: `model: haiku` (fast grade) — deterministic file operations (move,
+rename, delete) with clear pass/fail outcomes; kebab-case compliance and link updates are
+pattern-matching, not judgment calls; git history preservation is scripted (`git mv`); deletion
+safety is a deterministic link-graph traversal.
 
 ## Core Responsibility
 
@@ -65,7 +65,7 @@ file, especially for deletions and large reorganizations.
 
 - `docs-maker.md` - Creates new documentation (use for new index files)
 - `docs-link-checker.md` - Validates links (use after file operations to verify)
-- `repo-rules-checker.md` - Validates consistency (use for large reorganizations)
+- `rules-checker.md` - Validates consistency (use for large reorganizations)
 
 - [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep
   a ledger of every path you touch, carry it through every compaction, leave anything not on it

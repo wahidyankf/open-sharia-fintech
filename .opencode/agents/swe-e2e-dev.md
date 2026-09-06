@@ -1,6 +1,5 @@
 ---
 description: Develops end-to-end tests using Playwright following OSE Platform testing patterns and standards. Use when implementing E2E tests for OSE Platform applications.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow

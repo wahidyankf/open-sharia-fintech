@@ -26,6 +26,7 @@ let private harness name tier agentDir ownership : RepoConfig.HarnessEntry =
       SkillsDir = None
       SkillsMirrors = None
       Vendored = []
+      ModelMap = Map.empty
       Catalog = None
       Ownership = ownership }
 

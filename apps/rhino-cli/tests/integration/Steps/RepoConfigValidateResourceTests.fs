@@ -41,6 +41,7 @@ let private defaultHarnessEntry: HarnessEntry =
       SkillsDir = None
       SkillsMirrors = None
       Vendored = []
+      ModelMap = Map.empty
       Catalog = None
       Ownership = [] }
 

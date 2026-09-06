@@ -3,6 +3,7 @@ name: apps-ayokoding-www-general-fixer
 description: Applies validated fixes from general-checker audit reports. Re-validates before applying changes.
 tools: Read, Edit, Write, Glob, Grep, Bash
 model: sonnet
+effort: xhigh
 color: yellow
 skills:
   - docs-applying-content-quality

@@ -139,8 +139,11 @@ Every generated-tier harness in `repo-config.yml` receives its binding mechanica
 - **`.opencode/agents/*.md`** — mirrors of `.claude/agents/**/*.md`, flattened to one level, with
   color, model, and tool frontmatter translated (see Translation Artifacts below).
 - **`.codex/agents/*.toml`** — one flat TOML file per Claude agent, keyed on the agent's `name`
-  frontmatter rather than its filename or role subfolder, carrying `name`, `description`, and
-  `developer_instructions`.
+  frontmatter rather than its filename or role subfolder, carrying `name`, `description`, `model`,
+  `model_reasoning_effort`, and `developer_instructions`. Codex reads a role's `config_file` as a
+  full config layer, so a `model` set there takes precedence over the session model; a grade with no
+  Codex counterpart (`inherit`, a pinned vendor ID) omits the key and raises a conversion warning
+  rather than guessing.
 - **`.codex/config.toml`** — only the region between the `rhino-cli generated` markers is
   generator-owned. The hand-maintained `mcp_servers`, `features`, and vendored agent tables outside
   that region are preserved across regeneration.
@@ -257,20 +260,23 @@ agent frontmatter. OpenCode uses theme tokens (`primary`, `success`, `warning`, 
 
 ### Model ID Translation (Claude Code → OpenCode)
 
-Claude Code agent frontmatter uses short aliases (`sonnet`, `haiku`) or omits `model:` for
-planning-grade inheritance. OpenCode uses Zhipu AI GLM model IDs.
+Claude Code agent frontmatter declares a grade alias (`fable`, `opus`, `sonnet`, `haiku`) or
+`inherit`. The OpenCode mirror carries **no `model` key at any grade**, so the developer's own
+configuration decides: a primary agent falls back to the globally configured model, and a subagent
+to the model of the primary that invoked it. OpenCode has no `inherit` sentinel — omitting the key
+is the only way to express inheritance.
 
 - **Source**: `.claude/agents/<name>.md` frontmatter `model:` field
-- **Transform**: `convert_model` in `apps/rhino-cli/src/application/agents/converter.rs`
-- **Sink**: `.opencode/agents/<name>.md` frontmatter `model:` field
+- **Transform**: the `opencode` entry in `repo-config.yml` declares no `model-map:`, so
+  `claudeAgentFieldPolicy` in `apps/rhino-cli/src/RhinoCli.Application/src/HarnessRuntime.fs` drops
+  the field
+- **Sink**: `.opencode/agents/<name>.md` — no `model:` key is written
 - **Policy**: [Model Selection Convention](../../repo-governance/development/agents/model-selection.md)
   ("Platform Binding Examples" section)
 
-| Claude Code alias       | OpenCode model ID         | Capability tier                     |
-| ----------------------- | ------------------------- | ----------------------------------- |
-| `opus`                  | `zai-coding-plan/glm-5.2` | Thinking (collapsed onto execution) |
-| `sonnet`/omit (inherit) | `zai-coding-plan/glm-5.2` | Execution                           |
-| `haiku`                 | `zai-coding-plan/glm-5.2` | Fast (collapsed onto execution)     |
+Pinning an ID here would override every developer's own model choice and would need re-verifying
+against the vendor roster on each roster change. To reverse the decision, add a `model-map:` to the
+`opencode` registry entry and re-run `npm run generate:bindings`; no code change is involved.
 
 ### Tool Translation (Claude Code → OpenCode)
 
@@ -293,7 +299,7 @@ wins**, which makes declaration order significant. This repository's generated m
 
 To add a new generated binding:
 
-1. Add a `harness:` entry to `repo-config.yml` (tier, agent-dir, mirrors, instruction surfaces, shadow globs, and `skills-dir` / `skills-mirrors` / `vendored:` if the harness needs a skills mirror). Also add an `ownership:` list classifying every binding path this entry claims as `generated`, `vendored`, or `source` — `harness ownership validate` is a pre-push gate and fails on any tracked binding file with no declared class.
+1. Add a `harness:` entry to `repo-config.yml` (tier, agent-dir, mirrors, instruction surfaces, shadow globs, and `skills-dir` / `skills-mirrors` / `vendored:` if the harness needs a skills mirror). Add a `model-map:` giving that harness's model ID for each grade named in the top-level `model-grades:` block only if the harness pins a model per agent; omit it — as the `opencode` entry does — and the mirror emits no `model` key. Also add an `ownership:` list classifying every binding path this entry claims as `generated`, `vendored`, or `source` — `harness ownership validate` is a pre-push gate and fails on any tracked binding file with no declared class.
 2. Add a `catalog:` block to that registry entry, then run `rhino-cli harness catalog generate` — never hand-edit the table above, which is machine-owned inside its generated region.
 3. Implement the converter in `apps/rhino-cli/src/RhinoCli.Application/src/Harness.fs` and wire it into `harness bindings generate`.
 4. Add TickSpec step definitions and Gherkin scenarios under `specs/apps/rhino/cli/behaviours/`.

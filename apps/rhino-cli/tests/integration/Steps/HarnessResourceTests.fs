@@ -323,7 +323,12 @@ let ``validateBindings folds in the sync checks, catalog coverage, and both code
 
     Assert.Contains(sprintf "Codex Agent Files: %s" codexAgentDir, names)
     Assert.Contains(sprintf "Codex Config Region: %s" codexConfigFile, names)
-    Assert.Equal(List.length syncNames + List.length knownBindingDirs + 3, result.TotalChecks)
+
+    // The orphan family fails closed rather than abstaining: a scratch repo
+    // declares no `harness:` registry, so there is no list of generated agent
+    // directories to walk and the check says so instead of reporting nothing.
+    Assert.Contains("Mirror Orphans", names)
+    Assert.Equal(List.length syncNames + List.length knownBindingDirs + 4, result.TotalChecks)
 
 // ---------------------------------------------------------------------------
 // `--harness` name acceptance
@@ -344,6 +349,7 @@ let private registryWith (names: string list) : RhinoCli.Application.RepoConfig.
                   SkillsDir = None
                   SkillsMirrors = None
                   Vendored = []
+                  ModelMap = Map.empty
                   Catalog = None
                   Ownership = [] }) }
 
@@ -713,10 +719,26 @@ let ``convertPermission lower-cases, trims, and dedupes tool names`` () =
     Assert.Equal<Map<string, string>>(Map.ofList [ "read", "allow"; "write", "allow" ], perm)
 
 [<Fact>]
-let ``convertModel always resolves to the single OpenCode model id`` () =
-    Assert.Equal("zai-coding-plan/glm-5.2", convertModel "sonnet")
-    Assert.Equal("zai-coding-plan/glm-5.2", convertModel "opus")
-    Assert.Equal("zai-coding-plan/glm-5.2", convertModel "")
+let ``convertCodexModel resolves a claude alias through its grade`` () =
+    let maps =
+        { GradeOfAlias = Map.ofList [ "opus", "planning"; "sonnet", "execution" ]
+          EffortOfGrade = Map.ofList [ "planning", "high"; "execution", "xhigh" ]
+          ModelOfGrade = Map.ofList [ "planning", "vendor-planning"; "execution", "vendor-execution" ] }
+
+    Assert.Equal("vendor-planning", convertCodexModel maps "opus")
+    Assert.Equal("vendor-execution", convertCodexModel maps "sonnet")
+
+[<Fact>]
+let ``convertCodexModel yields no model when the harness declares no map`` () =
+    // This is the OpenCode shape: a harness with no `model-map:` resolves every
+    // grade to the empty string, and the encoder then writes no `model` key.
+    let maps =
+        { GradeOfAlias = Map.ofList [ "opus", "planning" ]
+          EffortOfGrade = Map.ofList [ "planning", "high" ]
+          ModelOfGrade = Map.empty }
+
+    Assert.Equal("", convertCodexModel maps "opus")
+    Assert.Equal("", convertCodexModel maps "inherit")
 
 [<Fact>]
 let ``parseClaudeTools accepts a YAML sequence as well as a comma-separated string`` () =
@@ -898,6 +920,31 @@ let ``syncAll with SkillsOnly is a no-op that still reports success`` () =
 // agents-validate-claude.feature's 5 scenarios never reach
 // ---------------------------------------------------------------------------
 
+/// The grade vocabulary the validator reads from `repo-config.yml` at runtime.
+/// A fixture repository without it makes the validator fail closed, so every
+/// `validateClaude` scratch root carries a registry just as a real one does.
+let private gradeRegistryYaml =
+    String.Join(
+        "\n",
+        [ "model-grades:"
+          "  ultra: { effort: high }"
+          "  planning: { effort: high }"
+          "  execution: { effort: xhigh }"
+          "  fast: { effort: xhigh }"
+          "harness:"
+          "  - name: claude-code"
+          "    tier: source"
+          "    agent-dir: .claude/agents"
+          "    model-map: { ultra: fable, planning: opus, execution: sonnet, fast: haiku }"
+          "" ]
+    )
+
+let private claudeScratch () : string =
+    let root = scratch ()
+    writeFile (Path.Combine(root, "repo-config.yml")) gradeRegistryYaml
+    root
+
+
 let private fullOpts (root: string) : ValidateClaudeOptions =
     { RepoRoot = root
       AgentsOnly = false
@@ -913,7 +960,7 @@ let private passedCheck (result: ValidationResult) (namePart: string) : Validati
 
 [<Fact>]
 let ``validateClaude fails an agent with an unrecognized tool`` () =
-    let root = scratch ()
+    let root = claudeScratch ()
 
     writeFile
         (Path.Combine(root, ".claude", "agents", "bad-tool-agent.md"))
@@ -924,7 +971,7 @@ let ``validateClaude fails an agent with an unrecognized tool`` () =
 
 [<Fact>]
 let ``validateClaude accepts a call-form tool entry`` () =
-    let root = scratch ()
+    let root = claudeScratch ()
 
     writeFile
         (Path.Combine(root, ".claude", "agents", "call-form-agent.md"))
@@ -935,7 +982,7 @@ let ``validateClaude accepts a call-form tool entry`` () =
 
 [<Fact>]
 let ``validateClaude fails an agent with an invalid model`` () =
-    let root = scratch ()
+    let root = claudeScratch ()
 
     writeFile
         (Path.Combine(root, ".claude", "agents", "bad-model-agent.md"))
@@ -945,8 +992,19 @@ let ``validateClaude fails an agent with an invalid model`` () =
     Assert.True((failedCheck result "Valid Model").IsSome)
 
 [<Fact>]
+let ``validateClaude accepts the ultra-tier fable alias`` () =
+    let root = claudeScratch ()
+
+    writeFile
+        (Path.Combine(root, ".claude", "agents", "ultra-model-agent.md"))
+        "---\nname: ultra-model-agent\ndescription: fixture\ntools: Read\nmodel: fable\ncolor: blue\n---\nBody.\n"
+
+    let result = validateClaude (fullOpts root)
+    Assert.True((passedCheck result "Valid Model").IsSome)
+
+[<Fact>]
 let ``validateClaude accepts a full claude-* model id`` () =
-    let root = scratch ()
+    let root = claudeScratch ()
 
     writeFile
         (Path.Combine(root, ".claude", "agents", "full-model-agent.md"))
@@ -957,7 +1015,7 @@ let ``validateClaude accepts a full claude-* model id`` () =
 
 [<Fact>]
 let ``validateClaude fails an agent with an invalid color`` () =
-    let root = scratch ()
+    let root = claudeScratch ()
 
     writeFile
         (Path.Combine(root, ".claude", "agents", "bad-color-agent.md"))
@@ -968,7 +1026,7 @@ let ``validateClaude fails an agent with an invalid color`` () =
 
 [<Fact>]
 let ``validateClaude skips the color check when color is absent`` () =
-    let root = scratch ()
+    let root = claudeScratch ()
 
     writeFile
         (Path.Combine(root, ".claude", "agents", "no-color-agent.md"))
@@ -979,7 +1037,7 @@ let ``validateClaude skips the color check when color is absent`` () =
 
 [<Fact>]
 let ``validateClaude fails an agent referencing a missing skill`` () =
-    let root = scratch ()
+    let root = claudeScratch ()
 
     writeFile
         (Path.Combine(root, ".claude", "agents", "missing-skill-agent.md"))
@@ -990,7 +1048,7 @@ let ``validateClaude fails an agent referencing a missing skill`` () =
 
 [<Fact>]
 let ``validateClaude fails an agent whose frontmatter contains a comment`` () =
-    let root = scratch ()
+    let root = claudeScratch ()
 
     writeFile
         (Path.Combine(root, ".claude", "agents", "commented-agent.md"))
@@ -1001,7 +1059,7 @@ let ``validateClaude fails an agent whose frontmatter contains a comment`` () =
 
 [<Fact>]
 let ``validateClaude warns on an unknown agent frontmatter field and a required-after-optional order`` () =
-    let root = scratch ()
+    let root = claudeScratch ()
 
     writeFile
         (Path.Combine(root, ".claude", "agents", "field-order-agent.md"))
@@ -1043,7 +1101,7 @@ let ``validateClaude passes generated-reports/ agents that declare Write and Bas
 
 [<Fact>]
 let ``validateClaude fails an agent with malformed YAML colon spacing`` () =
-    let root = scratch ()
+    let root = claudeScratch ()
 
     writeFile
         (Path.Combine(root, ".claude", "agents", "bad-format-agent.md"))
@@ -1054,7 +1112,7 @@ let ``validateClaude fails an agent with malformed YAML colon spacing`` () =
 
 [<Fact>]
 let ``validateClaude fails an agent whose file is too short to contain frontmatter`` () =
-    let root = scratch ()
+    let root = claudeScratch ()
     writeFile (Path.Combine(root, ".claude", "agents", "too-short-agent.md")) "no frontmatter"
 
     let result = validateClaude (fullOpts root)
@@ -1062,7 +1120,7 @@ let ``validateClaude fails an agent whose file is too short to contain frontmatt
 
 [<Fact>]
 let ``validateClaude fails an agent with malformed YAML inside its frontmatter`` () =
-    let root = scratch ()
+    let root = claudeScratch ()
     writeFile (Path.Combine(root, ".claude", "agents", "bad-yaml-agent.md")) "---\nname: [unbalanced\n---\nBody.\n"
 
     let result = validateClaude (fullOpts root)
@@ -1070,7 +1128,7 @@ let ``validateClaude fails an agent with malformed YAML inside its frontmatter``
 
 [<Fact>]
 let ``validateClaude fails an agent with completely empty frontmatter`` () =
-    let root = scratch ()
+    let root = claudeScratch ()
     writeFile (Path.Combine(root, ".claude", "agents", "empty-frontmatter-agent.md")) "---\n\n---\nBody.\n"
 
     let result = validateClaude (fullOpts root)
@@ -1084,7 +1142,7 @@ let ``validateClaude fails an agent with completely empty frontmatter`` () =
 
 [<Fact>]
 let ``validateClaude fails a skill directory with no SKILL.md`` () =
-    let root = scratch ()
+    let root = claudeScratch ()
 
     Directory.CreateDirectory(Path.Combine(root, ".claude", "skills", "no-file-skill"))
     |> ignore
@@ -1094,7 +1152,7 @@ let ``validateClaude fails a skill directory with no SKILL.md`` () =
 
 [<Fact>]
 let ``validateClaude fails a skill with malformed YAML colon spacing`` () =
-    let root = scratch ()
+    let root = claudeScratch ()
 
     writeFile
         (Path.Combine(root, ".claude", "skills", "bad-format-skill", "SKILL.md"))
@@ -1105,7 +1163,7 @@ let ``validateClaude fails a skill with malformed YAML colon spacing`` () =
 
 [<Fact>]
 let ``validateClaude fails a skill whose file is too short to contain frontmatter`` () =
-    let root = scratch ()
+    let root = claudeScratch ()
     writeFile (Path.Combine(root, ".claude", "skills", "too-short-skill", "SKILL.md")) "x"
 
     let result = validateClaude (fullOpts root)
@@ -1113,7 +1171,7 @@ let ``validateClaude fails a skill whose file is too short to contain frontmatte
 
 [<Fact>]
 let ``validateClaude fails a skill with malformed YAML inside its frontmatter`` () =
-    let root = scratch ()
+    let root = claudeScratch ()
 
     writeFile
         (Path.Combine(root, ".claude", "skills", "bad-yaml-skill", "SKILL.md"))
@@ -1124,7 +1182,7 @@ let ``validateClaude fails a skill with malformed YAML inside its frontmatter`` 
 
 [<Fact>]
 let ``validateClaude fails a skill missing its description field`` () =
-    let root = scratch ()
+    let root = claudeScratch ()
 
     writeFile
         (Path.Combine(root, ".claude", "skills", "no-desc-skill", "SKILL.md"))
@@ -1135,7 +1193,7 @@ let ``validateClaude fails a skill missing its description field`` () =
 
 [<Fact>]
 let ``validateClaude fails a skill missing its name field`` () =
-    let root = scratch ()
+    let root = claudeScratch ()
 
     writeFile
         (Path.Combine(root, ".claude", "skills", "no-name-skill", "SKILL.md"))
@@ -1146,7 +1204,7 @@ let ``validateClaude fails a skill missing its name field`` () =
 
 [<Fact>]
 let ``validateClaude fails a skill with an invalid name format`` () =
-    let root = scratch ()
+    let root = claudeScratch ()
 
     writeFile
         (Path.Combine(root, ".claude", "skills", "Bad_Name", "SKILL.md"))
@@ -1157,7 +1215,7 @@ let ``validateClaude fails a skill with an invalid name format`` () =
 
 [<Fact>]
 let ``validateClaude fails a skill whose name field does not match its directory`` () =
-    let root = scratch ()
+    let root = claudeScratch ()
 
     writeFile
         (Path.Combine(root, ".claude", "skills", "dir-name-skill", "SKILL.md"))
@@ -1168,7 +1226,7 @@ let ``validateClaude fails a skill whose name field does not match its directory
 
 [<Fact>]
 let ``validateClaude warns on an unknown skill frontmatter field`` () =
-    let root = scratch ()
+    let root = claudeScratch ()
 
     writeFile
         (Path.Combine(root, ".claude", "skills", "unknown-field-skill", "SKILL.md"))
@@ -1183,7 +1241,7 @@ let ``validateClaude warns on an unknown skill frontmatter field`` () =
 
 [<Fact>]
 let ``validateClaude fails with a directory-not-found check when \.claude/agents is missing`` () =
-    let root = scratch ()
+    let root = claudeScratch ()
     Directory.CreateDirectory(Path.Combine(root, ".claude", "skills")) |> ignore
 
     let result = validateClaude (fullOpts root)
@@ -1191,7 +1249,7 @@ let ``validateClaude fails with a directory-not-found check when \.claude/agents
 
 [<Fact>]
 let ``validateClaude fails with a directory-not-found check when \.claude/skills is missing`` () =
-    let root = scratch ()
+    let root = claudeScratch ()
     Directory.CreateDirectory(Path.Combine(root, ".claude", "agents")) |> ignore
 
     let result = validateClaude (fullOpts root)
@@ -1723,6 +1781,21 @@ let ``convertAllAgents tallies a per-file write failure without failing the whol
 
 // ---------------------------------------------------------------------------
 // convertCodexAgent / convertAllCodexAgents / rewriteGeneratedRegion
+// ---------------------------------------------------------------------------
+//
+/// The Codex translation the emitter reads from `repo-config.yml` at runtime.
+/// Declared here so these tests assert the mapping mechanism rather than the
+/// repository's current model identifiers.
+let private codexGradeMaps: GradeMaps =
+    { GradeOfAlias = Map.ofList [ "fable", "ultra"; "opus", "planning"; "sonnet", "execution"; "haiku", "fast" ]
+      EffortOfGrade = Map.ofList [ "ultra", "high"; "planning", "high"; "execution", "xhigh"; "fast", "xhigh" ]
+      ModelOfGrade =
+        Map.ofList
+            [ "ultra", "gpt-6-astra"
+              "planning", "gpt-5.6-sol"
+              "execution", "gpt-5.6-terra"
+              "fast", "gpt-5.6-luna" ] }
+
 // — coverage-gap edge cases
 // ---------------------------------------------------------------------------
 
@@ -1733,7 +1806,13 @@ let ``convertCodexAgent records a warning and leaves description empty when it i
     writeFile inputPath "---\nname: seq-desc\ndescription:\n  - a\n  - b\n---\nBody.\n"
 
     match
-        convertCodexAgent inputPath (Path.Combine(root, "out.toml")) "seq-desc" (Path.GetDirectoryName inputPath) true
+        convertCodexAgent
+            emptyGradeMaps
+            inputPath
+            (Path.Combine(root, "out.toml"))
+            "seq-desc"
+            (Path.GetDirectoryName inputPath)
+            true
     with
     | Error e -> failwith e
     | Ok(agent, warnings) ->
@@ -1745,12 +1824,48 @@ let ``convertCodexAgent records a warning and leaves description empty when it i
         )
 
 [<Fact>]
+let ``convertCodexAgent writes the tier model and reasoning effort into the emitted toml`` () =
+    let root = scratch ()
+    let claudeDir = Path.Combine(root, ".claude", "agents")
+    let inputPath = Path.Combine(claudeDir, "tiered.md")
+    writeFile inputPath "---\nname: tiered\ndescription: fixture\ntools: Read\nmodel: fable\neffort: high\n---\nBody.\n"
+    let outputPath = Path.Combine(root, ".codex", "agents", "tiered.toml")
+
+    match convertCodexAgent codexGradeMaps inputPath outputPath "tiered" claudeDir false with
+    | Error e -> failwith e
+    | Ok(_, warnings) ->
+        let emitted = File.ReadAllText outputPath
+        Assert.Contains("model = \"gpt-6-astra\"", emitted)
+        Assert.Contains("model_reasoning_effort = \"high\"", emitted)
+        Assert.DoesNotContain(warnings, fun w -> w.Field = "model" || w.Field = "effort")
+
+[<Fact>]
+let ``convertCodexAgent warns and omits the key when a model has no codex counterpart`` () =
+    let root = scratch ()
+    let claudeDir = Path.Combine(root, ".claude", "agents")
+    let inputPath = Path.Combine(claudeDir, "pinned.md")
+    writeFile inputPath "---\nname: pinned\ndescription: fixture\nmodel: claude-opus-5\n---\nBody.\n"
+    let outputPath = Path.Combine(root, ".codex", "agents", "pinned.toml")
+
+    match convertCodexAgent codexGradeMaps inputPath outputPath "pinned" claudeDir false with
+    | Error e -> failwith e
+    | Ok(_, warnings) ->
+        Assert.DoesNotContain("model = ", File.ReadAllText outputPath)
+
+        Assert.Contains(
+            warnings,
+            fun w ->
+                w.Field = "model"
+                && w.Reason.Contains("no codex counterpart for model claude-opus-5")
+        )
+
+[<Fact>]
 let ``convertCodexAgent fails when the input has no frontmatter marker at all`` () =
     let root = scratch ()
     let inputPath = Path.Combine(root, "no-marker.md")
     writeFile inputPath "just body text, no frontmatter\n"
 
-    match convertCodexAgent inputPath (Path.Combine(root, "out.toml")) "no-marker" root true with
+    match convertCodexAgent emptyGradeMaps inputPath (Path.Combine(root, "out.toml")) "no-marker" root true with
     | Ok _ -> Assert.True(false, "expected a frontmatter-extraction error")
     | Error e -> Assert.Contains("failed to extract frontmatter", e)
 
@@ -1760,7 +1875,7 @@ let ``convertCodexAgent fails when the frontmatter is empty (deserializes to no 
     let inputPath = Path.Combine(root, "empty-front.md")
     writeFile inputPath "---\n---\nBody.\n"
 
-    match convertCodexAgent inputPath (Path.Combine(root, "out.toml")) "empty-front" root true with
+    match convertCodexAgent emptyGradeMaps inputPath (Path.Combine(root, "out.toml")) "empty-front" root true with
     | Ok _ -> Assert.True(false, "expected a not-a-mapping error")
     | Error e -> Assert.Contains("frontmatter is not a mapping", e)
 
@@ -1768,7 +1883,15 @@ let ``convertCodexAgent fails when the frontmatter is empty (deserializes to no 
 let ``convertCodexAgent fails when the input file does not exist`` () =
     let root = scratch ()
 
-    match convertCodexAgent (Path.Combine(root, "missing.md")) (Path.Combine(root, "out.toml")) "missing" root true with
+    match
+        convertCodexAgent
+            emptyGradeMaps
+            (Path.Combine(root, "missing.md"))
+            (Path.Combine(root, "out.toml"))
+            "missing"
+            root
+            true
+    with
     | Ok _ -> Assert.True(false, "expected a read failure")
     | Error e -> Assert.Contains("failed to convert", e)
 
@@ -1778,7 +1901,7 @@ let ``convertCodexAgent defaults the mirror directory to the current directory f
     let inputPath = Path.Combine(root, ".claude", "agents", "bare-out.md")
     writeFile inputPath "---\nname: bare-out\ndescription: fixture\n---\nBody.\n"
 
-    match convertCodexAgent inputPath "bare.toml" "bare-out" (Path.GetDirectoryName inputPath) true with
+    match convertCodexAgent emptyGradeMaps inputPath "bare.toml" "bare-out" (Path.GetDirectoryName inputPath) true with
     | Error e -> failwith e
     | Ok(agent, _) -> Assert.Equal("bare-out", agent.Name)
 
@@ -1876,7 +1999,12 @@ let ``validateSync reports missing and undeclared skills-mirror drift`` () =
 let ``validateSync falls back to empty defaults for absent frontmatter fields and passes a fully matching agent`` () =
     let root = scratch ()
 
-    writeFile (Path.Combine(root, ".claude", "agents", "agent1.md")) "---\nname: agent1\n---\nBody one.\n"
+    // agent1's mirror declares no `description`, so the comparison falls back
+    // to the empty default and diverges from the source's own description.
+    writeFile
+        (Path.Combine(root, ".claude", "agents", "agent1.md"))
+        "---\nname: agent1\ndescription: source-only-desc\n---\nBody one.\n"
+
     writeFile (Path.Combine(root, ".opencode", "agents", "agent1.md")) "---\nunused: true\n---\nBody one.\n"
 
     writeFile
@@ -1885,15 +2013,13 @@ let ``validateSync falls back to empty defaults for absent frontmatter fields an
 
     writeFile
         (Path.Combine(root, ".opencode", "agents", "agent2.md"))
-        "---\ndescription: perm-desc\nmodel: zai-coding-plan/glm-5.2\npermission:\n  read: allow\n---\nBody two.\n"
+        "---\ndescription: perm-desc\npermission:\n  read: allow\n---\nBody two.\n"
 
     writeFile
         (Path.Combine(root, ".claude", "agents", "agent3.md"))
         "---\nname: agent3\ndescription: same-desc\nmodel: whatever-claude-says\n---\nSame body.\n"
 
-    writeFile
-        (Path.Combine(root, ".opencode", "agents", "agent3.md"))
-        "---\ndescription: same-desc\nmodel: zai-coding-plan/glm-5.2\n---\nSame body.\n"
+    writeFile (Path.Combine(root, ".opencode", "agents", "agent3.md")) "---\ndescription: same-desc\n---\nSame body.\n"
 
     let result = validateSync root
     Assert.True((failedCheck result "Agent: agent1").IsSome)
@@ -2280,6 +2406,7 @@ let ``bindingRoots skips a blank root and collects agent/skills/ownership roots`
                     SkillsDir = None
                     SkillsMirrors = None
                     Vendored = []
+                    ModelMap = Map.empty
                     Catalog = None
                     Ownership = [] }
                   { Name = "real-root"
@@ -2290,6 +2417,7 @@ let ``bindingRoots skips a blank root and collects agent/skills/ownership roots`
                     SkillsDir = Some "skills-y"
                     SkillsMirrors = None
                     Vendored = []
+                    ModelMap = Map.empty
                     Catalog = None
                     Ownership =
                       [ { Path = "own-z"
@@ -2489,7 +2617,13 @@ let ``convertCodexAgent describes a null description and a mapping description i
     writeFile nullPath "---\nname: null-desc\ndescription:\n---\nBody.\n"
 
     match
-        convertCodexAgent nullPath (Path.Combine(root, "n.toml")) "null-desc" (Path.GetDirectoryName nullPath) true
+        convertCodexAgent
+            emptyGradeMaps
+            nullPath
+            (Path.Combine(root, "n.toml"))
+            "null-desc"
+            (Path.GetDirectoryName nullPath)
+            true
     with
     | Error e -> failwith e
     | Ok(_, warnings) -> Assert.True(warnings |> List.exists (fun w -> w.Reason.Contains("got null")))
@@ -2497,7 +2631,15 @@ let ``convertCodexAgent describes a null description and a mapping description i
     let mapPath = Path.Combine(root, ".claude", "agents", "map-desc.md")
     writeFile mapPath "---\nname: map-desc\ndescription:\n  key: value\n---\nBody.\n"
 
-    match convertCodexAgent mapPath (Path.Combine(root, "m.toml")) "map-desc" (Path.GetDirectoryName mapPath) true with
+    match
+        convertCodexAgent
+            emptyGradeMaps
+            mapPath
+            (Path.Combine(root, "m.toml"))
+            "map-desc"
+            (Path.GetDirectoryName mapPath)
+            true
+    with
     | Error e -> failwith e
     | Ok(_, warnings) -> Assert.True(warnings |> List.exists (fun w -> w.Reason.Contains("got a mapping")))
 
@@ -3027,7 +3169,13 @@ let ``convertCodexAgent defaults the link-rebase input directory to the current 
 
     try
         match
-            convertCodexAgent bareName (Path.Combine(cwd, "bare-input-probe-out.toml")) "bare-agent" "irrelevant" true
+            convertCodexAgent
+                emptyGradeMaps
+                bareName
+                (Path.Combine(cwd, "bare-input-probe-out.toml"))
+                "bare-agent"
+                "irrelevant"
+                true
         with
         | Error e -> failwith e
         | Ok(agent, _warnings) -> Assert.Equal("fixture", agent.Description)

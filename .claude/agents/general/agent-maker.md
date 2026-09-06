@@ -3,6 +3,7 @@ name: agent-maker
 description: Creates new AI agent files in .claude/agents/ following AI Agents Convention. Changes are then synced to .opencode/agents/ via npm run generate:bindings. Ensures proper structure, skills integration, and documentation.
 tools: Read, Write, Glob, Grep, Bash
 model: sonnet
+effort: xhigh
 color: blue
 skills:
   - docs-applying-content-quality
@@ -49,8 +50,8 @@ Create new AI agent files following AI Agents Convention.
 
 **Related Agents**:
 
-- `repo-rules-checker` - Validates repository consistency
-- `repo-rules-maker` - Creates repository rules
+- `rules-checker` - Validates repository consistency
+- `rules-maker` - Creates repository rules
 
 **Related Conventions**:
 

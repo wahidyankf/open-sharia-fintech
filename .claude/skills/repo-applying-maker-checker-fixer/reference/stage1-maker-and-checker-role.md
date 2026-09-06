@@ -13,7 +13,7 @@
 
 **Tool Pattern**: `Write`, `Edit` (content modification)
 
-**Color**: Blue (writer agents) or Yellow (special case: repo-rules-maker uses bash)
+**Color**: Blue (writer agents) or Yellow (special case: rules-maker uses bash)
 
 **When to Use Maker**:
 

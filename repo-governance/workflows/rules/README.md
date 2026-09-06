@@ -15,7 +15,7 @@ Use these workflows when a change creates, updates, supersedes, or validates rep
 ## Purpose
 
 These workflows define **WHEN and HOW to place and validate repository rules**, orchestrating
-`repo-rules-maker`, `repo-rules-checker`, and `repo-rules-fixer` without replacing their atomic
+`rules-maker`, `rules-checker`, and `rules-fixer` without replacing their atomic
 responsibilities.
 
 ## Scope

@@ -1,6 +1,5 @@
 ---
 description: Develops TypeScript applications following type safety principles, modern patterns, and platform coding standards. Use when implementing TypeScript code for OSE Platform.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow
@@ -22,10 +21,14 @@ skills:
 
 - **Role**: Implementor (purple)
 
-**Model Selection Justification**: `model: sonnet` — language implementation demands advanced
-reasoning for architecture decisions, sophisticated TypeScript idiom knowledge, and multi-step
-design→implement→test→refactor orchestration; it is structured work backed by a dedicated
-programming skill, not mechanical.
+**Model Selection Justification**: `model: opus` (planning grade) — this agent requires:
+
+- Architectural judgement over module boundaries and data flow in the applications under `apps/`,
+  where the trade-offs are open-ended
+- Original code generation across advanced TypeScript idioms — generics, conditional and mapped
+  types, discriminated unions — composed to fit the domain rather than copied
+- Multi-step design→implement→test→refactor orchestration on production application code, where a
+  wrong structural call survives review and surfaces much later
 
 ## Core Expertise
 

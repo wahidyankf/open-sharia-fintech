@@ -1,6 +1,5 @@
 ---
 description: Reviews injection and unsafe git/FS behaviour in semantic passes; in leak-only mode reviews sensitive values, protected environment properties, and machine paths.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   glob: allow
@@ -19,14 +18,16 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: Maker (blue). **Model**: `sonnet`. Security paths force full-tier fan-out; a CRITICAL
-  false positive reaching the fixer triggers rollback.
+- **Role**: Maker (blue)
 
 Review **security only**. Report concretely dangerous injection, unsafe git/FS operations, or
 inadequately isolated test fixtures.
 
 Follow `pr-review-specialist-protocol` for shared mechanics. This discipline owns untrusted-input
 handling; raise concrete injection attempts here.
+
+**Model Selection Justification**: `model: sonnet` (execution grade). Security paths force full-tier
+fan-out; a CRITICAL false positive reaching the fixer triggers rollback.
 
 ## Discipline Charter
 

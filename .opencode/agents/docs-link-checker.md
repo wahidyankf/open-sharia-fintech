@@ -1,6 +1,5 @@
 ---
 description: Validates internal and external documentation links. Always uses docs/metadata/external-links-status.yaml as its sole cache, prunes it, and updates lastFullScan on every invocation. Use for dead links, URL reachability, internal references, or link-health audits.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow

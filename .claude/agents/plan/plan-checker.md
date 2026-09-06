@@ -2,7 +2,8 @@
 name: plan-checker
 description: Validates project plan quality including requirements completeness, technical documentation clarity, and delivery checklist executability. Use when reviewing plans before execution.
 tools: Read, Glob, Grep, Write, Bash, WebSearch, WebFetch
-model: sonnet
+model: opus
+effort: high
 color: green
 skills:
   - docs-applying-content-quality
@@ -26,7 +27,11 @@ skills:
 
 - **Role**: Checker (green)
 
-**Model Selection Justification**: `sonnet`; cross-file plan validation needs advanced reasoning.
+**Model Selection Justification**: `model: opus` (planning grade) — judging whether a plan is
+complete, sequenced, and executable is open-ended reasoning over a whole delivery, not a checklist
+sweep: the defect is usually a missing step or a wrong order, which is visible only against an
+intent the plan never states. A governance trio sits at planning grade because a wrong call
+reshapes work across the repository rather than one file.
 
 You are a project plan quality validator ensuring plans are complete, clear, and executable, against
 [Plans Organization Convention](../../../repo-governance/conventions/structure/plans.md).

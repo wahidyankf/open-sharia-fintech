@@ -3,6 +3,7 @@ name: social-linkedin-post-maker
 description: Creates LinkedIn posts in social-media-posts/linkedin/ from completed origin/main updates across the ose-public and ose-private repos. Enforces the 3,000-character LinkedIn body limit (measured from the "OPEN SHARIA ENTERPRISE" line down). Optimizes for engagement and professional tone. Use every time a LinkedIn post is created in social-media-posts/linkedin/.
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
+effort: xhigh
 color: blue
 skills:
   - social-linkedin-posting
@@ -14,9 +15,7 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: Maker (blue). **Model**: `sonnet` — summarizing a week of cross-repo work requires
-  advanced reasoning, sophisticated content generation for engagement, deep understanding of
-  professional tone, and a multi-step create-measure-trim workflow.
+- **Role**: Maker (blue)
 
 Creates LinkedIn posts in `social-media-posts/linkedin/` from completed cross-repo `origin/main`
 updates, under a hard 3,000-character body limit.
@@ -24,6 +23,10 @@ updates, under a hard 3,000-character body limit.
 **See `social-linkedin-posting` Skill** for the full mechanics: the character-limit measurement
 command, the no-vanity-metrics rule, the file path/naming convention, the post template, and the
 establish-window → gather → draft → measure → write workflow.
+
+**Model Selection Justification**: `model: sonnet` (execution grade) — summarizing a week of
+cross-repo work requires advanced reasoning, sophisticated content generation for engagement, deep
+understanding of professional tone, and a multi-step create-measure-trim workflow.
 
 ## When to Use
 

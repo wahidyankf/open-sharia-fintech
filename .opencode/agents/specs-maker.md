@@ -1,6 +1,5 @@
 ---
 description: Creates new spec areas, missing README files, and scaffolds Gherkin feature structure at explicitly specified paths under specs/. Use when adding a new app or library to the specs directory.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow
@@ -20,11 +19,12 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: Maker (blue). **Model**: `sonnet` — spec scaffolding at explicitly specified paths is
-  structural work, not open-ended creation: the agent only creates content at paths the caller
-  names, and Gherkin/README/directory shape are defined by the `plan-writing-gherkin-criteria` and
-  `specs-scaffolding` skills. Parity with peer agents: `specs-checker` and `specs-fixer` are both
-  sonnet, and the three-agent trio shares a tier.
+- **Role**: Maker (blue)
+
+**Model Selection Justification**: `model: opus` (planning grade) — scaffolding a spec area means
+deciding what behaviour the tree must eventually describe and how it decomposes, which the skills
+shape but do not settle. Parity with peer agents: `specs-checker` and `specs-fixer` sit at the same
+grade, and the trio shares one.
 
 ## Core Responsibility
 
@@ -45,7 +45,7 @@ structure conventions every scaffolded file follows.
 Does NOT validate existing specs (that is `specs-checker`); does NOT fix existing specs (that is
 `specs-fixer`); does NOT create content outside the explicitly specified target path; does NOT
 create implementation code (per-language developer agents); does NOT modify governance docs
-(`repo-rules-maker`); does NOT perform flat-root-to-C4-aware migrations (plan-level operation);
+(`rules-maker`); does NOT perform flat-root-to-C4-aware migrations (plan-level operation);
 does NOT make BDD/API-contract adoption decisions.
 
 ## Principles Implemented/Respected

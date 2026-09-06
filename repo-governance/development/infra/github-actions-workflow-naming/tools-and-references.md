@@ -18,7 +18,7 @@ when_to_use: Use when locating the tooling/agents that enforce this convention o
 
 `actionlint` validates every `.github/workflows/*.yml` file for syntax, job references, and input
 types — it runs in the PR gate (`pr-quality-gate.yml`) and the local pre-commit Husky hook.
-The `repo-rules-checker` agent validates adherence to this naming convention during governance
+The `rules-checker` agent validates adherence to this naming convention during governance
 audits.
 
 ## References
@@ -33,6 +33,6 @@ audits.
 
 **Agents:**
 
-- `repo-rules-checker` — Validates that workflow filenames match their `name:` fields and follow
+- `rules-checker` — Validates that workflow filenames match their `name:` fields and follow
   the domain-first grammar
-- `repo-rules-fixer` — Corrects misaligned workflow filenames or name fields
+- `rules-fixer` — Corrects misaligned workflow filenames or name fields

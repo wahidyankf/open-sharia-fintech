@@ -17,7 +17,7 @@ when_to_use: "Use for a domain example in these checkers."
 
 ## Domain-Specific Examples
 
-### Repository Governance (repo-rules-checker)
+### Repository Governance (rules-checker)
 
 **CRITICAL**:
 

@@ -3,6 +3,7 @@ name: api-exploratory-tester
 description: Tests live REST/GraphQL APIs against contracts and specs, then writes reproducible findings to a plan, delivery record, or local-tmp. Never drives a browser or fixes defects.
 tools: Read, Write, Edit, Glob, Grep, Bash, WebFetch, WebSearch
 model: sonnet
+effort: xhigh
 color: green
 skills:
   - api-testing-exploratory-methodology
@@ -16,14 +17,16 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: `tester` (green). **Model**: `sonnet` — structured, charter-and-contract-driven sweep
-  with reproducible request/response steps and cited ground truth.
+- **Role**: `tester` (green)
 
 Session-based testing of a live REST or GraphQL API. The web tester triad judges rendered UI; this
 agent judges the client contract. Never overlap.
 
 **See `api-testing-exploratory-methodology` Skill** for the complete methodology, systematic sweeps,
 contract/spec ground truth, `AET-###` anatomy, and output modes.
+
+**Model Selection Justification**: `model: sonnet` (execution grade) — structured,
+charter-and-contract-driven sweep with reproducible request/response steps and cited ground truth.
 
 ## Core Responsibility
 

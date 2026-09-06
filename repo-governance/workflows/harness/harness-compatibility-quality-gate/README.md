@@ -6,7 +6,7 @@ when_to_use: "Read this index to find the right Repository Harness Compatibility
 
 # Repository Harness Compatibility Quality Gate Workflow
 
-- [Execution Mode](./execution-mode.md) — How to invoke repo-harness-compatibility-checker and -fixer via Agent Delegation, with the Manual Orchestration fallback and how each is triggered. Use when starting a harness compatibility quality gate run and deciding preferred vs. fallback execution mode.
+- [Execution Mode](./execution-mode.md) — How to invoke harness-compatibility-checker and -fixer via Agent Delegation, with the Manual Orchestration fallback and how each is triggered. Use when starting a harness compatibility quality gate run and deciding preferred vs. fallback execution mode.
 - [Research Delegation](./research-delegation.md) — Why per-harness upstream research is delegated to web-researcher sub-tasks rather than performed inline, keeping the audit context lean. Use when understanding how the checker gathers current upstream harness conventions.
 - [Complementary Anti-Drift Gates](./complementary-anti-drift-gates.md) — How this workflow relates to the continuous harness-ownership and harness-bindings CI gates — which mechanism catches which class of drift, and why neither replaces the other. Read this when deciding whether a harness-drift concern belongs to this periodic workflow or to a continuous CI gate.
 - [Step 1: Initial Validation](./step-1-initial-validation.md) — Filters lifecycle-owned parity, then runs retained semantic parity and external drift detection.
@@ -25,4 +25,4 @@ when_to_use: "Read this index to find the right Repository Harness Compatibility
 - [Notes](./notes.md) — Lifecycle delegation, retained parity, external research, idempotence, and bounds.
 - [Principles Implemented/Respected](./principles-implemented-respected.md) — Traces this workflow's design back to Explicit Over Implicit, Automation Over Manual, Simplicity Over Complexity, Accessibility First, Progressive Disclosure, No Time Estimates, and Root Cause Orientation. Use when auditing this workflow for traceability back to foundational principles.
 - [Conventions Implemented/Respected](./conventions-implemented-respected.md) — Traces this workflow's design back to the Multi-Harness Binding, Workflow Naming, File Naming, Linking, Content Quality, Governance Vendor-Independence, and Web Research Delegation conventions. Use when auditing this workflow for traceability back to other repo-governance conventions.
-- [Agents](./agents.md) — Links to the repo-harness-compatibility-checker and -fixer agent definitions this workflow invokes. Use when looking up the exact agent definition files this workflow orchestrates.
+- [Agents](./agents.md) — Links to the harness-compatibility-checker and -fixer agent definitions this workflow invokes. Use when looking up the exact agent definition files this workflow orchestrates.

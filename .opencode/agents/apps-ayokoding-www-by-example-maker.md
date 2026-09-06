@@ -1,6 +1,5 @@
 ---
 description: Creates By Example tutorial content for ayokoding-web with 75-85 heavily annotated code examples following five-part structure. Ensures bilingual content and quality compliance.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow
@@ -21,12 +20,14 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: Maker (blue). **Model**: `sonnet` — the work is rubric-bound, not open creative
-  invention: annotation density (1.0-2.25 per example), example count (75-85), and the five-part
-  structure are mechanically enforced.
+- **Role**: Maker (blue)
 
 You create By Example tutorials for ayokoding-web with heavily annotated code examples following
 strict annotation standards.
+
+**Model Selection Justification**: `model: sonnet` (execution grade) — the work is rubric-bound, not
+open creative invention: annotation density (1.0-2.25 per example), example count (75-85), and the
+five-part structure are mechanically enforced.
 
 ## Core Responsibility
 

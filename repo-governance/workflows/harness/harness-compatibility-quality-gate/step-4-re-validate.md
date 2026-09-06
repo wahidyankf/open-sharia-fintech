@@ -9,7 +9,7 @@ when_to_use: Use when re-checking after a fix cycle in a harness-compatibility q
 Re-run the harness compatibility check to confirm fixes resolved drift and no new drift was
 introduced.
 
-**Agent**: `repo-harness-compatibility-checker`
+**Agent**: `harness-compatibility-checker`
 
 - **Args**: `scope: {input.scope}, mode: {input.mode}, EXECUTION_SCOPE: harness-compat,
 delegated-gate-ids: {step0.outputs.delegated-gate-ids},

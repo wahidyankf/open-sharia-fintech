@@ -15,9 +15,9 @@ Next steps:
 3. Commit changes: git commit -m "refactor(docs): reorganize documentation structure"
 ```
 
-### Before Large Reorganizations: Consider repo-rules-checker
+### Before Large Reorganizations: Consider rules-checker
 
-For large reorganizations, consider running `repo-rules-checker` before and after:
+For large reorganizations, consider running `rules-checker` before and after:
 
 - Before: Check current state compliance
 - After: Verify no new inconsistencies introduced

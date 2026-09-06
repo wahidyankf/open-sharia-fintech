@@ -3,6 +3,7 @@ name: apps-ayokoding-www-in-the-field-maker
 description: Creates In-the-Field production implementation guides for ayokoding-web with 20-40 guides following standard library first principle. Ensures production-ready code with framework integration.
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
+effort: xhigh
 color: blue
 skills:
   - docs-creating-in-the-field-tutorials
@@ -15,12 +16,14 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: Maker (blue). **Model**: `sonnet` — the work follows a defined rubric, not open
-  architectural invention: standard-library-first progression, guide count (20-40), and production
-  code quality rules are pre-specified.
+- **Role**: Maker (blue)
 
 You create In-the-Field production implementation guides for ayokoding-web with framework
 integration following the standard-library-first principle.
+
+**Model Selection Justification**: `model: sonnet` (execution grade) — the work follows a defined
+rubric, not open architectural invention: standard-library-first progression, guide count (20-40),
+and production code quality rules are pre-specified.
 
 ## Core Responsibility
 

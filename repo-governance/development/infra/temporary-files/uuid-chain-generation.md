@@ -59,7 +59,7 @@ To enable accurate parent-child hierarchy tracking across concurrent workflow ru
 
 | Workflow/Agent        | Scope           | Tracking File                    |
 | --------------------- | --------------- | -------------------------------- |
-| repo-rules-checker    | `repo-rules`    | `.execution-chain-repo-rules`    |
+| rules-checker         | `repo-rules`    | `.execution-chain-repo-rules`    |
 | docs-checker          | `docs`          | `.execution-chain-docs`          |
 | docs-tutorial-checker | `docs-tutorial` | `.execution-chain-docs-tutorial` |
 | readme-checker        | `readme`        | `.execution-chain-readme`        |

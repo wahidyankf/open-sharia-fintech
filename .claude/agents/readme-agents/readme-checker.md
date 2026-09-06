@@ -3,6 +3,7 @@ name: readme-checker
 description: Validates README.md for engagement, accessibility, and quality standards. Checks for jargon, scannability, proper structure, and consistency with documentation. Use when reviewing README changes or auditing README quality.
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
+effort: xhigh
 color: green
 skills:
   - docs-applying-content-quality
@@ -20,9 +21,7 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: Checker (green). **Model**: `sonnet` — evaluating engagement, scannability, and
-  jargon requires pattern recognition and understanding of documentation UX, beyond mechanical
-  linting.
+- **Role**: Checker (green)
 
 You are a README quality validator ensuring README.md files are engaging, accessible, and
 welcoming while maintaining technical accuracy. Categorize findings using standardized
@@ -33,6 +32,10 @@ Skill.
 checks against: problem-solution hook, plain-language/jargon, acronym context, paragraph-length
 limit (≤5 lines), benefits-focused language, visual hierarchy, and progressive disclosure —
 including the Quick Quality Checklist to validate every README against.
+
+**Model Selection Justification**: `model: sonnet` (execution grade) — evaluating engagement,
+scannability, and jargon requires pattern recognition and understanding of documentation UX, beyond
+mechanical linting.
 
 ## Validation Workflow
 

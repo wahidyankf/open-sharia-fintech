@@ -3,6 +3,7 @@ name: apps-ayokoding-www-primer-fixer
 description: Applies validated fixes from apps-ayokoding-www-primer-checker audit reports. Re-validates Primer findings (density, structure, scope discipline) before applying changes. Use after reviewing checker output.
 tools: Read, Edit, Write, Glob, Grep, Bash
 model: sonnet
+effort: xhigh
 color: yellow
 skills:
   - docs-applying-content-quality

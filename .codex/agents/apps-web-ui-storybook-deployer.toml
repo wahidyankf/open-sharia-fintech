@@ -1,5 +1,7 @@
 name = "apps-web-ui-storybook-deployer"
 description = "Deploys web-ui Storybook to Vercel via force-push to prod-web-ui"
+model = "gpt-5.6-luna"
+model_reasoning_effort = "xhigh"
 developer_instructions = """
 
 # Deployer for web-ui Storybook

@@ -17,6 +17,7 @@ let private harnessEntry name : RepoConfig.HarnessEntry =
       SkillsDir = None
       SkillsMirrors = None
       Vendored = []
+      ModelMap = Map.empty
       Catalog = None
       Ownership = [] }
 
@@ -33,6 +34,9 @@ type HarnessBindingsSteps() =
 
     let mutable bindingActual: Result<string option, string> = Ok(Some "generated")
     let mutable codexFiles: Result<string list, unit> = Ok []
+    let mutable mirrorNames: Result<string list, string> = Ok [ "demo.md" ]
+    let mutable sourceNames: string list = [ "demo" ]
+    let mutable vendoredMirrors: string list = []
     let mutable checks: ValidationCheck list = []
     let mutable nameResult: Result<unit, string> = Ok()
 
@@ -77,6 +81,22 @@ type HarnessBindingsSteps() =
     [<Given>]
     member _.``a repository whose \.codex/agents directory holds a \.md agent file``() = codexFiles <- Ok [ "demo.md" ]
 
+    [<Given>]
+    member _.``a repository whose generated agent directory holds a mirror with no source agent``() =
+        mirrorNames <- Ok [ "README.md"; "rules-maker.md"; "repo-rules-maker.md" ]
+        sourceNames <- [ "rules-maker" ]
+
+    [<Given>]
+    member _.``a repository whose generated agent mirrors each have a source agent``() =
+        mirrorNames <- Ok [ "README.md"; "rules-maker.md" ]
+        sourceNames <- [ "rules-maker" ]
+
+    [<Given>]
+    member _.``a repository whose generated agent directory holds a vendored mirror with no source agent``() =
+        mirrorNames <- Ok [ "README.md"; "rules-maker.md"; "ci-monitor-subagent.md" ]
+        sourceNames <- [ "rules-maker" ]
+        vendoredMirrors <- [ "ci-monitor-subagent.md" ]
+
     [<When>]
     member _.``the developer runs harness bindings generate for codex``() =
         requested <- "codex"
@@ -92,7 +112,8 @@ type HarnessBindingsSteps() =
         checks <-
             [ validateBindingContent binding bindingActual "regenerate the binding"
               validateCatalogCoverageState presentDirectory directoryExists catalog
-              validateCodexAgentFilenames true codexFiles ]
+              validateCodexAgentFilenames true codexFiles
+              validateMirrorOrphanState ".opencode/agents" mirrorNames sourceNames vendoredMirrors ]
 
     [<Then>]
     member _.``the harness name is not rejected as unknown``() =
@@ -131,6 +152,17 @@ type HarnessBindingsSteps() =
     [<Then>]
     member _.``the output names \.toml as the officially-correct extension``() =
         Assert.Contains(checks, fun check -> check.Message.Contains("must be <name>.toml"))
+
+    [<Then>]
+    member _.``the output names the orphaned mirror and the source that no longer exists``() =
+        let check =
+            checks
+            |> List.find (fun check -> check.Name = "Mirror Orphans: .opencode/agents")
+
+        Assert.Equal("failed", check.Status)
+        Assert.Equal("orphaned mirror(s): repo-rules-maker.md", check.Actual)
+        Assert.Contains("no .claude/agents/ source explains it", check.Message)
+        Assert.DoesNotContain("README.md", check.Actual)
 
 module private HarnessBindingScenarios =
     let acceptedName () =
@@ -174,6 +206,27 @@ module private HarnessBindingScenarios =
         steps.``the developer runs harness bindings validate`` ()
         steps.``the command exits successfully`` ()
 
+    let orphanedMirror () =
+        let steps = HarnessBindingsSteps()
+        steps.``a repository whose generated agent directory holds a mirror with no source agent`` ()
+        steps.``the developer runs harness bindings validate`` ()
+        steps.``the command exits with a failure code`` ()
+        steps.``the output names the orphaned mirror and the source that no longer exists`` ()
+
+    let vendoredMirror () =
+        let steps = HarnessBindingsSteps()
+
+        steps.``a repository whose generated agent directory holds a vendored mirror with no source agent`` ()
+
+        steps.``the developer runs harness bindings validate`` ()
+        steps.``the command exits successfully`` ()
+
+    let sourcedMirrors () =
+        let steps = HarnessBindingsSteps()
+        steps.``a repository whose generated agent mirrors each have a source agent`` ()
+        steps.``the developer runs harness bindings validate`` ()
+        steps.``the command exits successfully`` ()
+
     let markdownAgent () =
         let steps = HarnessBindingsSteps()
         steps.``a repository whose \.codex/agents directory holds a \.md agent file`` ()
@@ -205,3 +258,15 @@ let ``toml Codex agent passes`` () = HarnessBindingScenarios.tomlAgent ()
 [<Fact>]
 let ``markdown Codex agent fails`` () =
     HarnessBindingScenarios.markdownAgent ()
+
+[<Fact>]
+let ``orphaned generated mirror fails`` () =
+    HarnessBindingScenarios.orphanedMirror ()
+
+[<Fact>]
+let ``generated mirrors with sources pass`` () =
+    HarnessBindingScenarios.sourcedMirrors ()
+
+[<Fact>]
+let ``vendored generated mirror is exempt`` () =
+    HarnessBindingScenarios.vendoredMirror ()

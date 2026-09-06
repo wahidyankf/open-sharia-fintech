@@ -18,6 +18,6 @@ principle-appropriateness judgement.
 
 This quality-gate-specific filtering follows the shared
 [validation-ownership rule](../../meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md).
-Standalone `repo-rules-checker` behaviour is unchanged.
+Standalone `rules-checker` behaviour is unchanged.
 
 **Continued in** [Step 0.5: Deterministic Preflight — Command and Exit Handling](./step-0-5-deterministic-preflight-continued.md).

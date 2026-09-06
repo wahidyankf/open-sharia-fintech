@@ -57,8 +57,8 @@ When documenting a new convention or practice, ALWAYS reference which principles
 **Implementation**: Multiple agents enforce this
 
 - **agent-maker**: Validates new agents have explicit `tools` field in frontmatter
-- **repo-rules-checker**: Audits agents for missing or incomplete tool declarations
-- **repo-rules-fixer**: Can add missing frontmatter fields
+- **rules-checker**: Audits agents for missing or incomplete tool declarations
+- **rules-fixer**: Can add missing frontmatter fields
 
 **Result**: All agent files contain explicit tool lists:
 
@@ -82,7 +82,7 @@ tools: Read, Glob, Grep
 
 - **Husky + lint-staged**: Pre-commit hook formats code automatically
 - **Commitlint**: Commit-msg hook validates message format
-- **Various checker agents**: Automated quality validation (docs-checker, repo-rules-checker, etc.)
+- **Various checker agents**: Automated quality validation (docs-checker, rules-checker, etc.)
 
 **Result**: Code quality maintained automatically without manual intervention
 

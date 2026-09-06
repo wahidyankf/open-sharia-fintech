@@ -1,5 +1,7 @@
 name = "apps-ayokoding-www-general-fixer"
 description = "Applies validated fixes from general-checker audit reports. Re-validates before applying changes."
+model = "gpt-5.6-terra"
+model_reasoning_effort = "xhigh"
 developer_instructions = """
 
 # General Content Fixer for ayokoding-web

@@ -53,8 +53,8 @@ outputs:
 Automatically validates repository consistency across principles, conventions, development
 practices, agent/skill source definitions, and subdirectory README files, then applies fixes
 iteratively until no finding at or above the selected threshold remains. The preferred checker and
-fixer are [repo-rules-checker](../../../.claude/agents/repo/repo-rules-checker.md) and
-[repo-rules-fixer](../../../.claude/agents/repo/repo-rules-fixer.md). Validates source only (`repo-governance/`,
+fixer are [rules-checker](../../../.claude/agents/repo/rules-checker.md) and
+[rules-fixer](../../../.claude/agents/repo/rules-fixer.md). Validates source only (`repo-governance/`,
 `.claude/agents/`, `.claude/skills/`, `docs/explanation/` partially) — see the Purpose and Scope
 child below for the full validates/skips breakdown.
 

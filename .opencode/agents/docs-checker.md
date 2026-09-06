@@ -1,6 +1,5 @@
 ---
 description: Expert at validating factual correctness and content consistency of documentation using web verification. Checks technical accuracy, detects contradictions, validates examples and commands, and identifies outdated information. Use when verifying technical claims, checking command syntax, detecting contradictions, or auditing documentation accuracy.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   glob: allow
@@ -82,7 +81,7 @@ Use a dual verification label ([Verified]/[Unverified]/[Error]/[Outdated]) plus 
 label on every finding; write findings immediately, never buffered.
 
 Out of scope: link validity (`docs-link-checker`), convention/naming compliance
-(`repo-rules-checker`), writing style/grammar. Read-only; some sites block automated access
+(`rules-checker`), writing style/grammar. Read-only; some sites block automated access
 (403 → fall back to WebSearch).
 
 ## Reference Documentation
@@ -90,7 +89,7 @@ Out of scope: link validity (`docs-link-checker`), convention/naming compliance
 **Project Guidance**: [AGENTS.md](../../AGENTS.md), [AI Agents Convention](../../repo-governance/development/agents/ai-agents.md),
 [Criticality Levels](../../repo-governance/development/quality/criticality-levels.md).
 
-**Related Agents**: `docs-link-checker` (links), `repo-rules-checker` (conventions), `docs-maker`
+**Related Agents**: `docs-link-checker` (links), `rules-checker` (conventions), `docs-maker`
 (creation/editing), `docs-fixer` (applies fixes).
 
 - [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

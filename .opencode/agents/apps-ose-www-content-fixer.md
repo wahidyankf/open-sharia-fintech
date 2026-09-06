@@ -1,6 +1,5 @@
 ---
 description: Applies validated fixes from content-checker audit reports. Re-validates before applying changes.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow

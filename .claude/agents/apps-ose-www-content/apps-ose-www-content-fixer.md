@@ -3,6 +3,7 @@ name: apps-ose-www-content-fixer
 description: Applies validated fixes from content-checker audit reports. Re-validates before applying changes.
 tools: Read, Edit, Write, Glob, Grep, Bash
 model: sonnet
+effort: xhigh
 color: yellow
 skills:
   - docs-applying-content-quality

@@ -28,7 +28,7 @@ when_to_use: "Use when deciding whether a finding is HIGH_CONFIDENCE."
 
 **Examples Across Domains:**
 
-**repo-rules-fixer:**
+**rules-fixer:**
 
 - Missing `subcategory` field verified by re-reading frontmatter
 - Broken internal link verified by checking file doesn't exist at target path

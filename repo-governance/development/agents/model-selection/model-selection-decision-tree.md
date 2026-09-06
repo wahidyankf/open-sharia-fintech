@@ -1,6 +1,6 @@
 ---
 title: "Model Selection Decision Tree"
-description: "Gives the decision tree for walking from a task's characteristics to the correct model tier."
+description: "Gives the decision tree for walking from a task's characteristics to the correct model grade."
 category: explanation
 subcategory: development
 tags:
@@ -9,30 +9,42 @@ tags:
   - development
   - standards
 created: 2025-11-23
-when_to_use: Use when unsure which model tier a new agent should declare.
+when_to_use: Use when unsure which model grade a new agent should declare.
 ---
 
 # Model Selection Decision Tree
 
+The tree is entered from the bottom. Each grade must be argued past, never assumed.
+
 ```
-Start: Choosing Agent Model
+Start: Choosing an Agent Grade
+    |
+    +-- Is the task purely mechanical, with no reasoning required?
+    |   |
+    |   +-- Yes --> Fast (model: haiku)
+    |
+    +-- Does the task apply rules, validate against checklists,
+    |   or follow a structured procedure?
+    |   |
+    |   +-- Yes --> Execution-Grade (model: sonnet)
     |
     +-- Does the task require creative reasoning, code generation,
     |   architectural decisions, or nuanced content creation?
     |   |
-    |   +-- Yes --> Opus (omit model field)
+    |   +-- Yes --> Planning-Grade (model: opus)
+    |
+    +-- Has this agent DEMONSTRABLY failed at the planning grade
+    |   on a task that is expensive to detect and expensive to undo?
     |   |
-    |   +-- No --> Does the task require applying rules, validating
-    |              against checklists, or following structured procedures?
-    |              |
-    |              +-- Yes --> Sonnet (model: sonnet)
-    |              |
-    |              +-- No --> Is the task purely mechanical with
-    |                         no reasoning required?
-    |                         |
-    |                         +-- Yes --> Haiku (model: haiku)
-    |                         |
-    |                         +-- No --> Default to Sonnet
-    |                                    (safer than haiku for
-    |                                     ambiguous cases)
+    |   +-- Yes, with recorded evidence --> Ultra (model: fable)
+    |   |
+    |   +-- No, but it feels hard --> Planning-Grade
+    |
+    +-- None of the above / ambiguous --> Execution-Grade
+                                          (safer than fast for
+                                           ambiguous cases)
 ```
+
+Ultra is the only grade that cannot be reached by prediction. It requires the recorded evidence
+described in [Model Tiers — Ultra](./model-tiers-ultra.md#admission-evidence); anticipated
+difficulty is not evidence.

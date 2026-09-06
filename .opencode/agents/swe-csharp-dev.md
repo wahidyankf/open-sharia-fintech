@@ -1,6 +1,5 @@
 ---
 description: Develops C# applications following nullable reference type principles, async/await patterns, and platform coding standards. Use when implementing C# code for OSE Platform.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow
@@ -22,9 +21,14 @@ skills:
 
 - **Role**: Implementor (purple)
 
-**Model Selection Justification**: `model: sonnet` — ASP.NET Core architecture decisions, C# nullable
-reference types/records/pattern matching, Entity Framework Core, and async/await/Task/Channels design
-all need more than mechanical pattern-following.
+**Model Selection Justification**: `model: opus` (planning grade) — this agent requires:
+
+- Architectural judgement across ASP.NET Core layering, Entity Framework Core mapping, and
+  async/await/Task/Channels design, where the trade-offs have no single correct answer
+- Original code generation in a language whose nullable-reference, record, and pattern-matching
+  idioms must be composed rather than copied from a template
+- Multi-step design→implement→test→refactor orchestration on production application code, where a
+  wrong structural call survives review and is expensive to undo later
 
 ## Core Expertise
 

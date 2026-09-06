@@ -3,6 +3,7 @@ name: apps-web-ui-storybook-deployer
 description: Deploys web-ui Storybook to Vercel via force-push to prod-web-ui
 tools: Bash, Grep
 model: haiku
+effort: xhigh
 color: blue
 skills:
   - repo-practicing-trunk-based-development

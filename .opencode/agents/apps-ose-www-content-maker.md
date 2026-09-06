@@ -1,6 +1,5 @@
 ---
 description: Creates content for ose-web Next.js 16 content platform. English-only with date-based organization.
-model: zai-coding-plan/glm-5.2
 permission:
   edit: allow
   glob: allow

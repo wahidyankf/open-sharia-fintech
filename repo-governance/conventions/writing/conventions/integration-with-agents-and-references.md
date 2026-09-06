@@ -21,7 +21,7 @@ Conventions are most effective when enforced or assisted by agents:
 ### Agents That Create Conventions
 
 - **docs-maker** - Creates convention documents following this meta-convention
-- **repo-rules-maker** - Propagates convention changes across repository
+- **rules-maker** - Propagates convention changes across repository
 
 ### Agents That Use Conventions
 
@@ -29,7 +29,7 @@ Conventions are most effective when enforced or assisted by agents:
 - **docs-link-checker** - Enforces linking convention
 - **apps-ayokoding-www-general-checker** - Validates general ayokoding-web content conventions
 - **apps-ayokoding-www-by-example-checker** - Validates by-example tutorial conventions
-- **repo-rules-checker** - Audits convention compliance
+- **rules-checker** - Audits convention compliance
 
 ### Agent Integration Checklist
 
@@ -64,5 +64,5 @@ When creating a convention:
 **Agents:**
 
 - `docs-maker` - Creates convention documents following this structure
-- `repo-rules-maker` - Propagates convention changes
-- `repo-rules-checker` - Validates convention compliance
+- `rules-maker` - Propagates convention changes
+- `rules-checker` - Validates convention compliance

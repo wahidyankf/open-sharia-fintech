@@ -3,6 +3,7 @@ name: web-usability-tester
 description: Performs spec-blind heuristic usability evaluation of a live website and records findings in local-tmp by default. Judges first-time usability; output-mode plan or delivery must be explicit.
 tools: Read, Write, Edit, Glob, Grep, Bash, WebFetch, WebSearch
 model: sonnet
+effort: xhigh
 color: green
 skills:
   - web-testing-usability-heuristics
@@ -16,7 +17,7 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: `tester` (green). **Model**: `sonnet` — structured, checklist-driven, cited rubric.
+- **Role**: `tester` (green)
 - **Tools**: `WebFetch`/`WebSearch` fetch rendered content and research external convention only —
   never this site's intended behaviour; `Bash` drives `curl`/`npx playwright`; `Read`/`Glob`/`Grep`
   write plan documents only — never `specs/**`, source, or mockups.
@@ -31,6 +32,9 @@ Spec-Blind Discipline (hard rule), the Non-Destructive Constraint, heuristic eva
 walkthrough, dimensions checklist, the four Mandatory Systematic Probes, URL Naturalness, Responsive
 Usability, browser driving, `spec-suggestions.md` proposals, the `UWT-###` finding anatomy, and the
 three output modes.
+
+**Model Selection Justification**: `model: sonnet` (execution grade) — structured, checklist-driven,
+cited rubric.
 
 ## Core Responsibility
 

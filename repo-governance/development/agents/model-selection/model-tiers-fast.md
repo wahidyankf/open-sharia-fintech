@@ -41,6 +41,7 @@ name: apps-ayokoding-www-deployer
 description: Expert deployment orchestrator...
 tools: [Bash, Read, Glob, Grep]
 model: haiku
+effort: xhigh
 color: purple
 ---
 ```

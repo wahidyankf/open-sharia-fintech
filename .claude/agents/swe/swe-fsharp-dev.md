@@ -2,7 +2,8 @@
 name: swe-fsharp-dev
 description: Develops F# applications following functional programming principles, railway-oriented error handling, and platform coding standards. Use when implementing F# code for OSE Platform.
 tools: Read, Write, Edit, Glob, Grep, Bash
-model: sonnet
+model: opus
+effort: high
 color: purple
 skills:
   - swe-programming-fsharp
@@ -17,9 +18,14 @@ skills:
 
 - **Role**: Implementor (purple)
 
-**Model Selection Justification**: `model: sonnet` — functional domain modeling with discriminated
-unions, F# computation expressions and railway-oriented programming, Giraffe/Saturn patterns, and
-type-driven design all need more than mechanical pattern-following.
+**Model Selection Justification**: `model: opus` (planning grade) — this agent requires:
+
+- Functional domain modelling with discriminated unions and type-driven design, where the shape of
+  the model is invented rather than filled in
+- Original code generation across computation expressions, railway-oriented error handling, and the
+  Giraffe/Saturn stack, none of which reduce to template substitution
+- Multi-step design→implement→test→refactor orchestration on production application code — this
+  agent writes `apps/rhino-cli`, the tooling every other gate in this repository depends on
 
 ## Core Expertise
 

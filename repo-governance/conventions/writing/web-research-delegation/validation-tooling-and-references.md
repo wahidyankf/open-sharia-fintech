@@ -24,13 +24,13 @@ To validate an agent complies with this convention:
 3. **Does the block state the threshold (2+ searches or 3+ fetches per claim) or cite the convention in which it lives?** If no, the agent is non-compliant.
 4. **If the agent claims an exception, is the exception one of the three enumerated above, and is it named explicitly?** If no, the exception is not documented and the agent is non-compliant.
 
-`repo-rules-checker` enforces these four checks as part of its agent-frontmatter and agent-body audit.
+`rules-checker` enforces these four checks as part of its agent-frontmatter and agent-body audit.
 
 ## Tools and Automation
 
 - **`web-researcher`** — the default research primitive. Read-only delegated agent that returns cited, confidence-tagged findings without bloating the caller's context.
-- **`repo-rules-checker`** — validates agent compliance with this convention as part of routine governance audits.
-- **`repo-rules-fixer`** — applies fixes to non-compliant agents (adds Web Research Delegation block, cites convention).
+- **`rules-checker`** — validates agent compliance with this convention as part of routine governance audits.
+- **`rules-fixer`** — applies fixes to non-compliant agents (adds Web Research Delegation block, cites convention).
 - **Skill: `docs-validating-factual-accuracy`** — the factual-validation methodology that calls this convention as the authoritative source of the delegation rule.
 
 ## References

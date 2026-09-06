@@ -7,6 +7,18 @@ Feature: Codex agent definitions are generated from .claude/agents/
     Then the command exits successfully
     And .codex/agents/ holds exactly one TOML file named for that agent
     And the emitted Codex agent declares name, description, and developer_instructions
+
+  Scenario: An agent's model and effort tier is carried onto its Codex counterparts
+    Given a repository whose .claude/agents/ holds one agent per model tier
+    When the developer runs harness bindings generate
+    Then the command exits successfully
+    And each emitted Codex agent declares the Codex model at the same tier
+    And each emitted Codex agent declares model_reasoning_effort matching its Claude effort
+
+  Scenario: A tier with no Codex counterpart is omitted rather than guessed
+    Given a repository whose .claude/agents/ holds one agent declaring model inherit
+    When the developer runs harness bindings generate
+    Then the command exits successfully
     And the emitted Codex agent declares no model field
 
   Scenario: Agent identity comes from the name frontmatter, not the source subfolder

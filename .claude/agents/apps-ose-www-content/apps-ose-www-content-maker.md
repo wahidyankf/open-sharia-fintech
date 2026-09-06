@@ -3,6 +3,7 @@ name: apps-ose-www-content-maker
 description: Creates content for ose-web Next.js 16 content platform. English-only with date-based organization.
 tools: Read, Write, Edit, Glob, Grep
 model: sonnet
+effort: xhigh
 color: blue
 skills:
   - docs-applying-content-quality

@@ -62,7 +62,7 @@ This progressive approach ensures findings persist even if context is compacted 
 
 ALL \*-checker agents must implement progressive writing:
 
-1. repo-rules-checker
+1. rules-checker
 2. apps-ayokoding-www-general-checker
 3. apps-ayokoding-www-by-example-checker
 4. apps-ayokoding-www-facts-checker
@@ -80,4 +80,4 @@ ALL \*-checker agents must implement progressive writing:
 16. specs-checker
 17. swe-code-checker
 
-**Validation**: See repo-rules-checker agent for validation rules that verify progressive writing compliance across all checker agents.
+**Validation**: See rules-checker agent for validation rules that verify progressive writing compliance across all checker agents.

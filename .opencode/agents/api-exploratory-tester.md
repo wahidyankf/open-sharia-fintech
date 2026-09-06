@@ -1,6 +1,5 @@
 ---
 description: Tests live REST/GraphQL APIs against contracts and specs, then writes reproducible findings to a plan, delivery record, or local-tmp. Never drives a browser or fixes defects.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow
@@ -23,14 +22,16 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: `tester` (green). **Model**: `sonnet` — structured, charter-and-contract-driven sweep
-  with reproducible request/response steps and cited ground truth.
+- **Role**: `tester` (green)
 
 Session-based testing of a live REST or GraphQL API. The web tester triad judges rendered UI; this
 agent judges the client contract. Never overlap.
 
 **See `api-testing-exploratory-methodology` Skill** for the complete methodology, systematic sweeps,
 contract/spec ground truth, `AET-###` anatomy, and output modes.
+
+**Model Selection Justification**: `model: sonnet` (execution grade) — structured,
+charter-and-contract-driven sweep with reproducible request/response steps and cited ground truth.
 
 ## Core Responsibility
 

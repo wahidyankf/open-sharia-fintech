@@ -19,7 +19,7 @@ created: 2026-05-09
 
 ## Validation
 
-`repo-rules-checker` and `specs-checker` enforce this convention. The `rhino-cli specs` subcommands handle deterministic checks; `specs-checker` handles semantic and narrative checks.
+`rules-checker` and `specs-checker` enforce this convention. The `rhino-cli specs` subcommands handle deterministic checks; `specs-checker` handles semantic and narrative checks.
 
 ### Deterministic checks (rhino-cli)
 
@@ -40,9 +40,9 @@ created: 2026-05-09
 | Mainstream SWE term glossed unnecessarily                                   | LOW           |
 | Code block missing one-sentence introduction                                | LOW           |
 
-### Forbidden content audit (repo-rules-checker)
+### Forbidden content audit (rules-checker)
 
-`repo-rules-checker` scans app READMEs for forbidden headings:
+`rules-checker` scans app READMEs for forbidden headings:
 
 - `## Routes`, `## Screens`, `## API`, `## Endpoints` → HIGH (Category B content in README)
 - `## Architecture` with more than 10 lines of content → HIGH (move to `components/*/architecture.md`)

@@ -1,6 +1,6 @@
 ---
 title: "Step 3: Apply Fixes"
-description: Invokes repo-rules-fixer with mode-scoped fix levels, and notes that below-threshold findings remain untouched.
+description: Invokes rules-fixer with mode-scoped fix levels, and notes that below-threshold findings remain untouched.
 when_to_use: Use when applying validated fixes from an audit report during a repo-rules quality-gate iteration.
 ---
 
@@ -8,7 +8,7 @@ when_to_use: Use when applying validated fixes from an audit report during a rep
 
 Apply validated fixes from the audit report based on mode level.
 
-**Agent**: `repo-rules-fixer`
+**Agent**: `rules-fixer`
 
 - **Args**: `report: {step1.outputs.audit-report-1}, approved: all, mode: {input.mode},
 EXECUTION_SCOPE: repo-rules,

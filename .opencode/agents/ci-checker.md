@@ -1,6 +1,5 @@
 ---
 description: Validates project-role Nx targets, static BDD coverage, runtime boundaries, hook/PR isolation, scheduled suites, and CI safety
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   glob: allow

@@ -1,6 +1,5 @@
 ---
 description: Validates UI component quality including token compliance, accessibility, responsive design, component patterns, and dark mode. Use when auditing frontend components.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   glob: allow
@@ -24,6 +23,14 @@ skills:
 ## Agent Metadata
 
 - **Role**: Checker (green)
+
+**Model Selection Justification**: `model: sonnet` (execution grade) — this agent requires:
+
+- Systematic rule application across seven defined UI dimensions (tokens, accessibility, responsive
+  design, component patterns, dark mode) against `repo-governance/development/frontend/`
+- Structured audit-report generation following the report template
+- Pattern recognition over component source, not original design judgement — the conventions it
+  measures against are already written down
 
 Audits frontend components against `repo-governance/development/frontend/` and produces violation
 reports.

@@ -3,6 +3,7 @@ name: pdf-to-md-fixer
 description: Applies validated fixes from pdf-to-md-checker audit reports. Re-validates each finding before applying. Fixes missing sections (re-extracts from PDF), incorrect text, wrong table data, invalid Mermaid syntax, and missing figure placeholders. Use after reviewing pdf-to-md-checker output.
 tools: Read, Edit, Write, Glob, Grep, Bash
 model: sonnet
+effort: xhigh
 color: yellow
 skills:
   - docs-converting-pdf-to-markdown

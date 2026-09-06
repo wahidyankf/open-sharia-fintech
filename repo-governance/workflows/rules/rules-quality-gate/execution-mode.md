@@ -1,13 +1,13 @@
 ---
 title: "Execution Mode"
-description: How to invoke repo-rules-checker and -fixer via Agent Delegation, the Manual Orchestration fallback, and the six-step execution summary.
+description: How to invoke rules-checker and -fixer via Agent Delegation, the Manual Orchestration fallback, and the six-step execution summary.
 when_to_use: Use when starting a repository rules quality gate run and deciding preferred vs. fallback execution mode.
 ---
 
 # Execution Mode
 
-**Preferred Mode**: Agent Delegation — invoke `repo-rules-checker` and
-`repo-rules-fixer` via the Agent tool with `subagent_type`
+**Preferred Mode**: Agent Delegation — invoke `rules-checker` and
+`rules-fixer` via the Agent tool with `subagent_type`
 (see [Workflow Execution Modes Convention](../../meta/execution-modes.md)).
 
 **Fallback Mode**: Manual Orchestration — execute workflow logic directly using
@@ -27,8 +27,8 @@ The AI will:
 0. Resolve lifecycle ownership/evidence, then build rhino-cli if missing
    (`rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- build rhino-cli`) and run
    the filtered domain preflight (Step 0.5).
-1. Invoke `repo-rules-checker` via the Agent tool (reads governance files, writes audit)
-2. Invoke `repo-rules-fixer` via the Agent tool (reads audit, applies fixes, writes fix report)
+1. Invoke `rules-checker` via the Agent tool (reads governance files, writes audit)
+2. Invoke `rules-fixer` via the Agent tool (reads audit, applies fixes, writes fix report)
 3. Iterate until zero threshold-level domain findings are achieved; report lifecycle status separately
 4. Show git status with modified files
 5. Wait for user commit approval

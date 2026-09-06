@@ -1,5 +1,7 @@
 name = "repo-workflow-checker"
 description = "Validates workflow documentation quality and compliance with workflow pattern convention."
+model = "gpt-5.6-terra"
+model_reasoning_effort = "xhigh"
 developer_instructions = """
 
 # Workflow Checker Agent

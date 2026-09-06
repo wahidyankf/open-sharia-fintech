@@ -2,7 +2,8 @@
 name: plan-fixer
 description: Applies validated fixes from plan-checker audit reports. Re-validates plan findings before applying changes. Use after reviewing plan-checker output.
 tools: Read, Edit, Write, Glob, Grep, Bash, WebSearch, WebFetch
-model: sonnet
+model: opus
+effort: high
 color: yellow
 skills:
   - docs-applying-content-quality
@@ -27,6 +28,10 @@ skills:
 ## Agent Metadata
 
 - **Role**: Fixer (yellow)
+
+**Model Selection Justification**: `model: opus` (planning grade) — judging whether a
+`plan-checker` finding is real, then correcting plan structure, scope, or sequencing, where a wrong
+fix reshapes the delivery. Its checker's grade, per the governance-trio rule.
 
 Validate `plan-checker` findings before applying changes to prevent false positives.
 

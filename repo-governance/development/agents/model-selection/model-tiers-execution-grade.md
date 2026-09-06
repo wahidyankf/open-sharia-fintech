@@ -28,10 +28,11 @@ when_to_use: Use when deciding whether a new agent should declare the execution-
 
 **Agent examples**:
 
-- **All checkers** -- validate content against conventions using defined rulesets and produce structured audit reports (docs-checker, docs-tutorial-checker, docs-software-engineering-separation-checker, readme-checker, specs-checker, repo-rules-checker, repo-workflow-checker, plan-checker, plan-execution-checker, swe-code-checker, swe-ui-checker, ci-checker, apps-\*-checker)
-- **Most fixers** -- apply corrections from checker audit reports following documented fix procedures (docs-fixer, docs-tutorial-fixer, docs-software-engineering-separation-fixer, readme-fixer, specs-fixer, repo-rules-fixer, repo-workflow-fixer, plan-fixer, swe-ui-fixer, ci-fixer, apps-\*-fixer)
+- **Content and code checkers** -- validate content against conventions using defined rulesets and produce structured audit reports (docs-checker, docs-tutorial-checker, docs-software-engineering-separation-checker, readme-checker, repo-workflow-checker, swe-code-checker, swe-ui-checker, ci-checker, apps-\*-checker). The governance checkers -- `rules-*`, `specs-*`, `plan-*`, `harness-*` -- sit at planning-grade instead, because a wrong call there propagates across the repository rather than one file
+- **Most fixers** -- apply corrections from checker audit reports following documented fix procedures (docs-fixer, docs-tutorial-fixer, docs-software-engineering-separation-fixer, readme-fixer, repo-workflow-fixer, swe-ui-fixer, ci-fixer, apps-\*-fixer). Each governance fixer follows its checker's grade
 - **social-linkedin-post-maker** -- generates social media posts following a defined template and tone guidelines
-- **Structured makers** -- makers with tight, well-defined skills that pin down most decisions, making them rule-following rather than open-ended creation (docs-maker, readme-maker, agent-maker, specs-maker, repo-workflow-maker, apps-ose-www-content-maker, apps-ayokoding-www-by-example-maker, apps-ayokoding-www-general-maker, apps-ayokoding-www-in-the-field-maker, repo-rules-maker)
+- **Structured makers** -- makers with tight, well-defined skills that pin down most decisions, making them rule-following rather than open-ended creation (docs-maker, readme-maker, agent-maker, repo-workflow-maker, apps-ose-www-content-maker, and every `apps-ayokoding-www-*-maker`)
+- **Testers and converters** -- agents whose sweep is enumerated rather than invented: `web-*-tester` and api-exploratory-tester work through a fixed charter and cite ground truth; `pdf-to-md-*` follows a chunked extract-and-verify procedure; repo-setup-manager runs a five-step sequence with an acceptance condition per step
 - **swe-e2e-dev** -- writes Playwright E2E tests following a dedicated skill with defined patterns (locators, fixtures, waits); lower stakes than production code written by language developer agents
 
 **Frontmatter**: Specify `model: sonnet` explicitly.
@@ -42,6 +43,7 @@ name: docs-checker
 description: Expert documentation validator...
 tools: [Read, Glob, Grep, Write, Bash]
 model: sonnet
+effort: xhigh
 color: green
 ---
 ```

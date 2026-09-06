@@ -3,6 +3,7 @@ name: apps-ayokoding-www-annotated-concept-checker
 description: Validates Annotated-concept tutorial quality including worked-example/scenario count (45-60 standard mode, 20-30 no-code sub-mode), annotation density (1.0-2.25 per code/pseudocode block), worked-example structure, diagram accessibility, and ayokoding-web compliance. Use when reviewing Annotated-concept content.
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
+effort: xhigh
 color: green
 skills:
   - docs-applying-content-quality

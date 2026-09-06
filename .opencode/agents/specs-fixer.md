@@ -1,6 +1,5 @@
 ---
 description: Applies validated fixes from specs-checker audit reports for explicitly listed spec folders. Re-validates findings before applying. Use after reviewing specs-checker output.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow
@@ -25,8 +24,12 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: Fixer (yellow). **Model**: `sonnet` — confident re-validation and safe file
-  modifications across spec READMEs, feature files, and C4 diagrams.
+- **Role**: Fixer (yellow)
+
+**Model Selection Justification**: `model: opus` (planning grade) — re-validating a `specs-checker`
+finding and correcting a spec means changing the definition the tests are measured against, so a
+wrong fix silently redefines correct behaviour rather than breaking a build. It follows its
+checker's grade.
 
 ## Core Responsibility
 

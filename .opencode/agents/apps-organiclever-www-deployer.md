@@ -1,6 +1,5 @@
 ---
 description: Deploys organiclever-www (OrganicLever marketing website) to production environment branch (prod-organiclever-www) after validation. Vercel listens to the production branch for automatic builds.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   grep: allow
@@ -18,8 +17,7 @@ skills:
 
 - **Role**: Implementor (purple)
 
-**Model Selection Justification**: `model: haiku` (Haiku 4.5, 73.3% SWE-bench Verified —
-[benchmark reference](../../docs/reference/ai-model-benchmarks.md#claude-haiku-45)) — deterministic
+**Model Selection Justification**: `model: haiku` (fast grade) — deterministic
 git operations and status checks, no complex reasoning or content generation.
 
 ## Target Parameters

@@ -59,7 +59,7 @@ code fences, `binding-example` fences, "Platform Binding Examples" heading secti
 spans, link URL portions, HTML comments, and YAML frontmatter. The convention file itself
 (`governance-vendor-independence.md`) is also permanently allowlisted.
 
-The `repo-rules-checker` agent continues to detect violations during its full audit sweep as a
+The `rules-checker` agent continues to detect violations during its full audit sweep as a
 complementary signal.
 
 ## Exceptions and Escape Hatches

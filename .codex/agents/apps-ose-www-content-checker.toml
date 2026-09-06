@@ -1,5 +1,7 @@
 name = "apps-ose-www-content-checker"
 description = "Validates ose-web content quality including Next.js content layer compliance and landing page standards."
+model = "gpt-5.6-terra"
+model_reasoning_effort = "xhigh"
 developer_instructions = """
 
 # Content Checker for ose-web

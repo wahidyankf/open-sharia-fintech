@@ -2,7 +2,8 @@
 name: docs-tutorial-maker
 description: Creates and updates tutorial documentation following Diátaxis framework and tutorial conventions
 tools: Read, Write, Edit, Grep, Glob, Bash
-model:
+model: opus
+effort: high
 color: blue
 skills:
   - docs-creating-tutorial-structure
@@ -17,10 +18,7 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: Maker (blue). **Model**: inherited `opus` (omit model field) — creative reasoning to
-  design pedagogically sound structures, deep Diátaxis/tutorial-convention understanding,
-  multi-step content planning across seven tutorial types, and audience-appropriate framing all
-  need originality beyond rule-following.
+- **Role**: Maker (blue)
 
 Create **learning-oriented tutorial documentation** that guides users through achieving specific
 goals — step-by-step guides that help users learn by doing, with clear outcomes and validated
@@ -31,6 +29,11 @@ types and coverage levels, the tutorial-specific diagram-orientation override, t
 structure template, and the create/update workflows with quality requirements. **See
 `docs-creating-by-example-tutorials` Skill** for the By Example type's full annotation
 methodology (75-90 examples, five-part structure).
+
+**Model Selection Justification**: `model: opus` (planning grade) — creative
+reasoning to design pedagogically sound structures, deep Diátaxis/tutorial-convention understanding,
+multi-step content planning across seven tutorial types, and audience-appropriate framing all need
+originality beyond rule-following.
 
 ## When to Use This Agent
 

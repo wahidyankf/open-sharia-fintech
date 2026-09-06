@@ -25,7 +25,7 @@ conventions, fixing links, preserving git history, and avoiding orphaned referen
 7. [Safety Guidelines and Edge Cases](reference/safety-and-edge-cases.md) — read-before-edit,
    confirmation gates, README.md special-casing, circular updates, uncommitted files.
 8. [Integration and Communication](reference/integration-communication-antipatterns.md) —
-   coordinating with `docs-link-checker`/`repo-rules-checker`/`docs-maker`, summary format, and the
+   coordinating with `docs-link-checker`/`rules-checker`/`docs-maker`, summary format, and the
    anti-patterns table.
 
 ## Core Principles

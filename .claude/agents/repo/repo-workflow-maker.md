@@ -3,6 +3,7 @@ name: repo-workflow-maker
 description: Creates workflow documentation in repo-governance/workflows/ following workflow pattern convention.
 tools: Read, Write, Edit, Glob, Grep
 model: sonnet
+effort: xhigh
 color: blue
 skills:
   - docs-applying-content-quality

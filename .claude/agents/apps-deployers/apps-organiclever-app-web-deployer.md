@@ -3,6 +3,7 @@ name: apps-organiclever-app-web-deployer
 description: Deploys the OrganicLever app group to staging via the scheduled organiclever-app-test-local-deploy-stag.yml GitHub Actions workflow. The workflow runs the full local-stack test suite, then force-pushes the stag-organiclever-app-web and stag-organiclever-be branches. Vercel listens to stag-organiclever-app-web for automatic builds. Production promotion is deferred — no production-CD workflow exists yet.
 tools: Bash, Grep
 model: haiku
+effort: xhigh
 color: purple
 skills:
   - repo-practicing-trunk-based-development
@@ -17,8 +18,7 @@ skills:
 
 - **Role**: Implementor (purple)
 
-**Model Selection Justification**: `model: haiku` (Haiku 4.5, 73.3% SWE-bench Verified —
-[benchmark reference](../../../docs/reference/ai-model-benchmarks.md#claude-haiku-45)) — deterministic
+**Model Selection Justification**: `model: haiku` (fast grade) — deterministic
 workflow dispatch and monitoring, no complex reasoning or content generation.
 
 ## Target Parameters

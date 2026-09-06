@@ -13,11 +13,11 @@ Feature: Governance of the word-budget rule
     Then "governance-word-budget.md" exists
     And the file lists the monitored file classes, configured threshold source, and enforcement points
 
-  # Exemption(e2e): this contract belongs to the private AI checker instruction surface, not executable CLI output; alternative-proof: rhino-cli:test:integration / repo-rules-checker validates the budget qualitatively
+  # Exemption(e2e): this contract belongs to the private AI checker instruction surface, not executable CLI output; alternative-proof: rhino-cli:test:integration / rules-checker validates the budget qualitatively
   @e2e-exempt
-  Scenario: repo-rules-checker validates the budget qualitatively
+  Scenario: rules-checker validates the budget qualitatively
     Given the plan is complete
-    When "repo-rules-checker" runs Step 6
+    When "rules-checker" runs Step 6
     Then it reports qualitative bloat concerns across the whole instruction-file class
     And it annotates that the word ceiling is enforced by the deterministic "governance-word-budget" gate
 
@@ -38,6 +38,6 @@ Feature: Governance of the word-budget rule
   @e2e-exempt
   Scenario: The AI checker defers to lifecycle-gate evidence
     Given lifecycle evidence contains a current "governance-word-budget" result
-    When "repo-rules-checker" runs Step 0.5
+    When "rules-checker" runs Step 0.5
     Then it consumes the exact delegated gate ID "governance-word-budget"
     And it does not re-derive word counts in Step 6

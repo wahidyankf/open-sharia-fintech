@@ -2,7 +2,8 @@
 name: swe-ui-maker
 description: Creates UI components following all conventions — CVA variants, Radix composition, accessibility, responsive design, unit tests, and Storybook stories. Use when creating new shared components.
 tools: Read, Write, Edit, Glob, Grep, Bash
-model:
+model: opus
+effort: high
 color: blue
 skills:
   - swe-developing-frontend-ui
@@ -16,7 +17,7 @@ skills:
 
 - **Role**: Maker (blue)
 
-**Model Selection Justification**: inherited `model: opus` (omit model field) — complex code
+**Model Selection Justification**: `model: opus` (planning grade) — complex code
 generation across interlocking conventions, CVA/Radix/TypeScript component pattern knowledge,
 accessibility (ARIA, keyboard nav), and multi-file coordination (component, variants, tests, stories,
 barrel export) all exceed mechanical pattern-following.

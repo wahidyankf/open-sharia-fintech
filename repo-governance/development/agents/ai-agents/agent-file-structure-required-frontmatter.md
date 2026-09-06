@@ -41,7 +41,7 @@ skills: []
    - MUST exactly match the filename (without `.md` extension)
    - Use kebab-case format
    - Should be descriptive and action-oriented
-   - Examples: `docs-maker`, `repo-rules-checker`, `api-validator`
+   - Examples: `docs-maker`, `rules-checker`, `api-validator`
 
 2. **`description`** (required)
    - One-line summary of when to use this agent
@@ -57,8 +57,8 @@ skills: []
 
 4. **`model`** (required)
    - Specifies which model capability tier to use for this agent
-   - Options: (empty/omitted for planning-grade, the default), `sonnet` (execution-grade), or `haiku` (fast)
-   - Omit the value (leave `model:` empty) for planning-grade agents; specify `sonnet` or `haiku` only when a lower tier is justified
+   - Options: `fable` (ultra), `opus` (planning-grade), `sonnet` (execution-grade), `haiku` (fast), or `inherit`
+   - Always declare a value; a blank `model:` is not a grade. Justify anything above execution-grade
    - Planning-grade agents omit `model` for budget-adaptive inheritance — see [model-selection.md](../model-selection.md) for the design rationale
    - See "Model Selection Guidelines" below for decision criteria
 

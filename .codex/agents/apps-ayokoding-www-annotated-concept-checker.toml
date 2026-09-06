@@ -1,5 +1,7 @@
 name = "apps-ayokoding-www-annotated-concept-checker"
 description = "Validates Annotated-concept tutorial quality including worked-example/scenario count (45-60 standard mode, 20-30 no-code sub-mode), annotation density (1.0-2.25 per code/pseudocode block), worked-example structure, diagram accessibility, and ayokoding-web compliance. Use when reviewing Annotated-concept content."
+model = "gpt-5.6-terra"
+model_reasoning_effort = "xhigh"
 developer_instructions = """
 
 # Annotated-Concept Tutorial Checker for ayokoding-web

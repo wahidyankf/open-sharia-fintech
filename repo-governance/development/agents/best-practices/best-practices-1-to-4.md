@@ -79,7 +79,7 @@ tools: [Read, Write, Edit, Bash, WebFetch, WebSearch] # Excessive
 
 ## Practice 3: Use Appropriate Model for Task Complexity
 
-**Principle**: Match model to task complexity - use fast model for simple tasks, execution-grade for structured tasks, and omit `model` for planning-grade agents.
+**Principle**: Match the model grade to task complexity - fast for mechanical tasks, execution-grade for structured tasks, planning-grade for open-ended judgment, and ultra only on recorded evidence. Every agent declares its grade; none leaves `model` blank.
 
 **Good Example:**
 

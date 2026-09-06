@@ -1,6 +1,5 @@
 ---
 description: Converts PDF files to verbatim Markdown representations. Handles text-based PDFs via pdftotext, image-only PDFs via OCR (tesseract), converts diagrams to Mermaid format, and processes arbitrarily large files in 50-page chunks. By default outputs to same directory and filename as PDF with .md extension. Use when converting a PDF to Markdown for cross-referencing or archival.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow

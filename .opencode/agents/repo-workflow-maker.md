@@ -1,6 +1,5 @@
 ---
 description: Creates workflow documentation in repo-governance/workflows/ following workflow pattern convention.
-model: zai-coding-plan/glm-5.2
 permission:
   edit: allow
   glob: allow

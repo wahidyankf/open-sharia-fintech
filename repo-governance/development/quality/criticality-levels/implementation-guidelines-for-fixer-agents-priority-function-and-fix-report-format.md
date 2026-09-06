@@ -48,7 +48,7 @@ def determine_priority(criticality, confidence):
 
 **Source Audit**: repo-rules**a1b2c3**2025-12-27--10-30\_\_audit.md
 **Fix Date**: 2025-12-27T11:15:00+07:00
-**Fixer Version**: repo-rules-fixer v2.0
+**Fixer Version**: rules-fixer v2.0
 
 ---
 

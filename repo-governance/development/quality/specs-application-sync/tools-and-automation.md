@@ -23,4 +23,4 @@ when_to_use: "Use when locating the automated check for a sync violation."
 - **Contract codegen target**: Generates types from the OpenAPI spec. Declared as a dependency of `typecheck` and `build`, so stale contracts are caught in CI before merge.
 - **`specs:structure-validation`**: Validates that required owner folders and corpus structure
   exist. It is separate from scenario-to-adapter coverage.
-- **`repo-rules-checker`**: Audits the surrounding repository rules and documentation for drift.
+- **`rules-checker`**: Audits the surrounding repository rules and documentation for drift.

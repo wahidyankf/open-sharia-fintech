@@ -1,5 +1,7 @@
 name = "apps-ayokoding-www-in-the-field-checker"
 description = "Validates In-the-Field production guide quality including annotation density (1.0-2.25 ratio), standard library first progression, guide count (20-40), and production code quality. Use when reviewing in-the-field content."
+model = "gpt-5.6-terra"
+model_reasoning_effort = "xhigh"
 developer_instructions = """
 
 # In-the-Field Tutorial Checker for ayokoding-web

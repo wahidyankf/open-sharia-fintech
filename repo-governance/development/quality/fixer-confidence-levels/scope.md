@@ -19,7 +19,7 @@ when_to_use: "Use when checking whether a fixer is in scope."
 
 All fixer agents implement this confidence level system:
 
-- **repo-rules-fixer** - Repository-wide structural consistency fixes
+- **rules-fixer** - Repository-wide structural consistency fixes
 - **apps-ayokoding-www-general-fixer** - ayokoding-www general content fixes
 - **apps-ayokoding-www-by-example-fixer** - ayokoding-www by-example tutorial fixes
 - **apps-ayokoding-www-facts-fixer** - ayokoding-www factual accuracy fixes

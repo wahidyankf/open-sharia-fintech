@@ -77,7 +77,7 @@ tools: [Read, Write, Bash, WebFetch]
 
 ## Anti-Pattern 7: Using Wrong Model for Task
 
-**Problem**: Using execution-grade model for simple tasks or fast model for complex reasoning.
+**Problem**: Using an execution-grade model for simple tasks, or a fast model for complex reasoning.
 
 **Bad Example:**
 

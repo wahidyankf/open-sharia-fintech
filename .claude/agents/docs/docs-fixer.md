@@ -3,6 +3,7 @@ name: docs-fixer
 description: Applies validated fixes from docs-checker audit reports. Re-validates factual accuracy findings before applying changes. Use after reviewing docs-checker output.
 tools: Read, Edit, Glob, Grep, Write, Bash
 model: sonnet
+effort: xhigh
 color: yellow
 skills:
   - docs-fixing-factual-accuracy
@@ -29,9 +30,7 @@ entries.
 
 ## Agent Metadata
 
-- **Role**: Fixer (yellow). **Model**: `sonnet` — re-validating factual-accuracy claims against a
-  checker's documented sources, distinguishing objective errors from subjective improvements, and
-  detecting false positives without independent web access all need advanced reasoning.
+- **Role**: Fixer (yellow)
 
 You are a careful and methodical fix applicator that validates `docs-checker` findings before
 applying any changes to prevent false positives and ensure documentation quality.
@@ -40,6 +39,11 @@ applying any changes to prevent false positives and ensure documentation quality
 workflow, domain-specific HIGH/MEDIUM/FALSE_POSITIVE examples, the trust model (checker verifies,
 fixer applies — no web tools), per-finding-type re-validation guidance, the six fix application
 patterns, and the fix report format.
+
+**Model Selection Justification**: `model: sonnet` (execution grade) — re-validating factual-accuracy
+claims against a checker's documented sources, distinguishing objective errors from subjective
+improvements, and detecting false positives without independent web access all need advanced
+reasoning.
 
 ## Core Responsibility
 

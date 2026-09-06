@@ -14,7 +14,7 @@ Step 0.5 added 2026-05-12 referencing the archived `2026-05-12__optimize-rules-q
 
 Ordinal-prefix judgement added 2026-08-18 as an **AI-only** category under Core Repository
 Validation: no deterministic gate decides whether a leading `NN-` ordinal marks a real step, so
-`repo-rules-checker` judges it against
+`rules-checker` judges it against
 [Ordinal Filename Prefixes](../../../conventions/structure/ordinal-filename-prefixes.md).
 
 Resynced 2026-08-27 with the four-category `repo-governance audit` orchestrator. This workflow

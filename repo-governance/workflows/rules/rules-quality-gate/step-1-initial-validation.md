@@ -8,7 +8,7 @@ when_to_use: Use when running the first checker pass of a repo-rules quality-gat
 
 Run repository-wide consistency check to identify all issues.
 
-**Agent**: `repo-rules-checker`
+**Agent**: `rules-checker`
 
 - **Args**: `scope: all, EXECUTION_SCOPE: repo-rules,
 preflight-report: {step0_5.outputs.preflight-report},

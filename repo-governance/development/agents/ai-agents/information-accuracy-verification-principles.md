@@ -48,5 +48,5 @@ If information cannot be verified: (1) State the limitation explicitly, (2) Prov
 ## Agent-Specific Requirements
 
 - **Documentation agents (docs-maker)**: Verify code examples, file paths, project structure claims, convention references, external library docs
-- **Validation agents (repo-rules-checker)**: Read all files before validating, provide specific line numbers, verify links and frontmatter
+- **Validation agents (rules-checker)**: Read all files before validating, provide specific line numbers, verify links and frontmatter
 - **Development agents**: Read test files, verify command outputs, check error messages, confirm tool availability

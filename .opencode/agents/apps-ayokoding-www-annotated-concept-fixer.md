@@ -1,6 +1,5 @@
 ---
 description: Applies validated fixes from apps-ayokoding-www-annotated-concept-checker audit reports. Re-validates Annotated-concept findings (both standard and no-code sub-mode) before applying changes. Use after reviewing checker output.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow

@@ -1,6 +1,5 @@
 ---
 description: Creates UI components following all conventions — CVA variants, Radix composition, accessibility, responsive design, unit tests, and Storybook stories. Use when creating new shared components.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow
@@ -21,7 +20,7 @@ skills:
 
 - **Role**: Maker (blue)
 
-**Model Selection Justification**: inherited `model: opus` (omit model field) — complex code
+**Model Selection Justification**: `model: opus` (planning grade) — complex code
 generation across interlocking conventions, CVA/Radix/TypeScript component pattern knowledge,
 accessibility (ARIA, keyboard nav), and multi-file coordination (component, variants, tests, stories,
 barrel export) all exceed mechanical pattern-following.

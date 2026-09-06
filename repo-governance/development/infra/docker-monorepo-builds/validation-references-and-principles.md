@@ -41,8 +41,8 @@ both working.
 
 **Agents:**
 
-- `repo-rules-checker` - Can validate docker-compose context settings
-- `repo-rules-fixer` - Corrects docker-compose context misconfigurations
+- `rules-checker` - Can validate docker-compose context settings
+- `rules-fixer` - Corrects docker-compose context misconfigurations
 
 ## Principles Implemented/Respected
 

@@ -43,7 +43,7 @@ These criteria apply across ALL fixer agents:
 
 Each fixer agent has domain-specific validation checks:
 
-**repo-rules-fixer:**
+**rules-fixer:**
 
 - Frontmatter field validation for agent files
 - File naming convention compliance

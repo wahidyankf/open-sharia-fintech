@@ -38,10 +38,10 @@ demands it. Follow it when it helps a reader find the agent.
 
 **Skip the prefix when the agent is not app-scoped:**
 
-- Repository-wide agents — `docs-maker`, `repo-rules-checker`, `plan-execution-checker`.
+- Repository-wide agents — `docs-maker`, `rules-checker`, `plan-execution-checker`.
 - Cross-cutting agents spanning several apps — `readme-maker`, `agent-maker`,
   `repo-workflow-maker`.
-- Meta-agents managing repository structure — `docs-file-manager`, `repo-rules-maker`.
+- Meta-agents managing repository structure — `docs-file-manager`, `rules-maker`.
 
 **When you do use a scope:**
 

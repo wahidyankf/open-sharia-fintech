@@ -1,6 +1,5 @@
 ---
 description: Applies validated fixes from pdf-to-md-checker audit reports. Re-validates each finding before applying. Fixes missing sections (re-extracts from PDF), incorrect text, wrong table data, invalid Mermaid syntax, and missing figure placeholders. Use after reviewing pdf-to-md-checker output.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow

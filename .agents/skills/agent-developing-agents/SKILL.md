@@ -45,4 +45,25 @@ All agents SHOULD include a standardized "Reference Documentation" section near 
 
 ## Selecting AI Models for Agents
 
-Choose `sonnet` for tasks requiring judgment, ambiguity resolution, or multi-step orchestration; choose `haiku` for deterministic, pattern-matching, or high-volume tasks. Document the choice with a "Model Selection Justification" near the top of the agent file. See [Decision Framework](./reference/selecting-ai-models-decision-framework.md) for model characteristics and the full sonnet-vs-haiku criteria, [Matrix and Examples](./reference/selecting-ai-models-examples.md) for the selection matrix and agent-specific worked examples, [Documenting Model Selection and Cost Trade-offs](./reference/selecting-ai-models-documenting-and-costs.md) for the justification pattern and cost/performance trade-offs, and [Model Selection Checklist and Common Mistakes](./reference/selecting-ai-models-checklist-and-mistakes.md) for the pre-selection checklist and anti-patterns.
+Four grades, each declared explicitly — there is no blank-`model` grade:
+
+| Grade     | `model:` | `effort:` | For                                                                |
+| --------- | -------- | --------- | ------------------------------------------------------------------ |
+| ultra     | `fable`  | `high`    | Frontier reasoning. No members; admission needs recorded evidence  |
+| planning  | `opus`   | `high`    | Creative reasoning, code generation, architectural decisions       |
+| execution | `sonnet` | `xhigh`   | Rule-based validation, applying validated fixes, structured makers |
+| fast      | `haiku`  | `xhigh`   | Purely mechanical work with no reasoning required                  |
+
+Argue past each grade from the bottom rather than assuming one, and record the argument in a
+`**Model Selection Justification**` block near the top of the agent file. `harness claude validate`
+fails any agent whose body omits that block, whose `model` is outside the vocabulary, or whose
+`effort` contradicts its grade.
+
+Effort belongs to the grade, not the agent: a weaker model is compensated with more reasoning
+effort, so never pick an effort per agent.
+
+The [Model Selection Convention](../../../repo-governance/development/agents/model-selection/README.md)
+is authoritative — it owns the decision tree, the per-grade criteria and agent examples, the cost
+multipliers, the ultra admission bar, and the justification-block format. Do not restate them here;
+a second copy is what let this section teach a two-grade vocabulary long after the repository had
+four.

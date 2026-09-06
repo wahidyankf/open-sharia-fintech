@@ -23,4 +23,4 @@ when_to_use: "Use when locating the automated check for a feature-completeness v
 - **Runtime coverage thresholds**: Each native `test:unit` target enforces its project's numeric
   coverage floor; static `test:coverage:*` targets do not consume runtime reports.
 - **Nx cache inputs**: Gherkin specs are declared as inputs for test targets, invalidating caches when specs change.
-- **`repo-rules-checker`**: Validates that specs folders exist for apps that require them.
+- **`rules-checker`**: Validates that specs folders exist for apps that require them.

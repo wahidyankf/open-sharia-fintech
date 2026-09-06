@@ -3,6 +3,7 @@ name: apps-ayokoding-www-link-checker
 description: Validates links in ayokoding-web content. Checks internal and external links for correctness and accessibility.
 tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Edit, Bash
 model: haiku
+effort: xhigh
 color: green
 skills:
   - docs-applying-content-quality
@@ -23,8 +24,7 @@ skills:
 
 - **Role**: Checker (green)
 
-**Model Selection Justification**: `model: haiku` (Haiku 4.5, 73.3% SWE-bench Verified —
-[benchmark reference](../../../docs/reference/ai-model-benchmarks.md#claude-haiku-45)) — link validation
+**Model Selection Justification**: `model: haiku` (fast grade) — link validation
 is purely mechanical HTTP status/cache checking, a deterministic URL lookup loop with no rule-based
 reasoning or content analysis. See `model-selection.md` §Link Checkers as Haiku.
 

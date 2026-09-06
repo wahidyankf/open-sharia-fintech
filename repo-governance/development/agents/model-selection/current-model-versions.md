@@ -1,6 +1,6 @@
 ---
-title: "Current Model Versions (April 2026)"
-description: "States the current model versions in use as of April 2026."
+title: "Current Model Versions (September 2026)"
+description: "States the current model versions in use as of September 2026."
 category: explanation
 subcategory: development
 tags:
@@ -12,13 +12,23 @@ created: 2025-11-23
 when_to_use: Use when you need the current concrete model version string for a tier.
 ---
 
-# Current Model Versions (April 2026)
+# Current Model Versions (September 2026)
 
-| Agent config alias | Model ID                    | Context     | Notes                 | Benchmark                                                                        |
-| ------------------ | --------------------------- | ----------- | --------------------- | -------------------------------------------------------------------------------- |
-| `opus` (inherit)   | `claude-opus-4-7`           | 1M tokens   | Current top tier      | [Benchmarks](../../../../docs/reference/ai-model-benchmarks.md#claude-opus-47)   |
-| `sonnet`           | `claude-sonnet-4-6`         | 1M tokens   | Daily driver          | [Benchmarks](../../../../docs/reference/ai-model-benchmarks.md#claude-sonnet-46) |
-| `haiku`            | `claude-haiku-4-5-20251001` | 200k tokens | v3 retired 2026-04-19 | [Benchmarks](../../../../docs/reference/ai-model-benchmarks.md#claude-haiku-45)  |
+| Grade     | Agent config alias | Model ID                    | Context     | List price (in/out per MTok) |
+| --------- | ------------------ | --------------------------- | ----------- | ---------------------------- |
+| Ultra     | `fable`            | `claude-fable-5-1`          | 1M tokens   | $10 / $50                    |
+| Planning  | `opus`             | `claude-opus-5`             | 1M tokens   | $5 / $25                     |
+| Execution | `sonnet`           | `claude-sonnet-5`           | 1M tokens   | $2 / $10                     |
+| Fast      | `haiku`            | `claude-haiku-4-5-20251001` | 200k tokens | $1 / $5                      |
 
-Aliases (`opus`, `sonnet`, `haiku`) automatically track future model versions within each
-tier. The model IDs above are current as of April 2026.
+Aliases (`fable`, `opus`, `sonnet`, `haiku`) automatically track future model versions within each
+grade, which is why agent frontmatter declares the alias and never the dated ID. The concrete IDs
+and prices above were verified against the vendor's published model overview on 2026-09-06.
+
+The vendor's own guidance matches the grade ordering: start at the planning grade for most
+workloads, and move up to ultra only when evaluations at the planning grade with higher `effort`
+still fall short. That is the same admission bar
+[Model Tiers — Ultra](./model-tiers-ultra.md) states.
+
+Note the fast grade is the only one that is not a 1M-token context: an agent that must hold a large
+working set does not belong there regardless of how mechanical its reasoning is.

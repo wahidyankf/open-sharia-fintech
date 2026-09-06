@@ -47,7 +47,7 @@ This convention applies to:
 
 - All agent files in the platform binding directory (primary) and secondary agent directories
 - References to agents in `AGENTS.md`
-- Agent validation rules in `repo-rules-checker`
+- Agent validation rules in `rules-checker`
 
 ## Platform Bindings
 
@@ -75,7 +75,7 @@ Claude Code (.claude/agents/) — PRIMARY:
 OpenCode (.opencode/agents/) — SECONDARY:
   - Tool format: permission object { read: allow, write: allow }
     (boolean flags { read: true, write: true } are deprecated/legacy)
-  - Model selection: zai-coding-plan/glm-5.2 for every canonical tier
+  - Model selection: no model key is emitted — the developer's active model applies
 
 Codex (.codex/agents/) — SECONDARY:
   - File format: TOML with name, description, and developer_instructions

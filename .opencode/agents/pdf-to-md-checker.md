@@ -1,6 +1,5 @@
 ---
 description: Validates that a Markdown file is a verbatim, complete representation of its source PDF. Checks for missing sections, incorrect text, table integrity, OCR quality, Mermaid validity, and figure coverage. Use when verifying PDF-to-Markdown conversion fidelity before cross-referencing.
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   glob: allow

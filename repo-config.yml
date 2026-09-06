@@ -13,6 +13,23 @@
 #   gate-surface-guards — optional whole-surface execution wrappers
 #   gates            — declared quality-gate registry; every `gate` command (list/run/emit/validate) reads this list
 
+# Vendor-neutral capability grades. The grade is the pivot: an agent declares a
+# `model:` alias, that alias resolves to a grade through the claude-code entry's
+# `model-map:` below, and every other harness realizes the same grade through its
+# own `model-map:`. Effort belongs to the grade rather than to the agent — it was
+# already a pure function of grade across all 90 agents before it was declared
+# here, repeated by hand in each file rather than derived.
+#
+# Weaker models are compensated with more reasoning effort, which is why the
+# planning grade sits at `high` while execution and fast sit at `xhigh`. `ultra`
+# follows the same logic in the other direction; it currently has no members, so
+# the value is a declaration of intent rather than an observed setting.
+model-grades:
+  ultra: { effort: high }
+  planning: { effort: high }
+  execution: { effort: xhigh }
+  fast: { effort: xhigh }
+
 harness:
   # Authoritative harness registry — all 3 supported coding-agent harnesses.
   # Fields per entry:
@@ -33,6 +50,14 @@ harness:
     tier: source
     agent-dir: .claude/agents
     skills-dir: .claude/skills
+    # The source vocabulary. `harness claude validate` derives its accepted
+    # `model:` alias set from these values, so a grade cannot be renamed here
+    # without the validator following.
+    model-map:
+      ultra: fable
+      planning: opus
+      execution: sonnet
+      fast: haiku
     # Declared so the hand-authored config is visible to the cross-harness config-parity
     # obligation (Multi-Harness Binding Rule 10). Previously only codex declared a `config:`,
     # so two of the three configs the rule governs had no machine-readable record.
@@ -64,6 +89,13 @@ harness:
     agent-dir: .opencode/agents
     mirrors: .claude/agents
     config: .opencode/opencode.json
+    # No `model-map:` on purpose, and the absence is the switch rather than a
+    # special case in the emitter: a harness that declares no map has no `model`
+    # key written into its mirrors at all. OpenCode then resolves the model
+    # itself — a primary agent takes the globally configured model and a subagent
+    # takes the model of the primary that invoked it — so the mirrors follow
+    # whatever the developer is actually running instead of pinning a model the
+    # repository would have to keep current.
     instruction:
       - AGENTS.md
     catalog:
@@ -83,6 +115,14 @@ harness:
     agent-dir: .codex/agents
     mirrors: .claude/agents
     config: .codex/config.toml
+    # Codex pins a model per agent, so each grade names its counterpart. A grade
+    # absent from this map emits no `model` key and Codex applies its own
+    # default, which is preferable to guessing a counterpart.
+    model-map:
+      ultra: gpt-6-astra
+      planning: gpt-5.6-sol
+      execution: gpt-5.6-terra
+      fast: gpt-5.6-luna
     skills-dir: .agents/skills
     skills-mirrors: .claude/skills
     instruction:
@@ -1009,6 +1049,29 @@ gates:
           - CLAUDE.md
           - docs/reference/platform-bindings.md
           - repo-governance/
+      ci: { scope: other }
+
+  # `harness bindings validate` proves each mirror matches its source; it says
+  # nothing about whether the source itself is well-formed. Until this entry
+  # existed, `harness claude validate` was reachable only as the
+  # `npm run validate:claude` script and as a member of `harness audit`, which
+  # the `harness-catalog` note above already records as invoked by nothing — so
+  # the agent frontmatter checks (grade vocabulary, tools, colors, filename
+  # match, duplicate names, skill references) ran on no surface at all.
+  # Path-gated on the binding source and the governance maps the tier and color
+  # checks resolve against: a commit touching none of them cannot change the
+  # verdict.
+  - id: harness-claude
+    type: check
+    command: harness claude validate
+    kind: rhino-cli
+    ci-group: governance
+    surfaces:
+      pre-push:
+        scope: path-gated
+        trigger:
+          - .claude/
+          - repo-governance/development/agents/
       ci: { scope: other }
 
   # Path-gating is correct here, unlike a time-based check: this gate reads the

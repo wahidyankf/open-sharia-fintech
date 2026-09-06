@@ -1,6 +1,6 @@
 ---
 title: "Common Mistakes"
-description: "Lists common mistakes made when selecting a model tier for an agent."
+description: "Lists common mistakes made when selecting a model grade for an agent."
 category: explanation
 subcategory: development
 tags:
@@ -9,17 +9,19 @@ tags:
   - development
   - standards
 created: 2025-11-23
-when_to_use: Use when reviewing an agent's model-tier choice for a common mistake.
+when_to_use: Use when reviewing an agent's model-grade choice for a common mistake.
 ---
 
 # Common Mistakes
 
-| Mistake                                           | Problem                                                                          | Correction                                                          |
-| ------------------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| Using opus for validation tasks                   | Wastes resources; opus may over-interpret instead of checking                    | Use execution-grade tier for checkers and fixers                    |
-| Using fast tier for content creation              | Fast tier lacks reasoning depth for original content                             | Use planning-grade (inherit) for makers and developers              |
-| Using execution-grade tier for deployment scripts | Execution-grade tier is overqualified for deterministic command sequences        | Use fast tier for deployers and link checkers                       |
-| Omitting model justification                      | Future maintainers cannot assess whether the tier is appropriate                 | Always include Model Selection Justification block                  |
-| Defaulting to planning-grade "just in case"       | Violates Simplicity Over Complexity principle                                    | Analyze task requirements; use the simplest adequate tier           |
-| Using fast tier for tasks with error handling     | Fast tier cannot reason about unexpected states                                  | Use execution-grade or planning-grade depending on error complexity |
-| Adding `model: opus` to planning-grade agents     | Bypasses budget-adaptive inheritance; forces planning-grade API charges on users | Omit the field — inherit session model to match user's tier         |
+| Mistake                                               | Problem                                                                           | Correction                                                          |
+| ----------------------------------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Using planning-grade for validation tasks             | Wastes resources; it may over-interpret instead of checking                       | Use execution-grade for checkers and fixers                         |
+| Using fast for content creation                       | Fast lacks the reasoning depth for original content                               | Use planning-grade for makers and developers                        |
+| Using execution-grade for deployment scripts          | Execution-grade is overqualified for deterministic command sequences              | Use fast for deployers and link checkers                            |
+| Omitting model justification                          | Future maintainers cannot assess whether the grade is appropriate                 | Always include a Model Selection Justification block                |
+| Defaulting to a higher grade "just in case"           | Violates Simplicity Over Complexity                                               | Analyze task requirements; use the simplest adequate grade          |
+| Using fast for tasks with error handling              | Fast cannot reason about unexpected states                                        | Use execution-grade or planning-grade depending on error complexity |
+| Leaving `model` blank to mean planning-grade          | An absent field is unreadable — a deliberate grade looks like an omission         | Declare `model: opus`; see Model Tiers — Planning-Grade             |
+| Promoting to ultra on anticipated difficulty          | Doubles cost with no evidence the planning grade was the constraint               | Supply the three-part admission evidence, or stay at planning-grade |
+| Assuming a grade means the same cost across harnesses | Grades map to different vendors' models with different prices and context windows | Check the per-harness table in Platform Binding Examples            |

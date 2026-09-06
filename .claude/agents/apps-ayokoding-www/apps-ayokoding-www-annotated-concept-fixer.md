@@ -3,6 +3,7 @@ name: apps-ayokoding-www-annotated-concept-fixer
 description: Applies validated fixes from apps-ayokoding-www-annotated-concept-checker audit reports. Re-validates Annotated-concept findings (both standard and no-code sub-mode) before applying changes. Use after reviewing checker output.
 tools: Read, Edit, Write, Glob, Grep, Bash
 model: sonnet
+effort: xhigh
 color: yellow
 skills:
   - docs-applying-content-quality

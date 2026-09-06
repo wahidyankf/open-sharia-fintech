@@ -1,6 +1,5 @@
 ---
 description: "Executes Phase 0 of a plan delivery checklist: uses HIPPO for dependency and toolchain convergence, then runs scoped baselines and resolves preexisting failures before plan work begins."
-model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   glob: allow
@@ -12,6 +11,18 @@ skills:
 ---
 
 # repo-setup-manager
+
+## Agent Metadata
+
+- **Role**: Checker (green)
+
+**Model Selection Justification**: `model: sonnet` (execution grade) — this agent requires:
+
+- Following a fixed five-step sequence with an explicit acceptance condition per step
+- Classifying each baseline failure as in-scope or out-of-scope against a documented rule, then
+  halting on an unresolvable in-scope failure rather than improvising a fix
+- Structured reporting of pass/fail/skip counts; the one open-ended step (root-causing a preexisting
+  failure) ends in a stop signal, not an invented remedy
 
 ## Phase 0 Sequence
 

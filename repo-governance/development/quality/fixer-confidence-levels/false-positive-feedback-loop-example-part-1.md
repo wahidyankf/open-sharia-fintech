@@ -20,14 +20,14 @@ when_to_use: "Use for the first half of a worked feedback-loop example."
 **Initial State:**
 
 ```
-repo-rules-checker flags:
+rules-checker flags:
   - VIOLATION: 15 agent files have YAML comments in frontmatter
 ```
 
 **Fixer Re-validation:**
 
 ```
-repo-rules-fixer re-validates:
+rules-fixer re-validates:
   - Extracts frontmatter from each file
   - Searches isolated frontmatter for # symbols
   - Result: 0 actual violations found (all # symbols in markdown body)
