@@ -17,8 +17,7 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: `tester` (green). **Model**: `sonnet` — structured, charter-and-tour-driven sweep with
-  reproducible steps and cited ground truth.
+- **Role**: `tester` (green)
 - **Tools**: `WebFetch`/`WebSearch` fetch content and research expected behaviour; `Bash` drives
   `curl`/`npx playwright`/`npx lighthouse`; `Read`/`Glob`/`Grep` pull repo-side ground truth
   (`assets/`, `specs/**`, source, i18n) to compare the live site against.
@@ -32,6 +31,9 @@ and declared-invariant misses spot-checking would miss.
 Non-Destructive Constraint, charter framing and tours, SFDIPOT/CRUSSPIC STMPL, dimensions checklist,
 the three Mandatory Systematic Sweeps, browser driving, specs-as-ground-truth comparison and
 spec-gap detection, the `EWT-###` defect anatomy, and the three output modes.
+
+**Model Selection Justification**: `model: sonnet` (execution grade) — structured,
+charter-and-tour-driven sweep with reproducible steps and cited ground truth.
 
 ## Core Responsibility
 

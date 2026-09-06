@@ -999,6 +999,12 @@ type HarnessResourceSteps() =
                 | Error _ -> 1
             )
 
+    /// The block the AI Agents Convention requires in every agent body. A
+    /// fixture that omitted it would fail validation on that ground alone,
+    /// masking whatever its scenario is actually about.
+    let justifiedBody =
+        "**Model Selection Justification**: `model: sonnet` (execution grade) — fixture.\n"
+
     /// Writes a fully valid agent: every required and known optional field
     /// present, so it triggers neither a failed nor a warning check.
     let writeValidatedAgent (root: string) (name: string) (skills: string list) : string =
@@ -1017,9 +1023,10 @@ type HarnessResourceSteps() =
             sprintf
                 // `sonnet` is the execution grade, whose declared effort is
                 // `xhigh`; a fixture that omitted it would contradict its own grade.
-                "---\nname: %s\ndescription: fixture agent\ntools: Read, Write\nmodel: sonnet\neffort: xhigh\ncolor: blue\n%s---\nBody.\n"
+                "---\nname: %s\ndescription: fixture agent\ntools: Read, Write\nmodel: sonnet\neffort: xhigh\ncolor: blue\n%s---\n%s"
                 name
                 skillsBlock
+                justifiedBody
         )
 
         path
@@ -1261,7 +1268,8 @@ type HarnessResourceSteps() =
 
         File.WriteAllText(
             Path.Combine(dir, "validate-claude-ultra.md"),
-            "---\nname: validate-claude-ultra\ndescription: fixture agent\ntools: Read, Write\nmodel: fable\neffort: high\ncolor: blue\n---\nBody.\n"
+            "---\nname: validate-claude-ultra\ndescription: fixture agent\ntools: Read, Write\nmodel: fable\neffort: high\ncolor: blue\n---\n"
+            + justifiedBody
         )
 
         writeValidatedSkill root "validate-claude-ultra-skill" |> ignore
@@ -1337,6 +1345,19 @@ type HarnessResourceSteps() =
         )
 
         writeValidatedAgent root "validate-claude-no-vocabulary" [] |> ignore
+
+    [<Given>]
+    member _.``a \.claude/ directory where one agent's body states no model selection justification``() =
+        let root = scenarioRoot ()
+        writeGradeRegistry root
+        let dir = Path.Combine(root, ".claude", "agents")
+        Directory.CreateDirectory dir |> ignore
+
+        // Conforming frontmatter, a body that argues nothing.
+        File.WriteAllText(
+            Path.Combine(dir, "validate-claude-unargued.md"),
+            "---\nname: validate-claude-unargued\ndescription: fixture agent\ntools: Read, Write\nmodel: sonnet\neffort: xhigh\ncolor: blue\n---\nBody.\n"
+        )
 
     [<Given>]
     member _.``a \.claude/ directory containing two agent files declaring the same name``() =
@@ -1448,6 +1469,17 @@ type HarnessResourceSteps() =
                 && c.Actual = "effort: low")
 
         Assert.True(contradiction.IsSome)
+
+    [<Then>]
+    member _.``the output reports the missing justification block``() =
+        let unargued =
+            (result ()).Checks
+            |> List.tryFind (fun c ->
+                c.Status = "failed"
+                && c.Name.Contains("validate-claude-unargued", StringComparison.Ordinal)
+                && c.Actual = "no justification block")
+
+        Assert.True(unargued.IsSome)
 
     [<Then>]
     member _.``the output reports that no grade vocabulary is declared``() =
@@ -3403,6 +3435,10 @@ let ``--skills-only validates skills without checking agents`` () =
 [<Fact>]
 let ``An agent whose effort contradicts its grade fails validation`` () =
     FeatureRunner.runValidateClaude "An agent whose effort contradicts its grade fails validation"
+
+[<Fact>]
+let ``An agent stating no model selection justification fails validation`` () =
+    FeatureRunner.runValidateClaude "An agent stating no model selection justification fails validation"
 
 [<Fact>]
 let ``A registry declaring no grade vocabulary fails closed`` () =

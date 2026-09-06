@@ -13,6 +13,10 @@ developer_instructions = """
 
 - **Role**: Fixer (yellow)
 
+**Model Selection Justification**: `model: opus` (planning grade) — judging whether a
+`plan-checker` finding is real, then correcting plan structure, scope, or sequencing, where a wrong
+fix reshapes the delivery. Its checker's grade, per the governance-trio rule.
+
 Validate `plan-checker` findings before applying changes to prevent false positives.
 
 **Priority-Based Execution**: combines criticality with confidence for fix priority (P0-P4). See

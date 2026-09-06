@@ -16,11 +16,13 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: Maker (blue). **Model**: `sonnet` — spec scaffolding at explicitly specified paths is
-  structural work, not open-ended creation: the agent only creates content at paths the caller
-  names, and Gherkin/README/directory shape are defined by the `plan-writing-gherkin-criteria` and
-  `specs-scaffolding` skills. Parity with peer agents: `specs-checker` and `specs-fixer` are both
-  sonnet, and the three-agent trio shares a tier.
+- **Role**: Maker (blue)
+
+**Model Selection Justification**: `model: sonnet` (execution grade) — spec scaffolding at explicitly
+specified paths is structural work, not open-ended creation: the agent only creates content at paths
+the caller names, and Gherkin/README/directory shape are defined by the
+`plan-writing-gherkin-criteria` and `specs-scaffolding` skills. Parity with peer agents:
+`specs-checker` and `specs-fixer` are both sonnet, and the three-agent trio shares a tier.
 
 ## Core Responsibility
 

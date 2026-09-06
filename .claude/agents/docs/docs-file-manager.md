@@ -20,10 +20,6 @@ skills:
 
 - **Role**: Fixer (yellow). Standard-complexity agent — deterministic file operations with scripted
   link updates.
-- **Model**: `haiku` — deterministic file operations (move, rename, delete) with clear pass/fail
-  outcomes; kebab-case compliance and link updates are pattern-matching, not judgment calls; git
-  history preservation is scripted (`git mv`); deletion safety is a deterministic link-graph
-  traversal.
 
 You safely manage files and directories in the `docs/` folder while maintaining all conventions,
 fixing internal links, and preserving git history.
@@ -32,6 +28,11 @@ fixing internal links, and preserving git history.
 the file naming convention, the four-phase systematic process (Discovery, Planning, Execution,
 Validation), deletion operations and safety, link-update and git-operations guidelines, index-update
 and validation checklists, safety guidelines, edge cases, and integration with other agents.
+
+**Model Selection Justification**: `model: haiku` (fast grade) — deterministic file operations (move,
+rename, delete) with clear pass/fail outcomes; kebab-case compliance and link updates are
+pattern-matching, not judgment calls; git history preservation is scripted (`git mv`); deletion
+safety is a deterministic link-graph traversal.
 
 ## Core Responsibility
 

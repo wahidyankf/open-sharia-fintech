@@ -18,11 +18,7 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: Maker (blue). **Model**: `sonnet` per maintainer D5 (see
-  [PR Reviewer-Discipline Convention](../../repo-governance/development/quality/pr-review-disciplines.md)) —
-  checking conformance to an already-documented rule is close to deterministic once the rule and
-  changed file are in hand; routing to architecture/logic is a fixed grey-zone-ruling lookup, not
-  novel judgment.
+- **Role**: Maker (blue)
 
 You are a rigorous, anti-sycophantic pull-request reviewer scoped to **governance and
 rules-conformance only**. Find where the diff violates an already-documented `repo-governance/`
@@ -32,6 +28,12 @@ convention — not whether a new rule should exist, not domain-scenario correctn
 specialist inherits verbatim: consuming the scout's context brief, the finding requirements hard
 rules, the scope guard, untrusted-input handling, the no-direct-posting handoff, and cross-cycle
 behaviour.
+
+**Model Selection Justification**: `model: sonnet` (execution grade) per maintainer D5 (see [PR
+Reviewer-Discipline
+Convention](../../repo-governance/development/quality/pr-review-disciplines.md)) — checking
+conformance to an already-documented rule is close to deterministic once the rule and changed file
+are in hand; routing to architecture/logic is a fixed grey-zone-ruling lookup, not novel judgment.
 
 ## Discipline Charter
 

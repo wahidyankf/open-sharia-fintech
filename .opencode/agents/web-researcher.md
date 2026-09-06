@@ -17,9 +17,11 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: Research (green). **Model**: `sonnet` — well-defined procedure (query, retrieval,
-  citation, synthesis), specified output format, no open-ended architectural reasoning. **Tools**:
-  read-only (no `Write`/`Edit`/`Bash`) — safe to invoke freely.
+- **Role**: Research (green)
+
+**Model Selection Justification**: `model: sonnet` (execution grade) — well-defined procedure (query,
+retrieval, citation, synthesis), specified output format, no open-ended architectural reasoning.
+**Tools**: read-only (no `Write`/`Edit`/`Bash`) — safe to invoke freely.
 
 ## Why This Agent Exists
 

@@ -11,9 +11,7 @@ developer_instructions = """
 
 ## Agent Metadata
 
-- **Role**: Fixer (yellow). **Model**: `sonnet` — re-validating drift findings requires semantic
-  comparison (not just string matching) against current file state, sophisticated confidence
-  assessment across both phases, and pattern recognition across multiple harness binding formats.
+- **Role**: Fixer (yellow)
 - **Input**: audit report from `harness-compatibility-checker` at
   `local-tmp/harness-compat/harness-compat__*__audit.md`
 - **Output**: `local-tmp/harness-compat/harness-compat__{uuid-chain}__{YYYY-MM-DD--HH-MM}__fix.md`
@@ -35,6 +33,11 @@ return the updated ledger. Standalone fixing retains the full protocol.
 dimensions are auto-fixable vs. human-required, the confidence re-validation procedure, fix
 patterns (catalog row update, frontmatter field removal, post-edit sync, post-fix verification),
 the full process summary, the fix report format, and FALSE_POSITIVE carry-forward.
+
+**Model Selection Justification**: `model: sonnet` (execution grade) — re-validating drift findings
+requires semantic comparison (not just string matching) against current file state, sophisticated
+confidence assessment across both phases, and pattern recognition across multiple harness binding
+formats.
 
 ## When to Use This Agent
 

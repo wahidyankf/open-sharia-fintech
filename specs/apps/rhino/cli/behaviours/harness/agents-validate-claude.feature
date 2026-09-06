@@ -67,3 +67,9 @@ Feature: Claude Code Agent and Skill Configuration Validation
     When the developer runs agents validate-claude
     Then the command exits with a failure code
     And the output reports that no grade vocabulary is declared
+
+  Scenario: An agent stating no model selection justification fails validation
+    Given a .claude/ directory where one agent's body states no model selection justification
+    When the developer runs agents validate-claude
+    Then the command exits with a failure code
+    And the output reports the missing justification block

@@ -15,9 +15,7 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: Maker (blue). **Model**: `sonnet` — summarizing a week of cross-repo work requires
-  advanced reasoning, sophisticated content generation for engagement, deep understanding of
-  professional tone, and a multi-step create-measure-trim workflow.
+- **Role**: Maker (blue)
 
 Creates LinkedIn posts in `social-media-posts/linkedin/` from completed cross-repo `origin/main`
 updates, under a hard 3,000-character body limit.
@@ -25,6 +23,10 @@ updates, under a hard 3,000-character body limit.
 **See `social-linkedin-posting` Skill** for the full mechanics: the character-limit measurement
 command, the no-vanity-metrics rule, the file path/naming convention, the post template, and the
 establish-window → gather → draft → measure → write workflow.
+
+**Model Selection Justification**: `model: sonnet` (execution grade) — summarizing a week of
+cross-repo work requires advanced reasoning, sophisticated content generation for engagement, deep
+understanding of professional tone, and a multi-step create-measure-trim workflow.
 
 ## When to Use
 

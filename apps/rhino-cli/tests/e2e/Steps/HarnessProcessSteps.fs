@@ -68,14 +68,21 @@ type HarnessProcessSteps() =
             (Path.Combine(".claude", "skills", name, "SKILL.md"))
             (sprintf "---\nname: %s\ndescription: %s skill.\n---\n%s\n" name name body)
 
+    /// The block the AI Agents Convention requires in every agent body. A
+    /// fixture that omitted it would fail validation on that ground alone,
+    /// masking whatever its scenario is actually about.
+    let justifiedBody =
+        "**Model Selection Justification**: `model: sonnet` (execution grade) — fixture.\n"
+
     let validatedAgent name =
         write
             (Path.Combine(".claude", "agents", name + ".md"))
             // `sonnet` is the execution grade, whose declared effort is `xhigh`;
             // a fixture that omitted it would contradict its own grade.
             (sprintf
-                "---\nname: %s\ndescription: fixture agent\ntools: Read, Write\nmodel: sonnet\neffort: xhigh\ncolor: blue\n---\nBody.\n"
-                name)
+                "---\nname: %s\ndescription: fixture agent\ntools: Read, Write\nmodel: sonnet\neffort: xhigh\ncolor: blue\n---\n%s"
+                name
+                justifiedBody)
 
     let validatedSkill name =
         write
@@ -456,7 +463,8 @@ coverage:
 
         write
             (Path.Combine(".claude", "agents", "ultra-agent.md"))
-            "---\nname: ultra-agent\ndescription: ultra fixture\ntools: Read\nmodel: fable\neffort: high\ncolor: blue\n---\nBody.\n"
+            ("---\nname: ultra-agent\ndescription: ultra fixture\ntools: Read\nmodel: fable\neffort: high\ncolor: blue\n---\n"
+             + justifiedBody)
 
     [<Given>]
     member _.``a \.claude/ directory where one agent declares the "gpt-4" model alias``() =
@@ -507,6 +515,15 @@ coverage:
     member _.``a \.claude/ directory whose repo-config\.yml declares no model-map for claude-code``() =
         write "repo-config.yml" "harness:\n  - { name: claude-code, tier: source, agent-dir: .claude/agents }\n"
         validatedAgent "no-vocabulary-agent"
+
+    [<Given>]
+    member _.``a \.claude/ directory where one agent's body states no model selection justification``() =
+        writeGradeRegistry ()
+
+        // Conforming frontmatter, a body that argues nothing.
+        write
+            (Path.Combine(".claude", "agents", "unargued-agent.md"))
+            "---\nname: unargued-agent\ndescription: unargued fixture\ntools: Read\nmodel: sonnet\neffort: xhigh\ncolor: blue\n---\nBody.\n"
 
     [<Given>]
     member _.``a \.claude/ directory containing two agent files declaring the same name``() =
@@ -568,6 +585,11 @@ coverage:
     member _.``the output reports the effort the grade declares``() =
         Assert.Contains("wrong-effort-agent", output)
         Assert.Contains("effort: xhigh (the execution grade)", output)
+
+    [<Then>]
+    member _.``the output reports the missing justification block``() =
+        Assert.Contains("unargued-agent", output)
+        Assert.Contains("no justification block", output)
 
     [<Then>]
     member _.``the output reports that no grade vocabulary is declared``() =
@@ -1594,6 +1616,7 @@ module private ClaudeFeatureRunner =
 [<InlineData("--skills-only validates skills without checking agents")>]
 [<InlineData("An agent whose effort contradicts its grade fails validation")>]
 [<InlineData("A registry declaring no grade vocabulary fails closed")>]
+[<InlineData("An agent stating no model selection justification fails validation")>]
 let ``Claude validation scenarios cross the published process`` title = ClaudeFeatureRunner.run title
 
 module private AdditionalFeatureRunner =

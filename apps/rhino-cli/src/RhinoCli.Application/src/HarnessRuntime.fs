@@ -3404,6 +3404,29 @@ let private validateEffortCheck
                         (sprintf "effort contradicts the %s grade declared in repo-config.yml" grade)
                 )
 
+/// The literal every agent body must carry to state why its grade was chosen.
+let private justificationMarker = "**Model Selection Justification**"
+
+/// Checks that the agent body states why its grade was chosen.
+///
+/// The AI Agents Convention requires every agent to carry a Model Selection
+/// Justification block. Without it a reader cannot tell a deliberate grade
+/// assignment from an author who copied another agent's frontmatter, and a
+/// grade nobody argued for is exactly what the decision tree exists to
+/// prevent. Only the marker is checked: whether the prose beneath it is a good
+/// argument is a judgement no validator can make, but its absence is not.
+let private validateJustificationCheck (filename: string) (body: string) : ValidationCheck =
+    let name = sprintf "Agent: %s - Model Selection Justification" filename
+
+    if body.Contains justificationMarker then
+        ValidationCheck.passed name "Justification block present"
+    else
+        ValidationCheck.failed
+            name
+            (sprintf "a %s block in the agent body" justificationMarker)
+            "no justification block"
+            "Agent does not state why its model grade was chosen"
+
 /// Checks that `color` is in the allow-list of named color tokens
 /// [Repo-grounded — `agent_validator.rs::validate_color_check`].
 let private validateColorCheck (filename: string) (color: string) : ValidationCheck =
@@ -3518,7 +3541,7 @@ let validateAgentDocument
                   (sprintf "Agent: %s - YAML Syntax" filename)
                   (sprintf "Invalid frontmatter: %s" e) ],
             agentNames
-        | Ok(frontmatter, _body) ->
+        | Ok(frontmatter, body) ->
             let syntaxCheck =
                 ValidationCheck.passed (sprintf "Agent: %s - YAML Syntax" filename) "Valid YAML frontmatter"
 
@@ -3549,6 +3572,7 @@ let validateAgentDocument
                         else
                             []
 
+                    let justificationCheck = validateJustificationCheck filename body
                     let filenameCheck = validateFilenameCheck filename agent.Name
                     let uniqueCheck = validateUniqueness filename agent.Name agentNames
 
@@ -3573,7 +3597,7 @@ let validateAgentDocument
                         @ [ toolsCheck; modelCheck ]
                         @ effortChecks
                         @ colorChecks
-                        @ [ filenameCheck; uniqueCheck; skillsCheck; noCommentsCheck ]
+                        @ [ justificationCheck; filenameCheck; uniqueCheck; skillsCheck; noCommentsCheck ]
                         @ generatedReportsChecks
 
                     allChecks, updatedNames

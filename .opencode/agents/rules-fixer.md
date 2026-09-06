@@ -26,9 +26,7 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: Fixer (yellow). **Model**: `sonnet` — re-validating findings against current file
-  state, applying multi-line edits safely, and judging governance/licensing/documentation fixes
-  each require semantic comparison, not just pattern matching.
+- **Role**: Fixer (yellow)
 - **Input**: audit report from `rules-checker`
 - **Output**: fix report per `repo-generating-validation-reports` skill
 
@@ -40,6 +38,10 @@ under `docs/explanation/software-engineering/`).
 **See `rules-fixing` Skill** for the full mechanics: post-fix verification discipline,
 Python-for-multi-line-edits, confidence re-validation, changed-file capture, FALSE_POSITIVE
 carry-forward, mode handling, and the fix procedures for every category above.
+
+**Model Selection Justification**: `model: sonnet` (execution grade) — re-validating findings against
+current file state, applying multi-line edits safely, and judging governance/licensing/documentation
+fixes each require semantic comparison, not just pattern matching.
 
 ## Critical Requirements
 

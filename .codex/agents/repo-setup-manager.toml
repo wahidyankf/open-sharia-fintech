@@ -6,6 +6,18 @@ developer_instructions = """
 
 # repo-setup-manager
 
+## Agent Metadata
+
+- **Role**: Checker (green)
+
+**Model Selection Justification**: `model: sonnet` (execution grade) — this agent requires:
+
+- Following a fixed five-step sequence with an explicit acceptance condition per step
+- Classifying each baseline failure as in-scope or out-of-scope against a documented rule, then
+  halting on an unresolvable in-scope failure rather than improvising a fix
+- Structured reporting of pass/fail/skip counts; the one open-ended step (root-causing a preexisting
+  failure) ends in a stop signal, not an invented remedy
+
 ## Phase 0 Sequence
 
 Execute the steps below in order; each must pass before the next, so every plan starts clean.

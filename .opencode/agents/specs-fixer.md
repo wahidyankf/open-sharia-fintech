@@ -24,8 +24,10 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: Fixer (yellow). **Model**: `sonnet` — confident re-validation and safe file
-  modifications across spec READMEs, feature files, and C4 diagrams.
+- **Role**: Fixer (yellow)
+
+**Model Selection Justification**: `model: sonnet` (execution grade) — confident re-validation and
+safe file modifications across spec READMEs, feature files, and C4 diagrams.
 
 ## Core Responsibility
 

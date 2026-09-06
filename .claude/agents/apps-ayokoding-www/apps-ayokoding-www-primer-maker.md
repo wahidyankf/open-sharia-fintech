@@ -17,13 +17,15 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: Maker (blue). **Model**: `sonnet` — the mechanics (structure, density, count) are
-  mechanically enforced, same as By Example; the differentiator is a scope judgment — which slice of
-  the surface is "just enough to be productive".
+- **Role**: Maker (blue)
 
 You create Primer ("Just Enough X") tutorials for ayokoding-web: fast language/tool on-ramps authored
 at By-Example pace but deliberately scoped to the minimum surface needed for productive use in the
 topics that depend on them.
+
+**Model Selection Justification**: `model: sonnet` (execution grade) — the mechanics (structure,
+density, count) are mechanically enforced, same as By Example; the differentiator is a scope
+judgment — which slice of the surface is "just enough to be productive".
 
 ## Core Responsibility
 

@@ -16,20 +16,31 @@ let private testGradeMaps: GradeMaps =
       EffortOfGrade = Map.ofList [ "ultra", "high"; "planning", "high"; "execution", "xhigh"; "fast", "xhigh" ]
       ModelOfGrade = Map.empty }
 
+/// Every fixture body carries the Model Selection Justification block the AI
+/// Agents Convention requires. A fixture without it fails on that ground
+/// alone, which would make each scenario pass or fail for a reason it is not
+/// about.
+let private justifiedBody =
+    "**Model Selection Justification**: `model: sonnet` (execution grade) — fixture.\n"
+
 /// Fixtures carry the effort their grade declares, because effort is a
 /// property of the grade rather than of the agent: `sonnet` is the execution
 /// grade, which sits at `xhigh`.
 let private validAgent name =
-    $"---\nname: {name}\ndescription: fixture agent\ntools: Read, Write\nmodel: sonnet\neffort: xhigh\ncolor: blue\n---\nBody.\n"
+    $"---\nname: {name}\ndescription: fixture agent\ntools: Read, Write\nmodel: sonnet\neffort: xhigh\ncolor: blue\n---\n{justifiedBody}"
 
 let private agentWithModelAndEffort name model effort =
-    $"---\nname: {name}\ndescription: fixture agent\ntools: Read, Write\nmodel: {model}\neffort: {effort}\ncolor: blue\n---\nBody.\n"
+    $"---\nname: {name}\ndescription: fixture agent\ntools: Read, Write\nmodel: {model}\neffort: {effort}\ncolor: blue\n---\n{justifiedBody}"
 
 let private agentWithModel name model =
-    $"---\nname: {name}\ndescription: fixture agent\ntools: Read, Write\nmodel: {model}\ncolor: blue\n---\nBody.\n"
+    $"---\nname: {name}\ndescription: fixture agent\ntools: Read, Write\nmodel: {model}\ncolor: blue\n---\n{justifiedBody}"
 
 let private agentWithoutModel name =
-    $"---\nname: {name}\ndescription: fixture agent\ntools: Read, Write\ncolor: blue\n---\nBody.\n"
+    $"---\nname: {name}\ndescription: fixture agent\ntools: Read, Write\ncolor: blue\n---\n{justifiedBody}"
+
+/// The same conforming frontmatter with a body that argues nothing.
+let private agentWithoutJustification name =
+    $"---\nname: {name}\ndescription: fixture agent\ntools: Read, Write\nmodel: sonnet\neffort: xhigh\ncolor: blue\n---\nBody.\n"
 
 let private passedSkill = ValidationCheck.passed "Skill: fixture" "valid"
 let private failedSkill = ValidationCheck.failedMsg "Skill: fixture" "invalid"
@@ -101,6 +112,10 @@ type HarnessClaudeValidationSteps() =
                 EffortOfGrade = testGradeMaps.EffortOfGrade }
 
         agents <- [ "valid-agent.md", validAgent "valid-agent" ]
+
+    [<Given>]
+    member _.``a \.claude/ directory where one agent's body states no model selection justification``() =
+        agents <- [ "unargued-agent.md", agentWithoutJustification "unargued-agent" ]
 
     [<Given>]
     member _.``a \.claude/ directory containing two agent files declaring the same name``() =
@@ -186,6 +201,13 @@ type HarnessClaudeValidationSteps() =
         )
 
     [<Then>]
+    member _.``the output reports the missing justification block``() =
+        Assert.Contains(
+            result.Checks,
+            fun check -> check.Name.Contains("unargued-agent") && check.Actual = "no justification block"
+        )
+
+    [<Then>]
     member _.``the output reports the duplicate agent name``() =
         Assert.Contains(result.Checks, fun check -> check.Actual.Contains("Duplicate name: duplicate"))
 
@@ -265,6 +287,15 @@ let ``a registry with no grade vocabulary fails closed`` () =
         (fun s ->
             s.``the command exits with a failure code`` ()
             s.``the output reports that no grade vocabulary is declared`` ())
+
+[<Fact>]
+let ``agent stating no justification fails`` () =
+    HarnessClaudeScenarios.run
+        (fun s -> s.``a \.claude/ directory where one agent's body states no model selection justification`` ())
+        (fun s -> s.``the developer runs agents validate-claude`` ())
+        (fun s ->
+            s.``the command exits with a failure code`` ()
+            s.``the output reports the missing justification block`` ())
 
 [<Fact>]
 let ``duplicate agent name fails`` () =

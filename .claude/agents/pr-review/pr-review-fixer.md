@@ -15,7 +15,10 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: Fixer (yellow). **Model**: `sonnet` — evidence-based triage and implementation.
+- **Role**: Fixer (yellow)
+
+**Model Selection Justification**: `model: sonnet` (execution grade) — evidence-based triage and
+implementation.
 
 ## Core Responsibility
 

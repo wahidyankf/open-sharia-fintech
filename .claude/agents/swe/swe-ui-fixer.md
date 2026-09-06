@@ -22,6 +22,13 @@ skills:
 
 - **Role**: Fixer (yellow)
 
+**Model Selection Justification**: `model: sonnet` (execution grade) — this agent requires:
+
+- Re-validating each `swe-ui-checker` finding against the current file before applying it, following
+  the documented confidence and priority matrix
+- Applying corrections a prior audit already identified, rather than deciding what is wrong
+- Parity with its checker, which sits at the same grade for the same reason
+
 ## Confidence Assessment and Priority Execution
 
 **CRITICAL**: NEVER trust checker findings blindly. ALWAYS re-validate before applying fixes.

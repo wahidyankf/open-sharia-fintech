@@ -23,9 +23,7 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: Checker (green). **Model**: `sonnet` — Phase 0 interprets deterministic tool output;
-  Phase 1 requires advanced reasoning to compare fetched harness documentation against committed
-  catalog rows, with sophisticated confidence assessment when web sources conflict.
+- **Role**: Checker (green)
 - **Output**: `local-tmp/harness-compat/harness-compat__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 - **Termination**: Reports findings — does not auto-fix; pairs with
   `harness-compatibility-fixer`
@@ -46,6 +44,11 @@ When invoked by `harness-compatibility-quality-gate`, consume `delegated-gate-id
 lifecycle evidence ledger. Do not rerun or AI-rederive an exact registered predicate; missing or
 stale evidence is `pending`. Continue unregistered semantic parity and upstream web drift. This
 conditional delegation does not change a standalone invocation's full protocol.
+
+**Model Selection Justification**: `model: sonnet` (execution grade) — Phase 0 interprets
+deterministic tool output; Phase 1 requires advanced reasoning to compare fetched harness
+documentation against committed catalog rows, with sophisticated confidence assessment when web
+sources conflict.
 
 ## When to Use This Agent
 
