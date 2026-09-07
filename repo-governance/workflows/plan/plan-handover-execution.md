@@ -39,4 +39,15 @@ No specialist owns the handover itself. When the resumed plan reaches final veri
 - [Required Document Structure](./plan-handover-execution/required-document-structure.md) — the literal template, section by section.
 - [Notes and Execution Mode](./plan-handover-execution/notes-and-execution-mode.md) — load-bearing sections; who writes it.
 - [Steps](./plan-handover-execution/steps.md) — the seven steps to write a handover.
-- [Related Documentation](./plan-handover-execution/related-documentation.md) — cross-references.
+
+## Related Documentation
+
+- [Plan Takeover Execution](./plan-takeover-execution.md) — the read-side workflow this one's output
+  feeds into; owns discovery, reconciliation, and takeover once a handover (or none) is found.
+- [Plan Execution](./plan-execution.md) — the workflow a resumed plan ultimately continues in, once
+  `plan-takeover-execution.md` has adopted its worktree.
+- [Knowledge Capture](../../development/quality/knowledge-capture.md) — the entry-shape convention this
+  workflow's gotcha-capture step mirrors, and the destination for a gotcha that turns out to be durable
+  rather than session-specific.
+- [Agent Workflow Orchestration Convention](../../development/agents/agent-workflow-orchestration.md) —
+  the same-machine assumption `local-tmp/handovers/` depends on.

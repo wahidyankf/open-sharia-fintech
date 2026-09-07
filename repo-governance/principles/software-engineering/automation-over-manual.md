@@ -25,6 +25,19 @@ when_to_use: Use when deciding whether a repetitive task should be automated, or
 - [Anti-Patterns](./automation-over-manual/anti-patterns.md) — Four automation anti-patterns and why each is bad. Use when reviewing a workflow for automation gaps.
 - [PASS: Best Practices](./automation-over-manual/best-practices.md) — Five best practices for effective automation. Use when designing a new automation.
 - [Examples from This Repository](./automation-over-manual/examples-from-this-repository.md) — This repository's concrete automations and their benefits. Use to find an existing automation to reuse or extend.
-- [Relationship to Other Principles](./automation-over-manual/relationship-to-other-principles.md) — How this principle relates to other principles. Use when tracing this principle's ties to other principles.
-- [Related Conventions](./automation-over-manual/related-conventions.md) — Conventions that operationalize this principle. Use to find the convention that enforces this principle.
 - [References](./automation-over-manual/references.md) — External references on automation, git hooks, and code quality. Use to find further reading behind a claim in this document.
+
+## Related Conventions
+
+- [Code Quality Convention](../../development/quality/code.md) - Git hooks and Prettier
+- [AI Agents Convention](../../development/agents/ai-agents.md) - Validation agents
+- [Commit Message Convention](../../development/workflow/commit-messages.md) - Automated validation
+- [Repository Validation](../../development/quality/repository-validation.md) - Standard validation patterns
+
+## Relationship to Other Principles
+
+- [Explicit Over Implicit](./explicit-over-implicit.md) - Automation makes behaviour explicit
+- [Simplicity Over Complexity](../general/simplicity-over-complexity.md) - Automate demonstrated
+  repetitive work or recurring risk with the smallest sufficient mechanism; do not build automation
+  when an existing mechanism already satisfies the need
+- [Accessibility First](../content/accessibility-first.md) - Automated accessibility checks

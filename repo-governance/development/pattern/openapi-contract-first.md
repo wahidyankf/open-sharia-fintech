@@ -22,6 +22,34 @@ spec never follows from the code.
 ## Contents
 
 - [Principles and Conventions](./openapi-contract-first/principles-and-conventions.md) — The core principles and conventions this pattern implements - explicitness, reproducibility, automation, simplicity, and the backend hexagonal-architecture layering. Use when you need to trace an OpenAPI contract-first rule back to the principle or convention it implements.
-- [Overview and Spec Location](./openapi-contract-first/overview-and-spec-location.md) — How contract-first codegen works end to end, and where each backend app's OpenAPI spec file lives. Use when locating the OpenAPI spec file for a given backend app, or explaining the contract-first workflow.
 - [Codegen Tooling and Nx Targets](./openapi-contract-first/codegen-tooling-and-nx-targets.md) — Which codegen tool runs for each app, and the Nx targets that invoke codegen and spec linting. Use when running codegen for an app or looking up which tool generates its client/server types.
 - [Drift Enforcement, Scope, and Related](./openapi-contract-first/drift-enforcement-scope-and-related.md) — How CI fails the build on spec/codegen drift, which BE-client pairs participate in contract-first development, and related pattern documentation. Use when a CI drift check fails, or checking whether a given app participates in contract-first codegen.
+
+## Overview and Spec Location
+
+### Overview
+
+Each BE↔client pair maintains an OpenAPI 3.1 YAML spec. Codegen tooling reads that spec and emits typed client code
+(TypeScript) and server scaffolding (Rust). CI runs codegen on every push and fails the build if the generated
+output differs from the committed output. This makes spec drift a hard CI failure rather than a silent runtime
+divergence.
+
+### Spec Location
+
+Specs live under the `specs/` tree, organised by app and container:
+
+```
+specs/
+└── apps/
+    └── <app-name>/
+        └── containers/
+            └── contracts/
+                └── openapi.yaml
+```
+
+| BE App            | Spec Path                                           |
+| ----------------- | --------------------------------------------------- |
+| `organiclever-be` | `specs/apps/organiclever/be/contracts/openapi.yaml` |
+| `ose-be`          | `specs/apps/ose/be/contracts/openapi.yaml`          |
+
+The spec file is the only artefact that humans edit. Generated files are never edited by hand.

@@ -32,6 +32,11 @@ Design for **universal access from the start**. Accessibility is not an aftertho
 
 ## Reference
 
-- [Relationship to Other Principles](./accessibility-first/relationship-to-other-principles.md) — How Accessibility First relates to Explicit Over Implicit, Simplicity Over Complexity, and Progressive Disclosure. Use when tracing how this principle interacts with other governance principles.
 - [Related Conventions](./accessibility-first/related-conventions.md) — Links to the conventions that implement accessibility requirements - color accessibility, content quality, and diagrams. Use when looking for the specific conventions that enforce this principle's rules.
 - [References](./accessibility-first/references.md) — External references on WCAG standards, color accessibility tools, screen reader guides, and semantic HTML. Use when seeking authoritative external sources on accessibility standards and testing tools.
+
+## Relationship to Other Principles
+
+- [Explicit Over Implicit](../software-engineering/explicit-over-implicit.md) - Explicit alt text and descriptions
+- [Simplicity Over Complexity](../general/simplicity-over-complexity.md) - Simple accessible design
+- [Progressive Disclosure](./progressive-disclosure.md) - Accessible to all skill levels

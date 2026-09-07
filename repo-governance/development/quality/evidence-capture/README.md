@@ -15,5 +15,4 @@ when_to_use: "Read this index to find the right Evidence Capture Convention chil
 - [Locale Testing Evidence Requirements](./locale-testing-evidence-requirements.md) — The evidence bar for locale/i18n testing across supported languages. Use when verifying a locale-sensitive feature and capturing its evidence.
 - [What plan-execution-checker Validates](./what-plan-execution-checker-validates.md) — What the plan-execution-checker agent inspects in captured evidence. Use when you need to know what evidence the plan-execution-checker gate inspects.
 - [Examples](./examples.md) — Worked examples of correctly captured evidence. Use when you need a concrete example of properly captured evidence.
-- [Relationship to Other Conventions](./relationship-to-other-conventions.md) — How this convention relates to manual-behavioural-verification and other quality conventions. Use when deciding whether evidence capture or another convention governs a specific check.
 - [Related Documentation](./related-documentation.md) — Cross-references to related verification and plan conventions. Use when you need a related convention on verification or plan structure.

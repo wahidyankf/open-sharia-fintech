@@ -27,5 +27,36 @@ This practice mandates enumerate-not-sample forcing-functions for the three live
 - [The Six Forcing-Functions (5-6)](./live-tester-systematic-coverage/forcing-functions-5-6.md) — Forcing-functions 5-6: usability probes, recurrence/diff/completeness critic. Use when applying the usability-probe or recurrence-critic forcing-function.
 - [Motivating Example](./live-tester-systematic-coverage/motivating-example.md) — The incident that motivated the six forcing-functions. Use when you need the rationale behind these forcing-functions.
 - [Relationship to the Three Live-Site Testers](./live-tester-systematic-coverage/relationship-to-the-three-live-site-testers.md) — How the forcing-functions apply across the three live-site tester agents. Use when deciding how a live-site tester agent should apply these forcing-functions.
-- [Scope](./live-tester-systematic-coverage/scope.md) — What this practice applies to. Use when checking whether this practice applies to a testing pass.
-- [Related Documentation](./live-tester-systematic-coverage/related-documentation.md) — Related live-testing and quality conventions. Use when you need a related convention on live testing.
+
+## Related Documentation
+
+- [User-Facing Delivery Hardening Convention](./user-facing-delivery-hardening.md) -- Rule 15
+  (near-end three-tester retest before archival) that this practice makes thorough
+- [Manual Behavioural Verification Convention](./manual-behavioural-verification.md) -- Per-locale,
+  per-breakpoint discipline that this practice extends with element-level enumeration
+- [Evidence Capture Convention](./evidence-capture.md) -- Where and how to record findings and
+  matrices from each forcing-function
+- [Regression Test Mandate](./regression-test-mandate.md) -- Every defect found by these testers
+  must land with a reproducing test when fixed
+- [Behaviour-Driven Development](../behaviour-driven-development.md) -- Automated testing
+  architecture that systematic live testing complements (not replaces)
+- [web-ux-test-fixing-planning workflow](../../workflows/web/web-ux-test-fixing-planning.md) --
+  The orchestration workflow that sequences all three testers against the same target
+
+## Scope
+
+This practice applies to:
+
+- All runs of `web-exploratory-tester`, `web-usability-tester`, and `web-design-tester` against
+  any live web surface in `apps/`.
+- All runs of `api-exploratory-tester` against any live REST or GraphQL API in `apps/`.
+- All invocations of the `web-ux-test-fixing-planning` workflow.
+- The Rule-15 near-end retest required by the
+  [User-Facing Delivery Hardening Convention](./user-facing-delivery-hardening.md) before plan
+  archival.
+
+It does not apply to:
+
+- Automated Playwright E2E tests (those follow the [Behaviour-Driven Development](../behaviour-driven-development.md)).
+- API-only verification (covered by [Manual Behavioural Verification](./manual-behavioural-verification.md)).
+- Library-only changes with no UI surface.

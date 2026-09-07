@@ -33,6 +33,11 @@ when_to_use: Use when deciding how much complexity to expose at once in a docume
 
 ## Reference
 
-- [Relationship to Other Principles](./progressive-disclosure/relationship-to-other-principles.md) — How Progressive Disclosure relates to Simplicity Over Complexity, No Time Estimates, and Accessibility First. Use when tracing how this principle interacts with other governance principles.
 - [Related Conventions](./progressive-disclosure/related-conventions.md) — Links to the tutorial, Diátaxis, file-naming, and word-budget conventions that enforce this principle. Use when looking for the specific conventions that enforce this principle's rules.
 - [References](./progressive-disclosure/references.md) — External references on UX progressive disclosure, cognitive load, and documentation structure. Use when seeking authoritative external sources on progressive disclosure as a UX principle.
+
+## Relationship to Other Principles
+
+- [Simplicity Over Complexity](../general/simplicity-over-complexity.md) - Start simple, add complexity only when needed
+- [No Time Estimates](./no-time-estimates.md) - Focus on learning outcomes, not duration
+- [Accessibility First](./accessibility-first.md) - Progressive disclosure improves accessibility

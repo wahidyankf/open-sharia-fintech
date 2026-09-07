@@ -14,12 +14,51 @@ when_to_use: "Use when reviewing a change for a common quality anti-pattern."
 
 ## Documents
 
-- [Overview and Purpose](./anti-patterns/overview-and-purpose.md) — Overview and purpose of this anti-patterns catalog. Use when orienting to why this catalog exists.
 - [Anti-Patterns 1-3](./anti-patterns/anti-patterns-1-3.md) — Manual quality checks, no issue prioritization, fixes without confidence assessment. Use when reviewing for these three quality anti-patterns.
 - [Anti-Patterns 4-6](./anti-patterns/anti-patterns-4-6.md) — Deleting content without preservation, running all tests pre-push, ad-hoc validation logic. Use when reviewing for these three quality anti-patterns.
 - [Anti-Patterns 7-9](./anti-patterns/anti-patterns-7-9.md) — Ignoring criticality in fixes, no CI quality gates, undocumented validation rules. Use when reviewing for these three quality anti-patterns.
 - [Anti-Patterns 10-11](./anti-patterns/anti-patterns-10-11.md) — Formatting the entire repo on every commit, mixing test levels. Use when reviewing for these two quality anti-patterns.
 - [Summary of Anti-Patterns](./anti-patterns/summary-of-anti-patterns.md) — A quick-reference summary table of all eleven anti-patterns. Use for a quick-reference summary of all anti-patterns.
-- [Related Documentation](./anti-patterns/related-documentation.md) — Related quality-development documentation. Use when you need a related quality convention.
-- [Conclusion](./anti-patterns/conclusion.md) — Closing summary of this anti-patterns catalog. Use for the closing summary of this catalog.
 - [Principles and Conventions Implemented/Respected](./anti-patterns/principles-and-conventions-implemented-respected.md) — Principles/conventions implemented. Use to trace this catalog's rationale.
+
+## Conclusion
+
+Avoiding these anti-patterns ensures:
+
+- Automated quality enforcement
+- Clear issue prioritization
+- Safe automated remediation
+- Preserved documentation value
+- Fast feedback loops
+- Consistent validation patterns
+- Priority-based fix execution
+- Strong CI quality gates
+- Well-documented rules
+- Efficient incremental quality
+
+When implementing quality processes, ask: **Am I adding automation or friction?** If friction, refactor to follow quality development best practices.
+
+## Overview and Purpose
+
+### Overview
+
+Understanding common mistakes in quality development helps teams build more reliable, maintainable, and consistent codebases. These anti-patterns cause quality issues, technical debt, and maintenance burden.
+
+### Purpose
+
+This document provides:
+
+- Common anti-patterns in quality development
+- Examples of problematic implementations
+- Solutions and corrections for each anti-pattern
+- Quality and maintenance considerations
+
+## Related Documentation
+
+- [Code Quality Convention](./code.md) - Automated quality tools and git hooks
+- [Behaviour-Driven Development](../behaviour-driven-development.md) - Mandatory Unit proof and boundary-applicable Integration/E2E rules
+- [Criticality Levels Convention](./criticality-levels.md) - Issue categorization
+- [Fixer Confidence Levels Convention](./fixer-confidence-levels.md) - Confidence assessment
+- [Repository Validation Methodology](./repository-validation.md) - Validation patterns
+- [Nx Target Standards](../infra/nx-targets.md) - Canonical target names and CI execution model
+- [Best Practices](./best-practices.md) - Recommended patterns

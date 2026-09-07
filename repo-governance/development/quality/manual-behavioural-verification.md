@@ -21,7 +21,6 @@ This convention requires manually verifying UI features and API endpoints -- via
 ## Documents
 
 - [Principles and Conventions Implemented/Respected](./manual-behavioural-verification/principles-and-conventions-implemented-respected.md) — Principles/conventions this convention implements. Use when tracing this convention's rationale.
-- [The Rule](./manual-behavioural-verification/the-rule.md) — The manual-verification rule for UI/API changes. Use for the exact wording of the rule.
 - [UI Verification](./manual-behavioural-verification/ui-verification.md) — Required tools for manual UI verification. Use when preparing to manually verify a UI change.
 - [UI Verification Checklist](./manual-behavioural-verification/ui-verification-checklist.md) — The checklist to run through when verifying a UI change. Use when manually verifying a UI change.
 - [Example: UI Feature Verification (multi-locale app)](./manual-behavioural-verification/example-ui-feature-verification-multi-locale-app.md) — A worked example of manually verifying a UI feature across locales. Use for a concrete example of multi-locale UI verification.
@@ -30,5 +29,23 @@ This convention requires manually verifying UI features and API endpoints -- via
 - [Relationship to Automated Tests](./manual-behavioural-verification/relationship-to-automated-tests.md) — How manual verification relates to automated test coverage. Use when deciding whether automated tests already cover manual verification.
 - [Examples](./manual-behavioural-verification/examples.md) — Worked examples of manual behavioural verification. Use for a concrete example of this convention applied.
 - [Scope](./manual-behavioural-verification/scope.md) — What this convention applies to and its boundaries. Use when checking whether this convention applies to a change.
-- [Tools and Automation](./manual-behavioural-verification/tools-and-automation.md) — Tools used for manual behavioural verification. Use when locating a manual-verification tool.
 - [Related Documentation](./manual-behavioural-verification/related-documentation.md) — Related testing and evidence conventions. Use for a related convention on testing or evidence.
+
+## The Rule
+
+**Manual behavioural verification is MANDATORY after implementing UI or API changes.**
+
+This applies to:
+
+- New UI features (pages, components, interactions)
+- UI bug fixes
+- New API endpoints
+- API behaviour changes (request/response shape, validation rules, error handling)
+- Integration changes (connecting UI to API, connecting API to data source)
+
+## Tools and Automation
+
+- **Browser MCP tools**: Discover installed integrations first; prefer Playwright MCP, then Chrome
+  DevTools MCP, then equivalent available real-browser tooling
+- **curl**: Available via Bash for API verification
+- **jq**: Available via Bash for JSON response inspection

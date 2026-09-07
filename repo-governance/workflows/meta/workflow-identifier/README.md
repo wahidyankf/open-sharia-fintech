@@ -6,7 +6,6 @@ when_to_use: "Read this index to find the right Workflow Pattern Convention chil
 
 # Workflow Pattern Convention
 
-- [Overview](./overview.md) — Defines workflows as composed multi-step processes that orchestrate agents, procedures, and other workflows — the fifth layer in the governance hierarchy.
 - [Repository Hierarchy](./repository-hierarchy.md) — Shows where Workflows sit in the six-layer governance hierarchy, from Vision down through Principles, Conventions, Development, Agents, to Workflows.
 - [What Workflows Are](./what-workflows-are.md) — Lists the seven things a workflow definition specifies — sequences, looping, goals, termination criteria, input/output contracts, state management, and error handling.
 - [What Workflows Are NOT](./what-workflows-are-not.md) — Four boundary statements distinguishing a workflow from an agent, an ad-hoc script, a project plan, and a new conceptual layer.

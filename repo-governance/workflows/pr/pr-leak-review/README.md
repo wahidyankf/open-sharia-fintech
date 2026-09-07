@@ -12,5 +12,4 @@ when_to_use: "Use to locate the normative mechanics of pr-leak-review."
   Use when running or implementing the focused review.
 - [Evidence and Outcomes](./evidence-and-outcomes.md) — Defines authenticated current-head evidence
   and terminal states. Use when posting, authenticating, or consuming a leak result.
-- [Success Criteria](./success-criteria.md) — Defines clean, finding, and stale scenarios. Use when
   validating the workflow's observable behaviour.

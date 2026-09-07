@@ -19,8 +19,6 @@ This document defines the standards for selecting the appropriate model tier whe
 ## Foundations
 
 - [Principles Implemented/Respected](./model-selection/principles-implemented-respected.md) — principle list.
-- [Conventions Implemented/Respected](./model-selection/conventions-implemented-respected.md) — sibling conventions.
-- [Purpose](./model-selection/purpose.md) — why tiers exist.
 - [Scope](./model-selection/scope.md) — what's covered.
 
 ## Model Tiers
@@ -47,3 +45,13 @@ Four grades, cheapest first: **fast**, **execution-grade**, **planning-grade**, 
 - [Special Considerations — Link Fixer as Fast-Tier](./model-selection/special-considerations-link-fixer.md) — link-fixer case.
 - [Tools and Automation](./model-selection/tools-and-automation.md) — validation tools.
 - [References](./model-selection/references.md) — further reading.
+
+## Conventions Implemented/Respected
+
+This practice respects the following conventions:
+
+- **[Content Quality Principles](../../conventions/writing/quality.md)**: Agent frontmatter and model justification comments follow active voice and clarity standards.
+
+## Purpose
+
+Model selection directly affects agent quality, latency, and resource efficiency. Selecting too powerful a model wastes resources on simple tasks; selecting too weak a model produces poor results on complex work. This convention establishes clear criteria for matching model grades to task types, ensuring consistent and justified model assignments across all agents and across every harness binding.

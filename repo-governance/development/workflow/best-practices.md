@@ -14,7 +14,6 @@ when_to_use: Use when looking for the recommended pattern for a workflow decisio
 
 ## Contents
 
-- [Overview and Purpose](./best-practices/overview-and-purpose.md) — Why this document exists.
 - [Practice 1: Integrate Continuously via Short-Lived Branches](./best-practices/practice-1-integrate-continuously-via-short-lived-branches.md) — Merge to main at least daily.
 - [Practice 2: Make Small, Frequent Commits](./best-practices/practice-2-make-small-frequent-commits.md) — Fewest build-valid atomic commits.
 - [Practice 3: Use Conventional Commits](./best-practices/practice-3-use-conventional-commits.md) — type(scope): description format.
@@ -42,3 +41,17 @@ when_to_use: Use when looking for the recommended pattern for a workflow decisio
 - [Reproducible Environments Convention](../workflow/reproducible-environments.md) - Environment practices
 - [Anti-Patterns](../workflow/anti-patterns.md) - Common mistakes to avoid
 - [Git Push Default Convention](../workflow/git-push-default.md) - The PR-branch-as-default push target, and the direct-push modes as explicit selections
+
+## Overview and Purpose
+
+This document outlines best practices for development workflows, including Trunk Based Development, implementation methodology, commit messages, and reproducible environments. Following these practices ensures efficient, predictable, and high-quality development.
+
+### Purpose
+
+Provide actionable guidance for:
+
+- Git workflow execution
+- Implementation progression
+- Commit message authoring
+- Environment reproducibility
+- Development process standards

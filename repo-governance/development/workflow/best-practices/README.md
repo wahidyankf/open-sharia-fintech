@@ -6,7 +6,6 @@ when_to_use: "Read this index to find the right Best Practices for Workflow Deve
 
 # Best Practices for Workflow Development
 
-- [Overview and Purpose](./overview-and-purpose.md) — What this best-practices document covers and why following it matters. Use when orienting to why the best-practices document exists and what it covers before reading individual practices.
 - [Practice 1: Integrate Continuously via Short-Lived Branches](./practice-1-integrate-continuously-via-short-lived-branches.md) — Keep every branch short-lived and single-purpose; TBD forbids long-lived branches, not branches. Use when starting a plan branch, to confirm it will integrate within a day or two rather than living long-term.
 - [Practice 2: Make Small, Frequent Commits](./practice-2-make-small-frequent-commits.md) — Compose the fewest build-valid, reviewable, revertible commits. Use after explicit authorization when choosing boundaries.
 - [Practice 3: Use Conventional Commits](./practice-3-use-conventional-commits.md) — Follow conventional commit format for clear, parseable history. Use when writing a commit message and choosing its type/scope/subject format.

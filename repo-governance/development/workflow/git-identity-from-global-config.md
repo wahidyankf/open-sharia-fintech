@@ -22,7 +22,6 @@ Git commit authorship must come exclusively from the developer's global git conf
 ## Contents
 
 - [Principles and Conventions Implemented](./git-identity-from-global-config/principles-and-conventions-implemented.md) — Why this rule exists.
-- [Background](./git-identity-from-global-config/background.md) — The incident that motivated this convention.
 - [Standards](./git-identity-from-global-config/standards.md) — The three standards: no `[user]` section, global-config-only resolution, behavioural enforcement.
 - [Examples](./git-identity-from-global-config/examples.md) — PASS and FAIL configuration examples.
 - [Remediation and Sibling Repos](./git-identity-from-global-config/remediation-and-sibling-repos.md) — How to remove an existing override and verify sibling repos.
@@ -38,3 +37,16 @@ Git commit authorship must come exclusively from the developer's global git conf
   development environments across machines.
 - [No Machine-Specific Information in Commits](../quality/no-machine-specific-commits.md) —
   Related constraint preventing machine-specific paths and credentials from entering git history.
+
+## Background
+
+At one point a `[user]` block was added to a subrepo's `.git/config`, setting the local
+`user.name` and `user.email` to values different from the developer's global identity.
+Because git resolves local config before global config, every subsequent commit in that
+repository was attributed to the override identity — not the developer's real identity.
+The problem went undetected across several days and hundreds of commits before anyone
+noticed. History had to be rewritten to correct the attribution.
+
+This incident illustrates a structural risk: the override mechanism is silent, requires no
+confirmation, and persists until explicitly removed. The only reliable defense is a
+pre-commit guard that prevents commits entirely when an override is present.

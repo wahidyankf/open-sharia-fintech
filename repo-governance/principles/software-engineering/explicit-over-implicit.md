@@ -24,6 +24,17 @@ Choose **explicit composition and configuration** over magic, convenience, and h
 - [Anti-Patterns](./explicit-over-implicit/anti-patterns.md) — Four implicit-behaviour anti-patterns and why each is bad. Use when reviewing code for hidden or magic behaviour.
 - [PASS: Best Practices](./explicit-over-implicit/best-practices.md) — Five best practices for explicitness. Use when designing a new agent, module, or config schema.
 - [Examples from This Repository](./explicit-over-implicit/examples-from-this-repository.md) — This repository's concrete explicit configurations. Use to find an existing explicit configuration to reuse or extend.
-- [Relationship to Other Principles](./explicit-over-implicit/relationship-to-other-principles.md) — How this principle relates to other principles. Use when tracing this principle's ties to other principles.
-- [Related Conventions](./explicit-over-implicit/related-conventions.md) — Conventions that operationalize this principle. Use to find the convention that enforces this principle.
 - [References](./explicit-over-implicit/references.md) — External references on explicit-over-implicit and secure coding. Use to find further reading behind a claim in this document.
+
+## Related Conventions
+
+- [AI Agents Convention](../../development/agents/ai-agents.md) - Explicit tool permissions
+- [File Naming Convention](../../conventions/structure/file-naming.md) - Kebab-case naming rules
+- [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) - Explicit hex codes
+- [Code Quality Convention](../../development/quality/code.md) - Explicit git hooks
+
+## Relationship to Other Principles
+
+- [Simplicity Over Complexity](../general/simplicity-over-complexity.md) - Explicit configuration is often simpler than magic
+- [Accessibility First](../content/accessibility-first.md) - Explicit configuration improves understanding for all users
+- [Automation Over Manual](./automation-over-manual.md) - Automate explicit checks, not implicit assumptions

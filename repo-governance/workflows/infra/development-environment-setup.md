@@ -69,6 +69,10 @@ toolchain, or verifying an environment after adding a new project language.
 - [Notes](./development-environment-setup/notes.md) — pinning, idempotency, platform notes.
 - [Principles Respected](./development-environment-setup/principles-implemented-respected.md) — governance.
 - [Conventions Respected](./development-environment-setup/conventions-implemented-respected.md) — governance.
-- [Related Workflows](./development-environment-setup/related-workflows.md) — CI Quality Gate.
 - [Related Documentation](./development-environment-setup/related-documentation.md) — how-to guide, governance docs.
 - [Agents](./development-environment-setup/agents.md) — rules-checker follow-up.
+
+## Related Workflows
+
+- [CI Quality Gate](../ci/ci-quality-gate.md) — Validates CI/CD compliance (assumes toolchain
+  is already set up)

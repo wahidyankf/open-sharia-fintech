@@ -34,6 +34,14 @@ when_to_use: "Use when checking how markdown linting/formatting is configured, f
 - [Troubleshooting](./markdown/troubleshooting.md) — Fixes for a blocked push, a silent hook, and a violation backlog. Use when a markdown quality gate blocks you and you need a diagnostic path.
 - [Related Documentation](./markdown/related-documentation.md) — Cross-references to the conventions markdown quality tooling enforces. Use when you need the rationale behind a specific markdown quality rule.
 - [Maintenance](./markdown/maintenance.md) — How to update markdownlint rules and the Prettier/markdownlint-cli2 dependencies. Use when changing a rule or bumping a markdown-tooling dependency.
-- [Metrics](./markdown/metrics.md) — Repository-wide violation counts from the markdown-quality rollout. Use when you need the historical baseline for the markdown-quality rollout.
 - [Principles and Conventions Implemented/Respected](./markdown/principles-and-conventions-implemented-respected.md) — How markdown tooling implements core principles and aligns with related conventions. Use when tracing markdown quality tooling to the principles/conventions it implements.
 - [Archive Exclusion](./markdown/archive-exclusion.md) — Why plans/done/ and archived/ are excluded from markdown linting. Use when deciding whether archived content should be linted.
+
+## Metrics
+
+**Repository Status** (as of 2026-01-17):
+
+- Total markdown files: 1,038 (after excluding node_modules)
+- Violations before implementation: 17,903
+- Violations after implementation: 0
+- Auto-fix success rate: ~99.5%

@@ -32,7 +32,6 @@ when_to_use: Use when writing any delivery checklist step that ships code, or wh
 - [Gherkin-Tagged Delivery Steps](./test-driven-development/gherkin-tagged-delivery-steps.md) — Canonical scenario references, outcome-cohesion splitting, tag format, and exceptions.
 - [Enforcement and Exceptions](./test-driven-development/enforcement-and-exceptions.md) — How TDD is enforced, and what it does not apply to.
 - [Examples](./test-driven-development/examples.md) — TypeScript, Go, and Gherkin-to-test worked examples.
-- [Relationship to Implementation Workflow](./test-driven-development/relationship-to-implementation-workflow.md) — How TDD maps onto the three implementation stages.
 
 ## Related Documentation
 
@@ -43,3 +42,17 @@ when_to_use: Use when writing any delivery checklist step that ships code, or wh
 - [Gherkin Implementation Review](../../workflows/gherkin-implementation-review.md) - Semantic proof beyond static binding coverage
 - [Code Quality Convention](../quality/code.md) - Pre-push hooks that run the test suite TDD produces
 - [User-Facing Delivery Hardening Convention](../quality/user-facing-delivery-hardening.md) - Rules on UI-calculation test assertions
+
+## Relationship to Implementation Workflow
+
+TDD and the
+[Implementation Workflow Convention](./implementation.md) are complementary, not competing:
+
+| Implementation Stage    | TDD Role                                                                 |
+| ----------------------- | ------------------------------------------------------------------------ |
+| Make it work (Stage 1)  | Red→Green: write failing test, then minimum passing code                 |
+| Make it right (Stage 2) | Refactor with tests green; add tests for edge cases found during cleanup |
+| Make it fast (Stage 3)  | Optimize with tests green; add performance assertions if needed          |
+
+TDD does not add a fourth stage. It is the mechanism that makes each stage of the Implementation
+Workflow verifiable and safe.

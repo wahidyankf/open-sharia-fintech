@@ -29,9 +29,8 @@ This convention extends the [Tutorials Convention](../tutorials/general.md) for 
 7. [Quality Standards](./cookbook/quality-standards.md) — Recipe completeness checklist, code quality standards, and annotation density.
 8. [Cookbook vs Other Tutorial Types](./cookbook/cookbook-vs-other-tutorial-types.md) — How Cookbook compares to By-Example, How-To Guides, and By-Concept.
 9. [Validation and Quality Metrics](./cookbook/validation-and-quality-metrics.md) — Recipe-count coverage metrics and automated/manual quality checks.
-10. [Principles Implemented/Respected](./cookbook/principles-implemented-respected.md) — The repository principles this convention implements.
-11. [Scope](./cookbook/scope.md) — What this convention covers, does not cover, and where it applies.
-12. [Related Documentation](./cookbook/related-documentation.md) — Links to Naming, Tutorials, Programming Language, and By-Example/By-Concept conventions.
+10. [Scope](./cookbook/scope.md) — What this convention covers, does not cover, and where it applies.
+11. [Related Documentation](./cookbook/related-documentation.md) — Links to Naming, Tutorials, Programming Language, and By-Example/By-Concept conventions.
 
 ## Related Documentation
 
@@ -39,3 +38,13 @@ This convention extends the [Tutorials Convention](../tutorials/general.md) for 
 - [Tutorials Convention](../tutorials/general.md): Base tutorial standards that cookbook inherits
 - [By-Example Tutorial](../tutorials/swe-by-example.md): Comparison with code-first learning path
 - [By-Concept Tutorial](../tutorials/by-concept.md): Comparison with narrative-driven learning path
+
+## Principles Implemented/Respected
+
+This convention implements and respects:
+
+- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Automated validation via apps-ayokoding-www-general-checker agent
+- **[Progressive Disclosure](../../principles/content/progressive-disclosure.md)**: Recipes organized by problem complexity within categories
+- **[No Time Estimates](../../principles/content/no-time-estimates.md)**: Focus on problem solved, not time to implement
+- **[Accessibility First](../../principles/content/accessibility-first.md)**: Color-blind friendly diagrams and accessible formatting
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Clear problem statements and complete, runnable code

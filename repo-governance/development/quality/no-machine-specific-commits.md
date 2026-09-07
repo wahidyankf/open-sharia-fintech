@@ -29,4 +29,9 @@ when_to_use: "Use when writing, reviewing, or fixing a commit that might contain
 - [Examples](./no-machine-specific-commits/examples.md) — Worked prohibited-vs-correct examples for hardcoded paths, test fixtures, and committed credentials. Use when you need a concrete before/after example of fixing a machine-specific value.
 - [Scope](./no-machine-specific-commits/scope.md) — What file types this rule applies to, and the two exclusions (.env files and .gitignore entries). Use when checking whether this rule applies to a specific file type.
 - [Remediation](./no-machine-specific-commits/remediation.md) — The steps to fix an already-committed machine-specific value, including credential rotation for sensitive leaks. Use when machine-specific information has already been committed and needs remediation.
-- [Related Documentation](./no-machine-specific-commits/related-documentation.md) — Cross-references to the Code Quality, Reproducible Environments, and Commit Message conventions. Use when you need a related convention on hooks, environments, or commit formatting.
+
+## Related Documentation
+
+- [Code Quality Convention](./code.md) - Git hooks and pre-commit automation that help catch violations before they reach the remote
+- [Reproducible Environments](../workflow/reproducible-environments.md) - Volta pinning, package-lock.json, and `.env.example` templates for consistent developer environments
+- [Commit Message Convention](../workflow/commit-messages.md) - Conventional Commits format for the corrective commit

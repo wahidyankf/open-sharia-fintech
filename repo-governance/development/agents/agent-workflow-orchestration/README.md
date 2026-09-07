@@ -7,7 +7,6 @@ when_to_use: "Read this index to find the right Agent Workflow Orchestration Con
 # Agent Workflow Orchestration Convention
 
 - [Principles Implemented/Respected](./principles-implemented-respected.md) — Lists the core repository principles this convention implements and respects. Use when checking which principles justify a rule in the Agent Workflow Orchestration Convention.
-- [Conventions Implemented/Respected](./conventions-implemented-respected.md) — Lists the related repository conventions this convention implements and respects. Use when checking which sibling conventions govern agent workflow orchestration.
 - [When to Plan](./when-to-plan.md) — Defines when an agent should produce an explicit plan before acting, the plan format, and how to re-plan when things go wrong. Use when deciding whether a task needs an upfront plan before execution starts.
 - [Ask Last](./ask-last.md) — Defines the evidence and authority boundary an agent must exhaust before asking the user. Use before asking the user for information, preference, or authority during repository work.
 - [Delegated Agent Strategy](./delegated-agent-strategy.md) — Defines when to use delegated (sub)agents, the rules for delegating, and when not to delegate. Use when deciding whether to hand a piece of work off to a delegated agent.

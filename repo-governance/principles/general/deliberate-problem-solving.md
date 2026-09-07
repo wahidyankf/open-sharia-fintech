@@ -23,4 +23,14 @@ when_to_use: Use when about to implement a solution and need to check whether as
 - [Verification Checklist](./deliberate-problem-solving/verification-checklist.md) — A pre-implementation checklist for confirming assumptions, alternatives, and tradeoffs have been surfaced before coding. Use as a checklist immediately before starting implementation on any nontrivial task.
 - [For AI Agents](./deliberate-problem-solving/for-ai-agents.md) — States the five agent-specific obligations for deliberate problem-solving, including verification tools and stating limitations. Use when defining or auditing how an AI agent must apply deliberate problem-solving in its own behaviour.
 - [Common Violations](./deliberate-problem-solving/common-violations.md) — Three short before/after examples of assuming without verification, choosing silently, and proceeding despite confusion. Use when identifying whether a specific behaviour is a known violation of deliberate problem-solving.
-- [Summary](./deliberate-problem-solving/summary.md) — One-paragraph recap of deliberate problem-solving as verify, present, simplify, ask. Use when you need the shortest possible recap of what deliberate problem-solving requires.
+
+## Summary
+
+Deliberate problem-solving means:
+
+- **Verify** rather than assume
+- **Present** rather than choose silently
+- **Simplify** rather than over-engineer
+- **Ask** rather than guess
+
+This principle ensures correct, maintainable, and appropriate solutions through transparent communication and thoughtful analysis.

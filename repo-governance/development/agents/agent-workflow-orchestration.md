@@ -21,7 +21,6 @@ This document defines how AI agents plan, execute, verify, and improve their wor
 ## Planning and Delegation
 
 - [Principles Implemented/Respected](./agent-workflow-orchestration/principles-implemented-respected.md) — principle list.
-- [Conventions Implemented/Respected](./agent-workflow-orchestration/conventions-implemented-respected.md) — sibling conventions.
 - [When to Plan](./agent-workflow-orchestration/when-to-plan.md) — plan format, re-planning.
 - [Delegated Agent Strategy](./agent-workflow-orchestration/delegated-agent-strategy.md) — when to delegate.
 
@@ -49,3 +48,11 @@ This document defines how AI agents plan, execute, verify, and improve their wor
 - [Continuation-State Integrity](./agent-workflow-orchestration/continuation-state-integrity.md) — preserves active user-established rule decisions across compaction and handoff.
 - [Anti-Patterns](./agent-workflow-orchestration/anti-patterns.md) — orchestration mistakes.
 - [References](./agent-workflow-orchestration/references.md) — related conventions.
+
+## Conventions Implemented/Respected
+
+This practice respects the following conventions:
+
+- **[Content Quality Principles](../../conventions/writing/quality.md)**: Plan documents and lessons files follow active voice, clear structure, and actionable content - not vague notes.
+
+- **[CI Monitoring Convention](../workflow/ci-monitoring.md)**: Agents performing post-push CI verification MUST make one status read every 2 minutes via a scheduled wakeup. `gh run watch` and manual tight-loop polling are forbidden regardless of job duration. When rate-limited (HTTP 403): `ScheduleWakeup(delaySeconds=2100)` — not a retry loop.

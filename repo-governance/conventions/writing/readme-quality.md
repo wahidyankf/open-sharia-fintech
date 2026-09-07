@@ -27,4 +27,18 @@ This document defines quality standards for README.md files to ensure they are e
 - [Section-Specific Guidelines](./readme-quality/section-specific-guidelines.md) — guidance for the Opening, Motivation, Roadmap, Tech Stack, and Getting Started sections.
 - [Emoji Usage and Common Mistakes](./readme-quality/emoji-usage-and-common-mistakes.md) — strategic emoji use and the five most common quality mistakes.
 - [Examples, Maintenance, and Scope vs Structural Conventions](./readme-quality/examples-maintenance-and-scope.md) — worked good examples, maintenance triggers, and the boundary with the structural-placement convention.
-- [Related Documentation and External Resources](./readme-quality/related-documentation-and-resources.md) — related conventions and external references.
+
+## Related Documentation and External Resources
+
+### Related Documentation
+
+- [Content Quality Principles](./quality.md) — General content quality standards
+- [Emoji Usage Convention](../formatting/emoji.md) — Emoji usage guidelines
+- [Linking Convention](../formatting/linking.md) — How to format links
+- [App README vs Specs Convention](../structure/app-readme-vs-specs.md) — Structural placement: what content belongs in app READMEs vs specs/
+
+### External Resources
+
+- [Make a README](https://www.makeareadme.com/) - README best practices
+- [Awesome README](https://github.com/matiassingers/awesome-readme) - Examples of great READMEs
+- [Plain Language Guidelines](https://www.plainlanguage.gov/guidelines/) - US Government plain language guide

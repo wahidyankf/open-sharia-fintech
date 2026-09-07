@@ -6,11 +6,6 @@ when_to_use: "Read this index to find the right Best Practices for AI Agents Dev
 
 # Best Practices for AI Agents Development
 
-- [Overview](./overview.md) — Introduces the purpose of documenting best practices for AI agent development. Use when orienting to why this best-practices document exists.
-- [Purpose](./purpose.md) — States the purpose of cataloging proven agent-authoring best practices. Use when explaining why a best practice is being recommended in a review.
 - [Best Practices — Single Responsibility, Minimum Tools, Model Choice, and Descriptions](./best-practices-1-to-4.md) — Covers Practices 1-4: single responsibility per agent, requesting minimum necessary tool permissions, using the appropriate model for task complexity, and clear actionable descriptions. Use when authoring a new agent and deciding its responsibility, tool list, model tier, or frontmatter description.
 - [Best Practices — Tool Usage Docs, Testing, Frontmatter Context, Naming, and Dependencies](./best-practices-5-to-9.md) — Covers Practices 5-9: documenting tool usage in the agent body, testing with edge cases, frontmatter context, naming conventions, and documenting agent dependencies. Use when finishing an agent definition and checking its tool-usage docs, test scenarios, naming, or dependency notes.
-- [Related Documentation](./related-documentation.md) — Links to related conventions and documents referenced by the best-practices document. Use when looking for further reading on agent best practices.
 - [Summary](./summary.md) — Summarizes all nine best practices in one table for quick reference. Use when you need a quick-reference list of every best practice instead of reading each section.
-- [Principles Implemented/Respected](./principles-implemented-respected.md) — Lists the core repository principles this document implements and respects. Use when checking which principles justify a recommended best practice.
-- [Conventions Implemented/Respected](./conventions-implemented-respected.md) — Lists the related repository conventions this document implements and respects. Use when checking which sibling conventions govern agent best practices.

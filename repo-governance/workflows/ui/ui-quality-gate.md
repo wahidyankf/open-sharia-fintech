@@ -51,7 +51,6 @@ findings plus an affected-component regression smoke.
 - [Steps](./ui-quality-gate/steps.md) — the bounded discovery, fix, verification, and finalization flow.
 - [Bounded Run](./ui-quality-gate/bounded-run.md) — scope and termination safeguards.
 - [Example Usage](./ui-quality-gate/example-usage.md) — a worked end-to-end transcript.
-- [Related Documentation](./ui-quality-gate/related-documentation.md) — the checker/fixer/maker agents, frontend conventions.
 
 ## Success Criteria
 
@@ -80,3 +79,10 @@ Scenario: Lifecycle evidence remains independently blocking
   When merge readiness is evaluated
   Then the owning lifecycle gate still blocks delivery
 ```
+
+## Related Documentation
+
+- [swe-ui-checker](../../../.claude/agents/swe/swe-ui-checker.md) — Validation agent
+- [swe-ui-fixer](../../../.claude/agents/swe/swe-ui-fixer.md) — Fix application agent
+- [swe-ui-maker](../../../.claude/agents/swe/swe-ui-maker.md) — Component creation agent
+- [Frontend Conventions](../../development/frontend/README.md) — Standards enforced by this workflow

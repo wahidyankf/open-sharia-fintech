@@ -26,7 +26,24 @@ Every dependency bump MUST satisfy three constraints before it is merged: (1) re
 - [Selection Rules Within Every Path](./dependency-bump-policy/selection-rules-within-every-path.md) — Recency and functional stability.
 - [Pinning Policy (Hard Rule)](./dependency-bump-policy/pinning-policy-hard-rule.md) — Exact-pin form per manifest.
 - [CVE Clearance Process](./dependency-bump-policy/cve-clearance-process.md) — The five sources and the clearance status values.
-- [Cutoff Date Computation and Plan Duration](./dependency-bump-policy/cutoff-date-computation-and-plan-duration.md) — Stating the cutoff, and re-checking on long plans.
 - [Examples](./dependency-bump-policy/examples.md) — Worked Path A/B/C decisions.
 - [Application Workflow](./dependency-bump-policy/application-workflow.md) — The twelve-step procedure.
 - [Tools, Automation, and References](./dependency-bump-policy/tools-automation-and-references.md) — Enforcement tools and the full reference list.
+
+## Cutoff Date Computation and Plan Duration
+
+### Cutoff Date Computation
+
+For every bump, the policy author MUST state the cutoff date in writing:
+
+```
+Today: <YYYY-MM-DD>
+Cutoff: today − 60 days = <YYYY-MM-DD>
+Eligible (Path B): versions released on or before <cutoff>
+```
+
+This ensures auditability when CVE or release dates are revisited.
+
+### When the Plan Spans Many Days
+
+If a plan with dependency bumps takes more than 60 days to merge, the cutoff drifts forward. Re-run the eligibility check before the final merge to catch newly-eligible versions or newly-disclosed CVEs.

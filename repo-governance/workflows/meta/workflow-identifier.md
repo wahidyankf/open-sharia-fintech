@@ -23,7 +23,6 @@ and body structure, step execution patterns, state/error handling, composability
 
 ## Contents
 
-- [Overview](./workflow-identifier/overview.md) — what a workflow is.
 - [Repository Hierarchy](./workflow-identifier/repository-hierarchy.md) — where workflows sit.
 - [What Workflows Are](./workflow-identifier/what-workflows-are.md) — the seven properties.
 - [What Workflows Are NOT](./workflow-identifier/what-workflows-are-not.md) — boundary cases.
@@ -54,3 +53,7 @@ and body structure, step execution patterns, state/error handling, composability
 - [Principles Implemented/Respected](./workflow-identifier/principles-implemented-respected.md) — traceability.
 - [Conventions Implemented/Respected](./workflow-identifier/conventions-implemented-respected.md) — traceability.
 - [Related Documentation](./workflow-identifier/related-documentation.md) — composing references.
+
+## Overview
+
+Workflows are **composed multi-step processes** that orchestrate agents, procedures, and/or other workflows to achieve specific goals with clear termination criteria. They represent the fifth layer in the repository's governance hierarchy, sitting above individual agents to coordinate complex tasks.

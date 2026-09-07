@@ -7,7 +7,6 @@ when_to_use: "Read this index to find the right Subagent Orchestration Conventio
 # Subagent Orchestration Convention
 
 - [Principles Implemented/Respected](./principles-implemented-respected.md) — Lists the core repository principles this convention implements and respects. Use when checking which principles justify a rule about subagent orchestration.
-- [Conventions Implemented/Respected](./conventions-implemented-respected.md) — Lists the related repository conventions this convention implements and respects. Use when checking which sibling conventions govern subagent orchestration.
 - [Purpose](./purpose.md) — States why this convention defines standards for orchestrating background subagents. Use when explaining why a background-agent orchestration rule exists.
 - [Scope](./scope.md) — Defines what this convention covers and does not cover regarding subagent orchestration. Use when checking whether a subagent-orchestration question is in scope for this convention.
 - [Standard 1 — Default Concurrency: N Background Agents (N+1 Total Including Main Thread)](./standard-1-default-concurrency.md) — States the default concurrency cap for background agents plus the main thread. Use when deciding how many background agents to run concurrently for a batch of independent work.
@@ -21,5 +20,4 @@ when_to_use: "Read this index to find the right Subagent Orchestration Conventio
 - [Anti-Patterns — Batching and Stuck-Detection Mistakes](./anti-patterns-batching-and-detection.md) — Covers launching a full batch without waiting, relying solely on task-notifications for stuck detection, reading the transcript file to check progress, and self-promoting the concurrency cap. Use when reviewing an orchestrator's batching or stuck-detection behaviour for a common mistake.
 - [Anti-Patterns — Running Serially and Monolithic Chunks](./anti-patterns-serial-and-monolithic.md) — Covers running background work serially and assigning monolithic chunks to a single agent. Use when reviewing whether work was needlessly serialized or a chunk was too large for one agent.
 - [Anti-Patterns — Open-Ended Poll Loops and Going Silent](./anti-patterns-poll-loops-and-silence.md) — Covers delegated open-ended poll loops and silence while the main thread is otherwise idle and polling non-CI background work.
-- [Tooling Reference](./tooling-reference.md) — Lists the tools available for orchestrating and monitoring background subagents. Use when looking for the right tool to launch, poll, or inspect a background agent.
 - [References](./references.md) — Links to related conventions and documents referenced by the subagent-orchestration convention. Use when looking for further reading on subagent orchestration.

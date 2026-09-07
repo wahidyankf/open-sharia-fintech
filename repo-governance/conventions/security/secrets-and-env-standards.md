@@ -44,7 +44,6 @@ environment variables. The three prior docs that covered overlapping ground now 
 - [Tiered Env Files — the `APP_ENV` Contract](./secrets-and-env-standards/tiered-env-files-the-app-env-contract.md) — The tier-file loading contract
 - [Content-Fixture Exclusion](./secrets-and-env-standards/content-fixture-exclusion.md) — Rule for course env fixtures
 - [Content-Fixture Exclusion — Enforcement Surfaces](./secrets-and-env-standards/content-fixture-exclusion-enforcement-surfaces.md) — Which surface carries it, plus the Codex gotcha
-- [IaC Forward Scaffold](./secrets-and-env-standards/iac-forward-scaffold.md) — Pre-staged, commented-out entries
 
 ## Related Documents
 
@@ -53,3 +52,11 @@ environment variables. The three prior docs that covered overlapping ground now 
 - [`reproducible-environments.md`](../../development/workflow/reproducible-environments.md) — environment setup (stub)
 - [`docs/explanation/standardize-secrets-and-env-parity-decisions.md`](../../../docs/explanation/standardize-secrets-and-env-parity-decisions.md) — cross-repo parity decisions
 - [`repo-config.yml`](../../../repo-config.yml) — unified config hub (`env-contract:` and `env-injection:` sections)
+
+## IaC Forward Scaffold
+
+Terraform and Ansible surfaces are documented in the `env-contract:` section of `repo-config.yml`
+as **commented forward-scaffold** entries — syntactically present but inactive. Uncomment and fill
+in `root` when IaC surfaces are added
+to the repository. This prevents the drift guard from producing false findings before IaC exists while
+ensuring the pattern is immediately available when it does.

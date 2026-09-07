@@ -29,4 +29,10 @@ This convention requires bidirectional synchronization between `specs/` (Gherkin
 - [Examples](./specs-application-sync/examples.md) — PASS/FAIL examples of endpoint, app-removal, bug-fix, and refactor changes against sync obligations. Use when you need a concrete example of a change that does or does not require a spec update.
 - [Scope](./specs-application-sync/scope.md) — What this convention applies to, and its boundary with other conventions. Use when checking whether this convention applies to a specific kind of change.
 - [Tools and Automation](./specs-application-sync/tools-and-automation.md) — The validators and checks that enforce specs-application sync. Use when locating the automated check for a sync violation.
-- [Related Documentation](./specs-application-sync/related-documentation.md) — Cross-references to related structure and testing conventions. Use when you need a related convention on specs structure or testing.
+
+## Related Documentation
+
+- [Behaviour-Driven Development](../behaviour-driven-development.md) - How mandatory Unit and boundary-applicable Integration/E2E adapters consume shared Gherkin specs
+- [Behaviour-Driven Development](../behaviour-driven-development.md) - Mandatory 1:1 mapping for CLI apps; three-level consumption for demo-be backends
+- [Nx Target Standards](../infra/nx-targets.md) - Cache input declarations that include Gherkin specs
+- [specs/README.md](../../../specs/README.md) - Spec directory organization and per-app spec structure

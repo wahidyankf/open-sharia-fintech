@@ -14,7 +14,6 @@ when_to_use: "Read this index to find the right Knowledge Capture Convention chi
 - [Routing Timing: Destination-Aware (Inline vs. Ideas)](./routing-timing-destination-aware-inline-vs-ideas.md) — Inline routing versus an explicitly authorized `plans/ideas/` two-pager; Knowledge Capture never creates backlog directly.
 - [The Two Safety Gates (HARD — run before routing)](./the-two-safety-gates-hard-run-before-routing.md) — The two mandatory pre-routing safety gates. Use before routing any learning.
 - [Mandatory + Explicit "None" Escape](./mandatory-explicit-none-escape.md) — Why plans must state "no learnings" explicitly. Use when a plan has no learnings to record.
-- [Exemptions](./exemptions.md) — Narrow exemptions to knowledge capture. Use when checking a plan's exemption status.
 - [Anti-Theater Guardrails](./anti-theater-guardrails.md) — Guardrails against performative knowledge capture. Use when a learnings.md entry looks performative.
 - [The Transient-Log Caveat](./the-transient-log-caveat.md) — Why learnings.md is never a durable home. Use when deciding if content still needs routing.
 - [What Gets Validated](./what-gets-validated.md) — What plan-execution-checker validates here. Use to know what the validation gate checks.

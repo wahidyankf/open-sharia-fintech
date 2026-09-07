@@ -6,9 +6,6 @@ when_to_use: "Read this index to find the right Skill Context Architecture child
 
 # Skill Context Architecture
 
-- [Principles Implemented/Respected](./principles-implemented-respected.md) — Lists the core repository principles this convention implements and respects. Use when checking which principles justify a rule about Skill context architecture.
-- [Conventions Implemented/Respected](./conventions-implemented-respected.md) — Lists the related repository conventions this convention implements and respects. Use when checking which sibling conventions govern Skill context architecture.
-- [Purpose](./purpose.md) — States why this convention defines a context architecture for agent skills. Use when explaining why a Skill's context mode matters.
 - [The Architectural Constraint](./the-architectural-constraint.md) — Explains the core limitation on Skill context and its impact on agent skills. Use when a Skill needs to spawn or delegate work and you must check whether its context mode allows it.
 - [The Repository Standard](./the-repository-standard.md) — Defines the Skill context modes used in the primary binding agent skills directory, including inline context mode. Use when authoring a new Skill and deciding which context mode it declares.
 - [Fork agent skills: Main Conversation Only](./fork-agent-skills-main-conversation-only.md) — Explains when a Skill needs fork behaviour and lists fork-skill use cases outside the repository. Use when a Skill needs to run in an isolated context outside the current conversation.

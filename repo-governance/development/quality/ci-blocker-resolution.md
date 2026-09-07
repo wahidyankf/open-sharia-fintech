@@ -29,4 +29,13 @@ This convention mandates that a preexisting CI blocker is investigated to its ro
 - [Examples](./ci-blocker-resolution/examples.md) — Worked examples of resolving a CI blocker correctly. Use for a concrete example of a proper CI-blocker fix.
 - [Scope](./ci-blocker-resolution/scope.md) — What this convention applies to. Use when checking whether this convention applies to a CI failure.
 - [Operational CI-Availability Exceptions](./ci-blocker-resolution/operational-ci-availability-exceptions.md) — The narrow exceptions for CI-availability outages, not code defects. Use when CI itself is unavailable, not merely reporting a failure.
-- [Related Documentation](./ci-blocker-resolution/related-documentation.md) — Related quality-gate and debugging conventions. Use when you need a related convention on quality gates.
+
+## Related Documentation
+
+- [CI Monitoring Convention](../workflow/ci-monitoring.md) -- Safe CI / GitHub Actions monitoring cadence: never poll faster than once every two minutes (2-minute operational default)
+- [Code Quality Convention](./code.md) -- Quality gates that this convention protects
+- [Git Push Safety Convention](../workflow/git-push-safety.md) -- Per-instance approval for `--no-verify`
+- [Trunk Based Development Convention](../workflow/trunk-based-development.md) -- Main must always be releasable
+- [Root Cause Orientation Principle](../../principles/general/root-cause-orientation.md) -- The foundational principle this convention implements
+- [Commit Message Convention](../workflow/commit-messages.md) -- Conventional commit format for preexisting fixes
+- [Nx Target Standards](../infra/nx-targets.md) -- Canonical target names for quality gates

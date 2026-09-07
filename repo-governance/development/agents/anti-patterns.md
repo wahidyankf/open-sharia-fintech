@@ -20,11 +20,6 @@ Understanding common mistakes in AI agent development helps teams build more mai
 
 ## Overview and Foundations
 
-- [Overview](./anti-patterns/overview.md) — why this matters.
-- [Purpose](./anti-patterns/purpose.md) — what this document provides.
-- [Principles Implemented/Respected](./anti-patterns/principles-implemented-respected.md) — principle list.
-- [Conventions Implemented/Respected](./anti-patterns/conventions-implemented-respected.md) — sibling conventions.
-
 ## Common Anti-Patterns
 
 - [God Agent, Excessive Tools, Vague Descriptions, and Hardcoded Values](./anti-patterns/common-anti-patterns-1-to-4.md) — patterns 1-4.
@@ -37,4 +32,42 @@ Understanding common mistakes in AI agent development helps teams build more mai
 
 - [Summary of Anti-Patterns](./anti-patterns/summary-of-anti-patterns.md) — quick-reference table.
 - [Related Documentation](./anti-patterns/related-documentation.md) — further reading.
-- [Conclusion](./anti-patterns/conclusion.md) — closing statement.
+
+## Conclusion
+
+Avoiding these anti-patterns ensures:
+
+- Focused, single-responsibility agents
+- Appropriate tool permissions
+- Clear communication of purpose
+- Autonomous operation patterns
+- Portable, resilient implementations
+- Robust error handling
+- Transparent tool usage
+- Cost-effective model selection
+- Production-ready agents
+- Discoverable agent library
+
+## Conventions Implemented/Respected
+
+This companion document supports the conventions in this directory by providing practical examples and guidance.
+
+## Overview
+
+Understanding common mistakes in AI agent development helps teams build more maintainable, secure, and effective automation. These anti-patterns cause complexity, security risks, and maintenance burden.
+
+## Principles Implemented/Respected
+
+This companion document respects:
+
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Provides practical examples of simple vs complex approaches
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Makes patterns and anti-patterns explicit through clear examples
+
+## Purpose
+
+This document provides:
+
+- Common anti-patterns in agent development
+- Examples of problematic implementations
+- Solutions and corrections for each anti-pattern
+- Security and maintenance considerations

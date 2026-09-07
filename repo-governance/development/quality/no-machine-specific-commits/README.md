@@ -15,4 +15,3 @@ when_to_use: "Read this index to find the right No Machine-Specific Information 
 - [Examples](./examples.md) — Worked prohibited-vs-correct examples for hardcoded paths, test fixtures, and committed credentials. Use when you need a concrete before/after example of fixing a machine-specific value.
 - [Scope](./scope.md) — What file types this rule applies to, and the two exclusions (.env files and .gitignore entries). Use when checking whether this rule applies to a specific file type.
 - [Remediation](./remediation.md) — The steps to fix an already-committed machine-specific value, including credential rotation for sensitive leaks. Use when machine-specific information has already been committed and needs remediation.
-- [Related Documentation](./related-documentation.md) — Cross-references to the Code Quality, Reproducible Environments, and Commit Message conventions. Use when you need a related convention on hooks, environments, or commit formatting.
