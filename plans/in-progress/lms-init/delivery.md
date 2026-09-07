@@ -606,6 +606,17 @@ One pull request in `ose-public`.
       reports no `adoption` finding for `specs/apps/ose/lms-be` — the validator discovers new owners
       by folder walk and needs no registration.
   - _Suggested executor: `specs-maker`_
+- [ ] [AI] Validate every Mermaid diagram in `architecture.md` at the **binding** Rule-3 threshold,
+      not the gate default: `rtk apps/rhino-cli/scripts/rhino-bin.sh md mermaid validate --max-label-len 20 specs/apps/ose/lms-be`.
+      Acceptance: 0 violations. The `md-mermaid` pre-commit gate runs at rhino's default of 30
+      because `repo-config.yml` passes it no `--max-label-len`, so a green commit does **not** prove
+      the 20-character rule holds — and labels past roughly 27 characters clip silently in GitHub's
+      renderer.
+- [ ] [AI] Visually confirm each rendered `architecture.md` diagram in the GitHub pull-request
+      preview before marking this phase complete, per the
+      [render-fidelity caveat](../../../repo-governance/conventions/formatting/diagrams/mermaid-render-fidelity-caveat.md):
+      a green `md mermaid validate` is necessary, not sufficient. Acceptance: no label is clipped in
+      the rendered output.
 - [ ] [AI] Write the four feature files verbatim from `prd.md`: `behaviours/health/health.feature`,
       `behaviours/health/actuator.feature`, `behaviours/hello/hello.feature`, and
       `behaviours/config/port-resolution.feature`, each with a domain `README.md` stating its
@@ -645,7 +656,7 @@ One pull request in `ose-public`.
   - _Suggested executor: `swe-java-dev`_
 - [ ] [AI] Create `apps/ose-lms-be/project.json` with tags
       `["type:app", "platform:springboot", "lang:java", "domain:ose"]`, `implicitDependencies:
-  ["ose-lms-contracts"]`, and targets `codegen`, `build`, `typecheck`, `lint`, `dev`, `run`,
+["ose-lms-contracts"]`, and targets `codegen`, `build`, `typecheck`, `lint`, `dev`, `run`,
       `test:unit`, `test:quick`, `test:coverage:unit`, `test:coverage:behaviour`, `test:coverage`,
       `deps:audit`, `compat:min-version`,
       `specs:structure-validation`, plus `namedInputs.specs`. Declare **no** `test:coverage:e2e`

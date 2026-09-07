@@ -28,20 +28,21 @@ one fails quietly rather than loudly.
 graph LR
     J["A .java file<br/>enters the repo"]:::orange
 
-    J --> C["scripts/<br/>behaviour-coverage.mjs"]:::gray
+    J --> C["behaviour-coverage"]:::gray
     J --> W[".github/workflows/<br/>pr-quality-gate.yml"]:::gray
     J --> R["repo-config.yml<br/>gates:"]:::gray
-    J --> D["rhino-cli<br/>Doctor.fs + RepoConfig.fs"]:::gray
+    J --> D["rhino-cli<br/>Doctor.fs<br/>RepoConfig.fs"]:::gray
     J --> T["tag vocabulary,<br/>ports, language docs"]:::gray
 
-    C --> C1["BINDING_FILE regex omits .java<br/>so steps look unbound"]:::blue
-    W --> W1["no has-java detect or job<br/>so Java is never gated"]:::blue
-    R --> R1["no format-java pair<br/>so .java skips pre-commit"]:::blue
-    D --> D1["inventory is a hardcoded list<br/>so a java tool is invalid"]:::blue
-    T --> T1["lang:java not an allowed value<br/>so no port, no guide, no agent"]:::blue
+    C --> C1["BINDING_FILE omits<br/>.java, so steps<br/>look unbound"]:::blue
+    W --> W1["no has-java detect<br/>or job, so Java<br/>is never gated"]:::blue
+    R --> R1["no format-java pair<br/>so .java skips<br/>pre-commit"]:::blue
+    D --> D1["inventory is<br/>hardcoded, so a<br/>java tool is invalid"]:::blue
+    T --> T1["lang:java is not<br/>an allowed value:<br/>no port, no guide"]:::blue
 
     classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
@@ -81,11 +82,11 @@ Concretely, verified in the current commit:
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Gray #808080
 graph TD
-    SPEC["specs/apps/ose/lms-be/<br/>behaviours + architecture"]:::teal
-    CON["ose-lms-contracts<br/>OpenAPI, bundled by Redocly"]:::teal
-    BE["ose-lms-be<br/>Java 25 + Spring Boot"]:::blue
+    SPEC["specs: lms-be<br/>behaviours and<br/>architecture"]:::teal
+    CON["ose-lms-contracts<br/>OpenAPI, bundled<br/>by Redocly"]:::teal
+    BE["ose-lms-be<br/>Java 25, Spring Boot"]:::blue
     E2E["ose-lms-be-e2e<br/>Playwright-BDD"]:::orange
-    VAL["scripts/behaviour-coverage.mjs<br/>static binding proof"]:::gray
+    VAL["behaviour-coverage<br/>static binding proof"]:::gray
 
     CON -->|"bundle then codegen"| BE
     SPEC -->|"corpus"| VAL
@@ -99,6 +100,10 @@ graph TD
     classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
+Node labels are abbreviated to stay inside the 20-character-per-line render limit. In full: `SPEC`
+is `specs/apps/ose/lms-be/`, `VAL` is `scripts/behaviour-coverage.mjs`, and the contract corpus
+lives at `specs/apps/ose/lms-be/contracts/`.
+
 ### 2.2 Service internals
 
 Four production classes, deliberately. Anything more is domain modelling this plan does not do.
@@ -107,10 +112,10 @@ Four production classes, deliberately. Anything more is domain modelling this pl
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
 graph TD
     APP["OseLmsBeApplication<br/>Spring entry point"]:::orange
-    PORT["PortResolver<br/>pure: flag, env, default"]:::teal
+    PORT["PortResolver<br/>pure resolver:<br/>flag, env, default"]:::teal
     H["HealthController<br/>GET /api/v1/health"]:::blue
     G["HelloController<br/>GET /api/v1/hello"]:::blue
-    ACT["Actuator<br/>health only, via config"]:::orange
+    ACT["Actuator<br/>health endpoint only"]:::orange
 
     APP --> PORT
     APP --> H
@@ -132,13 +137,13 @@ the Unit boundary the BDD standard defines.
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Gray #808080
 graph LR
     F[".feature scenario"]:::teal
-    U["Unit adapter<br/>Cucumber-JVM + MockMvc<br/>in-process, no socket"]:::blue
-    E["E2E adapter<br/>Playwright-BDD<br/>real HTTP, started server"]:::orange
+    U["Unit adapter<br/>Cucumber-JVM,<br/>MockMvc in-process"]:::blue
+    E["E2E adapter<br/>Playwright-BDD<br/>real HTTP server"]:::orange
     X["@e2e-exempt<br/>+ exemption comment<br/>+ alternative proof"]:::gray
 
-    F -->|"always, no exemption exists"| U
-    F -->|"HTTP-observable scenarios"| E
-    F -->|"port-resolution scenarios"| X
+    F -->|"always, no exemption"| U
+    F -->|"HTTP-observable"| E
+    F -->|"port resolution"| X
     X -.->|"names its Unit proof"| U
 
     classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
@@ -158,10 +163,10 @@ symmetry [Repo-grounded].
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Gray #808080
 graph TD
     P0["Phase 0<br/>baseline<br/>no PR"]:::gray
-    DU1["DU1 — doctor refactor<br/>ose-public + ose-private"]:::orange
-    DU2["DU2 — Java enablement<br/>ose-public"]:::blue
-    DU3["DU3 — contract + service"]:::blue
-    DU4["DU4 — E2E + reconciliation"]:::teal
+    DU1["DU1 doctor refactor<br/>both repositories"]:::orange
+    DU2["DU2 Java enablement<br/>ose-public"]:::blue
+    DU3["DU3 contract<br/>and service"]:::blue
+    DU4["DU4 E2E and<br/>reconciliation"]:::teal
 
     P0 --> DU1 --> DU2 --> DU3 --> DU4
 
