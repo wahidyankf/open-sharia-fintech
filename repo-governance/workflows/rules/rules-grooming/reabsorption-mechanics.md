@@ -50,4 +50,4 @@ A merge is not a file concatenation. Each of these has broken a run that omitted
 
 - [Steps 3-4](./steps-3-4-candidate-discovery-and-ranking.md) — the admission rules these serve.
 - [Steps 5-6](./steps-5-6-checkpoint-and-handoff.md) — the hand-off that carries them.
-- [Steps 7-8](./steps-7-8-preservation-verification-and-recurrence.md) — the proof they worked.
+- [Step 7](./step-7-preservation-verification.md) — the proof they worked.

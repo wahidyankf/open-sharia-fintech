@@ -39,6 +39,36 @@ Feature: Repository rules grooming
     When preservation verification runs
     Then the run halts with that obligation named
 
+  Scenario: Every run is gated, including the zero-risk class
+    Given a run whose only class is fragmentation
+    And preservation verification passed
+    When Step 8 is reached
+    Then the rules quality gate is invoked once in EFFECTIVE mode
+    And the run does not reach Step 9 without a passing verdict
+
+  Scenario: The gate is invoked under named authorization, not inferred
+    Given the gate refuses authorization inferred from another workflow
+    When grooming invokes it at Step 8
+    Then the gate's Authorization section names grooming as a sanctioned caller
+    And no other workflow inherits that permission
+
+  Scenario: A gate finding outside the run's own edits defers
+    Given the gate reports a finding on a surface this run never touched
+    When the ledger is bounded
+    Then the finding is recorded as next-sweep input rather than repaired
+    And the gate is not re-run to confirm any repair
+
+  Scenario: A gate handoff continues into propagation without asking again
+    Given the gate returns NEEDS_PROPAGATION
+    When Step 8 handles the verdict
+    Then propagation runs once with the frozen ledger and no further user instruction
+    And propagation's terminal result is reported as the step's
+
+  Scenario: A run that lost an obligation is never submitted for a verdict
+    Given preservation verification found an unapproved loss
+    When the run halts at Step 7
+    Then the governance verdict is not requested
+
   Scenario: Grooming never writes a rule surface
     Given a manifest of approved candidates
     When the workflow hands them off

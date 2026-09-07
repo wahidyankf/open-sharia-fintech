@@ -28,7 +28,10 @@ All of:
 - Every approved item carries a propagation terminal status.
 - The post-run obligation inventory differs from the pre-run inventory only by the approved
   retirements, with every survivor unchanged and reachable.
-- The log entry is written, including the metrics delta and the next trigger evaluation.
+- The rules quality gate returned `PASS_EFFECTIVE`, or returned `NEEDS_PROPAGATION` and the
+  propagation it handed off to landed.
+- The log entry is written, including the metrics delta, the gate verdict, every finding bounded
+  out to the next sweep, and the next trigger evaluation.
 
 ## Halted
 
@@ -58,9 +61,13 @@ leaves the corpus coherent.
 - Recording a preservation diff as clean without re-running the inventory under identical
   extraction rules.
 - Declaring an obligation loss acceptable because the reduction was large.
+- Skipping the governance verdict because the run's class was the zero-risk one. Every run is
+  gated; preserving every obligation does not prove the corpus still coheres.
+- Re-running the gate to confirm its own repair, or repairing a gate finding on a surface this run
+  never touched instead of recording it for the next sweep.
 
 ## Related Documents
 
 - [Success Criteria](./success-criteria.md) — the Gherkin form of these conditions.
-- [Steps 7-8](./steps-7-8-preservation-verification-and-recurrence.md) — the verification that
+- [Step 7](./step-7-preservation-verification.md) — the verification that
   decides between groomed and halted.

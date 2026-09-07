@@ -24,8 +24,12 @@ guides.
 - **Deciding the rule.** The workflow places a rule; it does not invent one. An unfalsifiable
   input is normalized or rejected at Step 0, never guessed at.
 - **The wide sweep.** Tidying is subject-scoped. Repository-wide duplication, contradiction, and
-  traceability findings belong to the composed
-  [rules-quality-gate](../rules-quality-gate.md), which runs at Step 8.
+  traceability findings belong to [rules-grooming](../rules-grooming.md), the corpus-state-triggered
+  sweep, which hands each reduction back to this workflow to write. This workflow never invokes
+  [rules-quality-gate](../rules-quality-gate.md) — see
+  [Step 8](./step-8-verification.md), which explains why that edge stays absent. Where a
+  repository-wide concern is suspected mid-run, invoke `rules-checker` directly and treat what it
+  finds as new input rather than this run's blocker.
 - **Enforcement implementation.** The workflow declares and arms a gate; it does not write the
   validator behind one. That is application work under its own specs.
 - **The sibling repository.** One run touches one repository. The sibling obligation is recorded,

@@ -1,12 +1,10 @@
 ---
-title: "Steps 7-8 — Preservation Verification and Recurrence"
-description: The post-run obligation diff that proves nothing was lost, the revert path when it fails, and the log entry that arms the next sweep's trigger.
-when_to_use: Use when verifying a completed grooming sweep preserved every obligation, or recording the run.
+title: "Step 7 — Preservation Verification"
+description: The obligation diff and line-containment check that together prove a grooming run removed representation without removing any obligation.
+when_to_use: Use when verifying that a completed grooming sweep preserved every obligation.
 ---
 
-# Steps 7-8 — Preservation Verification and Recurrence
-
-## Step 7: Preservation Verification (Sequential)
+# Step 7 — Preservation Verification
 
 This is the step the whole workflow exists to be able to pass. Every other step is a way of
 arriving here with a diff that comes out empty.
@@ -30,12 +28,11 @@ The run passes only if:
   case the removed text covered.
 
 **Navigation is not obligation.** The inventory must exclude index entries — a bullet or ordered
-list item whose text is a link followed by an annotation — and `when_to_use` routing clauses. Both are
-pointers to content stated in their target — the README-completeness convention requires the
-annotation to describe that target — so counting them makes every legitimate index update read as
-an obligation loss. A run that skipped this exclusion reported 12 false losses against 0 real ones.
-An obligation found _only_ in an annotation and nowhere in its target is a governance defect in
-that pair, reported as a finding rather than absorbed into the count.
+list item whose text is a link followed by an annotation — and `when_to_use` routing clauses. Both
+are pointers to content stated in their target, so counting them makes every legitimate index
+update read as an obligation loss. A run that skipped this exclusion reported 12 false losses
+against 0 real ones. An obligation found _only_ in an annotation and nowhere in its target is a
+governance defect in that pair, reported as a finding rather than absorbed into the count.
 
 **Two independent proofs, not one.** For a verbatim-move reduction, also check line-level
 containment: every non-frontmatter line of each merged shard must be present in its parent, modulo
@@ -51,21 +48,6 @@ an obligation diff misses when the lost text carried no obligation modal.
 A halt here is a finding about the workflow, not only about the item. Record which class produced
 the loss; a class that produces one is a candidate for tightening its admission rule.
 
-## Step 8: Record and Recurrence (Sequential)
+## Related
 
-**Procedure**: Append the run record to the corpus grooming log, then re-evaluate the recurrence
-trigger against the post-run census so the next sweep's due date is set by measurement rather than
-by assumption.
-
-The record carries: run date, `scope`, `classes`, the census before and after, the metrics delta
-(file count, total lines, metadata ratio), per-class item counts by disposition, every retirement
-with its rationale, every deferred item, and the propagation PRs.
-
-Deferred items carry forward. A rediscovered candidate that was previously rejected is recorded as
-rejected-again rather than presented as new, so a maintainer is never asked the same question
-twice without being told they already answered it.
-
-- **Output**: Log entry, including the `> Last groomed: YYYY-MM-DD` line the trigger reads.
-- **Success criteria**: The log entry is written even when the run ended `partial` or `halted`. A
-  run that leaves no record is indistinguishable from one that never happened, and the next sweep
-  would then repeat its rejected candidates.
+- [Step 8](./step-8-governance-verdict.md) — the semantic verdict this run must also clear.
