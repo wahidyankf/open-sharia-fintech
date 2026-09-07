@@ -11,7 +11,10 @@ execution checklist.
 
 ## Active Plans
 
-_No plans are in progress._
+- **[lms-init](./lms-init/README.md)** — Initialize `ose-lms-be`, a Java 25 + Spring Boot REST
+  backend for the OSE Learning Management System, with a hello-world and a health endpoint. Teaches
+  the repository to build, format, test, and gate Java at all, and refactors the `rhino-cli` doctor
+  tool inventory to be config-driven across `ose-public` and `ose-private`.
 
 ## Instructions
 
