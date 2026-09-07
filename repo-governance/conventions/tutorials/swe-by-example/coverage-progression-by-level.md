@@ -1,15 +1,5 @@
 ---
-title: "Coverage Progression by Level"
 description: "Defines the topic focus, topic list, and example count for beginner, intermediate, and advanced coverage levels."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - education
-  - code-first
-created: 2025-12-25
 when_to_use: "Read when deciding which topics belong in the beginner, intermediate, or advanced level of a by-example tutorial."
 ---
 

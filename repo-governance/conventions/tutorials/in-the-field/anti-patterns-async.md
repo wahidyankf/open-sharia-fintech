@@ -1,16 +1,6 @@
 ---
-title: "Anti-Pattern: Async Frameworks Without Threading Knowledge"
 description: The production consequences (CPU thrashing, deadlocks) of using async frameworks without threading fundamentals.
 when_to_use: Use when explaining the risk of teaching async frameworks before threading basics.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Anti-Pattern: Async Frameworks Without Threading Knowledge

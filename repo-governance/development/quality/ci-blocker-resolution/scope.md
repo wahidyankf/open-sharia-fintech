@@ -1,16 +1,5 @@
 ---
-title: "Scope"
 description: "What this convention applies to."
-category: explanation
-subcategory: development
-tags:
-  - ci
-  - quality-gates
-  - root-cause
-  - debugging
-  - anti-pattern
-  - preexisting-issues
-created: 2026-04-04
 when_to_use: "Use when checking whether this convention applies to a CI failure."
 ---
 

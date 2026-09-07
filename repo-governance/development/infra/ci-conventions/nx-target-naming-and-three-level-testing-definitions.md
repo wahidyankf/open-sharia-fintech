@@ -1,10 +1,5 @@
 ---
-title: "Nx Testing Targets and Boundaries"
 description: "Runtime, static coverage, and Unit/Integration/E2E boundary definitions"
-category: explanation
-subcategory: development
-tags: [ci-cd, nx, testing]
-created: 2026-03-31
 when_to_use: "Use when classifying a test or selecting its canonical target."
 ---
 

@@ -1,16 +1,6 @@
 ---
-title: "The Learning-Bearing Trigger"
 description: The decidable test for whether a plan's delivery checklist authoring or restructuring course/curriculum content brings it into scope, with worked positive and negative examples.
 when_to_use: Read this when deciding whether a new or existing plan must carry the syllabus folder layout, template-derived shape, and disposition/custody declarations.
-category: explanation
-subcategory: conventions
-tags:
-  - plans
-  - syllabus
-  - learning-bearing
-  - custody
-  - governance
-created: 2026-07-22
 ---
 
 # The Learning-Bearing Trigger

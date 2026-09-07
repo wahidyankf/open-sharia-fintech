@@ -1,16 +1,6 @@
 ---
-title: "Allowlist Mechanism"
 description: The two mechanisms — binding-example fences and the Platform Binding Examples heading — that allow vendor references inside governance files for illustrative purposes.
 when_to_use: Use when you need to legitimately include a vendor-specific example inside governance prose without triggering the vendor-audit scanner.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - governance
-  - vendor-independence
-  - agents
-  - platform-bindings
-created: 2026-05-02
 ---
 
 # Allowlist Mechanism

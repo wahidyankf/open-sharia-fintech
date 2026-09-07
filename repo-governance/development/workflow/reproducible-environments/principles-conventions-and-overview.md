@@ -1,16 +1,5 @@
 ---
-title: "Principles, Conventions, and Overview"
 description: The principles and conventions reproducible environments respect, and the five-part overview of what reproducibility requires.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - reproducibility
-  - volta
-  - docker
-  - environment
-  - dependencies
-created: 2025-12-28
 when_to_use: Use when tracing why reproducible-environment practices exist, or when orienting to the five areas this document covers.
 ---
 

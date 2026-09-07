@@ -1,17 +1,6 @@
 ---
-title: "Anti-Patterns: No Hands-On Practice Through No Story or Context (5-8)"
 description: "Documents anti-patterns 5 through 8: missing hands-on practice, missing visual aids, incorrect LaTeX delimiters, and sudden difficulty jumps."
 when_to_use: "Read when reviewing a tutorial draft for missing exercises, missing visuals, broken LaTeX, or abrupt difficulty jumps."
-category: explanation
-subcategory: conventions
-tags:
-  - tutorials
-  - diataxis
-  - learning
-  - pedagogy
-  - documentation
-  - teaching
-created: 2025-12-03
 ---
 
 # Anti-Patterns: No Hands-On Practice Through No Story or Context (5-8)

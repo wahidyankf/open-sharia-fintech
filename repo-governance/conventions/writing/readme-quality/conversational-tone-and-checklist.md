@@ -1,15 +1,5 @@
 ---
-title: "7. Conversational Tone and Quality Checklist"
 description: Writing in a friendly, non-corporate tone, plus the full quality checklist covering engagement, scannability, accessibility, and language
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - readme
-  - engagement
-  - accessibility
-  - writing
-created: 2025-12-07
 when_to_use: Read this before committing README changes, to run through the quality checklist.
 ---
 

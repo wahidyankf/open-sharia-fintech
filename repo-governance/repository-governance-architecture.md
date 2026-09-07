@@ -1,14 +1,5 @@
 ---
-title: "Repository Governance Architecture"
 description: Six-layer governance hierarchy defining how repository rules, conventions, and practices are organized
-category: explanation
-subcategory: architecture
-tags:
-  - architecture
-  - governance
-  - six-layer
-  - structure
-created: 2026-02-09
 when_to_use: Use when you need the full six-layer governance model — how vision, principles, conventions, development, agents, and workflows relate and trace to each other.
 ---
 

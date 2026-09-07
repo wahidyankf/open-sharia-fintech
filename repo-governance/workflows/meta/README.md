@@ -1,11 +1,6 @@
 ---
-title: "Workflow Meta Documentation"
 description: Reference material for designing workflows that are understandable and reusable
 when_to_use: Use when routing to reference material about how workflows are structured or executed.
-category: explanation
-subcategory: workflows
-tags: []
-created: 2026-05-12
 ---
 
 # Workflow Meta Documentation

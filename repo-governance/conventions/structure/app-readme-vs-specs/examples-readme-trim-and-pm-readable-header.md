@@ -1,18 +1,6 @@
 ---
-title: "App README vs Specs — Examples: README Trim and PM-Readable Header"
 description: Worked before/after examples of trimming Category B content out of an app README, and adding the PM-readability header block to a spec file.
 when_to_use: Use when you need a concrete before/after example of applying the content-split rule or the PM-readability header block.
-category: explanation
-subcategory: conventions
-status: "Pilot — initial issue"
-tags:
-  - conventions
-  - readme
-  - specs
-  - spec-tree-shape
-  - pm-readability
-  - c4
-created: 2026-05-09
 ---
 
 # Examples: README Trim and PM-Readable Header

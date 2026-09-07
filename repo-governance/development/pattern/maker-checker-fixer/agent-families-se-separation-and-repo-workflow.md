@@ -1,16 +1,5 @@
 ---
-title: "Agent Families — se-separation and repo-workflow"
 description: "The remaining two agent families using this pattern."
-category: explanation
-subcategory: development
-tags:
-  - maker-checker-fixer
-  - workflow
-  - content-quality
-  - agent-patterns
-  - validation
-  - automation
-created: 2025-12-14
 when_to_use: "Use for SE-doc separation or workflow docs."
 ---
 

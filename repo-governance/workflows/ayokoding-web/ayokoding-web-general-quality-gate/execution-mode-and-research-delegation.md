@@ -1,5 +1,4 @@
 ---
-title: "Execution Mode and Research Delegation"
 description: Describes the Agent Delegation (preferred) and Manual Orchestration (fallback) execution modes for the general quality gate, and how the facts-checker delegates deep web research.
 when_to_use: Use when deciding whether to run this quality gate via Agent tool delegation or manually, or when understanding how factual research is delegated.
 ---

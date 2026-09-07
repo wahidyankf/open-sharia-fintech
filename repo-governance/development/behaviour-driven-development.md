@@ -1,10 +1,5 @@
 ---
-title: "Behaviour-Driven Development"
 description: "Canonical Gherkin, adapter, exemption, and test-coverage contract for every testable OSE project"
-category: explanation
-subcategory: development
-tags: [bdd, gherkin, testing, coverage]
-created: 2026-09-05
 when_to_use: "Use before changing observable behaviour, adding a test adapter, or reviewing Gherkin coverage."
 ---
 

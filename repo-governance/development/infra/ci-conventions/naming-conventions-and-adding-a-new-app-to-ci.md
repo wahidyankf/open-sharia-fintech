@@ -1,10 +1,5 @@
 ---
-title: "Naming Conventions and Adding a New App to CI"
 description: App/workflow filename grammar and the new-app checklist.
-category: explanation
-subcategory: development
-tags: [ci-cd, github-actions]
-created: 2026-03-31
 when_to_use: Use when naming or onboarding a new app.
 ---
 

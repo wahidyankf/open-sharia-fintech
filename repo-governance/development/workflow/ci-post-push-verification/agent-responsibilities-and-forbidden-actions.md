@@ -1,14 +1,5 @@
 ---
-title: "Agent Responsibilities and Forbidden Actions"
 description: Who is responsible for CI post-push verification, and which shortcuts are explicitly forbidden.
-category: explanation
-subcategory: development
-tags:
-  - ci
-  - github-actions
-  - verification
-  - quality-gates
-  - workflow
 when_to_use: Use when checking whether an agent or workflow step owes CI verification, or whether an action being considered is a forbidden shortcut.
 ---
 

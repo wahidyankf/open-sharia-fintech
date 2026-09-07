@@ -1,16 +1,5 @@
 ---
-title: "Stage 1: Maker (Comprehensive Content Management)"
 description: "The maker stage - creates or updates content and dependencies."
-category: explanation
-subcategory: development
-tags:
-  - maker-checker-fixer
-  - workflow
-  - content-quality
-  - agent-patterns
-  - validation
-  - automation
-created: 2025-12-14
 when_to_use: "Use when a request calls for the maker stage."
 ---
 

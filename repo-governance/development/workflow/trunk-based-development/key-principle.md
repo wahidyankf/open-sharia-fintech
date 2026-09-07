@@ -1,15 +1,5 @@
 ---
-title: "Key Principle"
 description: The three-tier precedence that deterministically resolves the active delivery mode, and the environment-branch carve-out.
-category: explanation
-subcategory: development
-tags:
-  - trunk-based-development
-  - git
-  - workflow
-  - development
-  - continuous-integration
-created: 2025-11-26
 when_to_use: Use as the final authority on which delivery mode wins when multiple signals are present.
 ---
 

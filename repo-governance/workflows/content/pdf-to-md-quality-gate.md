@@ -1,64 +1,6 @@
 ---
-name: pdf-to-md-quality-gate
-title: "pdf-to-md-quality-gate"
 description: Converts a PDF to verbatim Markdown and validates fidelity via Maker-Checker-Fixer until convergence.
 when_to_use: Use when converting a PDF to Markdown, or revalidating an existing PDF-derived Markdown file.
-goal: Convert a PDF file to verbatim Markdown and validate conversion fidelity iteratively until zero findings achieved on two consecutive checks
-termination: "Zero findings on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)"
-inputs:
-  - name: pdf-file
-    type: string
-    description: Path to source PDF file (source of truth)
-    required: true
-  - name: md-file
-    type: string
-    description: Path to output Markdown file; default is same directory and filename as pdf-file with .md extension
-    required: false
-  - name: force-remake
-    type: boolean
-    description: Re-run maker even if Markdown file already exists
-    required: false
-    default: false
-  - name: mode
-    type: enum
-    values: [lax, normal, strict, ocd]
-    description: "Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ocd: all levels)"
-    required: false
-    default: strict
-  - name: min-iterations
-    type: number
-    description: Minimum check-fix cycles before allowing zero-finding termination (prevents premature success)
-    required: false
-  - name: max-iterations
-    type: number
-    description: Maximum check-fix cycles to prevent infinite loops
-    required: false
-    default: 7
-  - name: max-concurrency
-    type: number
-    description: "N+1 background-agent cap. Raise only for independent work with capacity and budget; lower under pressure; never self-promote."
-    required: false
-    default: 3
-outputs:
-  - name: final-status
-    type: enum
-    values: [pass, partial, fail]
-    description: Final validation status
-  - name: lifecycle-status
-    type: enum
-    values: [verified, pending, not-applicable]
-    description: Lifecycle evidence state, separate from final-status
-  - name: iterations-completed
-    type: number
-    description: Number of check-fix cycles executed
-  - name: pdf-to-md-report
-    type: file
-    pattern: local-tmp/pdf-to-md/pdf-to-md__*__audit.md
-    description: Final fidelity validation audit report
-  - name: execution-scope
-    type: string
-    description: Scope identifier for UUID chain tracking (default "pdf-to-md")
-    required: false
 ---
 
 # PDF-to-Markdown Quality Gate Workflow
@@ -69,6 +11,30 @@ a cross-reference source-of-truth proxy for the original PDF.
 
 **When to use**: converting a new PDF, revalidating after manual Markdown edits, or validating an
 existing conversion before treating it as a reference source.
+
+## Goal and Termination
+
+**Goal**: Convert a PDF file to verbatim Markdown and validate conversion fidelity iteratively until zero findings achieved on two consecutive checks
+
+**Termination**: Zero findings on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)
+
+## Inputs
+
+- **`pdf-file`** (string, required) — Path to source PDF file (source of truth)
+- **`md-file`** (string, optional) — Path to output Markdown file; default is same directory and filename as pdf-file with .md extension
+- **`force-remake`** (boolean, optional, default `false`) — Re-run maker even if Markdown file already exists
+- **`mode`** (enum: lax, normal, strict, ocd, optional, default `strict`) — Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ocd: all levels)
+- **`min-iterations`** (number, optional) — Minimum check-fix cycles before allowing zero-finding termination (prevents premature success)
+- **`max-iterations`** (number, optional, default `7`) — Maximum check-fix cycles to prevent infinite loops
+- **`max-concurrency`** (number, optional, default `3`) — N+1 background-agent cap. Raise only for independent work with capacity and budget; lower under pressure; never self-promote.
+
+## Outputs
+
+- **`final-status`** (enum: pass, partial, fail) — Final validation status
+- **`lifecycle-status`** (enum: verified, pending, not-applicable) — Lifecycle evidence state, separate from final-status
+- **`iterations-completed`** (number) — Number of check-fix cycles executed
+- **`pdf-to-md-report`** (file, pattern `local-tmp/pdf-to-md/pdf-to-md__*__audit.md`) — Final fidelity validation audit report
+- **`execution-scope`** (string) — Scope identifier for UUID chain tracking (default "pdf-to-md")
 
 ## Contents
 

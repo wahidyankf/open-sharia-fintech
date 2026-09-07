@@ -1,13 +1,5 @@
 ---
-title: "PASS: Best Practices"
 description: Five best practices - start concrete, composition, flat over nested, one job per component, wait for pain.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - simplicity
-  - yagni
-created: 2025-12-15
 when_to_use: Use when choosing how to structure new code.
 ---
 

@@ -1,5 +1,4 @@
 ---
-title: "Implementation Workflow"
 description: "Three-stage development workflow - make it work, make it right, make it fast"
 when_to_use: "Read this index to find the right Implementation Workflow child document."
 ---

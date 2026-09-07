@@ -1,15 +1,5 @@
 ---
-title: "Worktree and Artifact Cleanup Convention"
 description: Mandatory post-merge gate requiring safe removal of self-created worktrees, eligible branches, and plan-local regenerable build output while preserving diagnostics and shared state.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - worktree
-  - cleanup
-  - parallelism
-created: 2026-07-20
 when_to_use: Use when a plan that created worktrees, branches, or build output is finishing and needs to tear them down.
 ---
 

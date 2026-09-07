@@ -1,14 +1,5 @@
 ---
-title: "Special Cases"
 description: "Covers agent directory structure, agent versioning, and deprecating agents."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when versioning, deprecating, or restructuring an agent's directory placement.
 ---
 

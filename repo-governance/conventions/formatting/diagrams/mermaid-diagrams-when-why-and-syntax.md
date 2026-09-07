@@ -1,18 +1,6 @@
 ---
-title: "Mermaid Diagrams: When, Why, and Syntax"
 description: "Covers when to use Mermaid, why it's preferred, and the basic Mermaid syntax structure."
 when_to_use: "Use when starting a new Mermaid diagram and need the baseline when/why/syntax orientation."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Mermaid Diagrams: When, Why, and Syntax

@@ -1,5 +1,4 @@
 ---
-title: "Example Usage"
 description: "Worked example invocations covering all-relationships validation, a single language, a single framework, and iteration bounds."
 when_to_use: "Use when looking for a concrete invocation pattern to copy for a specific scenario."
 ---

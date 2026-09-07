@@ -1,5 +1,4 @@
 ---
-title: "Phase 5: Backlog Plan Establishment"
 description: Invokes plan-planning with the full inventory, approved bump table, and a Definition of Done for the plan it must author.
 when_to_use: Use when handing the approved bump set off to plan-planning to author the backlog plan.
 ---

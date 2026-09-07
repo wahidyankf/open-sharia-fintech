@@ -1,14 +1,6 @@
 ---
-title: "File Naming — Withdrawn Rules Detail"
 description: What each of the three withdrawn filename rules checked, and whether dropping the governance workflow scope prefix requirement was a deliberate decision.
 when_to_use: Read this when you need the full withdrawal history behind File Naming's Withdrawn Rules summary, or when deciding whether to re-document the workflow scope-prefix requirement.
-category: explanation
-subcategory: conventions
-tags:
-  - naming
-  - files
-  - conventions
-created: 2026-08-18
 ---
 
 # File Naming — Withdrawn Rules Detail

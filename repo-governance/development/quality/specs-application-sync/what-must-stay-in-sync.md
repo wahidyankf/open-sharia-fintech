@@ -1,16 +1,5 @@
 ---
-title: "What Must Stay in Sync"
 description: "The three artifacts requiring sync: C4 diagrams, Gherkin feature files, and specs/ README files."
-category: explanation
-subcategory: development
-tags:
-  - specs
-  - architecture
-  - c4-diagrams
-  - gherkin
-  - synchronization
-  - quality
-created: 2026-03-24
 when_to_use: "Use when deciding which spec artifact a code change must also update."
 ---
 

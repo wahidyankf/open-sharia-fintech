@@ -1,15 +1,5 @@
 ---
-title: "Root Cause Orientation"
 description: Find root causes and fix them properly - no temporary fixes, no laziness, senior engineer standards
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - quality
-  - root-cause
-  - senior-engineer
-  - minimal-impact
-created: 2026-03-09
 when_to_use: Use when diagnosing a bug or planning a fix and need to check whether the change addresses the actual cause with minimal, senior-engineer-approved scope.
 ---
 

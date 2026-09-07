@@ -1,15 +1,5 @@
 ---
-title: "Long-Lived WIP Belongs on a Branch, Not in the Index"
 description: Advisory (non-enforced) guidance to park long-lived work-in-progress on a refs/heads/wip/* branch instead of leaving it staged.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - worktree
-  - bare-repo
-  - safety
-created: 2026-07-21
 when_to_use: Use when work-in-progress would otherwise sit staged in a shared index for an extended period instead of on its own branch.
 ---
 

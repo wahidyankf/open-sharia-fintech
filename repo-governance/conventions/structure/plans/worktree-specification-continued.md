@@ -1,14 +1,5 @@
 ---
-title: "Worktree Specification — Executor Lifecycle and Example"
 description: Defines the executor's enter/sync/cleanup lifecycle for a plan's worktree and shows a worked `## Worktree` block.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when implementing or auditing worktree entry, sync, and cleanup behaviour.
 ---
 

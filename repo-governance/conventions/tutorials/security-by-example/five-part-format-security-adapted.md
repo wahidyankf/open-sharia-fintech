@@ -1,15 +1,5 @@
 ---
-title: Five-Part Format (Security-Adapted)
 description: The security-domain adaptation of the SWE By-Example five-part structure - coverage, scenario, annotated artifact, key takeaway, and why it matters.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - security
-  - tool-output
-created: 2026-05-21
 when_to_use: Use when structuring a new security by-example entry or checking an existing one against the five required parts.
 ---
 

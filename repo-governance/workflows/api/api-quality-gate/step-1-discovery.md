@@ -1,5 +1,4 @@
 ---
-title: "Step 1: Discovery (Agent Delegation)"
 description: How the API quality gate invokes api-exploratory-tester for one full live API discovery sweep.
 when_to_use: Use when starting an API quality gate run.
 ---

@@ -1,14 +1,5 @@
 ---
-title: "Related Documentation"
 description: "Links to documentation related to agent-skill separation."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when looking for further reading on agent-skill separation.
 ---
 

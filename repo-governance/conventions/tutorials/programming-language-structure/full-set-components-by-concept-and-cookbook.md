@@ -1,16 +1,6 @@
 ---
-title: "The Full Set Tutorial Package Components: By-Concept Track and Cookbook"
 description: The narrative-driven by-concept track and the practical cookbook, the remaining two of five mandatory Full Set Tutorial Package components.
 when_to_use: Use when defining or reviewing the by-concept track or the cookbook of a language's Full Set Tutorial Package.
-category: explanation
-subcategory: conventions
-tags:
-  - programming-languages
-  - tutorials
-  - ayokoding-www
-  - education
-  - structure
-created: 2025-12-27
 ---
 
 # The Full Set Tutorial Package Components: By-Concept Track and Cookbook

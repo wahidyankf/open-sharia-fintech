@@ -1,5 +1,4 @@
 ---
-title: "Execution Mode and Task List Contract"
 description: States that direct orchestration is mandatory and defines the composite-wide granular Task list contract that keeps the live task list in sync with disk.
 when_to_use: Use when starting the composite, to confirm orchestration mode and set up the live Task list correctly.
 ---

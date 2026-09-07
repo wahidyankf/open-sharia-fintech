@@ -1,15 +1,5 @@
 ---
-title: "Heading Hierarchy: Descriptive Headings, Semantic Structure, and Machine Enforcement"
 description: "Writing descriptive (not vague) headings, using headings only for structure, and where heading hierarchy is mechanically enforced"
-category: explanation
-subcategory: conventions
-tags:
-  - content-quality
-  - markdown
-  - writing-standards
-  - accessibility
-  - documentation
-created: 2025-12-07
 when_to_use: "Read this when naming a heading, or to check whether a given file path is covered by the automated heading-hierarchy gate."
 ---
 

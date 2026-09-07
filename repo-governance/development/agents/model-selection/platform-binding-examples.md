@@ -1,14 +1,5 @@
 ---
-title: "Platform Binding Examples"
 description: "Covers the registry-driven per-harness model-ID mapping for all four grades, why one generated mirror pins no model, and the caveats that make a grade mean different things per vendor."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - model-selection
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when translating a model grade to a concrete model ID for a specific harness.
 ---
 

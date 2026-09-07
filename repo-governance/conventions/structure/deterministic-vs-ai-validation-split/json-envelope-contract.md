@@ -1,16 +1,6 @@
 ---
-title: "JSON Envelope Contract"
 description: The canonical JSON envelope shape, key order, and byte-determinism guarantees the deterministic preflight emits.
 when_to_use: Use when producing or consuming the deterministic preflight's JSON output and you need the exact schema.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - governance
-  - validation
-  - quality-gate
-  - automation
-created: 2026-08-13
 ---
 
 # JSON Envelope Contract

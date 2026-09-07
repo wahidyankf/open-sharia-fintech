@@ -1,15 +1,6 @@
 ---
-title: "No Last Updated Convention"
 description: Superseded by the No Manual Date Metadata Convention. Non-website markdown files must not contain Last Updated footer blocks or updated frontmatter fields.
 when_to_use: Read this only if you were linked here directly — it redirects to the No Manual Date Metadata Convention, which holds the current authoritative rules.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - frontmatter
-  - maintenance
-  - git
-created: 2026-04-25
 ---
 
 # No Last Updated Convention

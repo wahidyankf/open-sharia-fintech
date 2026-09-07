@@ -1,17 +1,5 @@
 ---
-title: "Screenshot Conventions"
 description: "Naming, format, and content requirements for captured screenshots."
-category: explanation
-subcategory: development
-tags:
-  - evidence
-  - testing
-  - screenshots
-  - plans
-  - verification
-  - locale
-  - manual-testing
-created: 2026-06-20
 when_to_use: "Use when naming or capturing a screenshot as plan evidence."
 ---
 

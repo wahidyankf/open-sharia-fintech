@@ -1,5 +1,4 @@
 ---
-title: "Step 1: Working Tree and Branch"
 description: Where a propagation run does its work — the current tree by default — and the ledger and staging discipline that make working alongside unrelated changes safe.
 when_to_use: Use after intake succeeds and before any file is written, to establish where the run writes and how it keeps out of neighbouring work.
 ---

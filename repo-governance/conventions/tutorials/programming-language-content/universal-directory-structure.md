@@ -1,15 +1,5 @@
 ---
-title: "Universal Directory Structure"
 description: "The mandatory directory tree every programming language must follow on ayokoding-www."
-category: explanation
-subcategory: conventions
-tags:
-  - programming-languages
-  - ayokoding
-  - tutorials
-  - education
-  - content-standards
-created: 2025-12-18
 when_to_use: "Use when scaffolding or auditing a language's content folder/file layout."
 ---
 

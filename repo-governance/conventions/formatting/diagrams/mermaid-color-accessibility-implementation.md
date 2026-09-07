@@ -1,18 +1,6 @@
 ---
-title: "Mermaid Color Accessibility: Dark Mode, Shape Differentiation, and Implementation Example"
 description: "Covers dark/light mode compliance, required shape differentiation, and a worked implementation example for accessible Mermaid colors."
 when_to_use: "Use when implementing accessible colors in a Mermaid diagram and need a concrete classDef example."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Mermaid Color Accessibility: Dark Mode, Shape Differentiation, and Implementation Example

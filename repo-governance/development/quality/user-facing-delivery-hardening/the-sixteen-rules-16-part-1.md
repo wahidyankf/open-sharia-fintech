@@ -1,16 +1,5 @@
 ---
-title: "The Sixteen Rules (16, part 1)"
 description: "Rule 16: the near-end api-exploratory-tester retest before archival."
-category: explanation
-subcategory: development
-tags:
-  - quality
-  - planning
-  - ui
-  - verification
-  - testing
-  - deployment
-created: 2026-06-19
 when_to_use: "Use when an API feature-change plan is nearing archival."
 ---
 

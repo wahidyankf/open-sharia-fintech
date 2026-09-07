@@ -1,13 +1,5 @@
 ---
-title: "Vision Supported"
 description: Explains how progressive disclosure advances the project's meet-people-at-their-level vision.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - progressive-disclosure
-  - user-experience
-created: 2025-12-15
 when_to_use: Use when justifying layered complexity against the project's mission.
 ---
 

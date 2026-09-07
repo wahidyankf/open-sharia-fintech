@@ -1,18 +1,6 @@
 ---
-title: "Standard 1 — Content Split Rule: Category B (Behaviour/Contract/Architecture), and Applying the Rule"
 description: The definition and content table for Category B content that moves to specs/, plus the three-question test for classifying a README paragraph.
 when_to_use: Use when checking whether a piece of README content is behaviour/architecture (Category B) and must move to specs/, or when applying the split-rule decision test.
-category: explanation
-subcategory: conventions
-status: "Pilot — initial issue"
-tags:
-  - conventions
-  - readme
-  - specs
-  - spec-tree-shape
-  - pm-readability
-  - c4
-created: 2026-05-09
 ---
 
 # Standard 1 — Content Split Rule: Category B, and Applying the Rule

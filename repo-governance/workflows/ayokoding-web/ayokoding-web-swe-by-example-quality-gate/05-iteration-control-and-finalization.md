@@ -1,5 +1,4 @@
 ---
-title: "Steps 5-6: Iteration Control and Finalization"
 description: Documents the iteration-control logic for continuing or finalizing a run, and the finalization step that reports final status and outputs.
 when_to_use: Use when determining whether a by-example quality-gate run should continue iterating, or when reporting its final status.
 ---

@@ -1,15 +1,6 @@
 ---
-title: "Workflow Execution Mode Convention"
 description: Defines execution modes for workflows — Agent Delegation (preferred) and Manual Orchestration (fallback) — explaining how to use the Agent tool for delegated agent invocation and when to fall back to direct execution
 when_to_use: Use when a workflow step needs to invoke an agent or run its logic directly, and you need to decide which execution mode applies and how to execute it correctly.
-category: explanation
-subcategory: workflows
-tags:
-  - workflows
-  - execution-mode
-  - orchestration
-  - conventions
-created: 2026-01-05
 ---
 
 # Workflow Execution Mode Convention
@@ -22,15 +13,41 @@ pitfalls below.
 
 ## Contents
 
-- [Overview](./execution-modes/overview.md) — the two modes and why they matter.
 - [The Core Challenge](./execution-modes/the-core-challenge.md) — why persistence needs a defined mode.
 - [Agent Delegation Mode (Preferred)](./execution-modes/agent-delegation-mode.md) — invoking agents via the Agent tool.
 - [Manual Orchestration Mode (Fallback)](./execution-modes/manual-orchestration-mode.md) — direct tool execution.
-- [Execution Mode Decision Flow](./execution-modes/execution-mode-decision-flow.md) — the decision tree.
 - [Manual Mode Execution Pattern](./execution-modes/manual-mode-execution-pattern.md) — the six-step manual procedure.
 - [Implementation Example](./execution-modes/implementation-example.md) — the Execution Mode section template.
 - [Future Considerations](./execution-modes/future-considerations.md) — potential workflow-runner automation.
 - [Tool Usage Rules](./execution-modes/tool-usage-rules.md) — which tools apply per mode.
 - [Common Pitfalls](./execution-modes/common-pitfalls.md) — four recurring mistakes and fixes.
-- [Principles Implemented/Respected](./execution-modes/principles-implemented-respected.md) — traceability to foundational principles.
-- [Related Documentation](./execution-modes/related-documentation.md) — links to composing conventions.
+
+## Overview
+
+This convention defines the execution modes for workflows in this repository: **Agent Delegation** (preferred) and **Manual Orchestration** (fallback). Understanding both modes is essential for executing workflows that require persistent file changes.
+
+## Principles Implemented/Respected
+
+- **Explicit Over Implicit**: Clear description of execution mode behaviour
+- **Simplicity Over Complexity**: Two clearly defined modes with explicit decision flow
+- **Documentation First**: Document current reality, not ideal future state
+- **No Time Estimates**: Focus on what to do, not how long it takes
+- **Automation Over Manual**: Agent Delegation preferred over manual execution
+
+## Related Documentation
+
+- [Workflow Pattern Convention](./workflow-identifier.md) - Overall workflow structure
+- [Plan Quality Gate Workflow](../plan/plan-quality-gate.md) - Example workflow using agent delegation
+- [AI Agents Convention](../../development/agents/ai-agents.md) - Agent invocation patterns
+- [Maker-Checker-Fixer Pattern](../../development/pattern/maker-checker-fixer.md) - Validation workflow pattern
+
+## Execution Mode Decision Flow
+
+```
+What does the workflow step reference?
+├── Named agent → Agent exists as defined subagent_type in .claude/agents/?
+│   ├── YES → Use Agent Delegation (preferred)
+│   └── NO  → Use Manual Orchestration (fallback)
+├── Nested workflow → Execute that workflow (recursively apply this decision flow)
+└── Procedure → Use Manual Orchestration (follow procedure steps directly)
+```

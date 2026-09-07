@@ -1,14 +1,5 @@
 ---
-title: "Condensing and Splitting Agents"
 description: "Gives the criteria for deciding whether an oversized agent should be condensed in place or split into separate agents."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when the word-budget gate flags an agent definition and you need to decide whether to condense or split it.
 ---
 

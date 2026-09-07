@@ -1,12 +1,5 @@
 ---
-title: "How It Applies — Code Documentation"
 description: Requirements for README, inline-comment, and API documentation.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - documentation
-created: 2025-12-28
 when_to_use: Use when writing or reviewing code documentation.
 ---
 

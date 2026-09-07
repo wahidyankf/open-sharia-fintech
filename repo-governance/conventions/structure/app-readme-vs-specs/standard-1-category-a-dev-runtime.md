@@ -1,18 +1,6 @@
 ---
-title: "Standard 1 — Content Split Rule: Category A (Dev-Runtime)"
 description: The definition and content table for Category A — dev-runtime content that stays in an app or infra README.
 when_to_use: Use when checking whether a piece of README content is dev-runtime (Category A) and should stay in the README.
-category: explanation
-subcategory: conventions
-status: "Pilot — initial issue"
-tags:
-  - conventions
-  - readme
-  - specs
-  - spec-tree-shape
-  - pm-readability
-  - c4
-created: 2026-05-09
 ---
 
 # Standard 1 — Content Split Rule: Category A (Dev-Runtime)

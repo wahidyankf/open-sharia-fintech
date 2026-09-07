@@ -1,5 +1,4 @@
 ---
-title: "Plan Establishment Workflow"
 description: ">"
 when_to_use: "Read this index to find the right Plan Establishment Workflow child document."
 ---

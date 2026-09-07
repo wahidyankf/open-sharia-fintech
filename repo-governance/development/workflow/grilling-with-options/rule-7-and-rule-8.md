@@ -1,17 +1,5 @@
 ---
-title: "Rule 7 and Rule 8 — Unlisted Answers; Standing Options"
 description: The rule that a user's write-in answer always counts, and the two standing options every grilling question must carry.
-category: explanation
-subcategory: development
-tags:
-  - planning
-  - grill-me
-  - user-interaction
-  - plan-maker
-  - design-decisions
-  - interaction
-  - agents
-created: 2026-05-26
 when_to_use: Use when a user supplies an unlisted answer, or when checking whether a question surfaces both the blank-state type option and the chat option.
 ---
 

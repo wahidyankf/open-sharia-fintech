@@ -1,15 +1,5 @@
 ---
-title: "Writing Style: Active Voice and Professional Tone"
 description: "When to use active vs passive voice, and how to keep a professional yet approachable tone"
-category: explanation
-subcategory: conventions
-tags:
-  - content-quality
-  - markdown
-  - writing-standards
-  - accessibility
-  - documentation
-created: 2025-12-07
 when_to_use: "Read this when reviewing a passage for voice or tone before committing markdown content."
 ---
 

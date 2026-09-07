@@ -1,16 +1,5 @@
 ---
-title: "Proactive Preexisting Error Resolution"
 description: When encountering preexisting errors, bugs, or broken state during any work, fix the root cause rather than ignoring, monkey-patching, or passively mentioning the problem
-category: explanation
-subcategory: development
-tags:
-  - root-cause
-  - quality
-  - preexisting-errors
-  - proactive
-  - bug-fixing
-  - ai-agents
-created: 2026-03-28
 when_to_use: Use whenever you encounter a preexisting error, broken test, incorrect configuration, or degraded code while doing other work.
 ---
 

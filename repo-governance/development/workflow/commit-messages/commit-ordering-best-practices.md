@@ -1,14 +1,5 @@
 ---
-title: "Commit Ordering Best Practices"
 description: Order already-independent thematic commits by dependency without creating incomplete intermediate states.
-category: explanation
-subcategory: development
-tags:
-  - conventional-commits
-  - git
-  - development
-  - code-quality
-created: 2025-11-24
 when_to_use: Use when a change requires multiple commits and you need to decide what order to make them in.
 ---
 

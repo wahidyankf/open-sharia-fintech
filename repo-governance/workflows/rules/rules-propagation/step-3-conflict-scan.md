@@ -1,5 +1,4 @@
 ---
-title: "Step 3: Semantic Sufficiency and Conflict Scan"
 description: The pre-write semantic no-op gate, contradiction check, and layer-aware precedence rule.
 when_to_use: Use after classification and before placement, whenever a new rule may touch ground an existing rule already covers.
 ---

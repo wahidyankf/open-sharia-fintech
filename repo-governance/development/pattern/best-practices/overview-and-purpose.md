@@ -1,10 +1,5 @@
 ---
-title: "Overview and Purpose"
 description: "Why these best practices matter, and what guidance this document provides."
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: "Use when orienting to this document before reading a specific practice."
 ---
 

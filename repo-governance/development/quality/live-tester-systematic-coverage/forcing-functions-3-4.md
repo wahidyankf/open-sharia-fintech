@@ -1,16 +1,5 @@
 ---
-title: "The Six Forcing-Functions (3-4)"
 description: "Forcing-functions 3-4: declared-invariant conformance, styling consistency."
-category: explanation
-subcategory: development
-tags:
-  - testing
-  - live-testing
-  - usability
-  - ux
-  - quality
-  - systematic
-created: 2026-06-22
 when_to_use: "Use when applying the invariant-conformance or styling-consistency forcing-function."
 ---
 

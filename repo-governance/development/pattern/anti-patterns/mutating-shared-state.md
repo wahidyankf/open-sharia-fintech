@@ -1,10 +1,5 @@
 ---
-title: "Anti-Pattern 4: Mutating Shared State"
 description: "Code mutates data structures in place instead of creating new ones."
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: "Use when reviewing code that mutates function arguments or shared objects."
 ---
 

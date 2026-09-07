@@ -1,15 +1,5 @@
 ---
-title: "KEV Fast-Track and EPSS Escalation"
 description: How a CISA KEV listing bypasses the 60-day soak and forces Path C, and how a high EPSS score flags a bump for expedited scheduling.
-category: explanation
-subcategory: development
-tags:
-  - dependencies
-  - security
-  - versioning
-  - reproducibility
-  - workflow
-created: 2026-05-15
 when_to_use: Use when a CVE affecting the currently pinned version might be actively exploited, to decide whether to bypass the normal Path B soak window.
 ---
 

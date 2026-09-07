@@ -1,10 +1,5 @@
 ---
-title: "Anti-Pattern: Unpinned Dependencies"
 description: Not locking dependency versions or committing the lockfile causes inconsistent builds.
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use when adding a dependency or configuring version pinning and lockfile commits.
 ---
 

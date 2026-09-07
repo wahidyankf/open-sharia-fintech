@@ -1,15 +1,5 @@
 ---
-title: "Cost/Noise Control: Shared-Context Extract-Once (D13)"
 description: "Extracting shared PR context once, and large-diff handling."
-category: explanation
-subcategory: development
-tags:
-  - pr-review
-  - governance
-  - agents
-  - quality-gates
-  - boundary-rules
-created: 2026-07-23
 when_to_use: "Use when a large diff needs shared-context handling."
 ---
 

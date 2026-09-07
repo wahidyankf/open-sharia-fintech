@@ -1,10 +1,5 @@
 ---
-title: "Target Naming Standards — Canonical Lifecycle Targets"
 description: "Canonical names and applicability for build, static coverage, and runtime testing targets"
-category: explanation
-subcategory: development
-tags: [nx, targets, project-json]
-created: 2026-02-23
 when_to_use: "Use before adding or renaming an Nx lifecycle target."
 ---
 

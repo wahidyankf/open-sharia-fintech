@@ -1,18 +1,5 @@
 ---
-title: "When to Apply and References"
 description: Where the three-stage workflow applies, its exceptions, and further reading on the underlying software-engineering ideas.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - workflow
-  - implementation
-  - optimization
-  - refactoring
-  - surgical-changes
-  - goal-driven
-  - test-driven
-created: 2025-12-15
 when_to_use: Use when deciding whether the full three-stage workflow applies to a task, or when looking for further reading.
 ---
 

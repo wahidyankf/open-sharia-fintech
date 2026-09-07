@@ -1,16 +1,5 @@
 ---
-title: "How It Differs from SWE By-Example: Artifact Type, Self-Containment, and Annotation Semantics"
 description: How scenario by-example redefines artifact type, self-containment, and annotation semantics compared to code-first SWE by-example.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - scenario
-  - governance
-  - decision-making
-created: 2026-05-21
 when_to_use: Use when adapting the SWE by-example rules for artifact type, self-containment, or annotation style to a scenario-domain example.
 ---
 

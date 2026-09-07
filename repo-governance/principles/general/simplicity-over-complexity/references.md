@@ -1,14 +1,5 @@
 ---
-title: "References"
 description: External references - KISS, YAGNI, Rule of Three, books, and articles.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - simplicity
-  - kiss
-  - yagni
-created: 2025-12-15
 when_to_use: Use when looking for external sources backing this principle.
 ---
 

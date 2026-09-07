@@ -1,16 +1,6 @@
 ---
-title: "Validation and Enforcement"
 description: "Describes the automated validation performed by apps-ayokoding-www-general-checker and the quality-gate workflow."
 when_to_use: "Read when you need to know what an automated checker validates on By-Concept content or how the quality-gate workflow runs."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-concept
-  - education
-  - narrative-driven
-created: 2026-01-30
 ---
 
 # Validation and Enforcement

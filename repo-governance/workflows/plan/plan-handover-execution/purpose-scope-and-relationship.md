@@ -1,5 +1,4 @@
 ---
-title: "Purpose, Scope, and Relationship to plan-takeover-execution.md"
 description: What a handover captures, when (not) to write one, and how this write-side workflow relates to plan-takeover-execution.md's read side.
 when_to_use: Use when deciding whether a handover is warranted, or clarifying how this workflow's output feeds the takeover workflow.
 ---

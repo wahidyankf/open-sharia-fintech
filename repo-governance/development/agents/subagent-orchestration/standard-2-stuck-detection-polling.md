@@ -1,14 +1,5 @@
 ---
-title: "Standard 2 — 3-Minute Stuck-Detection Polling"
 description: "Covers the polling mechanism, stuck threshold, and recovery procedure for detecting a stuck background agent."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - subagents
-  - orchestration
-  - development
-created: 2025-11-23
 when_to_use: Use when a background agent has been running for a while and you need to check whether it is stuck.
 ---
 

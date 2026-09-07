@@ -1,16 +1,6 @@
 ---
-title: "Production-Validated Standards Summary: Quality and Anti-Pattern Coverage"
 description: The validated annotation-density, standard-library-first, code-quality, and anti-pattern-coverage standards with quality enhancement history.
 when_to_use: Use when checking a guide set's annotation density, code quality, or anti-pattern coverage against validated standards.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Production-Validated Standards Summary: Quality and Anti-Pattern Coverage

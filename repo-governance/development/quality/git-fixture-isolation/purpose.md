@@ -1,17 +1,5 @@
 ---
-title: "Purpose"
 description: "Why this convention exists."
-category: explanation
-subcategory: development
-tags:
-  - testing
-  - git
-  - test-fixtures
-  - isolation
-  - regression
-  - safety
-  - defense-in-depth
-created: 2026-07-19
 when_to_use: "Use when orienting to why git-fixture isolation is required."
 ---
 

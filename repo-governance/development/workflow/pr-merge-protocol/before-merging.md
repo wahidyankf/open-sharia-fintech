@@ -1,15 +1,5 @@
 ---
-title: "Before Merging"
 description: The full (a)-(e) precondition checklist an agent must confirm immediately before merging, and why the list is spelled out in full rather than abbreviated.
-category: explanation
-subcategory: development
-tags:
-  - pull-request
-  - merge
-  - quality-gates
-  - workflow
-  - merge-preconditions
-created: 2026-04-04
 when_to_use: Use as the final checklist immediately before executing a PR merge.
 ---
 

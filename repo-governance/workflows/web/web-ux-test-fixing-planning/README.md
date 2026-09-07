@@ -1,5 +1,4 @@
 ---
-title: "Web UX Test-Fixing Planning Workflow"
 description: "Run the three live-site UX-quality testers (exploratory, usability, design) sequentially against the same URL(s), then solidify one source-attributed fix plan with tech-docs.md and a TDD-shaped delivery.md."
 when_to_use: "Read this index to find the right Web UX Test-Fixing Planning Workflow child document."
 ---

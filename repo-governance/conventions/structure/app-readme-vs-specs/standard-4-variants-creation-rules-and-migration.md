@@ -1,18 +1,6 @@
 ---
-title: "Standard 4 — Spec Tree Shape: Per-Surface Variants, Creation Rules, and Migration"
 description: How the canonical spec tree varies by surface profile (full-stack/web-only/CLI/library), the rules for creating new corpora, and the five-folder-to-corpus migration path.
 when_to_use: Use when determining which corpora a given app profile needs, or migrating a five-folder spec tree to the logical owner corpus.
-category: explanation
-subcategory: conventions
-status: "Pilot — initial issue"
-tags:
-  - conventions
-  - readme
-  - specs
-  - spec-tree-shape
-  - pm-readability
-  - c4
-created: 2026-05-09
 ---
 
 # Standard 4 — Spec Tree Shape: Per-Surface Variants, Creation Rules, and Migration

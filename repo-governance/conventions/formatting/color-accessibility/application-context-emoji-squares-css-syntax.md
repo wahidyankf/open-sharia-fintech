@@ -1,18 +1,6 @@
 ---
-title: "Application Contexts: Emoji Squares, CSS, and Syntax Highlighting"
 description: "Covers accessible-palette guidance for colored square emoji plus future CSS custom properties and syntax-highlighting themes."
 when_to_use: "Use when implementing CSS theme colors or syntax-highlighting palettes that must stay color-blind accessible."
-category: explanation
-subcategory: conventions
-tags:
-  - accessibility
-  - color-blindness
-  - wcag
-  - design
-  - conventions
-  - mermaid-diagrams
-  - color-palette
-created: 2025-12-04
 ---
 
 # Application Contexts: Emoji Squares, CSS, and Syntax Highlighting

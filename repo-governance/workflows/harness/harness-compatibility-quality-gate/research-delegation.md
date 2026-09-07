@@ -1,5 +1,4 @@
 ---
-title: "Research Delegation"
 description: Why per-harness upstream research is delegated to web-researcher sub-tasks rather than performed inline, keeping the audit context lean.
 when_to_use: Use when understanding how the checker gathers current upstream harness conventions.
 ---

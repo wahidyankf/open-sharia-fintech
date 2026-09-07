@@ -1,16 +1,6 @@
 ---
-title: "Core Characteristics: Focus, Coverage, and Topic Count"
 description: The production-implementation focus, in-scope/out-of-scope coverage, and the 20-40 guide-count target for In-the-Field content.
 when_to_use: Use when scoping what an In-the-Field guide should and should not cover, or deciding how many guides a language needs.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Core Characteristics: Focus, Coverage, and Topic Count

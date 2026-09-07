@@ -1,5 +1,4 @@
 ---
-title: "Factual Validation Convention"
 description: "Universal methodology for validating factual correctness across all repository content using web verification"
 when_to_use: "Read this index to find the right Factual Validation Convention child document."
 ---

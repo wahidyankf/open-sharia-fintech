@@ -1,10 +1,5 @@
 ---
-title: "Summary and Principles/Conventions Implemented"
 description: Recap of all twelve best practices, plus the principles and conventions they implement.
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use as a quick recap of all twelve practices, or when tracing them back to the principles and conventions they implement.
 ---
 

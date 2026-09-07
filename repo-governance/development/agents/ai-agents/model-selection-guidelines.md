@@ -1,14 +1,5 @@
 ---
-title: "Model Selection Guidelines"
 description: "Summarizes the model-tier decision tree for choosing which model an agent should use."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when deciding which model tier a new or existing agent should declare.
 ---
 

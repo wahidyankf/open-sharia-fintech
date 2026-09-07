@@ -1,14 +1,5 @@
 ---
-title: "Principles and Conventions Implemented"
 description: The principles and companion conventions the commit message format respects.
-category: explanation
-subcategory: development
-tags:
-  - conventional-commits
-  - git
-  - development
-  - code-quality
-created: 2025-11-24
 when_to_use: Use when tracing why the commit message convention exists back to the principles and conventions it respects.
 ---
 

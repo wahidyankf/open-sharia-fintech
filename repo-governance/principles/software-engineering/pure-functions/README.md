@@ -1,5 +1,4 @@
 ---
-title: "Pure Functions Over Side Effects"
 description: "Prefer pure functions (deterministic, no side effects) for predictable, testable code"
 when_to_use: "Read this index to find the right Pure Functions Over Side Effects child document."
 ---

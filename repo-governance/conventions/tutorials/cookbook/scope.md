@@ -1,17 +1,6 @@
 ---
-title: "Scope"
 description: "Defines what the Cookbook convention covers and explicitly does not cover, and where it applies across the repository."
 when_to_use: "Read when determining whether a question about Cookbook tutorials is answered by this convention or a different one."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - cookbook
-  - education
-  - problem-solving
-  - recipes
-created: 2026-01-30
 ---
 
 # Scope

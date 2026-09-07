@@ -1,15 +1,5 @@
 ---
-title: "PR Reviewer-Discipline Convention"
 description: Defines the nine PR-review specialist disciplines, their owned/routed-to scope, and the boundary tie-breaker rule.
-category: explanation
-subcategory: development
-tags:
-  - pr-review
-  - governance
-  - agents
-  - quality-gates
-  - boundary-rules
-created: 2026-07-23
 when_to_use: "Use when a PR-review specialist needs its owned scope, or a finding needs disposition."
 ---
 

@@ -1,14 +1,5 @@
 ---
-title: "Special Considerations — Link Fixer as Fast-Tier"
 description: "Explains why the link-fixer agent is assigned the fast tier."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - model-selection
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when checking why link-fixer or a similar mechanical-fix agent should be fast-tier.
 ---
 

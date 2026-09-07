@@ -1,16 +1,6 @@
 ---
-title: "Worktree Path: Standards and Examples"
 description: The required worktree directory structure, hook routing mechanism, naming and gitignore requirements, plus PASS/FAIL examples for hook registration, worktree paths, and hook file naming
 when_to_use: Read this when creating or reviewing a WorktreeCreate hook, choosing a worktree path, or checking a worktree/hook filename against PASS/FAIL examples.
-category: explanation
-subcategory: conventions
-tags:
-  - worktree
-  - git
-  - repository-structure
-  - claude
-  - hooks
-created: 2026-05-03
 ---
 
 # Worktree Path: Standards and Examples

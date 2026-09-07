@@ -1,16 +1,5 @@
 ---
-title: "Principles and Conventions Implemented/Respected"
 description: "Principles/conventions implemented."
-category: explanation
-subcategory: development
-tags:
-  - quality
-  - planning
-  - ui
-  - verification
-  - testing
-  - deployment
-created: 2026-06-19
 when_to_use: "Use to trace this convention's rationale."
 ---
 

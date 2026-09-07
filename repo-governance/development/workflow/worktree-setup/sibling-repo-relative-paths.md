@@ -1,18 +1,5 @@
 ---
-title: "Sibling-Repo Relative Paths From Inside a Worktree (Multi-Repo Plans)"
 description: Why a naive ../sibling-repo path breaks from inside a worktree, and the correct nesting-adjusted relative path for a multi-repo worktree-to-pr plan.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - git
-  - worktree
-  - npm
-  - nx
-  - dependencies
-  - toolchain
-  - doctor
-created: 2026-03-28
 when_to_use: Use when authoring or reviewing a multi-repo delivery-checklist command that references a sibling repo with a relative path.
 ---
 

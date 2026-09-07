@@ -1,14 +1,5 @@
 ---
-title: "Model Tiers — Fast"
 description: "Defines the fast tier: agents that declare haiku for simple, high-volume, low-reasoning work."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - model-selection
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when deciding whether a new agent should declare the fast (haiku) model tier.
 ---
 

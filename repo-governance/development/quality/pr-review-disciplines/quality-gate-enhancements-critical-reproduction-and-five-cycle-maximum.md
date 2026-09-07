@@ -1,15 +1,5 @@
 ---
-title: "Quality Gates: CRITICAL-Reproduction and Cycle Cap"
 description: "Requiring reproduction for CRITICAL, and the bounded five-cycle cap."
-category: explanation
-subcategory: development
-tags:
-  - pr-review
-  - governance
-  - agents
-  - quality-gates
-  - boundary-rules
-created: 2026-07-23
 when_to_use: "Use when a CRITICAL finding lacks reproduction steps."
 ---
 

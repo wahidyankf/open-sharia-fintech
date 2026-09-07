@@ -1,16 +1,6 @@
 ---
-title: "Full Set Completeness and Content Requirements"
 description: The five mandatory-component completeness checklist plus frontmatter, link, overview-file, and index-file content requirements.
 when_to_use: Use when verifying a language's Full Set Tutorial Package is complete or when writing tutorial file content and frontmatter.
-category: explanation
-subcategory: conventions
-tags:
-  - programming-languages
-  - tutorials
-  - ayokoding-www
-  - education
-  - structure
-created: 2025-12-27
 ---
 
 # Full Set Completeness and Content Requirements

@@ -1,13 +1,5 @@
 ---
-title: "Conventions Implemented/Respected (Architecture Document)"
 description: Which conventions this document itself implements
-category: explanation
-subcategory: architecture
-tags:
-  - architecture
-  - governance
-  - traceability
-created: 2026-02-09
 when_to_use: Use when auditing this document's traceability to Layer 2.
 ---
 

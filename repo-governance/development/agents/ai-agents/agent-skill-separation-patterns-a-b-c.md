@@ -1,14 +1,5 @@
 ---
-title: "Agent-Skill Separation — Four Separation Patterns (A-C)"
 description: "Defines Separation Patterns A through C for splitting knowledge between agents and agent skills."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when choosing which separation pattern (reference Skill, convention link, or hybrid) fits a piece of agent knowledge.
 ---
 

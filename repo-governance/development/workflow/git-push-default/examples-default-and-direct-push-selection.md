@@ -1,15 +1,5 @@
 ---
-title: "Examples — Default and Direct-Push Selection"
 description: PASS and FAIL examples of the default worktree-to-pr flow versus an unauthorized direct push, and PASS for an eligible private main-to-origin-main selection.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - push
-  - trunk-based-development
-  - ai-agents
-created: 2026-04-25
 when_to_use: Use when checking whether a specific delivery transcript correctly used the default mode or a properly declared direct-push override.
 ---
 

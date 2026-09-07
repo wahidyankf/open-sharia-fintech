@@ -1,17 +1,5 @@
 ---
-title: "Code Quality Convention"
 description: Automated code quality tools (Prettier, Husky, lint-staged, Commitlint) and git hooks for consistent formatting and commit message standards
-category: explanation
-subcategory: development
-tags:
-  - development
-  - code-quality
-  - prettier
-  - husky
-  - lint-staged
-  - git-hooks
-  - automation
-created: 2026-05-12
 when_to_use: "Use when configuring, debugging, or bypassing a code-quality git hook or formatter."
 ---
 

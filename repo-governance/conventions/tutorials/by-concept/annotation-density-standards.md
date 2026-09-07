@@ -1,16 +1,6 @@
 ---
-title: "Annotation Density Standards"
 description: "Defines the 1.0-2.25 comment-per-code-line density target and the `// =>` output-annotation pattern for By-Concept code blocks."
 when_to_use: "Read when annotating code examples in a By-Concept tutorial and verifying comment density meets the standard."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-concept
-  - education
-  - narrative-driven
-created: 2026-01-30
 ---
 
 # Annotation Density Standards

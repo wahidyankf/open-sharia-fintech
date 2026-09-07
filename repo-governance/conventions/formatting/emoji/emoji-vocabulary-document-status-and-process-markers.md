@@ -1,16 +1,6 @@
 ---
-title: "Emoji Vocabulary: Document, Status, and Process Markers"
 description: The standard emoji vocabulary for document-type markers, status/signal markers, and action/process markers used at the start of headings.
 when_to_use: Use when picking an emoji for a heading that marks an overview, status, or process/action section.
-category: explanation
-subcategory: conventions
-tags:
-  - emoji
-  - accessibility
-  - scannability
-  - conventions
-  - markdown
-created: 2025-12-04
 ---
 
 # Emoji Vocabulary: Document, Status, and Process Markers

@@ -1,15 +1,5 @@
 ---
-title: "The Red-Green-Refactor Cycle"
 description: The three-step Red/Green/Refactor loop every code change follows under TDD.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - workflow
-  - tdd
-  - testing
-  - red-green-refactor
-created: 2026-05-02
 when_to_use: Use as the canonical definition of the Red-Green-Refactor loop before implementing any code change.
 ---
 

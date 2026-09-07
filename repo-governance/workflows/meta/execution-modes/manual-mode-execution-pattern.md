@@ -1,13 +1,5 @@
 ---
-title: "Manual Mode Execution Pattern"
 description: The six-step procedure (initialize, check, terminate?, fix, iterate, finalize) for running a workflow manually without agent delegation.
-category: explanation
-subcategory: workflows
-tags:
-  - workflows
-  - execution-mode
-  - orchestration
-created: 2026-01-05
 when_to_use: Use when actually executing a workflow in Manual Orchestration mode and needing the concrete step sequence.
 ---
 

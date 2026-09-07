@@ -1,14 +1,5 @@
 ---
-title: "Guarded Admission and Parallelism"
 description: One outer HIPPO boundary per compute-bearing DAG node, which reservations each class makes, and the only two worker variables OSE maps.
-category: explanation
-subcategory: development
-tags:
-  - resource-management
-  - parallelism
-  - development
-  - tooling
-created: 2026-09-05
 when_to_use: Use when wiring a build, test, generator, or gate command, or when deciding whether two nodes must be serialized.
 ---
 

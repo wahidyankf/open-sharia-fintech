@@ -1,10 +1,5 @@
 ---
-title: "Anti-Patterns in Workflow Development"
 description: Common workflow anti-patterns and their corrected pattern.
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use when reviewing a workflow decision for a known anti-pattern.
 ---
 

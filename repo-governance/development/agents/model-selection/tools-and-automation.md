@@ -1,14 +1,5 @@
 ---
-title: "Tools and Automation"
 description: "Lists the gate and the agents that check model-tier compliance, and why the gate fails closed without a grade vocabulary."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - model-selection
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when looking for what validates an agent's model-tier declaration, or what the gate does without a registry.
 ---
 

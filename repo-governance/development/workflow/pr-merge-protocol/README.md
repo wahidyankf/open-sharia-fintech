@@ -1,5 +1,4 @@
 ---
-title: "PR Merge Protocol"
 description: "Practice governing PR merges — merge authority comes from hardened preconditions, not a per-instance prompt; `[AI]` merges by default."
 when_to_use: "Read this index to find the right PR Merge Protocol child document."
 ---

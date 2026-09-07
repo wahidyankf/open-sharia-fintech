@@ -1,14 +1,5 @@
 ---
-title: "Execution-Grade Clarity (HARD RULE)"
 description: Defines the outcome-section and granular-checkbox detail required for execution without extra context or duplicated Gherkin.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when writing or reviewing a delivery.md checkbox for execution-grade clarity.
 ---
 

@@ -1,18 +1,5 @@
 ---
-title: "Goal-Driven Execution — Application Examples"
 description: Two worked examples of goal-driven execution end to end - a new API endpoint and a bug fix.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - workflow
-  - implementation
-  - optimization
-  - refactoring
-  - surgical-changes
-  - goal-driven
-  - test-driven
-created: 2025-12-15
 when_to_use: Use as a worked reference when applying goal-driven execution to a new endpoint or a bug fix task.
 ---
 

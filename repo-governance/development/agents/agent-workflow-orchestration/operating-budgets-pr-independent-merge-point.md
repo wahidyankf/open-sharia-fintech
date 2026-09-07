@@ -1,15 +1,5 @@
 ---
-title: "Operating Budgets — The PR Is the Independent Merge Point"
 description: "Explains why worktree-to-pr isolates edits and gives every change-producing DAG leaf its own branch and PR under that mode."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - workflow
-  - orchestration
-created: 2025-11-23
 when_to_use: Use when deciding whether two pieces of concurrent work need separate worktrees and PRs.
 ---
 

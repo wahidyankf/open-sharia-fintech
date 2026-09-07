@@ -1,15 +1,5 @@
 ---
-title: "References"
 description: External references on automation, git hooks, and code quality.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - automation
-  - git-hooks
-  - ai-agents
-  - consistency
-created: 2025-12-15
 when_to_use: Use to find further reading behind a claim in this document.
 ---
 

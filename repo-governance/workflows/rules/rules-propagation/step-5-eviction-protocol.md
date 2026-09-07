@@ -1,5 +1,4 @@
 ---
-title: "Step 5: Eviction Protocol"
 description: How the workflow frees room on a full instruction surface by relocating a resident entry into a governance layer, in the same delivery as the admission.
 when_to_use: Use when a rule has passed the admission test's necessity condition but the destination has no budget headroom.
 ---

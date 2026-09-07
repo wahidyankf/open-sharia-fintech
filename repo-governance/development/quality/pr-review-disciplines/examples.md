@@ -1,15 +1,5 @@
 ---
-title: "Examples"
 description: "Worked examples of the nine-discipline review pipeline."
-category: explanation
-subcategory: development
-tags:
-  - pr-review
-  - governance
-  - agents
-  - quality-gates
-  - boundary-rules
-created: 2026-07-23
 when_to_use: "Use for a concrete example of this review pipeline."
 ---
 

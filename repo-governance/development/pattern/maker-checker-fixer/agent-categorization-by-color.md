@@ -1,16 +1,5 @@
 ---
-title: "Agent Categorization by Color"
 description: "How the three stages map to agent colors."
-category: explanation
-subcategory: development
-tags:
-  - maker-checker-fixer
-  - workflow
-  - content-quality
-  - agent-patterns
-  - validation
-  - automation
-created: 2025-12-14
 when_to_use: "Use when verifying an agent's color."
 ---
 

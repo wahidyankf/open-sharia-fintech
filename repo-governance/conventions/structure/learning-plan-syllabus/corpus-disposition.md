@@ -1,16 +1,6 @@
 ---
-title: "Corpus Disposition"
 description: The archive-with-plan versus promote-to disposition declaration every custodian plan carries in its selected technical form, the default rule, the promotion trigger test, and the corpus lifecycle diagram.
 when_to_use: Read this when writing a custodian plan's Corpus Disposition section in its selected technical form, or when deciding whether a corpus should switch from archive-with-plan to promote-to.
-category: explanation
-subcategory: conventions
-tags:
-  - plans
-  - syllabus
-  - learning-bearing
-  - custody
-  - governance
-created: 2026-07-22
 ---
 
 # Corpus Disposition

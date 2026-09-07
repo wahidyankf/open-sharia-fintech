@@ -1,15 +1,5 @@
 ---
-title: "Remediation and Sibling Repos"
 description: The commands to remove an existing per-repo [user] override, and how the behavioural guardrail applies across the sibling repositories.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - identity
-  - commits
-  - security
-  - reproducibility
-created: 2026-05-19
 when_to_use: Use when an existing `[user]` override must be removed, or when verifying the guardrail's coverage across ose-public and ose-private.
 ---
 

@@ -1,16 +1,6 @@
 ---
-title: "Core Validation Methodology — Command Syntax, Feature Existence, and Version Verification"
 description: Verification process and worked examples for checking command syntax, confirming a feature actually exists, and confirming version numbers are real and current.
 when_to_use: Use when verifying a specific command's flags, a claimed software feature, or a stated version number against authoritative sources.
-category: explanation
-subcategory: conventions
-tags:
-  - factual-validation
-  - verification
-  - web-research
-  - accuracy
-  - quality-assurance
-created: 2025-12-16
 ---
 
 # Core Validation Methodology — Command Syntax, Feature Existence, and Version Verification

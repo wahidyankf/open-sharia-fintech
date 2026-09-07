@@ -1,16 +1,6 @@
 ---
-title: "Examples in Documentation Types and References"
 description: Worked nested-fence examples for tutorials, how-to guides, and reference docs, plus links to the CommonMark and GitHub Flavored Markdown fence specifications.
 when_to_use: Use when writing a nested-fence example in a tutorial, how-to guide, or reference document and want a template to follow.
-category: explanation
-subcategory: conventions
-tags:
-  - markdown
-  - code-fences
-  - nesting
-  - syntax
-  - documentation
-created: 2025-12-23
 ---
 
 # Examples in Documentation Types and References

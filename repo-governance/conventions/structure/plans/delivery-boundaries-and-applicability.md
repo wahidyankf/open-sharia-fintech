@@ -1,14 +1,5 @@
 ---
-title: "Delivery Boundaries Declaration and Applicability"
 description: Shows the required Delivery Boundaries table format mapping phases to mode-specific delivery opportunities, and states applicability.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when writing a plan's Delivery Boundaries table or checking whether a grandfathered in-progress plan must retrofit gates.
 ---
 

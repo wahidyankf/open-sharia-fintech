@@ -1,15 +1,5 @@
 ---
-title: "Accessibility — Reduced Motion and ARIA Attributes"
 description: Honoring the prefers-reduced-motion media query, and the required ARIA attributes for each common component type (button, dialog, input, menu, tooltip, tab list, progress)
-category: explanation
-subcategory: development/frontend
-tags:
-  - accessibility
-  - wcag
-  - a11y
-  - aria
-  - focus
-created: 2026-03-28
 when_to_use: Use when adding an animation/transition, or when building any component that needs ARIA attributes (buttons, dialogs, inputs, menus, tooltips, tabs, progress bars).
 ---
 

@@ -1,10 +1,5 @@
 ---
-title: "Expression Safety"
 description: Two GitHub Actions expression-injection and falsy-value antipatterns.
-category: explanation
-subcategory: development
-tags: [ci-cd, github-actions]
-created: 2026-03-31
 when_to_use: Use when a run step references a ${{ ... }} expression.
 ---
 

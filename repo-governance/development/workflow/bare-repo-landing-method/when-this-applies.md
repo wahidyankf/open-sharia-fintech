@@ -1,15 +1,5 @@
 ---
-title: "When This Applies"
 description: The two conditions that trigger the bare-repo landing method, and the checked-out-branch trap to avoid.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - worktree
-  - bare-repo
-  - safety
-created: 2026-07-21
 when_to_use: Use when deciding whether a landing needs this method — a bare target repository, or a landing performed from a side worktree.
 ---
 

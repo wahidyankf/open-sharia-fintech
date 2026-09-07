@@ -1,19 +1,6 @@
 ---
-title: "Migration Path (Five-Folder to Logical Owner Corpus)"
 description: The atomic-commit procedure and path mapping for migrating a five-folder C4 spec tree to the logical owner corpus
 when_to_use: Read this when migrating an app's specs/apps/<app-family>/ tree from the retired five-folder layout to the logical owner corpus.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - specs
-  - gherkin
-  - directory-structure
-  - organization
-  - c4-diagrams
-  - openapi
-  - c4
-created: 2026-04-02
 ---
 
 # Migration Path (Five-Folder to Logical Owner Corpus)

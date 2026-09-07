@@ -1,15 +1,5 @@
 ---
-title: "Vercel Deployment Convention"
 description: Rules for configuring vercel.json when Nx build targets must run before the framework build
-category: explanation
-subcategory: development
-tags:
-  - vercel
-  - deployment
-  - nx
-  - build
-  - monorepo
-created: 2026-03-26
 when_to_use: Use when configuring `vercel.json` for a Vercel-deployed app whose Nx `build` target has `dependsOn` prerequisites.
 ---
 

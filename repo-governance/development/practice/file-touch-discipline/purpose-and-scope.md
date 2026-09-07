@@ -1,16 +1,5 @@
 ---
-title: "File-Touch Discipline — Purpose and Scope"
 description: The three observed failure modes that motivate File-Touch Discipline, and exactly what mutating operations and repositories this practice covers
-category: explanation
-subcategory: development
-tags:
-  - git
-  - safety
-  - concurrency
-  - ai-agents
-  - compaction
-  - discipline
-created: 2026-08-01
 when_to_use: Use when you need to understand why File-Touch Discipline exists, or to check whether a specific kind of work (read-only, delegated, generated) is covered by it.
 ---
 

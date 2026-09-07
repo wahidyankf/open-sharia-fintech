@@ -1,5 +1,4 @@
 ---
-title: "Evidence and Outcomes"
 description: "Defines pass authentication, terminal states, and no-retry rules."
 when_to_use: "Use when posting or consuming a pass result."
 ---

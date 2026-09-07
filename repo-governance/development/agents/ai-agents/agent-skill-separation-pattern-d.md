@@ -1,14 +1,5 @@
 ---
-title: "Agent-Skill Separation — Pattern D: Retain Task-Specific Logic"
 description: "Defines Separation Pattern D, for knowledge that must stay inline in the agent rather than move to a Skill."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when deciding that a piece of task-specific logic should remain in the agent body rather than become a Skill.
 ---
 

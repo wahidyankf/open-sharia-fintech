@@ -1,17 +1,6 @@
 ---
-title: "FP-Variant Multi-Language Convention — Standards S3: Clojure Idiomatic Patterns"
 description: The Clojure language patterns (namespaced-keyword maps, spec/malli, sequences and transducers, multimethods, threading macros, atoms/refs/agents, protocols) required in the Clojure tab.
 when_to_use: Use when writing or reviewing the Clojure tab of an FP-variant example, to confirm it uses native Clojure idioms rather than F#-influenced equivalents.
-category: explanation
-subcategory: conventions
-tags:
-  - fp
-  - clojure
-  - fsharp
-  - by-example
-  - ayokoding-www
-  - tutorial
-created: 2026-05-17
 ---
 
 # Standards S3: Clojure Idiomatic Patterns

@@ -1,14 +1,5 @@
 ---
-title: "Anti-Patterns"
 description: "Lists agent-authoring anti-patterns to avoid, cross-referencing the dedicated anti-patterns document."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when reviewing an agent definition for common authoring mistakes.
 ---
 

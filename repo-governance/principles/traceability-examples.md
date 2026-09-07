@@ -1,12 +1,5 @@
 ---
-title: "Traceability: From Principles to Implementation"
 description: Worked examples tracing a principle through convention/practice into concrete implementation
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - traceability
-created: 2025-12-15
 when_to_use: Use when you need a concrete worked example of how a principle should trace through a convention or practice into enforced implementation.
 ---
 

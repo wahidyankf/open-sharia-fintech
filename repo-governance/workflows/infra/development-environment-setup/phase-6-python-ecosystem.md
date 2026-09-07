@@ -1,5 +1,4 @@
 ---
-title: "Phase 6: Python Ecosystem (Sequential)"
 description: "Phase 6 (full scope only): install Python and ruff so the Python course corpora stay formatted."
 when_to_use: "Use when setting up Python under full scope."
 ---

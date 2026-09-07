@@ -1,5 +1,4 @@
 ---
-title: "Steps"
 description: The five sequential steps of the CI quality gate's check-fix-recheck loop, from initial check through finalization.
 when_to_use: Use when executing or auditing the CI quality gate's step-by-step logic.
 ---

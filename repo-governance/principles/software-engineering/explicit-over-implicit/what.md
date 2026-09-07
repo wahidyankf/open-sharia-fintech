@@ -1,14 +1,5 @@
 ---
-title: "What"
 description: Contrasts explicit and implicit configuration.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - explicit-configuration
-  - transparency
-  - clarity
-created: 2025-12-15
 when_to_use: Use for a quick working definition of explicit vs. implicit behaviour.
 ---
 

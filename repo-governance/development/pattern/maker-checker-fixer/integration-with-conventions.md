@@ -1,16 +1,5 @@
 ---
-title: "Integration with Conventions"
 description: "How this pattern integrates with other conventions."
-category: explanation
-subcategory: development
-tags:
-  - maker-checker-fixer
-  - workflow
-  - content-quality
-  - agent-patterns
-  - validation
-  - automation
-created: 2025-12-14
 when_to_use: "Use to trace a convention into this workflow."
 ---
 

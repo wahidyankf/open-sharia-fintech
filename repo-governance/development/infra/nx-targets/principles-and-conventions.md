@@ -1,15 +1,5 @@
 ---
-title: "Principles and Conventions Implemented/Respected"
 description: Lists the software-engineering principles and repo conventions that the Nx target scheme implements.
-category: explanation
-subcategory: development
-tags:
-  - nx
-  - targets
-  - project-json
-  - build
-  - scripts
-created: 2026-02-23
 when_to_use: Use when justifying why the target-naming and echo-placeholder rules exist, or when linking a target decision back to a named principle or convention.
 ---
 

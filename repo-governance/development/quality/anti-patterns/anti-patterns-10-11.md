@@ -1,13 +1,5 @@
 ---
-title: "Anti-Patterns 10-11"
 description: "Formatting the entire repo on every commit, mixing test levels."
-category: explanation
-subcategory: development
-tags:
-  - anti-patterns
-  - quality
-  - development
-created: 2026-05-12
 when_to_use: "Use when reviewing for these two quality anti-patterns."
 ---
 

@@ -1,16 +1,5 @@
 ---
-title: "How It Differs from SWE By-Example: Coverage Metric, Diagrams, and Framework Sequencing"
 description: How scenario by-example measures coverage, which Mermaid diagram types it uses, and why framework introduction is sequenced after the underlying concept.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - scenario
-  - governance
-  - decision-making
-created: 2026-05-21
 when_to_use: Use when scoping coverage percentages, choosing a Mermaid diagram type, or deciding when to introduce a named framework in a scenario-domain example.
 ---
 

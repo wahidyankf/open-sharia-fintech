@@ -1,10 +1,5 @@
 ---
-title: "Conclusion and Principles"
 description: Closing summary of anti-pattern outcomes and the principles/conventions this document implements.
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use when checking which principles and conventions the anti-patterns document traces back to.
 ---
 

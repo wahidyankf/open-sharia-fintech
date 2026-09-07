@@ -1,14 +1,5 @@
 ---
-title: "Relationship to Other Layers"
 description: How workflows relate to principles, conventions, development practices, agents, other workflows, and plans.
-category: explanation
-subcategory: workflows
-tags:
-  - workflows
-  - agents
-  - orchestration
-  - patterns
-created: 2025-12-23
 when_to_use: Use when explaining how workflows fit alongside principles, conventions, development practices, agents, or plans.
 ---
 

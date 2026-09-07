@@ -1,15 +1,6 @@
 ---
-title: "Convention Writing Convention — Purpose, Principles, and Scope"
 description: Why the convention-writing meta-convention exists, which core principles it implements, and what topics fall inside vs. outside conventions/.
 when_to_use: Use when deciding whether a new document belongs in conventions/ vs. development/, or when citing which principles a convention document implements.
-category: explanation
-subcategory: conventions
-tags:
-  - meta
-  - conventions
-  - standards
-  - documentation
-created: 2025-12-07
 ---
 
 # Purpose, Principles, and Scope

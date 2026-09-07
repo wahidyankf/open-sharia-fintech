@@ -1,16 +1,5 @@
 ---
-title: "Proactive Preexisting Error Resolution — The Three Anti-Patterns"
 description: Acting ignorant, monkey-patching, and passive mentioning - the three failure patterns for handling preexisting errors, each with worked examples and the correct alternative
-category: explanation
-subcategory: development
-tags:
-  - root-cause
-  - quality
-  - preexisting-errors
-  - proactive
-  - bug-fixing
-  - ai-agents
-created: 2026-03-28
 when_to_use: Use when reviewing your own response to a discovered preexisting error for one of these three failure patterns.
 ---
 

@@ -1,5 +1,4 @@
 ---
-title: "1. Initial Validation (Sequential)"
 description: "Step 1: invokes docs-software-engineering-separation-checker to identify separation violations and write the initial audit report."
 when_to_use: "Use when implementing or debugging the initial-validation step of the quality gate."
 ---

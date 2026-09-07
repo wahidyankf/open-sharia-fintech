@@ -1,5 +1,4 @@
 ---
-title: "Steps 6-8 — Two-Pager Reshape, Provenance, and Classification"
 description: Conforming every surviving idea to the eight-section template, appending provenance lines, and applying the urgency/importance rubrics.
 when_to_use: Use when normalizing an idea's structure, recording its move history, or filing it into an Eisenhower quadrant.
 ---

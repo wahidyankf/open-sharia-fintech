@@ -1,15 +1,5 @@
 ---
-title: "Formatting and File-Type Linting (lint-staged, not Nx targets)"
 description: Explains why formatting and several file-type lint checks run as lint-staged entries instead of Nx targets, with the glob-to-tool tables.
-category: explanation
-subcategory: development
-tags:
-  - nx
-  - targets
-  - project-json
-  - build
-  - scripts
-created: 2026-02-23
 when_to_use: Use when deciding whether a new file-type check belongs in lint-staged or as an Nx target.
 ---
 

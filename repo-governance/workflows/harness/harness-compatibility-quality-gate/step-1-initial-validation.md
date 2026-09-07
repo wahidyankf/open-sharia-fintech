@@ -1,5 +1,4 @@
 ---
-title: "Step 1: Initial Validation"
 description: Filters lifecycle-owned parity, runs retained semantic parity and external drift detection, and writes the first audit report.
 when_to_use: Use when running the first checker pass of a harness-compatibility quality-gate iteration.
 ---

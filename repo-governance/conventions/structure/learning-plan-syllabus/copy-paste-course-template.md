@@ -1,16 +1,6 @@
 ---
-title: "Copy-Paste Course Template"
 description: The three-tier (REQUIRED/RECOMMENDED/OPTIONAL) copy-paste markdown skeleton for authoring a new syllabus course file, matching the measured section tiering.
 when_to_use: Read this when starting a new syllabus/courses/<course-id>.md file — copy the REQUIRED skeleton, then add RECOMMENDED and OPTIONAL sections as they apply.
-category: explanation
-subcategory: conventions
-tags:
-  - plans
-  - syllabus
-  - learning-bearing
-  - custody
-  - governance
-created: 2026-07-22
 ---
 
 # Copy-Paste Course Template

@@ -1,15 +1,5 @@
 ---
-title: "Self-Containment Rules by Level"
 description: "Defines the self-containment requirements for beginner, intermediate, and advanced examples, and the acceptable vs unacceptable forms of cross-referencing between examples."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - education
-  - code-first
-created: 2025-12-25
 when_to_use: "Read when deciding how much a given example may assume from earlier examples, or when checking whether a cross-reference is acceptable."
 ---
 

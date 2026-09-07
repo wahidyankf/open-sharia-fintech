@@ -1,10 +1,5 @@
 ---
-title: "Anti-Pattern: Hardcoded Environment Configuration"
 description: Hardcoding production values in code creates security issues and breaks local development.
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use when about to hardcode a database URL, API key, or other environment-specific value in source code.
 ---
 

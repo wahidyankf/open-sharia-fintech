@@ -1,16 +1,5 @@
 ---
-title: "Examples"
 description: "Worked examples of the sixteen rules applied."
-category: explanation
-subcategory: development
-tags:
-  - quality
-  - planning
-  - ui
-  - verification
-  - testing
-  - deployment
-created: 2026-06-19
 when_to_use: "Use for a concrete example of these rules applied."
 ---
 

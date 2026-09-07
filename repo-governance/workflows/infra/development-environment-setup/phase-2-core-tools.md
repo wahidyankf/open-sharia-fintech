@@ -1,5 +1,4 @@
 ---
-title: "Phase 2: Core Tools (Sequential)"
 description: "Phase 2: install Git, Docker Desktop, and jq — the foundational tools required before anything else."
 when_to_use: "Use when installing the core tools a fresh environment needs before language ecosystems."
 ---

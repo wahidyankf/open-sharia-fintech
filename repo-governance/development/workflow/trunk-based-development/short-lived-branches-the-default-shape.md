@@ -1,15 +1,5 @@
 ---
-title: "Short-Lived Branches (the Default Shape)"
 description: The worktree-to-pr branch workflow example, the other cases branches are used for, and the branch lifespan rules.
-category: explanation
-subcategory: development
-tags:
-  - trunk-based-development
-  - git
-  - workflow
-  - development
-  - continuous-integration
-created: 2025-11-26
 when_to_use: Use when creating a short-lived plan branch, or checking whether a branch has outlived its acceptable lifespan.
 ---
 

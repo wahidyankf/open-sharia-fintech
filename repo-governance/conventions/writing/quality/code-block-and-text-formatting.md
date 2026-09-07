@@ -1,15 +1,5 @@
 ---
-title: "Code Block and Text Formatting"
 description: "Language-specific code block indentation standards and purposeful use of bold, italic, inline code, and strikethrough"
-category: explanation
-subcategory: conventions
-tags:
-  - content-quality
-  - markdown
-  - writing-standards
-  - accessibility
-  - documentation
-created: 2025-12-07
 when_to_use: "Read this when formatting a code block or deciding which inline text formatting to apply."
 ---
 

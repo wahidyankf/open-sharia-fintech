@@ -1,17 +1,5 @@
 ---
-title: "Grilling-With-Options Convention"
 description: Agents and workflows MUST resolve open design decisions using structured multiple-choice questions, not open-ended prose prompts.
-category: explanation
-subcategory: development
-tags:
-  - planning
-  - grill-me
-  - user-interaction
-  - plan-maker
-  - design-decisions
-  - interaction
-  - agents
-created: 2026-05-26
 when_to_use: Use whenever an agent or workflow must resolve an open design decision with the user, instead of asking an open-ended prose question.
 ---
 

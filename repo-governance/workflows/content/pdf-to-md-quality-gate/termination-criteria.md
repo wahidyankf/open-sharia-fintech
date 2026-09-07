@@ -1,5 +1,4 @@
 ---
-title: "Termination Criteria"
 description: "Defines the pass, partial, and fail termination criteria for each quality mode (lax/normal/strict/ocd)."
 when_to_use: "Use when determining what condition ends the workflow, or when choosing a quality mode."
 ---

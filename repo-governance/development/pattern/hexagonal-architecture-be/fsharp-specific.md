@@ -1,15 +1,5 @@
 ---
-title: "F#-Specific"
 description: "F#-specific idioms for outbound ports, dependency injection, and mapping domain errors to HTTP responses at the API boundary."
-category: explanation
-subcategory: development
-tags:
-  - architecture
-  - hexagonal
-  - ddd
-  - fsharp
-  - backend
-created: 2026-05-26
 when_to_use: "Use when implementing an F# outbound port interface, wiring DI in Program.fs, or mapping a domain error to an HTTP response."
 ---
 

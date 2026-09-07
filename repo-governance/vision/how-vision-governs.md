@@ -1,12 +1,5 @@
 ---
-title: "How Vision Governs Everything"
 description: How the vision propagates through principles, conventions, development, and agents
-category: explanation
-subcategory: vision
-tags:
-  - vision
-  - governance
-created: 2025-12-24
 when_to_use: Use when tracing how the foundational vision shapes principles, conventions, development practices, or agent automation.
 ---
 

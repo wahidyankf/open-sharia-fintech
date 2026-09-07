@@ -1,16 +1,6 @@
 ---
-title: "Factual Validation Convention — Web Verification Workflow"
 description: When to use WebSearch vs. WebFetch, search query patterns, handling 403 errors, and the preference order for authoritative sources.
 when_to_use: Use when choosing between WebSearch and WebFetch for a verification task, crafting a search query, or a fetch is blocked with a 403.
-category: explanation
-subcategory: conventions
-tags:
-  - factual-validation
-  - verification
-  - web-research
-  - accuracy
-  - quality-assurance
-created: 2025-12-16
 ---
 
 # Web Verification Workflow

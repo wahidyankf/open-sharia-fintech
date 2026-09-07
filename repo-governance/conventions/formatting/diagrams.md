@@ -1,18 +1,6 @@
 ---
-title: "Diagram and Schema Convention"
 description: Standards for using Mermaid diagrams and ASCII art in open-sharia-enterprise markdown files. Includes color-blind accessibility requirements
 when_to_use: "Use when adding, reviewing, or fixing any diagram, ASCII art, or plan-doc UI mockup in this repository."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Diagram and Schema Convention

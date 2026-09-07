@@ -1,15 +1,5 @@
 ---
-title: "Examples"
 description: PASS and FAIL examples of git identity configuration — a clean global identity, a per-repo override violation, and a compliant multi-identity includeIf setup.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - identity
-  - commits
-  - security
-  - reproducibility
-created: 2026-05-19
 when_to_use: Use when verifying whether a specific `.git/config` and `~/.gitconfig` combination passes or fails this convention.
 ---
 

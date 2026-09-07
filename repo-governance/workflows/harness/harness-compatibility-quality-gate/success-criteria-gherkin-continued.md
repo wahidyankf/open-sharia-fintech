@@ -1,5 +1,4 @@
 ---
-title: "Success Criteria (Gherkin) — Part 2"
 description: The remaining four Gherkin scenarios — spec updates, generator-logic escalation, out-of-scope escalation, and double-zero confirmation with bounded iteration.
 when_to_use: Use when verifying or testing this workflow's escalation and iteration-budget behaviour against its acceptance criteria.
 ---

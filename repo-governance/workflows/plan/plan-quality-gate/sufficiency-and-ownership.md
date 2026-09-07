@@ -1,5 +1,4 @@
 ---
-title: "Sufficiency and Ownership"
 description: What a plan-quality-gate PASS asserts, and the machine-decidable checks the gate must never reproduce.
 when_to_use: Use when deciding whether a plan gap is admissible to the ledger, or whether a check belongs to deterministic tooling.
 ---

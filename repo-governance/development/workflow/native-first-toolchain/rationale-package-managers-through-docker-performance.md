@@ -1,15 +1,5 @@
 ---
-title: "Rationale — Package Managers Through Docker Performance"
 description: Why native package managers are already idempotent, why installed binaries are the source of truth, why this is a single-machine problem, and why Docker Dev Containers cost too much on macOS.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - toolchain
-  - doctor
-  - environment
-  - architecture-decision
-created: 2026-04-04
 when_to_use: Use when justifying why native toolchain management beats IaC or containerized dev environments for this monorepo.
 ---
 

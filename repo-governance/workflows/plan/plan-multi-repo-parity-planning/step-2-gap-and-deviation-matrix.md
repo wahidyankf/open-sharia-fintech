@@ -1,5 +1,4 @@
 ---
-title: "Step 2 — Gap and Deviation Matrix Construction"
 description: Builds the deviation matrix by diffing per-repo inventories dimension-by-dimension, including the required meta-dimensions.
 when_to_use: Use after the survey, to construct the matrix that Step 3's grill will resolve row by row.
 ---

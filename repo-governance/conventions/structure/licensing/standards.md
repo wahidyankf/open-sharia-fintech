@@ -1,15 +1,6 @@
 ---
-title: "Licensing Standards"
 description: The concrete MIT-everywhere rule, the current per-directory LICENSE inventory, root LICENSE fallback coverage, required license text values, and the copyright notice format.
 when_to_use: Read this when placing or verifying a LICENSE file for a directory, or when checking the required copyright notice text and year range.
-category: explanation
-subcategory: conventions
-tags:
-  - licensing
-  - structure
-  - mit
-  - per-directory
-created: 2026-04-04
 ---
 
 # Licensing Standards

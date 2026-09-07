@@ -1,14 +1,5 @@
 ---
-title: "Recovery When Rate-Limited"
 description: The scheduled-wait recovery procedure for an HTTP 403 from gh, and why a retry loop is forbidden.
-category: explanation
-subcategory: development
-tags:
-  - ci
-  - github-actions
-  - rate-limiting
-  - monitoring
-  - workflow
 when_to_use: Use when a gh command returns HTTP 403 during CI monitoring.
 ---
 

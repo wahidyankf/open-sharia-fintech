@@ -1,15 +1,5 @@
 ---
-title: "Git Hook Lifecycle"
 description: Registry-backed lifecycle for the three Husky hook shims and their CI relationship
-category: explanation
-subcategory: development
-tags:
-  - git
-  - husky
-  - hooks
-  - ci-cd
-  - quality
-created: 2026-06-13
 when_to_use: Use when a Husky hook is failing, when adding or changing a pre-commit/pre-push/commit-msg gate, or when you need to know how local hooks relate to CI checks.
 ---
 

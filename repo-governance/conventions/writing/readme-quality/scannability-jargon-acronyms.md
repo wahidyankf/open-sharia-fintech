@@ -1,15 +1,5 @@
 ---
-title: "Guidelines: Scannability, Jargon, and Acronyms"
 description: "Three writing guidelines: short scannable paragraphs, eliminating jargon, and explaining acronyms with context"
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - readme
-  - engagement
-  - accessibility
-  - writing
-created: 2025-12-07
 when_to_use: Read this when a README paragraph reads as dense, jargon-heavy, or has an unexplained acronym.
 ---
 

@@ -1,14 +1,5 @@
 ---
-title: "The Rule and Workflow Mapping"
 description: The four required steps after pushing app or lib code, and which CI workflow to trigger per changed app.
-category: explanation
-subcategory: development
-tags:
-  - ci
-  - github-actions
-  - verification
-  - quality-gates
-  - workflow
 when_to_use: Use when you need the exact steps to verify CI after a push, or need to know which workflow file covers a changed app.
 ---
 

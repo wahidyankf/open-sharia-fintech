@@ -1,14 +1,5 @@
 ---
-title: "The Format Explained"
 description: The header, body, and footer parts of a commit message and the rules for each.
-category: explanation
-subcategory: development
-tags:
-  - conventional-commits
-  - git
-  - development
-  - code-quality
-created: 2025-11-24
 when_to_use: Use when writing a commit message and needing the exact rules for the header, body, or footer.
 ---
 

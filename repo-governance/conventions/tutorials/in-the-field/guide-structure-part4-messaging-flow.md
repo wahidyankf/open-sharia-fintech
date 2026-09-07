@@ -1,16 +1,6 @@
 ---
-title: "Guide Structure Part 4: Messaging Flow Diagrams"
 description: Mermaid diagrams for point-to-point JMS messaging and Kafka pub/sub progression with partitioning.
 when_to_use: Use when building a messaging-pattern progression diagram.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Guide Structure Part 4: Messaging Flow Diagrams

@@ -1,15 +1,5 @@
 ---
-title: "Build Context and Transitive Dependency Hoisting"
 description: Covers the repo-root build context requirement for docker-compose files and how to handle npm's transitive dependency hoisting in Docker builds.
-category: explanation
-subcategory: development/infra
-tags:
-  - docker
-  - monorepo
-  - npm-workspaces
-  - build
-  - node_modules
-created: 2026-03-28
 when_to_use: Use when a docker-compose build fails to find libs/ files, or when a Docker build fails on a module that is not a direct dependency of the app.
 ---
 

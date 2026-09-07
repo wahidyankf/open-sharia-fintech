@@ -1,11 +1,6 @@
 ---
-title: "Documentation Workflows"
 description: Workflows for checking that reader-facing documentation remains accurate and navigable
 when_to_use: Use when routing to a workflow that validates docs/ content quality or its style-guide separation.
-category: explanation
-subcategory: workflows
-tags: []
-created: 2026-05-12
 ---
 
 # Documentation Workflows

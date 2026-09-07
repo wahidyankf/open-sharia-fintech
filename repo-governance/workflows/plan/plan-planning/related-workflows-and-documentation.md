@@ -1,5 +1,4 @@
 ---
-title: "Related Workflows and Documentation — Plan Establishment"
 description: Links to the workflows and governance documents that plan-establishment calls, precedes, or depends on.
 when_to_use: Use when navigating from plan-establishment to plan-quality-gate, plan-execution, or the underlying conventions it relies on.
 ---

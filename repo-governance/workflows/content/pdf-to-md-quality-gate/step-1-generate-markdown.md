@@ -1,5 +1,4 @@
 ---
-title: "1. Generate Markdown (Conditional)"
 description: "Step 1: conditionally invokes pdf-to-md-maker to convert the source PDF to Markdown when no Markdown file exists yet or force-remake is set."
 when_to_use: "Use when implementing or debugging the conditional Markdown-generation step of the quality gate."
 ---

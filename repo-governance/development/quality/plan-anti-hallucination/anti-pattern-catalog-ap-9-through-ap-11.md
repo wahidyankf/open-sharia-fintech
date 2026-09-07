@@ -1,16 +1,5 @@
 ---
-title: "Anti-Patterns: AP-9 - AP-11"
 description: "Behaviour claim, cross-link, absence-search fabrication."
-category: explanation
-subcategory: development
-tags:
-  - plans
-  - ai-agents
-  - factual-validation
-  - anti-hallucination
-  - web-research
-  - verification
-created: 2026-05-03
 when_to_use: "Use as a checklist for AP-9 - AP-11."
 ---
 

@@ -1,15 +1,5 @@
 ---
-title: "Table Formatting, Line Length, and Paragraph Structure"
 description: "Table and alignment syntax, optimal prose line length, and paragraph structuring for web readability"
-category: explanation
-subcategory: conventions
-tags:
-  - content-quality
-  - markdown
-  - writing-standards
-  - accessibility
-  - documentation
-created: 2025-12-07
 when_to_use: "Read this when formatting a table or reviewing a document for line length and paragraph structure."
 ---
 

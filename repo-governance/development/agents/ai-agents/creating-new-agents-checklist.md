@@ -1,14 +1,5 @@
 ---
-title: "Creating New Agents — Agent Creation Checklist"
 description: "Gives the full checklist (frontmatter, document structure, content quality, convention compliance, information accuracy, file size, testing) for creating a new agent."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use as the step-by-step checklist while creating a new agent definition file.
 ---
 

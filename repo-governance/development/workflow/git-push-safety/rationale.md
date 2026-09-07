@@ -1,15 +1,5 @@
 ---
-title: "Rationale"
 description: Why force-push is destructive, why --no-verify is a safety bypass, why approval never carries forward, and the legitimate use cases for these operations.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - safety
-  - automation
-  - human-approval
-created: 2026-03-30
 when_to_use: Use when explaining to a user or teammate why this convention requires per-instance approval, or when judging whether a proposed force-push/hook-bypass is a legitimate use case.
 ---
 

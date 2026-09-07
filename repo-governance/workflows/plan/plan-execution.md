@@ -1,37 +1,6 @@
 ---
-name: plan-execution
-title: "plan-execution"
 description: Indexes end-to-end plan execution across per-topic children.
 when_to_use: Use when executing a plan or locating one execution step.
-goal: Execute a project plan, validate its completion and quality, then iteratively continue until all requirements are met and archive to plans/done/
-termination: End-to-end requirement-to-proof trace is complete, zero findings remain, and plan moved to done/
-inputs:
-  - name: plan-path
-    type: string
-    description: Path to the plan file to execute (e.g., "plans/in-progress/new-feature/plan.md")
-    required: true
-  - name: max-iterations
-    type: number
-    description: Maximum number of execute-check cycles to prevent infinite loops
-    required: false
-    default: 10
-  - name: max-concurrency
-    type: number
-    description: "Background agents run concurrently — the N in the N+1 model (1 main thread + N background agents = N+1 total). Raise only when independent work, machine capacity, and budget headroom all allow; lower under budget, runner, or disk pressure. Never self-promoted beyond the declared value."
-    required: false
-    default: 3
-outputs:
-  - name: final-status
-    type: enum
-    values: [pass, partial, fail]
-    description: Final execution and validation status
-  - name: iterations-completed
-    type: number
-    description: Number of execute-check cycles performed
-  - name: final-report
-    type: file
-    pattern: local-tmp/plan-execution/plan-execution__*__validation.md
-    description: Final validation report from plan-execution-checker
 ---
 
 # Plan Execution Workflow
@@ -40,6 +9,24 @@ outputs:
 
 > **Pre-Execution Requirement**: invoke `grill-me` first, per
 > [Grilling-With-Options](../../development/workflow/grilling-with-options.md).
+
+## Goal and Termination
+
+**Goal**: Execute a project plan, validate its completion and quality, then iteratively continue until all requirements are met and archive to plans/done/
+
+**Termination**: End-to-end requirement-to-proof trace is complete, zero findings remain, and plan moved to done/
+
+## Inputs
+
+- **`plan-path`** (string, required) — Path to the plan file to execute (e.g., "plans/in-progress/new-feature/plan.md")
+- **`max-iterations`** (number, optional, default `10`) — Maximum number of execute-check cycles to prevent infinite loops
+- **`max-concurrency`** (number, optional, default `3`) — Background agents run concurrently — the N in the N+1 model (1 main thread + N background agents = N+1 total). Raise only when independent work, machine capacity, and budget headroom all allow; lower under budget, runner, or disk pressure. Never self-promoted beyond the declared value.
+
+## Outputs
+
+- **`final-status`** (enum: pass, partial, fail) — Final execution and validation status
+- **`iterations-completed`** (number) — Number of execute-check cycles performed
+- **`final-report`** (file, pattern `local-tmp/plan-execution/plan-execution__*__validation.md`) — Final validation report from plan-execution-checker
 
 ## Contents
 

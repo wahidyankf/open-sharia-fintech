@@ -1,15 +1,5 @@
 ---
-title: "Covered Operations"
 description: The table of git push operations that require explicit, per-instance user approval before an agent may run them.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - safety
-  - automation
-  - human-approval
-created: 2026-03-30
 when_to_use: Use when deciding whether a specific push command or its aliased/scripted equivalent needs approval before running.
 ---
 

@@ -1,14 +1,5 @@
 ---
-title: "Governance Gate Class"
 description: The second, permanent quality-gate class — bounded, ledger-driven, terminal-verdict gates — and the rule for choosing between it and the *-check-fix class.
-category: explanation
-subcategory: workflows
-tags:
-  - workflows
-  - orchestration
-  - patterns
-  - quality-gates
-created: 2026-09-07
 when_to_use: Use when authoring a new quality gate, or when deciding which of the two gate classes an existing one belongs to.
 ---
 

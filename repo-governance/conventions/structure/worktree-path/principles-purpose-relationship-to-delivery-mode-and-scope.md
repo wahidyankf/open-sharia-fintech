@@ -1,16 +1,6 @@
 ---
-title: "Worktree Path: Principles, Purpose, Relationship to Delivery Mode, and Scope"
 description: The principles this convention implements, why it exists, how it relates to the Delivery Mode concept, and what it covers versus delegates elsewhere
 when_to_use: Read this when you need the rationale for the worktree path convention, how it relates to Delivery Mode, or whether a worktree topic falls inside its scope.
-category: explanation
-subcategory: conventions
-tags:
-  - worktree
-  - git
-  - repository-structure
-  - claude
-  - hooks
-created: 2026-05-03
 ---
 
 # Worktree Path: Principles, Purpose, Relationship to Delivery Mode, and Scope

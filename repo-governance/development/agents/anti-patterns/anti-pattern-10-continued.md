@@ -1,14 +1,5 @@
 ---
-title: "Anti-Pattern 10: Enumeration-Based Guards (Continued)"
 description: "Continues Anti-Pattern 10 with the confidence-assessment recipe for applying a denylist-guard finding."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - anti-patterns
-  - development
-  - best-practices
-created: 2025-11-23
 when_to_use: Use when writing up a finding about a denylist guard that fails open.
 ---
 

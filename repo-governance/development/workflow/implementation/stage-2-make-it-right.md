@@ -1,18 +1,5 @@
 ---
-title: "Stage 2: Make It Right"
 description: The second workflow stage - refactor working code for readability, maintainability, and clean code principles.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - workflow
-  - implementation
-  - optimization
-  - refactoring
-  - surgical-changes
-  - goal-driven
-  - test-driven
-created: 2025-12-15
 when_to_use: Use once functionality from Stage 1 works and tests pass, before considering any optimization.
 ---
 

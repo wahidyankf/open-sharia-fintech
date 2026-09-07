@@ -1,12 +1,5 @@
 ---
-title: "Relationship to Other Principles"
 description: Cross-references to deliberate-problem-solving, root-cause-orientation, explicit-over-implicit, automation-over-manual, progressive-disclosure.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - simplicity
-created: 2025-12-15
 when_to_use: Use when tracing connections to the repo's other principles.
 ---
 

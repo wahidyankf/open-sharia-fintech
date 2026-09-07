@@ -1,17 +1,5 @@
 ---
-title: "The Rule"
 description: "The rule requiring evidence capture for testing performed during plan execution."
-category: explanation
-subcategory: development
-tags:
-  - evidence
-  - testing
-  - screenshots
-  - plans
-  - verification
-  - locale
-  - manual-testing
-created: 2026-06-20
 when_to_use: "Use when you need the exact wording of the evidence-capture rule."
 ---
 

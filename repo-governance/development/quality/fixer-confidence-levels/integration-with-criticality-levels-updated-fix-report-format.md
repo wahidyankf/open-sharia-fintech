@@ -1,15 +1,5 @@
 ---
-title: "Integration with Criticality Levels: Updated Fix Report Format"
 description: "The updated fix-report format and why priority-based execution matters."
-category: explanation
-subcategory: development
-tags:
-  - fixer-agents
-  - confidence-levels
-  - validation
-  - automation
-  - quality-assurance
-created: 2025-12-14
 when_to_use: "Use when authoring a fix report with priority-based sections."
 ---
 
@@ -41,12 +31,12 @@ Fix reports should now group fixes by priority to show criticality context:
 
 ## P0 Fixes Applied (CRITICAL + HIGH Confidence)
 
-### 1. Missing Required Subcategory Field
+### 1. Missing Required `when_to_use` Field
 
 **File**: `repo-governance/development/agents/ai-agents.md`
-**Criticality**: CRITICAL - Breaks organization and validation
+**Criticality**: CRITICAL - Breaks routing and validation
 **Confidence**: HIGH - Confirmed field missing in frontmatter
-**Fix Applied**: Added `subcategory: development` at line 5
+**Fix Applied**: Added `when_to_use` at line 3
 
 [... more P0 fixes ...]
 

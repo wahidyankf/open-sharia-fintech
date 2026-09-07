@@ -1,18 +1,5 @@
 ---
-title: "Notes for AI Agents"
 description: The MUST-run-both-steps rule for agents, and why re-running the init (not re-provisioning) is the correct response to missing worktree dependencies mid-session.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - git
-  - worktree
-  - npm
-  - nx
-  - dependencies
-  - toolchain
-  - doctor
-created: 2026-03-28
 when_to_use: Use when an agent creates a worktree or discovers missing dependencies/build output mid-session.
 ---
 

@@ -1,16 +1,6 @@
 ---
-title: "Anti-Patterns Summary: Standard Library First Prevents Production Disasters"
 description: The consolidated summary of why standard-library-first prevents the five documented anti-patterns.
 when_to_use: Use when you need the closing summary argument for the standard-library-first principle.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Anti-Patterns Summary: Standard Library First Prevents Production Disasters

@@ -1,15 +1,5 @@
 ---
-title: "Criticality Levels Convention"
 description: Universal criticality level system for categorizing validation findings across all checker and fixer agents
-category: explanation
-subcategory: development
-tags:
-  - criticality
-  - validation
-  - checker-agents
-  - fixer-agents
-  - quality-assurance
-created: 2025-12-27
 when_to_use: "Use when a checker or fixer agent needs to classify or report a validation finding."
 ---
 

@@ -1,13 +1,5 @@
 ---
-title: "Common Violations"
 description: Three before/after examples of common simplicity violations.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - simplicity
-  - over-engineering
-created: 2025-12-15
 when_to_use: Use when identifying whether a behaviour violates this principle.
 ---
 

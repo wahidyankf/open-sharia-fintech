@@ -1,13 +1,5 @@
 ---
-title: "Verification Checklist"
 description: A pre-completion checklist for confirming a fix addressed the actual root cause with minimal, senior-engineer-approved scope.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - root-cause
-  - minimal-impact
-created: 2026-03-09
 when_to_use: Use as a checklist immediately before declaring a task complete.
 ---
 

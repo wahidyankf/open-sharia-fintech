@@ -1,14 +1,5 @@
 ---
-title: "Platform Binding Examples — Categorization Rationale and Link Checker Note"
 description: "Explains why the color categorization system exists and gives a special note for link-checker agents."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when justifying a color choice or handling a link-checker agent's color assignment.
 ---
 

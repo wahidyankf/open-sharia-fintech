@@ -1,16 +1,6 @@
 ---
-title: "The Full Set Tutorial Package Components: Foundational Tutorials and By-Example Track"
 description: Foundational tutorials (initial setup, quick start) and the code-first by-example track, the first two of five mandatory Full Set Tutorial Package components.
 when_to_use: Use when defining or reviewing the foundational tutorials or the by-example track of a language's Full Set Tutorial Package.
-category: explanation
-subcategory: conventions
-tags:
-  - programming-languages
-  - tutorials
-  - ayokoding-www
-  - education
-  - structure
-created: 2025-12-27
 ---
 
 # The Full Set Tutorial Package Components: Foundational Tutorials and By-Example Track

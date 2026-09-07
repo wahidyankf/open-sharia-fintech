@@ -1,15 +1,5 @@
 ---
-title: "Trunk Based Development Convention"
 description: Git workflow using Trunk Based Development (TBD) for continuous integration and rapid delivery
-category: explanation
-subcategory: development
-tags:
-  - trunk-based-development
-  - git
-  - workflow
-  - development
-  - continuous-integration
-created: 2025-11-26
 when_to_use: Use when deciding how a change reaches main, choosing a delivery mode, or checking whether a branch/workflow shape is TBD-compliant.
 ---
 

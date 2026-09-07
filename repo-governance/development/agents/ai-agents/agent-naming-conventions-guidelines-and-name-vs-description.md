@@ -1,14 +1,5 @@
 ---
-title: "Agent Naming Conventions — Naming Guidelines and Agent Name vs. Description"
 description: "Gives the general naming guidelines and explains the difference between an agent's name and its description."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when choosing an agent's short name or writing its frontmatter description alongside its name.
 ---
 

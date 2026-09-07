@@ -1,15 +1,6 @@
 ---
-title: "Dynamic Collection References — Examples and Special Considerations"
 description: Before/after conversion examples for common hardcoded-count patterns, plus edge cases like the index footer count and workflow/category count distinction.
 when_to_use: Use when converting an existing hardcoded count to a compliant reference, or when unsure whether a specific edge case (index footer, workflow count, category count) is exempt.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - documentation
-  - maintenance
-  - collections
-created: 2026-02-22
 ---
 
 # Examples and Special Considerations

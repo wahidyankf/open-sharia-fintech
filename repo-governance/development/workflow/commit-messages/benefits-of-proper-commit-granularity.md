@@ -1,14 +1,5 @@
 ---
-title: "Benefits of Proper Commit Granularity"
 description: How correct commit granularity helps code review, debugging, project history, and collaboration.
-category: explanation
-subcategory: development
-tags:
-  - conventional-commits
-  - git
-  - development
-  - code-quality
-created: 2025-11-24
 when_to_use: Use when justifying why commit granularity discipline is worth the extra care.
 ---
 

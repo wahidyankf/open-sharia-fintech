@@ -1,5 +1,4 @@
 ---
-title: "By-Example Tutorial Convention"
 description: "Standards for creating code-first by-example tutorials with 95% coverage, self-contained examples, and educational annotations"
 when_to_use: "Read this index to find the right By-Example Tutorial Convention child document."
 ---

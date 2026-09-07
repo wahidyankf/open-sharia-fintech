@@ -1,16 +1,6 @@
 ---
-title: "Programming Language Documentation Separation Convention"
 description: Establishes the relationship between docs/explanation/programming-languages/ repository-specific style guides and ayokoding-www educational content
 when_to_use: Read this when deciding whether new programming-language content belongs in a docs/explanation/ style guide or in ayokoding-www educational content.
-category: explanation
-subcategory: conventions
-tags:
-  - documentation
-  - programming-languages
-  - style-guides
-  - content-separation
-  - dry-principle
-created: 2026-02-04
 ---
 
 # Programming Language Documentation Separation Convention
@@ -29,4 +19,27 @@ This convention establishes the clear separation between **repository-specific p
 - [Example 3: F# — Correct Separation](./programming-language-docs-separation/example-fsharp.md) — A worked example contrasting an ayokoding-www Option-for-null-safety lesson with the corresponding docs/explanation/ OSE Platform mandatory-Option-usage rule
 - [Common Mistakes to Avoid](./programming-language-docs-separation/common-mistakes-to-avoid.md) — three worked FAIL/PASS pairs
 - [Validation Checklist, Related Conventions, and References](./programming-language-docs-separation/validation-checklist-related-conventions-and-references.md) — Pre-publish checklists for both docs/explanation/ style guides and ayokoding-www educational content, plus related-convention and platform-documentation references
-- [Agents](./programming-language-docs-separation/agents.md) — makers, checkers, and fixers for this convention
+
+## Agents
+
+**Makers**:
+
+- `docs-maker` - Creates style guide content in docs/explanation/ following this convention
+- `apps-ayokoding-www-general-maker` - Creates educational content in ayokoding-www following this convention
+- `apps-ayokoding-www-by-example-maker` - Creates by-example tutorials following separation rules
+
+**Checkers**:
+
+- `docs-checker` - Validates style guides follow this convention (prerequisite statements, no duplication)
+- `apps-ayokoding-www-general-checker` - Validates educational content scope (no OSE Platform-specific content)
+- `apps-ayokoding-www-facts-checker` - Validates factual correctness of educational content
+
+**Fixers**:
+
+- `docs-fixer` - Fixes style guide violations (adds missing prerequisite statements, removes duplicated content)
+- `apps-ayokoding-www-general-fixer` - Fixes educational content violations (removes OSE Platform-specific content)
+
+---
+
+**Scope**: Every language with a style guide under `docs/explanation/software-engineering/programming-languages/` (today TypeScript, Rust, F#) and every language AyoKoding teaches. Read those two indexes rather than a fixed list here.
+**Maintainers**: Repository Governance Team

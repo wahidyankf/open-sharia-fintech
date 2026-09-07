@@ -1,16 +1,5 @@
 ---
-title: "Compliance Checklist"
 description: "A checklist covering schema, entity type, repository layer, and query requirements for a compliant audited table."
-category: explanation
-subcategory: development
-tags:
-  - database
-  - audit-trail
-  - soft-delete
-  - dbup
-  - ef-core
-  - migrations
-created: 2026-03-09
 when_to_use: "Use when adding a new table or reviewing an existing one for compliance with this pattern."
 ---
 

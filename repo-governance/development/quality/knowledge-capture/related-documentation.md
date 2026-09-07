@@ -1,16 +1,5 @@
 ---
-title: "Related Documentation"
 description: "Related plan, post-mortem, and safety conventions."
-category: explanation
-subcategory: development
-tags:
-  - knowledge-capture
-  - learnings
-  - plans
-  - triage
-  - safety-gates
-  - post-mortems
-created: 2026-07-05
 when_to_use: "Use for a related plan or safety-gate convention."
 ---
 

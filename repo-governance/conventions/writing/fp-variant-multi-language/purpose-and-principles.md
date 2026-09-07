@@ -1,17 +1,6 @@
 ---
-title: "FP-Variant Multi-Language Convention — Purpose and Principles"
 description: Why FP-variant by-example tutorials require both F# and Clojure tabs, and the core principles this bidirectional idiomatic-language rule implements.
 when_to_use: Use when you need the rationale for why an FP-variant page requires two languages before diving into the standards themselves.
-category: explanation
-subcategory: conventions
-tags:
-  - fp
-  - clojure
-  - fsharp
-  - by-example
-  - ayokoding-www
-  - tutorial
-created: 2026-05-17
 ---
 
 # Purpose and Principles

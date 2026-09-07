@@ -1,16 +1,6 @@
 ---
-title: "Common Mistakes"
 description: Five common tutorial-structure mistakes, each with a FAIL example and the corrected PASS version.
 when_to_use: Use when reviewing a tutorial structure for common structural mistakes before or during a PR.
-category: explanation
-subcategory: conventions
-tags:
-  - programming-languages
-  - tutorials
-  - ayokoding-www
-  - education
-  - structure
-created: 2025-12-27
 ---
 
 # Common Mistakes

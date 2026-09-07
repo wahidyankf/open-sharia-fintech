@@ -1,14 +1,5 @@
 ---
-title: "PRs Open at Delivery Boundaries — Rules 5-7, Parity Delivery, and Mode Scope"
 description: Gives the remaining PR-boundary rules plus the mode-neutral independent parity-delivery rule and its scope.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when deciding whether independent work may share a PR or whether a ready parity PR/direct delivery may wait for a sibling.
 ---
 

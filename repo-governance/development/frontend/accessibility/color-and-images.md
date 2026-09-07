@@ -1,15 +1,5 @@
 ---
-title: "Accessibility — Color and Images"
 description: Never rely on color alone to convey status/error/success state, and the alt-text requirements for informative, decorative, and complex-diagram images
-category: explanation
-subcategory: development/frontend
-tags:
-  - accessibility
-  - wcag
-  - a11y
-  - aria
-  - focus
-created: 2026-03-28
 when_to_use: Use when adding a status/error/success indicator, a status badge, or any image to a UI component.
 ---
 

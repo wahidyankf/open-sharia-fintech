@@ -1,16 +1,5 @@
 ---
-title: "The Sixteen Rules (16, part 2, and progressive-disclosure caution)"
 description: "Rule 16's surface-conditional gate mapping, plus the progressive-disclosure density caution."
-category: explanation
-subcategory: development
-tags:
-  - quality
-  - planning
-  - ui
-  - verification
-  - testing
-  - deployment
-created: 2026-06-19
 when_to_use: "Use when mapping a plan's surface to its required tester gate, or evaluating a density fix."
 ---
 

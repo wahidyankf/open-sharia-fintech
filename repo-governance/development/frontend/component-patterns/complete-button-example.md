@@ -1,15 +1,5 @@
 ---
-title: "Component Patterns — Complete Button Example"
 description: The canonical ayokoding-www Button implementation combining React.ComponentProps, CVA variants, Slot.Root, and data-slot in one file
-category: explanation
-subcategory: development/frontend
-tags:
-  - components
-  - react
-  - radix
-  - cva
-  - shadcn
-created: 2026-03-28
 when_to_use: Use as the reference implementation when building a new component from scratch, or migrating an existing forwardRef-based component.
 ---
 

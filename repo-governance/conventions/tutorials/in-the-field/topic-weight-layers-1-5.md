@@ -1,16 +1,6 @@
 ---
-title: "Topic Weight Layers 1-5"
 description: The topic-weight numbering ranges for the Foundation, Quality Foundation, Core Concepts, Security/Configuration, and Data Management layers.
 when_to_use: Use when assigning a topic weight to a guide in the Foundation-through-Data-Management range.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Topic Weight Layers 1-5

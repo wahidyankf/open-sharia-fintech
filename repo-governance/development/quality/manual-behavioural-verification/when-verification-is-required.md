@@ -1,16 +1,5 @@
 ---
-title: "When Verification Is Required"
 description: "The triggers that require manual behavioural verification."
-category: explanation
-subcategory: development
-tags:
-  - verification
-  - testing
-  - playwright
-  - api
-  - quality
-  - manual-testing
-created: 2026-04-04
 when_to_use: "Use when deciding whether a change needs manual verification."
 ---
 

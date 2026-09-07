@@ -1,16 +1,5 @@
 ---
-title: "Never guard coverage with a hardcoded count"
 description: "Derive a coverage guard's expected set from the source of truth, never a magic count."
-category: explanation
-subcategory: development
-tags:
-  - regression
-  - testing
-  - bug-fix
-  - quality
-  - gherkin
-  - specs
-created: 2026-06-22
 when_to_use: 'Use when writing a test asserting "nothing escaped the check".'
 ---
 

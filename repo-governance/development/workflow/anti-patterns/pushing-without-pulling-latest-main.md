@@ -1,10 +1,5 @@
 ---
-title: "Anti-Pattern: Pushing Without Pulling Latest Main"
 description: Pushing without first pulling and rebasing on the latest main causes push rejections and messy merge commits.
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use when about to push to main without first pulling with rebase, or when configuring the team's pull strategy.
 ---
 

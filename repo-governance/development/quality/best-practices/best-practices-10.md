@@ -1,10 +1,5 @@
 ---
-title: "Best Practices 10"
 description: "Fail the build on quality violations in CI."
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: "Use when wiring a quality gate to fail CI on violation."
 ---
 

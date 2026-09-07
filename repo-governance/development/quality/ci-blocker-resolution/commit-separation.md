@@ -1,16 +1,5 @@
 ---
-title: "Commit Separation"
 description: "Why a CI-blocker fix must be its own commit."
-category: explanation
-subcategory: development
-tags:
-  - ci
-  - quality-gates
-  - root-cause
-  - debugging
-  - anti-pattern
-  - preexisting-issues
-created: 2026-04-04
 when_to_use: "Use when a CI-blocker fix is bundled with unrelated changes."
 ---
 

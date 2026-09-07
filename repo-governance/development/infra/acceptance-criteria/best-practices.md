@@ -1,14 +1,5 @@
 ---
-title: "Best Practices"
 description: Six best practices for writing concrete, testable Gherkin scenarios, each with a PASS/FAIL example.
-category: explanation
-subcategory: development
-tags:
-  - acceptance-criteria
-  - gherkin
-  - testing
-  - requirements
-created: 2025-12-07
 when_to_use: Use when drafting a Gherkin scenario and wanting to check it against the specific-values, single-behaviour, present-tense, behaviour-focused, testable, and data-table best practices.
 ---
 

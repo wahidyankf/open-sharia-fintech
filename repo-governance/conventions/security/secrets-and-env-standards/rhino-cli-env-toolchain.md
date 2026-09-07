@@ -1,17 +1,6 @@
 ---
-title: "`rhino-cli env` Toolchain"
 description: The rhino-cli env command family (backup, restore, init, validate), the backup-scope registry, and the env-contract section that drives drift validation.
 when_to_use: Use when running or configuring rhino-cli env backup/restore/init/validate, or when adding a new surface to the env-contract registry.
-category: explanation
-subcategory: conventions
-tags:
-  - security
-  - secrets
-  - env-files
-  - guard-env-file-access
-  - naming
-  - reproducibility
-created: 2026-06-10
 ---
 
 # `rhino-cli env` Toolchain

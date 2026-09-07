@@ -1,5 +1,4 @@
 ---
-title: "Phase A — Discover Every Trace of This Plan: Plan-Identifier and Repo Set"
 description: Covers Phase A steps A0 through A1 — resolving the plan-identifier, checking for a handover document lead, and resolving the candidate repo set.
 when_to_use: Use when starting discovery for a plan-takeover-execution run, before probing any repo for worktrees, branches, or PRs.
 ---

@@ -1,17 +1,6 @@
 ---
-title: "FP-Variant Multi-Language Convention — References"
 description: Cross-references to related conventions, implementing agents, in-FP-by-example overview pages, and repository architecture documents.
 when_to_use: Use when looking up related conventions, the agents implementing this convention, or the overview pages that use FP-variant examples.
-category: explanation
-subcategory: conventions
-tags:
-  - fp
-  - clojure
-  - fsharp
-  - by-example
-  - ayokoding-www
-  - tutorial
-created: 2026-05-17
 ---
 
 # References

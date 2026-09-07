@@ -1,16 +1,6 @@
 ---
-title: "Finance Formula Examples: NPV, Sharpe Ratio, and Compound Interest"
 description: Worked LaTeX examples for Net Present Value, Sharpe Ratio, and Compound Interest formulas, source and rendered.
 when_to_use: Use when writing an NPV, Sharpe Ratio, or compound interest formula in documentation and want a ready LaTeX template.
-category: explanation
-subcategory: conventions
-tags:
-  - latex
-  - mathematics
-  - formulas
-  - notation
-  - conventions
-created: 2025-12-02
 ---
 
 # Finance Formula Examples: NPV, Sharpe Ratio, and Compound Interest

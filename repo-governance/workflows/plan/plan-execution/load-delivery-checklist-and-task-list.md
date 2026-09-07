@@ -1,5 +1,4 @@
 ---
-title: "Load Delivery Checklist and Materialize Task List"
 description: Defines how the orchestrator reads the plan, reconciles prior-run state, and materializes the live Task list before implementation begins.
 when_to_use: Use when starting or resuming plan execution and building the initial Task list from delivery.md.
 ---

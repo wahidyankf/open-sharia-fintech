@@ -1,15 +1,5 @@
 ---
-title: "Function Composition"
 description: "The pipe pattern, compose pattern, and higher-order functions for building complex behaviour from simple functions."
-category: explanation
-subcategory: development
-tags:
-  - development
-  - functional-programming
-  - immutability
-  - pure-functions
-  - typescript
-created: 2025-12-28
 when_to_use: "Use when you need to combine several small functions into a single pipeline or transformation."
 ---
 

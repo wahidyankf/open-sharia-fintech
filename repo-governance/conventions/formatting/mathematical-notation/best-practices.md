@@ -1,16 +1,6 @@
 ---
-title: "Best Practices"
 description: "Best practices for LaTeX notation: defining variables, consistent notation, formatting complex formulas, semantic tables, and balancing precision with clarity."
 when_to_use: Use when writing a non-trivial formula and want guidance on notation style, variable definitions, or formula complexity.
-category: explanation
-subcategory: conventions
-tags:
-  - latex
-  - mathematics
-  - formulas
-  - notation
-  - conventions
-created: 2025-12-02
 ---
 
 # Best Practices

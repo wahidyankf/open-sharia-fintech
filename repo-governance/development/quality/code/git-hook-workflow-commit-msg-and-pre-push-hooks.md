@@ -1,17 +1,5 @@
 ---
-title: "Git Hook Workflow: Commit-msg and Pre-push Hooks"
 description: "What the commit-msg and pre-push hooks validate."
-category: explanation
-subcategory: development
-tags:
-  - development
-  - code-quality
-  - prettier
-  - husky
-  - lint-staged
-  - git-hooks
-  - automation
-created: 2026-05-12
 when_to_use: "Use when debugging a commit-msg or pre-push hook."
 ---
 

@@ -1,5 +1,4 @@
 ---
-title: "Related Workflows, Principles, Conventions, and Documentation"
 description: Collects the sibling workflows this one relates to, the principles and conventions it implements, and links to the in-the-field tutorial convention and involved agents.
 when_to_use: Use when looking for related workflows, tracing which principles and conventions this workflow implements, or finding the involved agent definitions.
 ---

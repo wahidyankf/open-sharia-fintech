@@ -1,15 +1,5 @@
 ---
-title: "1. Hook Readers Immediately"
 description: How to open a README motivation section with a problem-solution hook instead of a dense paragraph
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - readme
-  - engagement
-  - accessibility
-  - writing
-created: 2025-12-07
 when_to_use: Read this when writing or reviewing the opening of a README's motivation section.
 ---
 

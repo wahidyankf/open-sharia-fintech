@@ -1,10 +1,5 @@
 ---
-title: "Principles and Conventions Implemented/Respected"
 description: Principles and conventions this CI/CD series implements.
-category: explanation
-subcategory: development
-tags: [ci-cd]
-created: 2026-03-31
 when_to_use: Use when tracing a rule's source principle or convention.
 ---
 

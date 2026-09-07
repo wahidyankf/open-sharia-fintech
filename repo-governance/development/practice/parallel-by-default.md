@@ -1,15 +1,5 @@
 ---
-title: "Parallel-by-Default Practice"
 description: Run independent work in parallel within the agent budget while HIPPO controls shared-machine compute admission.
-category: explanation
-subcategory: development
-tags:
-  - parallelism
-  - concurrency
-  - performance
-  - ai-agents
-  - efficiency
-created: 2026-06-23
 when_to_use: Use whenever you have two or more independent units of work — tool calls, file reads, searches, or delegated agents — ready to launch.
 ---
 

@@ -1,5 +1,4 @@
 ---
-title: "Workflow Invocation and Safety Features"
 description: Documents how to trigger the workflow (with or without parameters) and the loop-prevention, convergence, false-positive, error-recovery, and user-control safety mechanisms it relies on.
 when_to_use: Use when you need the exact invocation syntax, or when you need to understand how the workflow protects against runaway iteration or unsafe auto-fixes.
 ---

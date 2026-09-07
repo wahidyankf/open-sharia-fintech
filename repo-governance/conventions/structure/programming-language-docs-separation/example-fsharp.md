@@ -1,16 +1,6 @@
 ---
-title: "Example 3: F# — Correct Separation"
 description: A worked example contrasting an ayokoding-www Option-for-null-safety lesson with the corresponding docs/explanation/ OSE Platform mandatory-Option-usage rule
 when_to_use: Read this when you need a concrete F#-based illustration of how educational and repository-specific content should be split.
-category: explanation
-subcategory: conventions
-tags:
-  - documentation
-  - programming-languages
-  - style-guides
-  - content-separation
-  - dry-principle
-created: 2026-02-04
 ---
 
 # Example 3: F# - Correct Separation

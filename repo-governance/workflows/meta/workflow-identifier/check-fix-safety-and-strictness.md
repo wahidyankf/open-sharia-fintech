@@ -1,14 +1,5 @@
 ---
-title: "*-check-fix Workflow Pattern — Safety Features and Strictness Parameter"
 description: The mandatory infinite-loop and false-positive safety features, plus how the mode parameter's four levels (lax/normal/strict/ocd) control fix scope.
-category: explanation
-subcategory: workflows
-tags:
-  - workflows
-  - agents
-  - orchestration
-  - patterns
-created: 2025-12-23
 when_to_use: Use when implementing loop-safety guards or the mode parameter in a new *-check-fix workflow.
 ---
 

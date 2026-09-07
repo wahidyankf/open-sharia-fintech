@@ -1,15 +1,5 @@
 ---
-title: Accessibility Convention
 description: WCAG AA requirements for UI components — focus management, ARIA attributes, reduced motion, form controls, and keyboard navigation for frontend applications
-category: explanation
-subcategory: development/frontend
-tags:
-  - accessibility
-  - wcag
-  - a11y
-  - aria
-  - focus
-created: 2026-03-28
 when_to_use: Use when building or reviewing any frontend UI component — focus rings, ARIA attributes, form inputs, color usage, images, or keyboard interaction.
 ---
 

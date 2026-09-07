@@ -1,18 +1,6 @@
 ---
-title: "Common Mermaid Syntax Errors: Label Constraints — Overview, Rule 1, and Rule 2"
 description: "Documents Error 8's overview plus Rule 1 (node label line breaks) and Rule 2 (edge labels must be plain text)."
 when_to_use: "Use when a Mermaid label needs a line break or contains HTML and you need the correct plain-text approach."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Common Mermaid Syntax Errors: Label Constraints — Overview, Rule 1, and Rule 2

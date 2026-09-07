@@ -1,16 +1,5 @@
 ---
-title: "The Rule"
 description: "The blocking rule: every fix needs a reproducing test in the same commit/PR, no exemptions."
-category: explanation
-subcategory: development
-tags:
-  - regression
-  - testing
-  - bug-fix
-  - quality
-  - gherkin
-  - specs
-created: 2026-06-22
 when_to_use: "Use when you need the exact wording of the mandate."
 ---
 

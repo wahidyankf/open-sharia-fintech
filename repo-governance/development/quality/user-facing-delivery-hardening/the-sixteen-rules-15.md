@@ -1,16 +1,5 @@
 ---
-title: "The Sixteen Rules (15)"
 description: "Rule 15: the near-end web-UI live tester triad retest before archival."
-category: explanation
-subcategory: development
-tags:
-  - quality
-  - planning
-  - ui
-  - verification
-  - testing
-  - deployment
-created: 2026-06-19
 when_to_use: "Use when a web-UI feature-change plan is nearing archival."
 ---
 

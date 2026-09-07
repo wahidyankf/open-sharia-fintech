@@ -1,17 +1,6 @@
 ---
-title: "Purpose"
 description: "Defines the purpose and target audience of the Cookbook tutorial type as an extension of the general Tutorials Convention."
 when_to_use: "Read when you need to understand why the Cookbook tutorial type exists and who it targets before authoring or reviewing one."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - cookbook
-  - education
-  - problem-solving
-  - recipes
-created: 2026-01-30
 ---
 
 # Purpose

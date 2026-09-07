@@ -1,16 +1,6 @@
 ---
-title: "Governance Vendor-Independence — Purpose and Scope"
 description: Why governance prose must be vendor-neutral, and exactly which files (repo-governance/, AGENTS.md, CLAUDE.md) this convention governs vs. exempts.
 when_to_use: Use when checking whether a file or line falls inside the vendor-independence convention's scope.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - governance
-  - vendor-independence
-  - agents
-  - platform-bindings
-created: 2026-05-02
 ---
 
 # Purpose and Scope

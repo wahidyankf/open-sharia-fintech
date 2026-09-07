@@ -1,5 +1,4 @@
 ---
-title: "Execution"
 description: "Defines pinned-head routing, fan-out, synthesis, and posting."
 when_to_use: "Use when running or implementing a single semantic pass."
 ---

@@ -1,5 +1,4 @@
 ---
-title: "Enter the Designated Worktree — Preconditions and Work Branch"
 description: Defines the backlog-promotion precondition and the three-tier precedence for selecting the plan's work branch.
 when_to_use: Use when resolving which branch or worktree a plan executes on before any implementation work begins.
 ---

@@ -1,15 +1,5 @@
 ---
-title: "Standards"
 description: The three standards governing git identity — no per-repo [user] section, global-config-only resolution, and behavioural guardrail enforcement.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - identity
-  - commits
-  - security
-  - reproducibility
-created: 2026-05-19
 when_to_use: Use when checking whether a `.git/config` state, an `includeIf` setup, or an enforcement mechanism complies with this convention.
 ---
 

@@ -1,18 +1,6 @@
 ---
-title: "Mermaid Color Accessibility: Palette and Rationale"
 description: "Explains why color-blind accessibility matters for Mermaid diagrams and gives the accessible color palette to use."
 when_to_use: "Use when choosing colors for a Mermaid diagram and need the accessible palette and the reasoning behind it."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Mermaid Color Accessibility: Palette and Rationale

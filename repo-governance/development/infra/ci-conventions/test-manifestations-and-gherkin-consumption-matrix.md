@@ -1,10 +1,5 @@
 ---
-title: "Project-Role Testing and Gherkin Matrix"
 description: "Applicable Gherkin adapters by project role and real boundary"
-category: explanation
-subcategory: development
-tags: [ci-cd, testing, gherkin]
-created: 2026-03-31
 when_to_use: "Use when deciding which adapters and targets a project owns."
 ---
 

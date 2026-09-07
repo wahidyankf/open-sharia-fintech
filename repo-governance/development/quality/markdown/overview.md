@@ -1,16 +1,5 @@
 ---
-title: "Overview"
 description: "The two tools (Prettier, markdownlint-cli2) that maintain markdown quality."
-category: explanation
-subcategory: development
-tags:
-  - markdown
-  - linting
-  - formatting
-  - prettier
-  - markdownlint
-  - quality
-created: 2026-01-17
 when_to_use: "Use when orienting to which tool owns a markdown quality concern."
 ---
 

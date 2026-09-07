@@ -1,14 +1,5 @@
 ---
-title: "Diagnosing a Stuck Self-Hosted Runner Job"
 description: How to tell a genuinely hung job step from a merely slow one, and remediate by cancelling and rerunning only the affected jobs.
-category: explanation
-subcategory: development
-tags:
-  - ci
-  - github-actions
-  - rate-limiting
-  - monitoring
-  - workflow
 when_to_use: Use when a self-hosted-runner job step shows zero progress for an extended period and contention has already been ruled out.
 ---
 

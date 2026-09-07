@@ -1,5 +1,4 @@
 ---
-title: "Agents"
 description: Links to the harness-compatibility-checker and -fixer agent definitions this workflow invokes.
 when_to_use: Use when looking up the exact agent definition files this workflow orchestrates.
 ---

@@ -1,14 +1,5 @@
 ---
-title: "Valid Commit Types"
 description: The full table of commit types with examples, and a detailed description of what each type covers.
-category: explanation
-subcategory: development
-tags:
-  - conventional-commits
-  - git
-  - development
-  - code-quality
-created: 2025-11-24
 when_to_use: Use when choosing which commit type (feat, fix, docs, etc.) applies to a change.
 ---
 

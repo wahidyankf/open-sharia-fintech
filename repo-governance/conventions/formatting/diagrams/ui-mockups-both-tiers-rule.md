@@ -1,18 +1,6 @@
 ---
-title: "UI Mockups in Plan Docs: The Both-Tiers Rule"
 description: "Defines the required two-tier mockup rule: low-fidelity ASCII wireframes plus high-fidelity Excalidraw PNGs."
 when_to_use: "Use when producing UI mockups for a plan and need to know both required fidelity tiers and their formats."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # UI Mockups in Plan Docs: The Both-Tiers Rule

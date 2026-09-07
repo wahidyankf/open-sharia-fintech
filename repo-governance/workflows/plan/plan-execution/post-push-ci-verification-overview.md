@@ -1,5 +1,4 @@
 ---
-title: "Post-Push CI Verification — Overview and Monitoring Tool"
 description: Defines when Post-Push CI Verification applies and the required ScheduleWakeup-based monitoring tool and cadence.
 when_to_use: Use when deciding which monitoring tool and poll cadence to use for CI after a push.
 ---

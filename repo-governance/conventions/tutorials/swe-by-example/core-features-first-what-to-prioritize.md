@@ -1,15 +1,5 @@
 ---
-title: "Core Features First: What to Prioritize"
 description: "Lists which core/built-in features to prioritize for programming languages, frameworks, and platforms, with worked examples across React, Vue, Node.js, and Spring."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - education
-  - code-first
-created: 2025-12-25
 when_to_use: "Read when you need the concrete checklist of what counts as a core/built-in feature to teach first for a given language, framework, or platform."
 ---
 

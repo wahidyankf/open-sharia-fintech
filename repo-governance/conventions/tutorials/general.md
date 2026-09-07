@@ -1,17 +1,6 @@
 ---
-title: "Tutorial Convention"
 description: Standards for creating learning-oriented tutorials in open-sharia-enterprise
 when_to_use: Use when authoring, reviewing, or scoping any tutorial, or when a type-specific tutorial convention needs the base standards it extends.
-category: explanation
-subcategory: conventions
-tags:
-  - tutorials
-  - diataxis
-  - learning
-  - pedagogy
-  - documentation
-  - teaching
-created: 2025-12-03
 ---
 
 # Tutorial Convention

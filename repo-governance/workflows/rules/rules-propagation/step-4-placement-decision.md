@@ -1,5 +1,4 @@
 ---
-title: "Step 4: Placement Decision"
 description: The instruction-surface admission test, the fallback to a governance layer, and the rule that a threshold is never raised to make a placement fit.
 when_to_use: Use after the conflict scan clears, to decide which file a rule is written into.
 ---

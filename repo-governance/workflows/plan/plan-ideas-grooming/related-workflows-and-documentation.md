@@ -1,5 +1,4 @@
 ---
-title: "Related Workflows and Documentation"
 description: Links to plan-idea-promotion-planning, plan-planning, plan-execution, and the conventions this workflow's steps reshape ideas against.
 when_to_use: Use when navigating from this workflow to a composed workflow or a governing convention.
 ---

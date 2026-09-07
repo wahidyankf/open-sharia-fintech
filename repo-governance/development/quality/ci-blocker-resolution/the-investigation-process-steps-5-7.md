@@ -1,16 +1,5 @@
 ---
-title: "The Investigation Process (Steps 5-7)"
 description: "Steps 5-7: apply the fix, verify, audit an existing mitigation."
-category: explanation
-subcategory: development
-tags:
-  - ci
-  - quality-gates
-  - root-cause
-  - debugging
-  - anti-pattern
-  - preexisting-issues
-created: 2026-04-04
 when_to_use: "Use when applying and verifying a fix for a CI blocker."
 ---
 

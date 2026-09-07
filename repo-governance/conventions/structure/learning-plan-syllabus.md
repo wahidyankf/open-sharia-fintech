@@ -1,16 +1,6 @@
 ---
-title: "Learning-Plan `syllabus/` Folder Convention"
 description: Defines the learning-bearing plan trigger, the required syllabus/courses + syllabus/paths folder layout, measured section tiering, the copy-paste course template, corpus disposition, and the custody rule for learning-path plans in plans/
 when_to_use: Read this before authoring or restructuring course/curriculum content inside a plan's own syllabus/ folder, or when consuming another plan's syllabus corpus.
-category: explanation
-subcategory: conventions
-tags:
-  - plans
-  - syllabus
-  - learning-bearing
-  - custody
-  - governance
-created: 2026-07-22
 ---
 
 # Learning-Plan `syllabus/` Folder Convention

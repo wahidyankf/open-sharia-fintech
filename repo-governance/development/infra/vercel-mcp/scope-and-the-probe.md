@@ -1,13 +1,5 @@
 ---
-title: "Scope and the Probe"
 description: How to decide mechanically whether a plan is in scope for this convention, and how to probe whether Vercel MCP is connected and authenticated.
-category: explanation
-subcategory: development
-tags:
-  - vercel
-  - mcp
-  - deployment
-created: 2026-08-01
 when_to_use: Use when checking whether a plan's surface makes it in scope, or when running the probe for Vercel MCP connection state.
 ---
 

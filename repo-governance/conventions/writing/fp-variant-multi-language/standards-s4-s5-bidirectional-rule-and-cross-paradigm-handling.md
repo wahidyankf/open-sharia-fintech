@@ -1,17 +1,6 @@
 ---
-title: "FP-Variant Multi-Language Convention — Standards S4-S5: Bidirectional Rule and Cross-Paradigm Handling"
 description: The bidirectional idiomatic rule preventing either language from mimicking the other, and how to handle a concept that exists natively in only one language via closest equivalent plus annotation.
 when_to_use: Use when a concept in one tab has no direct native counterpart in the other, to decide the correct closest-equivalent-plus-annotation treatment.
-category: explanation
-subcategory: conventions
-tags:
-  - fp
-  - clojure
-  - fsharp
-  - by-example
-  - ayokoding-www
-  - tutorial
-created: 2026-05-17
 ---
 
 # Standards S4-S5: Bidirectional Rule and Cross-Paradigm Handling

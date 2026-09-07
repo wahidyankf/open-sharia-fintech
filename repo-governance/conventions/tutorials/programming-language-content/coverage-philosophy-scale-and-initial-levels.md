@@ -1,15 +1,5 @@
 ---
-title: "Coverage Philosophy"
 description: "Introduces the 0-95% proficiency scale and defines the Initial Setup and Quick Start coverage levels, the first two components of the Full Set Tutorial Package."
-category: explanation
-subcategory: conventions
-tags:
-  - programming-languages
-  - ayokoding
-  - tutorials
-  - education
-  - content-standards
-created: 2025-12-18
 when_to_use: "Use when deciding what percentage of language knowledge a piece of content should target, or when writing the Initial Setup or Quick Start tutorial."
 ---
 

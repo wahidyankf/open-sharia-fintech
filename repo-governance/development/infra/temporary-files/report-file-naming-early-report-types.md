@@ -1,10 +1,5 @@
 ---
-title: "Report File Naming Standard — Repository Audit and Link Validation Reports"
 description: Filename pattern and retention for rules-checker and docs-link-checker reports.
-category: explanation
-subcategory: development
-tags: [temporary-files, ai-agents, file-organization, best-practices]
-created: 2025-12-01
 when_to_use: Use when naming a rules-checker or docs-link-checker report.
 ---
 

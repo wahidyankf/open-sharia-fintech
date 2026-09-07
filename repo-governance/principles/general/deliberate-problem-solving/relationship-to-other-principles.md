@@ -1,12 +1,5 @@
 ---
-title: "Relationship to Other Principles"
 description: Cross-references deliberate problem-solving to explicit-over-implicit, simplicity-over-complexity, automation-over-manual, and root-cause-orientation.
-category: explanation
-subcategory: principles
-tags:
-  - problem-solving
-  - decision-making
-created: 2026-01-29
 when_to_use: Use when tracing how deliberate problem-solving connects to the repo's other governing principles.
 ---
 

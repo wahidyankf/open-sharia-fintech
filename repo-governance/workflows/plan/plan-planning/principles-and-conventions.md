@@ -1,5 +1,4 @@
 ---
-title: "Principles and Conventions Implemented/Respected — Plan Establishment"
 description: Lists the general and software-engineering principles, and the repo conventions, that the plan-establishment workflow implements.
 when_to_use: Use when auditing plan-establishment against the repo's principle and convention catalog.
 ---

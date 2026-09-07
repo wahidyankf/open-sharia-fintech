@@ -1,5 +1,4 @@
 ---
-title: "Steps 9-10 — Link Rewrite, and Recurrence Trigger"
 description: The unified move/rename link-rewrite mechanism and rename criteria, plus the workflow's own two-condition re-run trigger.
 when_to_use: Use when fixing inbound/outbound links after a move or rename, or confirming whether a repo is due for another sweep.
 ---

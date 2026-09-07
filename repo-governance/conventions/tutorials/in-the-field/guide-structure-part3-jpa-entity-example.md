@@ -1,16 +1,6 @@
 ---
-title: "Guide Structure Part 3: JPA Entity Example"
 description: The worked JPA/Hibernate @Entity class example mapping a User to a database table.
 when_to_use: Use when writing a JPA entity-mapping example.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Guide Structure Part 3: JPA Entity Example

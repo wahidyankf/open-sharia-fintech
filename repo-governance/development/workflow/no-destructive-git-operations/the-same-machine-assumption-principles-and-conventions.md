@@ -1,15 +1,5 @@
 ---
-title: "The Same-Machine Assumption, Principles, and Conventions"
 description: Why this convention assumes concurrent actors share the same machine, and the principles and conventions it implements.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - safety
-  - worktree
-  - parallelism
-created: 2026-07-20
 when_to_use: Use when deciding whether a git operation is dangerous on a shared machine, or when tracing this convention back to what it implements.
 ---
 

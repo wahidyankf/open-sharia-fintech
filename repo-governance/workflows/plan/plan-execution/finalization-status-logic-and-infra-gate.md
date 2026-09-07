@@ -1,8 +1,9 @@
 ---
-title: "Finalization and Archival — Status Logic, Infra-Execution Gate, and Direct-Push Archival"
 description: Defines the pass/partial/fail branching logic, the Infra-Execution Gate precondition, and the direct-push archival steps.
 when_to_use: Use when determining final plan status, or verifying a pending infra-apply step before archiving a plan.
 ---
+
+# Finalization and Archival — Status Logic, Infra-Execution Gate, and Direct-Push Archival
 
 **Logic**:
 

@@ -1,15 +1,5 @@
 ---
-title: "Core Features First: What to Avoid Initially"
 description: "Catalogs premature abstraction/extension anti-patterns for languages, frameworks, and platforms, with paired FAIL/PASS code examples."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - education
-  - code-first
-created: 2025-12-25
 when_to_use: "Read when writing or reviewing a beginner example to check it does not prematurely introduce a framework, library, or auto-magic tool."
 ---
 

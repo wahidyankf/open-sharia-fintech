@@ -1,16 +1,5 @@
 ---
-title: "Commands and Agent Responsibilities"
 description: The git commands for identifying and diffing an incoming range after each integration operation, and who is responsible for reviewing it.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - safety
-  - rebase
-  - merge
-  - review
-created: 2026-08-06
 when_to_use: Use when you need the exact command for the integration operation that just ran, or to confirm whose responsibility the review is.
 ---
 

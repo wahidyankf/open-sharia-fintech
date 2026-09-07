@@ -1,9 +1,5 @@
 ---
-title: "PR Review Cycle — Scope Guard"
 description: "Binds every pipeline stage to the PR's stated problem so review cycles cannot grow the change they review."
-category: explanation
-subcategory: workflows
-created: 2026-08-22
 when_to_use: "Use when judging whether a finding, or the fix it asks for, belongs in this PR."
 ---
 

@@ -1,5 +1,4 @@
 ---
-title: "Cookbook Tutorial Convention"
 description: "Standards for creating problem-focused cookbook tutorials with practical, copy-paste ready recipes organized by problem type"
 when_to_use: "Read this index to find the right Cookbook Tutorial Convention child document."
 ---
@@ -15,6 +14,4 @@ when_to_use: "Read this index to find the right Cookbook Tutorial Convention chi
 - [Quality Standards](./quality-standards.md) — Defines the recipe completeness checklist, code quality standards, and annotation density target for cookbook recipes. Read when verifying a recipe's completeness, code quality, and annotation density before publishing.
 - [Cookbook vs Other Tutorial Types](./cookbook-vs-other-tutorial-types.md) — Compares Cookbook against By-Example, How-To Guides, and By-Concept tutorial types to clarify when each applies. Read when deciding whether content should be a cookbook recipe, a by-example tutorial, a how-to guide, or a by-concept tutorial.
 - [Validation and Quality Metrics](./validation-and-quality-metrics.md) — Defines the recipe-count-by-category coverage metrics and the automated and manual quality validation checks. Read when checking whether a cookbook has enough recipes per category or what an automated checker validates.
-- [Principles Implemented/Respected](./principles-implemented-respected.md) — Lists the repository principles (Automation Over Manual, Progressive Disclosure, and others) that this convention implements. Read when tracing which repository-wide principles the Cookbook convention is grounded in.
 - [Scope](./scope.md) — Defines what the Cookbook convention covers and explicitly does not cover, and where it applies across the repository. Read when determining whether a question about Cookbook tutorials is answered by this convention or a different one.
-- [Related Documentation](./related-documentation.md) — Links to the Tutorial Naming, Tutorials, Programming Language Structure/Content, and By-Example/By-Concept conventions related to Cookbook tutorials. Read when looking for the other conventions that Cookbook tutorials build on or should be cross-referenced with.

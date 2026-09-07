@@ -1,5 +1,4 @@
 ---
-title: "Safety Features and Related Workflows"
 description: Lists the workflow's safety guarantees (worktree isolation, gate-before-delivery, hook compliance, secrets rule) and links to related workflows.
 when_to_use: Use when verifying what protections this workflow provides, or navigating to a related workflow.
 ---

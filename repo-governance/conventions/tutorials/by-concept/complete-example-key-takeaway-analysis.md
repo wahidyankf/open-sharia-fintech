@@ -1,16 +1,6 @@
 ---
-title: "Complete Section Example: Key Takeaway and Analysis"
 description: "Completes the Goroutines reference example with its key takeaway, why-it-matters, and a structural analysis of each part."
 when_to_use: "Read when you need to see how a By-Concept section's key takeaway and why-it-matters parts should read, plus a part-by-part breakdown."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-concept
-  - education
-  - narrative-driven
-created: 2026-01-30
 ---
 
 # Complete Section Example: Key Takeaway and Analysis

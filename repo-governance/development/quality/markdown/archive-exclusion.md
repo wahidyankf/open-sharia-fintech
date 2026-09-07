@@ -1,16 +1,5 @@
 ---
-title: "Archive Exclusion"
 description: "Why plans/done/ and archived/ are excluded from markdown linting."
-category: explanation
-subcategory: development
-tags:
-  - markdown
-  - linting
-  - formatting
-  - prettier
-  - markdownlint
-  - quality
-created: 2026-01-17
 when_to_use: "Use when deciding whether archived content should be linted."
 ---
 

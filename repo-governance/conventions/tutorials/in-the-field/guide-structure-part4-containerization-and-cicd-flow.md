@@ -1,16 +1,6 @@
 ---
-title: "Guide Structure Part 4: Containerization and CI/CD Flow Diagrams"
 description: Mermaid diagrams for JAR/Docker/Kubernetes containerization progression and a full CI/CD pipeline flow.
 when_to_use: Use when building a containerization-progression or CI/CD-pipeline diagram.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Guide Structure Part 4: Containerization and CI/CD Flow Diagrams

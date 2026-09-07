@@ -1,15 +1,5 @@
 ---
-title: "Forbidden-Operations Caveats and Cross-Worktree Facts"
 description: Two forbidden-operation behaviours that are easy to misread as safe, and the git mechanics that already enforce isolation across worktrees.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - safety
-  - worktree
-  - parallelism
-created: 2026-07-20
 when_to_use: Use when tempted to treat bare --force-with-lease or --prune=now as safe, or when reasoning about what git already isolates between worktrees.
 ---
 

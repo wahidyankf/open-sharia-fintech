@@ -1,5 +1,4 @@
 ---
-title: "Step 1 — Parity-Set Survey"
 description: Empirically surveys every target repo's current state, including the rhino-cli byte-identity check and the survey-freshness re-run rule.
 when_to_use: Use when starting a parity run, to build the per-repo state inventory the deviation matrix is built from.
 ---

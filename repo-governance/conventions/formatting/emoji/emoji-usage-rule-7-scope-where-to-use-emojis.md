@@ -1,16 +1,6 @@
 ---
-title: "Emoji Usage Rule 7: Scope - Where to Use Emojis"
 description: The full scope rule for where emojis are allowed versus forbidden, with rationale.
 when_to_use: Use to check whether a file type (docs, agents, config, README) may contain emoji.
-category: explanation
-subcategory: conventions
-tags:
-  - emoji
-  - accessibility
-  - scannability
-  - conventions
-  - markdown
-created: 2025-12-04
 ---
 
 # Emoji Usage Rule 7: Scope - Where to Use Emojis

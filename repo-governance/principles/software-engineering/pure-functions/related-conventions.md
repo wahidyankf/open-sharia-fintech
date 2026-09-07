@@ -1,15 +1,5 @@
 ---
-title: "Related Conventions"
 description: Links to the functional programming, code quality, and implementation workflow conventions that operationalize pure functions.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - functional-programming
-  - pure-functions
-  - testability
-  - determinism
-created: 2025-12-28
 when_to_use: Use when looking for the concrete conventions that enforce or implement pure functions in this repository.
 ---
 

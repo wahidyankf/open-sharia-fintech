@@ -1,5 +1,4 @@
 ---
-title: "Tutorial Convention"
 description: "Standards for creating learning-oriented tutorials in open-sharia-enterprise"
 when_to_use: "Read this index to find the right Tutorial Convention child document."
 ---

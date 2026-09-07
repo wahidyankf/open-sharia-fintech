@@ -1,15 +1,5 @@
 ---
-title: "Task List Discipline"
 description: Before any task, including a purely conversational one, open the harness's native task list and keep it continuously in sync with actual progress
-category: explanation
-subcategory: development
-tags:
-  - task-management
-  - planning
-  - execution
-  - ai-agents
-  - discipline
-created: 2026-06-23
 when_to_use: Use whenever you're about to start work with 3 or more distinct steps, or work spanning multiple files or phases, before you touch the first file.
 ---
 

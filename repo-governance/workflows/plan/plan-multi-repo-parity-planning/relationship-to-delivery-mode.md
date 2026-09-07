@@ -1,5 +1,4 @@
 ---
-title: "Relationship to Each Repo's Own `## Delivery Mode`"
 description: Distinguishes this workflow's own plan-document delivery mode from each authored plan's separately-declared, independently-resolved execution Delivery Mode.
 when_to_use: Use when confused about which "delivery mode" a decision refers to — the plan document's or the plan's own future execution.
 ---

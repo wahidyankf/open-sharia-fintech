@@ -1,5 +1,4 @@
 ---
-title: "Post-Mortem Convention"
 description: "Standards for writing and organizing blameless incident post-mortems in this repository, including location, naming, mandatory sections, severity scale, and action-item tracking"
 when_to_use: "Read this index to find the right Post-Mortem Convention child document."
 ---

@@ -1,13 +1,5 @@
 ---
-title: "Ethical Profit and the Islamic Enterprise Paradox"
 description: Why profit is halal and necessary when earned ethically, resolving the tension between Islamic values and profit-seeking
-category: explanation
-subcategory: vision
-tags:
-  - vision
-  - purpose
-  - islamic-enterprise
-created: 2025-12-24
 when_to_use: Use when explaining why profit and openness are not in tension here.
 ---
 

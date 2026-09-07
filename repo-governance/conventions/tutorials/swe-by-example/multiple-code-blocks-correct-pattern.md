@@ -1,15 +1,5 @@
 ---
-title: "Multiple Code Blocks Pattern: The Correct Pattern"
 description: "Shows the correct multiple-code-blocks pattern for a two-library comparison, with trade-off text between blocks and a benefits summary."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - education
-  - code-first
-created: 2025-12-25
 when_to_use: "Read when you need a concrete worked example of the correct multiple-code-blocks pattern to model a comparison example against."
 ---
 

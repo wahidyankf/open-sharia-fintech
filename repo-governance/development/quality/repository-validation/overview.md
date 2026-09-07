@@ -1,16 +1,5 @@
 ---
-title: "Overview"
 description: "Overview of the repository validation methodology."
-category: explanation
-subcategory: development
-tags:
-  - validation
-  - consistency
-  - bash
-  - awk
-  - frontmatter
-  - automation
-created: 2025-12-14
 when_to_use: "Use when orienting to how repository validation works."
 ---
 

@@ -1,16 +1,5 @@
 ---
-title: "Absence/Completeness: Concept Sweep (3)"
 description: "Index-staleness and competing-convention edge cases."
-category: explanation
-subcategory: development
-tags:
-  - plans
-  - ai-agents
-  - factual-validation
-  - anti-hallucination
-  - web-research
-  - verification
-created: 2026-05-03
 when_to_use: "Use for the index-staleness edge case."
 ---
 
@@ -25,7 +14,7 @@ links rather than from the author's recall.
 **Hardest case — a competing convention**: an entire document whose _thesis_ is the old default
 contributes only a couple of matching lines, so by hit-count it looks like a minor sweep target.
 Most of its text never contains the swept literal at all. When a delta **inverts** an existing rule,
-require an explicit inventory entry for every convention whose title or `description:` frontmatter
+require an explicit inventory entry for every convention whose H1 or `description:` frontmatter
 names that rule — those files need **reading**, not grepping.
 
 **Acceptance-criterion rule (HARD)**: an acceptance criterion whose only evidence is the same regex

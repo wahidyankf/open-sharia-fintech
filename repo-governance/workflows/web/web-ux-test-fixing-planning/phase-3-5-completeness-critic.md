@@ -1,5 +1,4 @@
 ---
-title: "Web UX Test-Fixing Planning — Phase 3.5: Cross-Tester Completeness Critic"
 description: "The pre-solidification critic pass that reconciles the three coverage maps into one control x surface grid and confirms no matrix cell, recurrence class, or changed surface was silently skipped."
 when_to_use: "Use when checking exactly what the completeness critic verifies before Phase 4 solidification starts."
 ---

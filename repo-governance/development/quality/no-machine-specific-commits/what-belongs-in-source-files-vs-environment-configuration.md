@@ -1,16 +1,5 @@
 ---
-title: "What Belongs in Source Files vs. Environment Configuration"
 description: "A table mapping information types to their correct location, plus the .env.example template pattern."
-category: explanation
-subcategory: development
-tags:
-  - git
-  - commits
-  - security
-  - portability
-  - environment
-  - quality
-created: 2026-03-24
 when_to_use: "Use when deciding whether a value belongs in source code or in .env configuration."
 ---
 

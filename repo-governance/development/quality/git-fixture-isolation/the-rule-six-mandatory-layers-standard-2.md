@@ -1,17 +1,5 @@
 ---
-title: "The Rule: Six Mandatory Layers (Standard 2)"
 description: "Standard 2: no ambient discovery (explicit GIT_DIR)."
-category: explanation
-subcategory: development
-tags:
-  - testing
-  - git
-  - test-fixtures
-  - isolation
-  - regression
-  - safety
-  - defense-in-depth
-created: 2026-07-19
 when_to_use: "Use when implementing explicit GIT_DIR targeting in a fixture."
 ---
 

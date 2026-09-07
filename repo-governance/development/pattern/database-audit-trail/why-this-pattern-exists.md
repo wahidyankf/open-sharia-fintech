@@ -1,16 +1,5 @@
 ---
-title: "Why This Pattern Exists"
 description: "The auditability, soft-delete, compliance, and production-debugging rationale behind the required audit columns."
-category: explanation
-subcategory: development
-tags:
-  - database
-  - audit-trail
-  - soft-delete
-  - dbup
-  - ef-core
-  - migrations
-created: 2026-03-09
 when_to_use: "Use when justifying to a reviewer or teammate why a table must include the audit columns."
 ---
 

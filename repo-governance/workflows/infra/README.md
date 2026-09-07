@@ -1,14 +1,6 @@
 ---
-title: "Infrastructure Workflows"
 description: Workflows for development environment and infrastructure setup
 when_to_use: Use when routing to a workflow that sets up or verifies a development environment's toolchains.
-category: explanation
-subcategory: workflows
-tags:
-  - index
-  - workflows
-  - infrastructure
-created: 2026-05-12
 ---
 
 # Infrastructure Workflows

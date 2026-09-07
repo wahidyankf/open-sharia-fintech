@@ -1,14 +1,5 @@
 ---
-title: "Why"
 description: Explains the universal-benefit, moral, and legal/professional rationale for prioritizing accessibility.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - accessibility
-  - wcag
-  - inclusive-design
-created: 2025-12-15
 when_to_use: Use when justifying accessibility work to stakeholders who ask why it is required.
 ---
 

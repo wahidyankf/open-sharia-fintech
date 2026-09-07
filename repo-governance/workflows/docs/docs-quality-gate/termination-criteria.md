@@ -1,5 +1,4 @@
 ---
-title: "Termination Criteria"
 description: "Defines pass, partial, and fail termination criteria per quality mode, requiring zero findings across all three validators on two consecutive checks."
 when_to_use: "Use when determining what condition ends the workflow, or when choosing a quality mode."
 ---

@@ -1,10 +1,5 @@
 ---
-title: "Anti-Pattern: Mixed Concerns in Single Commit"
 description: Combining independently reviewable purposes in one commit produces confusing, hard-to-revert history.
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use after explicit authorization when a commit would bundle independently reviewable and revertible purposes.
 ---
 

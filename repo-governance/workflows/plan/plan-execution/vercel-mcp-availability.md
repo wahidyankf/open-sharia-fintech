@@ -1,5 +1,4 @@
 ---
-title: "Vercel MCP Availability (Surface-Conditional)"
 description: Defines how execution reconfirms Vercel MCP availability at Phase 0 for plans touching a Vercel-deployed surface.
 when_to_use: Use when a plan touches a Vercel-deployed surface and Phase 0 must verify the authoring-time MCP assumption still holds.
 ---

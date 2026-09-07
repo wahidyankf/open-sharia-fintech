@@ -1,18 +1,6 @@
 ---
-title: "UI Mockups in Plan Docs: Prior-Art Recommendation and Worked Example"
 description: "Gives the prior-art recommendation (R7) for researching existing patterns, plus a worked mockup example."
 when_to_use: "Use when starting a new UI mockup and want to research prior art first, or see a full worked example."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # UI Mockups in Plan Docs: Prior-Art Recommendation and Worked Example

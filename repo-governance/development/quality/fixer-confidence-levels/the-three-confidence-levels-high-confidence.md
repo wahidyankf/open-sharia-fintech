@@ -1,15 +1,5 @@
 ---
-title: "The Three Confidence Levels: HIGH_CONFIDENCE"
 description: "HIGH_CONFIDENCE: apply the fix automatically."
-category: explanation
-subcategory: development
-tags:
-  - fixer-agents
-  - confidence-levels
-  - validation
-  - automation
-  - quality-assurance
-created: 2025-12-14
 when_to_use: "Use when deciding whether a finding is HIGH_CONFIDENCE."
 ---
 
@@ -30,7 +20,7 @@ when_to_use: "Use when deciding whether a finding is HIGH_CONFIDENCE."
 
 **repo-workflow-fixer:**
 
-- Missing `subcategory` field verified by re-reading frontmatter
+- Missing `when_to_use` field verified by re-reading frontmatter
 - Broken internal link verified by checking file doesn't exist at target path
 - Wrong field value verified by comparing actual vs expected value
 - File naming convention violation verified by checking filename against the kebab-case pattern

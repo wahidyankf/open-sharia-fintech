@@ -1,16 +1,6 @@
 ---
-title: "Relationship to Other Tutorial Types"
 description: "Compares By-Concept against Initial Setup, Quick Start, Beginner, By-Example, Intermediate, Advanced, and Cookbook tutorial types."
 when_to_use: "Read when deciding whether a piece of content should be a By-Concept tutorial or another tutorial type."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-concept
-  - education
-  - narrative-driven
-created: 2026-01-30
 ---
 
 # Relationship to Other Tutorial Types

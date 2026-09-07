@@ -1,14 +1,5 @@
 ---
-title: "Platform Binding Examples — Research Agent Note"
 description: "Gives the special note for how research agents fit the color categorization system."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when handling a research agent's color assignment.
 ---
 

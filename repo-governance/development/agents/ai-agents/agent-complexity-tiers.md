@@ -1,14 +1,5 @@
 ---
-title: "Agent Complexity Tiers"
 description: "Defines the three agent complexity tiers by scope and reasoning depth; file size is governed solely by the word budget."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when deciding which complexity tier a new or existing agent belongs to.
 ---
 

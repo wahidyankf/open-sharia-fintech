@@ -1,16 +1,5 @@
 ---
-title: "The Six Forcing-Functions (1-2)"
 description: "Forcing-functions 1-2: shared-control matrix, per-control round-trip."
-category: explanation
-subcategory: development
-tags:
-  - testing
-  - live-testing
-  - usability
-  - ux
-  - quality
-  - systematic
-created: 2026-06-22
 when_to_use: "Use when applying the shared-control or round-trip forcing-function."
 ---
 

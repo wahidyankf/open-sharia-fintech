@@ -1,16 +1,5 @@
 ---
-title: "Decision Guide (continued)"
 description: "Table (part 2 of 2) mapping common change types to whether a spec update is required."
-category: explanation
-subcategory: development
-tags:
-  - specs
-  - architecture
-  - c4-diagrams
-  - gherkin
-  - synchronization
-  - quality
-created: 2026-03-24
 when_to_use: "Use when uncertain whether a Next.js/React/app-rename/library-level change requires a spec update."
 ---
 

@@ -1,17 +1,5 @@
 ---
-title: "Markdown Fallback Format"
 description: The inline markdown option format a genuinely non-interactive root emits when no native multiple-choice tool is available.
-category: explanation
-subcategory: development
-tags:
-  - planning
-  - grill-me
-  - user-interaction
-  - plan-maker
-  - design-decisions
-  - interaction
-  - agents
-created: 2026-05-26
 when_to_use: Use when rendering a grilling question on a root or harness with no native interactive multiple-choice tool.
 ---
 

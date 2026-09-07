@@ -1,10 +1,5 @@
 ---
-title: "Git Hooks Standard — Pre-Push"
 description: "Affected test:quick execution with no Integration or E2E runtime"
-category: explanation
-subcategory: development
-tags: [ci-cd, git-hooks, testing]
-created: 2026-03-31
 when_to_use: "Use when debugging or changing the pre-push test gate."
 ---
 

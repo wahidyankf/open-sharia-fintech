@@ -1,10 +1,5 @@
 ---
-title: "Infrastructure Development"
 description: Standards for reliable local development infrastructure, toolchains, and artifacts
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use when setting up local development tooling, naming Nx targets, organizing temporary files, or writing testable acceptance criteria.
 ---
 

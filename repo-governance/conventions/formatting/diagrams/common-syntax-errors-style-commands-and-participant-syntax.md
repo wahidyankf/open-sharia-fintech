@@ -1,18 +1,6 @@
 ---
-title: "Common Mermaid Syntax Errors: Style Commands and Sequence-Diagram Participant Syntax"
 description: "Documents Error 4 and Error 5: style command placement in sequence diagrams and participant `as` syntax mistakes."
 when_to_use: "Use when a Mermaid sequence diagram's style commands or participant aliasing aren't working as expected."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Common Mermaid Syntax Errors: Style Commands and Sequence-Diagram Participant Syntax

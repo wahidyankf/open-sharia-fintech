@@ -1,15 +1,5 @@
 ---
-title: "Validation and Enforcement, and Relationship to Other Tutorial Types"
 description: "Lists what the checker agent automatically validates and production validation results, the quality-gate workflow, and how by-example relates to other tutorial types."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - education
-  - code-first
-created: 2025-12-25
 when_to_use: "Read when you need to know exactly what the automated checker validates, how the quality-gate workflow runs, or how by-example compares to other tutorial types."
 ---
 

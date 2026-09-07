@@ -1,14 +1,5 @@
 ---
-title: "Anti-Pattern 10: Enumeration-Based Guards (Denylist Guards That Fail Open)"
 description: "Describes the enumeration-based (denylist) guard anti-pattern, where a guard silently fails open on an unenumerated input."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - anti-patterns
-  - development
-  - best-practices
-created: 2025-11-23
 when_to_use: Use when reviewing a guard, validator, or permission check that enumerates disallowed values instead of allowed ones.
 ---
 

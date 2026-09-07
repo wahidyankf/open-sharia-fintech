@@ -1,16 +1,6 @@
 ---
-title: "Learning-Plan Syllabus: Related Documentation"
 description: Cross-references to the parent Plans convention, the UI Mockups precedent this convention mirrors, the Worktree Path structure convention, Knowledge Capture, and the governance architecture overview.
 when_to_use: Read this when you need the related-convention links this document cross-references rather than the rules themselves.
-category: explanation
-subcategory: conventions
-tags:
-  - plans
-  - syllabus
-  - learning-bearing
-  - custody
-  - governance
-created: 2026-07-22
 ---
 
 # Learning-Plan Syllabus: Related Documentation

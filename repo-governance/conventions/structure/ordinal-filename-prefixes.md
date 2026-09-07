@@ -1,15 +1,6 @@
 ---
-title: "Ordinal Filename Prefixes Convention"
 description: When a governed markdown filename may carry a leading NN- ordinal, and when the parent index carries order instead
 when_to_use: Use when naming or renaming a governed markdown file whose name starts with a number, or when splitting a document into shards.
-category: explanation
-subcategory: conventions
-tags:
-  - naming
-  - files
-  - conventions
-  - ordinals
-created: 2026-08-18
 ---
 
 # Ordinal Filename Prefixes Convention

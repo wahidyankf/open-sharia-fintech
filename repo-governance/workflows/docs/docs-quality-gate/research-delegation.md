@@ -1,5 +1,4 @@
 ---
-title: "Research Delegation"
 description: "Explains that docs-checker and docs-tutorial-checker delegate multi-page web research to web-researcher to keep audit contexts lean."
 when_to_use: "Use when investigating why a checker is or isn't calling WebSearch/WebFetch directly for a given claim."
 ---

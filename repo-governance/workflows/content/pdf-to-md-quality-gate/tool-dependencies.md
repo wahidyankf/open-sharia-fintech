@@ -1,5 +1,4 @@
 ---
-title: "Tool Dependencies"
 description: "Lists required CLI tools (crane-cli, tesseract, jq), install/verify commands, and the crane check-all aggregator with its large-PDF fallback."
 when_to_use: "Use when setting up the toolchain for this workflow or diagnosing a missing-tool failure."
 ---

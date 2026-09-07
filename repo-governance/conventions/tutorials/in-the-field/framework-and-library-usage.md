@@ -1,16 +1,6 @@
 ---
-title: "Framework and Library Usage"
 description: Which external dependencies are encouraged, how to introduce a framework, and how to declare dependencies in examples.
 when_to_use: Use when introducing a new framework or dependency in a guide.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Framework and Library Usage

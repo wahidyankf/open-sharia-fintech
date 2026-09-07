@@ -1,5 +1,4 @@
 ---
-title: "Principles, Conventions, and Agents"
 description: Lists the principles and conventions this composite implements, and the agents it delegates to across its planning and execution phases.
 when_to_use: Use when auditing this workflow's governance alignment or looking up which agent performs a given phase.
 ---

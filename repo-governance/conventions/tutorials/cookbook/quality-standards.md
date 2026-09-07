@@ -1,17 +1,6 @@
 ---
-title: "Quality Standards"
 description: "Defines the recipe completeness checklist, code quality standards, and annotation density target for cookbook recipes."
 when_to_use: "Read when verifying a recipe's completeness, code quality, and annotation density before publishing."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - cookbook
-  - education
-  - problem-solving
-  - recipes
-created: 2026-01-30
 ---
 
 # Quality Standards

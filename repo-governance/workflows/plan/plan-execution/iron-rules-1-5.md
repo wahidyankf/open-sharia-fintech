@@ -1,5 +1,4 @@
 ---
-title: "Iron Rules (Non-Negotiable) — Rules 1-5"
 description: "States the first five non-negotiable execution rules: granular task tracking, never-stop, fix-all-issues, atomic sync, and local gates before push."
 when_to_use: Use when checking execution against the first five hard, non-negotiable rules governing every execution step.
 ---

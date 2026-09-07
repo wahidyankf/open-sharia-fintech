@@ -1,15 +1,6 @@
 ---
-title: "Scope"
 description: What the tutorial naming convention covers and does not cover, and how it relates to tutorial structure and general file naming.
 when_to_use: Use when you need to confirm whether a naming question falls inside or outside this convention's scope.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - tutorials
-  - naming
-  - learning-paths
-created: 2025-12-03
 ---
 
 # Scope

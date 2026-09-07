@@ -1,15 +1,5 @@
 ---
-title: "Why Merge --ff-only Cannot Run in the Bare Siblings"
 description: Worked console transcript showing why git merge fails in a bare repository and why the refspec fetch form is the only universal one.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - worktree
-  - bare-repo
-  - safety
-created: 2026-07-21
 when_to_use: Use when explaining or verifying why the bare-topology row of the Terminal Reconcile table uses a fetch refspec instead of merge --ff-only.
 ---
 

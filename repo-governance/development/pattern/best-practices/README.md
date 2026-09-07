@@ -1,5 +1,4 @@
 ---
-title: "Best Practices for Development Patterns"
 description: "Recommended techniques for the Maker-Checker-Fixer pattern and functional programming practices."
 when_to_use: "Read this index to find the right Best Practices for Development Patterns child document."
 ---

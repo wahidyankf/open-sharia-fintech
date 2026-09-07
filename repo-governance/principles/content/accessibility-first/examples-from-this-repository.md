@@ -1,13 +1,5 @@
 ---
-title: "Examples from This Repository"
 description: Real examples from this repository showing accessible Mermaid diagrams, agent categorization, and document frontmatter.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - accessibility
-  - wcag
-created: 2025-12-15
 when_to_use: Use when looking for worked examples of accessibility principles applied within this repository's own content.
 ---
 

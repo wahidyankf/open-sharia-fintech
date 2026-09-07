@@ -1,15 +1,5 @@
 ---
-title: "Standards"
 description: The four content standards governing what may and may not appear in a Why It Matters section
-category: explanation
-subcategory: conventions
-tags:
-  - ayokoding-www
-  - tutorial-content
-  - factual-accuracy
-  - why-it-matters
-  - hallucination-prevention
-created: 2026-05-09
 when_to_use: Read this to check whether a specific sentence in a Why It Matters section is a prohibited or permitted pattern.
 ---
 

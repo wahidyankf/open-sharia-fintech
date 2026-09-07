@@ -1,14 +1,5 @@
 ---
-title: "Granular Checklist Actions Within Outcome Sections"
 description: Requires execution-grade action checkboxes while preserving cohesive acceptance-criterion outcomes.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when writing or reviewing delivery checklist detail, action granularity, and outcome cohesion.
 ---
 

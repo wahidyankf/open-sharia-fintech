@@ -1,14 +1,5 @@
 ---
-title: "Continuation-State Integrity"
 description: Preserve active user-established repository-rule decisions across compaction, handoff, and session continuation.
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - continuation
-  - compaction
-  - task-management
-created: 2026-08-27
 when_to_use: Use when a user establishes a repository-rule preference during active work, or before acting after compaction, handoff, or session continuation.
 ---
 

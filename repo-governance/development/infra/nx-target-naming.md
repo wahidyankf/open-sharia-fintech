@@ -1,14 +1,5 @@
 ---
-title: "Nx Target Naming Convention"
 description: Derivation rules for Nx target names, covering the {domain}:{work} scheme for governance and validation targets and the lifecycle naming scheme for build/test targets
-category: explanation
-subcategory: development
-tags:
-  - nx
-  - targets
-  - naming
-  - conventions
-created: 2026-06-13
 when_to_use: Use when naming a new Nx target or rhino-cli subcommand, or deciding whether a check belongs in lint-staged.
 ---
 

@@ -1,18 +1,6 @@
 ---
-title: "Colors to Avoid and Color Blindness Types"
 description: "Lists prohibited colors and combinations, and explains how each color blindness type perceives them."
 when_to_use: "Use when checking whether a proposed color or color combination is unsafe for color-blind users."
-category: explanation
-subcategory: conventions
-tags:
-  - accessibility
-  - color-blindness
-  - wcag
-  - design
-  - conventions
-  - mermaid-diagrams
-  - color-palette
-created: 2025-12-04
 ---
 
 # Colors to Avoid and Color Blindness Types

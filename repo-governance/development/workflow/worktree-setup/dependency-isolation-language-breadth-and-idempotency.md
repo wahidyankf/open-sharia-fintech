@@ -1,18 +1,5 @@
 ---
-title: "Dependency Isolation, Language Breadth, and Idempotency"
 description: Why node_modules is not shared across worktrees, why worktrees routinely need many language toolchains, and why doctor --fix is cheap to run unconditionally.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - git
-  - worktree
-  - npm
-  - nx
-  - dependencies
-  - toolchain
-  - doctor
-created: 2026-03-28
 when_to_use: Use when explaining why every new worktree needs the two-step init regardless of stated task scope.
 ---
 

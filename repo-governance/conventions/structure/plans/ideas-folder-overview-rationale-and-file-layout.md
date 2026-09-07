@@ -1,14 +1,5 @@
 ---
-title: "Ideas Folder (Two-Pagers)"
 description: Defines the two-pager idea-brief format, why it exists between a one-liner and a full plan, its file layout, and the rule to fold new ideas into existing briefs rather than duplicating them.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when capturing a new idea in plans/ideas/ or deciding whether it duplicates an existing two-pager.
 ---
 

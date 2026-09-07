@@ -1,15 +1,5 @@
 ---
-title: "Rule"
 description: The core approval rule for force-push and hook-bypass operations, and the sole standing exception for confirmed secret-exposure history remediation.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - safety
-  - automation
-  - human-approval
-created: 2026-03-30
 when_to_use: Use when about to run a covered git push operation, or when handling a confirmed secret exposed in committed history.
 ---
 

@@ -1,10 +1,5 @@
 ---
-title: "Nx Target Anti-Patterns"
 description: "Testing and lifecycle target definitions that falsely satisfy or weaken project gates"
-category: explanation
-subcategory: development
-tags: [nx, targets, testing]
-created: 2026-02-23
 when_to_use: "Use when reviewing project.json target definitions."
 ---
 

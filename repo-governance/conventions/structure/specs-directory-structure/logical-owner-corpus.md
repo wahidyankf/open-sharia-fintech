@@ -1,16 +1,6 @@
 ---
-title: "Logical Owner Corpus"
 description: "The adopted specs shape — one corpus per logical owner, carrying an index, a canonical as-built architecture.md, and a recursive behaviours/ tree"
 when_to_use: "Read this when creating or validating a specs corpus for a logical owner, or when checking whether a spec area has adopted the shape."
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - specs
-  - gherkin
-  - directory-structure
-  - c4
-created: 2026-09-01
 ---
 
 # Logical Owner Corpus

@@ -1,18 +1,6 @@
 ---
-title: "Diagram Size and Splitting: Splitting Guidelines"
 description: "Gives concrete guidelines for how to split an oversized diagram into multiple focused diagrams."
 when_to_use: "Use when you've decided a diagram needs splitting and need the concrete guidelines for doing it well."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Diagram Size and Splitting: Splitting Guidelines

@@ -1,5 +1,4 @@
 ---
-title: "Immutability Over Mutability"
 description: "Prefer immutable data structures over mutable state for safer, more predictable code"
 when_to_use: "Read this index to find the right Immutability Over Mutability child document."
 ---

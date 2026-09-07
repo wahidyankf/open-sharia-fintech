@@ -1,18 +1,6 @@
 ---
-title: "Mermaid Color Accessibility: Testing Requirements, Documentation, and Key Points"
 description: "Covers testing requirements, documentation requirements, and key implementation points for accessible Mermaid colors."
 when_to_use: "Use when verifying or documenting that a Mermaid diagram's colors meet the accessibility requirements."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Mermaid Color Accessibility: Testing Requirements, Documentation, and Key Points

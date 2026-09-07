@@ -1,15 +1,5 @@
 ---
-title: "Standard 1: Default Integration Target Is a PR Branch"
 description: The default worktree-to-pr workflow, the situations it applies to, and the Phase 0 exception where no PR is opened at all.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - push
-  - trunk-based-development
-  - ai-agents
-created: 2026-04-25
 when_to_use: Use when confirming the default push behaviour for a delivery, or when checking whether Phase 0 of a plan should push or open a PR.
 ---
 

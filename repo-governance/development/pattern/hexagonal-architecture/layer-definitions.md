@@ -1,14 +1,5 @@
 ---
-title: "Layer Definitions"
 description: "What belongs and what is forbidden in each hexagonal layer - domain, application, infrastructure, and inbound adapters."
-category: explanation
-subcategory: development
-tags:
-  - architecture
-  - hexagonal
-  - ports-and-adapters
-  - dependency-rule
-created: 2026-05-26
 when_to_use: "Use when deciding whether a piece of code belongs in the domain, application, infrastructure, or inbound-adapter layer."
 ---
 

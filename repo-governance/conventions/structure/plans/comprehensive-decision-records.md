@@ -1,10 +1,5 @@
 ---
-title: "Comprehensive Decision Records"
 description: Defines the audience, end-to-end purpose, alternatives, and prior-art record required in formal plans.
-category: explanation
-subcategory: conventions
-tags: [conventions, plans, decisions, readability]
-created: 2026-08-30
 when_to_use: Use when authoring or reviewing the reasoning and context in a formal plan.
 ---
 

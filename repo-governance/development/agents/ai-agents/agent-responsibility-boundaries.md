@@ -1,14 +1,5 @@
 ---
-title: "Agent Responsibility Boundaries"
 description: "Defines single-responsibility, overlap-avoidance, and specialization-vs-generalization rules for agents."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when deciding whether a new or existing agent's responsibilities overlap with another agent's.
 ---
 

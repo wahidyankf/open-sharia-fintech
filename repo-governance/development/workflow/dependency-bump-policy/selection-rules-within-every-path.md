@@ -1,15 +1,5 @@
 ---
-title: "Selection Rules Within Every Path"
 description: The two rules — recency and functional stability — that narrow a chosen path's eligible versions down to the single version to pin.
-category: explanation
-subcategory: development
-tags:
-  - dependencies
-  - security
-  - versioning
-  - reproducibility
-  - workflow
-created: 2026-05-15
 when_to_use: Use once a path (A, B, or C) is chosen, to select the exact version to pin from that path's eligible set.
 ---
 

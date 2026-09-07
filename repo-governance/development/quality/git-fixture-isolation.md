@@ -1,17 +1,5 @@
 ---
-title: "Git Fixture Isolation Convention"
 description: Defense-in-depth mandate for any test or fixture that shells out to git to build throwaway repositories -- caps upward discovery, forces explicit repo targeting, blanks identity/config, and asserts a pre-write escape guard so a fixture can never mutate the real repository
-category: explanation
-subcategory: development
-tags:
-  - testing
-  - git
-  - test-fixtures
-  - isolation
-  - regression
-  - safety
-  - defense-in-depth
-created: 2026-07-19
 when_to_use: "Use when writing or reviewing a test or fixture that shells out to git to build a throwaway repository."
 ---
 

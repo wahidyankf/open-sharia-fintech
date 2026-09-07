@@ -1,17 +1,6 @@
 ---
-title: "Hands-On Elements Requirements: Practice Exercises"
 description: "Defines the frequency, difficulty, and structure requirements for practice exercises placed after each major tutorial section."
 when_to_use: "Read when adding a practice exercise after a tutorial section and structuring its problem, hint, and solution."
-category: explanation
-subcategory: conventions
-tags:
-  - tutorials
-  - diataxis
-  - learning
-  - pedagogy
-  - documentation
-  - teaching
-created: 2025-12-03
 ---
 
 # Hands-On Elements Requirements: Practice Exercises

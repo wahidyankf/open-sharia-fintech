@@ -1,15 +1,6 @@
 ---
-title: "File Naming Convention"
 description: Standard markdown + GitHub-compatible kebab-case naming for all files
 when_to_use: Use when naming a new file under docs/, repo-governance/, or a similar repository location.
-category: explanation
-subcategory: conventions
-tags:
-  - naming
-  - files
-  - conventions
-  - github
-created: 2025-11-19
 ---
 
 # File Naming Convention

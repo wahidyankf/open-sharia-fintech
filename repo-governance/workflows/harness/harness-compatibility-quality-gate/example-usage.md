@@ -1,5 +1,4 @@
 ---
-title: "Example Usage"
 description: Three invocation examples — standard strict-mode run, single-harness scope, and explicit iteration bounds.
 when_to_use: Use when looking for a concrete command to invoke this workflow with a specific scope or iteration setting.
 ---

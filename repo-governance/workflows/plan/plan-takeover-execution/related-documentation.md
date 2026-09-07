@@ -1,5 +1,4 @@
 ---
-title: "Related Documentation — Plan Takeover Execution"
 description: Links to the write-side handover workflow, the workflows this one hands off to, and the conventions Phases C and D apply without modification.
 when_to_use: Use when navigating from plan-takeover-execution to a workflow or convention it depends on.
 ---

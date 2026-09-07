@@ -1,17 +1,5 @@
 ---
-title: "Principles and Conventions Implemented/Respected"
 description: "Principles/conventions implemented."
-category: explanation
-subcategory: development
-tags:
-  - development
-  - code-quality
-  - prettier
-  - husky
-  - lint-staged
-  - git-hooks
-  - automation
-created: 2026-05-12
 when_to_use: "Use to trace this convention's rationale."
 ---
 

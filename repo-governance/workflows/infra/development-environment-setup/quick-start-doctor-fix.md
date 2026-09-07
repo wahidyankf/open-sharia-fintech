@@ -1,5 +1,4 @@
 ---
-title: "Quick Start: `doctor --fix`"
 description: "The fast path: clone, run guarded npm install, then run transactional doctor --fix to install missing tools."
 when_to_use: "Use when you already have Homebrew/apt and Node.js/npm and want the one-command setup instead of manual phases."
 ---

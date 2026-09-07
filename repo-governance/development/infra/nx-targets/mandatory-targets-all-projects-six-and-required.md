@@ -1,10 +1,5 @@
 ---
-title: "Mandatory and Applicable Nx Targets"
 description: "Real targets required by project capability instead of a mandatory placeholder set"
-category: explanation
-subcategory: development
-tags: [nx, targets, project-json, testing]
-created: 2026-02-23
 when_to_use: "Use when scaffolding or reviewing project.json targets."
 ---
 

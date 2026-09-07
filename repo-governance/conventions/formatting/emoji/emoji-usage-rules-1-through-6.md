@@ -1,16 +1,6 @@
 ---
-title: "Emoji Usage Rules 1-6"
 description: "Six binding usage rules: semantic consistency, restraint, heading-level placement, no emoji in technical content, accessibility, and no emoji in frontmatter."
 when_to_use: Use when checking a specific emoji placement against the repository's binding usage rules.
-category: explanation
-subcategory: conventions
-tags:
-  - emoji
-  - accessibility
-  - scannability
-  - conventions
-  - markdown
-created: 2025-12-04
 ---
 
 # Emoji Usage Rules 1-6

@@ -1,14 +1,5 @@
 ---
-title: "Tier Comparison Summary"
 description: "Summarizes the four model grades in one comparison table, including the effort each grade declares."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - model-selection
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when you need a quick side-by-side comparison of the four model grades, or the effort a grade requires.
 ---
 

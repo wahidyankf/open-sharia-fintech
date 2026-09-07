@@ -1,14 +1,5 @@
 ---
-title: "Core Practices"
 description: Lists the three core practices of root cause orientation - diagnosing before acting, applying minimal impact changes, and holding to senior engineer standards.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - root-cause
-  - minimal-impact
-  - senior-engineer
-created: 2026-03-09
 when_to_use: Use when looking for the concrete Do/Don't practices that operationalize root cause orientation.
 ---
 

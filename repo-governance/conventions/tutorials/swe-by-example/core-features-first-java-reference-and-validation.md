@@ -1,15 +1,5 @@
 ---
-title: "Core Features First: Java Reference Implementation and Validation Criteria"
 description: "Uses the Java by-example tutorial as a worked reference for core-features-first, and lists the checker agent's validation criteria."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - education
-  - code-first
-created: 2025-12-25
 when_to_use: "Read when you need a concrete worked example of core-features-first applied across levels, or the exact criteria the checker agent validates."
 ---
 

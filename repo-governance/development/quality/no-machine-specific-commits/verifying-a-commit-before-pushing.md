@@ -1,16 +1,5 @@
 ---
-title: "Verifying a Commit Before Pushing"
 description: "The grep command to scan staged changes for common machine-specific patterns before committing."
-category: explanation
-subcategory: development
-tags:
-  - git
-  - commits
-  - security
-  - portability
-  - environment
-  - quality
-created: 2026-03-24
 when_to_use: "Use before pushing a commit that adds test fixtures, configuration, or script output containing paths."
 ---
 

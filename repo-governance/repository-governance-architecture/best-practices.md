@@ -1,12 +1,5 @@
 ---
-title: "Best Practices"
 description: Checklists for creating conventions, practices, agents, workflows, and skills
-category: explanation
-subcategory: architecture
-tags:
-  - architecture
-  - governance
-created: 2026-02-09
 when_to_use: Use before creating a new convention, practice, agent, workflow, or skill.
 ---
 

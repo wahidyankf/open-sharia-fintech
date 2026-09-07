@@ -1,5 +1,4 @@
 ---
-title: "Related Documentation"
 description: "Links to the developer-facing how-to guide and the reproducible-environments and code-quality governance docs."
 when_to_use: "Use when looking for the human-facing companion guide or the underlying governance rationale."
 ---

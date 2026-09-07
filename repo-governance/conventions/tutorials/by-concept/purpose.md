@@ -1,16 +1,6 @@
 ---
-title: "Purpose"
 description: "Defines the purpose and target audience of the By-Concept tutorial type as an extension of the general Tutorials Convention."
 when_to_use: "Read when you need to understand why the By-Concept tutorial type exists and who it targets before authoring or reviewing one."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-concept
-  - education
-  - narrative-driven
-created: 2026-01-30
 ---
 
 # Purpose

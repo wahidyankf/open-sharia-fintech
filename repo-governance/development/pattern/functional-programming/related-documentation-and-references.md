@@ -1,15 +1,5 @@
 ---
-title: "Related Documentation and References"
 description: "Links to related principles and conventions, plus external books and articles on functional programming."
-category: explanation
-subcategory: development
-tags:
-  - development
-  - functional-programming
-  - immutability
-  - pure-functions
-  - typescript
-created: 2025-12-28
 when_to_use: "Use when you need a link to the underlying principle, or a book/article reference on functional programming."
 ---
 

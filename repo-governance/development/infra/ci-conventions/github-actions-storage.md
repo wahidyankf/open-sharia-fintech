@@ -1,10 +1,6 @@
 ---
-title: "CI/CD Conventions — GitHub Actions Storage"
 description: "Standards for keeping Actions artifacts, GitHub Packages, and caches within the account's included storage."
 when_to_use: "Use when a workflow uploads artifacts, publishes GitHub Packages, writes Actions caches, or changes storage retention."
-category: explanation
-subcategory: development
-created: 2026-09-05
 ---
 
 # CI/CD Conventions — GitHub Actions Storage

@@ -1,16 +1,6 @@
 ---
-title: "Purpose, Scope, and the Orphaned Fence Problem"
 description: Defines what the Nested Code Fence Convention covers, the principles it implements, and how an orphaned closing fence breaks markdown rendering.
 when_to_use: Use when you need to understand why nested code fences need special handling or what this convention covers.
-category: explanation
-subcategory: conventions
-tags:
-  - markdown
-  - code-fences
-  - nesting
-  - syntax
-  - documentation
-created: 2025-12-23
 ---
 
 # Purpose, Scope, and the Orphaned Fence Problem

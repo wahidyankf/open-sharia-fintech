@@ -1,5 +1,4 @@
 ---
-title: "Phase 11: Repository Bootstrap (Sequential)"
 description: "Phase 11: clone, run guarded npm install, restore or initialize local env files, then run Doctor to verify every tool."
 when_to_use: "Use when bootstrapping the repository itself after language toolchains are installed."
 ---

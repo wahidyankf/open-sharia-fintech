@@ -1,15 +1,5 @@
 ---
-title: "Parallel-by-Default — Purpose and Scope"
 description: The two failure modes (unnecessary latency, wasted throughput) that parallel-by-default eliminates, and exactly what work this practice covers and does not cover
-category: explanation
-subcategory: development
-tags:
-  - parallelism
-  - concurrency
-  - performance
-  - ai-agents
-  - efficiency
-created: 2026-06-23
 when_to_use: Use when deciding whether a specific piece of work falls under this practice's scope.
 ---
 

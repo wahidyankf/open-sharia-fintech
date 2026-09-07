@@ -1,10 +1,5 @@
 ---
-title: "Git Hooks Standard — Pre-Commit and Commit-msg"
 description: Pre-commit gate steps and the commit-msg format.
-category: explanation
-subcategory: development
-tags: [ci-cd, git-hooks]
-created: 2026-03-31
 when_to_use: Use when debugging the pre-commit hook or commit format.
 ---
 

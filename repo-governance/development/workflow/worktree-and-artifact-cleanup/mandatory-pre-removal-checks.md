@@ -1,15 +1,5 @@
 ---
-title: "Mandatory Pre-Removal Checks"
 description: Six checks required before any git worktree remove.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - worktree
-  - cleanup
-  - parallelism
-created: 2026-07-20
 when_to_use: Use immediately before running git worktree remove, to confirm identity, branch delivery, dirty diff, unpushed commits, and idleness.
 ---
 

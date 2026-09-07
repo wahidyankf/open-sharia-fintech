@@ -1,14 +1,5 @@
 ---
-title: "ScheduleWakeup Every 2 Minutes (Required Default)"
 description: The required default monitoring pattern — schedule a wakeup, then issue one status check per wakeup until the run completes.
-category: explanation
-subcategory: development
-tags:
-  - ci
-  - github-actions
-  - rate-limiting
-  - monitoring
-  - workflow
 when_to_use: Use as the default way to poll any CI run to completion.
 ---
 

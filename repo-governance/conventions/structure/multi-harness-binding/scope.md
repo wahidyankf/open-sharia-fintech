@@ -1,16 +1,6 @@
 ---
-title: "Multi-Harness Binding: Scope"
 description: The exact list of what the multi-harness binding convention governs and what it explicitly does not — instruction content, catalog entries, and the compatibility-audit workflow.
 when_to_use: Read this to check whether a specific binding question (for example, AGENTS.md content itself, or the compatibility-audit workflow) is covered by this convention or by a sibling document.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - governance
-  - platform-bindings
-  - agents
-  - compatibility
-created: 2026-05-24
 ---
 
 # Multi-Harness Binding: Scope

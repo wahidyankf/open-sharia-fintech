@@ -1,18 +1,6 @@
 ---
-title: "UI Mockups in Plan Docs: Principles in Practice and Scope"
 description: "States the principles behind requiring visible UI design records in plan docs and the scope of that requirement."
 when_to_use: "Use when you need to understand why plan docs must show UI design exploration, and which plans this applies to."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # UI Mockups in Plan Docs: Principles in Practice and Scope

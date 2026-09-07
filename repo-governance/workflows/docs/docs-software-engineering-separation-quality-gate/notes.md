@@ -1,5 +1,4 @@
 ---
-title: "Notes"
 description: "Summary notes: fully automated, idempotent, conservative fixer behaviour, observable, bounded, scope-aware, and incremental migration support."
 when_to_use: "Use for a quick-reference summary of the workflow's key operating characteristics."
 ---

@@ -1,15 +1,5 @@
 ---
-title: "Principles and Conventions"
 description: "The core principles and conventions this practice implements - immutability, pure functions, explicitness, and simplicity."
-category: explanation
-subcategory: development
-tags:
-  - development
-  - functional-programming
-  - immutability
-  - pure-functions
-  - typescript
-created: 2025-12-28
 when_to_use: "Use when you need to trace a functional-programming rule back to the principle or convention it implements."
 ---
 

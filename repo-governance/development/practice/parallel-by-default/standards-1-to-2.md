@@ -1,15 +1,5 @@
 ---
-title: "Parallel-by-Default — Standards 1-2: Parallel Unless Dependent, and the N+1 Model"
 description: The default execution model (parallel unless dependent) and the adjustable N+1 concurrency model, including why the default is 3 and the adjustment rule
-category: explanation
-subcategory: development
-tags:
-  - parallelism
-  - concurrency
-  - performance
-  - ai-agents
-  - efficiency
-created: 2026-06-23
 when_to_use: Use when deciding whether to run work serially or in parallel, and how many concurrent units are allowed.
 ---
 

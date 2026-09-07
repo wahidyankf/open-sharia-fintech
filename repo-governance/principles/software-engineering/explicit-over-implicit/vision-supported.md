@@ -1,14 +1,5 @@
 ---
-title: "Vision Supported"
 description: How this principle serves the Open Sharia Enterprise Vision.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - explicit-configuration
-  - transparency
-  - clarity
-created: 2025-12-15
 when_to_use: Use when explaining why an explicit-configuration change matters to the project's mission.
 ---
 

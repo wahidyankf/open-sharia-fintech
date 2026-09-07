@@ -1,5 +1,4 @@
 ---
-title: "Workflow Metadata and References"
 description: Collects success metrics, related sibling workflows, operational notes, and the principles/conventions/documentation this workflow implements and references.
 when_to_use: Use when looking for related workflows, tracking success metrics across runs, or tracing which principles and conventions this workflow implements.
 ---

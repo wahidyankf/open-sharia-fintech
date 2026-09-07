@@ -1,14 +1,5 @@
 ---
-title: "Acceptance Criteria Convention"
 description: Writing testable acceptance criteria using Gherkin format for clarity and automation
-category: explanation
-subcategory: development
-tags:
-  - acceptance-criteria
-  - gherkin
-  - testing
-  - requirements
-created: 2025-12-07
 when_to_use: Use when writing or reviewing acceptance criteria for a plan, feature spec, or test scenario.
 ---
 

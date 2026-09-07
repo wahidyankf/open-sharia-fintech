@@ -1,13 +1,5 @@
 ---
-title: "Why — Automation, Institutional Memory, and the Vision"
 description: Documentation enables automation, institutional memory, and the democratization vision.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - documentation
-  - institutional-memory
-created: 2025-12-28
 when_to_use: Use when linking documentation to automation or institutional continuity.
 ---
 

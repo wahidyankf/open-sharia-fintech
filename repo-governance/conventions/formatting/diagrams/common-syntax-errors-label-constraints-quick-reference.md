@@ -1,18 +1,6 @@
 ---
-title: "Common Mermaid Syntax Errors: Label Constraints — Quick Reference Summary"
 description: "Provides the quick-reference summary table for all Mermaid label constraint rules."
 when_to_use: "Use when you want the full label-constraint rules summarized in one quick-reference table."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Common Mermaid Syntax Errors: Label Constraints — Quick Reference Summary

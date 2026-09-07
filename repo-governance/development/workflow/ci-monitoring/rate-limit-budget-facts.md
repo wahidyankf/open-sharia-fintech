@@ -1,14 +1,5 @@
 ---
-title: "Rate Limit Budget Facts"
 description: The GitHub API rate-limit quota, reset window, and why a tight poll loop or gh run watch exhausts it.
-category: explanation
-subcategory: development
-tags:
-  - ci
-  - github-actions
-  - rate-limiting
-  - monitoring
-  - workflow
 when_to_use: Use when estimating whether a polling approach will exhaust the GitHub API rate limit.
 ---
 

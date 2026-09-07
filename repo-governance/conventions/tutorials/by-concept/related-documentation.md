@@ -1,16 +1,6 @@
 ---
-title: "Related Documentation"
 description: "Links to the By-Example, Naming, Content Quality, Diagrams, and Diátaxis conventions related to By-Concept tutorials."
 when_to_use: "Read when looking for the other conventions that By-Concept tutorials build on or should be cross-referenced with."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-concept
-  - education
-  - narrative-driven
-created: 2026-01-30
 ---
 
 # Related Documentation

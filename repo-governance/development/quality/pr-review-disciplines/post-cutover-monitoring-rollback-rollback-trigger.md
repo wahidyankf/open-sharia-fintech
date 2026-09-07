@@ -1,15 +1,5 @@
 ---
-title: "Post-Cutover Monitoring: Rollback Trigger (D6)"
 description: "The trigger and procedure for rolling back the split."
-category: explanation
-subcategory: development
-tags:
-  - pr-review
-  - governance
-  - agents
-  - quality-gates
-  - boundary-rules
-created: 2026-07-23
 when_to_use: "Use when deciding whether to roll back the discipline split."
 ---
 

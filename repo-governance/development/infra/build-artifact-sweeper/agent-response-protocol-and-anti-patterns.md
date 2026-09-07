@@ -1,15 +1,5 @@
 ---
-title: "Agent Response Protocol and Anti-Patterns"
 description: Defines the exact agent response protocol for a missing-artifact failure, including the filesystem-error cooldown ladder, and lists the anti-patterns to avoid
-category: explanation
-subcategory: development
-tags:
-  - build-artifacts
-  - environment
-  - ai-agents
-  - infrastructure
-  - cleanup
-created: 2026-08-05
 when_to_use: Use when a build, test, or tooling command fails because an artifact is missing and you need to know the correct response steps or want to check a behaviour against known anti-patterns.
 ---
 

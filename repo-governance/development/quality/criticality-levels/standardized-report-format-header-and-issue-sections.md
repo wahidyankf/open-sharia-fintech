@@ -1,15 +1,5 @@
 ---
-title: "Report Format: Header and Issue Sections"
 description: "The report header and issue-section template."
-category: explanation
-subcategory: development
-tags:
-  - criticality
-  - validation
-  - checker-agents
-  - fixer-agents
-  - quality-assurance
-created: 2025-12-27
 when_to_use: "Use when authoring a report header or issue section."
 ---
 

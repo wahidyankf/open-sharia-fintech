@@ -1,5 +1,4 @@
 ---
-title: "Worktree and Artifact Cleanup Convention"
 description: "Mandatory post-merge gate requiring a session to remove the worktrees, branches, and build artifacts it created — self-scoped, verified idle, and never touching shared caches other sessions depend on"
 when_to_use: "Read this index to find the right Worktree and Artifact Cleanup Convention child document."
 ---

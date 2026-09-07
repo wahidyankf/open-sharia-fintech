@@ -1,5 +1,4 @@
 ---
-title: "Step 0 — Prompt Parsing and Repo Exploration"
 description: Describes the sequential, exploration-only first step that builds a context summary of the repo before any user interaction begins.
 when_to_use: Use when starting plan-establishment and needing to understand what already exists in the repo before grilling the user.
 ---

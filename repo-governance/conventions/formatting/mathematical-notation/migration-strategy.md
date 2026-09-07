@@ -1,16 +1,6 @@
 ---
-title: "Migration Strategy"
 description: Rules for new documentation, updating existing documentation opportunistically, and a worked example converting plain-text math to LaTeX.
 when_to_use: Use when editing a document that has plain-text math and deciding whether and how to convert it to LaTeX.
-category: explanation
-subcategory: conventions
-tags:
-  - latex
-  - mathematics
-  - formulas
-  - notation
-  - conventions
-created: 2025-12-02
 ---
 
 # Migration Strategy

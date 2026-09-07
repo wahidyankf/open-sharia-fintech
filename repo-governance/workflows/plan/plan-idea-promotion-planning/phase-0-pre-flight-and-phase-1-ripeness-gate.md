@@ -1,5 +1,4 @@
 ---
-title: "Phase 0 — Pre-flight, and Phase 1 — Ripeness / Completeness Gate"
 description: Resolving the two-pager, identifier, and push target, then gating the brief's eight sections for completeness before any plan is authored.
 when_to_use: Use when starting the promotion procedure, or checking whether a two-pager is ripe enough to promote.
 ---

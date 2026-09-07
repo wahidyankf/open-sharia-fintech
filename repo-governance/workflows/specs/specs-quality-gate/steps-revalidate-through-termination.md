@@ -1,5 +1,4 @@
 ---
-title: "Specs Quality Gate — Steps: Re-validate Through Termination"
 description: "Documents steps 4-6 of the specs-quality-gate loop (re-validation, iteration control, finalization) and the mode-specific termination criteria for pass/partial/fail."
 when_to_use: "Use when tracing how the specs-quality-gate loop decides to iterate again or terminate, or when checking the pass/partial/fail definitions per mode."
 ---

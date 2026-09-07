@@ -1,16 +1,6 @@
 ---
-title: "Validation Checklist, Related Conventions, and References"
 description: Pre-publish checklists for both docs/explanation/ style guides and ayokoding-www educational content, plus related-convention and platform-documentation references
 when_to_use: Read this when doing a final check before publishing programming-language documentation, or looking up a related convention or reference.
-category: explanation
-subcategory: conventions
-tags:
-  - documentation
-  - programming-languages
-  - style-guides
-  - content-separation
-  - dry-principle
-created: 2026-02-04
 ---
 
 # Validation Checklist, Related Conventions, and References

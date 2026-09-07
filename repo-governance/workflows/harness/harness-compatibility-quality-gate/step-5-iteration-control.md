@@ -1,5 +1,4 @@
 ---
-title: "Step 5: Iteration Control"
 description: The consecutive_zero_count logic that decides whether the workflow loops back to fix, loops back to re-validate, or terminates with success/partial.
 when_to_use: Use when implementing or debugging the loop-continuation decision after a re-validation check.
 ---

@@ -1,5 +1,4 @@
 ---
-title: "Example Usage"
 description: Walks through four invocation examples (default, extended iterations, from backlog, quick validation) and one full iteration trace.
 when_to_use: Use when learning how to invoke plan execution with different arguments, or tracing a typical execute-validate cycle.
 ---

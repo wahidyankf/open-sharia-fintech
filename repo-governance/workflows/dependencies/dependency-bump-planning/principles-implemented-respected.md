@@ -1,5 +1,4 @@
 ---
-title: "Principles Implemented/Respected"
 description: Traces this workflow's design back to Deliberate Problem-Solving, Explicit Over Implicit, Reproducibility First, Automation Over Manual, and No Time Estimates.
 when_to_use: Use when auditing this workflow for traceability back to foundational principles.
 ---

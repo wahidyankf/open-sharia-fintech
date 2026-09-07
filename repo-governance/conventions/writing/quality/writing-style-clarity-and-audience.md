@@ -1,15 +1,5 @@
 ---
-title: "Writing Style: Clarity, Conciseness, and Audience Awareness"
 description: "Writing clearly with minimal words and adjusting complexity for beginner vs advanced audiences"
-category: explanation
-subcategory: conventions
-tags:
-  - content-quality
-  - markdown
-  - writing-standards
-  - accessibility
-  - documentation
-created: 2025-12-07
 when_to_use: "Read this when a passage reads as wordy or vague, or when unsure how much to explain for the target audience."
 ---
 

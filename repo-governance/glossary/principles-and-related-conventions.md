@@ -1,15 +1,6 @@
 ---
-title: "Principles and Related Conventions"
 description: Which principles the glossary implements and which conventions authoritatively define the terms it names.
 when_to_use: Use when tracing a glossary entry upward to the principle it serves or downward to the convention that governs it.
-category: explanation
-subcategory: governance
-tags:
-  - governance
-  - glossary
-  - principles
-  - conventions
-created: 2026-08-16
 ---
 
 # Principles and Related Conventions

@@ -1,5 +1,4 @@
 ---
-title: "Vercel MCP Availability (Surface-Conditional)"
 description: Explains when a plan must probe for a connected Vercel MCP server, how the result changes executor tags, and the narrow boundary of what the MCP server can observe.
 when_to_use: Use when a plan touches a Vercel-deployed surface and needs to decide whether deployment-observation steps can be tagged [AI].
 ---

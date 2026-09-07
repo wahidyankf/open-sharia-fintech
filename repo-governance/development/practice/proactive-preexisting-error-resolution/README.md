@@ -1,5 +1,4 @@
 ---
-title: "Proactive Preexisting Error Resolution"
 description: "When encountering preexisting errors, bugs, or broken state during any work, fix the root cause rather than ignoring, monkey-patching, or passively mentioning the problem"
 when_to_use: "Read this index to find the right Proactive Preexisting Error Resolution child document."
 ---

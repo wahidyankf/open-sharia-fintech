@@ -1,15 +1,5 @@
 ---
-title: "Nine Reviewer Disciplines: Table (2)"
 description: "Disciplines Documentation-Type-soundness; scout/synthesis."
-category: explanation
-subcategory: development
-tags:
-  - pr-review
-  - governance
-  - agents
-  - quality-gates
-  - boundary-rules
-created: 2026-07-23
 when_to_use: "Use to find a finding's owning specialist."
 ---
 

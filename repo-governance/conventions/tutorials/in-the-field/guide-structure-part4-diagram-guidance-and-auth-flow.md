@@ -1,16 +1,6 @@
 ---
-title: "Guide Structure Part 4: Diagram Guidance and Authentication Flow"
 description: When to include Mermaid diagrams in a guide, plus the TDD state machine and Basic-Auth/JWT authentication-flow diagrams.
 when_to_use: Use when deciding whether a guide needs a diagram, or building a TDD/authentication-flow diagram.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Guide Structure Part 4: Diagram Guidance and Authentication Flow

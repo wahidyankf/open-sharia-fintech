@@ -1,10 +1,5 @@
 ---
-title: "Anti-Pattern 9: Side Effects Throughout Codebase"
 description: "Side effects such as logging or notifications are mixed directly into business logic instead of isolated at the boundary."
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: "Use when reviewing a function that mixes I/O or side effects with its core calculation."
 ---
 

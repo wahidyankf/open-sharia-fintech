@@ -1,10 +1,5 @@
 ---
-title: "Practice 3: Use Checkers for Validation Workflow"
 description: "Run a checker agent after creation or before publication to validate content quality."
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: "Use when deciding whether to validate content before it is published or deployed."
 ---
 

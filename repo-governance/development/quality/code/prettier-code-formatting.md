@@ -1,17 +1,5 @@
 ---
-title: "Prettier - Code Formatting"
 description: "How Prettier formats code in this repository."
-category: explanation
-subcategory: development
-tags:
-  - development
-  - code-quality
-  - prettier
-  - husky
-  - lint-staged
-  - git-hooks
-  - automation
-created: 2026-05-12
 when_to_use: "Use when configuring or debugging Prettier formatting."
 ---
 

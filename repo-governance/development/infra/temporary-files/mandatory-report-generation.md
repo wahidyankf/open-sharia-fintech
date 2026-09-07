@@ -1,10 +1,5 @@
 ---
-title: "Mandatory Report Generation for Checker Agents"
 description: The requirement that *-checker agents write reports to their per-family local-tmp/ directory with required tools.
-category: explanation
-subcategory: development
-tags: [temporary-files, ai-agents, file-organization, best-practices]
-created: 2025-12-01
 when_to_use: Use when building or reviewing a *-checker agent.
 ---
 

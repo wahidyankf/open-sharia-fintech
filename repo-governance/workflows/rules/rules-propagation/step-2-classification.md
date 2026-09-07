@@ -1,5 +1,4 @@
 ---
-title: "Step 2: Classification"
 description: Determining a rule's subject, audience, vendor-neutrality, and governance layer before any placement decision is made.
 when_to_use: Use after normalization, to establish the four facts every later step depends on.
 ---

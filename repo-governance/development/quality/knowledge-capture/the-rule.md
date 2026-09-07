@@ -1,16 +1,5 @@
 ---
-title: "The Rule"
 description: "The core knowledge-capture rule."
-category: explanation
-subcategory: development
-tags:
-  - knowledge-capture
-  - learnings
-  - plans
-  - triage
-  - safety-gates
-  - post-mortems
-created: 2026-07-05
 when_to_use: "Use for the exact wording of the rule."
 ---
 

@@ -1,15 +1,6 @@
 ---
-title: "Dynamic Collection References — Standards (Rules 5-7)"
 description: The remaining three normative rules — where counts are acceptable, index documents as the single source of truth for counts, and the numeric-sweep obligation on plan amendments.
 when_to_use: Use when deciding if a count is one of the acceptable exceptions, tracing a count back to its authoritative index, or sweeping a plan amendment for stale numeric prose.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - documentation
-  - maintenance
-  - collections
-created: 2026-02-22
 ---
 
 # Standards (Rules 5-7)

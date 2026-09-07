@@ -1,5 +1,4 @@
 ---
-title: "Safety Features"
 description: Describes the infinite-loop prevention, progressive-update, error-recovery, and plan-preservation safety features, plus what plan-execution-checker validates.
 when_to_use: Use when explaining what safety guarantees plan execution provides, or what the checker validates.
 ---

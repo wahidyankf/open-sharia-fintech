@@ -1,5 +1,4 @@
 ---
-title: "2. Check for Findings (Sequential)"
 description: "Step 2: counts all findings in the audit report and decides whether to proceed to fixing or a confirmation re-check."
 when_to_use: "Use when implementing or debugging the findings-threshold decision step."
 ---

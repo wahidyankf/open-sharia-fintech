@@ -1,18 +1,5 @@
 ---
-title: "Goal-Driven Execution — Defining and Planning Goals"
 description: Turning tasks into verifiable goals with measurable success criteria, and planning multi-step tasks with per-step verification.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - workflow
-  - implementation
-  - optimization
-  - refactoring
-  - surgical-changes
-  - goal-driven
-  - test-driven
-created: 2025-12-15
 when_to_use: Use when starting a task and turning a vague request into a measurable success criterion before writing code.
 ---
 

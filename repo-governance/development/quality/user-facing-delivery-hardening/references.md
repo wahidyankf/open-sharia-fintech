@@ -1,16 +1,5 @@
 ---
-title: "References"
 description: "References and related documentation for this convention."
-category: explanation
-subcategory: development
-tags:
-  - quality
-  - planning
-  - ui
-  - verification
-  - testing
-  - deployment
-created: 2026-06-19
 when_to_use: "Use when you need a related workflow or convention document."
 ---
 

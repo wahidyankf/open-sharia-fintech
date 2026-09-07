@@ -1,15 +1,6 @@
 ---
-title: "Deterministic vs AI Validation Split Convention"
 description: Repository governance validation runs in two layers — a deterministic preflight that executes mechanical checks in milliseconds, and an AI checker that handles judgement-based categories. This convention defines which layer owns which category and the contract between them.
 when_to_use: Use when deciding whether a new or existing governance validation rule belongs in the deterministic preflight or the AI checker.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - governance
-  - validation
-  - quality-gate
-  - automation
 ---
 
 # Deterministic vs AI Validation Split Convention

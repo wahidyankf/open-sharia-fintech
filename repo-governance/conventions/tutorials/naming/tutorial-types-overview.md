@@ -1,15 +1,6 @@
 ---
-title: "Tutorial Types Overview"
 description: The Full Set Tutorial Package architecture diagram and the five mandatory components - foundational, by-example, by-concept, and cookbook - that together provide 0-95% coverage.
 when_to_use: Use when you need the big-picture map of how the six tutorial types relate before reading individual type definitions.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - tutorials
-  - naming
-  - learning-paths
-created: 2025-12-03
 ---
 
 # Tutorial Types Overview

@@ -1,5 +1,4 @@
 ---
-title: "Audit Checklist"
 description: The seven semantic checks the plan quality gate completes in one non-editing pass before freezing its ledger.
 when_to_use: Use during step 2 of the plan quality gate, while auditing a formal plan without editing it.
 ---

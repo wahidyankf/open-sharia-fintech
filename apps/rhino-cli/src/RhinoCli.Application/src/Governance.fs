@@ -1734,9 +1734,13 @@ let private generatedTreeEntry (tree: GovernanceTextTree) directory target =
     let targetPath = treeCombine directory target
     let content = Map.tryFind targetPath tree |> Option.defaultValue ""
 
+    // Falls back to the title-cased stem, matching `entryFor`'s
+    // `fallbackEntryTitle`. Since `repo-governance/` frontmatter no longer
+    // carries `title`, this fallback is the normal path rather than the rare
+    // one, so the two generators must not disagree about it.
     let title =
         frontmatterValue "title" content
-        |> Option.defaultValue ((treeBaseName target).Replace(".md", ""))
+        |> Option.defaultValue (titleCaseFromStem ((treeBaseName target).Replace(".md", "")))
 
     let description =
         frontmatterValue "description" content

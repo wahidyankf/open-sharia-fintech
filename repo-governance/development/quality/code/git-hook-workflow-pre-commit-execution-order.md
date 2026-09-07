@@ -1,17 +1,5 @@
 ---
-title: "Git Hook Workflow: Pre-commit Hook (Execution Order)"
 description: "The pre-commit hook's location and gate steps."
-category: explanation
-subcategory: development
-tags:
-  - development
-  - code-quality
-  - prettier
-  - husky
-  - lint-staged
-  - git-hooks
-  - automation
-created: 2026-05-12
 when_to_use: "Use to trace what runs on git commit."
 ---
 

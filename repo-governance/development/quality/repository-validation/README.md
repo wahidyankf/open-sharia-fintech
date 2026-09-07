@@ -1,5 +1,4 @@
 ---
-title: "Repository Validation Methodology Convention"
 description: "Standard validation methods and patterns for repository consistency checking"
 when_to_use: "Read this index to find the right Repository Validation Methodology Convention child document."
 ---
@@ -14,5 +13,3 @@ when_to_use: "Read this index to find the right Repository Validation Methodolog
 - [Best Practices](./best-practices.md) — Best practices for writing repository validation checks. Use when writing a new repository validation check.
 - [Common Pitfalls](./common-pitfalls.md) — Common pitfalls when writing validation scripts. Use when debugging a validation script that behaves unexpectedly.
 - [Markdown Quality Gates](./markdown-quality-gates.md) — The markdown-specific quality gates and their commands. Use when locating a markdown quality gate's command or exclusions.
-- [Related Conventions](./related-conventions.md) — Related validation and quality conventions. Use when you need a related convention on validation.
-- [Maintenance Notes](./maintenance-notes.md) — Notes for maintaining the validation scripts over time. Use when updating or extending a repository validation script.

@@ -1,16 +1,5 @@
 ---
-title: "Best Practices"
 description: "Best practices for writing repository validation checks."
-category: explanation
-subcategory: development
-tags:
-  - validation
-  - consistency
-  - bash
-  - awk
-  - frontmatter
-  - automation
-created: 2025-12-14
 when_to_use: "Use when writing a new repository validation check."
 ---
 

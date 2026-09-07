@@ -1,15 +1,5 @@
 ---
-title: "Programming Language Content Standard"
 description: "Universal content architecture for programming language education on ayokoding-www with mandatory structure, coverage model, and quality benchmarks"
-category: explanation
-subcategory: conventions
-tags:
-  - programming-languages
-  - ayokoding
-  - tutorials
-  - education
-  - content-standards
-created: 2025-12-18
 when_to_use: "Use before creating or reviewing any programming language tutorial content on ayokoding-www, to confirm the mandatory Full Set Tutorial Package structure, coverage levels, and quality benchmarks it must follow."
 ---
 

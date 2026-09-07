@@ -1,18 +1,6 @@
 ---
-title: "Application Contexts: Mermaid Diagrams in docs/"
 description: "Requires the verified accessible palette in Mermaid diagrams and gives implementation templates and best practices."
 when_to_use: "Use when writing or reviewing a Mermaid diagram under docs/ that needs accessible color classDefs."
-category: explanation
-subcategory: conventions
-tags:
-  - accessibility
-  - color-blindness
-  - wcag
-  - design
-  - conventions
-  - mermaid-diagrams
-  - color-palette
-created: 2025-12-04
 ---
 
 # Application Contexts: Mermaid Diagrams in docs/

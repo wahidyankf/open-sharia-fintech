@@ -1,17 +1,6 @@
 ---
-title: "FP-Variant Multi-Language Convention — Scope and Tabbed Format (S1)"
 description: Which files this convention governs (and excludes), plus the S1 standard for the F#-first, Clojure-second tabbed code block format.
 when_to_use: Use when determining whether a file falls under this convention, or when structuring the outer tabs shortcode for a new FP-variant example.
-category: explanation
-subcategory: conventions
-tags:
-  - fp
-  - clojure
-  - fsharp
-  - by-example
-  - ayokoding-www
-  - tutorial
-created: 2026-05-17
 ---
 
 # Scope and Tabbed Format (S1)

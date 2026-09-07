@@ -1,10 +1,5 @@
 ---
-title: "Report File Naming Standard — Content, Documentation, and Plan Validation Reports"
 description: Filename patterns for the content, docs, plan, and plan-execution families.
-category: explanation
-subcategory: development
-tags: [temporary-files, ai-agents, file-organization, best-practices]
-created: 2025-12-01
 when_to_use: Use when naming a content, docs, or plan report.
 ---
 

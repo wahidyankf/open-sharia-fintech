@@ -1,15 +1,6 @@
 ---
-title: "Intermediate"
 description: Definition, content scope, and example titles for the Intermediate tutorial type covering 60-85% of domain knowledge.
 when_to_use: Use when writing or naming a tutorial that takes a working-knowledge learner to production-ready, professional-team skill.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - tutorials
-  - naming
-  - learning-paths
-created: 2025-12-03
 ---
 
 # Intermediate

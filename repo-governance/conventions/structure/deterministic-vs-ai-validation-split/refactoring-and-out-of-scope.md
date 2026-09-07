@@ -1,16 +1,6 @@
 ---
-title: "Refactoring to Deterministic, and Out of Scope"
 description: The triggers for moving an AI-only category to deterministic, and what this convention deliberately does not define.
 when_to_use: Use when an AI-checker category keeps producing the same false positives and might be a candidate to become deterministic, or when checking whether a related concern is covered by this convention.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - governance
-  - validation
-  - quality-gate
-  - automation
-created: 2026-08-13
 ---
 
 # Refactoring to Deterministic, and Out of Scope

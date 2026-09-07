@@ -1,16 +1,6 @@
 ---
-title: "Tasteful Usage: Density Cap and Examples"
 description: The soft density limits on emoji per heading and per paragraph, and side-by-side good-vs-bad examples of emoji usage in documentation.
 when_to_use: Use when checking whether a document has too many emojis, or when you need a concrete good-vs-bad usage example.
-category: explanation
-subcategory: conventions
-tags:
-  - emoji
-  - accessibility
-  - scannability
-  - conventions
-  - markdown
-created: 2025-12-04
 ---
 
 # Tasteful Usage: Density Cap and Examples

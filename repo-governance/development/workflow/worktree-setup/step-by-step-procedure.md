@@ -1,18 +1,5 @@
 ---
-title: "Step-by-Step Procedure"
 description: The five numbered steps from creating a worktree through confirming both init commands completed.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - git
-  - worktree
-  - npm
-  - nx
-  - dependencies
-  - toolchain
-  - doctor
-created: 2026-03-28
 when_to_use: Use as a walkthrough when creating a worktree and running its toolchain init for the first time.
 ---
 

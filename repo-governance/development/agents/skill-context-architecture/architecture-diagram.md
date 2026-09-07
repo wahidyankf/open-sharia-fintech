@@ -1,14 +1,5 @@
 ---
-title: "Architecture Diagram"
 description: "Provides a diagram of the Skill context architecture."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - agent-skills
-  - architecture
-  - development
-created: 2025-11-23
 when_to_use: Use when you need a visual reference for how Skill context modes relate to each other.
 ---
 

@@ -1,16 +1,6 @@
 ---
-title: "Content Workflows"
 description: Workflows for creating, converting, and validating content in various formats
 when_to_use: Use when routing to a workflow that converts a source document to Markdown or validates conversion fidelity.
-category: explanation
-subcategory: workflows
-tags:
-  - index
-  - content
-  - pdf
-  - markdown
-  - quality-gate
-created: 2026-05-14
 ---
 
 # Content Workflows

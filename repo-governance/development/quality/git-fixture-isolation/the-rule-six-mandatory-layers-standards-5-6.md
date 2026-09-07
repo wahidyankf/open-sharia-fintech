@@ -1,17 +1,5 @@
 ---
-title: "The Rule: Six Mandatory Layers (Standards 5-6)"
 description: "Standards 5-6: exit-status checks, no primary-worktree diagnosis."
-category: explanation
-subcategory: development
-tags:
-  - testing
-  - git
-  - test-fixtures
-  - isolation
-  - regression
-  - safety
-  - defense-in-depth
-created: 2026-07-19
 when_to_use: "Use when implementing exit-status checks or diagnostic rules."
 ---
 

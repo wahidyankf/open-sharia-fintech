@@ -1,15 +1,5 @@
 ---
-title: "What is Trunk Based Development?"
 description: TBD's definition and its six core characteristics.
-category: explanation
-subcategory: development
-tags:
-  - trunk-based-development
-  - git
-  - workflow
-  - development
-  - continuous-integration
-created: 2025-11-26
 when_to_use: Use when explaining what TBD is or listing its core characteristics.
 ---
 

@@ -1,16 +1,6 @@
 ---
-title: "Testing, Integration, and Related Conventions"
 description: The process for testing nested fence rendering before committing, and how this convention integrates with related formatting conventions.
 when_to_use: Use when you need to verify a nested-fence example renders correctly or find related conventions that apply.
-category: explanation
-subcategory: conventions
-tags:
-  - markdown
-  - code-fences
-  - nesting
-  - syntax
-  - documentation
-created: 2025-12-23
 ---
 
 # Testing, Integration, and Related Conventions

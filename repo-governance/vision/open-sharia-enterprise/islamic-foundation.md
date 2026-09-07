@@ -1,13 +1,5 @@
 ---
-title: "Islamic Foundation"
 description: How the vision aligns with Shariah principles — Amanah, 'Adl, Maslahah, Khilafah — and serves broader Islamic values
-category: explanation
-subcategory: vision
-tags:
-  - vision
-  - purpose
-  - islamic-enterprise
-created: 2025-12-24
 when_to_use: Use when explaining the Islamic scholarly and values grounding behind this vision.
 ---
 

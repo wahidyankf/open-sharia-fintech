@@ -1,5 +1,4 @@
 ---
-title: "Iteration and Strictness Examples"
 description: Two worked examples — a full clean-path iteration for a new primer below the example floor, and a normal-strictness run showing which findings the fixer skips.
 when_to_use: Use as worked references when you want to see how a typical iteration or a strictness-mode fixer run plays out end to end.
 ---

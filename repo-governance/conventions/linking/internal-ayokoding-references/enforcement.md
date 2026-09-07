@@ -1,16 +1,6 @@
 ---
-title: "Enforcement"
 description: How this convention is enforced — manual PR review, a future automated CI link check, and docs-checker agent validation.
 when_to_use: Use when setting up or reviewing enforcement for AyoKoding link correctness (PR review checklist, CI script, or agent rules).
-category: explanation
-subcategory: conventions
-tags:
-  - linking
-  - cross-reference
-  - relative-paths
-  - portability
-  - ayokoding-www
-created: 2026-02-07
 ---
 
 # Enforcement

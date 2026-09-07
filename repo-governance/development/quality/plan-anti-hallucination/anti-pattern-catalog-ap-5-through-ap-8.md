@@ -1,16 +1,5 @@
 ---
-title: "Anti-Patterns: AP-5 - AP-8"
 description: "KPI, test name, agent, CLI flag fabrication."
-category: explanation
-subcategory: development
-tags:
-  - plans
-  - ai-agents
-  - factual-validation
-  - anti-hallucination
-  - web-research
-  - verification
-created: 2026-05-03
 when_to_use: "Use as a checklist for AP-5 - AP-8."
 ---
 

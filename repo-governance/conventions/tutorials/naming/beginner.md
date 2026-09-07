@@ -1,15 +1,6 @@
 ---
-title: "Beginner"
 description: Definition, content scope, and example titles for the Beginner tutorial type covering 0-60% of domain knowledge.
 when_to_use: Use when writing or naming a comprehensive zero-to-working-knowledge tutorial for someone completely new to a domain.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - tutorials
-  - naming
-  - learning-paths
-created: 2025-12-03
 ---
 
 # Beginner

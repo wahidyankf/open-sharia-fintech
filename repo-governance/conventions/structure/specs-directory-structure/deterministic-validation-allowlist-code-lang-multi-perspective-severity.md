@@ -1,19 +1,6 @@
 ---
-title: "Deterministic Validation: Allowlist-Driven App Selection"
 description: The rhino-cli specs validation commands and their default app selection
 when_to_use: Read this when running or configuring rhino-cli specs validate-* commands.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - specs
-  - gherkin
-  - directory-structure
-  - organization
-  - c4-diagrams
-  - openapi
-  - c4
-created: 2026-04-02
 ---
 
 # Deterministic Validation (rhino-cli)

@@ -1,15 +1,5 @@
 ---
-title: "What"
 description: Defines pure and impure functions and contrasts their determinism, side-effect, and referential-transparency characteristics.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - functional-programming
-  - pure-functions
-  - testability
-  - determinism
-created: 2025-12-28
 when_to_use: Use when clarifying the precise meaning of "pure function" before applying the principle.
 ---
 

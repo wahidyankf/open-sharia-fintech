@@ -1,39 +1,6 @@
 ---
-name: api-quality-gate
-title: "api-quality-gate"
 description: Exercises a running REST or GraphQL API through one discovery pass, an optional fix pass, and one scoped live verification.
 when_to_use: Use when a plan ships an API/backend surface needing contract, functional, and security validation against a live deployment.
-goal: Validate a live API against its contract and Gherkin specs, apply one bounded fix pass, and verify original findings without regressions
-termination: "Pass after a clean discovery or successful scoped verification; partial for unresolved findings or regressions; fail for technical, contract-resolution, or deployment errors"
-inputs:
-  - name: scope
-    type: string
-    description: 'Base URL or endpoint set to exercise, plus the contract to test against (e.g., "http://localhost:8302 with apps/ose-be/openapi.yaml")'
-    required: true
-  - name: mode
-    type: enum
-    values: [lax, normal, strict, ocd]
-    description: "Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ocd: all levels)"
-    required: false
-    default: strict
-  - name: max-concurrency
-    type: number
-    description: "N+1 background-agent cap. Raise only for independent work with capacity and budget; lower under pressure; never self-promote."
-    required: false
-    default: 3
-outputs:
-  - name: final-status
-    type: enum
-    values: [pass, partial, fail]
-    description: Final validation status
-  - name: lifecycle-status
-    type: enum
-    values: [verified, pending, not-applicable]
-    description: Lifecycle evidence state, separate from final-status
-  - name: final-report
-    type: file
-    pattern: "the destination selected by the tester's output-mode: the plan folder (plan), the plan's delivery.md (delivery), or local-tmp/<slug>/findings.md (local-tmp)"
-    description: Final findings record, written wherever the invoked output-mode directs
 ---
 
 # API Quality Gate Workflow
@@ -45,6 +12,24 @@ rebuild/redeploy once, then verify original findings and affected behaviour.
 
 This gate is the API counterpart of the [UI Quality Gate](../ui/ui-quality-gate.md): the UI gate
 checks component source, while this gate uses tester-driven evidence from actual HTTP responses.
+
+## Goal and Termination
+
+**Goal**: Validate a live API against its contract and Gherkin specs, apply one bounded fix pass, and verify original findings without regressions
+
+**Termination**: Pass after a clean discovery or successful scoped verification; partial for unresolved findings or regressions; fail for technical, contract-resolution, or deployment errors
+
+## Inputs
+
+- **`scope`** (string, required) — Base URL or endpoint set to exercise, plus the contract to test against (e.g., "http://localhost:8302 with apps/ose-be/openapi.yaml")
+- **`mode`** (enum: lax, normal, strict, ocd, optional, default `strict`) — Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ocd: all levels)
+- **`max-concurrency`** (number, optional, default `3`) — N+1 background-agent cap. Raise only for independent work with capacity and budget; lower under pressure; never self-promote.
+
+## Outputs
+
+- **`final-status`** (enum: pass, partial, fail) — Final validation status
+- **`lifecycle-status`** (enum: verified, pending, not-applicable) — Lifecycle evidence state, separate from final-status
+- **`final-report`** (file, pattern `the destination selected by the tester's output-mode: the plan folder (plan), the plan's delivery.md (delivery), or local-tmp/<slug>/findings.md (local-tmp)`) — Final findings record, written wherever the invoked output-mode directs
 
 ## Contents
 

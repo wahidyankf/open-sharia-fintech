@@ -1,14 +1,5 @@
 ---
-title: "Worktree Cap — One Worktree Per Repository Per Plan (HARD RULE)"
 description: Caps worktree modes at one reused worktree per repository, distinguishes main modes, and states cleanup timing.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when a plan produces more than one delivery unit in the same repository and needs to know whether a second worktree is allowed.
 ---
 

@@ -1,16 +1,6 @@
 ---
-title: "Post-Mortem Convention: Mandatory Sections — Timeline Through Resolution"
 description: The required Timeline, Root Cause, Trigger, Contributing Factors, and Resolution & Mitigations sections of a post-mortem document, in reading order
 when_to_use: Read this when authoring the middle mandatory sections of a post-mortem, from the incident timeline through how service was restored.
-category: explanation
-subcategory: conventions
-tags:
-  - post-mortem
-  - incidents
-  - blameless
-  - reliability
-  - structure
-created: 2026-06-05
 ---
 
 # Mandatory Sections: Timeline Through Resolution

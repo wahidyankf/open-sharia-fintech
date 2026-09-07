@@ -1,10 +1,5 @@
 ---
-title: "Parity Checklist — Affected-First PR-Gate Principle"
 description: Why PR checks scope to nx affected, and the exceptions.
-category: explanation
-subcategory: development
-tags: [ci-cd, nx]
-created: 2026-03-31
 when_to_use: Use when adding a PR-gate check and deciding its scope.
 ---
 

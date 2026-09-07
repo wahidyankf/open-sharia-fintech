@@ -1,17 +1,6 @@
 ---
-title: "`guard-env-file-access` Policy"
 description: The agent-access policy denying direct Read/Write/Edit of .env.prod and .env.stag, its decoupling from commit policy, its exceptions, and its enforcement mechanism plus residual gap.
 when_to_use: Use when an AI agent needs to know which .env* files it may open directly and which are hard-denied.
-category: explanation
-subcategory: conventions
-tags:
-  - security
-  - secrets
-  - env-files
-  - guard-env-file-access
-  - naming
-  - reproducibility
-created: 2026-06-10
 ---
 
 # `guard-env-file-access` Policy

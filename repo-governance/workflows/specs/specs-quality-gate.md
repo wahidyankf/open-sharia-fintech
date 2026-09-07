@@ -1,55 +1,6 @@
 ---
-name: specs-quality-gate
-title: "specs-quality-gate"
 description: "Validate explicitly listed specs/ folders for structural completeness, content accuracy, internal consistency, and cross-folder coherence, then apply fixes iteratively until zero findings."
 when_to_use: "Use after creating or restructuring spec areas, before major spec refactors, after bulk feature-file changes, or after adding a new app/library to the monorepo."
-goal: "Validate explicitly listed specs/ folders for structural completeness, content accuracy, internal consistency, and cross-folder coherence, then apply fixes iteratively until zero findings achieved"
-termination: "Zero findings at the configured mode threshold on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)"
-inputs:
-  - name: folders
-    type: file-list
-    description: "Explicit list of spec folders to validate (e.g., [specs/apps/organiclever-be, specs/apps/organiclever]). Each folder and its subfolders are validated. Cross-folder consistency is checked between listed folders."
-    required: true
-  - name: mode
-    type: enum
-    values: [lax, normal, strict, ocd]
-    description: "Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ocd: all levels)"
-    required: false
-    default: strict
-  - name: min-iterations
-    type: number
-    description: "Minimum check-fix cycles before allowing zero-finding termination (prevents premature success)"
-    required: false
-  - name: max-iterations
-    type: number
-    description: "Maximum check-fix cycles to prevent infinite loops"
-    required: false
-    default: 7
-  - name: max-concurrency
-    type: number
-    description: "Background agents run concurrently — the N in the N+1 model (1 main thread + N background agents = N+1 total). Raise only when independent work, machine capacity, and budget headroom all allow; lower under budget, runner, or disk pressure. Never self-promoted beyond the declared value."
-    required: false
-    default: 3
-outputs:
-  - name: final-status
-    type: enum
-    values: [pass, partial, fail]
-    description: "Final validation status"
-  - name: lifecycle-status
-    type: enum
-    values: [verified, pending, not-applicable]
-    description: Lifecycle evidence state, separate from final-status
-  - name: iterations-completed
-    type: number
-    description: "Number of check-fix cycles executed"
-  - name: final-report
-    type: file
-    pattern: "local-tmp/specs/specs__*__*__audit.md"
-    description: "Final audit report (4-part format with UUID chain)"
-  - name: execution-scope
-    type: string
-    description: "Scope identifier for UUID chain tracking (default 'specs')"
-    required: false
 ---
 
 # Specs Validation Workflow
@@ -65,6 +16,28 @@ fixes iteratively until all issues are resolved.
 - After bulk feature file additions or modifications
 - To verify consistency between related spec areas (e.g., demo-be and demo-fe)
 - After adding a new app or library to the monorepo
+
+## Goal and Termination
+
+**Goal**: Validate explicitly listed specs/ folders for structural completeness, content accuracy, internal consistency, and cross-folder coherence, then apply fixes iteratively until zero findings achieved
+
+**Termination**: Zero findings at the configured mode threshold on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)
+
+## Inputs
+
+- **`folders`** (file-list, required) — Explicit list of spec folders to validate (e.g., [specs/apps/organiclever-be, specs/apps/organiclever]). Each folder and its subfolders are validated. Cross-folder consistency is checked between listed folders.
+- **`mode`** (enum: lax, normal, strict, ocd, optional, default `strict`) — Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ocd: all levels)
+- **`min-iterations`** (number, optional) — Minimum check-fix cycles before allowing zero-finding termination (prevents premature success)
+- **`max-iterations`** (number, optional, default `7`) — Maximum check-fix cycles to prevent infinite loops
+- **`max-concurrency`** (number, optional, default `3`) — Background agents run concurrently — the N in the N+1 model (1 main thread + N background agents = N+1 total). Raise only when independent work, machine capacity, and budget headroom all allow; lower under budget, runner, or disk pressure. Never self-promoted beyond the declared value.
+
+## Outputs
+
+- **`final-status`** (enum: pass, partial, fail) — Final validation status
+- **`lifecycle-status`** (enum: verified, pending, not-applicable) — Lifecycle evidence state, separate from final-status
+- **`iterations-completed`** (number) — Number of check-fix cycles executed
+- **`final-report`** (file, pattern `local-tmp/specs/specs__*__*__audit.md`) — Final audit report (4-part format with UUID chain)
+- **`execution-scope`** (string) — Scope identifier for UUID chain tracking (default 'specs')
 
 ## Contents
 

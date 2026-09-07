@@ -1,16 +1,5 @@
 ---
-title: "Stage 3: Fixer — Role and Examples"
 description: "The fixer's role, tool pattern, color, and example agents."
-category: explanation
-subcategory: development
-tags:
-  - maker-checker-fixer
-  - workflow
-  - content-quality
-  - agent-patterns
-  - validation
-  - automation
-created: 2025-12-14
 when_to_use: "Use to identify which fixer agent to use."
 ---
 

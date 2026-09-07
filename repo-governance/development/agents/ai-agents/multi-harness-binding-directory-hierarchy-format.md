@@ -1,14 +1,5 @@
 ---
-title: "Multi-Harness Binding Operation — Directory Structure and Format Differences"
 description: "Defines the multi-harness directory structure, source-of-truth hierarchy, and format differences across the three supported coding-agent harnesses."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when checking which directory is the source of truth for an agent or Skill change, or how its format differs per harness.
 ---
 

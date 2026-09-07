@@ -1,15 +1,5 @@
 ---
-title: "When NOT to Offload"
 description: "Cases where offloading is the wrong move."
-category: explanation
-subcategory: development
-tags:
-  - content-preservation
-  - condensation
-  - offload
-  - zero-loss
-  - documentation
-created: 2025-12-14
 when_to_use: "Use when unsure whether a section actually needs offloading."
 ---
 

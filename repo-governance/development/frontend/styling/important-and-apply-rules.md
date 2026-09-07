@@ -1,15 +1,5 @@
 ---
-title: "Styling — !important and @apply Rules"
 description: Never use !important (with one documented, currently-necessary exception involving rehype-pretty-code inline styles), and @apply only inside @layer base
-category: explanation
-subcategory: development/frontend
-tags:
-  - styling
-  - tailwind
-  - css
-  - responsive
-  - mobile-first
-created: 2026-03-28
 when_to_use: Use when tempted to reach for !important or @apply outside a base-layer reset.
 ---
 

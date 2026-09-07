@@ -1,14 +1,5 @@
 ---
-title: "Token Budget Philosophy"
 description: "Explains the unlimited-budget mindset for agent context usage and how compaction handles scale."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when deciding how verbose an agent's instructions or a single execution can be.
 ---
 

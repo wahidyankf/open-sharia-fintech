@@ -1,15 +1,5 @@
 ---
-title: "Accessibility: ARIA, Color Contrast, and Screen Readers"
 description: "When to use ARIA labels, required color-contrast ratios, and structuring content for screen-reader comprehension"
-category: explanation
-subcategory: conventions
-tags:
-  - content-quality
-  - markdown
-  - writing-standards
-  - accessibility
-  - documentation
-created: 2025-12-07
 when_to_use: "Read this when adding custom HTML/ARIA to markdown, styling a diagram, or reviewing content for screen-reader friendliness."
 ---
 

@@ -1,15 +1,5 @@
 ---
-title: "Principles, Conventions, Context, and Decision"
 description: The principles and conventions native-first toolchain management implements, the context that prompted the decision, and the decision itself.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - toolchain
-  - doctor
-  - environment
-  - architecture-decision
-created: 2026-04-04
 when_to_use: Use when tracing why native toolchain management was chosen over Terraform, Ansible, or Docker Dev Containers.
 ---
 

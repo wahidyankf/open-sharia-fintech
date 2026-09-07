@@ -1,5 +1,4 @@
 ---
-title: "Execution Mode"
 description: "Describes Agent Delegation (preferred, invoking docs-checker/docs-tutorial-checker/docs-link-checker/docs-fixer/docs-tutorial-fixer) versus Manual Orchestration (fallback), and how a user invokes each."
 when_to_use: "Use when deciding whether to run this workflow via delegated agents or manual tool orchestration."
 ---

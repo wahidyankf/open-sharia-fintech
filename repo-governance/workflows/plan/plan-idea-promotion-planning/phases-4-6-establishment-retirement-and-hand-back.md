@@ -1,5 +1,4 @@
 ---
-title: "Phase 4 — Backlog Plan Establishment, Phase 5 — Two-Pager Retirement, Phase 6 — Hand-back"
 description: Invoking plan-planning to author the backlog plan, atomically retiring the source two-pager, then summarizing the outcome.
 when_to_use: Use when authoring the backlog plan itself, deleting the promoted two-pager, or reporting the final result to the user.
 ---

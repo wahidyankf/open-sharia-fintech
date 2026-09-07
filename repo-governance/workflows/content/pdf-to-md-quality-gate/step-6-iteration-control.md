@@ -1,5 +1,4 @@
 ---
-title: "6. Iteration Control (Sequential)"
 description: "Step 6: the iteration-control logic tracking consecutive-zero counts and consecutive-zero-fixes to decide pass, partial (stagnation exit), or loop back."
 when_to_use: "Use when implementing or debugging the loop/termination decision logic between checker and fixer iterations."
 ---

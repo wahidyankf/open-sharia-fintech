@@ -1,5 +1,4 @@
 ---
-title: "Step 6 — Quality Gate"
 description: Invokes the plan-quality-gate governance gate and defines how each terminal verdict is handled.
 when_to_use: Use when running the plan-quality-gate workflow as Step 6 of plan-establishment.
 ---

@@ -1,15 +1,5 @@
 ---
-title: "Examples: Plans through By-Example Tutorials"
 description: "Examples for plans, README, workflows, by-example checkers."
-category: explanation
-subcategory: development
-tags:
-  - criticality
-  - validation
-  - checker-agents
-  - fixer-agents
-  - quality-assurance
-created: 2025-12-27
 when_to_use: "Use for a domain example in these checkers."
 ---
 
@@ -72,7 +62,7 @@ when_to_use: "Use for a domain example in these checkers."
 
 **CRITICAL**:
 
-- Missing required workflow metadata (goal, termination)
+- Missing the workflow's `Goal and Termination` body section
 - Invalid step dependency reference (execution breaks)
 - Contradictory termination criteria
 

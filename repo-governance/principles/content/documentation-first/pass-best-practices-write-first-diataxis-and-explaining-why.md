@@ -1,12 +1,5 @@
 ---
-title: "PASS: Best Practices — Write First, Diátaxis, and Explaining WHY"
 description: Write docs first, use Diátaxis, explain WHY, and give examples.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - documentation
-created: 2025-12-28
 when_to_use: Use as a checklist when starting new documentation.
 ---
 

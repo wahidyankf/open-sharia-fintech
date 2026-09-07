@@ -1,13 +1,5 @@
 ---
-title: "What"
 description: Defines what Accessibility First means in practice and why accessibility is built in from day one rather than retrofitted.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - accessibility
-  - wcag
-created: 2025-12-15
 when_to_use: Use when you need a concise definition of the accessibility-first requirement before diving into specifics.
 ---
 

@@ -1,5 +1,4 @@
 ---
-title: "Validation"
 description: Defines the plan-execution-checker validation step and how its findings count determines whether execution continues.
 when_to_use: Use when running independent validation after execution, or deciding whether zero findings were achieved.
 ---

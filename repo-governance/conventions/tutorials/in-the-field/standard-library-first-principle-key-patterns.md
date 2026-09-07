@@ -1,16 +1,6 @@
 ---
-title: "Standard Library First Principle: Key Patterns and Example"
 description: Which topics always need a framework versus when the standard library suffices, plus a worked JSON-processing progression example.
 when_to_use: Use when deciding whether a specific topic justifies introducing a production framework.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Standard Library First Principle: Key Patterns and Example

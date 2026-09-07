@@ -1,14 +1,5 @@
 ---
-title: "Locating the Failing Task in a Parallel Runner's Log"
 description: Why the tail of a parallel Nx runner's log belongs to whichever task finished last, not the one that failed, and how to find the real failure.
-category: explanation
-subcategory: development
-tags:
-  - ci
-  - github-actions
-  - rate-limiting
-  - monitoring
-  - workflow
 when_to_use: Use when diagnosing a failed CI job whose log is produced by a parallel task runner like Nx.
 ---
 

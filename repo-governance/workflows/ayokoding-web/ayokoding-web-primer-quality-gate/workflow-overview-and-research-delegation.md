@@ -1,5 +1,4 @@
 ---
-title: "Workflow Overview and Research Delegation"
 description: Shows the Maker-Checker-Fixer flow as a Mermaid diagram and documents how the maker/facts-checker agents delegate multi-page web research to the web-researcher agent.
 when_to_use: Use when you need a visual summary of the quality-gate flow or want to understand how deep web research is delegated during content creation/verification.
 ---

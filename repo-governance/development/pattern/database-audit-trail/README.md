@@ -1,5 +1,4 @@
 ---
-title: "Database Audit Trail Pattern"
 description: "Required 6-column audit trail for every database table in open-sharia-enterprise"
 when_to_use: "Read this index to find the right Database Audit Trail Pattern child document."
 ---

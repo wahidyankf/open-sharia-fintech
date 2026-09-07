@@ -1,17 +1,5 @@
 ---
-title: "What Goes Where"
 description: "Which evidence type goes in which file/folder, and what delivery.md must reference."
-category: explanation
-subcategory: development
-tags:
-  - evidence
-  - testing
-  - screenshots
-  - plans
-  - verification
-  - locale
-  - manual-testing
-created: 2026-06-20
 when_to_use: "Use when unsure which evidence file to save a specific artifact into."
 ---
 

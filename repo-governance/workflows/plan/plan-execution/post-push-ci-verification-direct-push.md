@@ -1,5 +1,4 @@
 ---
-title: "Post-Push CI Verification — Direct-Push Modes"
 description: Defines how execution monitors and resolves failures for GitHub Actions workflows triggered on a direct push to origin main.
 when_to_use: Use when monitoring CI after a push under worktree-to-origin-main or main-to-origin-main.
 ---

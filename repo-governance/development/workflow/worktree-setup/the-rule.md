@@ -1,18 +1,5 @@
 ---
-title: "The Rule"
 description: The mandatory guarded-install and transactional-Doctor sequence, run order, the --fix flag, and the shared cargo target-directory symlink it provisions.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - git
-  - worktree
-  - npm
-  - nx
-  - dependencies
-  - toolchain
-  - doctor
-created: 2026-03-28
 when_to_use: Use as the exact commands to run, in order, right after creating a worktree.
 ---
 

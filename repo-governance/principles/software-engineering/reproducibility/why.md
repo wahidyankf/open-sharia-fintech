@@ -1,15 +1,5 @@
 ---
-title: "Why"
 description: Lists the benefits of reproducibility, the problems non-reproducibility causes, and when reproducibility should be applied versus where variance is acceptable.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - reproducibility
-  - environment
-  - determinism
-  - version-pinning
-created: 2025-12-28
 when_to_use: Use when justifying investment in version pinning or environment automation in a design discussion or code review.
 ---
 

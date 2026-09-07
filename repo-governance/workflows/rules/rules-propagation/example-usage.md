@@ -1,5 +1,4 @@
 ---
-title: "Example Usage"
 description: Worked invocations — a single rule, a batch, a dry run, and a rule that supersedes an existing one.
 when_to_use: Use when invoking the workflow and choosing inputs.
 ---

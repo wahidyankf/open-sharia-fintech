@@ -1,13 +1,5 @@
 ---
-title: "Summary of Anti-Patterns"
 description: "A quick-reference summary table of all eleven anti-patterns."
-category: explanation
-subcategory: development
-tags:
-  - anti-patterns
-  - quality
-  - development
-created: 2026-05-12
 when_to_use: "Use for a quick-reference summary of all anti-patterns."
 ---
 

@@ -1,16 +1,5 @@
 ---
-title: "Agent Families — docs-tutorial, ose-www-content, and readme"
 description: "Three agent families using this pattern."
-category: explanation
-subcategory: development
-tags:
-  - maker-checker-fixer
-  - workflow
-  - content-quality
-  - agent-patterns
-  - validation
-  - automation
-created: 2025-12-14
 when_to_use: "Use for tutorials, ose-www content, or READMEs."
 ---
 

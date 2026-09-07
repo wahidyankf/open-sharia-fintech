@@ -1,18 +1,5 @@
 ---
-title: "Surgical Changes — Application Examples"
 description: Worked bug-fix and validation examples contrasting scope-creep changes with surgical ones.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - workflow
-  - implementation
-  - optimization
-  - refactoring
-  - surgical-changes
-  - goal-driven
-  - test-driven
-created: 2025-12-15
 when_to_use: Use as a worked reference when deciding whether a specific edit is surgical or has drifted into scope creep.
 ---
 

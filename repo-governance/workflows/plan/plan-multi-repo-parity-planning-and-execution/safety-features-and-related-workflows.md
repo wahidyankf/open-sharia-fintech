@@ -1,5 +1,4 @@
 ---
-title: "Safety Features and Related Workflows"
 description: Lists the composite's inherited and composite-specific safety guarantees, and links to the workflows it nests or relates to.
 when_to_use: Use when verifying what protections this composite provides, or navigating to a related workflow.
 ---

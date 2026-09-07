@@ -1,15 +1,5 @@
 ---
-title: "Multiple Code Blocks Pattern: When to Split Code Blocks"
 description: "Lists the indicators that signal a code block should be split into multiple blocks, why it matters, and the split solution pattern."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - education
-  - code-first
-created: 2025-12-25
 when_to_use: "Read when reviewing a single code block that mixes languages, alternatives, or excessive comparison comments, to decide whether it must be split."
 ---
 

@@ -1,14 +1,5 @@
 ---
-title: "Executor Tagging — Git-Mechanical Steps Are [AI]"
 description: States that worktree creation, commit-and-push, and worktree removal are always [AI]-tagged, never [HUMAN], absent an explicit user request otherwise.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when tagging a worktree-provisioning, push, or worktree-removal step in delivery.md.
 ---
 

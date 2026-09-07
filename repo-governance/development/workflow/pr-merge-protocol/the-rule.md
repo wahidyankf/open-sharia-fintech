@@ -1,15 +1,5 @@
 ---
-title: "The Rule"
 description: The five hardened preconditions that must all hold before an AI agent or automation may merge a pull request.
-category: explanation
-subcategory: development
-tags:
-  - pull-request
-  - merge
-  - quality-gates
-  - workflow
-  - merge-preconditions
-created: 2026-04-04
 when_to_use: Use immediately before merging any pull request, to confirm all five preconditions hold.
 ---
 

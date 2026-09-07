@@ -1,14 +1,5 @@
 ---
-title: "What Belongs in One Commit"
 description: Keep every artifact required to complete one coherent, build-valid, revertible purpose together.
-category: explanation
-subcategory: development
-tags:
-  - conventional-commits
-  - git
-  - development
-  - code-quality
-created: 2025-11-24
 when_to_use: Use when deciding whether related changes across multiple files should land in one commit instead of several.
 ---
 

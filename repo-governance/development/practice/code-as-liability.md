@@ -1,14 +1,5 @@
 ---
-title: "Code as Liability"
 description: Every line of code is a maintenance liability, so a pull request that adds code states what it buys, what it costs to maintain, and which simpler alternative was rejected
-category: explanation
-subcategory: development
-tags:
-  - code-quality
-  - maintenance
-  - review
-  - discipline
-created: 2026-08-21
 when_to_use: Use when adding code, reviewing a pull request that adds code, or deciding whether a problem should be solved by writing code at all.
 ---
 

@@ -1,14 +1,5 @@
 ---
-title: "Summary of Anti-Patterns"
 description: "Summarizes all eleven anti-patterns in one table for quick reference."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - anti-patterns
-  - development
-  - best-practices
-created: 2025-11-23
 when_to_use: Use when you need a quick-reference list of every anti-pattern instead of reading each section.
 ---
 

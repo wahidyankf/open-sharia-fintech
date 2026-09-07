@@ -1,13 +1,5 @@
 ---
-title: "Why"
 description: Benefits of progressive disclosure, problems with immediate complexity, and its guiding principles.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - progressive-disclosure
-  - complexity-management
-created: 2025-12-15
 when_to_use: Use when justifying why complexity should be layered rather than exposed all at once.
 ---
 

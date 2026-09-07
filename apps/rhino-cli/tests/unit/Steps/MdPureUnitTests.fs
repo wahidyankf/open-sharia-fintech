@@ -55,13 +55,21 @@ let ``a YAML sequence frontmatter is treated as an empty mapping`` () =
     Assert.Contains(findings, fun (finding: Finding) -> finding.Message.Contains("\"category\" is missing"))
 
 [<Fact>]
-let ``governance frontmatter reports a missing title`` () =
+let ``governance frontmatter accepts exactly description and when_to_use`` () =
     let findings =
         validateDocsFrontmatterDocuments
             [ "repo-governance/conventions/example.md", "---\ndescription: D\nwhen_to_use: Use this.\n---\n" ]
 
+    Assert.Empty(findings)
+
+[<Fact>]
+let ``governance frontmatter rejects a key outside the two-key allow-list`` () =
+    let findings =
+        validateDocsFrontmatterDocuments
+            [ "repo-governance/conventions/example.md", "---\ntitle: T\ndescription: D\nwhen_to_use: Use this.\n---\n" ]
+
     Assert.Single(findings) |> ignore
-    Assert.Contains("\"title\" is missing", findings.Head.Message)
+    Assert.Contains("field \"title\" is not permitted", findings.Head.Message)
 
 [<Fact>]
 let ``heading documents ignore malformed ATX heading markers`` () =

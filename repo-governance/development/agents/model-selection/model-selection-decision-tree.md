@@ -1,14 +1,5 @@
 ---
-title: "Model Selection Decision Tree"
 description: "Gives the decision tree for walking from a task's characteristics to the correct model grade."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - model-selection
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when unsure which model grade a new agent should declare.
 ---
 

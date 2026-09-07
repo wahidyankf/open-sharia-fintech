@@ -1,16 +1,6 @@
 ---
-title: "Finance Formula Examples: WACC and CAPM"
 description: Worked LaTeX examples for the Weighted Average Cost of Capital and Capital Asset Pricing Model formulas, source and rendered.
 when_to_use: Use when writing a WACC or CAPM formula in documentation and want a ready LaTeX template with variable definitions.
-category: explanation
-subcategory: conventions
-tags:
-  - latex
-  - mathematics
-  - formulas
-  - notation
-  - conventions
-created: 2025-12-02
 ---
 
 # Finance Formula Examples: WACC and CAPM

@@ -1,15 +1,5 @@
 ---
-title: "How It Applies"
 description: Shows pure versus impure patterns for calculating Zakat and distributing Musharakah profit shares in TypeScript.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - functional-programming
-  - pure-functions
-  - testability
-  - determinism
-created: 2025-12-28
 when_to_use: Use when implementing a business-logic calculation and needing a concrete pure-versus-impure example.
 ---
 

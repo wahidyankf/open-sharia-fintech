@@ -1,16 +1,6 @@
 ---
-title: "Grandfathered Format Cohort"
 description: The 17-file ordered-list divergence inside plan 02's corpus, why it is identified as a separate authoring cohort, and why bullets are canonical for new course files while this cohort is not retrofitted.
 when_to_use: Read this when you find a course file using an ordered list for co-NN/ex-NN entries and need to know whether it is a known, accepted divergence or a new defect.
-category: explanation
-subcategory: conventions
-tags:
-  - plans
-  - syllabus
-  - learning-bearing
-  - custody
-  - governance
-created: 2026-07-22
 ---
 
 # Grandfathered Format Cohort

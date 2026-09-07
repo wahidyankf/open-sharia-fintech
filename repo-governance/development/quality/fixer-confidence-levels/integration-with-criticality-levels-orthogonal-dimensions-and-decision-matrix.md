@@ -1,15 +1,5 @@
 ---
-title: "Integration with Criticality Levels: Orthogonal Dimensions and Decision Matrix"
 description: "Confidence vs criticality as orthogonal dimensions, plus the decision matrix."
-category: explanation
-subcategory: development
-tags:
-  - fixer-agents
-  - confidence-levels
-  - validation
-  - automation
-  - quality-assurance
-created: 2025-12-14
 when_to_use: "Use when combining a criticality level with a confidence level."
 ---
 

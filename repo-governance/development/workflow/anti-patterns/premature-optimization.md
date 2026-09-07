@@ -1,10 +1,5 @@
 ---
-title: "Anti-Pattern: Premature Optimization"
 description: Optimizing before the implementation works wastes effort and skips the make-it-work step.
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use when planning to design caching or micro-optimizations before a basic working implementation exists.
 ---
 

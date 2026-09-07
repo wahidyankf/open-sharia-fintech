@@ -1,16 +1,5 @@
 ---
-title: "When to Check Synchronization"
 description: "The trigger points for verifying specs/ and application code are still in sync."
-category: explanation
-subcategory: development
-tags:
-  - specs
-  - architecture
-  - c4-diagrams
-  - gherkin
-  - synchronization
-  - quality
-created: 2026-03-24
 when_to_use: "Use when deciding whether a change requires a synchronization check."
 ---
 

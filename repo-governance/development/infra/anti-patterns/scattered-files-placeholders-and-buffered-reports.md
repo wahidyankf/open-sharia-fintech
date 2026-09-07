@@ -1,10 +1,5 @@
 ---
-title: "Anti-Patterns in Temporary Files, Placeholder Values, and Buffered Reports"
 description: Covers the scattered-temp-files, placeholder-UUID, and in-memory-report-buffering anti-patterns, with bad/good examples for each.
-category: explanation
-subcategory: development
-tags: [anti-patterns, temp-files, uuid, report-generation]
-created: 2026-05-12
 when_to_use: Use when a script is about to write a temporary file, generate a UUID/timestamp, or buffer audit findings before writing a report.
 ---
 

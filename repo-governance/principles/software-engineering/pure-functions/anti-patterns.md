@@ -1,15 +1,5 @@
 ---
-title: "Anti-Patterns"
 description: Catalogs common purity anti-patterns — side-effecting functions, hidden randomness, reading current time, and global state dependencies — with fixes.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - functional-programming
-  - pure-functions
-  - testability
-  - determinism
-created: 2025-12-28
 when_to_use: Use when reviewing code for hidden non-determinism or side effects and refactoring toward pure functions.
 ---
 

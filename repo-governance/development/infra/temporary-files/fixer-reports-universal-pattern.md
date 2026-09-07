@@ -1,10 +1,5 @@
 ---
-title: "Report File Naming Standard — Fixer Reports (Universal Pattern)"
 description: The shared fixer-report naming, audit-fix pairing, and content structure fixers follow.
-category: explanation
-subcategory: development
-tags: [temporary-files, ai-agents, file-organization, best-practices]
-created: 2025-12-01
 when_to_use: Use when a fixer agent generates its fix report.
 ---
 

@@ -1,14 +1,6 @@
 ---
-title: "Purpose, Scope, and Bullet Indentation Rules"
 description: Defines what the Indentation Convention covers, the principles it implements, the core space-indentation principle, and the standard markdown bullet indentation rules.
 when_to_use: Use when you need to know why this repository uses space indentation or how to indent nested markdown bullets.
-category: explanation
-subcategory: conventions
-tags:
-  - indentation
-  - formatting
-  - markdown
-created: 2025-12-12
 ---
 
 # Purpose, Scope, and Bullet Indentation Rules

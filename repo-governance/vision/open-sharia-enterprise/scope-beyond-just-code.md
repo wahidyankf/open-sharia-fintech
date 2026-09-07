@@ -1,13 +1,5 @@
 ---
-title: "Scope: Beyond Just Code"
 description: What Open Sharia Enterprise provides as a movement — technical infrastructure, education, and community — and what it deliberately is not
-category: explanation
-subcategory: vision
-tags:
-  - vision
-  - purpose
-  - islamic-enterprise
-created: 2025-12-24
 when_to_use: Use when clarifying what Open Sharia Enterprise does and does not claim to be.
 ---
 

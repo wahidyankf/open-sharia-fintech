@@ -1,13 +1,5 @@
 ---
-title: "Task List Discipline — Standard 7: Continuation State"
 description: Record active user-established repository-rule decisions and restore them before resumed work.
-category: explanation
-subcategory: development
-tags:
-  - task-management
-  - continuation
-  - compaction
-created: 2026-08-27
 when_to_use: Use when a user establishes a rule decision or when work resumes from compacted or handed-off state.
 ---
 

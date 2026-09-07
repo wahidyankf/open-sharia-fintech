@@ -1,5 +1,4 @@
 ---
-title: "Phase 8: Elixir/Erlang Ecosystem (Sequential)"
 description: "Phase 8 (full scope only): install Erlang and Elixir so mix format can format the Elixir course corpora."
 when_to_use: "Use when setting up Elixir/Erlang under full scope."
 ---

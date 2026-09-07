@@ -1,18 +1,6 @@
 ---
-title: "Diagram Size and Splitting: Real-World Fixes and Summary"
 description: "Shows real-world before/after examples of splitting oversized diagrams, plus a summary of the guidance."
 when_to_use: "Use when you want worked before/after examples of diagram splitting, or a quick summary of the rule."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Diagram Size and Splitting: Real-World Fixes and Summary

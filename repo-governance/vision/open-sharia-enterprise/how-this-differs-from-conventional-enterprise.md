@@ -1,13 +1,5 @@
 ---
-title: "How This Differs from Conventional Enterprise"
 description: How Open Sharia Enterprise's open, ethical-profit model differs from conventional closed-system enterprise
-category: explanation
-subcategory: vision
-tags:
-  - vision
-  - purpose
-  - islamic-enterprise
-created: 2025-12-24
 when_to_use: Use when contrasting this project's business model with conventional proprietary enterprise.
 ---
 

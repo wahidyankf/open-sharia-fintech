@@ -1,17 +1,6 @@
 ---
-title: "Tutorial Structure Requirements: Required Sections (Items 1-2)"
 description: "Specifies the required title/metadata section and the introduction (hook) section that open every tutorial."
 when_to_use: "Read when drafting the title/metadata section or the introduction (hook) of a tutorial."
-category: explanation
-subcategory: conventions
-tags:
-  - tutorials
-  - diataxis
-  - learning
-  - pedagogy
-  - documentation
-  - teaching
-created: 2025-12-03
 ---
 
 # Tutorial Structure Requirements: Required Sections (Items 1-2)

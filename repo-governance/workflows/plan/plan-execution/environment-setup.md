@@ -1,5 +1,4 @@
 ---
-title: "Environment Setup"
 description: Defines Phase 0's environment-setup responsibilities and the hard rule that Phase 0 opens no PR under any delivery mode.
 when_to_use: Use when running or auditing a plan's Phase 0 (environment setup and baseline) before implementation begins.
 ---

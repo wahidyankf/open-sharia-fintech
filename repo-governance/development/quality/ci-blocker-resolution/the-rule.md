@@ -1,16 +1,5 @@
 ---
-title: "The Rule"
 description: "The rule mandating preexisting CI blockers be root-caused, never bypassed."
-category: explanation
-subcategory: development
-tags:
-  - ci
-  - quality-gates
-  - root-cause
-  - debugging
-  - anti-pattern
-  - preexisting-issues
-created: 2026-04-04
 when_to_use: "Use for the exact wording of the CI-blocker-resolution rule."
 ---
 

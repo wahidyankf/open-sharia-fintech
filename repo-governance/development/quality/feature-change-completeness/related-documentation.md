@@ -1,16 +1,5 @@
 ---
-title: "Related Documentation"
 description: "Cross-references to related testing, specs-sync, and regression conventions."
-category: explanation
-subcategory: development
-tags:
-  - feature-completeness
-  - specs
-  - contracts
-  - testing
-  - documentation
-  - quality
-created: 2026-04-04
 when_to_use: "Use when you need a related convention on testing, specs sync, or regressions."
 ---
 

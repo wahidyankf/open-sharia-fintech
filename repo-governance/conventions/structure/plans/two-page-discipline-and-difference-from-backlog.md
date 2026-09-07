@@ -1,14 +1,5 @@
 ---
-title: "Two-Page Discipline and Difference from backlog/"
 description: States the length- and rigor-discipline rules that keep a two-pager short, plus how a two-pager differs from a full backlog/ plan folder.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when a two-pager is growing too detailed or when deciding whether an idea is ready to become a full plan.
 ---
 

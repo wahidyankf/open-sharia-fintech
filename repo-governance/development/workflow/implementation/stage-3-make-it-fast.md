@@ -1,18 +1,5 @@
 ---
-title: "Stage 3: Make It Fast (If Needed)"
 description: The third workflow stage - optimize performance only if measurements show it is necessary.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - workflow
-  - implementation
-  - optimization
-  - refactoring
-  - surgical-changes
-  - goal-driven
-  - test-driven
-created: 2025-12-15
 when_to_use: Use only after profiling data shows a measured bottleneck in code that already works and is clean.
 ---
 

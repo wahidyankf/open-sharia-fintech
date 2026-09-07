@@ -1,12 +1,5 @@
 ---
-title: "Anti-Patterns"
 description: Common time-estimate mistakes - daily schedules, clickbait titles, speed marketing, and speed comparisons.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - no-time-estimates
-created: 2025-12-15
 when_to_use: Use when auditing content for time-pressure anti-patterns before publishing.
 ---
 

@@ -1,16 +1,5 @@
 ---
-title: "Markdown Quality Gates"
 description: "The markdown-specific quality gates and their commands."
-category: explanation
-subcategory: development
-tags:
-  - validation
-  - consistency
-  - bash
-  - awk
-  - frontmatter
-  - automation
-created: 2025-12-14
 when_to_use: "Use when locating a markdown quality gate's command or exclusions."
 ---
 

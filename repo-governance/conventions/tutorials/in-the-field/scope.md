@@ -1,16 +1,6 @@
 ---
-title: "Scope"
 description: What the In-the-Field convention covers and does not cover, and where to find the topics it excludes.
 when_to_use: Use when you need to confirm whether a question about production guides falls inside this convention's scope.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Scope

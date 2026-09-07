@@ -1,16 +1,6 @@
 ---
-title: "Learning-Plan Syllabus: Purpose"
 description: Why this convention exists — three learning-path plans authored large course/curriculum corpora with no governing rule for shape, ownership, or lifecycle.
 when_to_use: Read this for the one-paragraph problem statement behind the syllabus convention.
-category: explanation
-subcategory: conventions
-tags:
-  - plans
-  - syllabus
-  - learning-bearing
-  - custody
-  - governance
-created: 2026-07-22
 ---
 
 # Learning-Plan Syllabus: Purpose

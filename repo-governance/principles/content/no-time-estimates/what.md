@@ -1,12 +1,5 @@
 ---
-title: "What"
 description: Contrasts outcomes-based framing with time-based framing.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - no-time-estimates
-created: 2025-12-15
 when_to_use: Use for a quick definition of what counts as a time estimate to avoid.
 ---
 

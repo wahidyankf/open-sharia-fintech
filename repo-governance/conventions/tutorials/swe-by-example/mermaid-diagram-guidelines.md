@@ -1,15 +1,5 @@
 ---
-title: "Mermaid Diagram Guidelines"
 description: "Defines when to include diagrams, the target diagram frequency, diagram types by use case, and the mandatory color-blind friendly palette."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - education
-  - code-first
-created: 2025-12-25
 when_to_use: "Read when deciding whether an example needs a diagram, which diagram type to use, or which colors are permitted."
 ---
 

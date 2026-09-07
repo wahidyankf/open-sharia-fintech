@@ -1,16 +1,6 @@
 ---
-title: "File Naming and Organization"
 description: "Defines the by-concept directory structure, file naming pattern, and concept-hierarchy section organization."
 when_to_use: "Read when creating or naming the beginner, intermediate, and advanced files for a new By-Concept tutorial."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-concept
-  - education
-  - narrative-driven
-created: 2026-01-30
 ---
 
 # File Naming and Organization

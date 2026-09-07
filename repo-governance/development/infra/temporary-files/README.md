@@ -1,5 +1,4 @@
 ---
-title: "Temporary Files Convention"
 description: "Guidelines for AI agents creating temporary uncommitted files and folders"
 when_to_use: "Read this index to find the right Temporary Files Convention child document."
 ---

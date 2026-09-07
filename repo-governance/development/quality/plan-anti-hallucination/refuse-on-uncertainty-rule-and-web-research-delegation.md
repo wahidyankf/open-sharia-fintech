@@ -1,16 +1,5 @@
 ---
-title: "Refuse-on-Uncertainty and Web Research"
 description: "The refuse-on-uncertainty rule; the web-research threshold."
-category: explanation
-subcategory: development
-tags:
-  - plans
-  - ai-agents
-  - factual-validation
-  - anti-hallucination
-  - web-research
-  - verification
-created: 2026-05-03
 when_to_use: "Use when uncertain about a plan claim."
 ---
 

@@ -1,5 +1,4 @@
 ---
-title: "Execution Mode"
 description: Describes the Agent Delegation (preferred) and Manual Orchestration (fallback) execution modes for the Primer quality gate, and how to invoke each.
 when_to_use: Use when deciding whether to run this quality gate via Agent tool delegation or manually with Read/Write/Edit tools, or when looking up the exact invocation syntax.
 ---

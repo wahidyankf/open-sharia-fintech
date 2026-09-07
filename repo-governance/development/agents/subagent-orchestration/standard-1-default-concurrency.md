@@ -1,14 +1,5 @@
 ---
-title: "Standard 1 — Default Concurrency: N Background Agents (N+1 Total Including Main Thread)"
 description: "States the default concurrency cap for background agents plus the main thread."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - subagents
-  - orchestration
-  - development
-created: 2025-11-23
 when_to_use: Use when deciding how many background agents to run concurrently for a batch of independent work.
 ---
 

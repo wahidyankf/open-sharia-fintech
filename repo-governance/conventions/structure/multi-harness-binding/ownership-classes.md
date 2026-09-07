@@ -1,16 +1,6 @@
 ---
-title: "Multi-Harness Binding: Total Ownership of Binding Files (Rule 8)"
 description: Rule 8 — every tracked file under a binding directory carries exactly one declared ownership class (generated, vendored, or source), with no fourth class and no unclassified residue.
 when_to_use: Read this when adding a file to a binding directory, when deciding whether a third-party payload belongs in the repository, or when `harness ownership validate` names a file you did not expect.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - governance
-  - platform-bindings
-  - agents
-  - compatibility
-created: 2026-08-19
 ---
 
 # Rule 8 — Total Ownership of Binding Files

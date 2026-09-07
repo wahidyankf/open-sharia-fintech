@@ -1,52 +1,6 @@
 ---
-name: harness-compatibility-quality-gate
-title: "harness-compatibility-quality-gate"
 description: "Validates internal cross-vendor parity and external harness-conformance drift, then fixes iteratively until zero findings."
 when_to_use: "Use after modifying agents, governance prose, or binding-sync logic; after a harness breaking change; or as a scheduled hygiene audit."
-goal: "Validate internal cross-vendor parity invariants and external harness-conformance drift, then fix iteratively until zero findings achieved"
-termination: "Zero findings on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)"
-inputs:
-  - name: scope
-    type: string
-    description: 'Subset of harnesses to validate: "all", or one of "claude-code", "opencode", "codex".'
-    required: false
-    default: all
-  - name: mode
-    type: enum
-    values: [lax, normal, strict, ocd]
-    description: "Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ocd: all levels)"
-    required: false
-    default: strict
-  - name: min-iterations
-    type: number
-    description: Minimum check-fix cycles before allowing zero-finding termination
-    required: false
-  - name: max-iterations
-    type: number
-    description: Maximum check-fix cycles to prevent infinite loops
-    required: false
-    default: 7
-  - name: max-concurrency
-    type: number
-    description: "N+1 background-agent cap. Raise only for independent work with capacity and budget; lower under pressure; never self-promote."
-    required: false
-    default: 3
-outputs:
-  - name: final-status
-    type: enum
-    values: [pass, partial, fail]
-    description: Final validation status
-  - name: lifecycle-status
-    type: enum
-    values: [verified, pending, not-applicable]
-    description: Lifecycle evidence state, separate from final-status
-  - name: iterations-completed
-    type: number
-    description: Number of check-fix cycles executed
-  - name: final-report
-    type: file
-    pattern: local-tmp/harness-compat/harness-compat__*__*__audit.md
-    description: Final audit report (4-part format with UUID chain)
 ---
 
 # Repository Harness Compatibility Quality Gate Workflow
@@ -61,6 +15,27 @@ workflow's Phase 0 checks parity semantically, Phase 1 checks drift via web rese
 
 **When to use**: after modifying agents/governance prose/binding-sync logic, after a harness
 breaking change, as a scheduled hygiene audit, or when onboarding a new harness.
+
+## Goal and Termination
+
+**Goal**: Validate internal cross-vendor parity invariants and external harness-conformance drift, then fix iteratively until zero findings achieved
+
+**Termination**: Zero findings on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)
+
+## Inputs
+
+- **`scope`** (string, optional, default `all`) — Subset of harnesses to validate: "all", or one of "claude-code", "opencode", "codex".
+- **`mode`** (enum: lax, normal, strict, ocd, optional, default `strict`) — Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ocd: all levels)
+- **`min-iterations`** (number, optional) — Minimum check-fix cycles before allowing zero-finding termination
+- **`max-iterations`** (number, optional, default `7`) — Maximum check-fix cycles to prevent infinite loops
+- **`max-concurrency`** (number, optional, default `3`) — N+1 background-agent cap. Raise only for independent work with capacity and budget; lower under pressure; never self-promote.
+
+## Outputs
+
+- **`final-status`** (enum: pass, partial, fail) — Final validation status
+- **`lifecycle-status`** (enum: verified, pending, not-applicable) — Lifecycle evidence state, separate from final-status
+- **`iterations-completed`** (number) — Number of check-fix cycles executed
+- **`final-report`** (file, pattern `local-tmp/harness-compat/harness-compat__*__*__audit.md`) — Final audit report (4-part format with UUID chain)
 
 ## Contents
 

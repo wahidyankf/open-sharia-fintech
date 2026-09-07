@@ -1,16 +1,5 @@
 ---
-title: "Relationship to the Three Live-Site Testers"
 description: "How the forcing-functions apply across the three live-site tester agents."
-category: explanation
-subcategory: development
-tags:
-  - testing
-  - live-testing
-  - usability
-  - ux
-  - quality
-  - systematic
-created: 2026-06-22
 when_to_use: "Use when deciding how a live-site tester agent should apply these forcing-functions."
 ---
 

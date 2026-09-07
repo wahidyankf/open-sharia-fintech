@@ -1,15 +1,5 @@
 ---
-title: "Accessibility — Contrast and Focus"
 description: WCAG AA minimum contrast ratios for text and UI components, plus the focus-visible ring pattern for keyboard-only focus indication
-category: explanation
-subcategory: development/frontend
-tags:
-  - accessibility
-  - wcag
-  - a11y
-  - aria
-  - focus
-created: 2026-03-28
 when_to_use: Use when choosing colors for text/UI elements, or when implementing focus rings on interactive elements.
 ---
 

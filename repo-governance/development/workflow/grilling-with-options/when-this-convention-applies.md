@@ -1,17 +1,5 @@
 ---
-title: "When This Convention Applies"
 description: The six contexts where grilling MUST follow this convention's structured format.
-category: explanation
-subcategory: development
-tags:
-  - planning
-  - grill-me
-  - user-interaction
-  - plan-maker
-  - design-decisions
-  - interaction
-  - agents
-created: 2026-05-26
 when_to_use: Use when deciding whether a given interaction requires this convention's structured grilling format.
 ---
 

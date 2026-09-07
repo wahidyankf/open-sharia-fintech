@@ -1,5 +1,4 @@
 ---
-title: "Enter the Designated Worktree — Secrets, Output, and Rationale"
 description: Explains why secret- and state-dependent infra operations must run from the primary checkout, and states the gate's output and rationale.
 when_to_use: Use when a delivery checklist item runs terraform apply, a live Ansible converge, or any other state-changing infra operation.
 ---

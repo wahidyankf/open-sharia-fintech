@@ -1,12 +1,5 @@
 ---
-title: "Relationship to Other Principles"
 description: How Documentation First relates to other governance principles.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - documentation
-created: 2025-12-28
 when_to_use: Use when tracing this principle's relationship to others.
 ---
 

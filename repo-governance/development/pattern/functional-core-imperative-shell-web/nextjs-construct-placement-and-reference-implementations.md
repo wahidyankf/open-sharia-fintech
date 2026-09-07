@@ -1,15 +1,5 @@
 ---
-title: "Next.js Construct Placement and Reference Implementations"
 description: "Where each Next.js construct (Server Components, Server Actions, route handlers, middleware) belongs, and the three reference apps that follow this pattern."
-category: explanation
-subcategory: development
-tags:
-  - architecture
-  - functional-core-imperative-shell
-  - nextjs
-  - functional-programming
-  - web
-created: 2026-06-17
 when_to_use: "Use when deciding whether a specific Next.js construct belongs in core/ or shell/, or looking for a reference implementation."
 ---
 

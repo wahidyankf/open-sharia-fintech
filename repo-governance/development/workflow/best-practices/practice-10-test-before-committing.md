@@ -1,10 +1,5 @@
 ---
-title: "Practice 10: Test Before Committing"
 description: Run tests locally before every commit rather than waiting for CI.
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use immediately before committing, to confirm tests and lint were run locally first.
 ---
 

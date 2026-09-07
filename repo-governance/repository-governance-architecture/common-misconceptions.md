@@ -1,12 +1,5 @@
 ---
-title: "Common Misconceptions"
 description: Five common misconceptions about the architecture, corrected
-category: explanation
-subcategory: architecture
-tags:
-  - architecture
-  - governance
-created: 2026-02-09
 when_to_use: Use when you suspect a misunderstanding about the layers.
 ---
 

@@ -1,13 +1,5 @@
 ---
-title: "Lint-Staged Membership Rule"
 description: The two-part criteria for whether a check belongs in lint-staged, the qualifying and non-qualifying check lists, resulting Nx target removals, and the staged-guard carve-out.
-category: explanation
-subcategory: development
-tags:
-  - nx
-  - targets
-  - conventions
-created: 2026-06-13
 when_to_use: Use when deciding whether a new check belongs in lint-staged or should instead be a dedicated Nx target or hook step.
 ---
 

@@ -1,14 +1,5 @@
 ---
-title: "Platform Binding Examples — Using Colors in Documentation and Examples"
 description: "Shows how to reference agent colors in documentation and lists worked color-field examples."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when documenting an agent's color in prose or when picking an example color-field value.
 ---
 

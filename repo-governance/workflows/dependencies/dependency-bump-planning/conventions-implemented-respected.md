@@ -1,5 +1,4 @@
 ---
-title: "Conventions Implemented/Respected"
 description: Traces this workflow's design back to the Workflow Naming, Plans Organization, Web Research Delegation, Subagent Orchestration, and Linking conventions.
 when_to_use: Use when auditing this workflow for traceability back to other repo-governance conventions.
 ---

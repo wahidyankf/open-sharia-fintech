@@ -1,15 +1,5 @@
 ---
-title: "Annotation Patterns Reference"
 description: "Reference patterns for annotating output, state changes, collections, and concurrency using the `// =>` notation."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - education
-  - code-first
-created: 2025-12-25
 when_to_use: "Read when writing `// =>` style annotations for outputs, state, collections, or goroutine/channel concurrency and you need a worked pattern to follow."
 ---
 

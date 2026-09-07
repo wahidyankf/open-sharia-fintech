@@ -1,5 +1,4 @@
 ---
-title: "AyoKoding Content By-Example Quality Gate Workflow"
 description: "Iterative Maker-Checker-Fixer quality gate for by-example tutorials, validating coverage, example count, annotation density, and the mandatory Examples-by-Level section."
 when_to_use: "Read this index to find the right AyoKoding Content By-Example Quality Gate Workflow child document."
 ---

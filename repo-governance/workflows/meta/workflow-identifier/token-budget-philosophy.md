@@ -1,14 +1,5 @@
 ---
-title: "Token Budget Philosophy"
 description: States that workflow orchestration should not economize on tokens — reliable compaction handles context, so focus on correct thorough execution.
-category: explanation
-subcategory: workflows
-tags:
-  - workflows
-  - agents
-  - orchestration
-  - patterns
-created: 2025-12-23
 when_to_use: Use when tempted to shorten or skip workflow steps to save tokens.
 ---
 

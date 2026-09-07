@@ -1,15 +1,5 @@
 ---
-title: "Complete Example Structure (Production Reference)"
 description: "Walks through a full production reference example (Golang Hello World) demonstrating all five parts of the mandatory format together, with a part-by-part analysis."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - education
-  - code-first
-created: 2025-12-25
 when_to_use: "Read when you need a single complete worked example showing all five parts assembled together, to model a new example against."
 ---
 
