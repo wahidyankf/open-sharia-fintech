@@ -256,9 +256,7 @@ type MdProcessSteps() =
     member _.``a governance doc with description and when_to_use frontmatter``() =
         rootDir <- Some(newTempDir ())
 
-        writeDoc
-            "repo-governance/conventions/foo.md"
-            "---\ndescription: D\nwhen_to_use: Use when W.\n---\nbody\n"
+        writeDoc "repo-governance/conventions/foo.md" "---\ndescription: D\nwhen_to_use: Use when W.\n---\nbody\n"
 
     [<Given>]
     member _.``a governance doc with description, when_to_use, and a title field``() =
@@ -904,8 +902,7 @@ type MdProcessSteps() =
         | "the output reports all md validators passed" -> Assert.Contains("MD AUDIT PASSED", output)
         | "the output identifies the forbidden frontmatter field and its location" ->
             Assert.Contains("updated:", output)
-        | "the output identifies the forbidden created field and its location" ->
-            Assert.Contains("created:", output)
+        | "the output identifies the forbidden created field and its location" -> Assert.Contains("created:", output)
         | "the output identifies the forbidden footer block and its location" -> Assert.Contains("Last Updated", output)
         | "the output identifies the forbidden inline annotation and its location" ->
             Assert.Contains("inline date annotation", output)

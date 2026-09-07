@@ -66,8 +66,7 @@ let ``governance frontmatter accepts exactly description and when_to_use`` () =
 let ``governance frontmatter rejects a key outside the two-key allow-list`` () =
     let findings =
         validateDocsFrontmatterDocuments
-            [ "repo-governance/conventions/example.md",
-              "---\ntitle: T\ndescription: D\nwhen_to_use: Use this.\n---\n" ]
+            [ "repo-governance/conventions/example.md", "---\ntitle: T\ndescription: D\nwhen_to_use: Use this.\n---\n" ]
 
     Assert.Single(findings) |> ignore
     Assert.Contains("field \"title\" is not permitted", findings.Head.Message)

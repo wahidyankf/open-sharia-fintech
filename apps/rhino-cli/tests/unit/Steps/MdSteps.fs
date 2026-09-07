@@ -251,9 +251,7 @@ type MdSteps() =
 
     [<Given>]
     member _.``a governance doc with description and when_to_use frontmatter``() =
-        writeDoc
-            "repo-governance/conventions/foo.md"
-            "---\ndescription: D\nwhen_to_use: Use when W.\n---\nbody\n"
+        writeDoc "repo-governance/conventions/foo.md" "---\ndescription: D\nwhen_to_use: Use when W.\n---\nbody\n"
 
     [<Given>]
     member _.``a governance doc with description, when_to_use, and a title field``() =
@@ -1411,15 +1409,11 @@ let ``Governance doc with description and when_to_use passes the two-key schema`
 
 [<Fact>]
 let ``Governance doc carrying a title field fails the allow-list`` () =
-    FeatureRunner.run
-        "docs-validate-frontmatter.feature"
-        "Governance doc carrying a title field fails the allow-list"
+    FeatureRunner.run "docs-validate-frontmatter.feature" "Governance doc carrying a title field fails the allow-list"
 
 [<Fact>]
 let ``Governance doc carrying any other key fails the allow-list`` () =
-    FeatureRunner.run
-        "docs-validate-frontmatter.feature"
-        "Governance doc carrying any other key fails the allow-list"
+    FeatureRunner.run "docs-validate-frontmatter.feature" "Governance doc carrying any other key fails the allow-list"
 
 [<Fact>]
 let ``Governance subtree outside the four sub-trees is still validated`` () =
