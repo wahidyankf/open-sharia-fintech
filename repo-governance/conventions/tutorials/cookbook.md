@@ -30,7 +30,6 @@ This convention extends the [Tutorials Convention](../tutorials/general.md) for 
 8. [Cookbook vs Other Tutorial Types](./cookbook/cookbook-vs-other-tutorial-types.md) — How Cookbook compares to By-Example, How-To Guides, and By-Concept.
 9. [Validation and Quality Metrics](./cookbook/validation-and-quality-metrics.md) — Recipe-count coverage metrics and automated/manual quality checks.
 10. [Scope](./cookbook/scope.md) — What this convention covers, does not cover, and where it applies.
-11. [Related Documentation](./cookbook/related-documentation.md) — Links to Naming, Tutorials, Programming Language, and By-Example/By-Concept conventions.
 
 ## Related Documentation
 
@@ -48,3 +47,12 @@ This convention implements and respects:
 - **[No Time Estimates](../../principles/content/no-time-estimates.md)**: Focus on problem solved, not time to implement
 - **[Accessibility First](../../principles/content/accessibility-first.md)**: Color-blind friendly diagrams and accessible formatting
 - **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Clear problem statements and complete, runnable code
+
+## Related Documentation
+
+- **[Tutorial Naming Convention](./naming.md)**: Cookbook as Component 5 of Full Set Tutorial Package
+- **[Tutorial Convention](./general.md)**: Base tutorial standards that cookbook inherits
+- **[Programming Language Structure](./programming-language-structure.md)**: Where cookbook/ folder fits in directory structure
+- **[Programming Language Content](./programming-language-content.md)**: Cookbook as mandatory component for complete language content
+- **[By-Example Tutorial](./swe-by-example.md)**: Comparison with code-first learning path
+- **[By-Concept Tutorial](./by-concept.md)**: Comparison with narrative-driven learning path

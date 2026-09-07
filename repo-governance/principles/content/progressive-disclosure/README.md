@@ -7,7 +7,6 @@ when_to_use: "Read this index to find the right Progressive Disclosure child doc
 # Progressive Disclosure
 
 - [Vision Supported](./vision-supported.md) — Explains how progressive disclosure advances the project's meet-people-at-their-level vision. Use when justifying layered complexity against the project's mission.
-- [What](./what.md) — Contrasts progressive disclosure with immediate complexity. Use for a quick definition of progressive disclosure before applying it.
 - [Why](./why.md) — Benefits of progressive disclosure, problems with immediate complexity, and its guiding principles. Use when justifying why complexity should be layered rather than exposed all at once.
 - [How It Applies — Tutorial Levels, Diátaxis, and File Naming](./how-it-applies-tutorial-levels-diataxis-and-file-naming.md) — Progressive structure in tutorial skill levels, the Diátaxis framework, and file naming. Use when designing a tutorial's skill-level progression, documentation category, or file names.
 - [How It Applies — Documentation Hierarchy, Convention Documents, and the Word Budget](./how-it-applies-documentation-hierarchy-convention-documents-and-the-word-budget.md) — Progressive structure in document sections, convention documents, and the governance word budget. Use when structuring a document's sections or trimming a governance file to fit its word budget.

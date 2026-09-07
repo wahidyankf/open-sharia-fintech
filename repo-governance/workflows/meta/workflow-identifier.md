@@ -52,8 +52,15 @@ and body structure, step execution patterns, state/error handling, composability
 - [Token Budget Philosophy](./workflow-identifier/token-budget-philosophy.md) — don't economize tokens.
 - [Principles Implemented/Respected](./workflow-identifier/principles-implemented-respected.md) — traceability.
 - [Conventions Implemented/Respected](./workflow-identifier/conventions-implemented-respected.md) — traceability.
-- [Related Documentation](./workflow-identifier/related-documentation.md) — composing references.
 
 ## Overview
 
 Workflows are **composed multi-step processes** that orchestrate agents, procedures, and/or other workflows to achieve specific goals with clear termination criteria. They represent the fifth layer in the repository's governance hierarchy, sitting above individual agents to coordinate complex tasks.
+
+## Related Documentation
+
+- [AI Agents Convention](../../development/agents/ai-agents.md) - How agents work
+- [Maker-Checker-Fixer Pattern](../../development/pattern/maker-checker-fixer.md) - Core workflow pattern
+- [Plans Organization](../../conventions/structure/plans.md) - How plans relate to workflows
+- [Implementation Workflow](../../development/workflow/implementation.md) - Development process workflow
+- [Workflows Index](../README.md) - All available workflows

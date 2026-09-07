@@ -14,5 +14,4 @@ when_to_use: "Read this index to find the right Manual Behavioural Verification 
 - [When Verification Is Required](./when-verification-is-required.md) — The triggers that require manual behavioural verification. Use when deciding whether a change needs manual verification.
 - [Relationship to Automated Tests](./relationship-to-automated-tests.md) — How manual verification relates to automated test coverage. Use when deciding whether automated tests already cover manual verification.
 - [Examples](./examples.md) — Worked examples of manual behavioural verification. Use for a concrete example of this convention applied.
-- [Scope](./scope.md) — What this convention applies to and its boundaries. Use when checking whether this convention applies to a change.
 - [Related Documentation](./related-documentation.md) — Related testing and evidence conventions. Use for a related convention on testing or evidence.

@@ -7,7 +7,6 @@ when_to_use: "Read this index to find the right Deliberate Problem-Solving child
 # Deliberate Problem-Solving
 
 - [Vision Supported](./vision-supported.md) — Explains how deliberate problem-solving serves the Open Sharia Enterprise vision of trustworthy, transparent, and educational Shariah-compliant systems. Use when explaining why deliberate problem-solving matters to the project's mission, not just as a technical practice.
-- [Principle](./principle.md) — States the core rule of deliberate problem-solving - think before coding, don't assume, don't hide confusion, surface tradeoffs. Use when you need the one-sentence statement of this principle to cite or apply.
 - [Why This Matters](./why-this-matters.md) — Explains the consequences of rushing to implementation without clarity, and what deliberate problem-solving ensures instead. Use when justifying why deliberate analysis is required before writing a solution.
 - [Core Practices](./core-practices.md) — Lists the four core practices of deliberate problem-solving - stating assumptions, presenting interpretations, suggesting simpler approaches, and stopping when unclear. Use when looking for the concrete Do/Don't practices that operationalize deliberate problem-solving.
 - [Application Examples](./application-examples.md) — Walks through three worked examples (API integration, database choice, feature implementation) contrasting hidden-assumption failures with deliberate approaches. Use when you need a worked example of applying deliberate problem-solving to a realistic task.

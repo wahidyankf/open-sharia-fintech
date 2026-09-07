@@ -24,7 +24,6 @@ This document defines the architectural constraint governing skill context modes
 - [Fork agent skills: Main Conversation Only](./skill-context-architecture/fork-agent-skills-main-conversation-only.md) — fork use cases.
 - [Validation and Compliance](./skill-context-architecture/validation-and-compliance.md) — checklist, mistakes.
 - [Architecture Diagram](./skill-context-architecture/architecture-diagram.md) — visual reference.
-- [Related Documentation](./skill-context-architecture/related-documentation.md) — further reading.
 - [Enforcement](./skill-context-architecture/enforcement.md) — code-review checklist.
 - [Summary](./skill-context-architecture/summary.md) — closing recap.
 
@@ -51,3 +50,20 @@ This architectural decision establishes that all skills stored in the `.claude/s
 - Agent developers creating or maintaining skills
 - Repository maintainers reviewing skill contributions
 - Anyone designing agent workflows involving skills
+
+## Related Documentation
+
+### Core Architecture
+
+- **[Repository Governance Architecture](../../repository-governance-architecture.md)** - Six-layer architecture including skills as delivery infrastructure
+- **[AI Agents Convention](./ai-agents.md)** - Agent structure and tool permissions
+
+### Agent skills Documentation
+
+- **[Primary binding skills catalog](../../../.claude/skills/README.md)** - Skill modes (inline vs fork) and organization
+- **[How to Create a New Skill](../../../docs/how-to/create-new-skill.md)** - Step-by-step skill creation guide
+
+### Related Conventions
+
+- **[Maker-Checker-Fixer Pattern](../pattern/maker-checker-fixer.md)** - Three-stage workflow without nested delegated agents
+- **[Temporary Files Convention](../infra/temporary-files.md)** - Audit reports enabling sequential agent workflows

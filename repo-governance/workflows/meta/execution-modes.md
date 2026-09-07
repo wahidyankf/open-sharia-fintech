@@ -25,7 +25,6 @@ pitfalls below.
 - [The Core Challenge](./execution-modes/the-core-challenge.md) — why persistence needs a defined mode.
 - [Agent Delegation Mode (Preferred)](./execution-modes/agent-delegation-mode.md) — invoking agents via the Agent tool.
 - [Manual Orchestration Mode (Fallback)](./execution-modes/manual-orchestration-mode.md) — direct tool execution.
-- [Execution Mode Decision Flow](./execution-modes/execution-mode-decision-flow.md) — the decision tree.
 - [Manual Mode Execution Pattern](./execution-modes/manual-mode-execution-pattern.md) — the six-step manual procedure.
 - [Implementation Example](./execution-modes/implementation-example.md) — the Execution Mode section template.
 - [Future Considerations](./execution-modes/future-considerations.md) — potential workflow-runner automation.
@@ -50,3 +49,14 @@ This convention defines the execution modes for workflows in this repository: **
 - [Plan Quality Gate Workflow](../plan/plan-quality-gate.md) - Example workflow using agent delegation
 - [AI Agents Convention](../../development/agents/ai-agents.md) - Agent invocation patterns
 - [Maker-Checker-Fixer Pattern](../../development/pattern/maker-checker-fixer.md) - Validation workflow pattern
+
+## Execution Mode Decision Flow
+
+```
+What does the workflow step reference?
+├── Named agent → Agent exists as defined subagent_type in .claude/agents/?
+│   ├── YES → Use Agent Delegation (preferred)
+│   └── NO  → Use Manual Orchestration (fallback)
+├── Nested workflow → Execute that workflow (recursively apply this decision flow)
+└── Procedure → Use Manual Orchestration (follow procedure steps directly)
+```

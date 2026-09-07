@@ -38,7 +38,6 @@ This document defines how AI agents plan, execute, verify, and improve their wor
 
 - [Verification Before Done](./agent-workflow-orchestration/verification-before-done.md) — pre-completion checks.
 - [Autonomous Bug Fixing](./agent-workflow-orchestration/autonomous-bug-fixing.md) — expected behaviour, CI failures.
-- [Demand Elegance (Balanced)](./agent-workflow-orchestration/demand-elegance-balanced.md) — polish standard.
 
 ## Self-Improvement and Task Management
 
@@ -56,3 +55,13 @@ This practice respects the following conventions:
 - **[Content Quality Principles](../../conventions/writing/quality.md)**: Plan documents and lessons files follow active voice, clear structure, and actionable content - not vague notes.
 
 - **[CI Monitoring Convention](../workflow/ci-monitoring.md)**: Agents performing post-push CI verification MUST make one status read every 2 minutes via a scheduled wakeup. `gh run watch` and manual tight-loop polling are forbidden regardless of job duration. When rate-limited (HTTP 403): `ScheduleWakeup(delaySeconds=2100)` — not a retry loop.
+
+## Demand Elegance (Balanced)
+
+For non-trivial changes, pause and ask: "Is there a more elegant way to do this?"
+
+If a solution feels hacky, reframe the task: "Knowing everything I now know, what is the elegant solution?" Then implement that instead.
+
+**When to skip this step**: Simple, obvious fixes with a single clear approach. Do not over-engineer a one-line correction.
+
+**Elegance is not complexity**: The more elegant solution is usually simpler, not more abstract. The question is whether the current approach is unnecessarily convoluted, not whether a more sophisticated pattern could be applied.

@@ -35,4 +35,3 @@ when_to_use: "Read this index to find the right Workflow Pattern Convention chil
 - [Token Budget Philosophy](./token-budget-philosophy.md) — States that workflow orchestration should not economize on tokens — reliable compaction handles context, so focus on correct thorough execution.
 - [Principles Implemented/Respected](./principles-implemented-respected.md) — Traces this convention's workflow-pattern design back to the foundational principles it respects.
 - [Conventions Implemented/Respected](./conventions-implemented-respected.md) — Traces this convention's design back to the File Naming, AI Agents, and Linking conventions it implements.
-- [Related Documentation](./related-documentation.md) — Links from the Workflow Pattern Convention to the AI Agents Convention, Maker-Checker-Fixer pattern, Plans Organization, Implementation Workflow, and the workflows index.

@@ -32,7 +32,6 @@ Design for **universal access from the start**. Accessibility is not an aftertho
 
 ## Reference
 
-- [Related Conventions](./accessibility-first/related-conventions.md) — Links to the conventions that implement accessibility requirements - color accessibility, content quality, and diagrams. Use when looking for the specific conventions that enforce this principle's rules.
 - [References](./accessibility-first/references.md) — External references on WCAG standards, color accessibility tools, screen reader guides, and semantic HTML. Use when seeking authoritative external sources on accessibility standards and testing tools.
 
 ## Relationship to Other Principles
@@ -40,3 +39,9 @@ Design for **universal access from the start**. Accessibility is not an aftertho
 - [Explicit Over Implicit](../software-engineering/explicit-over-implicit.md) - Explicit alt text and descriptions
 - [Simplicity Over Complexity](../general/simplicity-over-complexity.md) - Simple accessible design
 - [Progressive Disclosure](./progressive-disclosure.md) - Accessible to all skill levels
+
+## Related Conventions
+
+- [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) - **Master reference for all color usage** (palette, WCAG, testing)
+- [Content Quality Principles](../../conventions/writing/quality.md) - Accessibility standards in content
+- [Diagrams Convention](../../conventions/formatting/diagrams.md) - Accessible diagram standards

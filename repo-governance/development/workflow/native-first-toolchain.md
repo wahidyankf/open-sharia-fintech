@@ -23,7 +23,6 @@ This document records the architectural decision to use native toolchain managem
 - [Rationale — Package Managers Through Docker Performance](./native-first-toolchain/rationale-package-managers-through-docker-performance.md) — Idempotency, source of truth, single-machine scope, and Docker's macOS cost.
 - [Rationale — Worktrees and the Doctor Pattern](./native-first-toolchain/rationale-worktrees-and-the-doctor-pattern.md) — Worktree incompatibility with containers, the doctor check-diff-apply mapping, and future-decision guidance.
 - [Platform Support and Git Worktree Compatibility](./native-first-toolchain/platform-support-and-git-worktree-compatibility.md) — macOS/Ubuntu support and worktree-safe path resolution.
-- [Implementation Notes](./native-first-toolchain/implementation-notes.md) — Shell-restart caveat, `--dry-run` mode, and the idempotency contract.
 
 ## Related Documentation
 
@@ -39,3 +38,28 @@ Revisit this architectural decision if any of the following conditions change:
 - **Docker performance**: macOS Docker bind-mount performance reaches native parity, eliminating the primary objection to Dev Containers
 - **Cloud development**: A cloud development environment (GitHub Codespaces) becomes necessary for external contributors who cannot install toolchains locally
 - **Toolchain count**: The toolchain count exceeds what `rhino-cli doctor` can reasonably manage as a flat list of checks
+
+## Implementation Notes
+
+### Shell Restart Caveat
+
+Volta, SDKMAN, and rustup modify shell profile files. After installing any of these tools, the fixer must `source` the relevant init script before installing dependent tools:
+
+```bash
+# After Volta install
+source ~/.zshrc  # Or detect shell dynamically
+
+# After SDKMAN install
+source "$HOME/.sdkman/bin/sdkman-init.sh"
+
+# After rustup install
+source "$HOME/.cargo/env"
+```
+
+### `--dry-run` Mode
+
+`doctor --fix --dry-run` prints what would be installed without executing. This preview capability gives developers confidence before applying changes, equivalent to reviewing a Terraform plan before applying.
+
+### Idempotency Contract
+
+When implementing `doctor --fix`, each install command must be non-interactive and idempotent. The table in the Rationale section documents the re-run behaviour of each package manager. Pay particular attention to `rustup`, which requires the `-y` flag for non-interactive mode, and Flutter, which requires `brew install --cask flutter` rather than `brew install flutter`.

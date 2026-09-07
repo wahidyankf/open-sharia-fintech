@@ -49,9 +49,7 @@ until zero findings are achieved.
 ## Contents
 
 - [Lifecycle validation ownership](../meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md) — shared Step 0.
-- [Execution Mode](./ci-quality-gate/execution-mode.md) — preferred/fallback execution.
 - [Steps](./ci-quality-gate/steps.md) — the five-step check-fix-recheck loop.
-- [Principles Implemented/Respected](./ci-quality-gate/principles-implemented-respected.md) — the principles this gate embodies.
 
 ## Agents
 
@@ -74,3 +72,17 @@ until zero findings are achieved.
 - After modifying CI/CD infrastructure (workflows, composite actions, Docker files)
 - As a periodic compliance check
 - Before major releases to ensure CI consistency
+
+## Execution Mode
+
+**Preferred Mode**: Agent Delegation — invoke `ci-checker` and `ci-fixer` via the Agent tool
+with `subagent_type` (see [Workflow Execution Modes Convention](../meta/execution-modes.md)).
+
+**Fallback Mode**: Manual Orchestration — execute workflow logic directly using
+Read/Write/Edit tools when Agent Delegation is unavailable.
+
+## Principles Implemented/Respected
+
+- **Explicit Over Implicit**: All CI standards are documented in governance docs, not implicit conventions
+- **Automation Over Manual**: Automated checking and fixing reduces manual compliance burden
+- **Simplicity Over Complexity**: Simple iterative check-fix loop with bounded iterations

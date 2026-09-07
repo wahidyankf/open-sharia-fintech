@@ -19,7 +19,6 @@ when_to_use: "Use when reviewing a change for a common quality anti-pattern."
 - [Anti-Patterns 7-9](./anti-patterns/anti-patterns-7-9.md) — Ignoring criticality in fixes, no CI quality gates, undocumented validation rules. Use when reviewing for these three quality anti-patterns.
 - [Anti-Patterns 10-11](./anti-patterns/anti-patterns-10-11.md) — Formatting the entire repo on every commit, mixing test levels. Use when reviewing for these two quality anti-patterns.
 - [Summary of Anti-Patterns](./anti-patterns/summary-of-anti-patterns.md) — A quick-reference summary table of all eleven anti-patterns. Use for a quick-reference summary of all anti-patterns.
-- [Principles and Conventions Implemented/Respected](./anti-patterns/principles-and-conventions-implemented-respected.md) — Principles/conventions implemented. Use to trace this catalog's rationale.
 
 ## Conclusion
 
@@ -62,3 +61,18 @@ This document provides:
 - [Repository Validation Methodology](./repository-validation.md) - Validation patterns
 - [Nx Target Standards](../infra/nx-targets.md) - Canonical target names and CI execution model
 - [Best Practices](./best-practices.md) - Recommended patterns
+
+## Principles and Conventions Implemented/Respected
+
+### Principles Implemented/Respected
+
+- **Automation Over Manual**: Git hooks, CI gates, automated validation
+- **Documentation First**: Preserve content, document validation rules
+- **Explicit Over Implicit**: Clear criticality, documented rationale
+- **Simplicity Over Complexity**: Incremental quality, affected tests only
+
+### Conventions Implemented/Respected
+
+- **[Content Quality Principles](../../conventions/writing/quality.md)**: Active voice, clear problem/solution format in documentation
+- **[File Naming Convention](../../conventions/structure/file-naming.md)**: Quality documents follow standardized kebab-case naming
+- **[Linking Convention](../../conventions/formatting/linking.md)**: GitHub-compatible links to related quality documentation

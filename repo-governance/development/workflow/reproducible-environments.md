@@ -27,7 +27,6 @@ Practices for creating consistent, reproducible development and build environmen
 - [Containerization for Complex Environments](./reproducible-environments/containerization-for-complex-environments.md) — Docker Compose and a development Dockerfile.
 - [Documentation](./reproducible-environments/documentation.md) — README setup-instruction and common-tasks templates.
 - [Testing Reproducibility](./reproducible-environments/testing-reproducibility.md) — A CI-runnable environment-verification script.
-- [Monorepo Considerations](./reproducible-environments/monorepo-considerations.md) — Nx cache config and workspace TypeScript path mapping.
 - [Troubleshooting](./reproducible-environments/troubleshooting.md) — Common drift symptoms and a workspace-hoisting gotcha.
 - [Migration Guide](./reproducible-environments/migration-guide.md) — Adding Volta or Docker to an existing project.
 - [Git Identity Guardrail](./reproducible-environments/git-identity-guardrail.md) — No AI agent sets git identity; the human `includeIf` pattern and CI exemption.
@@ -64,3 +63,50 @@ placeholders only. See:
 
 **Backup and restore**: Use `rhino-cli env backup / restore`. See:
 [`secrets-and-env-standards.md` § 6](../../conventions/security/secrets-and-env-standards/rhino-cli-env-toolchain.md#rhino-cli-env-toolchain).
+
+## Monorepo Considerations
+
+### Nx Cache Configuration
+
+**nx.json** (committed to git):
+
+```json
+{
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "nx/tasks-runners/default",
+      "options": {
+        "cacheableOperations": ["build", "test", "lint"]
+      }
+    }
+  }
+}
+```
+
+**Why this matters**:
+
+- Nx caching is deterministic (same inputs = cache hit)
+- Reproducible builds enable reliable caching
+- Cache hits speed up CI/CD
+
+### Workspace Dependencies
+
+**Ensure consistent workspace configuration**:
+
+```json
+// tsconfig.base.json
+{
+  "compilerOptions": {
+    "paths": {
+      "@open-sharia-enterprise/ts-validation": ["libs/ts-validation/src/index.ts"],
+      "@open-sharia-enterprise/ts-auth": ["libs/ts-auth/src/index.ts"]
+    }
+  }
+}
+```
+
+**Reproducibility benefit**:
+
+- Path mappings explicit in tsconfig
+- All developers resolve imports identically
+- TypeScript compilation deterministic

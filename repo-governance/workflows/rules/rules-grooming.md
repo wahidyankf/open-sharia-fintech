@@ -95,7 +95,7 @@ Composed: `rules-checker` discovers and verifies, propagation writes at Step 6, 
 - [Step 9](./rules-grooming/step-9-record-and-recurrence.md) — the record; the re-run condition.
 - [Success Criteria](./rules-grooming/success-criteria.md) — Gherkin, run lifecycle.
 - [Success Criteria — Candidate Classes](./rules-grooming/success-criteria-candidate-classes.md) — Gherkin, per class.
-- [Refused Reductions](./rules-grooming/refused-reductions.md) — the five permanent exclusions.
+- [Refused Reductions](./rules-grooming/refused-reductions.md) — the six permanent exclusions.
 - [Success Criteria — Scaffolding and Protection](./rules-grooming/success-criteria-scaffolding-and-protection.md) — Gherkin, scaffolding and entry points.
 - [Termination Criteria](./rules-grooming/termination-criteria.md) — no-op, groomed, halted, partial.
 - [Related Workflows and Documentation](./rules-grooming/related-workflows-and-documentation.md) — what runs before and after it.

@@ -24,7 +24,6 @@ Choose **explicit composition and configuration** over magic, convenience, and h
 - [Anti-Patterns](./explicit-over-implicit/anti-patterns.md) — Four implicit-behaviour anti-patterns and why each is bad. Use when reviewing code for hidden or magic behaviour.
 - [PASS: Best Practices](./explicit-over-implicit/best-practices.md) — Five best practices for explicitness. Use when designing a new agent, module, or config schema.
 - [Examples from This Repository](./explicit-over-implicit/examples-from-this-repository.md) — This repository's concrete explicit configurations. Use to find an existing explicit configuration to reuse or extend.
-- [References](./explicit-over-implicit/references.md) — External references on explicit-over-implicit and secure coding. Use to find further reading behind a claim in this document.
 
 ## Related Conventions
 
@@ -38,3 +37,16 @@ Choose **explicit composition and configuration** over magic, convenience, and h
 - [Simplicity Over Complexity](../general/simplicity-over-complexity.md) - Explicit configuration is often simpler than magic
 - [Accessibility First](../content/accessibility-first.md) - Explicit configuration improves understanding for all users
 - [Automation Over Manual](./automation-over-manual.md) - Automate explicit checks, not implicit assumptions
+
+## References
+
+**Software Engineering Principles**:
+
+- [The Zen of Python](https://peps.python.org/pep-0020/) - "Explicit is better than implicit"
+- [The Twelve-Factor App](https://12factor.net/config) - Configuration in environment
+- [Martin Fowler on Explicit Dependencies](https://martinfowler.com/articles/injection.html)
+
+**Security Best Practices**:
+
+- [OWASP Secure Coding Practices](https://owasp.org/www-project-secure-coding-practices-quick-reference-guide/) - Explicit access control
+- [Principle of Least Privilege](https://en.wikipedia.org/wiki/Principle_of_least_privilege)

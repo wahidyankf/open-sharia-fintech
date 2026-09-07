@@ -31,7 +31,6 @@ Understanding common mistakes in AI agent development helps teams build more mai
 ## Summary and Reference
 
 - [Summary of Anti-Patterns](./anti-patterns/summary-of-anti-patterns.md) — quick-reference table.
-- [Related Documentation](./anti-patterns/related-documentation.md) — further reading.
 
 ## Conclusion
 
@@ -71,3 +70,11 @@ This document provides:
 - Examples of problematic implementations
 - Solutions and corrections for each anti-pattern
 - Security and maintenance considerations
+
+## Related Documentation
+
+- [AI Agents Convention](./ai-agents.md) - Complete agent development standards
+- [Best Practices](./best-practices.md) - Recommended patterns
+- [Skill Context Architecture](./skill-context-architecture.md) - Skill integration patterns
+- [Agent Workflow Orchestration Convention](./agent-workflow-orchestration.md) - How agents plan, verify, and self-improve during multi-step tasks
+- [Agents Index](../../../.claude/agents/README.md) - All available agents

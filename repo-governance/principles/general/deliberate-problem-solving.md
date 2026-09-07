@@ -15,7 +15,6 @@ when_to_use: Use when about to implement a solution and need to check whether as
 # Deliberate Problem-Solving
 
 - [Vision Supported](./deliberate-problem-solving/vision-supported.md) — Explains how deliberate problem-solving serves the Open Sharia Enterprise vision of trustworthy, transparent, and educational Shariah-compliant systems. Use when explaining why deliberate problem-solving matters to the project's mission, not just as a technical practice.
-- [Principle](./deliberate-problem-solving/principle.md) — States the core rule of deliberate problem-solving - think before coding, don't assume, don't hide confusion, surface tradeoffs. Use when you need the one-sentence statement of this principle to cite or apply.
 - [Why This Matters](./deliberate-problem-solving/why-this-matters.md) — Explains the consequences of rushing to implementation without clarity, and what deliberate problem-solving ensures instead. Use when justifying why deliberate analysis is required before writing a solution.
 - [Core Practices](./deliberate-problem-solving/core-practices.md) — Lists the four core practices of deliberate problem-solving - stating assumptions, presenting interpretations, suggesting simpler approaches, and stopping when unclear. Use when looking for the concrete Do/Don't practices that operationalize deliberate problem-solving.
 - [Application Examples](./deliberate-problem-solving/application-examples.md) — Walks through three worked examples (API integration, database choice, feature implementation) contrasting hidden-assumption failures with deliberate approaches. Use when you need a worked example of applying deliberate problem-solving to a realistic task.
@@ -34,3 +33,9 @@ Deliberate problem-solving means:
 - **Ask** rather than guess
 
 This principle ensures correct, maintainable, and appropriate solutions through transparent communication and thoughtful analysis.
+
+## Principle
+
+**Think before coding. Don't assume. Don't hide confusion. Surface tradeoffs.**
+
+Before implementing any solution, deliberately analyze the problem space, make assumptions explicit, and communicate uncertainties rather than proceeding with hidden confusion.

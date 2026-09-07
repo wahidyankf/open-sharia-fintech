@@ -19,7 +19,6 @@ This document defines the standards for selecting the appropriate model tier whe
 ## Foundations
 
 - [Principles Implemented/Respected](./model-selection/principles-implemented-respected.md) — principle list.
-- [Scope](./model-selection/scope.md) — what's covered.
 
 ## Model Tiers
 
@@ -55,3 +54,20 @@ This practice respects the following conventions:
 ## Purpose
 
 Model selection directly affects agent quality, latency, and resource efficiency. Selecting too powerful a model wastes resources on simple tasks; selecting too weak a model produces poor results on complex work. This convention establishes clear criteria for matching model grades to task types, ensuring consistent and justified model assignments across all agents and across every harness binding.
+
+## Scope
+
+### What This Convention Covers
+
+- Model grade definitions and their cognitive capabilities
+- Decision criteria for selecting each grade
+- Task-to-grade mapping with concrete examples
+- Per-harness translation of a grade to a concrete model ID
+- Justification requirements for model selection
+
+### What This Convention Does NOT Cover
+
+- Tool permission selection (see [AI Agents Convention](./ai-agents.md))
+- Agent color categorization (see [AI Agents Convention](./ai-agents.md))
+- Agent naming and file structure (see [AI Agents Convention](./ai-agents.md))
+- Workflow orchestration (see [Agent Workflow Orchestration](./agent-workflow-orchestration.md))

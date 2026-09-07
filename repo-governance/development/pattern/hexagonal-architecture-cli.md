@@ -22,7 +22,6 @@ application layers know nothing about flags, subcommands, or exit codes.
 ## Contents
 
 - [Overview and Directory Layout](./hexagonal-architecture-cli/overview-and-directory-layout.md) — How CLI argument parsing maps to the inbound adapter, plus the canonical directory layout across all four CLI apps. Use when scaffolding a new CLI app or command and need the canonical directory layout.
-- [Layer Responsibilities](./hexagonal-architecture-cli/layer-responsibilities.md) — What each CLI layer is responsible for - commands/ as inbound adapter, domain/, application/, and infrastructure/. Use when deciding which CLI layer a piece of code belongs in.
 - [Forbidden Imports, Examples, and Related](./hexagonal-architecture-cli/forbidden-imports-examples-and-related.md) — The forbidden-imports table, a worked Rust example of a command delegating to the application layer, and related pattern documentation. Use when checking whether a CLI layer imports something forbidden, or want a worked example of the commands/ to application/ handoff.
 
 ## Principles and Conventions
@@ -43,3 +42,31 @@ application layers know nothing about flags, subcommands, or exit codes.
 ### Conventions Implemented/Respected
 
 - **[Functional Programming Practices](./functional-programming.md)**: Domain functions are pure and stateless.
+
+## Layer Responsibilities
+
+### commands/ — Inbound Adapter
+
+- Parse CLI arguments using Clap (`#[derive(Parser)]`) or Cobra
+- Validate argument types and required/optional constraints
+- Map parsed arguments to application-layer input types
+- Translate application errors to human-readable messages and non-zero exit codes
+- Print progress or results to stdout/stderr
+
+### domain/ — Domain Layer
+
+- Business entities and value objects relevant to the CLI's domain
+- Pure validation and transformation functions
+- Domain error types (no exit codes, no `fmt.Println`)
+
+### application/ — Application Layer
+
+- Use-case functions that orchestrate domain objects and call outbound ports
+- Outbound port definitions (repository traits in Rust, interfaces in Go)
+- Application-level error types
+
+### infrastructure/ — Outbound Adapters
+
+- File system access (reading input files, writing output files)
+- HTTP client calls to external services
+- Concrete port implementations

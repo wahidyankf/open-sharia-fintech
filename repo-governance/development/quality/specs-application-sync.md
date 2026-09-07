@@ -27,7 +27,6 @@ This convention requires bidirectional synchronization between `specs/` (Gherkin
 - [Decision Guide (continued)](./specs-application-sync/decision-guide-continued.md) — Table (part 2 of 2) mapping common change types to whether a spec update is required. Use when uncertain whether a Next.js/React/app-rename/library-level change requires a spec update.
 - [Existing Patterns to Follow](./specs-application-sync/existing-patterns-to-follow.md) — Worked spec-organization patterns for organiclever, ayokoding-www, and CLI apps. Use when structuring specs/ for a new app and want an existing pattern to follow.
 - [Examples](./specs-application-sync/examples.md) — PASS/FAIL examples of endpoint, app-removal, bug-fix, and refactor changes against sync obligations. Use when you need a concrete example of a change that does or does not require a spec update.
-- [Scope](./specs-application-sync/scope.md) — What this convention applies to, and its boundary with other conventions. Use when checking whether this convention applies to a specific kind of change.
 - [Tools and Automation](./specs-application-sync/tools-and-automation.md) — The validators and checks that enforce specs-application sync. Use when locating the automated check for a sync violation.
 
 ## Related Documentation
@@ -36,3 +35,18 @@ This convention requires bidirectional synchronization between `specs/` (Gherkin
 - [Behaviour-Driven Development](../behaviour-driven-development.md) - Mandatory 1:1 mapping for CLI apps; three-level consumption for demo-be backends
 - [Nx Target Standards](../infra/nx-targets.md) - Cache input declarations that include Gherkin specs
 - [specs/README.md](../../../specs/README.md) - Spec directory organization and per-app spec structure
+
+## Scope
+
+This convention applies to:
+
+- All directories under `apps/`
+- All directories under `libs/`
+- All directories under `specs/`
+
+It does not apply to:
+
+- `docs/` — documentation follows its own conventions; spec synchronization is a code-and-architecture concern
+- `repo-governance/` — governance documents are not application code or acceptance specs
+- `plans/` — planning documents describe intentions, not observable system behaviour
+- `generated-contracts/` — auto-generated code is not maintained manually; update the source spec instead

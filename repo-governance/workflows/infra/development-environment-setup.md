@@ -68,7 +68,6 @@ toolchain, or verifying an environment after adding a new project language.
 - [Minimal Scope Quick Reference](./development-environment-setup/minimal-scope-quick-reference.md) — minimal-scope table.
 - [Notes](./development-environment-setup/notes.md) — pinning, idempotency, platform notes.
 - [Principles Respected](./development-environment-setup/principles-implemented-respected.md) — governance.
-- [Conventions Respected](./development-environment-setup/conventions-implemented-respected.md) — governance.
 - [Related Documentation](./development-environment-setup/related-documentation.md) — how-to guide, governance docs.
 - [Agents](./development-environment-setup/agents.md) — rules-checker follow-up.
 
@@ -76,3 +75,11 @@ toolchain, or verifying an environment after adding a new project language.
 
 - [CI Quality Gate](../ci/ci-quality-gate.md) — Validates CI/CD compliance (assumes toolchain
   is already set up)
+
+## Conventions Implemented/Respected
+
+- **[Workflow Identifier Convention](../meta/workflow-identifier.md)**: Follows standard workflow
+  structure with YAML frontmatter
+- **[Reproducible Environments](../../development/workflow/reproducible-environments.md)**: Implements
+  the environment reproducibility practices defined in governance
+- **[Code Quality Convention](../../development/quality/code.md)**: Verification steps ensure

@@ -7,7 +7,6 @@ when_to_use: "Read this index to find the right AI Agent Model Selection Convent
 # AI Agent Model Selection Convention
 
 - [Principles Implemented/Respected](./principles-implemented-respected.md) — Lists the core repository principles this convention implements and respects. Use when checking which principles justify a model-tier choice.
-- [Scope](./scope.md) — Defines what this convention covers and does not cover regarding model selection. Use when checking whether a model-selection question is in scope for this convention.
 - [Model Tiers — Ultra](./model-tiers-ultra.md) — Defines the ultra grade: the frontier tier reserved for work that demonstrably exceeds the planning grade, and the evidence admitting an agent to it requires. Use when deciding whether an agent's task genuinely exceeds the planning grade.
 - [Model Tiers — Planning-Grade](./model-tiers-planning-grade.md) — Defines the planning-grade tier: agents that declare opus for creative reasoning, architecture, and open-ended judgment. Use when deciding whether a new agent should declare the planning-grade (opus) model tier.
 - [Model Tiers — Execution-Grade](./model-tiers-execution-grade.md) — Defines the execution-grade tier: agents that declare sonnet for structured, execution-heavy work. Use when deciding whether a new agent should declare the execution-grade (sonnet) model tier.

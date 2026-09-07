@@ -22,7 +22,6 @@ This document outlines best practices for developing AI agents in the `.claude/a
 
 - [Single Responsibility, Minimum Tools, Model Choice, and Descriptions](./best-practices/best-practices-1-to-4.md) — practices 1-4.
 - [Tool Usage Docs, Testing, Frontmatter Context, Naming, and Dependencies](./best-practices/best-practices-5-to-9.md) — practices 5-9.
-- [Summary](./best-practices/summary.md) — quick-reference table.
 
 ## Conventions Implemented/Respected
 
@@ -59,3 +58,19 @@ Provide actionable guidance for:
 - [Skill Context Architecture](./skill-context-architecture.md) - Skill integration patterns
 - [Agent Workflow Orchestration Convention](./agent-workflow-orchestration.md) - How agents plan, verify, and self-improve during multi-step tasks
 - [Agents Index](../../../.claude/agents/README.md) - All available agents
+
+## Summary
+
+Following these best practices ensures:
+
+1. Single responsibility per agent
+2. Minimum necessary tool permissions
+3. Appropriate model selection
+4. Clear, actionable descriptions
+5. Documented tool usage
+6. Edge case testing
+7. Sufficient context in frontmatter
+8. Consistent naming conventions
+9. Documented dependencies
+
+Agents built following these practices are maintainable, secure, and effective at automating repository tasks.

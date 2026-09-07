@@ -28,7 +28,6 @@ This convention requires manually verifying UI features and API endpoints -- via
 - [When Verification Is Required](./manual-behavioural-verification/when-verification-is-required.md) — The triggers that require manual behavioural verification. Use when deciding whether a change needs manual verification.
 - [Relationship to Automated Tests](./manual-behavioural-verification/relationship-to-automated-tests.md) — How manual verification relates to automated test coverage. Use when deciding whether automated tests already cover manual verification.
 - [Examples](./manual-behavioural-verification/examples.md) — Worked examples of manual behavioural verification. Use for a concrete example of this convention applied.
-- [Scope](./manual-behavioural-verification/scope.md) — What this convention applies to and its boundaries. Use when checking whether this convention applies to a change.
 - [Related Documentation](./manual-behavioural-verification/related-documentation.md) — Related testing and evidence conventions. Use for a related convention on testing or evidence.
 
 ## The Rule
@@ -49,3 +48,18 @@ This applies to:
   DevTools MCP, then equivalent available real-browser tooling
 - **curl**: Available via Bash for API verification
 - **jq**: Available via Bash for JSON response inspection
+
+## Scope
+
+This convention applies to:
+
+- All AI agents implementing UI or API changes
+- All human developers implementing UI or API changes
+- All apps in `apps/` that have a UI or API surface
+
+It does not apply to:
+
+- Library-only changes (`libs/`) with no UI or API surface
+- Documentation changes (`docs/`, `repo-governance/`, `plans/`)
+- Configuration changes that do not affect runtime behaviour
+- Internal refactors with no observable behavioural change

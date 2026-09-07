@@ -14,4 +14,3 @@ when_to_use: "Read this index to find the right Explicit Over Implicit child doc
 - [Anti-Patterns](./anti-patterns.md) — Four implicit-behaviour anti-patterns and why each is bad. Use when reviewing code for hidden or magic behaviour.
 - [PASS: Best Practices](./best-practices.md) — Five best practices for explicitness. Use when designing a new agent, module, or config schema.
 - [Examples from This Repository](./examples-from-this-repository.md) — This repository's concrete explicit configurations. Use to find an existing explicit configuration to reuse or extend.
-- [References](./references.md) — External references on explicit-over-implicit and secure coding. Use to find further reading behind a claim in this document.
