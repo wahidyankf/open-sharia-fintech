@@ -77,7 +77,7 @@ Test-Driven Development is a software development approach where tests are writt
 - [TDD Cycle Standards](test-driven-development-tdd/tdd-cycle-standards.md) - Red-Green-Refactor requirements
 - [Testing Standards](test-driven-development-tdd/testing-standards.md) - FIRST principles, AAA pattern
 - [Test Doubles Standards](test-driven-development-tdd/test-doubles-standards.md) - When to use mocks, stubs, fakes
-- [Integration Testing Standards](test-driven-development-tdd/integration-testing-standards.md) - Real isolated local resources with zero network
+- [Integration Testing Standards](test-driven-development-tdd/integration-testing-standards.md) - Real isolated local resources with no external network
 - [TDD with DDD Standards](test-driven-development-tdd/tdd-with-ddd-standards.md) - Testing aggregates and domain models
 
 **Use TDD when you want to:**
@@ -184,7 +184,7 @@ Gherkin and adapters.
 1. **TDD Workflow** - Follow [TDD Cycle Standards](test-driven-development-tdd/tdd-cycle-standards.md) for Red-Green-Refactor
 2. **Testing Standards** - Apply [Testing Standards](test-driven-development-tdd/testing-standards.md) for FIRST principles
 3. **Domain Testing** - Follow [TDD with DDD Standards](test-driven-development-tdd/tdd-with-ddd-standards.md) for aggregates
-4. **Integration Tests** - Use [Integration Testing Standards](test-driven-development-tdd/integration-testing-standards.md) for real isolated local resources with zero network
+4. **Integration Tests** - Use [Integration Testing Standards](test-driven-development-tdd/integration-testing-standards.md) for real isolated local resources with no external network
 
 ### For Teams Adopting BDD
 

@@ -160,3 +160,71 @@ let ``render dispatches to the matching format's thunk`` () =
     Assert.Equal("text", render Text asText asJson asMarkdown)
     Assert.Equal("json", render Json asText asJson asMarkdown)
     Assert.Equal("markdown", render Markdown asText asJson asMarkdown)
+
+// ---- test-boundary renderers ----
+
+let private boundaryFinding kind severity : RhinoCli.Application.TestBoundary.TestBoundaryFinding =
+    { Project = "ose-be"
+      Path = "apps/ose-be/tests/integration/HttpTests.fs"
+      Line = 3
+      Severity = severity
+      Kind = kind
+      Message = "reaches the network" }
+
+[<Fact>]
+let ``testBoundaryText delegates to the audit's own renderer`` () =
+    Assert.Equal(RhinoCli.Application.TestBoundary.formatText [], testBoundaryText [])
+
+[<Fact>]
+let ``testBoundaryJson reports passed with no findings`` () =
+    let json = testBoundaryJson []
+    Assert.Contains("\"schema\": \"rhino-cli/test-boundary/v1\"", json, System.StringComparison.Ordinal)
+    Assert.Contains("\"status\": \"passed\"", json, System.StringComparison.Ordinal)
+    Assert.Contains("\"count\": 0", json, System.StringComparison.Ordinal)
+
+[<Fact>]
+let ``testBoundaryJson reports failed and carries every finding field`` () =
+    let json =
+        testBoundaryJson [ boundaryFinding "unallowlisted-network-use" "blocking" ]
+
+    Assert.Contains("\"status\": \"failed\"", json, System.StringComparison.Ordinal)
+    Assert.Contains("\"project\": \"ose-be\"", json, System.StringComparison.Ordinal)
+    Assert.Contains("\"path\": \"apps/ose-be/tests/integration/HttpTests.fs\"", json, System.StringComparison.Ordinal)
+    Assert.Contains("\"line\": 3", json, System.StringComparison.Ordinal)
+    Assert.Contains("\"severity\": \"blocking\"", json, System.StringComparison.Ordinal)
+    Assert.Contains("\"kind\": \"unallowlisted-network-use\"", json, System.StringComparison.Ordinal)
+    Assert.Contains("\"message\": \"reaches the network\"", json, System.StringComparison.Ordinal)
+
+[<Fact>]
+let ``testBoundaryJson stays passed when every finding is a warning`` () =
+    Assert.Contains(
+        "\"status\": \"passed\"",
+        testBoundaryJson [ boundaryFinding "stale-allowlist-entry" "warning" ],
+        System.StringComparison.Ordinal
+    )
+
+[<Fact>]
+let ``testBoundaryMarkdown renders the zero-finding heading`` () =
+    Assert.Equal("## Integration Test Network Boundary Audit\n\n**PASSED**: zero findings\n", testBoundaryMarkdown [])
+
+[<Fact>]
+let ``testBoundaryMarkdown renders a FAILED table for a blocking finding`` () =
+    let markdown =
+        testBoundaryMarkdown [ boundaryFinding "unallowlisted-network-use" "blocking" ]
+
+    Assert.Contains("**FAILED**: 1 finding(s) reported", markdown, System.StringComparison.Ordinal)
+    Assert.Contains("| Project | Path | Line | Severity | Kind | Message |", markdown, System.StringComparison.Ordinal)
+
+    Assert.Contains(
+        "| ose-be | apps/ose-be/tests/integration/HttpTests.fs | 3 | blocking | unallowlisted-network-use | reaches the network |",
+        markdown,
+        System.StringComparison.Ordinal
+    )
+
+[<Fact>]
+let ``testBoundaryMarkdown renders a PASSED table when only warnings are present`` () =
+    Assert.Contains(
+        "**PASSED**: 1 finding(s) reported",
+        testBoundaryMarkdown [ boundaryFinding "stale-allowlist-entry" "warning" ],
+        System.StringComparison.Ordinal
+    )

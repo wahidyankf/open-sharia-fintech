@@ -207,6 +207,13 @@ type DoctorConfig =
     { DotnetGlobalJson: string option
       SkipTools: string list }
 
+/// One project permitted to bind a loopback socket in its Integration tests.
+/// The allowlist is an opt-in for a socket the test itself owns; it is never a
+/// licence to reach an external network, which stays forbidden at every layer
+/// below E2E
+/// [Repo-grounded — `repo-governance/development/infra/nx-targets/mandatory-targets-integration-tests.md`].
+type IntegrationLoopbackEntry = { Project: string; Reason: string }
+
 /// Document-level settings for the generated platform-binding catalog: where
 /// it lives, and the date its claims were last verified against upstream
 /// [Repo-grounded — `repo_config/mod.rs::HarnessCatalog`].
@@ -223,6 +230,8 @@ type RepoConfig =
         /// Capability grade -> the reasoning effort its agents declare.
         ModelGrades: Map<string, string>
         HarnessCatalog: HarnessCatalog option
+        /// Projects allowed an owned loopback socket in `test:integration`.
+        IntegrationLoopback: IntegrationLoopbackEntry list
     }
 
 /// The value `load`/`loadOptional` never produce on their own but that
@@ -236,7 +245,8 @@ let empty: RepoConfig =
         { DotnetGlobalJson = None
           SkipTools = [] }
       ModelGrades = Map.empty
-      HarnessCatalog = None }
+      HarnessCatalog = None
+      IntegrationLoopback = [] }
 
 /// Raw YAML-shaped intermediate records. `[<CLIMutable>]` gives each record a
 /// parameterless constructor and settable properties, which is what lets
@@ -327,13 +337,19 @@ type HarnessCatalogDto = { Document: string; Verified: string }
 type ModelGradeDto = { Effort: string | null }
 
 [<CLIMutable>]
+type IntegrationLoopbackEntryDto =
+    { Project: string | null
+      Reason: string | null }
+
+[<CLIMutable>]
 type RepoConfigDto =
     { Harness: ResizeArray<HarnessEntryDto>
       Gates: ResizeArray<GateEntryDto>
       GateSurfaceGuards: Dictionary<string, GateSurfaceGuardDto>
       Doctor: DoctorConfigDto
       ModelGrades: Dictionary<string, ModelGradeDto>
-      HarnessCatalog: HarnessCatalogDto }
+      HarnessCatalog: HarnessCatalogDto
+      IntegrationLoopback: ResizeArray<IntegrationLoopbackEntryDto> }
 
 /// Matches `repo-config.yml`'s kebab-case keys (`agent-dir`,
 /// `dotnet-global-json`, ...) against the DTOs' PascalCase properties without
@@ -873,7 +889,22 @@ let private parseRepoConfig (data: string) : Result<RepoConfig, string> =
                             | _ ->
                                 Some
                                     { Document = dto.HarnessCatalog.Document
-                                      Verified = dto.HarnessCatalog.Verified } }))
+                                      Verified = dto.HarnessCatalog.Verified }
+                          IntegrationLoopback =
+                            toOptionList dto.IntegrationLoopback
+                            |> List.choose (fun entry ->
+                                match box entry with
+                                | null -> None
+                                | _ ->
+                                    match entry.Project with
+                                    | null -> None
+                                    | project ->
+                                        Some
+                                            { Project = project
+                                              Reason =
+                                                (match entry.Reason with
+                                                 | null -> ""
+                                                 | reason -> reason) }) }))
         with ex ->
             Error ex.Message
 

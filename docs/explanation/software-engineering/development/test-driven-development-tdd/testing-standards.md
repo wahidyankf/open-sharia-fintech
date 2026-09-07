@@ -123,8 +123,9 @@ mod tests {
 
 - **Unit**: mandatory in-process production behaviour with filesystem, environment, process,
   network, clock, and randomness replaced by deterministic injected ports.
-- **Integration**: at least one real isolated same-machine resource and zero network, including
-  loopback. In-memory repositories and intercepted HTTP remain Unit proof.
+- **Integration**: at least one real isolated same-machine resource, optionally an allowlisted
+  loopback socket the test owns, and zero external network. In-memory repositories and intercepted
+  HTTP remain Unit proof.
 - **E2E**: a real public browser, HTTP/API, or published process boundary with isolated synthetic
   identity/data and no fallback to developer, staging, or production state.
 
@@ -139,7 +140,7 @@ and examples.
 src/
   test/
     unit/               # Mandatory in-process deterministic tests
-    integration/        # Real isolated local resources; zero network
+    integration/        # Real isolated local resources; no external network
     e2e/                # Real public browser/API/process boundary
 ```
 

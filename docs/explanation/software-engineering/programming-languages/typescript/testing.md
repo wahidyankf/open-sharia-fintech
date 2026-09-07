@@ -30,7 +30,7 @@ created: 2026-02-22
 
 **REQUIRED**: Unit tests stay in process and replace every operating-system or remote boundary with
 an injected fake. Integration tests use at least one real, isolated same-machine resource but no
-network path, including loopback. E2E tests invoke the real public browser, HTTP/API, or process
+external network reach. E2E tests invoke the real public browser, HTTP/API, or process
 boundary with isolated synthetic data.
 
 ```mermaid
@@ -38,7 +38,7 @@ boundary with isolated synthetic data.
 flowchart TD
     A[TypeScript Testing]
     A --> B[Unit Tests\nVitest + injected fakes\nIn process]
-    A --> C[Integration Tests\nVitest or native runner\nReal local · no network]
+    A --> C[Integration Tests\nVitest or native runner\nReal local · no remote calls]
     A --> D[E2E Tests\nPlaywright or public process\nReal public boundary]
 
     B --> B1[Domain logic\nValue objects\nPure functions]
@@ -57,7 +57,7 @@ flowchart TD
 %%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#000','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
 flowchart TD
     A[E2E Tests\nReal public boundary\nImpacted manual + scheduled]
-    B[Integration Tests\nReal local · no network\nImpacted manual + scheduled]
+    B[Integration Tests\nReal local · no remote calls\nImpacted manual + scheduled]
     C[Unit Tests\nIn process\nEvery quick gate]
 
     A --> B
@@ -201,14 +201,14 @@ describe("Breadcrumb", () => {
 
 Use Vitest or the project-native runner plus real isolated resources such as a temporary filesystem,
 process environment snapshot, child process, standard stream, or embedded database. Integration
-must not use HTTP, TCP, UDP, loopback, `localhost`, a local test server, MSW, or another network
+must not reach an external network, a service the test did not start, MSW, or another network
 interceptor. An in-memory repository or intercepted `fetch` is Unit proof, not Integration proof.
 
 ### When to write integration tests
 
 - Env-tier loading from real isolated files
 - Filesystem persistence and cache behaviour
-- Child-process and standard-stream adapters that do not open a network path
+- Child-process and standard-stream adapters that reach no external network
 - Embedded local database adapters reached without TCP or another socket
 
 ### Vitest config

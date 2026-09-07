@@ -6,6 +6,7 @@ Features in this domain:
 
 - `repo-governance-audit.feature` — general governance audit
 - `repo-governance-layer-coherence.feature` — governance layer coherence
+- `repo-governance-test-boundary.feature` — Integration test network boundary audit
 - `repo-governance-traceability-audit.feature` — traceability audit
 - `repo-governance-vendor-audit.feature` — vendor independence audit
 

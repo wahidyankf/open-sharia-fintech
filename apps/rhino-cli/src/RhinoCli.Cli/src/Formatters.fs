@@ -925,6 +925,75 @@ let layerCoherenceMarkdown (findings: RepoGovernance.LayerCoherenceFinding list)
 
         header + rows
 
+type TestBoundaryFindingJson =
+    { project: string
+      path: string
+      line: int
+      severity: string
+      kind: string
+      message: string }
+
+type TestBoundaryInnerResult =
+    { status: string
+      count: int
+      findings: TestBoundaryFindingJson list }
+
+type TestBoundaryEnvelope =
+    { schema: string
+      status: string
+      result: TestBoundaryInnerResult }
+
+let testBoundaryText (findings: TestBoundary.TestBoundaryFinding list) : string = TestBoundary.formatText findings
+
+let testBoundaryJson (findings: TestBoundary.TestBoundaryFinding list) : string =
+    let status =
+        if TestBoundary.hasBlocking findings then
+            "failed"
+        else
+            "passed"
+
+    let env: TestBoundaryEnvelope =
+        { schema = "rhino-cli/test-boundary/v1"
+          status = status
+          result =
+            { status = status
+              count = List.length findings
+              findings =
+                findings
+                |> List.map (fun f ->
+                    { project = f.Project
+                      path = f.Path
+                      line = f.Line
+                      severity = f.Severity
+                      kind = f.Kind
+                      message = f.Message }) } }
+
+    JsonSerializer.Serialize(env, jsonOptions) + "\n"
+
+let testBoundaryMarkdown (findings: TestBoundary.TestBoundaryFinding list) : string =
+    if List.isEmpty findings then
+        "## Integration Test Network Boundary Audit\n\n**PASSED**: zero findings\n"
+    else
+        let verdict =
+            if TestBoundary.hasBlocking findings then
+                "FAILED"
+            else
+                "PASSED"
+
+        let header =
+            sprintf
+                "## Integration Test Network Boundary Audit\n\n**%s**: %d finding(s) reported\n\n| Project | Path | Line | Severity | Kind | Message |\n|---------|------|------|----------|------|---------|\n"
+                verdict
+                (List.length findings)
+
+        let rows =
+            findings
+            |> List.map (fun f ->
+                sprintf "| %s | %s | %d | %s | %s | %s |\n" f.Project f.Path f.Line f.Severity f.Kind f.Message)
+            |> String.concat ""
+
+        header + rows
+
 type TraceabilityFindingJson =
     { path: string
       line: int

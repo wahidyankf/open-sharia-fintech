@@ -25,7 +25,7 @@ static validators, complete Integration, then complete unfiltered E2E. Each path
 Domain code remains I/O-free; application code depends on injected ports; infrastructure owns
 filesystem, process, environment, and network adapters; CLI entry points delegate to application
 use cases. Unit tests replace every infrastructure dependency. Integration may exercise local
-adapters but no network; public-process proof belongs to E2E.
+adapters but no external network; public-process proof belongs to E2E.
 
 ## Invariant D — Canonical Command Surface
 

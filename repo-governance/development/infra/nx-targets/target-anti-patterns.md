@@ -15,8 +15,8 @@ when_to_use: "Use when reviewing project.json target definitions."
 - Echo/no-op/success-sentinel targets or runtime aliases used to claim an inapplicable layer.
 - Unit tests whose setup, subject, or assertions touch real filesystem, database, environment,
   clock, randomness, process, network, or other OS-facing dependencies.
-- Integration tests that use mocks instead of an owned local boundary, or any network path,
-  including loopback and a local HTTP server.
+- Integration tests that use mocks instead of an owned local boundary, reach an external network or
+  a service the test did not start, or use loopback without a `repo-config.yml` allowlist entry.
 - E2E tests that permit network use but do not observe a public boundary.
 - Any `test:coverage:*` target that executes or depends on a runtime test target.
 - A `test:quick` that omits an applicable static coverage validator or reaches Integration/E2E.

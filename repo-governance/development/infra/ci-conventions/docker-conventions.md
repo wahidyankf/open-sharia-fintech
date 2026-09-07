@@ -71,9 +71,10 @@ Three docker-compose file roles exist per app:
 | **E2E**        | `apps/{app}/docker-compose.e2e.yml`     | Networked test stack for public-boundary E2E with isolated synthetic data |
 | **CI overlay** | `infra/dev/{app}/docker-compose.ci.yml` | Overrides for CI E2E environment (no volume mounts, deterministic ports)  |
 
-Docker Compose is never an Integration-test classifier. Any test that reaches a container over
-HTTP, TCP, UDP, loopback, or a local server belongs to E2E and must enter through the application's
-public boundary. Integration may use only isolated real local resources with no network path.
+Docker Compose is never an Integration-test classifier. A container the test did not start is not
+a resource it owns, so any test that reaches one belongs to E2E and must enter through the
+application's public boundary. Integration may use only local resources it owns, including an
+allowlisted loopback socket it starts and stops itself.
 
 All compose files must pass `docker compose config` without errors before merging. The CI overlay
 is applied with `-f docker-compose.yml -f docker-compose.ci.yml` to keep dev and CI configs DRY.

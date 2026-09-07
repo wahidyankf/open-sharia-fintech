@@ -73,7 +73,7 @@ graph TD
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TB
     A["E2E Tests<br/>Playwright, Full Flows<br/>Slow, Few"]:::orange
-    B["Integration Tests<br/>Real local · no network<br/>Manual impacted"]:::purple
+    B["Integration Tests<br/>Real local · no remote calls<br/>Manual impacted"]:::purple
     C["Unit Tests<br/>In-process injected boundaries<br/>99% line hard gate"]:::teal
 
     A --> B
@@ -451,7 +451,7 @@ describe("Donor", () => {
 
 ## Integration Testing
 
-**REQUIRED**: Integration tests use a real isolated local resource and no network path. Injected
+**REQUIRED**: Integration tests use a real isolated local resource and no external network. Injected
 in-memory repositories and intercepted HTTP are Unit proof; HTTP dispatch is E2E.
 
 **See**: [Integration Testing Standards](../../development/test-driven-development-tdd/integration-testing-standards.md) for full patterns.

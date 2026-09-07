@@ -43,8 +43,8 @@ nx run organiclever-be:test:integration
 ```
 
 **Success criteria**: Integration tests pass using isolated local files, embedded non-network
-resources, process environment, or child-process streams. They open no HTTP, TCP, UDP, loopback,
-`localhost`, or local-server path.
+resources, process environment, child-process streams, or an allowlisted loopback socket the test
+owns. They reach no external network and no service the test did not start.
 
 **On failure**: Inspect the target's local fixture lifecycle and confirm every resource is isolated
 and cleaned deterministically. Docker-hosted PostgreSQL and other networked services belong to the

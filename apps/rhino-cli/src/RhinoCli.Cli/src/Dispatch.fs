@@ -1724,6 +1724,28 @@ let private runRepoGovernanceLayerCoherenceValidateLeaf (repoRoot: string) (form
 
     printResultAndExitCode output err
 
+/// `repo-governance test-boundary validate`. Enforces the Integration layer's
+/// default-deny network boundary against `repo-config.yml`'s
+/// `integration-loopback:` opt-in. A stale allowlist entry is a warning, so it
+/// reports without failing the gate.
+let private runRepoGovernanceTestBoundaryValidateLeaf (repoRoot: string) (format: OutputFormat) : int =
+    let findings = TestBoundary.auditRepository repoRoot
+
+    let output =
+        Formatters.render
+            format
+            (fun () -> Formatters.testBoundaryText findings)
+            (fun () -> Formatters.testBoundaryJson findings)
+            (fun () -> Formatters.testBoundaryMarkdown findings)
+
+    let err =
+        if TestBoundary.hasBlocking findings then
+            Some(sprintf "%d test-boundary finding(s) reported" (List.length findings))
+        else
+            None
+
+    printResultAndExitCode output err
+
 /// `repo-governance traceability validate` [Repo-grounded —
 /// `governance_traceability_audit.rs::run`].
 let private runRepoGovernanceTraceabilityValidateLeaf (repoRoot: string) (format: OutputFormat) : int =
@@ -2291,6 +2313,7 @@ let private routeTable: (string list * string) list =
       [ "git"; "lockfile"; "sync" ], "git-lockfile-sync"
       [ "repo-governance"; "vendor"; "validate" ], "repo-governance-vendor-validate"
       [ "repo-governance"; "layer-coherence"; "validate" ], "repo-governance-layer-coherence-validate"
+      [ "repo-governance"; "test-boundary"; "validate" ], "repo-governance-test-boundary-validate"
       [ "repo-governance"; "traceability"; "validate" ], "repo-governance-traceability-validate"
       [ "repo-governance"; "audit" ], "repo-governance-audit"
       [ "specs"; "counts"; "validate" ], "specs-counts-validate"
@@ -2427,6 +2450,8 @@ let route (getRepoRoot: unit -> Result<string, string>) (argv: string[]) : int =
                         runRepoGovernanceLayerCoherenceValidateLeaf repoRoot format
                     | "repo-governance-traceability-validate" ->
                         runRepoGovernanceTraceabilityValidateLeaf repoRoot format
+                    | "repo-governance-test-boundary-validate" ->
+                        runRepoGovernanceTestBoundaryValidateLeaf repoRoot format
                     | "repo-governance-audit" -> runRepoGovernanceAuditLeaf repoRoot format rest
                     | "specs-counts-validate" -> runSpecsCountsValidateLeaf repoRoot rest
                     | "specs-structure-validate" -> runSpecsStructureValidateLeaf repoRoot rest

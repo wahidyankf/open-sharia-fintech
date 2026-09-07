@@ -64,10 +64,11 @@ symmetry.
   process, network, and every other OS-facing dependency with injected mocks, fakes, or stubs.
   Setup and assertions must not access those real resources. The owner enforces a hard minimum of
   99% line coverage during `test:unit`.
-- **Integration** may use isolated local files, embedded databases accessed without network
-  transport, environment state, child processes, and standard streams. It must not use any network
-  path, including HTTP, TCP, UDP, loopback, `localhost`, `127.0.0.1`, or a local server. Isolate and
-  clean resources deterministically.
+- **Integration** may use isolated local files, embedded databases, environment state, child
+  processes, standard streams, and an
+  [allowlisted loopback socket](./infra/nx-targets/mandatory-targets-integration-tests.md) it owns.
+  It must not reach an external network or a service it did not start. Isolate and clean resources
+  deterministically.
 - **E2E** observes a real public browser, HTTP, or process boundary. It may use OS resources,
   processes, and network communication, but only with synthetic isolated data and identities.
   Production data and uncontrolled external services are forbidden without explicit authorization.

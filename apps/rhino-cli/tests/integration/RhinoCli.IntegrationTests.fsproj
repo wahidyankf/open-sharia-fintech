@@ -33,6 +33,7 @@
     <Compile Include="Steps/CargoTargetShareResourceSteps.fs" />
     <Compile Include="Steps/CargoTargetShareResourceTests.fs" />
     <Compile Include="Steps/ContractsResourceSteps.fs" />
+<Compile Include="Steps/TestBoundaryResourceSteps.fs" />
     <Compile Include="Steps/TestCoverageResourceSteps.fs" />
     <Compile Include="Steps/HarnessResourceSteps.fs" />
     <Compile Include="Steps/HarnessResourceTests.fs" />

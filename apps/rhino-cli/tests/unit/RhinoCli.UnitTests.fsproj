@@ -58,6 +58,7 @@
     <Compile Include="Steps/HarnessAuditSteps.fs" />
     <Compile Include="Steps/HarnessPolicyCoverageTests.fs" />
     <Compile Include="Steps/RepoGovernanceSteps.fs" />
+    <Compile Include="Steps/TestBoundarySteps.fs" />
     <Compile Include="Steps/GateDeclarationSteps.fs" />
     <Compile Include="Steps/GateEmissionSteps.fs" />
     <Compile Include="Steps/GateEnumerationSteps.fs" />
