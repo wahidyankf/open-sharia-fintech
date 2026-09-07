@@ -1,27 +1,29 @@
 ---
 title: "Step 7 and 8 — Quality Gate and Delivery"
-description: Runs plan-quality-gate per plan to double-zero, then delivers per the selected mode and reports the deviation count summary.
+description: Runs plan-quality-gate per plan to a PASS verdict, then delivers per the selected mode and reports the deviation count summary.
 when_to_use: Use when gating and delivering the authored plans, or reporting the run's final outcomes.
 ---
 
 # Step 7 — Quality Gate (Per Plan, Nested Workflow)
 
-Run [plan-quality-gate](../plan-quality-gate.md) for each created plan in its own repo.
+Run [plan-quality-gate](../plan-quality-gate.md) for each created plan in its own repo. This step is
+one of that gate's three named pre-authorizations.
 
 **Workflow**: `plan/plan-quality-gate`
 
-- **Args**: `scope: <plan-folder-path>, mode: {input.gate-mode}, max-concurrency: {input.max-concurrency}`
-- **Output**: `final-status` (pass / partial / fail), `final-report`
+- **Args**: `plan-path: <plan-folder-path>, checkpoint: pre-execution`
+- **Output**: `verdict`, `ledger`
 - **Run**: one gate per plan, up to `max-concurrency` gates in parallel
 
-Each plan must reach `pass` (double-zero: zero CRITICAL/HIGH/MEDIUM findings on two consecutive
-checks at the default `strict` gate-mode, or the invoker-specified gate-mode).
+The gate takes no mode: it has no severity threshold, and every admitted ledger row must be closed.
+Each plan must return `PASS`.
 
-**On `partial` or `fail`**: Fix the plan using `plan-fixer` and re-run the gate. Do not deliver
-un-gated plans. A plan in `partial` or `fail` state after two re-gate attempts is a blocking
-issue — surface it to the invoker before proceeding with delivery of the passing plans.
+**On any `BLOCKED_*` verdict**: read the returned ledger. There is no `plan-fixer` to re-run — the
+gate repairs its own ledger inside its bounded cycles, so a `BLOCKED_NON_CONVERGENT` result means
+the plan needs an external decision, not another gate pass. Surface it to the invoker as a blocking
+issue and do not deliver that plan. Re-invoke the gate only after the named external change lands.
 
-**Success criteria**: Every plan in the parity set reaches `pass`.
+**Success criteria**: Every plan in the parity set returns `PASS`.
 
 ## Step 8 — Delivery and Finalization (Per Mode)
 
@@ -72,7 +74,7 @@ Report outcomes.
 **Output**:
 
 - `plans-created`: One path per target repo
-- `gate-results`: plan-quality-gate status per plan (pass / partial / fail)
+- `gate-results`: plan-quality-gate verdict per plan (PASS / BLOCKED\_\*)
 - `delivery-refs`: Commit SHAs pushed to `origin main` (main modes) or PR URLs (worktree-to-pr)
 - Deviation count summary: "N deliberate deviations recorded; 0 silent deviations"
 - Parity identity assertion: actual worktree basename and corresponding branch per repository match

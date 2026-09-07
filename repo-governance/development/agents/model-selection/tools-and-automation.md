@@ -41,4 +41,4 @@ The following agents enforce or assist with model selection:
 
 - **agent-maker** -- applies these guidelines when creating new agents
 - **rules-checker** -- judges whether a justification block's argument actually fits the agent's charter; the block's presence is already gated by `harness-claude`
-- **rules-fixer** -- corrects model selection issues identified by the checker
+- **repo-workflow-fixer** -- corrects model selection issues identified by the checker

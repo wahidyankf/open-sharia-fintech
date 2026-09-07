@@ -39,5 +39,5 @@ that owns the declaration. Author these per the
 
 `plan-maker` requires these artefacts and emits delivery steps that produce them; `plan-checker`
 flags any missing artefact at HIGH criticality (its Learning-Bearing Syllabus Completeness step,
-Step 5n, sibling to the UI-design-funnel Step 5k); `plan-fixer` scaffolds the missing syllabus-record
+Step 5n, sibling to the UI-design-funnel Step 5k); the gate's repair pass scaffolds the missing syllabus-record
 sections.

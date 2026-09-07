@@ -20,10 +20,15 @@ A specialized workflow pattern that achieves **perfect quality state** by fixing
 
 **When to use**:
 
-- Repository-wide validation (rules-quality-gate)
-- Content quality assurance (plan-quality-gate, ayokoding-web-content-quality-gate)
+- Content quality assurance (docs-quality-gate, ayokoding-web-content-quality-gate)
+- Surface validation whose findings genuinely differ in severity (ui, api, ci, specs, harness)
 - Pre-release quality gates
 - Periodic health checks
+
+**When NOT to use**: `plan-quality-gate` and `rules-quality-gate` are
+[governance gates](./governance-gate-class.md), not `*-check-fix` workflows. They use a binary
+admission test, a frozen ledger, at most one stabilization cycle, and a terminal verdict, and they
+accept no `mode` threshold.
 
 **Key Differentiators**:
 

@@ -111,7 +111,7 @@
 - `plan-checker` - Validates plan quality
 - [plan-execution workflow](../../../repo-governance/workflows/plan/plan-execution.md) - Execute plans (calling context orchestrates; no dedicated subagent)
 - `plan-execution-checker` - Validates completed work
-- `plan-fixer` - Fixes plan issues
+- `docs-fixer` - Fixes documentation issues
 
 **Related Conventions**:
 

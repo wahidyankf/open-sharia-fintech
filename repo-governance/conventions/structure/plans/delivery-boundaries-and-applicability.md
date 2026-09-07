@@ -46,7 +46,7 @@ direct checkpoints. An explicitly requested semantic review is a PR step and bel
 phase; a change-producing phase absent from the table; or a final
 change-producing phase that is not a boundary. It flags as **MEDIUM** a missing
 `### Delivery Boundaries` table on a non-trivial plan, and a plan declaring a single end-of-plan
-boundary while its `## Parallelization Model` declares independent parallel nodes. `plan-fixer` adds
+boundary while its `## Parallelization Model` declares independent parallel nodes. The gate's repair pass adds
 the table and relocates misplaced integration steps to the boundary phase. `plan-execution-checker`
 flags a PR opened for a non-boundary phase under `*-to-pr`, a unit whose PR never merged, or a
 direct-mode unit whose checkpoint never reached `origin/main`.

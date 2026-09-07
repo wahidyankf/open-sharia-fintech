@@ -41,7 +41,7 @@ Execute fixer logic directly in main context
 
 ```
 Agent tool invokes plan-checker subagent → audit report persists
-Agent tool invokes plan-fixer subagent → fixes persist
+Agent tool invokes docs-fixer subagent → fixes persist
 ```
 
 ## Pitfall 3: Expecting automated iteration in manual mode

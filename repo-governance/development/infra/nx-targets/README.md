@@ -20,8 +20,8 @@ when_to_use: "Read this index to find the right Nx Target Standards child docume
 - [Mandatory Targets — test:quick Composition and Gate-Surface Rule](./mandatory-targets-all-projects-quick-and-gate.md) — The canonical five-step test:quick composition with a worked rhino-cli example, and the gate-surface / scheduled-tier rule.
 - [Mandatory Targets — Type, Build, Server, and Unit-Test Requirements](./mandatory-targets-type-build-server-unit.md) — Requirements for typecheck on statically typed projects, build on compiled/bundled projects, dev/start on server apps, and test:unit.
 - [Projects with Integration Tests](./mandatory-targets-integration-tests.md) — Applicability and
-  runtime rules for deterministic local-resource tests, including the prohibition on network and
-  loopback access.
+  runtime rules for deterministic local-resource tests, including the owned-loopback boundary and
+  its `repo-config.yml` allowlist.
 - [Mandatory Targets — CLI and E2E Test Projects](./mandatory-targets-cli-e2e.md) — The run/install targets required on CLI applications and the install/test:e2e/test:e2e:ui/test:e2e:report targets required on \*-e2e projects.
 - [Mandatory Static Behaviour Coverage](./mandatory-targets-behaviour-coverage.md) — Canonical corpus, adapter, and exemption validation without test execution.
 - [Accessibility Testing](./mandatory-targets-accessibility-testing.md) — The two-level accessibility testing requirement (static a11y linting and runtime axe-core E2E tests) for UI projects.

@@ -53,6 +53,23 @@ See [Usage Example](./reference/usage-example.md) for a complete checker-agent s
 ❌ **Generic scope**: Don't use same scope for all agents
 ✅ **Specific scope**: Use agent-family or language-specific scope
 
+## Governance-Gate Carve-Out
+
+The two [governance gates](../../../repo-governance/workflows/meta/workflow-identifier/governance-gate-class.md) —
+`plan-quality-gate` and `rules-quality-gate` — are **exempt from this report contract**. They emit a
+frozen ledger table, not a streamed audit report:
+
+- columns `ID`, canonical rule or source, location, material gap, required repair or resolution,
+  proof or evidence, and status;
+- written once to `local-tmp/plan/plan-quality-gate__<slug>__ledger.md` or
+  `local-tmp/repo-rules/rules-quality-gate__<slug>__ledger.md`;
+- no UUID chain, no progressive-writing protocol, and no criticality or confidence label, because
+  the ledger is frozen after one audit pass and every admitted row must be closed.
+
+Every other checker and fixer agent remains bound by the contract above, including the convergence
+safeguards below. Do not generalize this carve-out to a third workflow without changing the
+governance-gate class itself.
+
 ## Convergence Safeguards
 
 Checker agents re-running across maker-checker-fixer iterations MUST apply the known-false-positive

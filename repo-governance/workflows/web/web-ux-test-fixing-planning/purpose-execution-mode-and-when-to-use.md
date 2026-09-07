@@ -27,7 +27,7 @@ document. It is **not** an iterative quality gate over the site.
 testing passes to `web-exploratory-tester`, `web-usability-tester`, and `web-design-tester` via the
 Agent tool **one at a time** (exploratory → integrate → usability → integrate → design → integrate),
 running the solidification and plan authoring through `plan-maker`, and gating with `plan-checker` /
-`plan-fixer`. The human grill checkpoint runs inline so the user's conversation is preserved.
+`plan-checker`. The human grill checkpoint runs inline so the user's conversation is preserved.
 
 **Manual Orchestration (fallback)** — when those agents are unavailable as delegated agent types,
 the assistant executes each phase directly using the testers' and plan agents' documented procedures

@@ -10,12 +10,6 @@ inputs:
     type: string
     description: "Rules as free prose, normalized at Step 0"
     required: true
-  - name: mode
-    type: enum
-    values: [lax, normal, strict, ocd]
-    description: "Threshold for the Step 8 quality gate"
-    required: false
-    default: strict
   - name: max-concurrency
     type: number
     description: "Concurrent background agents — the N in the N+1 model"
@@ -68,8 +62,9 @@ indexed split; it may not generalize, weaken, compress away, or paraphrase a mat
 make a counter pass. For example, “junior engineer fresh from bootcamp with no professional work
 experience” cannot become merely “new engineer” for brevity.
 
-Agents composed: `.claude/agents/repo/rules-maker.md`, `rules-checker`,
-`rules-fixer`. `rules-quality-gate` verifies at Step 8.
+Agents composed: `.claude/agents/repo/rules-maker.md` and `rules-checker`. There is no
+`rules-fixer`: propagation is the sole writer of every rule edit. It never invokes
+`rules-quality-gate`, which hands work to propagation and is never called back.
 
 ## Contents
 
@@ -83,7 +78,7 @@ Agents composed: `.claude/agents/repo/rules-maker.md`, `rules-checker`,
 - [Step 5: Eviction](./rules-propagation/step-5-eviction-protocol.md) — making room on a full surface.
 - [Step 6: Write and Tidy](./rules-propagation/step-6-write-and-tidy.md) — classify, consolidate, reindex.
 - [Step 7: Enforcement](./rules-propagation/step-7-enforcement-disposition.md) — the mandatory three-way outcome.
-- [Step 8: Verification](./rules-propagation/step-8-verification.md) — bindings, gates, quality gate.
+- [Step 8: Verification](./rules-propagation/step-8-verification.md) — bindings, gates, semantic closure.
 - [Step 9: Delivery](./rules-propagation/step-9-delivery-and-sibling-obligation.md) — PR, recorded obligation.
 - [Termination Criteria](./rules-propagation/termination-criteria.md) — landed, halted, partial.
 - [Success Criteria](./rules-propagation/success-criteria.md) — Gherkin.

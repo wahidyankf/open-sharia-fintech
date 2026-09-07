@@ -388,6 +388,21 @@ gate-surface-guards:
       - --
     active-env: OSE_HIPPO_PRE_PUSH_ACTIVE
 
+# Projects permitted to bind a loopback socket inside `test:integration`.
+#
+# The Integration layer is defined by resource ownership, not by transport: a
+# server the test starts on a port it controls and shuts down before it
+# finishes is an owned local resource (see
+# repo-governance/development/infra/nx-targets/mandatory-targets-integration-tests.md).
+# The repository still denies loopback by default so a project cannot adopt one
+# silently; naming a project here is the opt-in, and `reason` is required so the
+# entry stays auditable.
+#
+# This list is NEVER a licence to reach an external network or a service the
+# test did not start. That stays forbidden below E2E for every project, listed
+# or not, and `repo-governance test-boundary validate` enforces both halves.
+integration-loopback: []
+
 gates:
   # Declared quality-gate registry. Fields per entry:
   #   id           — stable, unique gate identifier
@@ -1017,6 +1032,24 @@ gates:
         scope: path-gated
         trigger:
           - AGENTS.md
+      ci: { scope: other }
+
+  # Integration's network boundary is default-deny: a project may bind a
+  # loopback socket it owns only when `integration-loopback:` above names it.
+  # Path-gated on the Integration source roots and on the allowlist itself, so
+  # the gate fires exactly when either half of the rule could have moved.
+  - id: test-boundary
+    type: check
+    command: repo-governance test-boundary validate
+    kind: rhino-cli
+    ci-group: governance
+    surfaces:
+      pre-push:
+        scope: path-gated
+        trigger:
+          - apps/
+          - libs/
+          - repo-config.yml
       ci: { scope: other }
 
   - id: convention-license

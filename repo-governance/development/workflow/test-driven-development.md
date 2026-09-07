@@ -25,6 +25,7 @@ when_to_use: Use when writing any delivery checklist step that ships code, or wh
 - [Manual verification is part of TDD](./test-driven-development/manual-verification-is-part-of-tdd.md) — Treating a manual script like an automated test.
 - [Picking the right level](./test-driven-development/picking-the-right-level.md) — Choosing the cheapest test that exercises the behaviour.
 - [The Red-Green-Refactor Cycle](./test-driven-development/the-red-green-refactor-cycle.md) — The three-step loop every code change follows.
+- [Flaky tests are defects](./test-driven-development/flaky-tests-are-defects.md) — Fixing every intermittent failure at its root cause.
 - [Mini-TDD Passes](./test-driven-development/mini-tdd-passes.md) — Splitting a feature into small Red→Green→Refactor cycles.
 - [Applying TDD to Plans](./test-driven-development/applying-tdd-to-plans.md) — Plan creation and plan execution requirements.
 - [TDD Shape for Delivery Checklists](./test-driven-development/tdd-shape-for-delivery-checklists.md) — granular RED/GREEN/REFACTOR evidence inside cohesive outcome sections.

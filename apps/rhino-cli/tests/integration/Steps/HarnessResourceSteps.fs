@@ -2109,7 +2109,7 @@ type HarnessResourceSteps() =
         lookupFileContent <- readDocumentTree path
 
     [<Then>]
-    member _.``"governance-word-budget" is skipped locally and delegated from Step 0\.5``() =
+    member _.``"governance-word-budget" is skipped locally and delegated by exact gate ID``() =
         Assert.Contains("governance-word-budget` skipped", lookupFileContent)
         Assert.Contains("`delegated-gate-ids`", lookupFileContent)
 
@@ -3622,8 +3622,8 @@ let ``rules-checker validates the budget qualitatively`` () =
     FeatureRunner.runWordBudgetRule "rules-checker validates the budget qualitatively"
 
 [<Fact>]
-let ``The quality-gate workflow delegates the validator by exact gate ID`` () =
-    FeatureRunner.runWordBudgetRule "The quality-gate workflow delegates the validator by exact gate ID"
+let ``The quality gate leaves the word-budget validator to deterministic tooling`` () =
+    FeatureRunner.runWordBudgetRule "The quality gate leaves the word-budget validator to deterministic tooling"
 
 [<Fact>]
 let ``The preflight envelope carries the governance-word-budget category`` () =

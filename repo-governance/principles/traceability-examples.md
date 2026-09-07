@@ -58,7 +58,7 @@ When documenting a new convention or practice, ALWAYS reference which principles
 
 - **agent-maker**: Validates new agents have explicit `tools` field in frontmatter
 - **rules-checker**: Audits agents for missing or incomplete tool declarations
-- **rules-fixer**: Can add missing frontmatter fields
+- **rules-propagation**: Can add missing frontmatter fields
 
 **Result**: All agent files contain explicit tool lists:
 

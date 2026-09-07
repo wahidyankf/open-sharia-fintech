@@ -62,5 +62,5 @@ expected to reference this convention are:
   live in the [Platform Binding Examples](./platform-binding-examples-claude-code-and-opencode.md) sections.
 - **`rules-checker`** — Its general cross-reference/consistency validation flags a
   plan-creation touchpoint that has dropped its reference to this convention.
-- **`rules-fixer`** — Restores missing convention references to touchpoint files when
+- **`rules-propagation`** — Restores missing convention references to touchpoint files when
   flagged.

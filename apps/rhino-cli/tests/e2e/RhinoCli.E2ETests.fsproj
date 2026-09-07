@@ -26,6 +26,7 @@
     <Compile Include="Steps/DoctorProcessSteps.fs" />
     <Compile Include="Steps/CargoTargetShareProcessSteps.fs" />
     <Compile Include="Steps/ContractsProcessSteps.fs" />
+    <Compile Include="Steps/TestBoundaryProcessSteps.fs" />
     <Compile Include="Steps/TestCoverageProcessSteps.fs" />
     <Compile Include="Steps/ConventionProcessSteps.fs" />
     <Compile Include="Steps/GovernanceProcessSteps.fs" />

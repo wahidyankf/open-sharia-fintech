@@ -1,21 +1,12 @@
 ---
-title: "Plan Quality Gate Workflow"
-description: ">"
-when_to_use: "Read this index to find the right Plan Quality Gate Workflow child document."
+title: "Plan Quality Gate"
+description: "Child documents of the plan-quality-gate governance gate"
+when_to_use: "Read this index to find the right plan-quality-gate child document."
 ---
 
-# Plan Quality Gate Workflow
+# Plan Quality Gate
 
-- [Execution Mode — Plan Quality Gate](./execution-mode.md) — Describes the agent-delegation and manual-orchestration execution modes for plan-quality-gate, and when each is used. Use when deciding whether to invoke plan-checker/plan-fixer via the Agent tool or fall back to manual orchestration.
-- [Research Delegation — Plan Quality Gate](./research-delegation.md) — Explains when plan-checker delegates multi-page web research to web-researcher instead of using its own in-context WebSearch/WebFetch. Use when checking whether a single technical claim in a plan audit should be delegated to web-researcher.
-- [Step 1 — Initial Validation](./step-1-initial-validation.md) — Lists the full validation scope plan-checker runs on its first pass, per its Steps 0-7 and the conditional 5b-5n sub-steps. Use when checking exactly what plan-checker validates on the initial audit pass.
-- [Steps 2-3 — Check for Findings and Apply Fixes](./steps-2-3-check-and-apply-fixes.md) — Describes the finding-count condition check and the conditional plan-fixer invocation, including its decision-envelope loop. Use when determining whether threshold-level findings require a plan-fixer pass, or when resolving a plan-fixer decision envelope.
-- [Steps 4-6 — Re-validate, Iteration Control, Finalization](./steps-4-5-6-revalidate-iterate-finalize.md) — Describes the re-validation checker pass, the loop-continuation logic keyed on consecutive_zero_count and max-iterations, and how final status is determined. Use when tracing the check-fix loop's re-validation, iteration-control, or final-status logic.
-- [Termination Criteria and Relationship to Delivery-Mode Done-Definition](./termination-criteria-and-delivery-mode-relationship.md) — States pass/partial/fail criteria and how document validation relates to PR CI, leak review, surface gates, and merge preconditions.
-- [Example Usage — Plan Quality Gate](./example-usage.md) — Worked examples of invoking plan-quality-gate against all plans, a plan folder, a single plan, and with explicit iteration bounds. Use when writing an invocation of plan-quality-gate and needing a worked example of the scope/mode arguments.
-- [Iteration Example and Safety Features](./iteration-example-and-safety-features.md) — Shows a typical four-iteration execution flow, then lists the infinite-loop, convergence, and false-positive safety features. Use when explaining how the check-fix loop converges, or when auditing what safeguards prevent runaway or thrashing iterations.
-- [Plan-Specific Validation — Completeness Through Execution-Grade Clarity](./plan-specific-validation-completeness-through-clarity.md) — First half of the plan-checker validation catalog — completeness, technical accuracy, anti-hallucination, harness-neutrality, worktree specification, and execution-grade clarity. Use when checking exactly what plan-checker validates for structural completeness, factual accuracy, or harness neutrality.
-- [Plan-Specific Validation — Operational Readiness and Knowledge Capture](./plan-specific-validation-operational-readiness.md) — Second half of the plan-checker validation catalog — implementation readiness, codebase alignment, clarity, operational readiness, and knowledge-capture presence. Use when checking what plan-checker requires for operational readiness (quality gates, CI verification, dev-env setup) or knowledge-capture presence.
-- [Final Audit Report Structure and Observability Metrics](./final-audit-report-structure-and-observability.md) — Describes the five-part structure of plan-checker's audit report and the metrics tracked across executions. Use when parsing or generating a plan-checker audit report, or when reviewing what observability data plan-quality-gate tracks.
-- [Related Workflows and Success Metrics](./related-workflows-and-success-metrics.md) — Lists the workflows plan-quality-gate composes with and the success metrics tracked across executions. Use when navigating from plan-quality-gate to a composing workflow, or when reviewing its success-metric tracking.
-- [Notes, Principles, and Conventions Implemented/Respected — Plan Quality Gate](./notes-principles-and-conventions.md) — Closing operational notes plus the principles and conventions catalog for the plan-quality-gate workflow. Use when auditing plan-quality-gate against the repo's principle and convention catalog, or reviewing its operational characteristics.
+- [Execution and Delegation](./execution-and-delegation.md) — How the gate splits a delegated read-only `plan-checker` sweep from root-owned repair, why `plan-fixer` no longer exists, and when the checker delegates multi-page research to `web-researcher`. Use when starting a run and deciding what the subagent does versus what the root must keep.
+- [Sufficiency and Ownership](./sufficiency-and-ownership.md) — What a `PASS` asserts and does not assert, and the machine-decidable checks the gate must never reproduce because deterministic tooling already owns them. Use when deciding whether a gap is admissible to the ledger.
+- [Audit Checklist](./audit-checklist.md) — The seven semantic checks completed in one non-editing pass before the ledger is frozen, plus the extra completion-checkpoint confirmations. Use during step 2 of the bounded procedure.
+- [Deterministic Verification](./deterministic-verification.md) — The two canonical `rhino-cli` gate groups run once per cycle, their exit-code assertion rule, and how a HIPPO capacity deferral is handled without consuming a cycle. Use at step 4, and for the rules gate's `EFFECTIVE`-mode verification.

@@ -81,8 +81,9 @@ less than that.
 
 In scope: both conventions under `repo-governance/conventions/structure/` in both repos, plus any
 child shard the word budget forces; every rules-machinery surface restating either rule
-(`repo-rules-checker`/`-fixer`/`-maker`, the `repo-validating-governance-rules` and `repo-rules-fixing`
-skills, the `rules-quality-gate` workflow shards); the `md-naming` gate registry entry; and the
+(`rules-checker`/`rules-maker`, the `rules-validating-governance` skill, and the
+`rules-quality-gate` and `rules-propagation` workflow shards — the fixer agent and its skill were
+retired when the gate became read-only); the `md-naming` gate registry entry; and the
 split emitter's collision refusal — the only code change.
 
 Out of scope (for now):

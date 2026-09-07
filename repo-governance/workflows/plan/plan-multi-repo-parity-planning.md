@@ -4,7 +4,7 @@ title: "plan-multi-repo-parity-planning"
 description: Authors sibling-repo parity plans, deciding every deviation.
 when_to_use: Use when a change spans sibling repos and drift between them must not be silent.
 goal: Author sibling-repository plans for one objective, with every deviation decided and recorded
-termination: "One plan per target repo exists, each passes plan-quality-gate (double-zero), every deviation-matrix cell carries a recorded decision, research findings are incorporated or skipped with justification, and delivery completed per the selected mode"
+termination: "One plan per target repo exists, each receiving a PASS verdict from plan-quality-gate, every deviation-matrix cell carries a recorded decision, research findings are incorporated or skipped with justification, and delivery completed per the selected mode"
 inputs:
   - name: objective
     type: string
@@ -27,12 +27,6 @@ inputs:
     description: "Plan stage folder in each target repo"
     required: false
     default: in-progress
-  - name: gate-mode
-    type: enum
-    values: [lax, normal, strict, ocd]
-    description: "Mode passed through to plan-quality-gate for each plan"
-    required: false
-    default: strict
   - name: max-concurrency
     type: number
     description: "Background agents run concurrently — the N in the N+1 model (1 main thread + N background agents = N+1 total). Raise only when independent work, machine capacity, and budget headroom all allow; lower under budget, runner, or disk pressure. Never self-promoted beyond the declared value."
@@ -47,7 +41,7 @@ outputs:
     description: "Cross-repo decision matrix (every gap mapped to an align/deviate decision with justification), embedded in each plan's chosen technical form and mirrored in each repo's explanation rationale doc"
   - name: gate-results
     type: string
-    description: "plan-quality-gate final status per plan (pass/partial/fail)"
+    description: "plan-quality-gate verdict per plan (PASS/BLOCKED_*)"
   - name: parity-identity-record
     type: string
     description: "Shared objective, worktree basename, and branch mapping"
@@ -62,9 +56,9 @@ Authors one plan per sibling repo, grilling every cross-repo gap first.
 
 ## Agent References
 
-Plan authoring and validation use [plan-maker](../../../.claude/agents/plan/plan-maker.md),
-[plan-checker](../../../.claude/agents/plan/plan-checker.md), and
-[plan-fixer](../../../.claude/agents/plan/plan-fixer.md).
+Plan authoring and validation use [plan-maker](../../../.claude/agents/plan/plan-maker.md) and
+[plan-checker](../../../.claude/agents/plan/plan-checker.md). Repair belongs to the
+[plan-quality-gate](./plan-quality-gate.md) itself; there is no `plan-fixer`.
 
 ## Contents
 

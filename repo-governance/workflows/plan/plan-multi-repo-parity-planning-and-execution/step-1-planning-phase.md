@@ -15,7 +15,7 @@ stage: in-progress, gate-mode: {input.gate-mode}, max-concurrency: {input.max-co
 All of its steps apply unchanged: parity-set survey, deviation-matrix construction, **first grill
 (hard gate — every matrix cell decided)**, conditional web research, **second grill
 (post-research)**, per-repo plan authoring via `plan-maker`, per-plan
-[plan-quality-gate](../plan-quality-gate.md) to double-zero, and delivery per mode.
+[plan-quality-gate](../plan-quality-gate.md) to a PASS verdict, and delivery per mode.
 
 **Composite constraints on the nested run**:
 

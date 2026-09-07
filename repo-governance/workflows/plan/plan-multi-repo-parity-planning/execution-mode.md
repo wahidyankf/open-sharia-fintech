@@ -8,7 +8,7 @@ when_to_use: Use when starting this workflow, to confirm which execution mode ap
 
 **Preferred Mode**: Agent Delegation — invoke `plan-maker` for authoring each plan (Step 6) and
 delegate `plan-quality-gate` for each gated plan (Step 7) via the Agent tool with `subagent_type`.
-`plan-maker`, `plan-checker`, and `plan-fixer` run as delegated agents; file changes persist to the
+`plan-maker` and `plan-checker` run as delegated agents; file changes persist to the
 actual filesystem. See [Workflow Execution Modes Convention](../../meta/execution-modes.md).
 
 **Fallback Mode**: Manual Orchestration — execute workflow logic directly using Read/Write/Edit
@@ -30,5 +30,5 @@ The orchestrator:
 4. Delegates external research to `web-researcher` (conditional on research-needed flag)
 5. Grills the invoker again with research findings to validate and close any new decision branches
 6. Delegates plan authoring to `plan-maker` per repo
-7. Runs `plan-quality-gate` per plan until double-zero
+7. Runs `plan-quality-gate` once per plan and requires a `PASS` verdict
 8. Delivers per the selected mode and reports outcomes

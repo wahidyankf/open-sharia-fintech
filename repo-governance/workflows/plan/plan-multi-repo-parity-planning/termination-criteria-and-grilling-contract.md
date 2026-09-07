@@ -8,7 +8,7 @@ when_to_use: Use when determining the workflow's final status, or understanding 
 
 **Success** (`pass`):
 
-- Every plan reaches `pass` on plan-quality-gate (double-zero at the specified gate-mode)
+- Every plan receives a `PASS` verdict from plan-quality-gate (which takes no mode)
 - Every plan is delivered per the selected mode
 - Zero undecided matrix rows (every deviation has a recorded decision and justification)
 

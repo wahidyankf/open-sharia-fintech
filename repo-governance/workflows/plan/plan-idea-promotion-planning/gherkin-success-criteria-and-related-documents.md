@@ -16,7 +16,7 @@ Scenario: A ripe two-pager becomes a backlog plan and is retired atomically
   When the workflow runs to completion with the user's approval
   Then a prior-art report appears under local-tmp/plan-idea-promotion-planning/plan-idea-promotion-planning__*__report.md
   And a plan exists at plans/backlog/<identifier>/
-  And the backlog plan passes plan-quality-gate at strict mode
+  And the backlog plan receives a PASS verdict from plan-quality-gate
   And plans/ideas/<slug>.md no longer exists on the push target
   And the brief's line is removed from plans/ideas/README.md
   And no application or library code is modified

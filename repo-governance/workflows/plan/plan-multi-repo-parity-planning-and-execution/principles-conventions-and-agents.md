@@ -45,7 +45,7 @@ when_to_use: Use when auditing this workflow's governance alignment or looking u
 
 - [plan-maker](../../../../.claude/agents/plan/plan-maker.md) — authors each repo's plan (planning phase)
 - [plan-checker](../../../../.claude/agents/plan/plan-checker.md) /
-  [plan-fixer](../../../../.claude/agents/plan/plan-fixer.md) — quality gate per plan (planning phase)
+  the [plan-quality-gate](../plan-quality-gate.md) itself — one gate run per plan (planning phase)
 - [web-researcher](../../../../.claude/agents/web/web-researcher.md) — conditional research
   (planning phase)
 - [plan-execution-checker](../../../../.claude/agents/plan/plan-execution-checker.md) — independent

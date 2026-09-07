@@ -38,6 +38,7 @@ and body structure, step execution patterns, state/error handling, composability
 - [Validation](./workflow-identifier/validation.md) — pre-execution checks.
 - [Relationship to Other Layers](./workflow-identifier/relationship-to-other-layers.md) — principles through plans.
 - [Composability](./workflow-identifier/composability.md) — nesting workflows/agents/procedures.
+- [Governance Gate Class](./workflow-identifier/governance-gate-class.md) — the second gate class and how to choose.
 - [\*-check-fix Pattern — Characteristics](./workflow-identifier/check-fix-pattern-characteristics.md) — the zero-findings pattern.
 - [\*-check-fix Pattern — Standard Structure](./workflow-identifier/check-fix-standard-structure.md) — the inputs/outputs block.
 - [\*-check-fix Pattern — Required Steps](./workflow-identifier/check-fix-required-steps.md) — the five steps.

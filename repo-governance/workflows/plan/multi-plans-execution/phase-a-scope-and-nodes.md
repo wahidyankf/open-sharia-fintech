@@ -27,7 +27,7 @@ explicit list or a set-selector; both resolve once into one enumerated set.
   defers every durable mutation until A2 accepts the complete set.
 
 **A2. Refuse unvetted plans before side effects.** Confirm every frozen member passed
-`plan-quality-gate` (a clean strict double-zero — check its audit trail or re-run the gate). If any
+`plan-quality-gate` (a `PASS` verdict — check its ledger or re-run the gate). If any
 member fails, report the full result and stop the run before creating recovery state or promotion
 artifacts; never promote a subset around it.
 

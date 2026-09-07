@@ -21,7 +21,7 @@ bootcamp-executable actions:
 4. update canonical rules, indexes, configuration, and enforcement machinery;
 5. record the three-way enforcement disposition;
 6. generate declared harness bindings;
-7. run propagation verification and `rules-quality-gate`; and
+7. run propagation's own verification, which never invokes `rules-quality-gate`; and
 8. record the repository-specific manifest, final status, and sibling obligation.
 
 Every action needs the exact repository, input, path or bounded discovery, copyable invocation,

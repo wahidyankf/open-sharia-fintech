@@ -25,7 +25,7 @@ Classify a test by the real boundary it crosses, not by its framework or size.
 
 ```
 Unit        → in-process production behaviour; no real OS, network, clock, or randomness
-Integration → at least one real isolated same-machine resource; zero network, including loopback
+Integration → at least one real isolated same-machine resource; zero external network
 E2E         → real public browser, HTTP/API, or process boundary; isolated synthetic data
 ```
 
@@ -71,8 +71,9 @@ owned on the same machine.
 **Scope**: Real temporary files, environment state, child processes, standard streams, or an
 embedded/local database reached without a socket. Setup and cleanup use unique synthetic resources.
 
-**Boundary rule**: No HTTP, TCP, UDP, Unix socket, loopback, `localhost`, `127.0.0.1`, or local test
-server. MSW, WireMock, mockito, and in-memory repositories are Unit doubles, not Integration proof.
+**Boundary rule**: No external network and no service the test did not start. A loopback socket the
+test starts and stops is Integration when `repo-config.yml` allowlists the project. MSW, WireMock,
+mockito, and in-memory repositories are Unit doubles, not Integration proof.
 
 **Speed**: Seconds per test. Dozens run in under a minute.
 
@@ -80,11 +81,11 @@ server. MSW, WireMock, mockito, and in-memory repositories are Unit doubles, not
 
 - Filesystem persistence, environment loading, caches, and generated artifacts
 - Child-process/stdin/stdout adapters whose subject is not the product's public process boundary
-- Embedded databases or local stores reached without networking
+- Embedded databases, local stores, or a loopback server the test starts and stops itself
 - Composition against real same-machine resources that Unit replaces with ports
 
-**What they prove**: Production adapters behave against their real local resource without network
-or shared external infrastructure.
+**What they prove**: Production adapters behave against their real local resource without external
+network or shared infrastructure.
 
 **Rust tools**: Built-in test runner plus temporary filesystem/process/embedded-store fixtures
 
@@ -128,7 +129,7 @@ testing
 | ------------- | ----------------------------- | --------------------------------------- | ------------------------------------ |
 | Boundary      | In-process behaviour          | Real isolated local resource            | Real public browser/API/process      |
 | Files/env     | Injected or in-memory         | Real and isolated                       | Through public subject as applicable |
-| Network       | None                          | None, including loopback                | Allowed when it is the public path   |
+| Network       | None                          | Owned loopback when allowlisted         | Allowed when it is the public path   |
 | Clock/random  | Fixed/injected                | Controlled and restored                 | Isolated test identity/data          |
 | Applicability | Mandatory for every scenario  | Only for a genuine local boundary       | Only for a genuine public boundary   |
 | Execution     | Every `test:quick`            | Manual impacted; scheduled complete     | Manual impacted; scheduled complete  |
@@ -140,7 +141,7 @@ testing
 %%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
 flowchart TD
     E2E["E2E Tests\nReal public boundary\nImpacted manual + scheduled"]
-    INT["Integration Tests\nReal local · no network\nImpacted manual + scheduled"]
+    INT["Integration Tests\nReal local · no remote calls\nImpacted manual + scheduled"]
     UNIT["Unit Tests\nIn process · deterministic\nMandatory in every quick gate"]
 
     E2E --> INT
@@ -159,7 +160,7 @@ flowchart TD
 src/
   test/
     unit/               # Fast isolated tests (co-located with source is also acceptable for TS)
-    integration/        # Real isolated local resources; zero network
+    integration/        # Real isolated local resources; no external network
   components/
     Foo.unit.test.tsx   # TypeScript: unit tests may be co-located with source
 ```
@@ -198,7 +199,7 @@ async fn member_repository_integration_test(pool: PgPool) { // ❌ real DB = E2E
     // …
 }
 
-// CORRECT — a real isolated embedded database file uses no network
+// CORRECT — a real isolated embedded database file reaches no external network
 #[test]
 fn member_repository_integration_test() {
     let temp_dir = tempfile::tempdir().expect("isolated database directory");
