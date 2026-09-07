@@ -25,10 +25,12 @@ inputs:
     type: enum
     values: [fragmentation, duplication, scaffolding, retirement]
     description: >
-      Which candidate classes this run considers. Multi-valued. Omitting a class suppresses its
-      discovery sweep entirely rather than discovering and skipping it.
+      Which candidate classes this run considers. Multi-valued. All four run by default; naming a
+      subset suppresses the omitted sweeps entirely rather than discovering and skipping them.
+      Discovery is never the safeguard — Step 5 gates every retirement per item, and no default
+      makes a removal automatic.
     required: false
-    default: "fragmentation,duplication"
+    default: "fragmentation,duplication,scaffolding,retirement"
   - name: max-concurrency
     type: number
     description: "Background agents run concurrently — the N in the N+1 model. Never self-promoted beyond the declared value."

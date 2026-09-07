@@ -53,8 +53,10 @@ scale, the admission test itself. No new instrument is built, and no new judgeme
 Scanning for `must`, `never`, or `required` and treating their absence as evidence would admit real
 rules. "Filenames are lowercase kebab-case" binds absolutely and contains no modal; so does "The
 instruction surface is a fixed-size cache." A sweep shortcutting to modal-matching produces
-retirement candidates mislabelled as scaffolding, which is how an opt-in high-risk class gets
-executed under a low-risk one's approval path.
+retirement candidates mislabelled as scaffolding, which is how an obligation removal escapes Step
+5's per-item approval and lands under a low-risk class's blanket one. That misroute is the whole
+risk now that every class discovers by default: the approval path, not the class list, is what
+stops a removal.
 
 ## The Recall Bound
 
