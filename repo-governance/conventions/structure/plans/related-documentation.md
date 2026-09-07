@@ -33,4 +33,4 @@ when_to_use: Use when looking for a related convention or guide that this plans 
 
 **Development Guides**:
 
-- [AI Agents Convention](../../../development/agents/ai-agents.md) — Standards for AI agents (including `plan-maker`, `plan-checker`, `plan-fixer`, `plan-execution-checker`)
+- [AI Agents Convention](../../../development/agents/ai-agents.md) — Standards for AI agents (including `plan-maker`, `plan-checker`, `plan-execution-checker`)

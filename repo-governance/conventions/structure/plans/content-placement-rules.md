@@ -14,7 +14,7 @@ when_to_use: Use when deciding whether a piece of plan content belongs in brd.md
 
 # Content-Placement Rules (brd.md vs prd.md)
 
-Authoritative split between `brd.md` and `prd.md`. These rules are normative for `plan-maker` / `plan-checker` / `plan-fixer` — the agents share one definition to avoid drift.
+Authoritative split between `brd.md` and `prd.md`. These rules are normative for `plan-maker` / `plan-checker` / `plan-quxer` — the agents share one definition to avoid drift.
 
 > **Solo-maintainer framing**: BRD and PRD are **content-placement containers**, not sign-off artifacts. This repo has one maintainer collaborating with AI agents; code review (the PR) is the only approval gate. The convention MUST NOT introduce sponsor sign-off, stakeholder approval ceremonies, or role-based gates.
 

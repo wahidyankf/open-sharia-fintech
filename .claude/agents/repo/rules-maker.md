@@ -65,7 +65,7 @@ worktrees. Regenerate bindings after every `.claude/` edit and validate synchron
 **Related Agents**:
 
 - `rules-checker` - Validates rules created by this maker
-- `rules-fixer` - Fixes rule violations
+- `rules-propagation` (workflow) - Sole writer of every rule edit
 
 **Related Conventions**:
 

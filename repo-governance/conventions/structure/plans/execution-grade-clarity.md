@@ -56,7 +56,7 @@ human readability without adding maintenance burden.
   proof boundary; list each reference. See
   [Gherkin-Tagged Delivery Steps](../../../development/workflow/test-driven-development/gherkin-tagged-delivery-steps.md#gherkin-tagged-delivery-steps).
 
-**HARD RULE**: `plan-checker` flags violations of this rule as HIGH severity. `plan-fixer` rewrites offending items with maximum detail.
+**HARD RULE**: `plan-checker` admits violations of this rule to the ledger. The gate's repair pass rewrites offending items with maximum detail.
 
 **Bad**:
 

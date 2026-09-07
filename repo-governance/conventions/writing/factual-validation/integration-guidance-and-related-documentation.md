@@ -59,7 +59,7 @@ created: 2025-12-16
 - Documentation URLs are accessible
 - Version requirements are current
 
-**Agent:** `plan-checker`, `plan-fixer`
+**Agent:** `plan-checker`
 
 ### README Files
 

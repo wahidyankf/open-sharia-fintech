@@ -14,7 +14,7 @@ Use these workflows when a live site needs to be experienced as a real visitor w
 
 ## Purpose
 
-These workflows define **WHEN and HOW to test a running site and act on the result**, orchestrating the three live-site testing agents (`web-exploratory-tester`, `web-usability-tester`, `web-design-tester`) and the planning agents (`plan-maker`, `plan-checker`, `plan-fixer`) so that a single run yields one combined, fix-ready plan.
+These workflows define **WHEN and HOW to test a running site and act on the result**, orchestrating the three live-site testing agents (`web-exploratory-tester`, `web-usability-tester`, `web-design-tester`) and the planning agents (`plan-maker`, `plan-checker`, `plan-checker`) so that a single run yields one combined, fix-ready plan.
 
 ## Scope
 

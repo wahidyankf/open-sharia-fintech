@@ -12,7 +12,7 @@ goal: >
   (plans/in-progress/ by default, or plans/backlog/ when target-stage=backlog) from a user prompt
   describing a desired behaviour or change, then push it to the confirmed target
 termination: >
-  Plan exists in the resolved target-stage directory, passes plan-quality-gate at strict mode, and
+  Plan exists in the resolved target-stage directory, receives a PASS verdict from plan-quality-gate, and
   is pushed to the confirmed target
 inputs:
   - name: prompt
@@ -48,7 +48,7 @@ outputs:
   - name: final-report
     type: file
     pattern: local-tmp/plan/plan__*__audit.md
-    description: Final audit report from plan-quality-gate
+    description: Frozen ledger returned by plan-quality-gate
 ---
 
 # Plan Establishment Workflow
@@ -74,7 +74,7 @@ pushed to the confirmed target.
 - [Step 4 — Plan Creation](./plan-planning/step-4-plan-creation.md) — plan-maker handoff and envelope loop.
 - [Step 4 — Automatic Rule-Impact Handoff](./plan-planning/step-4-automatic-rule-impact.md) — per-repository propagation coverage for rule-affecting plans.
 - [Step 5 — Plan Review](./plan-planning/step-5-plan-review.md) — eleven structural checks.
-- [Step 6 — Quality Gate](./plan-planning/step-6-quality-gate.md) — strict-mode plan-quality-gate.
+- [Step 6 — Quality Gate](./plan-planning/step-6-quality-gate.md) — the gate's sole named pre-authorization.
 - [Step 7 — Push and Verify](./plan-planning/step-7-push-and-verify.md) — commit, push, CI, and complete three-class cleanup.
 - [Principles and Conventions Implemented/Respected](./plan-planning/principles-and-conventions.md) — the catalog entries.
 - [Related Workflows and Documentation](./plan-planning/related-workflows-and-documentation.md) — cross-references.

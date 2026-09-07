@@ -56,5 +56,5 @@ Each plan agent applies this convention at a specific point in its workflow:
 
 - **`plan-maker`** — before writing each non-trivial claim, run the verification recipe for the claim's category. If verification fails, refuse-on-uncertainty.
 - **`plan-checker`** — Step 5f scans the entire plan for unverified claims (file paths, Nx targets, package versions, API signatures, agent names, KPIs) and flags violations against the Anti-Pattern catalog.
-- **`plan-fixer`** — re-verifies each finding before applying. Repo-grounding failure during re-verification means MEDIUM (manual review), not HIGH (auto-apply). Fabricated content NEVER auto-applied.
+- **`plan-quality-gate`** — re-verifies each ledger row before repairing it. A repo-grounding failure during re-verification blocks the row for manual resolution rather than repairing it. Fabricated content is NEVER applied.
 - **`plan-execution-checker`** — verifies that all delivery-checkbox claims still hold after execution: file paths exist (or were created), commands ran successfully, claimed test names appear in the test files, claimed Nx targets are present in `project.json`.

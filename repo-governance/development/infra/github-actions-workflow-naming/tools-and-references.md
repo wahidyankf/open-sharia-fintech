@@ -35,4 +35,4 @@ audits.
 
 - `rules-checker` — Validates that workflow filenames match their `name:` fields and follow
   the domain-first grammar
-- `rules-fixer` — Corrects misaligned workflow filenames or name fields
+- `repo-workflow-fixer` — Corrects misaligned workflow filenames or name fields

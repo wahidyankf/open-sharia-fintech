@@ -70,9 +70,9 @@ After creating a new convention or practice document:
    - Update agents that should enforce the new rule
    - Add validation checks to appropriate checker agents
 3. **Use rules-checker** to validate consistency after changes
-4. **Use rules-fixer** if issues found (after user review)
+4. **Use rules-propagation** if issues found (after user review)
 
-**Workflow**: docs-maker (create) → rules-maker (propagate) → rules-checker (validate) → rules-fixer (fix if needed)
+**Workflow**: docs-maker (create) → rules-maker (propagate) → rules-checker (validate) → rules-propagation (write any fix)
 
 ## Vision Supported
 

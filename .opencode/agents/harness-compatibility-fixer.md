@@ -60,7 +60,7 @@ findings have been reviewed (or the workflow runs in automated mode with a known
 
 **Do NOT use for**: running the initial drift check (use `harness-compatibility-checker`
 first); web research on harness conventions (consult `web-researcher` directly); repository-wide
-rules fixes (use `rules-fixer`).
+rules fixes (use `rules-propagation`).
 
 ## Reference Documentation
 
@@ -69,7 +69,7 @@ rules fixes (use `rules-fixer`).
 [Maker-Checker-Fixer Pattern](../../repo-governance/development/pattern/maker-checker-fixer.md),
 [harness-compatibility-quality-gate workflow](../../repo-governance/workflows/harness/harness-compatibility-quality-gate.md).
 Related: `harness-compatibility-checker` (generates the audit reports this agent
-processes), `rules-fixer` (different scope).
+processes), `rules-propagation` (different scope).
 
 - [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) -
   Keep a ledger of every path you touch, carry it through every compaction, leave anything not on

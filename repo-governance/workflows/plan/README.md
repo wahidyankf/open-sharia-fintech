@@ -17,7 +17,7 @@ Use these workflows to turn an idea into a well-grounded, checkable delivery pla
 These workflows define **WHEN and HOW to establish, validate, and execute plans**. The
 plan-establishment workflow orchestrates the full prompt-to-pushed-plan lifecycle (repo
 exploration → grill → research → plan-maker → quality gate → push). The plan-quality-gate
-workflow orchestrates `plan-checker` and `plan-fixer` for authoring-time validation. The
+workflow delegates a read-only `plan-checker` sweep and repairs its own ledger. The
 plan-execution workflow is orchestrated directly by the calling context (which delegates
 per-item work to specialized agents) and invokes `plan-execution-checker` for independent
 validation at the end.
@@ -48,7 +48,7 @@ validation at the end.
 - [multi-plans-execution](./multi-plans-execution.md) — Schedules several ready plans together via a dependency DAG and bounded parallelism. Use when two or more gated plans should run together, not one at a time.
 - [plan-multi-repo-parity-planning](./plan-multi-repo-parity-planning.md) — Authors aligned-but-divergent plans across sibling repos, grilling every deviation to a decision. Use when a change spans sibling repos and drift between them must not be silent.
 - [plan-multi-repo-parity-planning-and-execution](./plan-multi-repo-parity-planning-and-execution.md) — End-to-end composite that plans then executes a cross-repo parity objective in one run. Use when a cross-repo objective should be planned AND delivered in one continuous run.
-- [plan-quality-gate](./plan-quality-gate.md) — Iteratively runs plan-checker and plan-fixer against a plan's documents until zero threshold-level findings are confirmed on two consecutive checks, or max-iterations is reached. Use before starting plan execution, after creating or updating a plan, or periodically to re-validate plan completeness and technical accuracy.
+- [plan-quality-gate](./plan-quality-gate.md) — Governance gate producing exactly one terminal verdict on a formal plan's semantic readiness, from a frozen ledger repaired in at most two cycles. Use only when the user explicitly names it, or from one of its three named callers.
 - [plan-ideas-grooming](./plan-ideas-grooming.md) — Sweeps plans/ideas/ across repos, deduplicating, classifying into Eisenhower quadrants, and correcting cross-repo residency. Use when a repo's plans/ideas/ exceeds 60 files or 90 days have passed since the last grooming run.
 
 ## Orchestration Model Shared by These Workflows

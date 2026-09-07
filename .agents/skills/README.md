@@ -61,7 +61,6 @@ below.
 ### Plans
 
 - [Grill Me](./grill-me/README.md) — interview the user via structured multiple-choice grilling
-- [Plan Applying Fixes](./plan-applying-fixes/README.md) — plan-fixer's fix-recipe catalog
 - [Plan Creating Project Plans](./plan-creating-project-plans/README.md) — project plan structure, naming, and grilling gates
 - [Plan Grooming Idea Briefs](./plan-grooming-idea-briefs/README.md) — converging plans/ideas/ into deduplicated two-pagers
 - [Plan Validating Quality](./plan-validating-quality/README.md) — plan-checker's 21-rule validation methodology
@@ -114,7 +113,6 @@ below.
 - [Repo Propagating Rules](./repo-propagating-rules/README.md) — run the rules-propagation workflow whenever a rule is created, updated, or deleted
 - [Repo Understanding Repository Architecture](./repo-understanding-repository-architecture/README.md) — six-layer governance hierarchy
 - [Repo Understanding Shared Vocabulary](./repo-understanding-shared-vocabulary/README.md) — what repo rules, content trees, and delivery units cover
-- [Rules Fixing](./rules-fixing/README.md) — rules-fixer's applying-fixes mechanics
 - [Rules Validating Governance](./rules-validating-governance/README.md) — rules-checker's repo-wide consistency methodology
 - [Social Linkedin Posting](./social-linkedin-posting/README.md) — social-linkedin-post-maker's character-limit and workflow rules
 - [Specs Scaffolding](./specs-scaffolding/README.md) — specs-maker's four surface-profile trees

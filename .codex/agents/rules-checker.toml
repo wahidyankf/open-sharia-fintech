@@ -66,7 +66,7 @@ governance-prose quality.
 (report generation standards), [Repository Governance Architecture](../../repo-governance/repository-governance-architecture.md),
 [Maker-Checker-Fixer Pattern](../../repo-governance/development/pattern/maker-checker-fixer.md).
 
-**Related Agents**: `rules-fixer` (fixes issues this checker finds), `rules-maker`
+**Related Agents**: `rules-maker`
 (creates repository rules and conventions).
 
 - [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

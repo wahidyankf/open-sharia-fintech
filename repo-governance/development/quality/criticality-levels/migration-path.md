@@ -28,7 +28,7 @@ Existing agents using different terminology should migrate to this convention.
 
 1. Update `rules-checker` to use CRITICAL/HIGH/MEDIUM/LOW sections
 2. Test report generation with standardized format
-3. Validate that `rules-fixer` correctly interprets new format
+3. Validate that `repo-workflow-fixer` correctly interprets new format
 4. Identify any issues before broader rollout
 
 ## Phase 3: Checker Agent Families (Week 2-3)
@@ -61,7 +61,7 @@ Existing agents using different terminology should migrate to this convention.
 
 Update all fixer agents to use priority-based execution:
 
-- rules-fixer (pilot)
+- repo-workflow-fixer (pilot)
 - apps-ayokoding-www-general-fixer
 - apps-ayokoding-www-by-example-fixer
 - apps-ayokoding-www-facts-fixer
@@ -72,7 +72,7 @@ Update all fixer agents to use priority-based execution:
 - apps-ose-www-content-fixer
 - readme-fixer
 - docs-fixer
-- plan-fixer
+- docs-fixer
 - repo-workflow-fixer
 
 ## Phase 5: Validation (Week 4)

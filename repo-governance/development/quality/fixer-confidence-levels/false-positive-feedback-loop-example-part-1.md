@@ -27,7 +27,7 @@ rules-checker flags:
 **Fixer Re-validation:**
 
 ```
-rules-fixer re-validates:
+repo-workflow-fixer re-validates:
   - Extracts frontmatter from each file
   - Searches isolated frontmatter for # symbols
   - Result: 0 actual violations found (all # symbols in markdown body)

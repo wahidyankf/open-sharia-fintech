@@ -1,91 +1,86 @@
 ---
 name: rules-quality-gate
 title: "rules-quality-gate"
-description: "Orchestrated quality gate that checks repository rules, fixes threshold-level findings, and re-validates to a bounded double-clean result."
-when_to_use: "Use after changing conventions/principles/development practices, before major releases, periodically for repo health, or after adding/modifying agents."
-goal: Validate repository consistency across all layers and resolve findings at or above the selected mode threshold
-termination: "Zero threshold-level domain findings on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)"
+description: "Read-only governance gate producing one semantic verdict on a proposed or effective repository rule state, handing every finding to rules-propagation."
+when_to_use: "Use only when the user explicitly names this gate or unambiguously directs its semantic rule audit."
+goal: Produce one read-only semantic verdict for one proposed or effective repository rule state
+termination: "PASS_NO_CHANGE or PASS_EFFECTIVE; every finding hands off to rules-propagation and is reported through its terminal result"
 inputs:
   - name: mode
     type: enum
-    values: [lax, normal, strict, ocd]
-    description: "Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ocd: all levels)"
-    required: false
-    default: strict
-  - name: min-iterations
-    type: number
-    description: Minimum check-fix cycles before allowing zero-finding termination (prevents premature success)
-    required: false
-  - name: max-iterations
-    type: number
-    description: Maximum check-fix cycles to prevent infinite loops
-    required: false
-    default: 7
-  - name: max-concurrency
-    type: number
-    description: "Background agents run concurrently — the N in the N+1 model (1 main thread + N background agents = N+1 total). Raise only when independent work, machine capacity, and budget headroom all allow; lower under budget, runner, or disk pressure. Never self-promoted beyond the declared value."
-    required: false
-    default: 3
-outputs:
-  - name: final-status
-    type: enum
-    values: [pass, partial, fail]
-    description: Final validation status
-  - name: lifecycle-status
-    type: enum
-    values: [verified, pending, not-applicable]
-    description: Lifecycle evidence state, separate from final-status
-  - name: iterations-completed
-    type: number
-    description: Number of check-fix cycles executed
-  - name: final-report
-    type: file
-    pattern: local-tmp/repo-rules/repo-rules__*__*__audit.md
-    description: Final audit report (three top-level sections with UUID chain)
-  - name: execution-scope
+    values: [PROPOSAL, EFFECTIVE]
+    description: Compare a requested outcome against current rules, or evaluate the repository after propagation edits
+    required: true
+  - name: outcome
     type: string
-    description: Scope identifier for UUID chain tracking (default "repo-rules")
-    required: false
+    description: The requested rule outcome and its rationale
+    required: true
+outputs:
+  - name: verdict
+    type: enum
+    values: [PASS_NO_CHANGE, PASS_EFFECTIVE]
+    description: The only terminal results this gate can produce
+  - name: ledger
+    type: file
+    pattern: local-tmp/repo-rules/rules-quality-gate__*__ledger.md
+    description: The frozen finding ledger handed to propagation
 ---
 
-# Repository Rules Validation Workflow
+# Rules Quality Gate
 
-Automatically validates repository consistency across principles, conventions, development
-practices, agent/skill source definitions, and subdirectory README files, then applies fixes
-iteratively until no finding at or above the selected threshold remains. The preferred checker and
-fixer are [rules-checker](../../../.claude/agents/repo/rules-checker.md) and
-[rules-fixer](../../../.claude/agents/repo/rules-fixer.md). Validates source only (`repo-governance/`,
-`.claude/agents/`, `.claude/skills/`, `docs/explanation/` partially) — see the Purpose and Scope
-child below for the full validates/skips breakdown.
+A [governance gate](../meta/workflow-identifier/governance-gate-class.md), not a `*-check-fix`
+workflow. It produces one read-only verdict for one proposed or effective repository rule state,
+never edits a rule, and never starts another gate run.
+[Rules propagation](./rules-propagation.md) is the sole writer and the mandatory continuation for
+any non-passing finding.
 
-**Word-budget semantic-preservation hard gate:** neither checker nor fixer may change rule meaning
-to satisfy a word target or ceiling. Progressive disclosure and indexed splits are valid only when
-every obligation, named audience qualifier, strength, scope, boundary, exception, pass/violation
-condition, and enforcement disposition survives. Generalization, weakening, dense paraphrase, or
-deletion for brevity is a HIGH domain finding even if the deterministic word counter turns green.
+## Authorization
+
+Run only when the user explicitly names this gate or unambiguously directs its semantic audit.
+Never infer authorization from a rule change, a review request, a propagation run, or another
+workflow. Propagation in particular must not call this gate: that edge was removed so the two
+workflows form an acyclic pair.
+
+## Modes, Snapshot, and Ledger
+
+Run in exactly one mode. `PROPOSAL` compares the requested outcome with current effective rules
+before any edit. `EFFECTIVE` evaluates the repository after propagation has written.
+
+Freeze the mode, requested outcome and rationale, intended normative strength, scope and consumers,
+any proposed move or deletion, relevant canonical sources and hierarchy, enforcement route, Git
+revision, and dirty paths. A material change to a frozen input returns `BLOCKED_INPUT_CHANGED` to
+the caller and never restarts the gate.
+
+Audit without editing. Record a finite ledger — `ID`, canonical source, material semantic gap,
+required resolution, evidence, and status `OPEN`, `RESOLVED`, `NOT_APPLICABLE`, or `BLOCKED` — at
+`local-tmp/repo-rules/rules-quality-gate__<slug>__ledger.md`. Admit only a rule violation, or a gap
+making the requested outcome unsafe, contradictory, undiscoverable, or materially ambiguous. There
+is no severity, confidence, or mode threshold. `NOT_APPLICABLE` requires evidence. Preserve the
+snapshot, mode, ledger, evidence, and result across compaction or handoff.
+
+## Procedure
+
+1. Inspect only the affected rule, its points of use, relevant higher authority, and directly
+   overlapping guidance. Never audit unrelated governance.
+2. Complete the semantic audit below without editing.
+3. In `PROPOSAL`, return `PASS_NO_CHANGE` when current effective meaning already satisfies the
+   request. In `EFFECTIVE`, run the shared
+   [deterministic verification](../plan/plan-quality-gate/deterministic-verification.md) and return
+   `PASS_EFFECTIVE` only when the ledger is clear and every gate passes.
+4. Otherwise emit `NEEDS_PROPAGATION` with the frozen ledger, evidence, and any required external
+   decision.
+
+## Terminal Contract
+
+`NEEDS_PROPAGATION` is a non-terminal handoff, never a blocked result. The caller must immediately
+run [rules propagation](./rules-propagation.md) with the frozen outcome, ledger, and evidence
+without another user instruction, and then report only propagation's terminal result. This gate can
+therefore end only in `PASS_NO_CHANGE` or `PASS_EFFECTIVE`. It never repairs a rule, reruns itself,
+or authorizes commit and push. Propagation owns any input, conflict, input-change, or tooling
+blocker it cannot resolve.
 
 ## Contents
 
-- [Lifecycle validation ownership](../meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md) — shared Step 0.
-- [Purpose and Scope](./rules-quality-gate/purpose-and-scope.md) — what's validated vs. skipped.
-- [Execution Mode](./rules-quality-gate/execution-mode.md) — Agent Delegation, invocation.
-- [Step 0.5: Preflight — Overview](./rules-quality-gate/step-0-5-deterministic-preflight.md) — what the audit orchestrator does.
-- [Step 0.5: Preflight — Command](./rules-quality-gate/step-0-5-deterministic-preflight-continued.md) — invocation and exit-code handling.
-- [Step 1: Initial Validation](./rules-quality-gate/step-1-initial-validation.md) — the first checker pass.
-- [Step 2: Check for Findings](./rules-quality-gate/step-2-check-for-findings.md) — threshold counting.
-- [Step 3: Apply Fixes](./rules-quality-gate/step-3-apply-fixes.md) — mode-scoped fixing.
-- [Step 4: Re-validate](./rules-quality-gate/step-4-re-validate.md) — preflight + checker re-run.
-- [Step 5: Iteration Control](./rules-quality-gate/step-5-iteration-control.md) — loop/terminate logic.
-- [Step 6: Finalization](./rules-quality-gate/step-6-finalization.md) — final status reporting.
-- [Termination Criteria](./rules-quality-gate/termination-criteria.md) — pass/partial/fail by mode.
-- [Example Usage](./rules-quality-gate/example-usage.md) — normal/strict/ocd/bounded invocations.
-- [Iteration Example](./rules-quality-gate/iteration-example.md) — a worked four-iteration trace.
-- [Safety Features](./rules-quality-gate/safety-features.md) — loop, convergence, and fix safeguards.
-- [Skip-list Curation Rules](./rules-quality-gate/skip-list-curation-rules.md) — the false-positives file.
-- [Related Workflows](./rules-quality-gate/related-workflows.md) — deployment/release/content gates.
-- [Observability Metrics](./rules-quality-gate/observability-metrics.md) — the nine tracked metrics.
-- [Notes](./rules-quality-gate/notes.md) — automation posture, idempotency, terminology.
-- [Backlog](./rules-quality-gate/backlog.md) — extending scope to all of docs/.
-- [Principles Implemented/Respected](./rules-quality-gate/principles-implemented-respected.md) — traceability.
-- [Conventions Implemented/Respected](./rules-quality-gate/conventions-implemented-respected.md) — traceability.
-- [What Changed](./rules-quality-gate/what-changed.md) — the Step 0.5 changelog.
+- [Sufficiency and Ownership](./rules-quality-gate/sufficiency-and-ownership.md) — what a passing rule asserts, and what this gate must not re-check.
+- [Semantic Audit](./rules-quality-gate/semantic-audit.md) — the nine decisions of step 2.
+- [Execution and Delegation](./rules-quality-gate/execution-and-delegation.md) — the read-only `rules-checker` sweep.

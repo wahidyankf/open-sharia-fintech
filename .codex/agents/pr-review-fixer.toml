@@ -50,7 +50,7 @@ invalidated evidence; current-head CI replaces only predicates it records as cov
 - [PR-Review Maker→Fixer Cycle workflow](../../repo-governance/workflows/pr/pr-review-cycle.md) -
   Orchestrates the strictly sequential N-cycle loop this agent participates in
 - `web-researcher` - Delegate target for external fact verification while triaging a finding
-- `plan-fixer`, `ci-fixer` - Sibling fixer agents in the standard three-stage pattern
+- `docs-fixer`, `ci-fixer` - Sibling fixer agents in the standard three-stage pattern
 
 **Related Conventions**:
 

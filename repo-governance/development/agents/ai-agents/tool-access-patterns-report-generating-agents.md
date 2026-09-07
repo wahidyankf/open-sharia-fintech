@@ -29,7 +29,7 @@ when_to_use: Use when creating or auditing a checker agent's frontmatter tools l
 **Applies to these agent types**:
 
 - All `*-checker` agents (rules-checker, docs-checker, plan-checker, plan-execution-checker, etc.)
-- `rules-fixer` (generates fix reports)
+- `repo-workflow-fixer` (generates fix reports)
 - Any agent creating validation, audit, or verification reports
 
 **MANDATORY REQUIREMENT FOR ALL \*-CHECKER AGENTS**:

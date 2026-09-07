@@ -44,4 +44,4 @@ Concretely:
 | Open-ended "current best practice" question                                            | **Delegate to `web-researcher`** |
 | Library API surface unfamiliar to the maker                                            | **Delegate to `web-researcher`** |
 
-`plan-fixer` retains Exception 2 from the universal convention (in-context only; same-context re-validation is required for fixer atomicity). All other plan agents follow the lower threshold above.
+The `plan-quality-gate` repair pass retains Exception 2 from the universal convention (in-context only; same-context re-validation is required for repair atomicity). All other plan agents follow the lower threshold above.

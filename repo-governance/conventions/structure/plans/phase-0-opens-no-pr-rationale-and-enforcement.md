@@ -1,6 +1,6 @@
 ---
 title: "Phase 0 Opens No PR — Baseline Artifacts, Rationale, and Enforcement"
-description: Explains where Phase 0's evidence artifacts land, why opening a Phase 0 PR is prohibited, and how plan-maker, plan-checker, and plan-fixer enforce it.
+description: Explains where Phase 0's evidence artifacts land, why opening a Phase 0 PR is prohibited, and how plan-maker, plan-checker, and plan-quality-gate enforce it.
 category: explanation
 subcategory: conventions
 tags:
@@ -29,7 +29,7 @@ conflation the [Delivery Mode](./delivery-mode-the-four-modes.md#delivery-mode) 
 
 **Enforcement**: `plan-maker` never emits a PR-creation, optional semantic-review, PR-CI, or merge
 step inside Phase 0. `plan-checker` flags any such step as **HIGH** regardless of delivery mode.
-`plan-fixer` removes the offending step and folds any Phase 0 evidence artifact into the first
+The gate's repair pass removes the offending step and folds any Phase 0 evidence artifact into the first
 change-producing unit's mode-specific integration. `plan-execution-checker` flags a PR actually
 opened for Phase 0 as **HIGH**.
 `repo-setup-manager` carries no push or PR step.

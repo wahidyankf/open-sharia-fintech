@@ -26,7 +26,7 @@ together, and require each resulting `main` state to be safe to deploy to produc
 For incomplete behaviour, record a temporary production-disabled flag, tests for both paths, and
 rollout, rollback, and removal.
 
-**`plan-checker` flags violations as HIGH severity. `plan-fixer` rewrites offending items with maximum detail.**
+**`plan-checker` admits violations to the ledger. The `plan-quality-gate` repair pass rewrites offending items with maximum detail.**
 
 A finite cross-repository lifecycle checkbox may instead use the canonical same-document controlled
 runbook-reference exception when it meets every condition in the

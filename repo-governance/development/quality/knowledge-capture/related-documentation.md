@@ -35,4 +35,3 @@ when_to_use: "Use for a related plan or safety-gate convention."
 - [plan-checker](../../../../.claude/agents/plan/plan-checker.md) — flags silent absence of the phase.
 - [plan-execution-checker](../../../../.claude/agents/plan/plan-execution-checker.md) — blocks archival
   until routing and both safety gates are complete.
-- [plan-fixer](../../../../.claude/agents/plan/plan-fixer.md) — scaffolds a missing phase.

@@ -20,7 +20,7 @@ when_to_use: "Use to locate the automated enforcement."
 
 - **`web-researcher`** — default research primitive for external claims.
 - **`plan-checker`** — Step 5f hallucination scan against this convention.
-- **`plan-fixer`** — re-verification before applying replacement content.
+- **`plan-quality-gate`** — re-verification before its repair pass applies replacement content.
 - **`plan-execution-checker`** — post-execution claim verification.
 - **`plan-quality-gate`** — workflow gate that cannot pass until zero anti-pattern violations remain.
 - **`plan-execution`** — workflow Step 2 per-item verification before delegation.
@@ -37,7 +37,7 @@ when_to_use: "Use to locate the automated enforcement."
 
 **Agents:**
 
-- [`plan-maker`](../../../../.claude/agents/plan/plan-maker.md), [`plan-checker`](../../../../.claude/agents/plan/plan-checker.md), [`plan-fixer`](../../../../.claude/agents/plan/plan-fixer.md), [`plan-execution-checker`](../../../../.claude/agents/plan/plan-execution-checker.md) — the four agents this convention governs.
+- [`plan-maker`](../../../../.claude/agents/plan/plan-maker.md), [`plan-checker`](../../../../.claude/agents/plan/plan-checker.md), [`plan-execution-checker`](../../../../.claude/agents/plan/plan-execution-checker.md) — the three agents this convention governs.
 - [`web-researcher`](../../../../.claude/agents/web/web-researcher.md) — research primitive.
 
 **Workflows:**

@@ -30,7 +30,7 @@ To validate an agent complies with this convention:
 
 - **`web-researcher`** — the default research primitive. Read-only delegated agent that returns cited, confidence-tagged findings without bloating the caller's context.
 - **`rules-checker`** — validates agent compliance with this convention as part of routine governance audits.
-- **`rules-fixer`** — applies fixes to non-compliant agents (adds Web Research Delegation block, cites convention).
+- **`rules-propagation`** — applies fixes to non-compliant agents (adds Web Research Delegation block, cites convention).
 - **Skill: `docs-validating-factual-accuracy`** — the factual-validation methodology that calls this convention as the authoritative source of the delegation rule.
 
 ## References
@@ -46,7 +46,7 @@ To validate an agent complies with this convention:
 - [`web-researcher`](../../../../.claude/agents/web/web-researcher.md) — the default research primitive
 - `docs-checker`, `docs-tutorial-checker`, `apps-ayokoding-www-facts-checker`, `plan-checker` — validation agents that delegate to `web-researcher` above the threshold
 - `docs-maker`, `docs-tutorial-maker`, `plan-maker` — authoring agents that commission research before writing
-- `docs-fixer`, `apps-ayokoding-www-facts-fixer`, `plan-fixer` — fixer agents invoking Exception 2 (same-context re-validation)
+- `docs-fixer`, `apps-ayokoding-www-facts-fixer` — fixer agents invoking Exception 2 (same-context re-validation)
 - `docs-link-checker`, `apps-ayokoding-www-link-checker`, `apps-ayokoding-www-link-fixer` — link-reachability agents invoking Exception 3
 
 **Agent skills:**

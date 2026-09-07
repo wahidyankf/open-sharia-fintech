@@ -28,7 +28,7 @@ when_to_use: "Use when deciding whether a finding is MEDIUM_CONFIDENCE."
 
 **Examples Across Domains:**
 
-**rules-fixer:**
+**repo-workflow-fixer:**
 
 - Content duplication between AGENTS.md and convention file (context differs, may be intentional)
 - Link target unclear (file missing, but can't determine correct target automatically)
@@ -72,7 +72,7 @@ when_to_use: "Use when deciding whether a finding is MEDIUM_CONFIDENCE."
 - Narrative flow issues or writing style critiques (subjective quality)
 - Terminology inconsistency where both terms are technically correct
 
-**plan-fixer:**
+**docs-fixer:**
 
 - Scope decisions ("plan scope too broad" - requires business judgment)
 - Technology choices ("should use PostgreSQL instead of MongoDB" - architectural expertise)

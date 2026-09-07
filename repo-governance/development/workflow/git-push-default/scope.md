@@ -19,7 +19,7 @@ when_to_use: Use when determining whether a git-push question is governed by thi
 
 - Default push and PR-opening behaviour for every delivery mode.
 - Linear history maintenance before every push, whether to a PR branch or to `origin main`.
-- Agent behaviour in all plan contexts: `plan-maker`, `plan-checker`, `plan-fixer`, and the
+- Agent behaviour in all plan contexts: `plan-maker`, `plan-checker`, `plan-quality-gate`, and the
   plan-execution workflow.
 - Delivery checklist authoring — plan documents must declare a `## Delivery Mode` field only when
   overriding the default, and must tag git-mechanical steps correctly for the resolved mode.

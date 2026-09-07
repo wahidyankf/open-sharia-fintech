@@ -1,30 +1,11 @@
 ---
-title: "Repository Rules Validation Workflow"
-description: "Orchestrated quality gate that fixes findings at the selected threshold and re-validates to a bounded double-clean result."
-when_to_use: "Read this index to find the right Repository Rules Validation Workflow child document."
+title: "Rules Quality Gate"
+description: "Child documents of the rules-quality-gate governance gate"
+when_to_use: "Read this index to find the right rules-quality-gate child document."
 ---
 
-# Repository Rules Validation Workflow
+# Rules Quality Gate
 
-- [Purpose and Scope](./purpose-and-scope.md) — What this workflow validates (repo-governance/, the primary binding directory agent and skill sources, docs/explanation/ partially) versus what it skips, and why. Use when checking whether a specific directory or file family is in scope for this quality gate, or is delegated to a specialized agent family instead.
-- [Execution Mode](./execution-mode.md) — How to invoke rules-checker and -fixer via Agent Delegation, the Manual Orchestration fallback, and the six-step execution summary. Use when starting a repository rules quality gate run and deciding preferred vs. fallback execution mode.
-- [Step 0.5: Deterministic Preflight — Overview](./step-0-5-deterministic-preflight.md) — What the rhino-cli repo-governance audit orchestrator does (four fixed-order categories), and why the step is numbered 0.5 instead of renumbering Steps 1-6. Use when understanding what the deterministic preflight covers before invoking it.
-- [Step 0.5: Deterministic Preflight — Command and Exit Handling](./step-0-5-deterministic-preflight-continued.md) — The preflight command, the RHINO_AUDIT_NOW hash-reuse recommendation, exit-code handling, and the --skip/--exclude operator hatch. Use when running the preflight command, debugging its exit code, or needing to bypass a category.
-- [Step 1: Initial Validation](./step-1-initial-validation.md) — Runs the repository-wide consistency checker, its UUID chain tracking, and the graceful-degradation rule when the preflight report is unavailable. Use when running the first checker pass of a repo-rules quality-gate iteration.
-- [Step 2: Check for Findings](./step-2-check-for-findings.md) — Counts retained deterministic and AI-only domain findings without mixing lifecycle evidence.
-- [Step 3: Apply Fixes](./step-3-apply-fixes.md) — Invokes rules-fixer with mode-scoped fix levels, and notes that below-threshold findings remain untouched. Use when applying validated fixes from an audit report during a repo-rules quality-gate iteration.
-- [Step 4: Re-validate](./step-4-re-validate.md) — Re-runs the deterministic preflight and the AI checker, reusing the deterministic findings section when the preflight JSON is unchanged. Use when re-checking after a fix cycle in a repo-rules quality-gate iteration.
-- [Step 5: Iteration Control](./step-5-iteration-control.md) — The consecutive_zero_count logic deciding loop-back-to-fix, loop-back-to-re-validate, or success/partial termination. Use when implementing or debugging the loop-continuation decision after a re-validation check.
-- [Step 6: Finalization](./step-6-finalization.md) — Reports the final status (pass/partial/fail), iteration count, and final report. Use when determining the workflow's terminal status after the iteration loop exits.
-- [Termination Criteria](./termination-criteria.md) — Pass/partial/fail conditions by mode level, and how deterministic preflight findings relate to the two-consecutive-zero requirement. Use when checking whether a completed run's status is correctly determined.
-- [Example Usage](./example-usage.md) — Four invocation examples — normal, strict, ocd modes, and explicit iteration bounds. Use when looking for a concrete command to invoke this workflow at a specific mode or iteration setting.
-- [Iteration Example](./iteration-example.md) — A worked trace combining retained domain checks with separate lifecycle evidence.
-- [Safety Features](./safety-features.md) — Infinite-loop prevention, convergence safeguards (preflight hash reuse, skip-list, scoped re-validation), false-positive protection, and error recovery. Use when auditing this workflow's guardrails against runaway iteration or wasted AI-token spend.
-- [Skip-list Curation Rules](./skip-list-curation-rules.md) — How local-tmp/.known-false-positives.md is maintained — who owns it, when to add an entry vs. fix at source, the per-entry schema, and triage priority. Use when deciding whether a preflight finding should be fixed at source or added to the skip-list.
-- [Related Workflows](./related-workflows.md) — The three kinds of workflows this quality gate composes with — deployment, release, and content-creation workflows. Use when looking for what to run before or after this workflow in a larger orchestration.
-- [Observability Metrics](./observability-metrics.md) — The nine metrics to track across executions — preflight latency, AI-vs-deterministic token ratios, convergence, success rate, and the target DETERMINISTIC ratio. Use when instrumenting or reviewing this workflow's execution history for efficiency or drift.
-- [Notes](./notes.md) — Operational notes — fully automated with no human checkpoints, idempotency caveats, conservative fixing, observability, and the "agents" terminology clarification. Use when clarifying this workflow's automation posture or reproducibility guarantees.
-- [Backlog](./backlog.md) — One open extension item — widening rules-checker scope to all of docs/. Use when scoping future work to consolidate the docs/ agent family into this gate.
-- [Principles Implemented/Respected](./principles-implemented-respected.md) — Traces this workflow's design back to Explicit Over Implicit, Automation Over Manual, Simplicity Over Complexity, Accessibility First, Progressive Disclosure, and No Time Estimates. Use when auditing this workflow for traceability back to foundational principles.
-- [Conventions Implemented/Respected](./conventions-implemented-respected.md) — Traces this workflow's design back to the Deterministic vs AI Validation Split, File Naming, Linking, and Content Quality conventions. Use when auditing this workflow for traceability back to other repo-governance conventions.
-- [What Changed](./what-changed.md) — A changelog of the Step 0.5 preflight addition and the two archived plans that hardened and then resynced it. Use when tracing why the deterministic preflight step exists or when the rhino-cli category list was last resynced.
+- [Sufficiency and Ownership](./sufficiency-and-ownership.md) — What a passing rule asserts and does not assert, how `PROPOSAL` and `EFFECTIVE` differ on a not-yet-built deterministic check, and the machine-decidable checks this gate must never reproduce. Use when deciding whether a rule gap is admissible to the ledger.
+- [Semantic Audit](./semantic-audit.md) — The nine decisions the gate makes about an affected rule: concreteness, normative strength, explicit scope, correct governance level, single canonical source, truthful enforcement, compaction survival, actionability, and move-or-deletion integrity. Use at step 2 of the procedure.
+- [Execution and Delegation](./execution-and-delegation.md) — How the read-only `rules-checker` sweep is delegated for context isolation, why `rules-fixer` was retired in favour of propagation as sole writer, and where repository-wide consistency sweeps now live. Use when starting a run and deciding what the subagent does.

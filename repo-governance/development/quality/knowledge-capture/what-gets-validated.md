@@ -29,7 +29,7 @@ are:
   safety gates were applied; verifies no code born from a learning landed inline; and rejects any
   Knowledge Capture write under `plans/backlog/`. Only the idea-promotion workflow owns the
   transition from a ripe idea to a formal backlog plan.
-- **`plan-fixer`**: scaffolds a missing Knowledge Capture phase and `learnings.md` file into a plan
+- **`plan-quality-gate`**: scaffolds a missing Knowledge Capture phase and `learnings.md` file into a plan during its repair pass
   that lacks them.
 - **`plan-maker`** and the plan-creating skill: emit the Knowledge Capture phase and the
   `learnings.md` scaffold into every new substantive plan by default.

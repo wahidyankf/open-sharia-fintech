@@ -42,7 +42,7 @@ The funnel produces four kinds of artefact, all visible in the plan (`prd.md` + 
   desktop appearance alone. A desktop-only design is not a valid finalist.
 
 `plan-maker` requires these artefacts; `plan-checker` flags any missing artefact at HIGH criticality
-(sibling to the specs/Gherkin Step 5j); `plan-fixer` scaffolds missing funnel sections. A UI-bearing
+(sibling to the specs/Gherkin Step 5j); the gate's repair pass scaffolds missing funnel sections. A UI-bearing
 plan never passes quality gates without its design funnel.
 
 See [ui-design-funnel-grilling-and-learning-plans.md](ui-design-funnel-grilling-and-learning-plans.md) for the grilling questions.

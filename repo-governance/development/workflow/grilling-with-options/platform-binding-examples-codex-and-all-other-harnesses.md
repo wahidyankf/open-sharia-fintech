@@ -31,7 +31,7 @@ required.
 
 The root orchestrator MUST own every grill and invoke `request_user_input` directly. After the user
 resolves the questions, it constructs and passes the canonical Resolved User Decisions Envelope
-verbatim to any delegated `plan-maker` or `plan-fixer`; it MUST NOT delegate the user interaction
+verbatim to any delegated `plan-maker` or `plan-checker`; it MUST NOT delegate the user interaction
 itself.
 
 One `request_user_input` call carries 1–3 tightly coupled question objects. Each object MUST use:

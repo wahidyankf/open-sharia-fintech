@@ -3,12 +3,6 @@ title: "Web UX Test-Fixing Planning — Inputs Reference (Part 2) and Outputs"
 description: "The full machine-readable parameter contract for mode, max-concurrency, and push-target, plus every declared output (plan-path, findings counts, final-status)."
 when_to_use: "Use when you need the exact type/required/default contract for these three inputs or any output, rather than the prose summary in Inputs at a Glance."
 inputs:
-  - name: mode
-    type: enum
-    values: [lax, normal, strict, ocd]
-    description: "Quality threshold for the nested plan-quality-gate. Default: strict."
-    required: false
-    default: strict
   - name: max-concurrency
     type: number
     description: >

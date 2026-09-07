@@ -21,7 +21,7 @@ Invoke the [plan-planning workflow](../plan-planning.md) with:
   - this **Definition of Done** for the plan it must author: the problem, scope, and open questions
     are carried into `brd.md` / `prd.md`; the deep prior-art findings and material alternatives are
     folded in; the plan uses the fixed mature core and one reader-led technical shape; it passes
-    `plan-quality-gate` at strict mode.
+    `plan-quality-gate`, which takes no mode.
 
 Because `plan-planning` runs its own grill + research + `plan-maker` + `plan-quality-gate` + push
 inside a dedicated worktree, this phase yields a strict-gate-passing backlog plan on the confirmed
