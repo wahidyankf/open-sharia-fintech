@@ -1,12 +1,12 @@
 ---
 title: "Scope Boundary and the Non-Writing Invariant"
-description: The three admitted candidate classes, the reductions explicitly refused, and why this workflow hands every edit to rules-propagation instead of writing.
+description: The four admitted candidate classes, the reductions explicitly refused, and why this workflow hands every edit to rules-propagation instead of writing.
 when_to_use: Use when checking whether a proposed reduction is in scope, or why this workflow does not write.
 ---
 
 # Scope Boundary and the Non-Writing Invariant
 
-## The Three Admitted Classes
+## The Four Admitted Classes
 
 A candidate is admissible only as one of these. The class determines its semantic risk, and
 therefore its ranking and its approval path.
@@ -19,24 +19,20 @@ therefore its ranking and its approval path.
    keep rationale. The reduction keeps the canonical home and replaces the rest with `See` links.
    Risk is **low but non-zero**: the link target must already cover every case the removed text
    covered, per forbidden anti-fix 4.
-3. **Retirement** — a rule whose subject no longer exists, that a later rule supersedes in fact but
+3. **Non-normative scaffolding** — prose stating no obligation: meta-narration announcing what a
+   document covers, a preamble restating its own heading, a transition adding no condition. The
+   class **deletes only**. It never rewrites a sentence, only removes one carrying nothing. Risk is
+   **low and mechanically bounded** — text carrying no obligation must leave Step 7's extracted
+   inventory byte-identical, so that existing diff is the admission test rather than a second
+   judgement. Opt-in via `classes` until a run demonstrates the extractor's recall.
+4. **Retirement** — a rule whose subject no longer exists, that a later rule supersedes in fact but
    not in text, or that no surface reaches. This is the only class that removes an obligation, so
    it is opt-in via the `classes` input and gated per item at Step 5.
 
 ## Refused Reductions
 
-These are out of scope permanently, not merely deprioritized:
-
-- **Rewriting prose to save words.** Forbidden anti-fix 2. Grooming never paraphrases, tightens, or
-  densifies a rule's wording.
-- **Weakening a qualifier.** Propagation's semantic-preservation hard gate binds every hand-off:
-  audience qualifiers, scope boundaries, exceptions, pass conditions, and violation conditions
-  survive verbatim enough to remain unambiguous.
-- **Trimming a safety guardrail.** Secrets and `.env` rules, the Git Identity Guardrail, and
-  environment-branch rules are never candidates in any class.
-- **Raising a word budget.** Never, for any reason, in any class.
-- **Deleting a rule to make room.** Forbidden anti-fix 1. Retirement removes a rule that no longer
-  binds; it is never a capacity measure.
+Five reductions are out of scope permanently, not merely deprioritized — see
+[Refused Reductions](./refused-reductions.md).
 
 ## The Non-Writing Invariant
 

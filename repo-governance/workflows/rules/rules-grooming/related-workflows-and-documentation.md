@@ -50,6 +50,6 @@ when_to_use: Use when navigating from this workflow to a composed workflow or a 
 
 ## Agents
 
-- `rules-checker` — runs the obligation inventory at Steps 2 and 7 and all three discovery sweeps
+- `rules-checker` — runs the obligation inventory at Steps 2 and 7 and all four discovery sweeps
   at Step 3. Its existing agent-to-agent and Skill-to-Skill duplication detection is the closest
   precedent for the duplication sweep, extended here to governance prose.

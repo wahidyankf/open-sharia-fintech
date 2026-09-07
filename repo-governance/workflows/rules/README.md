@@ -38,11 +38,12 @@ responsibilities.
 
 - [rules-quality-gate](./rules-quality-gate.md) — Read-only governance gate producing one semantic
   verdict on a proposed or effective rule state, in `PROPOSAL` or `EFFECTIVE` mode. It never writes:
-  every finding hands off to rules-propagation, the sole writer. Use only when explicitly named.
+  every finding hands off to rules-propagation, the sole writer. Use when explicitly named, or when
+  rules-grooming reaches its Step 8.
 - [rules-grooming](./rules-grooming.md) — Recurring corpus-wide sweep that removes volume
-  carrying no obligation — fragmentation overhead, cross-surface duplication, dead rules — and
-  hands every reduction to rules-propagation to write. Never writes, never rewords a rule. Use
-  when a recurrence trigger fires, not to fix one file's word budget.
+  carrying no obligation — fragmentation overhead, cross-surface duplication, non-normative
+  scaffolding, dead rules — and hands every reduction to rules-propagation to write. Never writes,
+  never rewords a rule. Use when a recurrence trigger fires, not to fix one file's word budget.
 - [rules-propagation](./rules-propagation.md) — Places newly-stated rules on the correct surface — instruction surface first, governance layers below — de-conflicting, deduplicating, and arming enforcement. Use when a decided rule must be written into the repository, or an existing rule superseded.
 
 ## Related Documentation

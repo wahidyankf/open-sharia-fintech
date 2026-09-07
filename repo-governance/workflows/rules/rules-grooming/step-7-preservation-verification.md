@@ -34,6 +34,12 @@ update read as an obligation loss. A run that skipped this exclusion reported 12
 against 0 real ones. An obligation found _only_ in an annotation and nowhere in its target is a
 governance defect in that pair, reported as a finding rather than absorbed into the count.
 
+**For scaffolding, this diff is also the admission test.** Text carrying no obligation cannot change
+the inventory, so a scaffolding deletion that alters it by one entry was misclassified and is
+rejected at [Step 3d](./scaffolding-admission.md) rather than debated here. The class adds no new
+verification instrument — it reuses this one at candidate scale, which is the whole reason it can be
+admitted without relaxing anything above.
+
 **Two independent proofs, not one.** For a verbatim-move reduction, also check line-level
 containment: every non-frontmatter line of each merged shard must be present in its parent, modulo
 the heading demotion and link rewriting Step 6 performs. Containment catches a truncated move that

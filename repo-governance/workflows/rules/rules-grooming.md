@@ -1,7 +1,7 @@
 ---
 name: rules-grooming
 title: "rules-grooming"
-description: "Sweeps the repo-rules corpus for volume that carries no obligation — fragmentation overhead, cross-surface duplication, dead rules — and hands every reduction to rules-propagation."
+description: "Sweeps the repo-rules corpus for volume that carries no obligation — fragmentation overhead, cross-surface duplication, non-normative scaffolding, dead rules — and hands every reduction to rules-propagation."
 when_to_use: "Use when the rule corpus is due a recurring volume sweep, never as remediation for one file failing its word budget."
 goal: >
   Reduce the size of the repository's rule corpus without reducing its normative content, by
@@ -23,7 +23,7 @@ inputs:
     default: "repo-rules corpus"
   - name: classes
     type: enum
-    values: [fragmentation, duplication, retirement]
+    values: [fragmentation, duplication, scaffolding, retirement]
     description: >
       Which candidate classes this run considers. Multi-valued. Omitting a class suppresses its
       discovery sweep entirely rather than discovering and skipping it.
@@ -60,18 +60,21 @@ frontmatter, a `Contents` line, a README entry, and cross-links; the same obliga
 on a second surface; a rule outlives its subject. None of that is obligation — it is
 **representation**, and it is what this workflow removes.
 
-**Reduction target.** Volume that carries no obligation. Three candidate classes only:
-fragmentation overhead, cross-surface duplication, and dead rules. Nothing else is admitted.
+**Reduction target.** Volume that carries no obligation. Four candidate classes only:
+fragmentation overhead, cross-surface duplication, non-normative scaffolding, and dead rules.
+Nothing else is admitted.
 
 **Non-writing invariant.** [rules-propagation](./rules-propagation.md) is the sole writer of every
 rule edit. This workflow discovers, ranks, and hands off; it never edits a rule surface, which
 leaves conflict scanning, placement, and enforcement disposition with the workflow that owns them.
 
-**This is not prose compression.** Rewriting wording to save words is
-[forbidden anti-fix 2](../../conventions/structure/governance-word-budget-remediation.md) and
-violates propagation's semantic-preservation hard gate. Grooming never paraphrases a rule, never
-generalizes a qualifier, and never trims a safety guardrail. A file over its word budget is
-remediated by progressive disclosure, not by scheduling a grooming run.
+**This is not prose compression.** Rewriting a rule's wording to save words violates propagation's
+[semantic-preservation hard gate](./rules-propagation.md), which forbids generalizing, weakening,
+compressing away, or paraphrasing a material qualifier; the
+[word-budget convention](../../conventions/structure/governance-word-budget-remediation.md)
+separately forbids ever compressing a safety guardrail. Grooming deletes text that carries no
+obligation; it never rewrites text that does. A file over its word budget is remediated by
+progressive disclosure, not by scheduling a grooming run.
 
 Composed: `rules-checker` discovers and verifies, propagation writes at Step 6, and
 [rules-quality-gate](./rules-quality-gate.md) returns the verdict at Step 8.
@@ -79,16 +82,18 @@ Composed: `rules-checker` discovers and verifies, propagation writes at Step 6, 
 ## Contents
 
 - [Purpose and When to Use](./rules-grooming/purpose-and-when-to-use.md) — what it reduces; the recurrence trigger.
-- [Scope Boundary and the Non-Writing Invariant](./rules-grooming/scope-boundary-and-non-writing-invariant.md) — the three classes; why it never writes.
+- [Scope Boundary and the Non-Writing Invariant](./rules-grooming/scope-boundary-and-non-writing-invariant.md) — the four classes; why it never writes.
 - [Steps 0-2](./rules-grooming/steps-0-2-authorization-census-and-inventory.md) — authorization, corpus census, obligation inventory.
-- [Steps 3-4](./rules-grooming/steps-3-4-candidate-discovery-and-ranking.md) — the three discovery sweeps; yield over risk.
+- [Steps 3-4](./rules-grooming/steps-3-4-candidate-discovery-and-ranking.md) — the four discovery sweeps; yield over risk.
 - [Steps 5-6](./rules-grooming/steps-5-6-checkpoint-and-handoff.md) — human checkpoint; propagation hand-off.
 - [Reabsorption Mechanics](./rules-grooming/reabsorption-mechanics.md) — the packing limits; what a merge must carry.
+- [Scaffolding Admission](./rules-grooming/scaffolding-admission.md) — the two tests a deletion must pass.
 - [Step 7](./rules-grooming/step-7-preservation-verification.md) — the preservation diff.
 - [Step 8](./rules-grooming/step-8-governance-verdict.md) — the mandatory governance verdict.
 - [Step 9](./rules-grooming/step-9-record-and-recurrence.md) — the record; the re-run condition.
 - [Success Criteria](./rules-grooming/success-criteria.md) — Gherkin, run lifecycle.
 - [Success Criteria — Candidate Classes](./rules-grooming/success-criteria-candidate-classes.md) — Gherkin, per class.
-- [Grooming Log](./rules-grooming/grooming-log.md) — the durable run record the trigger reads.
+- [Refused Reductions](./rules-grooming/refused-reductions.md) — the five permanent exclusions.
+- [Success Criteria — Scaffolding and Protection](./rules-grooming/success-criteria-scaffolding-and-protection.md) — Gherkin, scaffolding and entry points.
 - [Termination Criteria](./rules-grooming/termination-criteria.md) — no-op, groomed, halted, partial.
 - [Related Workflows and Documentation](./rules-grooming/related-workflows-and-documentation.md) — what runs before and after it.

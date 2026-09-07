@@ -6,9 +6,14 @@ when_to_use: Use when recording a completed grooming run and arming its recurren
 
 # Step 9 — Record and Recurrence
 
-**Procedure**: Append the run record to the [grooming log](./grooming-log.md), then re-evaluate the
-recurrence trigger against the post-run census so the next sweep's due date is set by measurement
-rather than by assumption.
+**Procedure**: Write the run record into the delivery PR's body, then re-evaluate the recurrence
+trigger against the post-run census so the next sweep's due date is set by measurement rather than
+by assumption.
+
+**The record lives in the PR, not in a tracked file.** A run log binds nothing, and this tree binds;
+the commit trail already establishes when a run happened, so a tracked log would only be a second
+source of truth free to drift from it. [Step 1](./purpose-and-when-to-use.md) reads git for the same
+reason.
 
 The record carries: run date, `scope`, `classes`, the census before and after, the metrics delta
 (file count, total lines, metadata ratio), per-class item counts by disposition, every retirement
@@ -21,7 +26,7 @@ surface the run did not touch — is recorded here as next-sweep input, which is
 keeps that bound from being a quiet drop.
 
 - **Depends on**: Step 8.
-- **Output**: Log entry, including the `> Last groomed: YYYY-MM-DD` line the trigger reads.
+- **Output**: The run record in the delivery PR body; the commit date is what the trigger reads.
 - **Success criteria**: The log entry is written even when the run ended `partial` or `halted`. A
   run that leaves no record is indistinguishable from one that never happened, and the next sweep
   would then repeat its rejected candidates and re-ask its answered questions.
@@ -29,5 +34,5 @@ keeps that bound from being a quiet drop.
 ## Related
 
 - [Step 7](./step-7-preservation-verification.md) and [Step 8](./step-8-governance-verdict.md) — the verifications this records.
-- [Grooming Log](./grooming-log.md) — where the record lands.
+- [Purpose and When to Use](./purpose-and-when-to-use.md) — the git-derived recurrence trigger.
 - [Termination Criteria](./termination-criteria.md) — the states this record reports.

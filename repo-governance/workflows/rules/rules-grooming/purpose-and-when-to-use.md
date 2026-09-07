@@ -35,15 +35,21 @@ from the census at Step 1.
 - **Metadata ratio** — YAML frontmatter lines divided by total corpus lines reaches **25%**. The
   measurement taken on 2026-09-07 was 23.7% (30,397 of 128,383 lines), which is the baseline this
   threshold sits just above.
-- **Corpus growth** — file count has risen by **15%** or more since the last recorded run.
-- **Elapsed time** — **180 days** since the last recorded run, tracked by the log line Step 8
-  appends.
+- **Corpus growth** — file count has risen by **15%** or more across the trailing **180 days**.
+- **Elapsed time** — **180 days** since the last grooming delivery landed on `main`.
 
-**First run.** With no prior run recorded, the growth and elapsed conditions have no baseline to
-measure against. The elapsed condition is then satisfied by definition, and the run proceeds — its
-census becomes the baseline every later run compares to. Without this clause the two
-baseline-dependent conditions can never fire and the metadata-ratio condition alone gates the
-workflow, which would leave it unrunnable at any ratio below 25%.
+**The baseline is git, not a tracked file.** Both conditions above are measured by re-running the
+Step 1 census against a past revision and comparing — `git log` supplies the dates, and any commit
+supplies the corpus it contained. No state file records them.
+
+That is deliberate. A run log binds nothing, and `repo-governance/` is the tree that binds; run
+history is what the PR and the commit trail already are. A tracked log would also be a second source
+of truth about when a run happened, free to drift from the history that actually establishes it.
+
+**First run.** With no prior grooming delivery in the history, the elapsed condition is satisfied by
+definition and the run proceeds. Without this clause the two history-dependent conditions can never
+fire and the metadata-ratio condition alone gates the workflow, leaving it unrunnable at any ratio
+below 25%.
 
 Whichever fires first is the trigger. It is a recurring commitment against the corpus, not a
 one-time cleanup wearing a recurring name. A maintainer, or an agent acting on their behalf,
@@ -61,4 +67,4 @@ invokes it explicitly; it never self-triggers, and no other workflow may start i
   [rules-quality-gate](../rules-quality-gate.md), which grooming never invokes and is never invoked
   by.
 - **The corpus is merely long.** Length alone is not a finding. Every candidate must belong to one
-  of the three classes and carry a measured yield.
+  of the four classes and carry a measured yield.

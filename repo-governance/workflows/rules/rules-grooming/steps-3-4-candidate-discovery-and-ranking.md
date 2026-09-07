@@ -1,6 +1,6 @@
 ---
 title: "Steps 3-4 — Candidate Discovery and Ranking"
-description: The three class-scoped discovery sweeps and the yield-over-risk ordering that decides which candidates reach the checkpoint first.
+description: The four class-scoped discovery sweeps and the yield-over-risk ordering that decides which candidates reach the checkpoint first.
 when_to_use: Use when running a grooming sweep's discovery pass, or ordering the resulting candidates.
 ---
 
@@ -47,6 +47,13 @@ supersedes it in fact while leaving its text standing; or no surface reaches it 
 it. Absence of inbound links alone is insufficient — a rule may bind through a gate rather than a
 link, and the sweep must check both.
 
+### 3d. Scaffolding (Agent: `rules-checker`)
+
+Admit a sentence only when it passes **both** the form test and the inventory test in
+[Scaffolding Admission](./scaffolding-admission.md). Neither alone is sufficient, and modal absence
+is not one of them. Yield is the removed lines. A file whose scaffolding is its only content is a
+retirement candidate — route it to 3c rather than emptying it here.
+
 - **Output**: Unranked candidate set.
 - **On failure**: A sweep that cannot complete is reported and its class excluded; the run
   continues at `partial`.
@@ -56,8 +63,8 @@ link, and the sweep must check both.
 **Procedure**: Order candidates by measured yield divided by semantic risk, then group by subject
 so that Step 6 can batch a subject's items into one propagation delivery.
 
-Risk is set by class, not judged per item: fragmentation is zero, duplication is low, retirement is
-high. The ordering that falls out is deliberate — the corpus gets its largest, safest reductions
+Risk is set by class, not judged per item: fragmentation is zero, duplication and scaffolding are
+low, retirement is high. The ordering that falls out is deliberate — the corpus gets its largest, safest reductions
 first, and the run can be stopped after any batch with the remaining work still coherent.
 
 Drop any candidate whose yield is under the noise floor: a reduction not worth a propagation

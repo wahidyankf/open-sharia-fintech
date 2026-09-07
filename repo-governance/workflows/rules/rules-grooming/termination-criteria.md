@@ -12,7 +12,7 @@ unaccounted for.
 ## No-op
 
 Step 1's census fired no recurrence trigger, or every discovered candidate fell under the yield
-noise floor. The log records the census and the three trigger values. No discovery sweep runs in
+noise floor. The PR records the census and the three trigger values. No discovery sweep runs in
 the first case, and no hand-off occurs in either.
 
 Unlike a `*-check-fix` workflow, grooming has no zero-findings convergence to reach and never
@@ -30,7 +30,7 @@ All of:
   retirements, with every survivor unchanged and reachable.
 - The rules quality gate returned `PASS_EFFECTIVE`, or returned `NEEDS_PROPAGATION` and the
   propagation it handed off to landed.
-- The log entry is written, including the metrics delta, the gate verdict, every finding bounded
+- The PR record is written, including the metrics delta, the gate verdict, every finding bounded
   out to the next sweep, and the next trigger evaluation.
 
 ## Halted
@@ -46,7 +46,7 @@ An authorization failure at Step 0 is not a halt — the run never started.
 
 Some subject groups landed and others did not: a propagation run halted on a conflict, a class
 sweep could not complete, the census could not measure every path, or the checkpoint went
-unanswered. The landed groups stay landed; the rest are named in the log with their blockers.
+unanswered. The landed groups stay landed; the rest are named in the PR with their blockers.
 
 Partial is a legitimate outcome. The ranking at Step 4 is built so that stopping after any batch
 leaves the corpus coherent.
