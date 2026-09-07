@@ -340,7 +340,7 @@ let private validateGovernanceSchema (path: string) (fm: IDictionary<obj, obj>) 
     // YAML permits) is reported rather than silently admitted.
     let disallowedFindings =
         fm.Keys
-        |> Seq.map (fun k -> if isNull k then "" else string k)
+        |> Seq.map (fun k -> if isNull k then "" else string<obj> k)
         |> Seq.filter (fun k -> not (Set.contains k governanceAllowedKeys))
         |> Seq.sort
         |> Seq.map (fun k ->
