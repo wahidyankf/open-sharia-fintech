@@ -1,0 +1,518 @@
+# Technical Documentation — islamic-be-init
+
+## 1. Architecture
+
+### 1.1 Project Topology
+
+`islamic-be` follows the same three-project shape as `ose-be`: an application, a dedicated E2E
+project, and a contracts project rooted in the spec corpus. The corpus — not the code — is the
+source of truth for behaviour.
+
+<!-- Uses colors: blue (#0173B2), orange (#DE8F05), teal (#029E73), purple (#CC78BC) for accessibility -->
+
+```mermaid
+graph LR
+    SPEC["specs/apps/islamic/be/<br/>behaviours (Gherkin)"]:::purple
+    CONTRACT["islamic-contracts<br/>OpenAPI 3.1"]:::orange
+    APP["islamic-be<br/>Go 1.26 + Gin"]:::blue
+    E2E["islamic-be-e2e<br/>Playwright + BDD"]:::teal
+
+    SPEC -->|"unit bindings (Godog)"| APP
+    SPEC -->|"e2e bindings (bddgen)"| E2E
+    CONTRACT -->|"codegen: types + ServerInterface"| APP
+    E2E -->|"HTTP :8402"| APP
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
+
+### 1.2 Internal Package Layout
+
+Go's convention places tests beside the code they cover, and `go test ./... -coverprofile` assumes
+it. The Gherkin step registrations are the exception: they are concentrated in one `internal/bdd/`
+package so the behaviour-coverage extractor scans a single known root.
+
+```mermaid
+graph LR
+    MAIN["cmd/islamic-be/main.go<br/>entry point"]:::gray
+    CONFIG["internal/config<br/>port resolution"]:::blue
+    HEALTH["internal/health<br/>handler"]:::blue
+    ROUTER["internal/router<br/>Gin engine + ServerInterface"]:::blue
+    GEN["generated-contracts<br/>oapi-codegen output"]:::orange
+    BDD["internal/bdd<br/>Godog step registrations"]:::purple
+
+    MAIN --> CONFIG
+    MAIN --> ROUTER
+    ROUTER --> HEALTH
+    ROUTER --> GEN
+    BDD -->|"drives in-process"| ROUTER
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+`internal/bdd` uses `net/http/httptest` against the in-process Gin engine. No socket is bound, so
+every scenario stays inside the Unit boundary as the BDD contract defines it — the test replaces the
+network rather than crossing it.
+
+### 1.3 Codegen Dependency Chain
+
+`islamic-be` mirrors `ose-be`'s chain exactly: `codegen` gates `typecheck` and `build`, never the
+test targets.
+
+```mermaid
+graph LR
+    BUNDLE["islamic-contracts:bundle<br/>redocly"]:::orange
+    CODEGEN["islamic-be:codegen<br/>oapi-codegen"]:::orange
+    TYPECHECK["islamic-be:typecheck<br/>go build ./..."]:::blue
+    BUILD["islamic-be:build<br/>go build -o dist/"]:::blue
+    UNIT["islamic-be:test:unit<br/>go test -coverprofile"]:::teal
+
+    BUNDLE --> CODEGEN
+    CODEGEN --> TYPECHECK
+    CODEGEN --> BUILD
+    TYPECHECK -.->|"no dependsOn edge"| UNIT
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+Unlike Rust, Go compiles the generated package as an ordinary import, and `go test` compiles its
+dependencies itself. The dashed edge records that `test:unit` deliberately carries no `dependsOn`
+on `codegen`, matching the Codegen Dependency Chain convention's default.
+
+### 1.4 CI Job Routing — the Defect This Plan Fixes
+
+`pr-quality-gate.yml`'s `detect` job classifies affected projects by `lang:` tag. Today a `lang:go`
+project matches no case, and both the `typescript` and `flutter` jobs fail to exclude it.
+
+```mermaid
+graph LR
+    AFFECTED["nx show projects --affected"]:::gray
+    DETECT{"lang: tag?"}:::orange
+    TSJOB["typescript job<br/>node only"]:::blue
+    GOJOB["go job<br/>setup-go + Java"]:::teal
+    LEAK["Go targets run<br/>with no toolchain"]:::purple
+
+    AFFECTED --> DETECT
+    DETECT -->|"lang:ts"| TSJOB
+    DETECT -->|"lang:go — today"| LEAK
+    DETECT -->|"lang:go — after Phase 1"| GOJOB
+    LEAK -.->|"exclude-list fix removes this edge"| TSJOB
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+The `typescript` job's `if:` is `has-ts == 'true'`, and `islamic-be-e2e` is `lang:ts`. Any change
+touching the pair therefore satisfies that condition, so this is not a theoretical leak — it fires on
+the first PR that adds the app.
+
+### 1.5 Delivery Dependency Position
+
+```mermaid
+graph LR
+    P1["Phase 1<br/>Go lane"]:::orange
+    P2["Phase 2<br/>specs + contracts"]:::purple
+    P3["Phase 3<br/>islamic-be"]:::blue
+    P4["Phase 4<br/>islamic-be-e2e"]:::teal
+    P5["Phase 5<br/>rhino-cli parity"]:::orange
+    P6["Phase 6<br/>registry + docs"]:::gray
+
+    P1 --> P3
+    P2 --> P3
+    P3 --> P4
+    P3 --> P6
+    P5 --> P6
+    P4 --> P6
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+Phases 1 and 2 are independent of each other and may proceed in either order or concurrently.
+Phase 5 is independent of Phases 1–4 and gates only Phase 6.
+
+## 2. Decision Records
+
+### D-1 — A standalone service, not a bounded context in `ose-be`
+
+**Decision**: Ship `islamic-be` as its own deployable under a new `domain:islamic` product line.
+
+**Alternatives considered**:
+
+- *A bounded context inside `ose-be`* (`Contexts/PrayerTimes/`). Zero new toolchain, zero CI work,
+  reuses the existing contract and E2E suite; deliverable in days. Rejected because it couples a
+  broadly-consumed stateless utility to a regulated compliance product's release cadence and blast
+  radius, and because `ose-be` owns Postgres, NATS, and an LLM client that this workload needs none of.
+- *A standalone service tagged `domain:ose`*. Avoids one convention amendment. Rejected because
+  `nx affected` scoping and `nx graph --focus` would conflate two genuinely different products.
+
+**Prior art**: `organiclever-be` and `ose-be` are already separate deployables serving separate
+products from one repository, with separate spec corpora and separate E2E projects. This follows that
+established split rather than inventing one.
+
+### D-2 — Go and Gin, with a first-class language lane
+
+**Decision**: Implement in Go 1.26 with Gin, and build the missing platform lane in the same plan.
+
+**Alternatives considered**:
+
+- *F# and Giraffe*, copying `ose-be`. Zero platform work — CI, behaviour coverage, tag vocabulary,
+  linting, and `rhino-cli` already handle it. Rejected on the explicit instruction to use Go; the
+  cost was surfaced and accepted before this plan was written.
+- *Two plans — lane first, apps second*. Rejected because a platform lane with no consumer ships
+  enablement nothing exercises, which this repository's cost/benefit and anti-echo rules push back on.
+
+**Prior art**: `plans/done/2026-04-15__demo-be-golang-gin` built a Go/Gin backend here before. Its
+app was deleted with the demo suite, but its residue is load-bearing evidence that this works:
+`Brewfile`'s `brew "go"`, `repo-config.yml`'s `format-gofmt` and `format-verify-gofmt` gates,
+`scripts/verify-gofmt.sh`, and `rhino-cli`'s `TestCoverage.Format.Go` `cover.out` parser all survive
+and are reused unchanged. That plan also used Godog for Gherkin binding, which this plan repeats.
+
+### D-3 — `oapi-codegen` rather than `openapi-generator-cli`
+
+**Decision**: Generate Go types and a Gin `ServerInterface` with `oapi-codegen` v2
+(`github.com/oapi-codegen/oapi-codegen/v2`, verified v2.6.0 on the development machine).
+
+**Alternatives considered**:
+
+- *`openapi-generator-cli` with `go-gin-server`, models only* — the exact structural mirror of
+  `ose-be`, using a devDependency already present. Rejected on two grounds: it produces models only,
+  so nothing binds a route to the contract; and its JAR needs a JRE, which would force the new Go CI
+  job to provision Java for a job that otherwise needs only Go.
+- *`openapi-generator-cli` with the plain `go` client generator, models only*. Same two objections.
+
+**Rationale**: `oapi-codegen` emits a `ServerInterface` the router must satisfy. A handler that
+drifts from the published contract fails compilation at `typecheck`, which is strictly stronger than
+the models-only enforcement `ose-be` gets. This is a deliberate, documented divergence from `ose-be`
+in the direction of a tighter gate, not a weaker one.
+
+**Consequence**: `apps/islamic-be` gains a `tools.go`-style pinned dependency on
+`oapi-codegen` so the generator version is locked by `go.mod`/`go.sum` rather than by a developer's
+`PATH`.
+
+### D-4 — Idiomatic Go test layout with centralised BDD bindings
+
+**Decision**: Unit tests co-located as `*_test.go` beside their package; every Godog step
+registration in `internal/bdd/`.
+
+**Alternatives considered**:
+
+- *Repository layout* (`tests/unit/steps/` + `tests/unit/tests/`, mirroring `ose-be`). Rejected
+  because it forces external test packages, which cannot reach unexported identifiers and makes the
+  99% line floor materially harder to reach honestly.
+- *Fully idiomatic, with step registrations scattered beside their subjects*. Rejected because the
+  behaviour-coverage extractor would have to scan the entire module rather than one directory,
+  widening the surface where a stray regex literal could be misread as a binding.
+
+**Consequence**: `behaviour-coverage.json` points the `unit` adapter's `bindings` at `internal/bdd`
+and its `driver` at `go.mod`.
+
+### D-5 — Stateless: no Integration adapter
+
+**Decision**: Omit `test:integration` and `test:coverage:integration` entirely, and explain the
+omission in the project README.
+
+**Rationale**: the BDD contract admits an Integration adapter only where a project owns a real
+local-resource boundary. `islamic-be` owns no database, no message bus, no filesystem state, and no
+child process. Port resolution reads environment variables, which Unit replaces with injected values.
+The convention is explicit that projects without the boundary omit both targets, and that echo,
+no-op, and success-sentinel targets are forbidden because they falsely claim a quality boundary
+exists.
+
+**Consequence**: `integration-loopback:` in `repo-config.yml` stays `[]`. The health scenario needs
+no `@integration-exempt` tag, because there is no Integration adapter for it to be exempt from —
+unlike `ose-be`, which carries that tag precisely because it *does* have the adapter.
+
+### D-6 — Container image, but no continuous deployment
+
+**Decision**: Ship `Dockerfile` and `infra/dev/islamic-be/docker-compose.yml`; add no
+`publish-images.yml` entry, no `islamic-be-build-deploy-stag.yml`, and no `stag-islamic-be` branch.
+
+**Rationale**: the image is buildable and runnable locally, which proves the packaging works and
+matches the `ose-be` file inventory. The deploy half is deliberately withheld because the k3s rollout
+lives in `ose-private`'s coralpolyp and there is no manifest for this service; wiring GHCR publication
+to a rollout that does not exist would produce images nothing consumes.
+
+### D-7 — Full `env-contract` registration via a paired `rhino-cli` change
+
+**Decision**: Add a `scanGoReads` scanner to `apps/rhino-cli/src/RhinoCli.Application/src/Env.fs`
+and register `apps/islamic-be` in `repo-config.yml`'s `env-contract:` surfaces with `lang: go`.
+
+**Alternatives considered**:
+
+- *Omit `islamic-be` from `env-contract:` for v1*. The registry is opt-in with no completeness check,
+  so omission validates clean and costs no cross-repo work. Rejected in favour of full parity — no
+  app should be the one app whose env keys go undrift-checked.
+- *Register with `lang: typescript` as a stopgap*. Rejected as actively misleading: the TypeScript
+  scanner reads `root/src` for TS idioms, finds nothing in Go source, and reports every declared key
+  as `DeclaredNotRead` — a green gate proving nothing.
+
+**Cost, stated plainly**: `Env.fs:1591` currently dispatches `"rust"`, `"typescript"`, and
+`"fsharp"`, returning `Error "unsupported lang: %s"` otherwise. `apps/rhino-cli/src` is held
+byte-identical across `ose-public` and `ose-private` with zero carve-outs, and rhino-cli behaviour
+must be cucumber-covered in both repositories. This decision therefore converts Phase 5 into a
+cross-repository parity delivery with a recorded shared identity.
+
+**Prior art**: `scanFsharpReads` (`Env.fs:1516`) is the model — a regex pair over source files under
+`root/src`, filtered through `frameworkOwnedEnvironmentKeys`, marked `[<ExcludeFromCodeCoverage>]`
+with a documented coverage boundary. `scanGoReads` follows that shape, matching `os.Getenv("VAR")`
+and `os.LookupEnv("VAR")`.
+
+### D-8 — Lane-first PR sequencing
+
+**Decision**: Land the Go lane before any Go code, in six `ose-public` PRs plus one `ose-private`
+parity PR.
+
+**Rationale**: landing `islamic-be` before the lane is not merely untidy — it is red CI, because the
+Go targets execute in the toolchain-less `typescript` job (§1.4). The lane must precede or accompany
+the app. Lane-first was chosen over a combined lane-and-app PR because the Go binding extractor is
+provable standalone through `scripts/behaviour-coverage.test.mjs` fixtures, so Phase 1 is genuinely
+self-verifying rather than inert.
+
+**Accepted weakness**: the `go` CI job itself has no Go project to run against until Phase 3. If
+`setup-go` or module resolution is misconfigured, Phase 3 discovers it. This is bounded — the fix
+lands in the same phase that surfaces it.
+
+## 3. File-Impact Analysis
+
+```text
+.
+├── .github/
+│   ├── actions/setup-go/action.yml [N] — pin Go from apps/islamic-be/go.mod, cache modules
+│   └── workflows/pr-quality-gate.yml [E] — add has-go detect case, add go job, add
+│                                           tag:lang:go to the typescript and flutter exclude lists
+├── apps/
+│   ├── README.md [E] — add islamic-be to the product map and islamic-be-e2e to the E2E table
+│   ├── islamic-be/
+│   │   ├── go.mod [N] — module github.com/wahidyankf/ose-public/apps/islamic-be, go 1.26
+│   │   ├── go.sum [N] — dependency checksums
+│   │   ├── tools.go [N] — pin the oapi-codegen generator version to the module
+│   │   ├── .golangci.yml [N] — golangci-lint v2 schema (version: "2")
+│   │   ├── .env.example [N] — ISLAMIC_BE_PORT=8402
+│   │   ├── .editorconfig [N] — mirror apps/ose-be/.editorconfig
+│   │   ├── .gitignore [N] — dist/, cover.out, generated-contracts/
+│   │   ├── .dockerignore [N] — build-context exclusions
+│   │   ├── Dockerfile [N] — multi-stage build on the pinned Go version
+│   │   ├── LICENSE [N] — MIT, copied from apps/ose-be/LICENSE
+│   │   ├── README.md [N] — corpus, adapters, targets, and the Integration omission rationale
+│   │   ├── project.json [N] — Nx targets and the four-dimension tag set
+│   │   ├── behaviour-coverage.json [N] — corpus + unit and e2e adapters (no integration adapter)
+│   │   ├── cmd/islamic-be/main.go [N] — entry point; excluded from the coverage denominator
+│   │   ├── internal/config/port.go [N] — flag → ISLAMIC_BE_PORT → default 8402
+│   │   ├── internal/config/port_test.go [N] — port-resolution unit tests
+│   │   ├── internal/health/health.go [N] — health handler
+│   │   ├── internal/health/health_test.go [N] — health handler unit tests
+│   │   ├── internal/router/router.go [N] — Gin engine satisfying the generated ServerInterface
+│   │   ├── internal/router/router_test.go [N] — routing and 404 unit tests
+│   │   └── internal/bdd/steps.go [N] — every Godog step registration, httptest-driven
+│   └── islamic-be-e2e/
+│       ├── package.json [N] — playwright + playwright-bdd, mirroring ose-be-e2e
+│       ├── playwright.config.ts [N] — bddgen wiring against the islamic corpus
+│       ├── tsconfig.json [N] — mirror apps/ose-be-e2e/tsconfig.json
+│       ├── .gitignore [N] — test-results, .features-gen
+│       ├── README.md [N] — how to run the suite and what it covers
+│       ├── project.json [N] — E2E targets and tags
+│       ├── behaviour-coverage.json [N] — corpus + e2e adapter
+│       ├── steps/health.steps.ts [N] — health scenario bindings
+│       ├── steps/backend-process.ts [N] — start and stop the islamic-be process
+│       └── utils/response-store.ts [N] — per-scenario response capture
+├── infra/dev/islamic-be/docker-compose.yml [N] — local dev stack for the service alone
+├── specs/apps/islamic/
+│   ├── README.md [N] — product-level corpus index
+│   ├── overview.md [N] — PM-first framing of the Islamic tools product
+│   └── be/
+│       ├── README.md [N] — corpus contents and related projects
+│       ├── architecture.md [N] — C4 context → container → component
+│       ├── behaviours/health/README.md [N] — health bounded-context index
+│       ├── behaviours/health/health.feature [N] — the three US-1 scenarios
+│       ├── behaviours/config/README.md [N] — configuration bounded-context index
+│       ├── behaviours/config/port-resolution.feature [N] — the five US-3 scenarios
+│       └── contracts/
+│           ├── README.md [N] — contract index
+│           ├── project.json [N] — islamic-contracts: lint, bundle, docs
+│           ├── .spectral.yaml [N] — ruleset copied from the ose-be contract
+│           ├── openapi.yaml [N] — OpenAPI 3.1 root
+│           ├── paths/README.md [N] — path-fragment index
+│           ├── paths/health.yaml [N] — GET /api/v1/health
+│           ├── schemas/README.md [N] — schema index
+│           ├── schemas/health.yaml [N] — HealthResponse
+│           ├── schemas/error.yaml [N] — Error
+│           └── generated/README.md [N] — explains that bundles are generated, not authored
+├── scripts/
+│   ├── behaviour-coverage.mjs [E] — add extractGoBindings; dispatch .go in extractBindings
+│   └── behaviour-coverage.test.mjs [E] — fixtures for each Godog registration form
+├── repo-config.yml [E] — register the golangci-lint gate; add the islamic-be env-contract surface
+├── apps/rhino-cli/src/RhinoCli.Application/src/Env.fs [E] — add scanGoReads; dispatch "go"
+├── specs/apps/rhino/cli/behaviours/env/*.feature [E] — Gherkin for the Go scanner (bounded family:
+│                                                       the exact files are discovered from the
+│                                                       existing env behaviour folder before editing)
+├── docs/reference/
+│   ├── web-sites.md [E] — add islamic-be (port 8402) and ISLAMIC_BE_PORT to both tables
+│   ├── monorepo-structure.md [E] — add both projects to Current Apps
+│   └── system-architecture/applications.md [E] — add the service to the application map
+├── repo-governance/development/infra/nx-targets/
+│   ├── tag-convention-four-dimension-scheme.md [E] — admit lang:go, platform:gin, domain:islamic
+│   └── tag-convention-current-tags-and-examples.md [E] — add the three new project rows
+└── plans/in-progress/README.md [E] — list this plan under Active Plans
+```
+
+### More Detail
+
+**Bounded family discovery.** The only `*` pattern above is
+`specs/apps/rhino/cli/behaviours/env/*.feature`. Its exact members are enumerated with a directory
+listing at the start of Phase 5 and recorded in the execution ledger before any edit, per the
+file-impact convention.
+
+**Generated paths.** `apps/islamic-be/generated-contracts/` and
+`specs/apps/islamic/be/contracts/generated/` carry no `[N]` entries because both are already covered
+by root `.gitignore` rules (`**/generated-contracts/`) or regenerated by their own targets. They are
+build output, not planned files.
+
+**Ordering constraint.** `repo-config.yml` is edited twice — the `golangci-lint` gate in Phase 1 and
+the `env-contract` surface in Phase 6. These are separate list entries under existing top-level keys,
+so neither changes the key set that the cross-repo schema-parity gate compares. Phase 5's gate
+re-verifies that explicitly.
+
+**Every Nx-registered project declares `namedInputs.specs`.** This is rule 2 of the byte-identity
+standard and it applies to all three new projects, including `islamic-contracts` rooted under
+`specs/`, which a directory-only `apps`/`libs` scan cannot see.
+
+## 4. Mechanics
+
+### 4.1 Nx Target Surface
+
+| Target                       | `islamic-be`                                          | `islamic-be-e2e`         |
+| ---------------------------- | ------------------------------------------------------ | ------------------------ |
+| `codegen`                    | `oapi-codegen` from the bundled contract               | —                        |
+| `typecheck`                  | `go build ./...`                                       | `bddgen && tsc --noEmit` |
+| `build`                      | `go build -o dist/islamic-be ./cmd/islamic-be`         | —                        |
+| `lint`                       | `golangci-lint run`                                    | `oxlint .`               |
+| `dev` / `run`                | `go run ./cmd/islamic-be`                              | —                        |
+| `test:unit`                  | `go test ./... -coverprofile=cover.out` + 99% floor    | — (E2E project)          |
+| `test:integration`           | **omitted** — no local-resource boundary (D-5)         | **omitted**              |
+| `test:e2e`                   | —                                                      | `scripts/run-e2e.sh`     |
+| `test:coverage:unit`         | behaviour-coverage `--adapter unit`                    | —                        |
+| `test:coverage:e2e`          | behaviour-coverage `--adapter e2e`                     | same                     |
+| `test:coverage:behaviour`    | behaviour-coverage `--adapter behaviour`               | same                     |
+| `test:coverage`              | aggregates the applicable validators                   | same                     |
+| `test:quick`                 | typecheck → lint → unit → specs validation → coverage  | typecheck → lint → coverage |
+| `specs:structure-validation` | `rhino-cli specs structure validate`                   | same                     |
+| `deps:audit`                 | `go list -json -deps` piped to `govulncheck`           | `npm audit`              |
+| `compat:min-version`         | assert the `go` directive in `go.mod` matches the pin  | echo (no TS floor)       |
+
+`compat:min-version` is a **real check** for `islamic-be`, not an echo. Go has a genuine minimum-version
+declaration in `go.mod`; asserting it is cheap and avoids adding another stub to the set that
+`plans/backlog/remove-stale-compat-min-version-stubs` already wants removed.
+
+### 4.2 The Go Binding Extractor
+
+`extractBindings` in `scripts/behaviour-coverage.mjs` currently reads:
+
+```javascript
+return resourceName.toLowerCase().endsWith(".fs")
+  ? extractFsharpBindings(resourceName, source)
+  : extractTypescriptBindings(resourceName, source);
+```
+
+`.go` gains its own branch. `extractGoBindings` must recognise the registration forms Godog accepts:
+
+| Form                                          | Pattern shape                                      |
+| --------------------------------------------- | -------------------------------------------------- |
+| `sc.Step("a plain string", fn)`               | Cucumber expression in an interpreted string       |
+| ``sc.Step(`^a regexp$`, fn)``                 | Backtick raw string carrying a regular expression  |
+| ``sc.Step(regexp.MustCompile(`^x$`), fn)``    | Explicit `regexp.MustCompile` wrapper              |
+| `sc.Given(...)` / `.When(...)` / `.Then(...)` | Keyword-sensitive registrations                    |
+
+Keyword sensitivity matters: the existing F# and TypeScript extractors already set
+`keywordSensitive` per binding, and the Go extractor sets it the same way — `true` for
+`Given`/`When`/`Then`, `false` for the generic `Step`. Go's backtick raw strings need their own
+handling because the existing comment-stripping logic is written for `//` and `/* */` in a context
+where backticks are not string delimiters.
+
+### 4.3 The Go Env Scanner
+
+`scanGoReads` mirrors `scanFsharpReads`: walk `root` for `*.go`, apply two compiled regexes, filter
+through `frameworkOwnedEnvironmentKeys`, return the deduplicated key set. Note the path difference —
+`scanFsharpReads` scans `root/src`, but a Go module has no `src/` directory, so `scanGoReads` scans
+from the module root while skipping `generated-contracts/`.
+
+```go
+os.Getenv("ISLAMIC_BE_PORT")
+os.LookupEnv("ISLAMIC_BE_PORT")
+```
+
+Both forms are matched. The scanner is marked `[<ExcludeFromCodeCoverage>]` with the same documented
+coverage-boundary comment its siblings carry, and its behaviour is cucumber-covered in both
+repositories per byte-identity rule 3.
+
+### 4.4 Port Resolution
+
+Resolution order is flag → `ISLAMIC_BE_PORT` → default `8402`, with a malformed value failing at
+startup rather than silently falling back. A bare `PORT` is deliberately not honoured, matching the
+repository-wide rule that one exported `PORT` must not retarget every app at once.
+
+## 5. Dependencies
+
+| Dependency                                  | Version (verified)  | Role                                     |
+| ------------------------------------------- | ------------------- | ---------------------------------------- |
+| Go toolchain                                | 1.26.1              | Language; pinned via `go.mod`            |
+| `github.com/gin-gonic/gin`                  | latest at execution | HTTP framework                           |
+| `github.com/oapi-codegen/oapi-codegen/v2`   | 2.6.0               | Contract-to-Go generation                |
+| `github.com/cucumber/godog`                 | latest at execution | Gherkin runner for unit bindings         |
+| `golangci-lint`                             | 2.11.3              | Linting; **v2 config schema**            |
+| `govulncheck`                               | latest at execution | `deps:audit`                             |
+| `@redocly/cli`, `@stoplight/spectral-cli`   | already present     | Contract bundling and linting            |
+| `playwright`, `playwright-bdd`              | already present     | E2E suite                                |
+
+`golangci-lint` 2.x uses a different configuration schema from 1.x — `.golangci.yml` must declare
+`version: "2"` and nest linters under `linters:`. A 1.x-shaped config fails to parse. Phase 1 pins
+the version in the `setup-go` action so CI and developer machines agree.
+
+## 6. Risks and Mitigations
+
+| Risk                                                                                                   | Mitigation                                                                                                                  |
+| -------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| The Go binding extractor misreads a Go regex literal and reports a false binding, masking an unbound scenario. | Fixtures in `behaviour-coverage.test.mjs` cover each registration form plus negative cases; a false positive is a test failure. |
+| `oapi-codegen` output shape changes across versions and breaks the `ServerInterface` contract.            | The generator version is pinned in `go.mod` via `tools.go`, not resolved from `PATH`.                                          |
+| `rhino-cli` byte-identity drifts while the paired PRs are open in two repositories.                       | Shared parity identity recorded before the first mutation; `rhino-cli-parity-audit.yml` gates convergence.                      |
+| The `go` CI job is misconfigured and only discovered in Phase 3.                                          | Accepted and bounded (D-8). Phase 3's gate includes a CI run showing the `go` job green and the `typescript` job skipping Go.   |
+| The 99% unit coverage floor is unreachable because `main.go` is untestable.                               | `cmd/islamic-be/main.go` is excluded from the denominator, mirroring `ose-be`'s exclusion of `Program.fs`.                      |
+| Adding an `env-contract` surface changes `repo-config.yml`'s key set and trips the schema-parity gate.    | Both edits are list items under existing top-level keys; Phase 5's gate verifies the key set is unchanged.                      |
+
+## 7. Rollback
+
+Every phase is independently revertible, and nothing in this plan persists data or publishes an
+artifact outside the repository.
+
+| Phase | Rollback                                                                                                            |
+| ----- | -------------------------------------------------------------------------------------------------------------------- |
+| 1     | Revert the PR. The `go` job and extractor become dormant; no other project references them.                          |
+| 2     | Revert the PR. `islamic-contracts` deregisters from Nx when its `project.json` is removed.                           |
+| 3     | Revert the PR. Requires reverting Phase 4 first if it landed, since `islamic-be-e2e` declares an implicit dependency. |
+| 4     | Revert the PR. `islamic-be` is unaffected.                                                                            |
+| 5     | Revert **both** repositories' PRs together; a one-sided revert breaks byte-identity.                                  |
+| 6     | Revert the PR. The service keeps running; only registry documentation and env drift-checking regress.                |
+
+Full-plan rollback is deleting `apps/islamic-be/`, `apps/islamic-be-e2e/`, `specs/apps/islamic/`, and
+`infra/dev/islamic-be/`, then reverting the registry, CI, and `rhino-cli` edits in reverse phase
+order. No external state, no published image, and no consumer depends on any of it.
+
+## See Also
+
+- [prd.md](./prd.md) — acceptance criteria implemented here.
+- [delivery.md](./delivery.md) — the execution checklist.
+- [Cross-Repo rhino-cli Byte-Identity Standard](../../../repo-governance/development/infra/nx-targets/cache-cross-repo-byte-identity.md)
+- [Behaviour-Driven Development](../../../repo-governance/development/behaviour-driven-development.md)

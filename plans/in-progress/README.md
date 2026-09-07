@@ -11,7 +11,9 @@ execution checklist.
 
 ## Active Plans
 
-_No plans are in progress._
+- [islamic-be-init](./islamic-be-init/README.md) — stand up the `islamic-be` Go/Gin service
+  and its `islamic-be-e2e` Playwright suite, plus the first-class Go language lane the
+  monorepo needs to gate them.
 
 ## Instructions
 
