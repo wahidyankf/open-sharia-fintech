@@ -1,5 +1,5 @@
 ---
-description: "Index of focused leak-review scope, execution, evidence, and success criteria."
+description: "Index of focused leak-review scope, execution, and evidence."
 when_to_use: "Use to locate the normative mechanics of pr-leak-review."
 ---
 
@@ -11,4 +11,3 @@ when_to_use: "Use to locate the normative mechanics of pr-leak-review."
   Use when running or implementing the focused review.
 - [Evidence and Outcomes](./evidence-and-outcomes.md) — Defines authenticated current-head evidence
   and terminal states. Use when posting, authenticating, or consuming a leak result.
-  validating the workflow's observable behaviour.

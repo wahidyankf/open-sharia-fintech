@@ -41,7 +41,6 @@ Run [`pr-review-security-maker`](../../../.claude/agents/pr-review/pr-review-sec
 - [Evidence and Outcomes](./pr-leak-review/evidence-and-outcomes.md) — Defines authenticated
   current-head evidence and terminal states. Use when posting, authenticating, or consuming a leak
   result.
-  scenarios. Use when validating the workflow's observable behaviour.
 
 Merge verification requires one authenticated `ose-pr-leak-review:v1` `pass` whose repository,
 base, and head equal the PR's exact current coordinates. A changed head needs one new pass, never a
