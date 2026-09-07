@@ -29,6 +29,19 @@ The run passes only if:
 - **Every `See` link written by a duplication reduction resolves**, and its target covers every
   case the removed text covered.
 
+**Navigation is not obligation.** The inventory must exclude index entries — a bullet or ordered
+list item whose text is a link followed by an annotation — and `when_to_use` routing clauses. Both are
+pointers to content stated in their target — the README-completeness convention requires the
+annotation to describe that target — so counting them makes every legitimate index update read as
+an obligation loss. A run that skipped this exclusion reported 12 false losses against 0 real ones.
+An obligation found _only_ in an annotation and nowhere in its target is a governance defect in
+that pair, reported as a finding rather than absorbed into the count.
+
+**Two independent proofs, not one.** For a verbatim-move reduction, also check line-level
+containment: every non-frontmatter line of each merged shard must be present in its parent, modulo
+the heading demotion and link rewriting Step 6 performs. Containment catches a truncated move that
+an obligation diff misses when the lost text carried no obligation modal.
+
 - **Depends on**: Step 6.
 - **On failure**: Halt, and identify the propagation delivery that introduced the loss. Reverting
   that delivery is itself a rule edit, so it is handed back to propagation — grooming does not

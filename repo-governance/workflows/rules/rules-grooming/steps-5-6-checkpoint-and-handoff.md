@@ -50,6 +50,10 @@ Propagation's own limits bind every item, and grooming has no authority to relax
 - It will not raise a word budget to land a merge. A fragmentation candidate whose merge no longer
   fits is recorded as rejected, and the shard stays split.
 
+A reabsorption item is not "concatenate these files". It carries the six mechanical steps in
+[Reabsorption Mechanics](./reabsorption-mechanics.md), each of which has broken a run that omitted
+it.
+
 - **Args**: Approved manifest items, grouped by subject; the pre-run inventory for reference.
 - **Depends on**: Step 5.
 - **Output**: Per-group propagation terminal status and PR URL, recorded against each manifest item.

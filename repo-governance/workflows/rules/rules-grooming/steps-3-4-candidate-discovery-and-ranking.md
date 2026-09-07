@@ -17,10 +17,9 @@ Admit a candidate when one of these holds:
 
 - **Reabsorbable shard.** The shard has no inbound link from outside its own unit — its parent
   `.md` and its folder `README.md` are part of that unit and do not count as external — and it
-  still fits once **packed against its parent cumulatively**. Test the whole sibling set per
-  parent, smallest shard first, against one budget; do not test each shard against the parent
-  alone. A per-shard test over-reports: on the 2026-09-07 census 811 shards each fit individually
-  while only 226 fit once packed, a 3.6× overstatement.
+  survives both packing limits in
+  [Reabsorption Mechanics](./reabsorption-mechanics.md): packed per parent rather than per shard,
+  and to 80% of the parent's budget rather than to its ceiling.
 - **Single-child shard folder** whose parent has the headroom to reabsorb it. A parent already over
   budget is not a candidate however small its only child.
 - **Index annotation longer than its target's body**, frontmatter excluded from both sides.

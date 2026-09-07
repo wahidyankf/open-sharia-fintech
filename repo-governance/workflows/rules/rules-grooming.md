@@ -82,8 +82,10 @@ Agents composed: `rules-checker` for discovery. There is no grooming writer.
 - [Steps 0-2](./rules-grooming/steps-0-2-authorization-census-and-inventory.md) — authorization, corpus census, obligation inventory.
 - [Steps 3-4](./rules-grooming/steps-3-4-candidate-discovery-and-ranking.md) — the three discovery sweeps; yield over risk.
 - [Steps 5-6](./rules-grooming/steps-5-6-checkpoint-and-handoff.md) — human checkpoint; propagation hand-off.
+- [Reabsorption Mechanics](./rules-grooming/reabsorption-mechanics.md) — the packing limits; what a merge must carry.
 - [Steps 7-8](./rules-grooming/steps-7-8-preservation-verification-and-recurrence.md) — the preservation diff; the re-run condition.
 - [Success Criteria](./rules-grooming/success-criteria.md) — Gherkin, run lifecycle.
 - [Success Criteria — Candidate Classes](./rules-grooming/success-criteria-candidate-classes.md) — Gherkin, per class.
+- [Grooming Log](./rules-grooming/grooming-log.md) — the durable run record the trigger reads.
 - [Termination Criteria](./rules-grooming/termination-criteria.md) — no-op, groomed, halted, partial.
 - [Related Workflows and Documentation](./rules-grooming/related-workflows-and-documentation.md) — what runs before and after it.
