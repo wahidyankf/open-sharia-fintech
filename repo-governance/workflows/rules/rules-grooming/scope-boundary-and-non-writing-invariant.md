@@ -24,14 +24,15 @@ therefore its ranking and its approval path.
    class **deletes only**. It never rewrites a sentence, only removes one carrying nothing. Risk is
    **low and mechanically bounded** — text carrying no obligation must leave Step 7's extracted
    inventory byte-identical, so that existing diff is the admission test rather than a second
-   judgement. Opt-in via `classes` until a run demonstrates the extractor's recall.
+   judgement. **Opt-in, and measured unproductive**: its one sweep found ~5 safely removable lines
+   in 163,867. Enable it deliberately, not by default, and expect near-nothing.
 4. **Retirement** — a rule whose subject no longer exists, that a later rule supersedes in fact but
    not in text, or that no surface reaches. This is the only class that removes an obligation, so
    it is opt-in via the `classes` input and gated per item at Step 5.
 
 ## Refused Reductions
 
-Five reductions are out of scope permanently, not merely deprioritized — see
+Six reductions are out of scope permanently, not merely deprioritized — see
 [Refused Reductions](./refused-reductions.md).
 
 ## The Non-Writing Invariant
