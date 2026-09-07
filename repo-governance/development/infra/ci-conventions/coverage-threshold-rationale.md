@@ -1,10 +1,5 @@
 ---
-title: "Runtime and Static Coverage Responsibilities"
 description: "Separates runtime code coverage from static scenario and adapter coverage"
-category: explanation
-subcategory: development
-tags: [ci-cd, testing, coverage]
-created: 2026-03-31
 when_to_use: "Use when assigning coverage work to a test or coverage target."
 ---
 

@@ -1,15 +1,5 @@
 ---
-title: "Examples"
 description: A TypeScript (Vitest) and Go (Godog) Red-Green-Refactor worked example, and the Gherkin-to-test chain for BDD.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - workflow
-  - tdd
-  - testing
-  - red-green-refactor
-created: 2026-05-02
 when_to_use: Use as a concrete reference for what a Red-Green-Refactor cycle looks like in TypeScript, Go, or from a Gherkin scenario.
 ---
 

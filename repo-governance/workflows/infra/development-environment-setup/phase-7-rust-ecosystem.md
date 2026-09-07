@@ -1,5 +1,4 @@
 ---
-title: "Phase 7: Rust Ecosystem (Sequential)"
 description: "Phase 7 (full scope only): install Rust and cargo-llvm-cov for full Doctor and Rust-content gates."
 when_to_use: "Use when satisfying the full Doctor inventory or formatting Rust course content."
 ---

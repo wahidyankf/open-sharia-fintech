@@ -1,5 +1,4 @@
 ---
-title: "Phase 2: Candidate Discovery & Classification"
 description: Delegates per-ecosystem version/CVE/KEV/EPSS research to web-researcher and classifies each dependency's policy path.
 when_to_use: Use when determining, per package, the policy path (A/B/C), proposed version, and clearance-relevant security data.
 ---

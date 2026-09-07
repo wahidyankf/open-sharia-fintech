@@ -1,5 +1,4 @@
 ---
-title: "Related Documentation"
 description: Cross-references from the API quality gate to the workflows index, the UI gate, and related quality conventions.
 when_to_use: Use when looking for documentation related to the API quality gate.
 ---

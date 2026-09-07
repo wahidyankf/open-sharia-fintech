@@ -1,5 +1,4 @@
 ---
-title: "Convention Writing Convention"
 description: "Meta-convention defining how to write and organize convention documents in the conventions/ directory"
 when_to_use: "Read this index to find the right Convention Writing Convention child document."
 ---

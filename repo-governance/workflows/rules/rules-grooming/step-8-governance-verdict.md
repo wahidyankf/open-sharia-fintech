@@ -1,5 +1,4 @@
 ---
-title: "Step 8 — Governance Verdict"
 description: The mandatory read-only quality-gate pass that confirms what a grooming run left behind is still coherent, and the bound that keeps it from chasing the whole corpus.
 when_to_use: Use when submitting a completed grooming sweep for its governance verdict.
 ---

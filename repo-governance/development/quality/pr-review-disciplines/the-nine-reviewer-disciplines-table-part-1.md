@@ -1,15 +1,5 @@
 ---
-title: "Nine Reviewer Disciplines: Table (1)"
 description: "Shared rules; disciplines Architecture-Performance."
-category: explanation
-subcategory: development
-tags:
-  - pr-review
-  - governance
-  - agents
-  - quality-gates
-  - boundary-rules
-created: 2026-07-23
 when_to_use: "Use to find a finding's owning specialist."
 ---
 

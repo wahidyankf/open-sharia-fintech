@@ -1,17 +1,5 @@
 ---
-title: "Evidence Capture Convention"
 description: Standards for capturing and organizing testing evidence (screenshots, curl outputs, console logs) in plan folders and delivery.md during plan execution
-category: explanation
-subcategory: development
-tags:
-  - evidence
-  - testing
-  - screenshots
-  - plans
-  - verification
-  - locale
-  - manual-testing
-created: 2026-06-20
 when_to_use: "Use when capturing, naming, or referencing testing evidence during plan execution."
 ---
 

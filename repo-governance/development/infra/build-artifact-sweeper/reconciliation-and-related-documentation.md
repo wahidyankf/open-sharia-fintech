@@ -1,15 +1,5 @@
 ---
-title: "Reconciliation and Related Documentation"
 description: Reconciles the sweeper with neighbouring conventions on worktree cleanup, CI blockers, and file-touch discipline, and links to the related documentation
-category: explanation
-subcategory: development
-tags:
-  - build-artifacts
-  - environment
-  - ai-agents
-  - infrastructure
-  - cleanup
-created: 2026-08-05
 when_to_use: Use when a rule in another convention seems to conflict with the sweeper's behaviour, or when you need pointers to the documents this convention builds on.
 ---
 

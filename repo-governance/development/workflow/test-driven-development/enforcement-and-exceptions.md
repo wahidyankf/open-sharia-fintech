@@ -1,15 +1,5 @@
 ---
-title: "Enforcement and Exceptions"
 description: How the pre-push hook and plan-checker enforce TDD, and the five kinds of change TDD does not apply to.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - workflow
-  - tdd
-  - testing
-  - red-green-refactor
-created: 2026-05-02
 when_to_use: Use when checking whether TDD's enforcement mechanism would catch a given gap, or whether a change qualifies for an exception.
 ---
 

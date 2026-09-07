@@ -1,15 +1,5 @@
 ---
-title: "Applying the Rule and Examples"
 description: How agent, skill, and workflow files should cite the delegation rule, with worked good/bad examples
-category: explanation
-subcategory: conventions
-tags:
-  - ai-agents
-  - web-research
-  - delegation
-  - factual-validation
-  - governance
-created: 2026-04-16
 when_to_use: Read this when writing or reviewing the Web Research Delegation subsection of an agent, skill, or workflow file.
 ---
 

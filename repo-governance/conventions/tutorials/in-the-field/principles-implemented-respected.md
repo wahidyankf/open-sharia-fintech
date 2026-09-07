@@ -1,16 +1,6 @@
 ---
-title: "Principles Implemented/Respected"
 description: The content principles - progressive disclosure, no time estimates, accessibility, explicit over implicit, documentation first - this convention implements.
 when_to_use: Use when you need the rationale for why the In-the-Field convention is designed the way it is.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Principles Implemented/Respected

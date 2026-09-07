@@ -1,16 +1,5 @@
 ---
-title: "Regression Test Mandate"
 description: Blocking rule requiring every bug fix to land with a reproducing test in the same commit/PR -- the bug-driven dual of Feature Change Completeness
-category: explanation
-subcategory: development
-tags:
-  - regression
-  - testing
-  - bug-fix
-  - quality
-  - gherkin
-  - specs
-created: 2026-06-22
 when_to_use: "Use when landing a bug fix and deciding what reproducing test it must include."
 ---
 

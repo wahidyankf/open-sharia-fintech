@@ -1,5 +1,4 @@
 ---
-title: "Knowledge Capture Convention"
 description: "Standards for capturing generalizable learnings during plan execution in a transient learnings.md log, triaging each through an open-ended principle-based routing matrix, and enforcing two safety gates before any learning reaches a durable home"
 when_to_use: "Read this index to find the right Knowledge Capture Convention child document."
 ---

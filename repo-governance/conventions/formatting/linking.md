@@ -1,15 +1,6 @@
 ---
-title: "Documentation Linking Convention"
 description: Standards for linking between documentation files in open-sharia-enterprise
 when_to_use: Use when adding or reviewing a link between documentation files in this repository.
-category: explanation
-subcategory: conventions
-tags:
-  - linking
-  - markdown
-  - conventions
-  - github-compatibility
-created: 2025-11-22
 ---
 
 # Documentation Linking Convention

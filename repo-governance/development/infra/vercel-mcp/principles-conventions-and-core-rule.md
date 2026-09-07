@@ -1,13 +1,5 @@
 ---
-title: "Principles, Conventions, and Core Rule"
 description: The assumption that Vercel MCP is available, the principles and conventions behind it, and the two-gate rule that resolves it for a plan.
-category: explanation
-subcategory: development
-tags:
-  - vercel
-  - mcp
-  - planning
-created: 2026-08-01
 when_to_use: Use when you need the core assumed-availability rule and its two gates, or the principles/conventions this convention builds on.
 ---
 

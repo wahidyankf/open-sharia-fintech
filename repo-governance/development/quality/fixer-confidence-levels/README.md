@@ -1,5 +1,4 @@
 ---
-title: "Fixer Confidence Levels Convention"
 description: "Universal confidence level system for fixer agents to assess and apply validated fixes"
 when_to_use: "Read this index to find the right Fixer Confidence Levels Convention child document."
 ---

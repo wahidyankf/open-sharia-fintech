@@ -1,17 +1,6 @@
 ---
-title: "Narrative Requirements: Voice, Perspective, and Transitions"
 description: "Defines the required teacher voice and perspective, plus the transition patterns used to connect tutorial sections."
 when_to_use: "Read when writing tutorial prose and choosing voice, perspective, or a transition between two sections."
-category: explanation
-subcategory: conventions
-tags:
-  - tutorials
-  - diataxis
-  - learning
-  - pedagogy
-  - documentation
-  - teaching
-created: 2025-12-03
 ---
 
 # Narrative Requirements: Voice, Perspective, and Transitions

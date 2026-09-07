@@ -1,5 +1,4 @@
 ---
-title: "No Time Estimates"
 description: "People work and learn at vastly different speeds - focus on outcomes and deliverables, not arbitrary time constraints"
 when_to_use: "Read this index to find the right No Time Estimates child document."
 ---

@@ -1,16 +1,6 @@
 ---
-title: "Repository Governance"
 description: How open-sharia-enterprise turns its mission and values into consistent ways of working
-category: explanation
-subcategory: governance
-tags:
-  - index
-  - governance
-  - principles
-  - conventions
-  - development
-  - workflows
-created: 2026-01-04
+when_to_use: "Read this index to find the right repository-governance layer or document."
 ---
 
 # Repository Governance

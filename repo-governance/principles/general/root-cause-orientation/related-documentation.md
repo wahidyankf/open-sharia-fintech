@@ -1,12 +1,5 @@
 ---
-title: "Related Documentation"
 description: Links to deliberate-problem-solving, simplicity-over-complexity, implementation workflow, agent workflow orchestration, and proactive preexisting error resolution.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - root-cause
-created: 2026-03-09
 when_to_use: Use when looking for the full set of documents related to root cause orientation.
 ---
 

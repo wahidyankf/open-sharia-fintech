@@ -1,16 +1,5 @@
 ---
-title: "Maintenance"
 description: "How to update markdownlint rules and the Prettier/markdownlint-cli2 dependencies."
-category: explanation
-subcategory: development
-tags:
-  - markdown
-  - linting
-  - formatting
-  - prettier
-  - markdownlint
-  - quality
-created: 2026-01-17
 when_to_use: "Use when changing a rule or bumping a markdown-tooling dependency."
 ---
 

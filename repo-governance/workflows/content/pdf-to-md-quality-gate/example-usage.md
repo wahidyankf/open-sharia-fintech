@@ -1,5 +1,4 @@
 ---
-title: "Example Usage"
 description: "Worked example invocations covering standard runs, force regeneration, lax mode, custom output paths, and iteration bounds."
 when_to_use: "Use when looking for a concrete invocation pattern to copy for a specific scenario."
 ---

@@ -1,5 +1,4 @@
 ---
-title: "Step 2 — Web Research"
 description: Describes the conditional research step that delegates external verification to web-researcher, and its skip condition.
 when_to_use: Use when deciding whether Step 2 can be skipped, or when delegating research to web-researcher.
 ---

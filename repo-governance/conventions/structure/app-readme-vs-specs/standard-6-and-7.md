@@ -1,18 +1,6 @@
 ---
-title: "Standard 6 and 7 — BDD/Contracts Adoption, and Cross-Link Integrity"
 description: Adoption expectations for BDD and API contracts by surface profile and per-app rollout status, plus the two-way navigation requirement between app READMEs and specs trees.
 when_to_use: Use when checking whether an app should have adopted BDD/API contracts yet, or verifying README-to-specs cross-links are intact.
-category: explanation
-subcategory: conventions
-status: "Pilot — initial issue"
-tags:
-  - conventions
-  - readme
-  - specs
-  - spec-tree-shape
-  - pm-readability
-  - c4
-created: 2026-05-09
 ---
 
 # Standard 6 and 7 — BDD/Contracts Adoption, and Cross-Link Integrity

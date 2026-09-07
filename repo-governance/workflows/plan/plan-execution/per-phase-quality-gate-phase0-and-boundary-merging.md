@@ -1,5 +1,4 @@
 ---
-title: "Per-Phase Quality Gate — Phase 0 Exemption and Delivery-Boundary Merging"
 description: Defines Phase 0's exemption from pushing or opening a PR, and the delivery-boundary merge-not-batch rule.
 when_to_use: Use when confirming Phase 0 pushes nothing or deciding whether a delivery unit should integrate now or wait.
 ---

@@ -1,15 +1,5 @@
 ---
-title: "Operating Budgets — The PR Is the Independent Merge Point (Continued)"
 description: "Continues the independent-merge-point rule: why the worktree is a per-repository unit rather than a per-PR unit."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - workflow
-  - orchestration
-created: 2025-11-23
 when_to_use: Use when reasoning about worktree scope relative to a repository versus a single PR.
 ---
 

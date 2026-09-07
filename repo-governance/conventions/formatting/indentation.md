@@ -1,14 +1,6 @@
 ---
-title: "Indentation Convention"
 description: Standard markdown indentation for all files in the repository
 when_to_use: Use when indenting bullets, YAML frontmatter, or code blocks in any markdown file.
-category: explanation
-subcategory: conventions
-tags:
-  - indentation
-  - formatting
-  - markdown
-created: 2025-12-12
 ---
 
 # Indentation Convention

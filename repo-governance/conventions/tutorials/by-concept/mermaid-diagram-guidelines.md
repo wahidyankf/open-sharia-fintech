@@ -1,16 +1,6 @@
 ---
-title: "Mermaid Diagram Guidelines"
 description: "Defines when to include Mermaid diagrams, the target diagram frequency, and the mandatory color-blind friendly palette."
 when_to_use: "Read when deciding whether a concept section needs a diagram and which colors to use for it."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-concept
-  - education
-  - narrative-driven
-created: 2026-01-30
 ---
 
 # Mermaid Diagram Guidelines

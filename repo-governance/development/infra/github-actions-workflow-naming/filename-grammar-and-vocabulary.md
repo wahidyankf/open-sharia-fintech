@@ -1,14 +1,5 @@
 ---
-title: "Filename Grammar and Vocabulary"
 description: The domain-first filename grammar for GitHub Actions workflow files and the fixed verb/qualifier vocabulary used to compose the action-chain segment.
-category: explanation
-subcategory: development
-tags:
-  - github-actions
-  - ci-cd
-  - naming
-  - workflow
-created: 2026-03-13
 when_to_use: Use when composing a workflow filename — choosing its domain and stringing together verbs/qualifiers in execution order.
 ---
 

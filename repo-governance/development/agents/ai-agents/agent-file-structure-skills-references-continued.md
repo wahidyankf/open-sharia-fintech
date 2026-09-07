@@ -1,14 +1,5 @@
 ---
-title: "Agent File Structure — Agent skills References (Continued)"
 description: "Continues agent skills reference guidance: best practices for agent skills references, the frontmatter-only DRY rule, and agent skills vs. direct convention references."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when writing or reviewing how an agent documents its agent skills usage in its body text.
 ---
 

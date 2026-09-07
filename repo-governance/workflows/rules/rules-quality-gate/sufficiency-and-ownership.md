@@ -1,5 +1,4 @@
 ---
-title: "Sufficiency and Ownership"
 description: What a passing repository rule asserts, and the machine-decidable checks the rules quality gate must never reproduce.
 when_to_use: Use when deciding whether a rule gap is admissible to the ledger, or whether a check belongs to deterministic tooling.
 ---

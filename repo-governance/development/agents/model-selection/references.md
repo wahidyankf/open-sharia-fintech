@@ -1,14 +1,5 @@
 ---
-title: "References"
 description: "Links to related conventions and documents referenced by the model-selection convention."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - model-selection
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when looking for further reading on model selection.
 ---
 

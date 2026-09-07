@@ -1,5 +1,4 @@
 ---
-title: "Purpose and Scope"
 description: What this workflow places, what it refuses to place, and where its authority to rewrite existing rules begins and ends.
 when_to_use: Use when checking whether a stated rule is in scope for propagation, or whether the workflow may touch a given surface.
 ---

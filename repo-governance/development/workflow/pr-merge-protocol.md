@@ -1,15 +1,5 @@
 ---
-title: "PR Merge Protocol"
 description: Practice governing PR merges — merge authority comes from hardened preconditions, not a per-instance prompt; `[AI]` merges by default.
-category: explanation
-subcategory: development
-tags:
-  - pull-request
-  - merge
-  - quality-gates
-  - workflow
-  - merge-preconditions
-created: 2026-04-04
 when_to_use: Use whenever a pull request is about to be merged, or when checking whether this protocol applies.
 ---
 

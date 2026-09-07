@@ -1,16 +1,6 @@
 ---
-title: "Worktree Path Convention"
 description: Defines the worktree directory structure, naming convention, and gitignore requirements for claude --worktree routing
 when_to_use: Read this when creating, naming, or cleaning up a worktree, or configuring the WorktreeCreate hook.
-category: explanation
-subcategory: conventions
-tags:
-  - worktree
-  - git
-  - repository-structure
-  - claude
-  - hooks
-created: 2026-05-03
 ---
 
 # Worktree Path Convention

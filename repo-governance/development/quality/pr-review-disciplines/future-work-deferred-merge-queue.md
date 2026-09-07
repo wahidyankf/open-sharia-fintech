@@ -1,15 +1,5 @@
 ---
-title: "Future Work: Deferred Merge Queue (D7/D10)"
 description: "A deferred merge-queue integration idea."
-category: explanation
-subcategory: development
-tags:
-  - pr-review
-  - governance
-  - agents
-  - quality-gates
-  - boundary-rules
-created: 2026-07-23
 when_to_use: "Use when scoping a future merge-queue integration."
 ---
 

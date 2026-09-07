@@ -1,16 +1,6 @@
 ---
-title: "Workflow Pattern Convention"
 description: Standards for creating orchestrated multi-step processes that compose agents, procedures, and/or other workflows
 when_to_use: Use when defining, structuring, or validating a new workflow document, or when deciding whether a task should become a workflow at all.
-category: explanation
-subcategory: workflows
-tags:
-  - workflows
-  - agents
-  - orchestration
-  - patterns
-  - conventions
-created: 2025-12-23
 ---
 
 # Workflow Pattern Convention

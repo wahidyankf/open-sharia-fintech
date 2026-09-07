@@ -1,16 +1,6 @@
 ---
-title: "Guide Structure Overview"
 description: The six-part recommended guide structure and the requirements for Part 1, which establishes production relevance.
 when_to_use: Use when starting to write a new In-the-Field guide and need the overall structure and Part 1 requirements.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Guide Structure Overview

@@ -1,12 +1,5 @@
 ---
-title: "Anti-Patterns"
 description: Common progressive-disclosure mistakes - front-loading complexity, no starting point, and all-or-nothing docs.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - progressive-disclosure
-created: 2025-12-15
 when_to_use: Use when auditing content for complexity that overwhelms beginners.
 ---
 

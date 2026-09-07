@@ -1,15 +1,5 @@
 ---
-title: Hexagonal Architecture + DDD — Backend Apps
 description: Hexagonal architecture with DDD bounded contexts for backend apps — F#/Giraffe directory layouts, language-specific idioms, and inter-context isolation rules
-category: explanation
-subcategory: development
-tags:
-  - architecture
-  - hexagonal
-  - ddd
-  - fsharp
-  - backend
-created: 2026-05-26
 when_to_use: "Use when structuring a backend bounded context, wiring F# dependency injection, or mapping a domain error to an HTTP response."
 ---
 

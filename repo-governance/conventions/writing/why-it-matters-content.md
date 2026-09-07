@@ -1,15 +1,5 @@
 ---
-title: "Why It Matters Content Convention"
 description: Rule prohibiting corporate case studies and fabricated platform scenarios in Why It Matters sections of ayokoding-www tutorials; requires theoretical explanations only
-category: explanation
-subcategory: conventions
-tags:
-  - ayokoding-www
-  - tutorial-content
-  - factual-accuracy
-  - why-it-matters
-  - hallucination-prevention
-created: 2026-05-09
 when_to_use: Read this before writing or reviewing a Why It Matters section in an ayokoding-www tutorial.
 ---
 

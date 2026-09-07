@@ -1,5 +1,4 @@
 ---
-title: "Hexagonal Architecture + DDD — Backend Apps"
 description: "Hexagonal architecture with DDD bounded contexts for backend apps — F#/Giraffe directory layouts, language-specific idioms, and inter-context isolation rules"
 when_to_use: "Read this index to find the right Hexagonal Architecture + DDD — Backend Apps child document."
 ---

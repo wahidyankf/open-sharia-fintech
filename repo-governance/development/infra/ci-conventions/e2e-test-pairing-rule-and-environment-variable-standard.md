@@ -1,10 +1,5 @@
 ---
-title: "E2E Test Pairing Rule and Environment Variable Standard"
 description: E2E runner pairing and required env-variable rules.
-category: explanation
-subcategory: development
-tags: [ci-cd, testing]
-created: 2026-03-31
 when_to_use: Use when wiring an E2E runner or env variable.
 ---
 

@@ -1,15 +1,5 @@
 ---
-title: "Content Quality Principles"
 description: Universal markdown content quality standards applicable to all repository markdown contexts
-category: explanation
-subcategory: conventions
-tags:
-  - content-quality
-  - markdown
-  - writing-standards
-  - accessibility
-  - documentation
-created: 2025-12-07
 when_to_use: Read this before writing or reviewing any markdown content in this repository.
 ---
 

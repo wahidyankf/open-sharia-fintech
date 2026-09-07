@@ -1,15 +1,5 @@
 ---
-title: Component Patterns Convention
 description: Standards for building UI components with CVA variants, Radix primitives, and React patterns
-category: explanation
-subcategory: development/frontend
-tags:
-  - components
-  - react
-  - radix
-  - cva
-  - shadcn
-created: 2026-03-28
 when_to_use: Use when creating or reviewing any UI component in ayokoding-www or organiclever-app-web.
 ---
 

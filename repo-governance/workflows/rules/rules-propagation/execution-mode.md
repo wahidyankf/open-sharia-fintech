@@ -1,5 +1,4 @@
 ---
-title: "Execution Mode"
 description: How the propagation run is driven — agent delegation, the N+1 concurrency model, dry-run behaviour, and invocation.
 when_to_use: Use when starting a propagation run and deciding how to delegate its steps.
 ---

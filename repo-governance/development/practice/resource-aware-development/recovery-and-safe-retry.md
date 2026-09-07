@@ -1,14 +1,5 @@
 ---
-title: "Recovery and Safe Retry"
 description: What HIPPO exits 73, 75, and 78 require before a retry, and the corrections that are never allowed.
-category: explanation
-subcategory: development
-tags:
-  - resource-management
-  - parallelism
-  - development
-  - tooling
-created: 2026-09-05
 when_to_use: Use when a guarded command exits non-zero and you are deciding whether and how to retry it.
 ---
 

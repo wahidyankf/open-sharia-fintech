@@ -1,15 +1,5 @@
 ---
-title: "Git Identity From Global Config Convention"
 description: Prohibits per-repo [user] overrides in .git/config; git author identity must come exclusively from the global git config
-category: explanation
-subcategory: development
-tags:
-  - git
-  - identity
-  - commits
-  - security
-  - reproducibility
-created: 2026-05-19
 when_to_use: Use when a `.git/config` may contain a per-repo `[user]` override, or when managing git author identity.
 ---
 

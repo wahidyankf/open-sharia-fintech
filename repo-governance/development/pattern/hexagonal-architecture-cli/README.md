@@ -1,5 +1,4 @@
 ---
-title: "Hexagonal Architecture — CLI Apps"
 description: "Hexagonal architecture specialization for CLI apps — commands as inbound adapters, layer responsibilities, and forbidden imports"
 when_to_use: "Read this index to find the right Hexagonal Architecture — CLI Apps child document."
 ---

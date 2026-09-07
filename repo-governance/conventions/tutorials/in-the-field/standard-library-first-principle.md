@@ -1,16 +1,6 @@
 ---
-title: "Standard Library First Principle"
 description: The core standard-library-first principle, why it matters, the progression pattern, and the first half of the topic progression table.
 when_to_use: Use when you need the rationale for teaching standard-library approaches before frameworks, or the topic progression table.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Standard Library First Principle

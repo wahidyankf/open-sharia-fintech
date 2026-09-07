@@ -1,16 +1,5 @@
 ---
-title: "Agent Workflow Orchestration Convention"
 description: "Standards for how AI agents plan, execute, verify, and self-improve during multi-step tasks"
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - workflow
-  - orchestration
-  - planning
-  - verification
-  - delegated-agents
-created: 2026-03-09
 when_to_use: Use when planning, delegating, verifying, or self-improving during a multi-step agent task.
 ---
 

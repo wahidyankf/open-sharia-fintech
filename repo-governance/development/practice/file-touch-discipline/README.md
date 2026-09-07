@@ -1,5 +1,4 @@
 ---
-title: "File-Touch Discipline"
 description: "Every actor keeps a deliberate, append-only record of the files it touched, carries that record intact across context compaction, and treats every file not on the record as another actor's in-flight work"
 when_to_use: "Read this index to find the right File-Touch Discipline child document."
 ---

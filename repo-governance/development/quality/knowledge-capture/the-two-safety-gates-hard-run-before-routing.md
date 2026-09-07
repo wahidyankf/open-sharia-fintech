@@ -1,16 +1,5 @@
 ---
-title: "The Two Safety Gates (HARD — run before routing)"
 description: "The two mandatory pre-routing safety gates."
-category: explanation
-subcategory: development
-tags:
-  - knowledge-capture
-  - learnings
-  - plans
-  - triage
-  - safety-gates
-  - post-mortems
-created: 2026-07-05
 when_to_use: "Use before routing any learning."
 ---
 

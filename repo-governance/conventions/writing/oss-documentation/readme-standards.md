@@ -1,14 +1,5 @@
 ---
-title: "README Standards"
 description: "Required README sections, writing principles, and a worked good-structure example"
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - documentation
-  - open-source
-  - repository-standards
-created: 2026-04-04
 when_to_use: "Read this when writing or reviewing a project README.md file."
 ---
 

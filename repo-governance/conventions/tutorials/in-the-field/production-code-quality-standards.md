@@ -1,16 +1,6 @@
 ---
-title: "Production Code Quality Standards"
 description: Code completeness requirements and the 1.0-2.25 annotation-density target for production code examples.
 when_to_use: Use when checking whether a guide's code examples meet production completeness and annotation-density standards.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Production Code Quality Standards

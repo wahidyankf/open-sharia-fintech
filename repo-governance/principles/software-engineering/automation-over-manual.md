@@ -1,15 +1,5 @@
 ---
-title: "Automation Over Manual"
 description: Automate repetitive tasks to ensure consistency and reduce human error - humans for creative work, machines for repetition
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - automation
-  - git-hooks
-  - ai-agents
-  - consistency
-created: 2025-12-15
 when_to_use: Use when deciding whether a repetitive task should be automated, or when looking for this repository's automation examples.
 ---
 

@@ -1,13 +1,5 @@
 ---
-title: "What Counts as Code"
 description: The surfaces the code-as-liability practice reaches — non-Markdown files under apps/, libs/, and scripts/ — and the explicit exemption for tests, specs, and fixtures.
-category: explanation
-subcategory: development
-tags:
-  - code-quality
-  - maintenance
-  - discipline
-created: 2026-08-21
 when_to_use: Use when deciding whether a given added file falls under the cost/benefit obligation.
 ---
 

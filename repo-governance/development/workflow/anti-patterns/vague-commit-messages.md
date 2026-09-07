@@ -1,10 +1,5 @@
 ---
-title: "Anti-Pattern: Vague Commit Messages"
 description: Commit messages that don't explain changes undermine searchable history and changelog automation.
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use when writing a commit message that doesn't clearly state what changed and why.
 ---
 

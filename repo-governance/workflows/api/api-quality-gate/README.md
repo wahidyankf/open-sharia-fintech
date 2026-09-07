@@ -1,5 +1,4 @@
 ---
-title: "API Quality Gate Workflow"
 description: "Exercises a running API through one discovery, an optional fix, and one scoped live verification."
 when_to_use: "Read this index to find the right API Quality Gate Workflow child document."
 ---

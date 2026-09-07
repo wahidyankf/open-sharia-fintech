@@ -1,5 +1,4 @@
 ---
-title: "In-the-Field Tutorial Convention"
 description: "Standards for creating production-ready implementation guides building on by-example/by-concept foundations with frameworks, libraries, and enterprise patterns"
 when_to_use: "Read this index to find the right In-the-Field Tutorial Convention child document."
 ---

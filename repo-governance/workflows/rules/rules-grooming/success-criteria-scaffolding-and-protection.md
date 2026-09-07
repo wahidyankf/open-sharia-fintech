@@ -1,5 +1,4 @@
 ---
-title: "Success Criteria — Scaffolding and Entry-Point Protection"
 description: Gherkin scenarios for what the scaffolding class admits and refuses, and for the entry-point documents no class may remove without naming them.
 when_to_use: Use when validating or extending the scaffolding admission rule or the entry-point protection.
 ---

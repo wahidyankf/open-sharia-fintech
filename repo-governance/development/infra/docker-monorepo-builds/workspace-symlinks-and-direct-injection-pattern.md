@@ -1,15 +1,5 @@
 ---
-title: "Workspace Symlinks and the Direct Injection Pattern"
 description: Explains why npm workspace symlinks break inside Docker builds and the direct node_modules injection pattern that fixes it.
-category: explanation
-subcategory: development/infra
-tags:
-  - docker
-  - monorepo
-  - npm-workspaces
-  - build
-  - node_modules
-created: 2026-03-28
 when_to_use: Use when a Docker build inside this monorepo fails to resolve a workspace symlink or reports a shared library module not found.
 ---
 

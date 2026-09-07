@@ -1,14 +1,5 @@
 ---
-title: "Cross-Repository Parity Identity"
 description: Keep corresponding worktree and short-lived branch identities aligned across repositories for one parity objective.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - worktrees
-  - branches
-  - parity
-created: 2026-08-27
 when_to_use: Use before mutating more than one repository for a declared parity objective.
 ---
 

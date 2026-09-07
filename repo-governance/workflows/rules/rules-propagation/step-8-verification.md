@@ -1,5 +1,4 @@
 ---
-title: "Step 8: Verification"
 description: Regenerating derived surfaces, running the deterministic gates, composing the repository rules quality gate, and reconciling the file-touch ledger.
 when_to_use: Use after every rule is written and dispositioned, before opening the PR.
 ---

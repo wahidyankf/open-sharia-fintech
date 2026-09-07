@@ -1,17 +1,6 @@
 ---
-title: "Recipe Organization and Naming"
 description: "Defines the cookbook directory structure, recipe file naming pattern, and category organization rules."
 when_to_use: "Read when creating or naming a new recipe file or a new cookbook category."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - cookbook
-  - education
-  - problem-solving
-  - recipes
-created: 2026-01-30
 ---
 
 # Recipe Organization and Naming

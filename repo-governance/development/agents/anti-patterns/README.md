@@ -1,5 +1,4 @@
 ---
-title: "Anti-Patterns in AI Agents Development"
 description: "Common mistakes to avoid when developing AI agents, with problem, cause, and solution for each anti-pattern."
 when_to_use: "Read this index to find the right Anti-Patterns in AI Agents Development child document."
 ---

@@ -1,15 +1,5 @@
 ---
-title: "Fixer Guidelines: Priority Function and Fix Report Format"
 description: "Priority-determination function and a fix-report example."
-category: explanation
-subcategory: development
-tags:
-  - criticality
-  - validation
-  - checker-agents
-  - fixer-agents
-  - quality-assurance
-created: 2025-12-27
 when_to_use: "Use for priority determination or a fix-report template."
 ---
 
@@ -66,33 +56,31 @@ def determine_priority(criticality, confidence):
 
 ## P0 Fixes Applied (CRITICAL + HIGH Confidence)
 
-### 1. Missing Required Subcategory Field
+### 1. Missing Required `when_to_use` Field
 
 **File**: `repo-governance/development/agents/ai-agents.md`
-**Original Issue**: CRITICAL - Missing `subcategory: development` field
+**Original Issue**: CRITICAL - Missing `when_to_use` field
 **Validation**: Confirmed field missing in frontmatter (HIGH confidence)
-**Fix Applied**: Added `subcategory: development` at line 5
+**Fix Applied**: Added `when_to_use` at line 3
 
 **Before**:
 
 ```yaml
 ---
-name: AI Agents Convention
-category: development
+description: Agent complexity tiers and condensation.
 ---
 ```
-````
 
 **After**:
 
 ```yaml
 ---
-name: AI Agents Convention
-category: development
-subcategory: development
+description: Agent complexity tiers and condensation.
+when_to_use: Use when authoring or reviewing an agent definition.
 ---
 ```
 
 [... continue for all P0 fixes ...]
 
 ---
+````

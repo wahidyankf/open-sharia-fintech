@@ -1,14 +1,5 @@
 ---
-title: "Overview and Core Concepts"
 description: "The four concentric zones of hexagonal architecture, plus the core concepts of ports, inbound adapters, outbound adapters, and the domain model."
-category: explanation
-subcategory: development
-tags:
-  - architecture
-  - hexagonal
-  - ports-and-adapters
-  - dependency-rule
-created: 2026-05-26
 when_to_use: "Use when orienting to hexagonal architecture's zones and core vocabulary before applying it to a specific app."
 ---
 

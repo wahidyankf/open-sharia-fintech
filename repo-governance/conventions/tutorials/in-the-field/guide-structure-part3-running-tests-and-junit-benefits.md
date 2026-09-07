@@ -1,16 +1,6 @@
 ---
-title: "Guide Structure Part 3: Running Tests and JUnit 5 Benefits"
 description: How to run JUnit 5 tests via Maven and why JUnit 5 is the production-standard testing framework.
 when_to_use: Use when documenting how to run tests or justifying JUnit 5 over the standard library.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Guide Structure Part 3: Running Tests and JUnit 5 Benefits

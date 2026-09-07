@@ -1,10 +1,5 @@
 ---
-title: "Anti-Pattern 1: God Agent in Maker-Checker-Fixer"
 description: "A single agent tries to create, validate, and fix content instead of using separate maker/checker/fixer agents."
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: "Use when designing or reviewing an agent that both creates and validates its own content."
 ---
 

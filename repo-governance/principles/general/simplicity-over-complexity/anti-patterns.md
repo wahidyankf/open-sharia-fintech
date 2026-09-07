@@ -1,13 +1,5 @@
 ---
-title: "Anti-Patterns"
 description: Four code-level anti-patterns - premature abstraction, config explosion, deep inheritance, over-generic code.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - simplicity
-  - over-engineering
-created: 2025-12-15
 when_to_use: Use when reviewing code for these anti-patterns.
 ---
 

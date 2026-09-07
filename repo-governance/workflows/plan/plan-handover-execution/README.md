@@ -1,5 +1,4 @@
 ---
-title: "Plan Handover Execution Workflow"
 description: "Writes a structured handover document capturing an in-progress plan's state for the next agent, session, or human."
 when_to_use: "Read this index to find the right Plan Handover Execution Workflow child document."
 ---

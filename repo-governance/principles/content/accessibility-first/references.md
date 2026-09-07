@@ -1,14 +1,5 @@
 ---
-title: "References"
 description: External references on WCAG standards, color accessibility tools, screen reader guides, and semantic HTML.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - accessibility
-  - wcag
-  - inclusive-design
-created: 2025-12-15
 when_to_use: Use when seeking authoritative external sources on accessibility standards and testing tools.
 ---
 

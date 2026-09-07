@@ -1,14 +1,5 @@
 ---
-title: "*-check-fix Workflow Pattern — Consecutive Pass Requirement"
 description: Why every *-check-fix workflow requires two consecutive zero-finding validations before declaring success, and its mechanism and iteration-budget impact.
-category: explanation
-subcategory: workflows
-tags:
-  - workflows
-  - agents
-  - orchestration
-  - patterns
-created: 2025-12-23
 when_to_use: Use when explaining or implementing the double-zero confirmation rule in a *-check-fix workflow.
 ---
 

@@ -1,14 +1,5 @@
 ---
-title: "Mechanize Cross-File Invariants — Scope and Related Documentation"
 description: Where this practice applies and where it deliberately does not, plus links to related conventions and principles
-category: explanation
-subcategory: development
-tags:
-  - generate-and-validate
-  - drift
-  - automation
-  - governance
-created: 2026-08-07
 when_to_use: Use when deciding whether a specific case of divergence falls under this practice, or to find the related conventions and principles.
 ---
 

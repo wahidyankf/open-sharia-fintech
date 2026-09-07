@@ -1,14 +1,5 @@
 ---
-title: "Multi-Harness Binding Operation — Sync Automation, References, History, Practices, and Troubleshooting"
 description: "Covers sync automation, documentation references, migration history, best practices, and troubleshooting for multi-harness binding operations."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when an agent or Skill change needs to propagate across the multi-harness bindings, or when troubleshooting a sync failure.
 ---
 

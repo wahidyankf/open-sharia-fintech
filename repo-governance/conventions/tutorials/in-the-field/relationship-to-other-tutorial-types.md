@@ -1,16 +1,6 @@
 ---
-title: "Relationship to Other Tutorial Types"
 description: How In-the-Field differs from and builds on By-Example, By-Concept, and Cookbook tutorial types.
 when_to_use: Use when deciding whether content belongs in In-the-Field versus another tutorial type.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Relationship to Other Tutorial Types

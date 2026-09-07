@@ -1,16 +1,5 @@
 ---
-title: "Acceptable Test Data"
 description: "The distinction between realistic test data that verifies parsing logic and actual machine identity."
-category: explanation
-subcategory: development
-tags:
-  - git
-  - commits
-  - security
-  - portability
-  - environment
-  - quality
-created: 2026-03-24
 when_to_use: "Use when a test fixture resembles machine-specific data and you need to confirm it is acceptable."
 ---
 

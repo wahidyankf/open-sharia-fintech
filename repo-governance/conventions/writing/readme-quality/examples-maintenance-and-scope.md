@@ -1,15 +1,5 @@
 ---
-title: "Examples, Maintenance, and Scope vs Structural Conventions"
 description: Worked good-example excerpts from this project, README maintenance triggers, and the boundary with the structural-placement convention
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - readme
-  - engagement
-  - accessibility
-  - writing
-created: 2025-12-07
 when_to_use: Read this for real worked examples of good README writing, or to know when a README needs a maintenance review.
 ---
 

@@ -1,12 +1,5 @@
 ---
-title: "Examples from This Repository"
 description: Real examples from this repository of tutorial levels, documentation structure, and agent tool permissions.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - progressive-disclosure
-created: 2025-12-15
 when_to_use: Use when looking for worked examples of progressive disclosure applied in this repository.
 ---
 

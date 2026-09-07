@@ -1,5 +1,4 @@
 ---
-title: "Plan Anti-Hallucination Convention"
 description: "Mandatory pre-write verification, repo-grounding, refuse-on-uncertainty, and confidence-labeling rules for plan content authored by AI agents"
 when_to_use: "Read this index to find the right Plan Anti-Hallucination Convention child document."
 ---

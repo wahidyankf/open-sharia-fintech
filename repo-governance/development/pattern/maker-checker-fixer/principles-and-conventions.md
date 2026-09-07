@@ -1,16 +1,5 @@
 ---
-title: "Principles and Conventions"
 description: "Principles and conventions this pattern implements."
-category: explanation
-subcategory: development
-tags:
-  - maker-checker-fixer
-  - workflow
-  - content-quality
-  - agent-patterns
-  - validation
-  - automation
-created: 2025-12-14
 when_to_use: "Use to trace a rule back to its principle."
 ---
 

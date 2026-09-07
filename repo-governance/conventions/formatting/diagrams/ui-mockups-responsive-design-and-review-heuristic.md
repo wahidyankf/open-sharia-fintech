@@ -1,18 +1,6 @@
 ---
-title: "UI Mockups in Plan Docs: Responsive Design and Design-Review Heuristic"
 description: "Covers the mobile/tablet/desktop responsive design requirement and the identical-DOM-per-breakpoint review heuristic."
 when_to_use: "Use when a UI mockup needs to show responsive behaviour across breakpoints and you need the review heuristic."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # UI Mockups in Plan Docs: Responsive Design and Design-Review Heuristic

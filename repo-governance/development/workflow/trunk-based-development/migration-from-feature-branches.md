@@ -1,15 +1,5 @@
 ---
-title: "Migration from Feature Branches"
 description: Mindset shifts, transition steps, and common concerns addressed when moving a team from GitFlow/GitHub Flow to TBD.
-category: explanation
-subcategory: development
-tags:
-  - trunk-based-development
-  - git
-  - workflow
-  - development
-  - continuous-integration
-created: 2025-11-26
 when_to_use: Use when transitioning a team that is used to a feature-branch workflow to TBD.
 ---
 

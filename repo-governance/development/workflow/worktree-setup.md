@@ -1,18 +1,5 @@
 ---
-title: Worktree Toolchain Initialization
 description: Practice for initializing dependencies, hooks, and the polyglot toolchain in each new worktree's root immediately after creation
-category: explanation
-subcategory: development
-tags:
-  - development
-  - git
-  - worktree
-  - npm
-  - nx
-  - dependencies
-  - toolchain
-  - doctor
-created: 2026-03-28
 when_to_use: Use immediately after creating a git worktree, before Git mutations or Nx commands in it.
 ---
 

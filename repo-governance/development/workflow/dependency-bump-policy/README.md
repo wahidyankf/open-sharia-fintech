@@ -1,5 +1,4 @@
 ---
-title: "Dependency Bump Stability & Safety Policy"
 description: "Three-path decision tree (LTS, 60-day soak, security waiver) governing every dependency bump across the polyglot monorepo."
 when_to_use: "Read this index to find the right Dependency Bump Stability & Safety Policy child document."
 ---

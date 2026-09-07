@@ -1,14 +1,5 @@
 ---
-title: "Agent Size Checking and Content Philosophy"
 description: "Describes how agent file size is measured — by the word-budget gate, not by hand — and the content philosophy that keeps agents small."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when the word-budget gate flags an agent, or when explaining why agent definitions are kept small.
 ---
 

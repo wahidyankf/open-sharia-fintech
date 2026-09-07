@@ -1,16 +1,6 @@
 ---
-title: "Emoji Usage Convention"
 description: Standards for semantic emoji usage to enhance document scannability and engagement with accessible colored emojis
 when_to_use: Use when deciding whether, where, or which emoji to use in repository documentation.
-category: explanation
-subcategory: conventions
-tags:
-  - emoji
-  - accessibility
-  - scannability
-  - conventions
-  - markdown
-created: 2025-12-04
 ---
 
 # Emoji Usage Convention

@@ -1,14 +1,5 @@
 ---
-title: "Diagrams in Plans — Skipping, Accessibility, and Example"
 description: States when a plan may skip diagrams, the color-blind-safe palette and accessibility invariants for plan diagrams, and a worked flowchart example.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when a plan is simple enough to consider skipping diagrams, or when applying the accessible color palette to a plan diagram.
 ---
 

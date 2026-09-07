@@ -1,15 +1,6 @@
 ---
-title: "Complementary Anti-Drift Gates"
 description: How this workflow relates to the continuous harness-ownership and harness-bindings CI gates — which mechanism catches which class of drift, and why neither replaces the other.
 when_to_use: Read this when deciding whether a harness-drift concern belongs to this periodic workflow or to a continuous CI gate.
-category: explanation
-subcategory: workflows
-tags:
-  - workflows
-  - governance
-  - platform-bindings
-  - agents
-created: 2026-08-19
 ---
 
 # Complementary Anti-Drift Gates

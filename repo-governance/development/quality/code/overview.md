@@ -1,17 +1,5 @@
 ---
-title: "Overview"
 description: "Overview of the automated code-quality tooling."
-category: explanation
-subcategory: development
-tags:
-  - development
-  - code-quality
-  - prettier
-  - husky
-  - lint-staged
-  - git-hooks
-  - automation
-created: 2026-05-12
 when_to_use: "Use when orienting to the code-quality toolchain."
 ---
 

@@ -1,15 +1,5 @@
 ---
-title: "Examples"
 description: Worked pass/fail examples of the PR merge protocol - correct precondition-gated merges, premature merges, and a user-authorized gate bypass.
-category: explanation
-subcategory: development
-tags:
-  - pull-request
-  - merge
-  - quality-gates
-  - workflow
-  - merge-preconditions
-created: 2026-04-04
 when_to_use: Use as a reference when unsure whether a specific merge decision matches or violates this protocol.
 ---
 

@@ -1,15 +1,5 @@
 ---
-title: "Vision Supported"
 description: Explains how immutability serves the Open Sharia Enterprise Vision by making concurrent Islamic finance systems safer and easier to audit.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - functional-programming
-  - immutability
-  - data-structures
-  - concurrency
-created: 2025-12-28
 when_to_use: Use when explaining why immutability matters for Shariah-compliant, globally collaborative systems, not just as a coding style preference.
 ---
 

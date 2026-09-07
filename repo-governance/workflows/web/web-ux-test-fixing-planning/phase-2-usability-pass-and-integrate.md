@@ -1,5 +1,4 @@
 ---
-title: "Web UX Test-Fixing Planning — Phase 2: Usability Pass + Integrate"
 description: "Runs web-usability-tester after Phase 1 integrates, then folds its UWT-### findings, walkthrough, and USS-### spec-suggestions into the same plan."
 when_to_use: "Use when checking what the spec-blind usability tester is dispatched with, or how its results are kept distinct from the exploratory findings."
 ---

@@ -1,16 +1,6 @@
 ---
-title: "Multi-Harness Binding: Canonical Surface, Binding Tiers, and No-Shadowing (Rules 1-3)"
 description: Rules 1 through 3 — AGENTS.md as the single instruction source, the Tier-1/Tier-2 binding model, and the hard no-shadowing rule for higher-precedence harness files.
 when_to_use: Read this when deciding whether a harness needs a committed binding file, or when auditing whether a harness-specific file improperly shadows AGENTS.md.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - governance
-  - platform-bindings
-  - agents
-  - compatibility
-created: 2026-05-24
 ---
 
 # Multi-Harness Binding: Canonical Surface, Binding Tiers, and No-Shadowing (Rules 1-3)

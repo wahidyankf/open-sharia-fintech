@@ -1,5 +1,4 @@
 ---
-title: "Cookbook Tutorial Convention"
 description: "Standards for creating problem-focused cookbook tutorials with practical, copy-paste ready recipes organized by problem type"
 when_to_use: "Read this index to find the right Cookbook Tutorial Convention child document."
 ---

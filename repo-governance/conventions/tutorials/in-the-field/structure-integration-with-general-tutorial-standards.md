@@ -1,16 +1,6 @@
 ---
-title: "Structure Integration with General Tutorial Standards"
 description: How In-the-Field tutorials adapt the general tutorial structure, plus the inherited and specialized requirements they must follow.
 when_to_use: Use when structuring a new In-the-Field guide or verifying it inherits the right general-tutorial requirements.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Structure Integration with General Tutorial Standards

@@ -1,5 +1,4 @@
 ---
-title: "When to Use"
 description: The three scenarios that call for the dependency bump planning workflow — periodic hygiene sweeps, pre-release snapshots, and LTS advances.
 when_to_use: Use when deciding whether to kick off a dependency-bump planning sweep.
 ---

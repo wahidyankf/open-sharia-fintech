@@ -1,5 +1,4 @@
 ---
-title: "Programming Language Documentation Separation Convention"
 description: "Establishes the relationship between docs/explanation/programming-languages/ repository-specific style guides and ayokoding-www educational content"
 when_to_use: "Read this index to find the right Programming Language Documentation Separation Convention child document."
 ---

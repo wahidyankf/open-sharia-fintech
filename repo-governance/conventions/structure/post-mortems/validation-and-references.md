@@ -1,16 +1,6 @@
 ---
-title: "Post-Mortem Convention: Validation and References"
 description: The completion checklist for a finished post-mortem, plus in-repo and industry-source references for the post-mortem convention
 when_to_use: Read this when doing a final check before marking a post-mortem complete, or when looking up a source this convention is built on.
-category: explanation
-subcategory: conventions
-tags:
-  - post-mortem
-  - incidents
-  - blameless
-  - reliability
-  - structure
-created: 2026-06-05
 ---
 
 # Validation and References

@@ -1,5 +1,4 @@
 ---
-title: "Notes and Execution Mode"
 description: The two load-bearing sections of the template, and why writing a handover doesn't warrant a delegated agent.
 when_to_use: Use when confirming which template sections must never be empty, or who performs this workflow.
 ---

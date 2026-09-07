@@ -1,14 +1,6 @@
 ---
-title: "Repo Rules — Scope Boundaries"
 description: The in-scope and out-of-scope table for the term "repo rules", including why language style guides count despite living outside repo-governance/.
 when_to_use: Use when deciding whether a given file is a repo rule — for example when scoping a rules audit, a propagation sweep, or a governance review.
-category: explanation
-subcategory: governance
-tags:
-  - governance
-  - glossary
-  - conventions
-created: 2026-08-16
 ---
 
 # Repo Rules — Scope Boundaries

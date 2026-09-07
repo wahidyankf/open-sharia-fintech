@@ -1,15 +1,5 @@
 ---
-title: "Section-Specific Guidelines"
 description: Per-section guidance for the Opening, Motivation, Roadmap, Tech Stack, and Getting Started sections of a README
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - readme
-  - engagement
-  - accessibility
-  - writing
-created: 2025-12-07
 when_to_use: Read this when writing one of these specific README sections and want section-level structural guidance.
 ---
 

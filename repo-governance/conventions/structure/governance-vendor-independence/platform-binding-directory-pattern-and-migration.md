@@ -1,16 +1,6 @@
 ---
-title: "Platform Binding Directory Pattern, and Migration Guidance"
 description: The catalog of per-platform binding directories and root instruction files, plus the step-by-step process for refactoring an existing governance file to be vendor-neutral.
 when_to_use: Use when you need the catalog of platform-binding directories, or the step-by-step process for scrubbing vendor terms from an existing governance file.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - governance
-  - vendor-independence
-  - agents
-  - platform-bindings
-created: 2026-05-02
 ---
 
 # Platform Binding Directory Pattern, and Migration Guidance

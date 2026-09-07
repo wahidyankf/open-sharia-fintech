@@ -1,5 +1,4 @@
 ---
-title: "Reproducible Environments"
 description: "Practices for creating consistent, reproducible development and build environments"
 when_to_use: "Read this index to find the right Reproducible Environments child document."
 ---

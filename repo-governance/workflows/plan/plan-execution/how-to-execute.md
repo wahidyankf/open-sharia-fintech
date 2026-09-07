@@ -1,5 +1,4 @@
 ---
-title: "How to Execute"
 description: Lists the 12 top-level actions (0-11) the calling context performs when a user asks it to execute a plan.
 when_to_use: Use when tracing the exact ordered actions plan execution performs, from backlog promotion through worktree cleanup.
 ---

@@ -1,5 +1,4 @@
 ---
-title: "When to Use, and Relationship to plan-execution.md"
 description: States when (and when not) to run this workflow, and that it is a discovery-and-reconciliation layer in front of plan-execution.md rather than a duplicate of it.
 when_to_use: Use when deciding whether a discovery layer is needed before plan-execution.md, or when scoping what this workflow specifies versus what it inherits from plan-execution.md.
 ---

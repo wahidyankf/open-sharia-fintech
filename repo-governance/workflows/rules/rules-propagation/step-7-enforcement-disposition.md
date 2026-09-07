@@ -1,5 +1,4 @@
 ---
-title: "Step 7: Enforcement Disposition"
 description: The mandatory three-way outcome every propagated rule must carry before delivery — covered by an existing gate, newly gated, or unenforced by explicit decision.
 when_to_use: Use after the rule is written, before verification, to decide how the rule will be enforced.
 ---

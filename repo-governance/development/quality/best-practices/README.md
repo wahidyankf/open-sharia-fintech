@@ -1,5 +1,4 @@
 ---
-title: "Best Practices for Quality Development"
 description: "Catalog of ten actionable best practices for code quality, validation, and content preservation."
 when_to_use: "Read this index to find the right Best Practices for Quality Development child document."
 ---

@@ -1,16 +1,5 @@
 ---
-title: "The Sixteen Rules (1-6)"
 description: "Rules 1-6: visual-parity gate, primitive naming, responsive parity, filter coverage, value-bearing tests, labeled numbers."
-category: explanation
-subcategory: development
-tags:
-  - quality
-  - planning
-  - ui
-  - verification
-  - testing
-  - deployment
-created: 2026-06-19
 when_to_use: "Use when authoring a UI plan and checking against rules 1-6."
 ---
 

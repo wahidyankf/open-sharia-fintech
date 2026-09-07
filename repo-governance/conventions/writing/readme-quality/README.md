@@ -1,5 +1,4 @@
 ---
-title: "README Quality Convention"
 description: "Quality standards for README.md files ensuring engagement, accessibility, and scannability"
 when_to_use: "Read this index to find the right README Quality Convention child document."
 ---

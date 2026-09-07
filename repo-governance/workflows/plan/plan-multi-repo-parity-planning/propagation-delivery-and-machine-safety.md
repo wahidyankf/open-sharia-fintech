@@ -1,5 +1,4 @@
 ---
-title: "Propagation, Delivery Shape, and Shared-Machine Safety"
 description: Covers parity propagation, capacity-controlled cross-repository compute, per-repo delivery shape, and shared-machine safety.
 when_to_use: Use when deciding whether repos can run in parallel, how a repo's plan lands as PRs, or before running any destructive-looking git operation.
 ---

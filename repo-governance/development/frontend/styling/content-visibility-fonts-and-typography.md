@@ -1,15 +1,5 @@
 ---
-title: "Styling — Content Visibility, Font Loading, and Fluid Typography"
 description: Never hide content on mobile (adapt the layout instead), use next/font for all font loading, and use clamp() or Tailwind responsive utilities for text that scales between breakpoints
-category: explanation
-subcategory: development/frontend
-tags:
-  - styling
-  - tailwind
-  - css
-  - responsive
-  - mobile-first
-created: 2026-03-28
 when_to_use: Use when a component might hide content on small screens, when adding a font, or when sizing text that must scale across breakpoints.
 ---
 

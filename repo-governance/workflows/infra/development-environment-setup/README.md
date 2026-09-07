@@ -1,5 +1,4 @@
 ---
-title: "Development Environment Setup Workflow"
 description: "Guides installing and verifying every toolchain needed for pre-commit, pre-push, integration, and E2E work in this monorepo."
 when_to_use: "Read this index to find the right Development Environment Setup Workflow child document."
 ---

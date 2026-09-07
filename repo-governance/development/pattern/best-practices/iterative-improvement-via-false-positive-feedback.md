@@ -1,10 +1,5 @@
 ---
-title: "Practice 9: Iterative Improvement via False Positive Feedback"
 description: "Use the fixer's false positive reports to improve checker accuracy over time."
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: "Use when a fixer detects a false positive and needs to feed that signal back into checker logic."
 ---
 

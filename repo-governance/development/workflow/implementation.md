@@ -1,18 +1,5 @@
 ---
-title: "Implementation Workflow"
 description: Three-stage development workflow - make it work, make it right, make it fast
-category: explanation
-subcategory: development
-tags:
-  - development
-  - workflow
-  - implementation
-  - optimization
-  - refactoring
-  - surgical-changes
-  - goal-driven
-  - test-driven
-created: 2025-12-15
 when_to_use: Use when planning or reviewing any code change, to sequence work-then-right-then-fast and to apply surgical scoping and goal-driven verification.
 ---
 

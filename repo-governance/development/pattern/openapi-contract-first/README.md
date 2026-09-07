@@ -1,5 +1,4 @@
 ---
-title: "OpenAPI Contract-First Development"
 description: "Spec-first API development — the OpenAPI YAML is the single source of truth; code is generated from it, not the reverse"
 when_to_use: "Read this index to find the right OpenAPI Contract-First Development child document."
 ---

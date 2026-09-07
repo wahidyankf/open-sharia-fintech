@@ -1,5 +1,4 @@
 ---
-title: "Phase 3: Node.js Ecosystem (Sequential)"
 description: "Phase 3: install Volta, then Node.js and npm at the versions pinned in package.json."
 when_to_use: "Use when setting up or repairing the Node.js/npm toolchain via Volta."
 ---

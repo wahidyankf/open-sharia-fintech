@@ -1,18 +1,6 @@
 ---
-title: "Standard 5 — PM-Readability Contract for specs/ (Rules 1-6)"
 description: The six authoring rules that make specs/apps/ files readable by a SWE-background TPM — header block, intent-before-mechanism, scoped glossing, tables, introduced code blocks, and links forward.
 when_to_use: Use when authoring or reviewing a specs/apps/ file against the six PM-readability rules.
-category: explanation
-subcategory: conventions
-status: "Pilot — initial issue"
-tags:
-  - conventions
-  - readme
-  - specs
-  - spec-tree-shape
-  - pm-readability
-  - c4
-created: 2026-05-09
 ---
 
 # Standard 5 — PM-Readability Contract for specs/ (Rules 1-6)

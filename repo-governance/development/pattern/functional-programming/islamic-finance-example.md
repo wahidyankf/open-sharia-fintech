@@ -1,15 +1,5 @@
 ---
-title: "Islamic Finance Example"
 description: "A worked Mudharabah profit-distribution example showing functional core/imperative shell applied to Shariah-compliant business logic."
-category: explanation
-subcategory: development
-tags:
-  - development
-  - functional-programming
-  - immutability
-  - pure-functions
-  - typescript
-created: 2025-12-28
 when_to_use: "Use when you need a complete worked example of applying functional core/imperative shell to financial business logic."
 ---
 

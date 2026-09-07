@@ -1,16 +1,5 @@
 ---
-title: Scenario By-Example Tutorial Convention
 description: Standards for scenario-domain by-example tutorials using annotated documents, decisions, and governance artifacts — extends the SWE By-Example Convention for any non-code domain
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - scenario
-  - governance
-  - decision-making
-created: 2026-05-21
 when_to_use: Use when writing or reviewing a non-code, scenario-driven by-example tutorial (security governance, ADRs, legal/compliance, risk) and you need the standard this content must follow.
 ---
 

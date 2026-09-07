@@ -1,10 +1,5 @@
 ---
-title: "Practice 11: Pull with Rebase Before Pushing"
 description: Always pull latest changes from remote main before pushing, preferring rebase for clean linear history in Trunk Based Development.
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use immediately before pushing to main, to pull the latest remote changes with rebase first.
 ---
 

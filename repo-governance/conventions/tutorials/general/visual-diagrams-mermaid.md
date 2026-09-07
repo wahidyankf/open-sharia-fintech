@@ -1,17 +1,6 @@
 ---
-title: "Diagrams (Mermaid)"
 description: "Defines when to use Mermaid diagrams in a tutorial, required diagram elements, and diagram types by use case."
 when_to_use: "Read when deciding whether a tutorial concept needs a Mermaid diagram and which diagram type to use."
-category: explanation
-subcategory: conventions
-tags:
-  - tutorials
-  - diataxis
-  - learning
-  - pedagogy
-  - documentation
-  - teaching
-created: 2025-12-03
 ---
 
 # Diagrams (Mermaid)

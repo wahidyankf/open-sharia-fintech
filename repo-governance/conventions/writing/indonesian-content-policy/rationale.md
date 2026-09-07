@@ -1,16 +1,6 @@
 ---
-title: "Indonesian Content Policy — Rationale"
 description: Why technical tutorials should be English-first (international programming reality, learning English through code, resource efficiency) and why unique Indonesian content is encouraged (cultural value, local context, accessibility, community).
 when_to_use: Use when you need to justify the English-first policy or the encouragement of unique Indonesian content to a stakeholder.
-category: explanation
-subcategory: conventions
-tags:
-  - ayokoding-www
-  - indonesian
-  - bilingual
-  - content-policy
-  - translation
-created: 2026-02-07
 ---
 
 # Rationale

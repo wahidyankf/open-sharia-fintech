@@ -1,13 +1,5 @@
 ---
-title: "How It Applies"
 description: Five worked contrasts (structure, agents, frontmatter, docs, conventions) of simple versus complex choices.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - simplicity
-  - over-engineering
-created: 2025-12-15
 when_to_use: Use when you need a concrete before/after example for a specific decision.
 ---
 
@@ -76,13 +68,8 @@ PASS: **Simple (Correct)**:
 
 ```yaml
 ---
-title: Document Title
 description: Brief description
-category: explanation
-tags:
-  - tag1
-  - tag2
-created: 2025-12-15
+when_to_use: Use when <the situation this document governs>.
 ---
 ```
 

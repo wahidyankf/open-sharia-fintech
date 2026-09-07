@@ -1,5 +1,4 @@
 ---
-title: "Cross-Language Lint Strictness"
 description: "Uniform warning-and-above lint threshold across every language and artifact type in this repository."
 when_to_use: "Read this index to find the right Cross-Language Lint Strictness child document."
 ---

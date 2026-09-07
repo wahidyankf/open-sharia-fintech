@@ -1,17 +1,5 @@
 ---
-title: "Best Practices"
 description: "Best practices for working with the code-quality tooling."
-category: explanation
-subcategory: development
-tags:
-  - development
-  - code-quality
-  - prettier
-  - husky
-  - lint-staged
-  - git-hooks
-  - automation
-created: 2026-05-12
 when_to_use: "Use for a quick best-practice reminder on code quality."
 ---
 

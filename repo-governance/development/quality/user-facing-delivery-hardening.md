@@ -1,16 +1,5 @@
 ---
-title: "User-Facing Delivery Hardening Convention"
 description: Sixteen durable rules for planning, executing, verifying, and archiving user-facing feature work so design-parity and behavioural defects cannot ship past green gates
-category: explanation
-subcategory: development
-tags:
-  - quality
-  - planning
-  - ui
-  - verification
-  - testing
-  - deployment
-created: 2026-06-19
 when_to_use: "Use when planning, executing, or archiving a user-facing (UI or API) feature-change plan."
 ---
 

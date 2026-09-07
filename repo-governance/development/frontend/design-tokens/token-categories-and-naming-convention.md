@@ -1,15 +1,5 @@
 ---
-title: "Design Tokens — Token Categories and Naming Convention"
 description: Structural tokens (shared, not overridable) vs. brand tokens (per-app override), and the bare-HSL-variable plus Tailwind-theme-alias naming pattern
-category: explanation
-subcategory: development/frontend
-tags:
-  - design-tokens
-  - css
-  - tailwind
-  - theming
-  - dark-mode
-created: 2026-03-28
 when_to_use: Use when deciding whether a new value belongs in the shared structural set or a per-app brand override, or when naming a new token.
 ---
 

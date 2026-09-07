@@ -1,5 +1,6 @@
 ---
-title: "Repository Governance Architecture"
+description: "The six-layer governance architecture — what each layer answers, how traceability flows between them, and the delivery mechanisms that test them."
+when_to_use: "Read this index to find the right governance-architecture child document."
 ---
 
 # Repository Governance Architecture

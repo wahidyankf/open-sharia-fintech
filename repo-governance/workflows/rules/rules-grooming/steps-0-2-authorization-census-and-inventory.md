@@ -1,5 +1,4 @@
 ---
-title: "Steps 0-2 — Authorization, Corpus Census, and Obligation Inventory"
 description: Freezing the run's inputs, measuring the corpus to confirm a sweep is due, and capturing the pre-run obligation snapshot that the preservation proof diffs against.
 when_to_use: Use when starting a grooming sweep — establishing authorization, baseline metrics, and the preservation baseline.
 ---

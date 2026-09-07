@@ -1,5 +1,4 @@
 ---
-title: "Strictness Examples 4-6: Normal, Strict, and OCD Modes"
 description: Three worked examples showing which findings the fixer skips under normal, strict, and ocd strictness modes.
 when_to_use: Use as worked references for how each strictness mode determines which findings get auto-fixed.
 ---

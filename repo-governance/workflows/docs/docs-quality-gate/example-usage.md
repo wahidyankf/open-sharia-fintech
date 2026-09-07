@@ -1,5 +1,4 @@
 ---
-title: "Example Usage"
 description: "Worked example invocations covering standard, lax, strict, ocd modes, scoped validation, and iteration bounds."
 when_to_use: "Use when looking for a concrete invocation pattern to copy for a specific scenario."
 ---

@@ -1,10 +1,5 @@
 ---
-title: "Practice 12: Default to worktree-to-pr; Select a Direct-Push Mode Deliberately"
 description: The repo-wide default delivery mode is worktree-to-pr; direct-push modes are a deliberate, explicit selection, not the assumed path.
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use when choosing a plan's delivery mode, to confirm worktree-to-pr is the default and a direct-push mode requires deliberate declaration.
 ---
 

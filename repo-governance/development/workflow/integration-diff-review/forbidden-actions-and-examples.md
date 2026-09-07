@@ -1,16 +1,5 @@
 ---
-title: "Forbidden Actions and Examples"
 description: Actions that violate the integration diff review convention, and worked pass/fail examples of reviewing after a rebase, pull, or fast-forward.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - safety
-  - rebase
-  - merge
-  - review
-created: 2026-08-06
 when_to_use: Use when checking whether a resumed task actually reviewed its incoming diff, or when writing a worked example of doing so.
 ---
 

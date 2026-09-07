@@ -1,5 +1,4 @@
 ---
-title: "Related Workflows and Documentation"
 description: What runs before and after a grooming sweep, the conventions its reductions are measured against, and the workflows it deliberately never calls.
 when_to_use: Use when navigating from this workflow to a composed workflow or a governing convention.
 ---

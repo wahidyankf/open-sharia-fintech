@@ -1,12 +1,5 @@
 ---
-title: "Why This Matters"
 description: Explains the consequences of rushing to implementation without clarity, and what deliberate problem-solving ensures instead.
-category: explanation
-subcategory: principles
-tags:
-  - problem-solving
-  - decision-making
-created: 2026-01-29
 when_to_use: Use when justifying why deliberate analysis is required before writing a solution.
 ---
 

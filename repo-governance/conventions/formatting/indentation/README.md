@@ -1,5 +1,4 @@
 ---
-title: "Indentation Convention"
 description: "Standard markdown indentation for all files in the repository"
 when_to_use: "Read this index to find the right Indentation Convention child document."
 ---

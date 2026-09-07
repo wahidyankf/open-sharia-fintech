@@ -1,5 +1,4 @@
 ---
-title: "Focused PR Leak Review Workflow"
 description: "Index of focused leak-review scope, execution, evidence, and success criteria."
 when_to_use: "Use to locate the normative mechanics of pr-leak-review."
 ---

@@ -1,18 +1,6 @@
 ---
-title: "Width Violation Fix Strategy Guide"
 description: "Provides a strategy guide for fixing Mermaid diagrams that violate width constraints."
 when_to_use: "Use when an existing Mermaid diagram fails a width check and needs a concrete fix strategy."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Width Violation Fix Strategy Guide

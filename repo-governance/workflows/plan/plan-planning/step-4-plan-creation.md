@@ -1,5 +1,4 @@
 ---
-title: "Step 4 — Plan Creation"
 description: Describes the plan-maker delegation handoff, the file-impact instruction, and the decision-envelope loop that governs reinvocation.
 when_to_use: Use when delegating plan writing to plan-maker, or when resolving a plan-maker decision envelope.
 ---

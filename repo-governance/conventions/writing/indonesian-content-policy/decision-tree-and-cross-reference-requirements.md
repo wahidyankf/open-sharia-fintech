@@ -1,16 +1,6 @@
 ---
-title: "Indonesian Content Policy — Decision Tree and Cross-Reference Requirements"
 description: The decision tree for whether to create Indonesian content, a content-type example table, and the mandatory cross-reference links when translations exist.
 when_to_use: Use when unsure whether a specific piece of content should be Indonesian or English, or when a translation exists and needs cross-reference links.
-category: explanation
-subcategory: conventions
-tags:
-  - ayokoding-www
-  - indonesian
-  - bilingual
-  - content-policy
-  - translation
-created: 2026-02-07
 ---
 
 # Decision Tree and Cross-Reference Requirements

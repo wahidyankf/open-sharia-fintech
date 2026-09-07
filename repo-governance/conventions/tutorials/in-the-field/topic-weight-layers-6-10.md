@@ -1,16 +1,6 @@
 ---
-title: "Topic Weight Layers 6-10"
 description: The topic-weight numbering ranges for the Integration Patterns, Advanced Patterns, Deployment, Optimization, and Meta Topics layers.
 when_to_use: Use when assigning a topic weight to a guide in the Integration-Patterns-through-Meta-Topics range.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Topic Weight Layers 6-10

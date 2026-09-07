@@ -1,15 +1,6 @@
 ---
-title: "Governance Surfaces"
 description: Definitions for surface, instruction file, binding, mirror, harness, and autoloaded — the vocabulary the word-budget and vendor-independence conventions run on.
 when_to_use: Use when reading a word-budget report, editing a binding, or reasoning about which guidance an agent actually receives.
-category: explanation
-subcategory: governance
-tags:
-  - governance
-  - glossary
-  - platform-bindings
-  - agents
-created: 2026-08-16
 ---
 
 # Governance Surfaces

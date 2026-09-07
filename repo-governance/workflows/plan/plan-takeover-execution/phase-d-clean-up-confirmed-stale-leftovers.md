@@ -1,5 +1,4 @@
 ---
-title: "Phase D — Clean Up Confirmed-Stale Leftovers"
 description: Describes the post-classification cleanup pass — the six-check pre-removal sequence, branch deletion, build-artifact scoping, and the never-remove-on-default-to-delete rule.
 when_to_use: Use when removing a worktree, branch, or build artifact Phase A found that was not the Bucket-3 target Phase C adopted.
 ---

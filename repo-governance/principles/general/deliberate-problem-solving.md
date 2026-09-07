@@ -1,14 +1,5 @@
 ---
-title: "Deliberate Problem-Solving"
 description: Think before coding - surface assumptions, tradeoffs, and confusion rather than hiding them
-category: explanation
-subcategory: principles
-tags:
-  - problem-solving
-  - communication
-  - decision-making
-  - clarity
-created: 2026-01-29
 when_to_use: Use when about to implement a solution and need to check whether assumptions, alternatives, or confusion have been surfaced first.
 ---
 

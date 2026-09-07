@@ -1,14 +1,5 @@
 ---
-title: "Commit Granularity: Real-World Examples"
 description: Three worked examples of choosing the fewest build-valid, reviewable, and revertible thematic commits.
-category: explanation
-subcategory: development
-tags:
-  - conventional-commits
-  - git
-  - development
-  - code-quality
-created: 2025-11-24
 when_to_use: Use after explicit commit authorization when you need a concrete example of applying the thematic boundary test.
 ---
 

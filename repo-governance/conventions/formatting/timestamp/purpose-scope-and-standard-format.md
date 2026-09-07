@@ -1,15 +1,6 @@
 ---
-title: "Purpose, Scope, and Standard Format"
 description: Defines what the Timestamp Format Convention covers, the principles it implements, and the baseline UTC+7 ISO 8601 format and rationale.
 when_to_use: Use when you need to understand why the repository standardizes on UTC+7 timestamps or what the convention covers before applying it.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - timestamps
-  - timezone
-  - formatting
-created: 2025-11-30
 ---
 
 # Purpose, Scope, and Standard Format

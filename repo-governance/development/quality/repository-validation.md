@@ -1,16 +1,5 @@
 ---
-title: "Repository Validation Methodology Convention"
 description: Standard validation methods and patterns for repository consistency checking
-category: explanation
-subcategory: development
-tags:
-  - validation
-  - consistency
-  - bash
-  - awk
-  - frontmatter
-  - automation
-created: 2025-12-14
 when_to_use: "Use when writing or debugging a repository-wide validation check."
 ---
 

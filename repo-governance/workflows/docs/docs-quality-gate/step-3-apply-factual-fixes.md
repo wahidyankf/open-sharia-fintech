@@ -1,5 +1,4 @@
 ---
-title: "3. Apply Factual Fixes (Sequential, Conditional)"
 description: "Step 3: invokes docs-fixer to fix factual errors, outdated information, technical inaccuracies, and contradictions by mode."
 when_to_use: "Use when implementing or debugging the factual-fix application step."
 ---

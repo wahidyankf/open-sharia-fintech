@@ -1,5 +1,4 @@
 ---
-title: "Phase B — Reconcile Findings Into One Decision"
 description: Defines the four buckets (nothing found, already delivered, live in-flight, anomaly) Phase A's findings classify into for each candidate repo.
 when_to_use: Use when classifying a repo's discovered evidence into a single bucket before takeover or cleanup can proceed.
 ---

@@ -1,12 +1,5 @@
 ---
-title: "Questions the Vision Answers"
 description: Answers the vision gives to contributors, users, and the project itself
-category: explanation
-subcategory: vision
-tags:
-  - vision
-  - purpose
-created: 2025-12-24
 when_to_use: Use when explaining to a contributor, user, or reviewer why the project exists or what it offers them.
 ---
 

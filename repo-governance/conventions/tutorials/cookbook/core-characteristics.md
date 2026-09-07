@@ -1,17 +1,6 @@
 ---
-title: "Core Characteristics"
 description: "Defines the problem-focused approach, coverage domains, recipe independence, and cross-level applicability that characterize Cookbook tutorials."
 when_to_use: "Read when scoping what problem domains a cookbook should cover and confirming a recipe is independent and cross-level."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - cookbook
-  - education
-  - problem-solving
-  - recipes
-created: 2026-01-30
 ---
 
 # Core Characteristics

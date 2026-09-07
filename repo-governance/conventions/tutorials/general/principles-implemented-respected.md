@@ -1,17 +1,6 @@
 ---
-title: "Principles Implemented/Respected"
 description: "Lists the Progressive Disclosure, No Time Estimates, and Accessibility First principles this convention implements."
 when_to_use: "Read when tracing which repository-wide principles the general Tutorial Convention is grounded in."
-category: explanation
-subcategory: conventions
-tags:
-  - tutorials
-  - diataxis
-  - learning
-  - pedagogy
-  - documentation
-  - teaching
-created: 2025-12-03
 ---
 
 # Principles Implemented/Respected

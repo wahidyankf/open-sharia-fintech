@@ -1,17 +1,6 @@
 ---
-title: "Related Conventions and External Resources"
 description: "Links to the conventions this document builds on and to external learning-theory, Diátaxis, and technical-writing resources."
 when_to_use: "Read when looking for the related repository conventions or external references behind this Tutorial Convention."
-category: explanation
-subcategory: conventions
-tags:
-  - tutorials
-  - diataxis
-  - learning
-  - pedagogy
-  - documentation
-  - teaching
-created: 2025-12-03
 ---
 
 # Related Conventions and External Resources

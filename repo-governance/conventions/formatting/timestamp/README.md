@@ -1,5 +1,4 @@
 ---
-title: "Timestamp Format Convention"
 description: "Standard timestamp format using UTC+7 (Indonesian WIB Time)"
 when_to_use: "Read this index to find the right Timestamp Format Convention child document."
 ---

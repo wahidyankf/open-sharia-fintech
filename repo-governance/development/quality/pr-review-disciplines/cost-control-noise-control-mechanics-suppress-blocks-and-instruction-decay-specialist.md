@@ -1,15 +1,5 @@
 ---
-title: "Cost/Noise Control: SUPPRESS Blocks and D14"
 description: "Per-specialist SUPPRESS blocks, and the instruction-decay specialist."
-category: explanation
-subcategory: development
-tags:
-  - pr-review
-  - governance
-  - agents
-  - quality-gates
-  - boundary-rules
-created: 2026-07-23
 when_to_use: "Use when scoping a specialist's SUPPRESS block."
 ---
 

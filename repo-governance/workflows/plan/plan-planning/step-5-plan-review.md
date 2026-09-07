@@ -1,5 +1,4 @@
 ---
-title: "Step 5 — Plan Review"
 description: Lists the eleven structural checks the orchestrator runs against the created plan files before the quality gate.
 when_to_use: Use when verifying structural completeness of a freshly created plan before invoking plan-quality-gate.
 ---

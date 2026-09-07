@@ -1,5 +1,4 @@
 ---
-title: "Conventions Implemented/Respected"
 description: Which repository conventions this workflow enforces during a run and which it must not breach while placing a rule.
 when_to_use: Use when tracing a step of this workflow to the convention that constrains it.
 ---

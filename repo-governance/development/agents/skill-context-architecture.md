@@ -1,15 +1,5 @@
 ---
-title: "Skill Context Architecture"
 description: "Architectural guidance on skill context modes in `.claude/skills/`. Inline skills work universally; fork skills work from main conversation only."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - skills
-  - architecture
-  - constraints
-  - delegated-agents
-created: 2026-01-22
 when_to_use: Use when authoring a Skill and deciding its context mode, or when a Skill needs to spawn or delegate work.
 ---
 

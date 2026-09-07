@@ -1,16 +1,5 @@
 ---
-title: "Manual Behavioural Verification Convention"
 description: Practice requiring manual verification of UI features and API endpoints using Playwright MCP tools and curl after implementing changes
-category: explanation
-subcategory: development
-tags:
-  - verification
-  - testing
-  - playwright
-  - api
-  - quality
-  - manual-testing
-created: 2026-04-04
 when_to_use: "Use after implementing a UI or API change, before declaring it done."
 ---
 

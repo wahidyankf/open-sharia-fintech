@@ -1,16 +1,5 @@
 ---
-title: "Examples"
 description: "PASS/FAIL examples of endpoint, app-removal, bug-fix, and refactor changes against sync obligations."
-category: explanation
-subcategory: development
-tags:
-  - specs
-  - architecture
-  - c4-diagrams
-  - gherkin
-  - synchronization
-  - quality
-created: 2026-03-24
 when_to_use: "Use when you need a concrete example of a change that does or does not require a spec update."
 ---
 

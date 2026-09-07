@@ -1,16 +1,6 @@
 ---
-title: "Factual Validation Convention"
 description: Universal methodology for validating factual correctness across all repository content using web verification
 when_to_use: Use when verifying a technical claim, command, code example, version number, or external reference in any repository content before publishing it.
-category: explanation
-subcategory: conventions
-tags:
-  - factual-validation
-  - verification
-  - web-research
-  - accuracy
-  - quality-assurance
-created: 2025-12-16
 ---
 
 # Factual Validation Convention

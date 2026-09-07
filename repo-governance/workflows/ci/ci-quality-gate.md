@@ -1,43 +1,6 @@
 ---
-name: ci-quality-gate
-title: "ci-quality-gate"
 description: Validates all projects conform to CI/CD standards and iteratively fixes non-compliance until zero findings are confirmed twice.
 when_to_use: Use after adding a new app, modifying CI/CD infrastructure, as a periodic compliance check, or before major releases.
-goal: Validate all projects conform to CI/CD standards and fix non-compliance iteratively
-termination: "Zero findings on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)"
-inputs:
-  - name: scope
-    type: string
-    description: Scope of validation - "all" for all projects, or specific project name
-    required: false
-    default: all
-  - name: mode
-    type: enum
-    values: [lax, normal, strict, ocd]
-    description: "Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ocd: all levels)"
-    required: false
-    default: strict
-  - name: max-iterations
-    type: number
-    description: Maximum number of check-fix cycles
-    required: false
-    default: 7
-outputs:
-  - name: final-status
-    type: enum
-    values: [pass, partial, fail]
-    description: Final validation status
-  - name: lifecycle-status
-    type: enum
-    values: [verified, pending, not-applicable]
-    description: Lifecycle evidence state, separate from final-status
-  - name: iterations-completed
-    type: number
-    description: Number of check-fix cycles performed
-  - name: final-report
-    type: file
-    pattern: local-tmp/ci/ci__*__audit.md
-    description: Final audit report from ci-checker
 ---
 
 # CI Quality Gate Workflow
@@ -45,6 +8,25 @@ outputs:
 **Purpose**: Automatically validate all projects in the repository conform to CI/CD standards
 defined in `repo-governance/development/infra/ci-conventions.md`, then iteratively fix non-compliance
 until zero findings are achieved.
+
+## Goal and Termination
+
+**Goal**: Validate all projects conform to CI/CD standards and fix non-compliance iteratively
+
+**Termination**: Zero findings on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)
+
+## Inputs
+
+- **`scope`** (string, optional, default `all`) — Scope of validation - "all" for all projects, or specific project name
+- **`mode`** (enum: lax, normal, strict, ocd, optional, default `strict`) — Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ocd: all levels)
+- **`max-iterations`** (number, optional, default `7`) — Maximum number of check-fix cycles
+
+## Outputs
+
+- **`final-status`** (enum: pass, partial, fail) — Final validation status
+- **`lifecycle-status`** (enum: verified, pending, not-applicable) — Lifecycle evidence state, separate from final-status
+- **`iterations-completed`** (number) — Number of check-fix cycles performed
+- **`final-report`** (file, pattern `local-tmp/ci/ci__*__audit.md`) — Final audit report from ci-checker
 
 ## Contents
 

@@ -1,5 +1,4 @@
 ---
-title: "Rules Quality Gate"
 description: "Child documents of the rules-quality-gate governance gate"
 when_to_use: "Read this index to find the right rules-quality-gate child document."
 ---

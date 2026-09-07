@@ -1,16 +1,6 @@
 ---
-title: "Programming Language Docs Separation: Style Guides vs. Educational Content"
 description: Rule 1 and Rule 2 of content separation — what belongs in docs/explanation/ repository-specific style guides versus ayokoding-www educational content
 when_to_use: Read this when deciding whether new programming-language content belongs in docs/explanation/ (repo-specific) or ayokoding-www (educational).
-category: explanation
-subcategory: conventions
-tags:
-  - documentation
-  - programming-languages
-  - style-guides
-  - content-separation
-  - dry-principle
-created: 2026-02-04
 ---
 
 # Content Separation Rules: Style Guides vs. Educational Content

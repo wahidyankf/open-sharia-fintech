@@ -1,15 +1,5 @@
 ---
-title: "Why Draft, Not Ready-for-Review, on Open"
 description: Why every worktree-to-pr branch opens as a draft, and the two direct-push modes' scope, restrictions, and delivery-checklist tagging rule.
-category: explanation
-subcategory: development
-tags:
-  - trunk-based-development
-  - git
-  - workflow
-  - development
-  - continuous-integration
-created: 2025-11-26
 when_to_use: Use when deciding whether a PR should open as draft, or when checking whether a direct-push mode is permitted for a given repository.
 ---
 

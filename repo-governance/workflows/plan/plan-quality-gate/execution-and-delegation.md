@@ -1,5 +1,4 @@
 ---
-title: "Execution and Delegation"
 description: How the governance gate splits a read-only checker sweep from root-owned repair, and when the checker delegates web research.
 when_to_use: Use when running the plan quality gate, to decide what the subagent does and what the root must keep.
 ---

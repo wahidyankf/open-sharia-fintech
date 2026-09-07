@@ -1,17 +1,5 @@
 ---
-title: "Git Hook Workflow: Pre-commit Hook (What It Validates)"
 description: "What the pre-commit hook validates."
-category: explanation
-subcategory: development
-tags:
-  - development
-  - code-quality
-  - prettier
-  - husky
-  - lint-staged
-  - git-hooks
-  - automation
-created: 2026-05-12
 when_to_use: "Use when debugging a pre-commit check failure."
 ---
 

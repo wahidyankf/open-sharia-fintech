@@ -1,8 +1,9 @@
 ---
-title: "Finalization and Archival — PR Merge, Cleanup, and Final Status"
 description: Defines PR-mode merge, immediate safe cleanup, and final status.
 when_to_use: Use when merging a plan's delivering PR, cleaning up its worktree afterward, or determining the plan's final status.
 ---
+
+# Finalization and Archival — PR Merge, Cleanup, and Final Status
 
 1. **Merge — `[AI]` by default**: once exact-current-head/base PR CI, applicable surface gates,
    archival-in-PR, and the hardened merge preconditions (a)-(e) hold, surface the PR URL and checklist, then

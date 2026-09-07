@@ -1,15 +1,6 @@
 ---
-title: "When to Link Rule References: Formatting and Examples"
 description: The two-tier formatting rule for referencing repository rules — markdown link on first mention, inline code on subsequent mentions — with correct and incorrect examples.
 when_to_use: Use when writing prose that references a vision, principle, convention, development practice, or workflow document more than once in a section.
-category: explanation
-subcategory: conventions
-tags:
-  - linking
-  - markdown
-  - conventions
-  - github-compatibility
-created: 2025-11-22
 ---
 
 # When to Link Rule References: Formatting and Examples

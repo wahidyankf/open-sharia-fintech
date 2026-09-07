@@ -1,5 +1,4 @@
 ---
-title: "Conventions Implemented/Respected, and Notes"
 description: The repo conventions this workflow respects, plus closing notes on its thin, observable, and bounded design posture.
 when_to_use: Use when checking which repo-governance conventions govern a specific rule, or for a quick recap after reading the phases.
 ---

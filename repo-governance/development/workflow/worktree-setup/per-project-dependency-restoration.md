@@ -1,18 +1,5 @@
 ---
-title: "Per-Project Dependency Restoration for Some Language Ecosystems"
 description: The doctor --fix gap for F#/.NET projects, which need an explicit dotnet restore step the toolchain-level fix does not cover.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - git
-  - worktree
-  - npm
-  - nx
-  - dependencies
-  - toolchain
-  - doctor
-created: 2026-03-28
 when_to_use: Use when `nx affected -t test:quick` fails on an F# project with a missing-dependency error right after provisioning a worktree.
 ---
 

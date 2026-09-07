@@ -1,10 +1,5 @@
 ---
-title: "Software Engineering Principles"
 description: Values behind dependable, understandable software development in the platform
-category: explanation
-subcategory: principles
-tags: []
-created: 2026-05-12
 when_to_use: Use when deciding whether a software-development value belongs here, or looking up a specific software-engineering principle.
 ---
 

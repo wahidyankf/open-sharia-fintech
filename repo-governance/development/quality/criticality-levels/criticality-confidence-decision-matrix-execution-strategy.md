@@ -1,15 +1,5 @@
 ---
-title: "Decision Matrix: Execution Strategy for Fixers"
 description: "Fixer execution strategy per priority."
-category: explanation
-subcategory: development
-tags:
-  - criticality
-  - validation
-  - checker-agents
-  - fixer-agents
-  - quality-assurance
-created: 2025-12-27
 when_to_use: "Use for a fixer agent's execution-order rules."
 ---
 

@@ -1,5 +1,4 @@
 ---
-title: "Scaffolding Admission"
 description: The two tests a sentence must pass before the scaffolding class may delete it, why modal absence is not one of them, and the recall bound that makes both tests necessary.
 when_to_use: Use when admitting a scaffolding candidate at Step 3d, or auditing one that was admitted.
 ---

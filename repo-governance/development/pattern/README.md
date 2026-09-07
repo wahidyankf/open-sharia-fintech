@@ -1,10 +1,5 @@
 ---
-title: "Development Patterns"
 description: Reusable architecture and quality patterns for maintainable platform changes
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: "Use when a change needs a proven shape — an application boundary, an audit trail, or an independent review cycle."
 ---
 

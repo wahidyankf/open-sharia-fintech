@@ -1,16 +1,6 @@
 ---
-title: "Corpus Census: Tiering Rule and Reproduction"
 description: The REQUIRED at 99%/RECOMMENDED at 80% tiering rule derived from the section-frequency table, the capstone carve-out, and the method for reproducing the measurement.
 when_to_use: Read this when applying or re-deriving the section tiers, or when checking whether a capstone-format file's missing sections are the known carve-out.
-category: explanation
-subcategory: conventions
-tags:
-  - plans
-  - syllabus
-  - learning-bearing
-  - custody
-  - governance
-created: 2026-07-22
 ---
 
 # Corpus Census: Tiering Rule and Reproduction

@@ -1,16 +1,6 @@
 ---
-title: "Fabricated Corporate Case Study Rule — The Pattern and What's Allowed/Prohibited"
 description: How to recognize invented corporate metrics in Why It Matters sections, the confirmed fabricated examples found in this codebase, and what content is prohibited vs. allowed.
 when_to_use: Use when writing or reviewing a Why It Matters section that names a real company alongside a specific metric or outcome.
-category: explanation
-subcategory: conventions
-tags:
-  - factual-validation
-  - verification
-  - web-research
-  - accuracy
-  - quality-assurance
-created: 2025-12-16
 ---
 
 # Fabricated Corporate Case Study Rule — The Pattern and What's Allowed/Prohibited

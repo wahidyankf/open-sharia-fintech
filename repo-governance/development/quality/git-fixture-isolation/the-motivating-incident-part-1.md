@@ -1,17 +1,5 @@
 ---
-title: "The Motivating Incident (part 1)"
 description: "The incident: a git-fixture test corrupted the real repository."
-category: explanation
-subcategory: development
-tags:
-  - testing
-  - git
-  - test-fixtures
-  - isolation
-  - regression
-  - safety
-  - defense-in-depth
-created: 2026-07-19
 when_to_use: "Use for the incident that motivated this convention."
 ---
 

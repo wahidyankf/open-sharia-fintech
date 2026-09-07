@@ -1,14 +1,5 @@
 ---
-title: "Anti-Patterns — Batching and Stuck-Detection Mistakes"
 description: "Covers launching a full batch without waiting, relying solely on task-notifications for stuck detection, reading the transcript file to check progress, and self-promoting the concurrency cap."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - subagents
-  - orchestration
-  - development
-created: 2025-11-23
 when_to_use: Use when reviewing an orchestrator's batching or stuck-detection behaviour for a common mistake.
 ---
 

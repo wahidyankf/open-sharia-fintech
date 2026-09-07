@@ -1,15 +1,6 @@
 ---
-title: "Environment File Access Convention"
 description: AI agents must not directly read, write, or edit exactly .env.prod or .env.stag; every other real .env* file is agent-readable. Full policy in secrets-and-env-standards.md.
 when_to_use: Use when an AI agent needs to know whether it may directly open a specific .env* file.
-category: explanation
-subcategory: conventions
-tags:
-  - security
-  - env-files
-  - agents
-  - guard-env-file-access
-created: 2026-05-24
 ---
 
 # Environment File Access Convention

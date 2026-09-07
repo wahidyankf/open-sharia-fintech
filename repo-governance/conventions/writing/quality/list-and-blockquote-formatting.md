@@ -1,15 +1,5 @@
 ---
-title: "List and Blockquote Formatting"
 description: "When to use unordered, ordered, nested, and checklist list formats, and how to format blockquotes and callouts"
-category: explanation
-subcategory: conventions
-tags:
-  - content-quality
-  - markdown
-  - writing-standards
-  - accessibility
-  - documentation
-created: 2025-12-07
 when_to_use: "Read this when choosing a list type or writing a blockquote/callout in markdown content."
 ---
 

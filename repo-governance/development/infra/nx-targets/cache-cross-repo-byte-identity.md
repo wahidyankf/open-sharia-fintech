@@ -1,15 +1,5 @@
 ---
-title: "Cross-Repo rhino-cli Byte-Identity Standard"
 description: The four rules holding apps/rhino-cli to a stricter, byte-identical standard across ose-public and ose-private.
-category: explanation
-subcategory: development
-tags:
-  - nx
-  - targets
-  - project-json
-  - build
-  - scripts
-created: 2026-02-23
 when_to_use: Use when changing anything under apps/rhino-cli and verifying cross-repo parity obligations.
 ---
 

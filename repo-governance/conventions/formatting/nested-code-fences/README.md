@@ -1,5 +1,4 @@
 ---
-title: "Nested Code Fence Convention"
 description: "Standards for properly nesting code fences when documenting markdown structure within markdown content"
 when_to_use: "Read this index to find the right Nested Code Fence Convention child document."
 ---

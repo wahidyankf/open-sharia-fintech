@@ -1,5 +1,4 @@
 ---
-title: "Worktree Path Convention"
 description: "Defines the worktree directory structure, naming convention, and gitignore requirements for claude --worktree routing"
 when_to_use: "Read this index to find the right Worktree Path Convention child document."
 ---

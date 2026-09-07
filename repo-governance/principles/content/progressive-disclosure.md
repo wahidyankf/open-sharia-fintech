@@ -1,15 +1,5 @@
 ---
-title: "Progressive Disclosure"
 description: Start simple and layer complexity gradually - beginners see simple patterns, experts access advanced features when needed
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - progressive-disclosure
-  - learning-paths
-  - user-experience
-  - complexity-management
-created: 2025-12-15
 when_to_use: Use when deciding how much complexity to expose at once in a document, tutorial, or interface.
 ---
 

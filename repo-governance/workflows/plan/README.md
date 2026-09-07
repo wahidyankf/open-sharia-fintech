@@ -1,11 +1,6 @@
 ---
-title: "Plan Workflows"
 description: "Orchestrated workflows for plan creation, quality validation, and execution — from idea to archived delivery."
 when_to_use: Use when routing to a workflow that authors, validates, executes, or takes over a project plan.
-category: explanation
-subcategory: workflows
-tags: []
-created: 2026-05-12
 ---
 
 # Plan Workflows

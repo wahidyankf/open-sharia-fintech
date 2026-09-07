@@ -1,5 +1,4 @@
 ---
-title: "No Machine-Specific Information in Commits"
 description: "Practice prohibiting absolute local paths, usernames, IP addresses, and environment-specific configuration from committed code"
 when_to_use: "Read this index to find the right No Machine-Specific Information in Commits child document."
 ---

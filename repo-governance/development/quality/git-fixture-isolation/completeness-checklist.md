@@ -1,17 +1,5 @@
 ---
-title: "Completeness Checklist"
 description: "The checklist to verify a git fixture implements all six layers."
-category: explanation
-subcategory: development
-tags:
-  - testing
-  - git
-  - test-fixtures
-  - isolation
-  - regression
-  - safety
-  - defense-in-depth
-created: 2026-07-19
 when_to_use: "Use before landing a new git-fixture test, to verify full isolation."
 ---
 

@@ -1,13 +1,5 @@
 ---
-title: "Tool Usage Rules"
 description: What tools the AI assistant uses under Agent Delegation vs. Manual Orchestration.
-category: explanation
-subcategory: workflows
-tags:
-  - workflows
-  - execution-mode
-  - orchestration
-created: 2026-01-05
 when_to_use: Use when checking which tool calls are correct for the active execution mode.
 ---
 

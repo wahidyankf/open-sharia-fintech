@@ -1,16 +1,5 @@
 ---
-title: "File-Touch Discipline — Agent Checklist and Related Documentation"
 description: A nine-point summary checklist for AI agents applying File-Touch Discipline, plus links to related conventions
-category: explanation
-subcategory: development
-tags:
-  - git
-  - safety
-  - concurrency
-  - ai-agents
-  - compaction
-  - discipline
-created: 2026-08-01
 when_to_use: Use as a quick-reference checklist before and during any session that mutates files, or to find the conventions this practice relates to.
 ---
 

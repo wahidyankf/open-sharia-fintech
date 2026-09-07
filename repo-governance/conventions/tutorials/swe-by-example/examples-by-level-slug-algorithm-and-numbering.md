@@ -1,15 +1,5 @@
 ---
-title: "Examples-by-Level Section: Slug Algorithm and Example Numbering"
 description: "Details the github-slugger algorithm for anchor generation, why the Examples by Level section is required, a worked snippet, and the example numbering scheme."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - education
-  - code-first
-created: 2025-12-25
 when_to_use: "Read when you need to compute a github-slugger anchor by hand, justify why the Examples by Level section exists, or determine sequential example numbering across levels."
 ---
 

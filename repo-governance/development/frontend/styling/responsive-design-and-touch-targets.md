@@ -1,15 +1,5 @@
 ---
-title: "Styling — Responsive Design and Touch Targets"
 description: Mobile-first breakpoints (375px/768px/1280px), container queries for component-relative layout, and the 44×44px minimum tap target for mobile viewports
-category: explanation
-subcategory: development/frontend
-tags:
-  - styling
-  - tailwind
-  - css
-  - responsive
-  - mobile-first
-created: 2026-03-28
 when_to_use: Use when building any responsive layout, or sizing an interactive element for mobile.
 ---
 

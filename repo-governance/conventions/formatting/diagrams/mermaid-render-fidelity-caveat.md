@@ -1,18 +1,6 @@
 ---
-title: "Render-Fidelity Caveat: Source-Correct Can Still Be Render-Wrong"
 description: "Warns that a syntactically source-correct Mermaid diagram can still render incorrectly, with guidance on catching this."
 when_to_use: "Use when a Mermaid diagram passes syntax validation but still renders wrong, to understand why and how to check."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Render-Fidelity Caveat: Source-Correct Can Still Be Render-Wrong

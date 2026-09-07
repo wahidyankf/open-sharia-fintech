@@ -1,15 +1,5 @@
 ---
-title: "Principles/Conventions"
 description: "Principles/conventions implemented."
-category: explanation
-subcategory: development
-tags:
-  - pr-review
-  - governance
-  - agents
-  - quality-gates
-  - boundary-rules
-created: 2026-07-23
 when_to_use: "Use to trace rationale."
 ---
 

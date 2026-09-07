@@ -1,14 +1,5 @@
 ---
-title: "Best Practices — Single Responsibility, Minimum Tools, Model Choice, and Descriptions"
 description: "Covers Practices 1-4: single responsibility per agent, requesting minimum necessary tool permissions, using the appropriate model for task complexity, and clear actionable descriptions."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - best-practices
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when authoring a new agent and deciding its responsibility, tool list, model tier, or frontmatter description.
 ---
 

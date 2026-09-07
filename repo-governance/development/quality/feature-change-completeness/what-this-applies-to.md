@@ -1,16 +1,5 @@
 ---
-title: "What This Applies To"
 description: "The kinds of changes this convention covers and does not cover."
-category: explanation
-subcategory: development
-tags:
-  - feature-completeness
-  - specs
-  - contracts
-  - testing
-  - documentation
-  - quality
-created: 2026-04-04
 when_to_use: "Use when deciding whether a specific change falls under this convention."
 ---
 

@@ -1,14 +1,5 @@
 ---
-title: "PASS: Best Practices"
 description: Five best practices for explicitness.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - explicit-configuration
-  - transparency
-  - clarity
-created: 2025-12-15
 when_to_use: Use when designing a new agent, module, or config schema.
 ---
 

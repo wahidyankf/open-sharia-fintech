@@ -1,18 +1,6 @@
 ---
-title: "ASCII Art Use Cases"
 description: "Lists concrete ASCII art use cases — directory structures, simple diagrams, process flow, component relationships, tables."
 when_to_use: "Use when you need a worked ASCII art example for a specific use case like directory trees or simple flows."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # ASCII Art Use Cases

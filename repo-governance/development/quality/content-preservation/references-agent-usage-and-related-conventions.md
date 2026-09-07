@@ -1,15 +1,5 @@
 ---
-title: "References, Agent Usage, and Related Conventions"
 description: "References, which agents use this convention, and related conventions."
-category: explanation
-subcategory: development
-tags:
-  - content-preservation
-  - condensation
-  - offload
-  - zero-loss
-  - documentation
-created: 2025-12-14
 when_to_use: "Use when you need a related convention or the agents that apply this one."
 ---
 
@@ -50,7 +40,7 @@ When creating new convention or development documents during offload, `docs-make
 
 - Place files in the correct subdirectory (`conventions/` or `development/`) with lowercase kebab-case filenames
 - Include comprehensive content from source
-- Add frontmatter with appropriate subcategory
+- Add frontmatter carrying `description` and `when_to_use`, and no other key
 - Update index files
 
 ## Related Conventions

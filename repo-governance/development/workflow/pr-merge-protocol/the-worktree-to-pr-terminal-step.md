@@ -1,15 +1,5 @@
 ---
-title: "The `worktree-to-pr` Terminal Step"
 description: The sequence after all commits are pushed under worktree-to-pr - current-head CI, surface gates, archival, and readiness.
-category: explanation
-subcategory: development
-tags:
-  - pull-request
-  - merge
-  - quality-gates
-  - workflow
-  - merge-preconditions
-created: 2026-04-04
 when_to_use: Use when a worktree-to-pr plan branch has all its commits pushed and the AI needs to know what "done" requires before the merge.
 ---
 

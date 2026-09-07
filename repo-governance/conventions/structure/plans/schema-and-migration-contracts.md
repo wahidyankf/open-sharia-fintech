@@ -1,10 +1,5 @@
 ---
-title: "Schema and Migration Contracts"
 description: Defines the data-model, compatibility, migration, recovery, and proof required for schema-changing plans.
-category: explanation
-subcategory: conventions
-tags: [conventions, plans, schema, migrations]
-created: 2026-08-30
 when_to_use: Use when a formal plan adds, removes, renames, retypes, or reinterprets persisted data.
 ---
 

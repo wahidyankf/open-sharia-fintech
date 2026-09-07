@@ -1,16 +1,5 @@
 ---
-title: "Proactive Preexisting Error Resolution — Scope Judgment"
 description: How to size a discovered preexisting-error fix as small (fix inline), medium (its own commit in the current session), or large (a plan)
-category: explanation
-subcategory: development
-tags:
-  - root-cause
-  - quality
-  - preexisting-errors
-  - proactive
-  - bug-fixing
-  - ai-agents
-created: 2026-03-28
 when_to_use: Use when deciding how big a change to make in response to a discovered preexisting error.
 ---
 

@@ -1,17 +1,5 @@
 ---
-title: "Related Documentation"
 description: "Cross-references to related verification and plan conventions."
-category: explanation
-subcategory: development
-tags:
-  - evidence
-  - testing
-  - screenshots
-  - plans
-  - verification
-  - locale
-  - manual-testing
-created: 2026-06-20
 when_to_use: "Use when you need a related convention on verification or plan structure."
 ---
 

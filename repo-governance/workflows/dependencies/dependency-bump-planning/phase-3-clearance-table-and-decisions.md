@@ -1,5 +1,4 @@
 ---
-title: "Phase 3: Clearance Table & Decisions"
 description: Assembles the Security & Functional Clearance Status table and writes the clearance report progressively to local-tmp/dependency-bump-planning/.
 when_to_use: Use when turning per-package classifications into the final clearance table and report.
 ---

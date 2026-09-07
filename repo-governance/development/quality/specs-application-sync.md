@@ -1,16 +1,5 @@
 ---
-title: "Specs-Application Sync Convention"
 description: Bidirectional synchronization requirement between specs/ and application code in apps/ and libs/
-category: explanation
-subcategory: development
-tags:
-  - specs
-  - architecture
-  - c4-diagrams
-  - gherkin
-  - synchronization
-  - quality
-created: 2026-03-24
 when_to_use: "Use when a code change might require a matching specs/ update, or vice versa."
 ---
 

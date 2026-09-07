@@ -1,18 +1,6 @@
 ---
-title: "Common Mermaid Syntax Errors: Literal Quotes and Nested Escaping in Node Text"
 description: "Documents Error 2 and Error 3: literal quotes inside node text and nested escaping problems in Mermaid."
 when_to_use: "Use when a Mermaid diagram has quote characters or nested escaping that isn't rendering correctly."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Common Mermaid Syntax Errors: Literal Quotes and Nested Escaping in Node Text

@@ -1,10 +1,5 @@
 ---
-title: "Best Practices 7-9"
 description: "Combine criticality and confidence, enable lint-staged, document validation rules."
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: "Use when applying these three quality best practices."
 ---
 

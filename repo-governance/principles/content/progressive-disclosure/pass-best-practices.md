@@ -1,13 +1,5 @@
 ---
-title: "PASS: Best Practices"
 description: Practices for minimal viable examples, multiple entry points, learn-more links, and complete levels.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - progressive-disclosure
-  - user-experience
-created: 2025-12-15
 when_to_use: Use as a checklist when writing layered, audience-aware documentation.
 ---
 

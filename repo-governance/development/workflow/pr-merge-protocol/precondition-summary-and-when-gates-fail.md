@@ -1,15 +1,5 @@
 ---
-title: "Precondition Summary and When Gates Fail"
 description: The status summary an agent presents before merging, and the fix-then-re-evaluate procedure to follow when a quality gate fails.
-category: explanation
-subcategory: development
-tags:
-  - pull-request
-  - merge
-  - quality-gates
-  - workflow
-  - merge-preconditions
-created: 2026-04-04
 when_to_use: Use when writing the merge status summary, or when a quality gate has failed and the merge is on hold.
 ---
 

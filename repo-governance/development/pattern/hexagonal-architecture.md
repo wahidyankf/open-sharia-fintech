@@ -1,14 +1,5 @@
 ---
-title: Hexagonal Architecture
 description: Core hexagonal architecture pattern — ports, adapters, dependency rule, and app-type specializations
-category: explanation
-subcategory: development
-tags:
-  - architecture
-  - hexagonal
-  - ports-and-adapters
-  - dependency-rule
-created: 2026-05-26
 when_to_use: "Use when structuring a backend or CLI app's layers, or deciding whether code belongs in domain, application, infrastructure, or an adapter."
 ---
 

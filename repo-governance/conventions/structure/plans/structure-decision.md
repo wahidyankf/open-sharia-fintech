@@ -1,14 +1,5 @@
 ---
-title: "Structure Decision"
 description: States the fixed mature-plan core and the reader-led decision rule for one technical-documentation shape.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when scaffolding a new formal plan and choosing its technical-documentation shape.
 ---
 

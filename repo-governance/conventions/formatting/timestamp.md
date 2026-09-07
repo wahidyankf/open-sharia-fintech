@@ -1,15 +1,6 @@
 ---
-title: "Timestamp Format Convention"
 description: Standard timestamp format using UTC+7 (Indonesian WIB Time)
 when_to_use: Use when writing, generating, or validating any timestamp in this repository.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - timestamps
-  - timezone
-  - formatting
-created: 2025-11-30
 ---
 
 # Timestamp Format Convention

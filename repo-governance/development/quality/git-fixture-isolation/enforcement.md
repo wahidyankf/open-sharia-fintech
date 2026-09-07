@@ -1,17 +1,5 @@
 ---
-title: "Enforcement"
 description: "How this convention is enforced across checker/fixer agents."
-category: explanation
-subcategory: development
-tags:
-  - testing
-  - git
-  - test-fixtures
-  - isolation
-  - regression
-  - safety
-  - defense-in-depth
-created: 2026-07-19
 when_to_use: "Use when locating the automated enforcement for git-fixture isolation."
 ---
 

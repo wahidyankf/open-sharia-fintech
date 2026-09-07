@@ -1,15 +1,6 @@
 ---
-title: "Cookbook"
 description: Definition, content scope, and example titles for the Cookbook tutorial type - practical, problem-focused recipes rather than depth-based coverage.
 when_to_use: Use when writing or naming a problem-solving reference of practical recipes rather than a linear learning tutorial.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - tutorials
-  - naming
-  - learning-paths
-created: 2025-12-03
 ---
 
 # Cookbook

@@ -1,16 +1,6 @@
 ---
-title: "Edge Cases and Special Considerations"
 description: When public ayokoding.com URLs are the correct choice, how to reference Indonesian-language content, and how to handle AyoKoding path migrations.
 when_to_use: Use when a linking situation doesn't fit the standard docs/-to-relative-path rule — public-facing content, Indonesian content, or a directory reorganization.
-category: explanation
-subcategory: conventions
-tags:
-  - linking
-  - cross-reference
-  - relative-paths
-  - portability
-  - ayokoding-www
-created: 2026-02-07
 ---
 
 # Edge Cases and Special Considerations

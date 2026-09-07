@@ -1,5 +1,4 @@
 ---
-title: "Steps 3-4: Apply Content and Facts Fixes"
 description: Documents the content-fixer and facts-fixer steps of the general quality gate, including their conditions and success criteria.
 when_to_use: Use when running or interpreting the fix-application steps of the general quality gate.
 ---

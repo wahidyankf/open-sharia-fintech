@@ -1,15 +1,5 @@
 ---
-title: "Task List Discipline — Standard 6: Idle-Polling Status Heartbeat"
 description: The five-minute user heartbeat required only while the main thread has no useful work beyond polling non-CI background work
-category: explanation
-subcategory: development
-tags:
-  - task-management
-  - planning
-  - execution
-  - ai-agents
-  - discipline
-created: 2026-06-23
 when_to_use: Use when the main thread is idle except for polling a non-CI background agent or process.
 ---
 

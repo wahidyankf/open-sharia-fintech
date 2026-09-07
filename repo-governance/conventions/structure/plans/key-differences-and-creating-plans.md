@@ -1,14 +1,5 @@
 ---
-title: "Key Differences from Documentation and Creating Plans"
 description: Contrasts plans/ against docs/ across location, purpose, and lifecycle, then walks through the seven steps of creating a new plan.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when deciding whether new content belongs in plans/ or docs/, or when starting to author a new plan.
 ---
 

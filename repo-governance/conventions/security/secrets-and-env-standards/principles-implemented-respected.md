@@ -1,17 +1,6 @@
 ---
-title: "Principles Implemented/Respected"
 description: The five software-engineering principles the secrets-and-env standard implements — Reproducibility First, Explicit Over Implicit, Automation Over Manual, Root Cause Orientation, Documentation First.
 when_to_use: Use when you need to justify a secrets/env-handling rule in terms of the repository's core principles.
-category: explanation
-subcategory: conventions
-tags:
-  - security
-  - secrets
-  - env-files
-  - guard-env-file-access
-  - naming
-  - reproducibility
-created: 2026-06-10
 ---
 
 # Principles Implemented/Respected

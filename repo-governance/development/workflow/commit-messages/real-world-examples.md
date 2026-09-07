@@ -1,14 +1,5 @@
 ---
-title: "Real-World Examples"
 description: Worked good and bad commit message examples across common change types.
-category: explanation
-subcategory: development
-tags:
-  - conventional-commits
-  - git
-  - development
-  - code-quality
-created: 2025-11-24
 when_to_use: Use when you need a concrete example commit message for a specific kind of change.
 ---
 

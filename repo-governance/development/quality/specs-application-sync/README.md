@@ -1,5 +1,4 @@
 ---
-title: "Specs-Application Sync Convention"
 description: "Bidirectional synchronization requirement between specs/ and application code in apps/ and libs/"
 when_to_use: "Read this index to find the right Specs-Application Sync Convention child document."
 ---

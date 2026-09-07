@@ -1,16 +1,5 @@
 ---
-title: "No Machine-Specific Information in Commits"
 description: Practice prohibiting absolute local paths, usernames, IP addresses, and environment-specific configuration from committed code
-category: explanation
-subcategory: development
-tags:
-  - git
-  - commits
-  - security
-  - portability
-  - environment
-  - quality
-created: 2026-03-24
 when_to_use: "Use when writing, reviewing, or fixing a commit that might contain a machine-specific path, username, IP, or config value."
 ---
 

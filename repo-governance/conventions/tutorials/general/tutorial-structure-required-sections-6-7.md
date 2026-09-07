@@ -1,17 +1,6 @@
 ---
-title: "Tutorial Structure Requirements: Required Sections (Items 6-7)"
 description: "Specifies the required Challenges section and the Summary-and-Next-Steps section that close every tutorial."
 when_to_use: "Read when drafting the Challenges section or the Summary-and-Next-Steps section of a tutorial."
-category: explanation
-subcategory: conventions
-tags:
-  - tutorials
-  - diataxis
-  - learning
-  - pedagogy
-  - documentation
-  - teaching
-created: 2025-12-03
 ---
 
 # Tutorial Structure Requirements: Required Sections (Items 6-7)

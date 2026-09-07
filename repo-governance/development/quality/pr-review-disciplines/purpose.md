@@ -1,15 +1,5 @@
 ---
-title: "Purpose"
 description: "Why the split exists."
-category: explanation
-subcategory: development
-tags:
-  - pr-review
-  - governance
-  - agents
-  - quality-gates
-  - boundary-rules
-created: 2026-07-23
 when_to_use: "Use to orient to the split's purpose."
 ---
 

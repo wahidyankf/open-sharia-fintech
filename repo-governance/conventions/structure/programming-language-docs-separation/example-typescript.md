@@ -1,16 +1,6 @@
 ---
-title: "Example 2: TypeScript — Correct Separation"
 description: A worked example contrasting an ayokoding-www generic error-handling lesson with the corresponding docs/explanation/ OSE Platform domain error hierarchy
 when_to_use: Read this when you need a concrete TypeScript-based illustration of how educational and repository-specific content should be split.
-category: explanation
-subcategory: conventions
-tags:
-  - documentation
-  - programming-languages
-  - style-guides
-  - content-separation
-  - dry-principle
-created: 2026-02-04
 ---
 
 # Example 2: TypeScript - Correct Separation

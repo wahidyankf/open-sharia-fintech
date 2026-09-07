@@ -1,5 +1,4 @@
 ---
-title: "CI Monitoring Convention"
 description: "Standards for monitoring GitHub Actions CI runs without exhausting the GitHub API rate limit — required tooling, default 2-minute poll interval, no stream-watching, trigger discipline, and recovery procedures"
 when_to_use: "Read this index to find the right CI Monitoring Convention child document."
 ---

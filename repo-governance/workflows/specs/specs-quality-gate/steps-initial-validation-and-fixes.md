@@ -1,5 +1,4 @@
 ---
-title: "Specs Quality Gate — Steps: Initial Validation and Fixes"
 description: "Documents steps 1-3 of the specs-quality-gate loop: initial specs-checker validation, the findings threshold decision, and applying specs-fixer fixes by mode."
 when_to_use: "Use when tracing exactly what happens in the first half of a specs-quality-gate check-fix cycle, before re-validation."
 ---

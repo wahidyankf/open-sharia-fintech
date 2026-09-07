@@ -31,15 +31,44 @@ Feature: Docs Frontmatter Validation
     Then the command exits with a failure code
     And the frontmatter output identifies the wrong category value
 
-  Scenario: Governance doc with only title fails once when_to_use and description are armed
-    Given a governance doc carrying only a title frontmatter field
+  Scenario: Governance doc with only a description fails on the missing when_to_use
+    Given a governance doc carrying only a description frontmatter field
     When the developer runs docs validate-frontmatter
     Then the command exits with a failure code
     And the frontmatter output identifies the missing when-to-use field
+
+  Scenario: Governance doc with only a when_to_use fails on the missing description
+    Given a governance doc carrying only a when_to_use frontmatter field
+    When the developer runs docs validate-frontmatter
+    Then the command exits with a failure code
     And the frontmatter output identifies the missing description field
 
-  Scenario: Governance doc with title, description, and when_to_use passes the lighter schema
-    Given a governance doc with title, description, and when_to_use frontmatter
+  Scenario: Governance doc with description and when_to_use passes the two-key schema
+    Given a governance doc with description and when_to_use frontmatter
+    When the developer runs docs validate-frontmatter
+    Then the command exits successfully
+    And the frontmatter output reports zero fail-level findings
+
+  Scenario: Governance doc carrying a title field fails the allow-list
+    Given a governance doc with description, when_to_use, and a title field
+    When the developer runs docs validate-frontmatter
+    Then the command exits with a failure code
+    And the frontmatter output identifies title as a key outside the allow-list
+
+  Scenario: Governance doc carrying any other key fails the allow-list
+    Given a governance doc with description, when_to_use, and a category field
+    When the developer runs docs validate-frontmatter
+    Then the command exits with a failure code
+    And the frontmatter output identifies category as a key outside the allow-list
+
+  Scenario: Governance subtree outside the four sub-trees is still validated
+    Given a governance doc under repo-governance/glossary carrying only a title field
+    When the developer runs docs validate-frontmatter
+    Then the command exits with a failure code
+    And the frontmatter output identifies the missing description field
+
+  Scenario: The software-engineering schema is unaffected by the governance allow-list
+    Given a software-engineering doc with title, description, category, subcategory, and tags frontmatter
     When the developer runs docs validate-frontmatter
     Then the command exits successfully
     And the frontmatter output reports zero fail-level findings

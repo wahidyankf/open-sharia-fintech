@@ -1,18 +1,6 @@
 ---
-title: "Related Documentation and External Resources"
 description: "Links to related conventions and external Mermaid/ASCII-art resources."
 when_to_use: "Use when looking for related conventions or official external references to cross-check this convention against."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Related Documentation and External Resources

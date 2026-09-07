@@ -1,13 +1,5 @@
 ---
-title: "Why"
 description: Benefits of outcome focus, problems with time estimates, and individual learning-speed variation.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - no-time-estimates
-  - learning
-created: 2025-12-15
 when_to_use: Use when justifying why time estimates are removed from educational content.
 ---
 

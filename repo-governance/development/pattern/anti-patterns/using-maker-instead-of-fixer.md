@@ -1,10 +1,5 @@
 ---
-title: "Anti-Pattern 10: Using Maker Instead of Fixer"
 description: "A maker agent is used to apply fixes from an audit report, when a validation-driven fixer is the correct tool."
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: "Use when deciding whether to invoke a maker or a fixer to address audit-report findings."
 ---
 

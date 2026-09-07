@@ -1,14 +1,5 @@
 ---
-title: "How It Applies — Frontmatter, Dependencies, and Configuration"
 description: Explicit-vs-implicit examples for frontmatter, dependencies, and config files.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - explicit-configuration
-  - transparency
-  - clarity
-created: 2025-12-15
 when_to_use: Use when reviewing frontmatter, an import statement, or a config file.
 ---
 
@@ -24,28 +15,24 @@ PASS: **Explicit (Correct)**:
 
 ```yaml
 ---
-title: "Explicit Over Implicit"
 description: Choose explicit composition over magic
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - explicit-configuration
-created: 2025-12-15
+when_to_use: Use when a choice could be inferred from context and should instead be stated.
 ---
 ```
 
-**Why this works**: All fields present. No guessing about category, tags, or dates. Self-contained.
+**Why this works**: Both fields present. The reader is told what the document covers _and_ when to
+reach for it, rather than inferring the second from the first.
 
 FAIL: **Implicit (Avoid)**:
 
 ```yaml
 ---
-title: "Explicit Over Implicit"
+description: Choose explicit composition over magic
 ---
 ```
 
-**Why this fails**: Missing category, tags, dates. Relies on defaults or context. Not self-documenting.
+**Why this fails**: Missing `when_to_use`. The routing condition is left to be guessed from the
+description, which is what "implicit" means here.
 
 ## Dependency Declaration
 

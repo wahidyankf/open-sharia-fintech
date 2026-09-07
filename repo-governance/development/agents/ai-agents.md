@@ -1,14 +1,5 @@
 ---
-title: "AI Agents Convention"
 description: "Standards for creating and managing AI agents in the platform binding directory (primary) and secondary agent directories"
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when authoring, reviewing, or restructuring an agent definition file in .claude/agents/, or when deciding which sub-topic of agent standards applies.
 ---
 

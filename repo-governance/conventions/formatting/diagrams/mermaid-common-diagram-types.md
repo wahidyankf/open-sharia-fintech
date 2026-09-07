@@ -1,18 +1,6 @@
 ---
-title: "Common Mermaid Diagram Types"
 description: "Documents the six common Mermaid diagram types (flowchart, sequence, class, ER, state, git graph) with examples."
 when_to_use: "Use when choosing which Mermaid diagram type fits the relationship or process you're documenting."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Common Mermaid Diagram Types

@@ -1,5 +1,4 @@
 ---
-title: "Example Usage"
 description: Six worked invocation examples — default parallelism, set-selectors, exclusions, parallelism overrides, plan-only mode, and an explicit Depends-on declaration.
 when_to_use: Use when you need a concrete invocation pattern to copy for running multi-plans-execution with a particular scope or mode.
 ---

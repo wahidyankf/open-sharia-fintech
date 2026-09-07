@@ -1,14 +1,5 @@
 ---
-title: "Information Accuracy and Verification — Verification Checklist for Agents"
 description: "Gives the verification checklist an agent should run through before reporting work as complete."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use as a final checklist before an agent reports a task complete.
 ---
 

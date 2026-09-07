@@ -1,5 +1,4 @@
 ---
-title: "Steps"
 description: The bounded UI quality gate steps, from discovery through optional fixing, scoped verification, and finalization.
 when_to_use: Use when executing or auditing the UI quality gate's step-by-step logic.
 ---

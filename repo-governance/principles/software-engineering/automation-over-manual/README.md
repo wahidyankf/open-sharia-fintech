@@ -1,5 +1,4 @@
 ---
-title: "Automation Over Manual"
 description: "Automate repetitive tasks to ensure consistency and reduce human error - humans for creative work, machines for repetition"
 when_to_use: "Read this index to find the right Automation Over Manual child document."
 ---

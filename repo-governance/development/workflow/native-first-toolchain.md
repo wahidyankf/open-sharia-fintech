@@ -1,15 +1,5 @@
 ---
-title: "Native-First Toolchain Management"
 description: Architectural decision to use native package managers and rhino-cli doctor instead of Terraform, Ansible, or Dev Containers.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - toolchain
-  - doctor
-  - environment
-  - architecture-decision
-created: 2026-04-04
 when_to_use: Use when deciding how to install or verify a toolchain, or evaluating Terraform, Ansible, or Docker Dev Containers.
 ---
 

@@ -1,5 +1,4 @@
 ---
-title: "Termination Criteria"
 description: "Defines success, partial, and failure outcomes for the environment-setup workflow."
 when_to_use: "Use when determining whether your environment setup run succeeded, is partial, or failed."
 ---

@@ -1,14 +1,5 @@
 ---
-title: "Validation and Compliance"
 description: "Explains how rules-checker validates agent compliance and how to manually verify an agent."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when running or interpreting an agent-compliance validation pass.
 ---
 

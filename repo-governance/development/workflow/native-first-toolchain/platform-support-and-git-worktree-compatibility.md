@@ -1,15 +1,5 @@
 ---
-title: "Platform Support and Git Worktree Compatibility"
 description: Which platforms doctor --fix supports and how, and why every command already works correctly from a git worktree.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - toolchain
-  - doctor
-  - environment
-  - architecture-decision
-created: 2026-04-04
 when_to_use: Use when setting up doctor on Ubuntu/Linux, or when confirming toolchain commands are worktree-safe.
 ---
 

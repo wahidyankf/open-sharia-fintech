@@ -1,16 +1,5 @@
 ---
-title: "Knowledge Capture Convention"
 description: Standards for capturing generalizable learnings during plan execution in a transient learnings.md log, triaging each through an open-ended principle-based routing matrix, and enforcing two safety gates before any learning reaches a durable home
-category: explanation
-subcategory: development
-tags:
-  - knowledge-capture
-  - learnings
-  - plans
-  - triage
-  - safety-gates
-  - post-mortems
-created: 2026-07-05
 when_to_use: "Use when a plan surfaces a generalizable learning and you need to capture or route it."
 ---
 

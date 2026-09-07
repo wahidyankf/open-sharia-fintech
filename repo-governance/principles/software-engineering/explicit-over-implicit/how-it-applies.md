@@ -1,14 +1,5 @@
 ---
-title: "How It Applies"
 description: Explicit-vs-implicit examples for agent tool permissions, file naming, and color.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - explicit-configuration
-  - transparency
-  - clarity
-created: 2025-12-15
 when_to_use: Use when reviewing tool permissions, a filename, or a color value.
 ---
 

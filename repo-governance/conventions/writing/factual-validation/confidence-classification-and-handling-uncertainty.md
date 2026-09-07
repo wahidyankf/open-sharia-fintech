@@ -1,16 +1,6 @@
 ---
-title: "Factual Validation Convention — Confidence Level Classification and Handling Uncertainty"
 description: The four confidence labels (Verified, Unverified, Error, Outdated) with criteria and examples, plus how to handle claims that cannot be verified or are context-dependent.
 when_to_use: Use when labeling a verified claim's confidence level, or when a claim cannot be verified and needs an explicit uncertainty note.
-category: explanation
-subcategory: conventions
-tags:
-  - factual-validation
-  - verification
-  - web-research
-  - accuracy
-  - quality-assurance
-created: 2025-12-16
 ---
 
 # Confidence Level Classification and Handling Uncertainty

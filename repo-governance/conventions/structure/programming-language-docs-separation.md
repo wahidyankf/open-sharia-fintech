@@ -1,16 +1,6 @@
 ---
-title: "Programming Language Documentation Separation Convention"
 description: Establishes the relationship between docs/explanation/programming-languages/ repository-specific style guides and ayokoding-www educational content
 when_to_use: Read this when deciding whether new programming-language content belongs in a docs/explanation/ style guide or in ayokoding-www educational content.
-category: explanation
-subcategory: conventions
-tags:
-  - documentation
-  - programming-languages
-  - style-guides
-  - content-separation
-  - dry-principle
-created: 2026-02-04
 ---
 
 # Programming Language Documentation Separation Convention

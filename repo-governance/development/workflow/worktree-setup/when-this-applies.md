@@ -1,18 +1,5 @@
 ---
-title: "When This Applies"
 description: The creation triggers for the two-step worktree init, and that it applies regardless of stated task scope.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - git
-  - worktree
-  - npm
-  - nx
-  - dependencies
-  - toolchain
-  - doctor
-created: 2026-03-28
 when_to_use: Use when deciding whether a worktree creation needs the two-step init.
 ---
 

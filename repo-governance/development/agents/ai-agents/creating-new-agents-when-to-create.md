@@ -1,14 +1,5 @@
 ---
-title: "Creating New Agents — When to Create a New Agent"
 description: "States the criteria for deciding when a new agent should be created rather than extending an existing one."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when deciding whether a new task needs a new agent or fits an existing agent's scope.
 ---
 

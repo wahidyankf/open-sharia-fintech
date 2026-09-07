@@ -1,15 +1,6 @@
 ---
-title: "No Manual Date Metadata: Principles and Purpose"
 description: The core principles this convention implements, and why manual updated fields, Last Updated footers, and inline date annotations were removed in favor of git history.
 when_to_use: Read this to understand why the repository bans manual date metadata before you go looking for where to record a file's last-changed date.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - frontmatter
-  - maintenance
-  - git
-created: 2026-04-25
 ---
 
 # No Manual Date Metadata: Principles and Purpose

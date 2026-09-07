@@ -1,5 +1,4 @@
 ---
-title: "Iteration Example"
 description: "A worked three-iteration trace showing findings dropping from 8 to 3 to 0, with the double-zero confirmation."
 when_to_use: "Use when you need to see how consecutive_zero_count evolves across a realistic multi-iteration run."
 ---

@@ -1,5 +1,4 @@
 ---
-title: "Agent Selection"
 description: Defines the priority-ordered heuristics the orchestrator uses to pick a specialized agent for each delivery checklist item.
 when_to_use: Use when deciding which agent should execute a given delivery checklist item.
 ---

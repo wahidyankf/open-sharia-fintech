@@ -1,15 +1,5 @@
 ---
-title: "Codegen Dependency Chain"
 description: The codegen -> typecheck / codegen -> build dependency chain for apps with OpenAPI contract specs.
-category: explanation
-subcategory: development
-tags:
-  - nx
-  - targets
-  - project-json
-  - build
-  - scripts
-created: 2026-02-23
 when_to_use: Use when wiring dependsOn for a project that generates types from an OpenAPI contract.
 ---
 

@@ -1,5 +1,4 @@
 ---
-title: "2. Aggregate Findings (Sequential)"
 description: "Step 2: counts findings across all three reports by mode threshold and decides whether to proceed to fixing or a confirmation re-check."
 when_to_use: "Use when implementing or debugging the findings-aggregation and threshold decision step."
 ---

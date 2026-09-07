@@ -1,17 +1,6 @@
 ---
-title: "`env-injection:` Section — Value-Less Injection Manifest"
 description: The repo-config.yml env-injection section that declares, per app, the injection home for every key at every stage, and how it feeds the validate-env manifest-consistency check.
 when_to_use: "Use when adding a new app or a new CI test-harness key to the env-injection manifest in repo-config.yml."
-category: explanation
-subcategory: conventions
-tags:
-  - security
-  - secrets
-  - env-files
-  - guard-env-file-access
-  - naming
-  - reproducibility
-created: 2026-06-10
 ---
 
 # `env-injection:` Section — Value-Less Injection Manifest

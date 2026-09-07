@@ -1,5 +1,4 @@
 ---
-title: "Refused Reductions"
 description: The six reductions no grooming class may ever produce — prose rewriting, qualifier weakening, guardrail trimming, entry-point deletion, budget raising, and deletion for capacity.
 when_to_use: Use when checking whether a proposed reduction is permanently out of scope.
 ---

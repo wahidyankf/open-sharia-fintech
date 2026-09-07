@@ -1,5 +1,4 @@
 ---
-title: "Hexagonal Architecture"
 description: "Core hexagonal architecture pattern — ports, adapters, dependency rule, and app-type specializations"
 when_to_use: "Read this index to find the right Hexagonal Architecture child document."
 ---

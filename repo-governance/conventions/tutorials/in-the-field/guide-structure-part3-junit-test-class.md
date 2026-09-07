@@ -1,16 +1,6 @@
 ---
-title: "Guide Structure Part 3: JUnit 5 Test Class Example"
 description: The worked production JUnit 5 test class example with lifecycle annotations and assertions.
 when_to_use: Use when writing a JUnit 5 production test class example.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Guide Structure Part 3: JUnit 5 Test Class Example

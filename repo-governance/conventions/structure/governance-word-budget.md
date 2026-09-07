@@ -1,16 +1,6 @@
 ---
-title: "Governance Word-Budget Convention"
 description: Per-surface word thresholds for auto-loaded instruction files, enforced by rhino-cli and git hooks
 when_to_use: Use when a governance or instruction file may be approaching or over its word-count threshold.
-category: explanation
-subcategory: conventions
-tags:
-  - instruction-files
-  - agents-md
-  - word-budget
-  - governance
-  - rhino-cli
-created: 2026-06-27
 ---
 
 # Governance Word-Budget Convention

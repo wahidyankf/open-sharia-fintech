@@ -1,15 +1,5 @@
 ---
-title: "When Plans Override the Default Mode"
 description: Reasons a plan may declare a non-default Delivery Mode and the two named ose-private categories where direct-main delivery is permitted.
-category: explanation
-subcategory: development
-tags:
-  - trunk-based-development
-  - git
-  - workflow
-  - development
-  - continuous-integration
-created: 2025-11-26
 when_to_use: Use when deciding whether a plan's change justifies overriding the worktree-to-pr default.
 ---
 

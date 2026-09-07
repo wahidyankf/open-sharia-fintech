@@ -1,16 +1,6 @@
 ---
-title: "Anti-Patterns: Testing Framework Without Foundation"
 description: Why the Anti-Patterns section exists, plus the consequences of introducing a testing framework without standard-library foundation.
 when_to_use: Use when explaining the risk of teaching a testing framework before its standard-library basis.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Anti-Patterns: Testing Framework Without Foundation

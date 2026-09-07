@@ -1,5 +1,4 @@
 ---
-title: "Initial Execution — Verify, Capture, and Atomic Sync"
 description: "Defines execution-loop steps 5-8: performing the item, verifying the result, capturing learnings, and the atomic sync ritual."
 when_to_use: Use when verifying a delegated agent's work, capturing a learning, or running the atomic sync ritual for one checklist item.
 ---

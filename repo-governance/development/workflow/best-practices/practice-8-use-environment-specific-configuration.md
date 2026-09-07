@@ -1,10 +1,5 @@
 ---
-title: "Practice 8: Use Environment-Specific Configuration"
 description: Different settings for development vs production, never hardcoded.
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use when a value differs between local development and production and needs to be configured rather than hardcoded.
 ---
 

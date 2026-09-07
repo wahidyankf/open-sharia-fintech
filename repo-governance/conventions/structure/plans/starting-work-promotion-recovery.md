@@ -1,5 +1,4 @@
 ---
-title: "Starting Work — Promotion Recovery"
 description: "Defines authoritative state reconciliation and resume behaviour for backlog-to-in-progress promotion."
 when_to_use: "Use before mutating a plan promotion, or when resuming an interrupted promotion."
 ---

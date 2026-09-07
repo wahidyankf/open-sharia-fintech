@@ -1,5 +1,4 @@
 ---
-title: "Step 3: User Review"
 description: Documents the manual decision point where a human reads the audit report, counts findings by strictness mode, assesses overall status, and decides whether to proceed to the fixer or return to the maker.
 when_to_use: Use when reviewing a by-example audit report and deciding the next action.
 ---

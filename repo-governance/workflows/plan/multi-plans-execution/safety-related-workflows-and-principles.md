@@ -1,5 +1,4 @@
 ---
-title: "Safety Features, Related Workflows, and Principles"
 description: The guardrails bounding a multi-plan run, links to plan-execution.md and the focused PR leak gate, and the five general principles this design maps to.
 when_to_use: Use when verifying what safeguards a run relies on, navigating to a composed workflow, or checking which principles a rule implements.
 ---

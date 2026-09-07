@@ -1,5 +1,4 @@
 ---
-title: "Repository Dependency Bump Planning Workflow"
 description: "Surveys monorepo dependency manifests, classifies bumps per the Dependency Bump Policy, and produces a validated backlog plan — never edits a manifest itself."
 when_to_use: "Read this index to find the right Repository Dependency Bump Planning Workflow child document."
 ---

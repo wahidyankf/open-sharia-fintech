@@ -1,15 +1,6 @@
 ---
-title: "By Example: Overview and Structure"
 description: Coverage, prerequisites, and file structure for the By Example tutorial type - 75-85 annotated examples across three files reaching 95% coverage.
 when_to_use: Use when you need the coverage target, prerequisites, and file/example-count structure for a By Example tutorial.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - tutorials
-  - naming
-  - learning-paths
-created: 2025-12-03
 ---
 
 # By Example: Overview and Structure

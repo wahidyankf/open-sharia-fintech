@@ -1,5 +1,4 @@
 ---
-title: "Skill Context Architecture"
 description: "Architectural guidance on skill context modes in `.claude/skills/`. Inline skills work universally; fork skills work from main conversation only."
 when_to_use: "Read this index to find the right Skill Context Architecture child document."
 ---

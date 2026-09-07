@@ -1,18 +1,6 @@
 ---
-title: "Principles and Scope"
 description: "Explains the accessibility and simplicity principles behind this convention plus what it covers and excludes."
 when_to_use: "Use when you need to understand why this color accessibility convention exists or what falls inside/outside its scope."
-category: explanation
-subcategory: conventions
-tags:
-  - accessibility
-  - color-blindness
-  - wcag
-  - design
-  - conventions
-  - mermaid-diagrams
-  - color-palette
-created: 2025-12-04
 ---
 
 # Principles and Scope

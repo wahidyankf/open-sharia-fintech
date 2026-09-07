@@ -1,16 +1,5 @@
 ---
-title: "Scope"
 description: "The boundary of this convention, including the plans/ exception and its Two Paths cross-reference."
-category: explanation
-subcategory: development
-tags:
-  - feature-completeness
-  - specs
-  - contracts
-  - testing
-  - documentation
-  - quality
-created: 2026-04-04
 when_to_use: "Use when checking whether this convention's scope covers a specific directory or artifact."
 ---
 

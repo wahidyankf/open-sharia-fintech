@@ -1,15 +1,6 @@
 ---
-title: "Diátaxis Framework"
 description: Understanding the Diátaxis documentation framework used in open-sharia-enterprise
 when_to_use: Use when deciding where new documentation belongs or organizing content by Diátaxis category.
-category: explanation
-subcategory: conventions
-tags:
-  - diataxis
-  - documentation-framework
-  - organization
-  - conventions
-created: 2025-11-22
 ---
 
 # Diátaxis Framework

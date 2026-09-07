@@ -1,5 +1,4 @@
 ---
-title: "Native-First Toolchain Management"
 description: "Architectural decision to use native package managers and rhino-cli doctor instead of Terraform, Ansible, or Dev Containers."
 when_to_use: "Read this index to find the right Native-First Toolchain Management child document."
 ---

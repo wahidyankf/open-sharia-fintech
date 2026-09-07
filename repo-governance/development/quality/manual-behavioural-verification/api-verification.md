@@ -1,16 +1,5 @@
 ---
-title: "API Verification"
 description: "How to manually verify an API endpoint with curl."
-category: explanation
-subcategory: development
-tags:
-  - verification
-  - testing
-  - playwright
-  - api
-  - quality
-  - manual-testing
-created: 2026-04-04
 when_to_use: "Use when preparing to manually verify an API change."
 ---
 

@@ -1,5 +1,4 @@
 ---
-title: "Content Quality Principles"
 description: "Universal markdown content quality standards applicable to all repository markdown contexts"
 when_to_use: "Read this index to find the right Content Quality Principles child document."
 ---

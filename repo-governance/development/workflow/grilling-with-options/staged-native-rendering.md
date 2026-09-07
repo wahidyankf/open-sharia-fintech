@@ -1,17 +1,5 @@
 ---
-title: "Staged Native Rendering"
 description: The procedure for rendering a 3-4-leaf decision envelope through a native tool limited to 2-3 options, via branch groups, plus the markdown fallback for non-interactive roots.
-category: explanation
-subcategory: development
-tags:
-  - planning
-  - grill-me
-  - user-interaction
-  - plan-maker
-  - design-decisions
-  - interaction
-  - agents
-created: 2026-05-26
 when_to_use: Use when a native interactive tool's option limit is smaller than the number of substantive leaves in a decision envelope.
 ---
 

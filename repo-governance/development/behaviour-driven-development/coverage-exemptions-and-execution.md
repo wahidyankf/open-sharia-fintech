@@ -1,10 +1,5 @@
 ---
-title: "BDD Coverage, Exemptions, and Execution"
 description: "Static coverage targets, higher-layer exemptions, test:quick composition, and runtime execution surfaces"
-category: explanation
-subcategory: development
-tags: [bdd, gherkin, testing, coverage]
-created: 2026-09-05
 when_to_use: "Use when defining BDD coverage targets, documenting an Integration/E2E exemption, or selecting a runtime execution surface."
 ---
 

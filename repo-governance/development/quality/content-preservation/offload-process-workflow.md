@@ -1,15 +1,5 @@
 ---
-title: "Offload Process Workflow"
 description: "The step-by-step workflow for performing an offload."
-category: explanation
-subcategory: development
-tags:
-  - content-preservation
-  - condensation
-  - offload
-  - zero-loss
-  - documentation
-created: 2025-12-14
 when_to_use: "Use when executing a content offload end to end."
 ---
 

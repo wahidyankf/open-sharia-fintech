@@ -1,14 +1,5 @@
 ---
-title: "Best Practices"
 description: Gives working habits for plans - apply minimal sufficiency, keep them focused and secret-free, update them as you go, maintain indices, and archive completed plans.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when looking for day-to-day working habits for maintaining plan documents over their lifecycle.
 ---
 

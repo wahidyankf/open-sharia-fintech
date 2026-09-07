@@ -1,15 +1,5 @@
 ---
-title: "Migration Path"
 description: "How agents migrate to the criticality-level system."
-category: explanation
-subcategory: development
-tags:
-  - criticality
-  - validation
-  - checker-agents
-  - fixer-agents
-  - quality-assurance
-created: 2025-12-27
 when_to_use: "Use when migrating an agent to this system."
 ---
 

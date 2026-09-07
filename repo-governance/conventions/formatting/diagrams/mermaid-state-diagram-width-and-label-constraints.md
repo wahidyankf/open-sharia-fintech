@@ -1,18 +1,6 @@
 ---
-title: "State Diagram Width and Label Constraints"
 description: "Specifies width and label constraints specific to Mermaid state diagrams."
 when_to_use: "Use when authoring or fixing a Mermaid state diagram that has wide or long labels."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # State Diagram Width and Label Constraints

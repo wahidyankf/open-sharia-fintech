@@ -1,5 +1,4 @@
 ---
-title: "Preconditions"
 description: The three preconditions that must hold before the API quality gate can run — reachable service, identified contract, non-destructive scope.
 when_to_use: Use when confirming a service is ready to be exercised by the API quality gate.
 ---

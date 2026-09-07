@@ -1,13 +1,5 @@
 ---
-title: "Layer 2: Conventions (WHAT - Documentation Rules)"
-description: The documentation-standards layer: scope, categories, requirements
-category: explanation
-subcategory: architecture
-tags:
-  - architecture
-  - governance
-  - conventions
-created: 2026-02-09
+description: "The documentation-standards layer: scope, categories, requirements"
 when_to_use: Use for Layer 2's scope and governance relationships.
 ---
 

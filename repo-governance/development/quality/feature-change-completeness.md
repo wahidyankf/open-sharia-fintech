@@ -1,16 +1,5 @@
 ---
-title: "Feature Change Completeness Convention"
 description: Practice requiring all related specs, contracts, tests, and documentation to be updated as part of any feature change -- binding both the direct-code path and the plan path
-category: explanation
-subcategory: development
-tags:
-  - feature-completeness
-  - specs
-  - contracts
-  - testing
-  - documentation
-  - quality
-created: 2026-04-04
 when_to_use: "Use when landing a feature change and deciding which companion artifacts it must also update."
 ---
 

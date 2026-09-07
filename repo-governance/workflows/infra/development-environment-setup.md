@@ -1,31 +1,6 @@
 ---
-name: development-environment-setup
-title: "development-environment-setup"
 description: "Guides installing and verifying every toolchain needed for pre-commit, pre-push, integration, and E2E work in this monorepo."
 when_to_use: "Use for new developer onboarding, a fresh machine/OS setup, or recovering a broken toolchain."
-goal: "Set up a complete local development environment with all toolchains required for pre-commit, pre-push, integration tests, and E2E tests across all projects"
-termination: "npm run doctor reports all tools OK and nx affected -t test:quick passes for all projects"
-inputs:
-  - name: platform
-    type: enum
-    values: [macos, linux]
-    description: Target operating system
-    required: false
-    default: macos
-  - name: scope
-    type: enum
-    values: [full, minimal]
-    description: "full: all 19 tools for all projects; minimal: core tools only (Node.js, Go, Docker, jq)"
-    required: false
-    default: full
-outputs:
-  - name: doctor-status
-    type: enum
-    values: [all-ok, warnings, missing]
-    description: Result of npm run doctor after setup
-  - name: tools-installed
-    type: number
-    description: Count of tools successfully installed and verified
 ---
 
 # Development Environment Setup Workflow
@@ -40,6 +15,22 @@ integration tests to E2E tests.
 
 **When to use**: new developer onboarding, a fresh machine/OS install, recovering a broken
 toolchain, or verifying an environment after adding a new project language.
+
+## Goal and Termination
+
+**Goal**: Set up a complete local development environment with all toolchains required for pre-commit, pre-push, integration tests, and E2E tests across all projects
+
+**Termination**: npm run doctor reports all tools OK and nx affected -t test:quick passes for all projects
+
+## Inputs
+
+- **`platform`** (enum: macos, linux, optional, default `macos`) — Target operating system
+- **`scope`** (enum: full, minimal, optional, default `full`) — full: all 19 tools for all projects; minimal: core tools only (Node.js, Go, Docker, jq)
+
+## Outputs
+
+- **`doctor-status`** (enum: all-ok, warnings, missing) — Result of npm run doctor after setup
+- **`tools-installed`** (number) — Count of tools successfully installed and verified
 
 ## Contents
 

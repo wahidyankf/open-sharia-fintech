@@ -1,5 +1,4 @@
 ---
-title: "Plan Multi-Repo Parity Planning and Execution Workflow"
 description: "End-to-end composite that plans then executes a cross-repo parity objective in one run."
 when_to_use: "Read this index to find the right Plan Multi-Repo Parity Planning and Execution Workflow child document."
 ---

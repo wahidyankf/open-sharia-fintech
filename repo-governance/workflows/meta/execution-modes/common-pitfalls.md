@@ -1,13 +1,5 @@
 ---
-title: "Common Pitfalls"
 description: Four recurring mistakes when choosing or executing an execution mode, each with the wrong and right pattern.
-category: explanation
-subcategory: workflows
-tags:
-  - workflows
-  - execution-mode
-  - orchestration
-created: 2026-01-05
 when_to_use: Use when debugging why a workflow's file changes didn't persist or iteration behaved unexpectedly.
 ---
 

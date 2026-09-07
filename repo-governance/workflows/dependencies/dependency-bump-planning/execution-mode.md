@@ -1,5 +1,4 @@
 ---
-title: "Execution Mode"
 description: States that this workflow uses Direct Orchestration — the calling context runs the phases, delegating research to web-researcher and invoking plan-planning.
 when_to_use: Use when determining who runs this workflow's phases and how research and plan authoring are delegated.
 ---

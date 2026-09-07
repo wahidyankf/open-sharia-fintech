@@ -1,14 +1,5 @@
 ---
-title: "Platform Binding Examples — Agent Identification Example"
 description: "Continues color accessibility guidance with a worked agent-identification example."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when working through a concrete example of identifying an agent by its color and name.
 ---
 

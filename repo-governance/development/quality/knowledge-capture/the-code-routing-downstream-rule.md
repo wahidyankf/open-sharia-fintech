@@ -1,16 +1,5 @@
 ---
-title: "The Code-Routing Downstream Rule"
 description: "Routing for a learning implying a code change."
-category: explanation
-subcategory: development
-tags:
-  - knowledge-capture
-  - learnings
-  - plans
-  - triage
-  - safety-gates
-  - post-mortems
-created: 2026-07-05
 when_to_use: "Use when a learning implies a code change."
 ---
 

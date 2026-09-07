@@ -1,15 +1,5 @@
 ---
-title: OpenAPI Contract-First Development
 description: Spec-first API development — the OpenAPI YAML is the single source of truth; code is generated from it, not the reverse
-category: explanation
-subcategory: development
-tags:
-  - openapi
-  - contract-first
-  - codegen
-  - api
-  - drift-enforcement
-created: 2026-05-26
 when_to_use: "Use when adding or changing an API endpoint, running codegen, or debugging a CI spec/codegen drift failure."
 ---
 

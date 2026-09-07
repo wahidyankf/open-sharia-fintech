@@ -1,15 +1,5 @@
 ---
-title: "Overview"
 description: "Overview of the criticality-level system."
-category: explanation
-subcategory: development
-tags:
-  - criticality
-  - validation
-  - checker-agents
-  - fixer-agents
-  - quality-assurance
-created: 2025-12-27
 when_to_use: "Use to orient to the criticality-level system."
 ---
 

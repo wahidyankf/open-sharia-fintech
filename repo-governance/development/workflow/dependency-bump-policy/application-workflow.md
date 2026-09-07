@@ -1,15 +1,5 @@
 ---
-title: "Application Workflow"
 description: The twelve-step ordered procedure for proposing or executing a dependency bump, from classification through quality gates.
-category: explanation
-subcategory: development
-tags:
-  - dependencies
-  - security
-  - versioning
-  - reproducibility
-  - workflow
-created: 2026-05-15
 when_to_use: Use as the step-by-step checklist when proposing or executing any dependency bump.
 ---
 

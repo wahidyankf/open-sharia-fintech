@@ -1,5 +1,4 @@
 ---
-title: "Content Preservation Convention"
 description: "Principles and processes for preserving knowledge when condensing files and extracting duplications"
 when_to_use: "Read this index to find the right Content Preservation Convention child document."
 ---

@@ -1,15 +1,5 @@
 ---
-title: Coverage Levels and Applies To
 description: The Beginner/Intermediate/Advanced coverage-level definitions for security by-example content and which ayokoding-www tracks this convention governs.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - security
-  - tool-output
-created: 2026-05-21
 when_to_use: Use when assigning an example to a coverage level or checking whether a security content track falls under this convention.
 ---
 

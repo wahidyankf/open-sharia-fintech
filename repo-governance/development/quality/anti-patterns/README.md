@@ -1,5 +1,4 @@
 ---
-title: "Anti-Patterns in Quality Development"
 description: "Catalog of eleven common quality-development anti-patterns and why each undermines reliability, maintainability, or consistency."
 when_to_use: "Read this index to find the right Anti-Patterns in Quality Development child document."
 ---

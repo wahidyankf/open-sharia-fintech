@@ -1,16 +1,6 @@
 ---
-title: "Production-Validated Standards Summary: Coverage"
 description: The validated guide-count and topic-coverage targets, and the diagram-density standard with its six progression diagram types.
 when_to_use: Use when checking a guide set's coverage or diagram density against validated production standards.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Production-Validated Standards Summary: Coverage

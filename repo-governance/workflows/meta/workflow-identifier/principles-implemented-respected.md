@@ -1,14 +1,5 @@
 ---
-title: "Principles Implemented/Respected"
 description: Traces this convention's workflow-pattern design back to the foundational principles it respects.
-category: explanation
-subcategory: workflows
-tags:
-  - workflows
-  - agents
-  - orchestration
-  - patterns
-created: 2025-12-23
 when_to_use: Use when auditing this convention for traceability back to foundational principles.
 ---
 

@@ -1,15 +1,6 @@
 ---
-title: "Principles Implemented/Respected"
 description: The core content principles the tutorial naming convention implements - progressive disclosure, no time estimates, and explicit over implicit.
 when_to_use: Use when you need the rationale for why the tutorial naming convention is designed the way it is.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - tutorials
-  - naming
-  - learning-paths
-created: 2025-12-03
 ---
 
 # Principles Implemented/Respected

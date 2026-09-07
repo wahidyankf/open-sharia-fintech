@@ -1,18 +1,6 @@
 ---
-title: "Format Selection Rule: Rationale and Examples"
 description: "Explains why Mermaid and ASCII are split the way they are, with worked format-choice examples."
 when_to_use: "Use when you need the reasoning behind the format-selection rule or a worked example of applying it."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Format Selection Rule: Rationale and Examples

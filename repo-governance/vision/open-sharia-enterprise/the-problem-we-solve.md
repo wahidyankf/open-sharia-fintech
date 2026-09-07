@@ -1,13 +1,5 @@
 ---
-title: "The Problem We Solve"
 description: The current state of Islamic enterprise technology and the barriers it creates for developers, businesses, and individuals
-category: explanation
-subcategory: vision
-tags:
-  - vision
-  - purpose
-  - islamic-enterprise
-created: 2025-12-24
 when_to_use: Use when explaining what is broken about the status quo that Open Sharia Enterprise addresses.
 ---
 

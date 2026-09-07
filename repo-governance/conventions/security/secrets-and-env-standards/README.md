@@ -1,5 +1,4 @@
 ---
-title: "Secrets and Environment-Variable Standards"
 description: "The authoritative hub for how this repository handles secrets and environment variables — naming convention, layout, annotation format, startup validation, tooling (rhino-cli env family), tiered injection standard (env-injection: section in repo-config.yml), storage tiers, and the env-contract drift guard."
 when_to_use: "Read this index to find the right Secrets and Environment-Variable Standards child document."
 ---

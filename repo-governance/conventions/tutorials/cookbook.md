@@ -1,17 +1,6 @@
 ---
-title: Cookbook Tutorial Convention
 description: Standards for creating problem-focused cookbook tutorials with practical, copy-paste ready recipes organized by problem type
 when_to_use: Use when authoring, reviewing, or scoping a Cookbook (problem-focused recipe) tutorial for any language or framework.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - cookbook
-  - education
-  - problem-solving
-  - recipes
-created: 2026-01-30
 ---
 
 # Cookbook Tutorial Convention

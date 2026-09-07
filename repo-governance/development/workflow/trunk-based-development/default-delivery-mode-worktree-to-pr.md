@@ -1,15 +1,5 @@
 ---
-title: "Default Delivery Mode: `worktree-to-pr`"
 description: The default mode's work location, integration target, merge authority, and quality gates.
-category: explanation
-subcategory: development
-tags:
-  - trunk-based-development
-  - git
-  - workflow
-  - development
-  - continuous-integration
-created: 2025-11-26
 when_to_use: Use as the canonical reference for what worktree-to-pr requires at each step.
 ---
 

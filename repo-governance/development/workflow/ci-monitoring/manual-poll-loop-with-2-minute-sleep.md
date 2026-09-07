@@ -1,14 +1,5 @@
 ---
-title: "Manual Poll Loop With 2-Minute Sleep (Unavoidable Loop Cases)"
 description: The fallback poll pattern when ScheduleWakeup is unavailable, and why gh run watch is prohibited.
-category: explanation
-subcategory: development
-tags:
-  - ci
-  - github-actions
-  - rate-limiting
-  - monitoring
-  - workflow
 when_to_use: Use only when ScheduleWakeup is unavailable and a manual poll loop is unavoidable.
 ---
 

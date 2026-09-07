@@ -1,15 +1,5 @@
 ---
-title: "Forbidden Imports, Examples, and Related"
 description: "The forbidden-imports table, a worked Rust example of a command delegating to the application layer, and related pattern documentation."
-category: explanation
-subcategory: development
-tags:
-  - architecture
-  - hexagonal
-  - cli
-  - rust
-  - fsharp
-created: 2026-05-26
 when_to_use: "Use when checking whether a CLI layer imports something forbidden, or want a worked example of the commands/ to application/ handoff."
 ---
 

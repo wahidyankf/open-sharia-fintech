@@ -1,5 +1,4 @@
 ---
-title: "Steps 5-6 — Human Checkpoint and Propagation Hand-Off"
 description: The approval gate that separates mechanical reductions from obligation removal, and the batched hand-off that makes rules-propagation write every approved item.
 when_to_use: Use when approving a grooming manifest, or handing approved items to rules-propagation.
 ---

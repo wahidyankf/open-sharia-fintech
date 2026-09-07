@@ -1,17 +1,6 @@
 ---
-title: "Layout Standard — One Template per App"
 description: Where each app's env template lives, the no-duplication rule, the HUMAN-only rule for relocating real env files, and the library env-var declaration rule.
 when_to_use: Use when adding an env template for a new app, or when a library reads process env vars directly and you need to know where to declare them.
-category: explanation
-subcategory: conventions
-tags:
-  - security
-  - secrets
-  - env-files
-  - guard-env-file-access
-  - naming
-  - reproducibility
-created: 2026-06-10
 ---
 
 # Layout Standard — One Template per App

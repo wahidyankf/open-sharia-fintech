@@ -1,19 +1,6 @@
 ---
-title: "Full Directory Structure and README Index Files"
 description: The complete specs/ tree layout, which subdirectories each project surface profile actually has, and the README.md index-file requirement at every level
 when_to_use: Read this when you need the top-level specs/ layout or the rule for which subdirectories a given project should have README.md files in.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - specs
-  - gherkin
-  - directory-structure
-  - organization
-  - c4-diagrams
-  - openapi
-  - c4
-created: 2026-04-02
 ---
 
 # Full Directory Structure, and README Index Files

@@ -1,10 +1,5 @@
 ---
-title: "Best Practices for Quality Development"
 description: Catalog of ten actionable best practices for code quality, validation, and content preservation.
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: "Use when looking for a proven practice to apply during quality-focused development."
 ---
 

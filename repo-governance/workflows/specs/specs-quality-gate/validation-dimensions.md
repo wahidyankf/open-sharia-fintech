@@ -1,5 +1,4 @@
 ---
-title: "Specs Quality Gate — Validation Dimensions"
 description: "Lists the nine validation categories the specs-checker enforces and which categories are offloaded to deterministic rhino-cli subcommands versus LLM reasoning."
 when_to_use: "Use when checking exactly what a specs-quality-gate audit report is scoring, or which rhino-cli command backs a given category."
 ---

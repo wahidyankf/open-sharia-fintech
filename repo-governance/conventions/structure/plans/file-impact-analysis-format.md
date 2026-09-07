@@ -1,14 +1,5 @@
 ---
-title: "File-Impact Analysis Format (HARD RULE)"
 description: Specifies the required annotated file-tree format for a plan's File-Impact Analysis section and the optional More Detail elaboration.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when writing or reviewing a plan's tech-docs.md File-Impact Analysis section.
 ---
 

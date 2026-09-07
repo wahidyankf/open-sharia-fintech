@@ -1,15 +1,5 @@
 ---
-title: "Measure After Fetching, Never Before"
 description: Why rev-list --left-right --count must run after a fetch, and the false-clean reading it produces when measured beforehand.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - worktree
-  - bare-repo
-  - safety
-created: 2026-07-21
 when_to_use: Use when checking whether a repository's local main is actually in sync with origin/main, to avoid trusting a stale measurement.
 ---
 

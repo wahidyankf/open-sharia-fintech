@@ -1,5 +1,4 @@
 ---
-title: "Step 3 — First Grill (Mandatory Meta-Questions)"
 description: The four mandatory meta-questions every First Grill session must surface — bare-repo delivery mode, rationale-doc location, repo-specific constraints, and research-needed.
 when_to_use: Use when closing out the First Grill, to confirm every mandatory meta-question was asked and recorded.
 ---

@@ -1,14 +1,5 @@
 ---
-title: "Examples from This Repository"
 description: This repository's concrete explicit configurations.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - explicit-configuration
-  - transparency
-  - clarity
-created: 2025-12-15
 when_to_use: Use to find an existing explicit configuration to reuse or extend.
 ---
 

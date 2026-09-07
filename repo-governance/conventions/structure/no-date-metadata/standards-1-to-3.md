@@ -1,15 +1,6 @@
 ---
-title: "No Manual Date Metadata: Standards 1-3"
 description: Standards 1 through 3 — no updated frontmatter field, no Last Updated footer blocks, and no misplaced Last Updated lines mid-document.
 when_to_use: Read this when checking a file's frontmatter block or its ending/mid-body content for a forbidden updated or Last Updated pattern.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - frontmatter
-  - maintenance
-  - git
-created: 2026-04-25
 ---
 
 # No Manual Date Metadata: Standards 1-3
@@ -20,6 +11,8 @@ The first three standards enforced by the
 ## Standard 1: No `updated:` in YAML Frontmatter
 
 Non-website markdown files MUST NOT contain an `updated:` field in their YAML frontmatter block.
+Under `repo-governance/` the prohibition also covers `created:`, which the two-key frontmatter
+allow-list refuses along with every other key.
 
 FAIL — forbidden:
 

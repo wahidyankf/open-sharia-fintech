@@ -1,15 +1,5 @@
 ---
-title: "Replication, Benchmark Examples, and Related Resources"
 description: "The step-by-step formula for adding a new programming language, a summary of the three benchmark language implementations, and links to related conventions and guides."
-category: explanation
-subcategory: conventions
-tags:
-  - programming-languages
-  - ayokoding
-  - tutorials
-  - education
-  - content-standards
-created: 2025-12-18
 when_to_use: "Use when starting content for a brand-new programming language, looking for a reference implementation to model, or navigating to a related convention or how-to guide."
 ---
 

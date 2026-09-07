@@ -1,15 +1,5 @@
 ---
-title: "No Corner-Cutting and Preferring Additive Operations"
 description: Why weakening a failing gate is forbidden, what corner-cutting looks like, and the additive-and-own-worktree habits that prevent most destructive operations from ever arising.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - safety
-  - worktree
-  - parallelism
-created: 2026-07-20
 when_to_use: Use when a gate, test, lint, or CI job fails and there is pressure to make it pass quickly, or when choosing between a destructive and an additive git operation.
 ---
 

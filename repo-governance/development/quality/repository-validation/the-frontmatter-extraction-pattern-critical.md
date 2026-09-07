@@ -1,16 +1,5 @@
 ---
-title: "The Frontmatter Extraction Pattern (CRITICAL)"
 description: "The critical pattern for extracting frontmatter safely in validation scripts."
-category: explanation
-subcategory: development
-tags:
-  - validation
-  - consistency
-  - bash
-  - awk
-  - frontmatter
-  - automation
-created: 2025-12-14
 when_to_use: "Use when writing a script that extracts frontmatter from a markdown file."
 ---
 

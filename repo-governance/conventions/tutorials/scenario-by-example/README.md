@@ -1,5 +1,4 @@
 ---
-title: "Scenario By-Example Tutorial Convention"
 description: "Standards for scenario-domain by-example tutorials using annotated documents, decisions, and governance artifacts — extends the SWE By-Example Convention for any non-code domain"
 when_to_use: "Read this index to find the right Scenario By-Example Tutorial Convention child document."
 ---

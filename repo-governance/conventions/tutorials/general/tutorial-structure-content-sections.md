@@ -1,17 +1,6 @@
 ---
-title: "Content Sections (The Learning Journey)"
 description: "Specifies the required content-section structure: concept introduction, explanation, demonstration, practice exercise, and checkpoint."
 when_to_use: "Read when drafting the main content sections (the learning journey) of a tutorial."
-category: explanation
-subcategory: conventions
-tags:
-  - tutorials
-  - diataxis
-  - learning
-  - pedagogy
-  - documentation
-  - teaching
-created: 2025-12-03
 ---
 
 # 5. Content Sections (The Learning Journey)

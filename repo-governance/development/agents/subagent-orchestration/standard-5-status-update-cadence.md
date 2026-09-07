@@ -1,14 +1,5 @@
 ---
-title: "Standard 5 — Idle-Polling Status Heartbeat"
 description: "Requires a five-minute user heartbeat only while the main thread has no useful work beyond polling non-CI background work."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - subagents
-  - orchestration
-  - development
-created: 2025-11-23
 when_to_use: Use when the main thread is idle except for polling a non-CI background agent or process.
 ---
 

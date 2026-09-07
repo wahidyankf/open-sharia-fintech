@@ -1,5 +1,4 @@
 ---
-title: "Dynamic Collection References Convention"
 description: "Standards for referencing dynamic collections (agents, principles, conventions, practices, skills) in documentation without hardcoding counts that become stale"
 when_to_use: "Read this index to find the right Dynamic Collection References Convention child document."
 ---

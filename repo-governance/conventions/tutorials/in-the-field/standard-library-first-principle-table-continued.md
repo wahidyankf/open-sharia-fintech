@@ -1,16 +1,6 @@
 ---
-title: "Standard Library First Principle: Topic Progression Table (Continued)"
 description: The second half of the standard-library-to-framework topic progression table (Web Framework through Service Discovery).
 when_to_use: Use when looking up which production framework a specific topic (caching, messaging, security, etc.) progresses to.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Standard Library First Principle: Topic Progression Table (Continued)

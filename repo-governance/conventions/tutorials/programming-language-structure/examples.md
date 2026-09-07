@@ -1,16 +1,6 @@
 ---
-title: "Examples"
 description: Worked complete-structure and navigation examples for a dual-path language (Java) and a single-path language (Kotlin).
 when_to_use: Use when you need a concrete worked example of tutorials/ structure and navigation for a dual-path or single-path language.
-category: explanation
-subcategory: conventions
-tags:
-  - programming-languages
-  - tutorials
-  - ayokoding-www
-  - education
-  - structure
-created: 2025-12-27
 ---
 
 # Examples

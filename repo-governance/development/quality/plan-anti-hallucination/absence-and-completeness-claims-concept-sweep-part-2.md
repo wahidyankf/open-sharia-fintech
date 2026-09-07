@@ -1,16 +1,5 @@
 ---
-title: "Absence/Completeness: Concept Sweep (2)"
 description: "The six-point minimum discipline for a concept sweep."
-category: explanation
-subcategory: development
-tags:
-  - plans
-  - ai-agents
-  - factual-validation
-  - anti-hallucination
-  - web-research
-  - verification
-created: 2026-05-03
 when_to_use: "Use when designing a concept sweep."
 ---
 

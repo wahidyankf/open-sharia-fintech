@@ -1,17 +1,6 @@
 ---
-title: "Recipe Structure Standards: Title, Problem Statement, and Solution"
 description: "Specifies the first three required parts of a cookbook recipe: the recipe title format, problem statement, and solution code."
 when_to_use: "Read when drafting the title, problem statement, and solution code of a cookbook recipe."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - cookbook
-  - education
-  - problem-solving
-  - recipes
-created: 2026-01-30
 ---
 
 # Recipe Structure Standards: Title, Problem Statement, and Solution

@@ -1,14 +1,5 @@
 ---
-title: "Standard 5 — Idle-Polling Status Heartbeat (Continued)"
 description: "Clarifies the narrow idle-main trigger and provides concise examples for the five-minute non-CI heartbeat."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - subagents
-  - orchestration
-  - development
-created: 2025-11-23
 when_to_use: Use when distinguishing the idle-polling heartbeat from ordinary milestone reporting and CI monitoring.
 ---
 

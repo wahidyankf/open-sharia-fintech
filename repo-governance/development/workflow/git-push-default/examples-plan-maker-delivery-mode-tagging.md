@@ -1,15 +1,5 @@
 ---
-title: "Examples — Plan-Maker Delivery-Mode Tagging"
 description: FAIL examples of a plan-maker assuming direct push without declaring a mode and mis-tagging git-mechanical steps [HUMAN], plus the corrected [AI]-tagged PASS example.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - push
-  - trunk-based-development
-  - ai-agents
-created: 2026-04-25
 when_to_use: Use when checking whether a plan-maker-authored delivery checklist declares its mode correctly and tags git-mechanical steps [AI].
 ---
 

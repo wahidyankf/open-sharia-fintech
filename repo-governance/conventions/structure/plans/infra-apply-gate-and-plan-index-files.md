@@ -1,14 +1,5 @@
 ---
-title: "Infra-Apply Gate and Plan Index Files"
 description: States that a plan with pending infrastructure-apply steps must stay in in-progress/, and the README.md index requirements for each plans/ subfolder.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when deciding whether a plan with a terraform apply or similar step is ready to archive, or when updating a subfolder's README.md index.
 ---
 

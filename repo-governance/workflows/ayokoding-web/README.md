@@ -1,11 +1,6 @@
 ---
-title: "AyoKoding Web Workflows"
 description: Workflows for keeping AyoKoding learning content accurate, useful, and well structured
 when_to_use: Use when routing to a workflow that validates a specific AyoKoding tutorial type's quality.
-category: explanation
-subcategory: workflows
-tags: []
-created: 2026-05-12
 ---
 
 # AyoKoding Web Workflows

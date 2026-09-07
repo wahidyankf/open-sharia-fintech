@@ -1,14 +1,5 @@
 ---
-title: "Agent-Skill Separation — Benefits, Implementation, Measurement, and Vigilance"
 description: "Covers the benefits of proper separation, the implementation pattern, measurement and success criteria, ongoing vigilance, and related agent skills."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when implementing an agent-skill separation and deciding how to measure whether it succeeded.
 ---
 

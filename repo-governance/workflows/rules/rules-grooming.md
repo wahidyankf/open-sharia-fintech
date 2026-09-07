@@ -1,58 +1,6 @@
 ---
-name: rules-grooming
-title: "rules-grooming"
 description: "Sweeps the repo-rules corpus for volume that carries no obligation — fragmentation overhead, cross-surface duplication, non-normative scaffolding, dead rules — and hands every reduction to rules-propagation."
 when_to_use: "Use when the rule corpus is due a recurring volume sweep, never as remediation for one file failing its word budget."
-goal: >
-  Reduce the size of the repository's rule corpus without reducing its normative content, by
-  identifying representation that carries no obligation and routing each reduction through the sole
-  writer of rule edits
-termination: >
-  Every manifest item is landed, rejected, or deferred with a recorded reason, the post-run
-  obligation inventory differs from the pre-run inventory only by the approved retirements, the
-  rules quality gate returns a passing verdict, and the run and its metrics delta are recorded;
-  halts on any unapproved obligation loss
-inputs:
-  - name: scope
-    type: string
-    description: >
-      Path prefixes to sweep, comma-separated. Defaults to the full repo-rules corpus as the
-      Membership Test defines it. Narrowing is permitted; the census still reports corpus-wide
-      metrics so a partial sweep cannot misreport overall progress.
-    required: false
-    default: "repo-rules corpus"
-  - name: classes
-    type: enum
-    values: [fragmentation, duplication, scaffolding, retirement]
-    description: >
-      Which candidate classes this run considers. Multi-valued. All four run by default; naming a
-      subset suppresses the omitted sweeps entirely rather than discovering and skipping them.
-      Discovery is never the safeguard — Step 5 gates every retirement per item, and no default
-      makes a removal automatic.
-    required: false
-    default: "fragmentation,duplication,scaffolding,retirement"
-  - name: max-concurrency
-    type: number
-    description: "Background agents run concurrently — the N in the N+1 model. Never self-promoted beyond the declared value."
-    required: false
-    default: 3
-  - name: dry-run
-    type: boolean
-    description: "Emit the census, manifest, and obligation inventory; hand nothing to propagation."
-    required: false
-    default: false
-outputs:
-  - name: grooming-manifest
-    type: file
-    pattern: local-tmp/rules-grooming/rules-grooming__*__manifest.md
-    description: "Ranked candidates with class, measured yield, semantic risk, and per-item disposition"
-  - name: obligation-inventory
-    type: file-list
-    pattern: local-tmp/rules-grooming/rules-grooming__*__obligations-{pre,post}.md
-    description: "The distinct-obligation snapshots whose diff is the run's preservation proof"
-  - name: final-status
-    type: enum
-    values: [no-op, groomed, halted, partial]
 ---
 
 # Repository Rules Grooming Workflow
@@ -80,6 +28,25 @@ progressive disclosure, not by scheduling a grooming run.
 
 Composed: `rules-checker` discovers and verifies, propagation writes at Step 6, and
 [rules-quality-gate](./rules-quality-gate.md) returns the verdict at Step 8.
+
+## Goal and Termination
+
+**Goal**: Reduce the size of the repository's rule corpus without reducing its normative content, by identifying representation that carries no obligation and routing each reduction through the sole writer of rule edits
+
+**Termination**: Every manifest item is landed, rejected, or deferred with a recorded reason, the post-run obligation inventory differs from the pre-run inventory only by the approved retirements, the rules quality gate returns a passing verdict, and the run and its metrics delta are recorded; halts on any unapproved obligation loss
+
+## Inputs
+
+- **`scope`** (string, optional, default `repo-rules corpus`) — Path prefixes to sweep, comma-separated. Defaults to the full repo-rules corpus as the Membership Test defines it. Narrowing is permitted; the census still reports corpus-wide metrics so a partial sweep cannot misreport overall progress.
+- **`classes`** (enum: fragmentation, duplication, scaffolding, retirement, optional, default `fragmentation,duplication,scaffolding,retirement`) — Which candidate classes this run considers. Multi-valued. All four run by default; naming a subset suppresses the omitted sweeps entirely rather than discovering and skipping them. Discovery is never the safeguard — Step 5 gates every retirement per item, and no default makes a removal automatic.
+- **`max-concurrency`** (number, optional, default `3`) — Background agents run concurrently — the N in the N+1 model. Never self-promoted beyond the declared value.
+- **`dry-run`** (boolean, optional, default `false`) — Emit the census, manifest, and obligation inventory; hand nothing to propagation.
+
+## Outputs
+
+- **`grooming-manifest`** (file, pattern `local-tmp/rules-grooming/rules-grooming__*__manifest.md`) — Ranked candidates with class, measured yield, semantic risk, and per-item disposition
+- **`obligation-inventory`** (file-list, pattern `local-tmp/rules-grooming/rules-grooming__*__obligations-{pre,post}.md`) — The distinct-obligation snapshots whose diff is the run's preservation proof
+- **`final-status`** (enum: no-op, groomed, halted, partial)
 
 ## Contents
 

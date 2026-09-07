@@ -1,17 +1,6 @@
 ---
-title: "Validation Criteria: Structure, Narrative, and Visual Validation"
 description: "Lists the structure, narrative, and visual validation checklist items that docs-tutorial-checker verifies on a tutorial."
 when_to_use: "Read when checking a tutorial's required sections, narrative quality, or visual completeness against the validation checklist."
-category: explanation
-subcategory: conventions
-tags:
-  - tutorials
-  - diataxis
-  - learning
-  - pedagogy
-  - documentation
-  - teaching
-created: 2025-12-03
 ---
 
 # Validation Criteria: Structure, Narrative, and Visual Validation

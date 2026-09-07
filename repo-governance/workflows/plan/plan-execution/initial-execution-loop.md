@@ -1,5 +1,4 @@
 ---
-title: "Initial Execution — Execution Loop"
 description: "Defines the single-item, strictly sequential execution loop's first four sub-steps: task update, repo-grounding, analysis, and the AI/HUMAN marker check."
 when_to_use: Use when walking through how each delivery checklist item is picked up, repo-grounded, and routed for execution.
 ---

@@ -1,5 +1,4 @@
 ---
-title: "Diátaxis Framework"
 description: "Understanding the Diátaxis documentation framework used in open-sharia-enterprise"
 when_to_use: "Read this index to find the right Diátaxis Framework child document."
 ---

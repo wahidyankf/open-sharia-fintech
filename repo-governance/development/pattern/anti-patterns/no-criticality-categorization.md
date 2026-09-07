@@ -1,10 +1,5 @@
 ---
-title: "Anti-Pattern 8: No Criticality Categorization"
 description: "Checker findings are listed as a flat, unprioritized list instead of being grouped by criticality."
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: "Use when reviewing an audit report that treats all issues as equally important."
 ---
 

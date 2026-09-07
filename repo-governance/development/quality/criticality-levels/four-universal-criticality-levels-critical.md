@@ -1,15 +1,5 @@
 ---
-title: "Four Universal Criticality Levels: CRITICAL"
 description: "The CRITICAL level definition and examples."
-category: explanation
-subcategory: development
-tags:
-  - criticality
-  - validation
-  - checker-agents
-  - fixer-agents
-  - quality-assurance
-created: 2025-12-27
 when_to_use: "Use when classifying a finding as CRITICAL."
 ---
 
@@ -38,7 +28,7 @@ when_to_use: "Use when classifying a finding as CRITICAL."
 
 **Repository Governance**:
 
-- Missing required `subcategory` field in convention document frontmatter
+- Missing `description` or `when_to_use`, or any other key present, in a `repo-governance/` document's frontmatter
 - Agent `name` field doesn't match filename (breaks agent discovery)
 - Broken internal link to non-existent file in documentation
 

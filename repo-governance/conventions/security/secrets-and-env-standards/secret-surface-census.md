@@ -1,17 +1,6 @@
 ---
-title: "Secret-Surface Census"
 description: The full inventory of every secret-bearing surface in the repo — app env files, .secrets/, secrets.json, IaC vars, and each platform's environment — with backing tool, backup, and validation status.
 when_to_use: Use when auditing which secret surfaces exist in this repo and whether each is backed up and validated.
-category: explanation
-subcategory: conventions
-tags:
-  - security
-  - secrets
-  - env-files
-  - guard-env-file-access
-  - naming
-  - reproducibility
-created: 2026-06-10
 ---
 
 # Secret-Surface Census

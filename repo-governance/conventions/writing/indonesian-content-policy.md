@@ -1,16 +1,6 @@
 ---
-title: "Indonesian Content Policy - ayokoding-www"
 description: Policy defining when and how to create Indonesian content in ayokoding-www bilingual platform
 when_to_use: Use when deciding what language to write new ayokoding-www content in, or whether an Indonesian translation of existing content is warranted.
-category: explanation
-subcategory: conventions
-tags:
-  - ayokoding-www
-  - indonesian
-  - bilingual
-  - content-policy
-  - translation
-created: 2026-02-07
 ---
 
 # Indonesian Content Policy - ayokoding-www

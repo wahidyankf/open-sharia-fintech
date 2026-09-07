@@ -1,5 +1,4 @@
 ---
-title: "Execution Mode, Workflow Overview, and Research Delegation"
 description: Describes the Agent Delegation (preferred) and Manual Orchestration (fallback) execution modes, the Maker-Checker-Fixer flow diagram, and how the maker/facts-checker agents delegate deep web research.
 when_to_use: Use when deciding how to run this quality gate, wanting a visual summary of the flow, or understanding how factual research is delegated.
 ---

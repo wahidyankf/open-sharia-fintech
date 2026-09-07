@@ -1,5 +1,4 @@
 ---
-title: "Markdown Quality Standards"
 description: "Automated markdown linting and formatting standards using Prettier and markdownlint-cli2"
 when_to_use: "Read this index to find the right Markdown Quality Standards child document."
 ---

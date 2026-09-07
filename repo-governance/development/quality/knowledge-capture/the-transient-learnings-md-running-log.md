@@ -1,16 +1,5 @@
 ---
-title: "The Transient `learnings.md` Running Log"
 description: "How the transient learnings.md log works."
-category: explanation
-subcategory: development
-tags:
-  - knowledge-capture
-  - learnings
-  - plans
-  - triage
-  - safety-gates
-  - post-mortems
-created: 2026-07-05
 when_to_use: "Use when maintaining a plan's learnings.md log."
 ---
 

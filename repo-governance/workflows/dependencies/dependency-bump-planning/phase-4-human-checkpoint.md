@@ -1,5 +1,4 @@
 ---
-title: "Phase 4: Human Checkpoint"
 description: The hard gate where the user must confirm the plan identifier, scope, and approve proceeding to plan authoring.
 when_to_use: Use when presenting the proposed bump table for user approval before any plan is authored.
 ---

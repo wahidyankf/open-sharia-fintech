@@ -1,14 +1,5 @@
 ---
-title: "What Every PR Body Must Carry"
 description: What every PR description states about outcome, scope, natural seam, production deployability, reading order, verification, and rollback.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - pr-review
-  - organization
-created: 2026-08-22
 when_to_use: Use when writing or reviewing a PR description.
 ---
 

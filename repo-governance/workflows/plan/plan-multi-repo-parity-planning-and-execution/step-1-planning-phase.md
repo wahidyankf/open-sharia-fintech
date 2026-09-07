@@ -1,5 +1,4 @@
 ---
-title: "Step 1 — Planning Phase"
 description: Runs the nested plan-multi-repo-parity-planning workflow in full, with composite-specific constraints on stage and mode.
 when_to_use: Use when executing the composite's first step — authoring and gating one plan per repo before any execution begins.
 ---

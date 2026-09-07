@@ -1,5 +1,4 @@
 ---
-title: "Web UX Test-Fixing Planning — Systematic Coverage & Recurrence"
 description: "Documents the enumerate-don't-sample forcing function all three testers carry, plus the three cross-tester obligations this workflow layers on top: coverage matrices, recurrence re-checks, and changed-surface targeting."
 when_to_use: "Use when verifying the testers were handed mandatory recurrence and changed-surface coverage, or when checking what a coverage-matrix artifact must contain."
 ---

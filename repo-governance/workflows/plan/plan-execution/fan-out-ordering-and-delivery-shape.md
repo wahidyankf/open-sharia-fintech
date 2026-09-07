@@ -1,5 +1,4 @@
 ---
-title: "Fan-Out, Ordering, and Delivery Shape"
 description: Defines the N+1 fan-out model, DAG-first ordering, and mode-specific delivery-unit integration shape.
 when_to_use: Use when planning concurrency or mapping delivery units to the resolved delivery mode's work location and integration mechanism.
 ---

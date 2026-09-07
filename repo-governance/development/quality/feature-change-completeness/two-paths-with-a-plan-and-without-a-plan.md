@@ -1,16 +1,5 @@
 ---
-title: "Two Paths: With a Plan and Without a Plan"
 description: "How this rule binds a direct code change versus a change made through a plan document."
-category: explanation
-subcategory: development
-tags:
-  - feature-completeness
-  - specs
-  - contracts
-  - testing
-  - documentation
-  - quality
-created: 2026-04-04
 when_to_use: "Use when a feature change has a plan doc and you need to know how completeness is tracked."
 ---
 

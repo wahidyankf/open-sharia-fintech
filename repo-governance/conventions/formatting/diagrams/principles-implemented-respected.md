@@ -1,18 +1,6 @@
 ---
-title: "Principles Implemented/Respected"
 description: "Lists the accessibility, simplicity, and documentation-first principles this diagram convention implements."
 when_to_use: "Use when you need to understand why this diagram convention requires Mermaid-first, accessible colors, and visible UI design records."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Principles Implemented/Respected

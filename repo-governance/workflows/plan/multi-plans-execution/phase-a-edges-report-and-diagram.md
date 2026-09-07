@@ -1,5 +1,4 @@
 ---
-title: "Phase A — Load Plans and Build the Dependency DAG (Edges, Report, and Diagram)"
 description: Covers A4-A7 — inter-plan edges, resource-sets, and the DAG report.
 when_to_use: Use when computing ordering edges or reading the DAG report.
 ---

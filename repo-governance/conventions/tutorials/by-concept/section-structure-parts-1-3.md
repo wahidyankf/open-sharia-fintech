@@ -1,16 +1,6 @@
 ---
-title: "Section Structure: Title, Diagram, and Narrative (Parts 1-3)"
 description: "Specifies the first half of the six-part concept-section structure: title/introduction, Mermaid diagram, and narrative explanation."
 when_to_use: "Read when drafting the opening (title, diagram, narrative) of a By-Concept tutorial section."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-concept
-  - education
-  - narrative-driven
-created: 2026-01-30
 ---
 
 # Section Structure: Title, Diagram, and Narrative (Parts 1-3)

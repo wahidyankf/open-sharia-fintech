@@ -1,14 +1,5 @@
 ---
-title: "Best Practices for AI Agents Development"
 description: "Proven practices for developing maintainable, secure, and effective AI agents in the .claude/agents/ directory."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - best-practices
-  - development
-  - standards
-created: 2026-05-12
 when_to_use: Use when authoring a new agent and checking it against proven practices, or citing a best practice in a review.
 ---
 

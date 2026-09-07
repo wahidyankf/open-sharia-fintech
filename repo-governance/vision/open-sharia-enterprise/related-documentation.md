@@ -1,13 +1,5 @@
 ---
-title: "Related Documentation (Open Sharia Enterprise Vision)"
 description: Links from the ecosystem vision to the principles, conventions, development, agent, and workflow layers it inspires
-category: explanation
-subcategory: vision
-tags:
-  - vision
-  - purpose
-  - islamic-enterprise
-created: 2025-12-24
 when_to_use: Use when navigating from the ecosystem vision to the layers it governs.
 ---
 

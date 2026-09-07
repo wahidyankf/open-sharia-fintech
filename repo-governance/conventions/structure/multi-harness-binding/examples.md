@@ -1,16 +1,6 @@
 ---
-title: "Multi-Harness Binding: Examples"
 description: Worked PASS and FAIL examples of the binding rules — Tier-1 with no committed file, Tier-2 generated pointers, thin pointers, and the failure modes each rule prevents.
 when_to_use: Read this when you need a concrete pattern to check a specific binding decision against, or when explaining why a proposed binding file was rejected.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - governance
-  - platform-bindings
-  - agents
-  - compatibility
-created: 2026-05-24
 ---
 
 # Multi-Harness Binding: Examples

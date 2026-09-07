@@ -1,5 +1,4 @@
 ---
-title: "CI/CD Conventions"
 description: "Central reference for CI/CD conventions in the multi-language Nx monorepo."
 when_to_use: "Read this index to find the right CI/CD Conventions child document."
 ---

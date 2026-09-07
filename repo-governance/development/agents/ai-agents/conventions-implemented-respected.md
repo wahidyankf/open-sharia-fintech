@@ -1,14 +1,5 @@
 ---
-title: "Conventions Implemented/Respected"
 description: "Lists the related repository conventions this convention implements and respects."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when checking which sibling conventions govern agent authoring alongside this one.
 ---
 

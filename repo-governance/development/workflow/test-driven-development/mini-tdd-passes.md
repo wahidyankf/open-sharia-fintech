@@ -1,15 +1,5 @@
 ---
-title: "Mini-TDD Passes"
 description: Splitting a feature or bug fix into multiple small Red-Green-Refactor cycles instead of one large test.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - workflow
-  - tdd
-  - testing
-  - red-green-refactor
-created: 2026-05-02
 when_to_use: Use when a delivery checklist item like "implement email validation" needs breaking into a sequence of small TDD cycles.
 ---
 

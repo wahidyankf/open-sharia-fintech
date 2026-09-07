@@ -1,18 +1,6 @@
 ---
-title: "Common Mermaid Syntax Errors: Special Characters in Node Text and Edge Labels"
 description: "Documents Error 1: how special characters in Mermaid node text and edge labels break rendering, with fixes."
 when_to_use: "Use when a Mermaid diagram fails to render and the node text or edge labels contain special characters."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Common Mermaid Syntax Errors: Special Characters in Node Text and Edge Labels

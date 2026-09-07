@@ -1,17 +1,5 @@
 ---
-title: "Principles and Conventions Implemented"
 description: The principles and companion conventions the Grilling-With-Options Convention implements and respects.
-category: explanation
-subcategory: development
-tags:
-  - planning
-  - grill-me
-  - user-interaction
-  - plan-maker
-  - design-decisions
-  - interaction
-  - agents
-created: 2026-05-26
 when_to_use: Use when tracing why structured multiple-choice grilling is required back to the principles and conventions it respects.
 ---
 

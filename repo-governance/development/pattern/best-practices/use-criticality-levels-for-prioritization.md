@@ -1,10 +1,5 @@
 ---
-title: "Practice 8: Use Criticality Levels for Prioritization"
 description: "Checkers should categorize findings by criticality (CRITICAL/HIGH/MEDIUM/LOW) to prioritize fixes."
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: "Use when designing a checker's audit report format or prioritizing which findings to fix first."
 ---
 

@@ -1,18 +1,5 @@
 ---
-title: "Goal-Driven Execution — Verification and Iteration"
 description: The test-first verification pattern and the loop-until-verified habit that replaces assuming a change works.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - workflow
-  - implementation
-  - optimization
-  - refactoring
-  - surgical-changes
-  - goal-driven
-  - test-driven
-created: 2025-12-15
 when_to_use: Use when implementing a change and deciding whether to write the test first and whether "done" has actually been verified.
 ---
 

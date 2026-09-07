@@ -1,12 +1,5 @@
 ---
-title: "Anti-Patterns — Self-Documenting Code and Deferred Documentation"
 description: Why self-documenting-code claims and deferred documentation both fail.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - documentation
-created: 2025-12-28
 when_to_use: Use when reviewing a change that skips documentation.
 ---
 

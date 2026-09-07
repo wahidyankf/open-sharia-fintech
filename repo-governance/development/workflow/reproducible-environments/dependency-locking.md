@@ -1,16 +1,5 @@
 ---
-title: "Dependency Locking"
 description: Lockfile discipline — guarded npm ci, hosted-CI freshness checks, and lockfile PR review practices.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - reproducibility
-  - volta
-  - docker
-  - environment
-  - dependencies
-created: 2025-12-28
 when_to_use: Use when installing dependencies, wiring CI lockfile checks, or reviewing a PR that changes package-lock.json.
 ---
 

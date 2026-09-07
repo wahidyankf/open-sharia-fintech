@@ -1,5 +1,4 @@
 ---
-title: "OSS Documentation Convention"
 description: "Standards for repository documentation files (README, CONTRIBUTING, ADRs, security)"
 when_to_use: "Read this index to find the right OSS Documentation Convention child document."
 ---

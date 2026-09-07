@@ -1,18 +1,6 @@
 ---
-title: "Flowchart Width Constraints"
 description: "Specifies width constraints for Mermaid flowcharts to keep them readable on narrow viewports."
 when_to_use: "Use when a Mermaid flowchart risks becoming too wide to render legibly."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Flowchart Width Constraints

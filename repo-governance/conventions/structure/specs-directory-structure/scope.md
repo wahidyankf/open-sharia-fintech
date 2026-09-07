@@ -1,19 +1,6 @@
 ---
-title: "Specs Directory Structure: Scope"
 description: What the specs/ directory structure convention covers versus what it explicitly delegates to sibling conventions
 when_to_use: Read this when you need to confirm whether a specs/ topic (Gherkin writing, C4 content, PM-readability) falls inside or outside this convention.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - specs
-  - gherkin
-  - directory-structure
-  - organization
-  - c4-diagrams
-  - openapi
-  - c4
-created: 2026-04-02
 ---
 
 # Scope

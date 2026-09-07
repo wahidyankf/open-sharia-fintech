@@ -1,14 +1,5 @@
 ---
-title: "CI Post-Push Verification Convention"
 description: After pushing app or library code, manually trigger all related GitHub CI workflows and verify they pass before considering the work complete.
-category: explanation
-subcategory: development
-tags:
-  - ci
-  - github-actions
-  - verification
-  - quality-gates
-  - workflow
 when_to_use: Use immediately after pushing app or lib code, to confirm CI actually passes rather than assuming the pre-push hook was sufficient.
 ---
 

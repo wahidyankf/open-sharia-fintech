@@ -1,15 +1,5 @@
 ---
-title: "Quality Checklist: Educational Value, Diagrams, and Structure"
 description: "Continues the pre-publish quality checklist with the educational value, diagrams, and structure sections."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - education
-  - code-first
-created: 2025-12-25
 when_to_use: "Read before publishing by-example content, alongside the Coverage/Self-Containment/Code Quality checklist, to confirm educational value, diagram, and structure requirements are satisfied."
 ---
 

@@ -1,16 +1,5 @@
 ---
-title: "CI Blocker Resolution Convention"
 description: Practice mandating that preexisting CI blockers are investigated at the root cause and fixed properly, never bypassed
-category: explanation
-subcategory: development
-tags:
-  - ci
-  - quality-gates
-  - root-cause
-  - debugging
-  - anti-pattern
-  - preexisting-issues
-created: 2026-04-04
 when_to_use: "Use when a CI check fails and you need to resolve it without bypassing the gate."
 ---
 

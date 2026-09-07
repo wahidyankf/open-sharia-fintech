@@ -1,13 +1,5 @@
 ---
-title: "For AI Agents"
 description: Five agent-specific obligations for applying minimal sufficiency without weakening required safeguards.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - simplicity
-  - over-engineering
-created: 2025-12-15
 when_to_use: Use when auditing agent behaviour against this principle.
 ---
 

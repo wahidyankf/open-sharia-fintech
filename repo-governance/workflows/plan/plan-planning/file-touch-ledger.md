@@ -1,5 +1,4 @@
 ---
-title: "File-Touch Ledger (All Plans, Unconditional)"
 description: States the two planning-side obligations that follow from a plan never being the only writer to its repository — the durable Files Changed ledger and the never-touch-outside-footprint rule.
 when_to_use: Use when scaffolding a delivery step's implementation-notes block, or when a plan's execution encounters another actor's in-flight work in the same repo.
 ---

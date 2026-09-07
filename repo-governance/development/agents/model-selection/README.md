@@ -1,5 +1,4 @@
 ---
-title: "AI Agent Model Selection Convention"
 description: "Standards for selecting the appropriate model grade (ultra, planning-grade, execution-grade, fast) for AI agents based on task complexity"
 when_to_use: "Read this index to find the right AI Agent Model Selection Convention child document."
 ---

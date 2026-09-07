@@ -1,15 +1,5 @@
 ---
-title: "Drift Enforcement, Scope, and Related"
 description: "How CI fails the build on spec/codegen drift, which BE-client pairs participate in contract-first development, and related pattern documentation."
-category: explanation
-subcategory: development
-tags:
-  - openapi
-  - contract-first
-  - codegen
-  - api
-  - drift-enforcement
-created: 2026-05-26
 when_to_use: "Use when a CI drift check fails, or checking whether a given app participates in contract-first codegen."
 ---
 

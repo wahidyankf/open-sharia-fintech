@@ -1,13 +1,5 @@
 ---
-title: "PASS: Best Practices"
 description: Actionable best practices for accessible color palettes, testing, contrast verification, alt text, headings, and multi-cue design.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - accessibility
-  - wcag
-created: 2025-12-15
 when_to_use: Use as a checklist when producing or reviewing visual content, diagrams, or documents for accessibility.
 ---
 

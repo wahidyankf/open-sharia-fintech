@@ -1,5 +1,4 @@
 ---
-title: "Why It Matters Content Convention"
 description: "Rule prohibiting corporate case studies and fabricated platform scenarios in Why It Matters sections of ayokoding-www tutorials; requires theoretical explanations only"
 when_to_use: "Read this index to find the right Why It Matters Content Convention child document."
 ---

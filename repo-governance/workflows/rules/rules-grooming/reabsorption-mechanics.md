@@ -1,5 +1,4 @@
 ---
-title: "Reabsorption Mechanics"
 description: The packing limits that decide which shards may be reabsorbed, and the six mechanical steps a reabsorption must carry to avoid breaking its parent.
 when_to_use: Use when admitting a reabsorption candidate at Step 3a, or executing one at Step 6.
 ---

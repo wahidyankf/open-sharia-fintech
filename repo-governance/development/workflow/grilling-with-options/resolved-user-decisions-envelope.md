@@ -1,17 +1,5 @@
 ---
-title: "Resolved User Decisions Envelope"
 description: The exact inbound payload the root passes back to a specialist verbatim once the user has resolved every decision, and the validation the specialist must perform on it.
-category: explanation
-subcategory: development
-tags:
-  - planning
-  - grill-me
-  - user-interaction
-  - plan-maker
-  - design-decisions
-  - interaction
-  - agents
-created: 2026-05-26
 when_to_use: Use when the root is constructing the resolved-decisions payload to pass back to a specialist, or when a specialist must validate that payload before proceeding.
 ---
 

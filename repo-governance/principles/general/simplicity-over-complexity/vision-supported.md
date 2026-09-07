@@ -1,12 +1,5 @@
 ---
-title: "Vision Supported"
 description: How simplicity over complexity serves the Open Sharia Enterprise vision of accessibility and low maintenance cost.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - simplicity
-created: 2025-12-15
 when_to_use: Use when explaining why simplicity matters to the project's mission.
 ---
 

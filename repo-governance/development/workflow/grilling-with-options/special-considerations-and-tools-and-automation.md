@@ -1,17 +1,5 @@
 ---
-title: "Special Considerations and Tools and Automation"
 description: How grilling narrows to validation passes inside plan-maker, why grilling is a process artifact rather than a document, and the tools that implement and check this convention.
-category: explanation
-subcategory: development
-tags:
-  - planning
-  - grill-me
-  - user-interaction
-  - plan-maker
-  - design-decisions
-  - interaction
-  - agents
-created: 2026-05-26
 when_to_use: Use when grilling is invoked from inside plan-maker, when verifying compliance without a generated artifact, or when identifying which tool implements or checks this convention.
 ---
 

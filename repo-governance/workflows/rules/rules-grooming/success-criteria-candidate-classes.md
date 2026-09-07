@@ -1,5 +1,4 @@
 ---
-title: "Success Criteria — Candidate Classes"
 description: Gherkin scenarios for what each candidate class admits, what it refuses, and the reductions no class may ever produce.
 when_to_use: Use when validating or extending a candidate class's admission rule.
 ---

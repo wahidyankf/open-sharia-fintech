@@ -1,5 +1,4 @@
 ---
-title: "Initial Execution — Progress, Output, and Stopping Rules"
 description: Defines execution-loop step 9, progress-streaming cadence, success/failure criteria, and the sanctioned stopping rules.
 when_to_use: Use when deciding whether the orchestrator may pause between items, or confirming a phase's success criteria.
 ---

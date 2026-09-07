@@ -1,15 +1,5 @@
 ---
-title: "Purpose"
 description: "Why this convention exists."
-category: explanation
-subcategory: development
-tags:
-  - fixer-agents
-  - confidence-levels
-  - validation
-  - automation
-  - quality-assurance
-created: 2025-12-14
 when_to_use: "Use when orienting to why fixer confidence levels exist."
 ---
 

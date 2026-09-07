@@ -1,15 +1,5 @@
 ---
-title: "When Branches Are Appropriate"
 description: Five natural-fit cases for a branch — code review, spikes, external contributors, compliance, environment branches.
-category: explanation
-subcategory: development
-tags:
-  - trunk-based-development
-  - git
-  - workflow
-  - development
-  - continuous-integration
-created: 2025-11-26
 when_to_use: Use when deciding whether a situation warrants a branch, or why prod-ayokoding-www is TBD-compliant.
 ---
 

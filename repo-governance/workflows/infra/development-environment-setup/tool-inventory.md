@@ -1,5 +1,4 @@
 ---
-title: "Tool Inventory"
 description: "Table of every tool rhino-cli doctor checks, its required version, version source file, and package manager."
 when_to_use: "Use as a quick reference for which tool version a given config file pins, or which manager installs it."
 ---

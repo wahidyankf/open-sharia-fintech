@@ -1,5 +1,4 @@
 ---
-title: "Docker Monorepo Build Patterns"
 description: "Patterns and pitfalls for building Docker images in an npm workspace monorepo"
 when_to_use: "Read this index to find the right Docker Monorepo Build Patterns child document."
 ---

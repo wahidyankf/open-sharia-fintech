@@ -1,5 +1,4 @@
 ---
-title: "Repository Validation Methodology Convention"
 description: "Standard validation methods and patterns for repository consistency checking"
 when_to_use: "Read this index to find the right Repository Validation Methodology Convention child document."
 ---

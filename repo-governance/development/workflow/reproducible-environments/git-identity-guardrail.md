@@ -1,16 +1,5 @@
 ---
-title: "Git Identity Guardrail"
 description: No AI agent sets or modifies git identity at any scope; the human per-repository includeIf pattern and the CI service-account exemption.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - reproducibility
-  - volta
-  - docker
-  - environment
-  - dependencies
-created: 2025-12-28
 when_to_use: Use when an agent is about to run any git config user.* command, or when setting up per-repository git identity as a human.
 ---
 

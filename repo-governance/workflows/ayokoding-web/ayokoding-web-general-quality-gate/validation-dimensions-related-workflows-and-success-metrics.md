@@ -1,5 +1,4 @@
 ---
-title: "Validation Dimensions, Related Workflows, and Success Metrics"
 description: Lists what each of the three validators (content, facts, links) checks, which other workflows this one composes with, and the metrics tracked across executions.
 when_to_use: Use when you need to know exactly what a given validator checks, which workflows to compose this with, or what metrics to track.
 ---

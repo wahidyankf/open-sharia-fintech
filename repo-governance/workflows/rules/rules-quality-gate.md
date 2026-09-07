@@ -1,29 +1,6 @@
 ---
-name: rules-quality-gate
-title: "rules-quality-gate"
 description: "Read-only governance gate producing one semantic verdict on a proposed or effective repository rule state, handing every finding to rules-propagation."
 when_to_use: "Use when the user explicitly names this gate, unambiguously directs its semantic rule audit, or rules-grooming reaches its Step 8."
-goal: Produce one read-only semantic verdict for one proposed or effective repository rule state
-termination: "PASS_NO_CHANGE or PASS_EFFECTIVE; every finding hands off to rules-propagation and is reported through its terminal result"
-inputs:
-  - name: mode
-    type: enum
-    values: [PROPOSAL, EFFECTIVE]
-    description: Compare a requested outcome against current rules, or evaluate the repository after propagation edits
-    required: true
-  - name: outcome
-    type: string
-    description: The requested rule outcome and its rationale
-    required: true
-outputs:
-  - name: verdict
-    type: enum
-    values: [PASS_NO_CHANGE, PASS_EFFECTIVE]
-    description: The only terminal results this gate can produce
-  - name: ledger
-    type: file
-    pattern: local-tmp/repo-rules/rules-quality-gate__*__ledger.md
-    description: The frozen finding ledger handed to propagation
 ---
 
 # Rules Quality Gate
@@ -79,6 +56,22 @@ without another user instruction, and then report only propagation's terminal re
 therefore end only in `PASS_NO_CHANGE` or `PASS_EFFECTIVE`. It never repairs a rule, reruns itself,
 or authorizes commit and push. Propagation owns any input, conflict, input-change, or tooling
 blocker it cannot resolve.
+
+## Goal and Termination
+
+**Goal**: Produce one read-only semantic verdict for one proposed or effective repository rule state
+
+**Termination**: PASS_NO_CHANGE or PASS_EFFECTIVE; every finding hands off to rules-propagation and is reported through its terminal result
+
+## Inputs
+
+- **`mode`** (enum: PROPOSAL, EFFECTIVE, required) — Compare a requested outcome against current rules, or evaluate the repository after propagation edits
+- **`outcome`** (string, required) — The requested rule outcome and its rationale
+
+## Outputs
+
+- **`verdict`** (enum: PASS_NO_CHANGE, PASS_EFFECTIVE) — The only terminal results this gate can produce
+- **`ledger`** (file, pattern `local-tmp/repo-rules/rules-quality-gate__*__ledger.md`) — The frozen finding ledger handed to propagation
 
 ## Contents
 

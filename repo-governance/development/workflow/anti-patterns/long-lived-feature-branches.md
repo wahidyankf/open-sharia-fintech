@@ -1,10 +1,5 @@
 ---
-title: "Anti-Pattern: Long-Lived Feature Branches"
 description: Feature branches lasting weeks cause merge conflicts and integration delays, and the fix that avoids them.
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use when tempted to keep a feature branch open for more than a day or two instead of shipping in small integrated phases.
 ---
 

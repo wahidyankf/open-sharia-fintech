@@ -1,14 +1,5 @@
 ---
-title: "Anti-Patterns in AI Agents Development"
 description: "Common mistakes to avoid when developing AI agents, with problem, cause, and solution for each anti-pattern."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - anti-patterns
-  - development
-  - best-practices
-created: 2026-05-12
 when_to_use: Use when reviewing an agent definition for a common authoring mistake, or naming which anti-pattern a finding matches.
 ---
 

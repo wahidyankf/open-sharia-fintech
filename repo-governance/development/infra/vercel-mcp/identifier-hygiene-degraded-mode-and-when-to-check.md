@@ -1,13 +1,5 @@
 ---
-title: "Identifier Hygiene, Degraded Mode, and When to Check"
 description: Slug-over-ID addressing for Vercel projects and teams, the fallbacks a plan uses when Vercel MCP is absent, and the four moments to re-run the probe.
-category: explanation
-subcategory: development
-tags:
-  - vercel
-  - mcp
-  - verification
-created: 2026-08-01
 when_to_use: Use when naming a project or team in a committed artifact, planning around an absent Vercel MCP server, or deciding when to re-probe.
 ---
 

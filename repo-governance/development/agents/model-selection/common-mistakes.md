@@ -1,14 +1,5 @@
 ---
-title: "Common Mistakes"
 description: "Lists common mistakes made when selecting a model grade for an agent."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - model-selection
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when reviewing an agent's model-grade choice for a common mistake.
 ---
 

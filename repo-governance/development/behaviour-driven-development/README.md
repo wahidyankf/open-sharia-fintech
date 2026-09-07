@@ -1,10 +1,5 @@
 ---
-title: "Behaviour-Driven Development Details"
 description: "Index for the canonical BDD standard's focused supporting rules"
-category: reference
-subcategory: development
-tags: [bdd, gherkin, testing]
-created: 2026-09-05
 when_to_use: "Use to locate detailed rules that extend the canonical behaviour-driven-development standard."
 ---
 

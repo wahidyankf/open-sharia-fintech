@@ -1,15 +1,5 @@
 ---
-title: "PASS: Best Practices"
 description: Summarizes six concrete best practices for writing pure functions, from explicit dependencies to mock-free testing.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - functional-programming
-  - pure-functions
-  - testability
-  - determinism
-created: 2025-12-28
 when_to_use: Use as a quick checklist when writing or reviewing TypeScript code for purity compliance.
 ---
 

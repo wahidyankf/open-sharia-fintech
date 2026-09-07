@@ -1,14 +1,5 @@
 ---
-title: "GitHub Actions Workflow Naming Convention"
 description: Domain-first filename grammar and name-mirrors-filename rule for all workflow files
-category: explanation
-subcategory: development
-tags:
-  - github-actions
-  - ci-cd
-  - naming
-  - workflow
-created: 2026-03-13
 when_to_use: Use when naming a new GitHub Actions workflow file or its `name:` field, or when auditing an existing workflow filename/name pair for alignment.
 ---
 

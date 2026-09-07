@@ -1,15 +1,5 @@
 ---
-title: Styling Convention
 description: CSS and Tailwind v4 styling patterns for frontend applications in the open-sharia-enterprise monorepo
-category: explanation
-subcategory: development/frontend
-tags:
-  - styling
-  - tailwind
-  - css
-  - responsive
-  - mobile-first
-created: 2026-03-28
 when_to_use: Use when writing or reviewing CSS/Tailwind styling in any frontend app in this monorepo.
 ---
 

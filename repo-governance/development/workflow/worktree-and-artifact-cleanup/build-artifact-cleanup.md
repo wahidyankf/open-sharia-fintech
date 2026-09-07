@@ -1,15 +1,5 @@
 ---
-title: "Build-Artifact Cleanup"
 description: Scope and exclusions for purging build output produced inside a plan's own worktrees.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - worktree
-  - cleanup
-  - parallelism
-created: 2026-07-20
 when_to_use: Use when deciding what build output to purge, and what to leave alone, during post-merge cleanup.
 ---
 

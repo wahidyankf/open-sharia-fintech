@@ -1,14 +1,5 @@
 ---
-title: Core Principles
 description: Foundational principles that guide all conventions and development practices
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - values
-  - philosophy
-  - index
-created: 2025-12-15
 when_to_use: Use when deciding whether a document belongs under principles/, or looking up which principle governs a decision.
 ---
 

@@ -1,14 +1,5 @@
 ---
-title: "Name Derivation"
 description: The mechanical derivation rule from filename to `name:` field, and the character transformation table it applies.
-category: explanation
-subcategory: development
-tags:
-  - github-actions
-  - ci-cd
-  - naming
-  - workflow
-created: 2026-03-13
 when_to_use: Use when deriving or checking a workflow's `name:` field against its filename, character by character.
 ---
 

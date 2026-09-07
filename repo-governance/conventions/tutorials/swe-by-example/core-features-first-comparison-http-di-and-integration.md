@@ -1,15 +1,5 @@
 ---
-title: "Core Features First: Comparison for HTTP Clients and DI, and Principle Integration"
 description: "Shows worked PASS/FAIL comparisons of core-features-first vs framework-first teaching for HTTP clients and Spring dependency injection, and ties the principle to related conventions."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - education
-  - code-first
-created: 2025-12-25
 when_to_use: "Read when you need worked PASS/FAIL comparison snippets for teaching HTTP clients or dependency injection progressively, or how this principle relates to other conventions."
 ---
 

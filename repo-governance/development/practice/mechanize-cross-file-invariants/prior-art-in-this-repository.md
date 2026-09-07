@@ -1,14 +1,5 @@
 ---
-title: "Mechanize Cross-File Invariants — Prior Art In This Repository"
 description: Four cross-cutting invariants this repository already governs via generate-and-validate - harness bindings, repo-config.yml schema parity, git hooks, and lint-staged config
-category: explanation
-subcategory: development
-tags:
-  - generate-and-validate
-  - drift
-  - automation
-  - governance
-created: 2026-08-07
 when_to_use: Use when looking for an existing example of this pattern to model a new generate-and-validate pipeline on.
 ---
 

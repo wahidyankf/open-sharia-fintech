@@ -1,15 +1,5 @@
 ---
-title: "Vercel MCP Capability Convention"
 description: The Vercel MCP server is an assumed capability for plans touching a Vercel-deployed surface, probed at planning time and again at execution Phase 0
-category: explanation
-subcategory: development
-tags:
-  - vercel
-  - mcp
-  - deployment
-  - planning
-  - verification
-created: 2026-08-01
 when_to_use: Use when a plan or its execution touches a Vercel-deployed surface and you need to know whether the Vercel MCP capability is assumed available, what it may be used for, or how to proceed when it is absent.
 ---
 

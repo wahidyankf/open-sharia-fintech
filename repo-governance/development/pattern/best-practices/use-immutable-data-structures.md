@@ -1,10 +1,5 @@
 ---
-title: "Practice 5: Use Immutable Data Structures"
 description: "Prefer immutable operations such as spread and array methods over direct mutation."
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: "Use when writing code that updates objects or arrays and needs to avoid mutating the original."
 ---
 

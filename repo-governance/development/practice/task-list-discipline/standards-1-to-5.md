@@ -1,15 +1,5 @@
 ---
-title: "Task List Discipline — Standards 1-5"
 description: Create the list before starting, mark in-progress before starting a task, mark completed immediately after verification, add discovered tasks on the spot, and one task per concrete outcome
-category: explanation
-subcategory: development
-tags:
-  - task-management
-  - planning
-  - execution
-  - ai-agents
-  - discipline
-created: 2026-06-23
 when_to_use: Use when creating or updating task entries during multi-step execution.
 ---
 

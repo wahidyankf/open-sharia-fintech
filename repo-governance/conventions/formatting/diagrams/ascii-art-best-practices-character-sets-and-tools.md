@@ -1,18 +1,6 @@
 ---
-title: "ASCII Art: Best Practices, Character Sets, and Tools"
 description: "Covers ASCII art best practices, the character sets to use, and recommended tools for creating ASCII art."
 when_to_use: "Use when authoring ASCII art and need the character-set conventions or a tool recommendation."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # ASCII Art: Best Practices, Character Sets, and Tools

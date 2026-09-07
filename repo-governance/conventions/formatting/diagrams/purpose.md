@@ -1,18 +1,6 @@
 ---
-title: "Purpose"
 description: "States that this document defines when and how to use different diagram formats so diagrams render consistently everywhere."
 when_to_use: "Use when you need the one-sentence purpose of this convention before diving into its rules."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Purpose

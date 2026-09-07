@@ -1,13 +1,5 @@
 ---
-title: "Policy"
 description: "The warning-and-above threshold, two enforcement points, toolchain convergence, clean-then-gate rollout, and documented-waivers-only rule for every cross-language lint gate."
-category: development
-subcategory: quality
-tags:
-  - lint
-  - quality
-  - ci
-created: 2026-06-10
 when_to_use: "Use when adding a new lint gate, deciding its failure threshold, or documenting a lint-rule waiver."
 ---
 

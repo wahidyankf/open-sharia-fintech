@@ -1,10 +1,5 @@
 ---
-title: "Parity Checklist — Test Execution Boundaries and Command Surfaces"
 description: "Fast-gate, static-coverage, and canonical-command invariants"
-category: explanation
-subcategory: development
-tags: [ci-cd, testing]
-created: 2026-03-31
 when_to_use: "Use when checking lifecycle execution or Rhino command-surface parity."
 ---
 

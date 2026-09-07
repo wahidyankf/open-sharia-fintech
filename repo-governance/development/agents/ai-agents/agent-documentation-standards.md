@@ -1,14 +1,5 @@
 ---
-title: "Agent Documentation Standards"
 description: "Defines required and recommended documentation elements and writing style for agent definition files."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when writing or reviewing the prose quality of an agent definition file.
 ---
 

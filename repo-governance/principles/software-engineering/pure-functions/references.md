@@ -1,15 +1,5 @@
 ---
-title: "References"
 description: Lists external references on functional programming, testing pure functions, the Functional Core/Imperative Shell pattern, and Islamic finance standards.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - functional-programming
-  - pure-functions
-  - testability
-  - determinism
-created: 2025-12-28
 when_to_use: Use when seeking further reading on pure-function theory, testing practice, or Shariah transparency requirements.
 ---
 

@@ -1,13 +1,5 @@
 ---
-title: "Trustworthy Measurement — Rule 5: Probes and Scans Must Assert Their Reach"
 description: A falsifiability probe proves nothing unless it moves the byte the check actually guards, and a scan proves nothing unless it asserts where it stopped
-category: explanation
-subcategory: development
-tags:
-  - measurement
-  - false-zero
-  - verification
-created: 2026-08-19
 when_to_use: Use when proving a guard is falsifiable, or when a script locates a region by walking a file.
 ---
 

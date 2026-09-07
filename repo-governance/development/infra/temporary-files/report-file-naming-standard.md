@@ -1,10 +1,5 @@
 ---
-title: "Report File Naming Standard"
 description: The 4-part `{agent-family}__{uuid-chain}__{timestamp}__{suffix}.md` pattern, its separators, and why UUIDs/timestamps must be real.
-category: explanation
-subcategory: development
-tags: [temporary-files, ai-agents, file-organization, best-practices]
-created: 2025-12-01
 when_to_use: Use when constructing a checker or fixer report filename.
 ---
 

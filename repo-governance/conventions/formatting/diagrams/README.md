@@ -1,5 +1,4 @@
 ---
-title: "Diagram and Schema Convention"
 description: "Standards for using Mermaid diagrams and ASCII art in open-sharia-enterprise markdown files. Includes color-blind accessibility requirements"
 when_to_use: "Read this index to find the right Diagram and Schema Convention child document."
 ---

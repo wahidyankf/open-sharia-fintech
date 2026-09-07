@@ -1,11 +1,6 @@
 ---
-title: "Linking Conventions"
 description: Rules for durable, repository-internal Markdown links
 when_to_use: Use when one repository document needs to link to another and you want the link to keep working in a fresh checkout, not just on a published site.
-category: explanation
-subcategory: conventions
-tags: []
-created: 2026-05-12
 ---
 
 # Linking Conventions

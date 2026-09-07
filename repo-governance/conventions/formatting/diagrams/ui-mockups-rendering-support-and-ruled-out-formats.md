@@ -1,18 +1,6 @@
 ---
-title: "UI Mockups in Plan Docs: Rendering-Support Matrix and Ruled-Out Formats"
 description: "Compares which mockup formats render properly across viewing surfaces, and lists formats that are ruled out and why."
 when_to_use: "Use when choosing a mockup format and need to confirm it will render on GitHub, IDEs, and other required surfaces."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # UI Mockups in Plan Docs: Rendering-Support Matrix and Ruled-Out Formats

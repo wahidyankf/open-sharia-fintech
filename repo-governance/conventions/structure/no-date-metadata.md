@@ -1,15 +1,6 @@
 ---
-title: "No Manual Date Metadata Convention"
 description: Non-website markdown files must not contain manual date metadata of any kind. Git history is the single source of truth for when files changed and why.
 when_to_use: Read this before adding, reviewing, or removing any date field (updated, Last Updated, inline Created/Updated annotations) in a non-website markdown file.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - frontmatter
-  - maintenance
-  - git
-created: 2026-04-25
 ---
 
 # No Manual Date Metadata Convention

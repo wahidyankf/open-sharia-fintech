@@ -1,15 +1,5 @@
 ---
-title: "When to Plan"
 description: "Defines when an agent should produce an explicit plan before acting, the plan format, and how to re-plan when things go wrong."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - workflow
-  - orchestration
-created: 2025-11-23
 when_to_use: Use when deciding whether a task needs an upfront plan before execution starts.
 ---
 

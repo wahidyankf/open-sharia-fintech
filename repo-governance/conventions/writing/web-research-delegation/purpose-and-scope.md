@@ -1,15 +1,5 @@
 ---
-title: "Web Research Delegation: Purpose and Scope"
 description: Why this convention exists and which agents, skills, and workflows it governs
-category: explanation
-subcategory: conventions
-tags:
-  - ai-agents
-  - web-research
-  - delegation
-  - factual-validation
-  - governance
-created: 2026-04-16
 when_to_use: Read this before adding WebSearch or WebFetch to an agent's tool list, to confirm whether the delegation rule applies.
 ---
 

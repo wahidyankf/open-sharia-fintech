@@ -1,5 +1,4 @@
 ---
-title: "PR-Review Cycle — Steps 0-1: Resolve and Review"
 description: "Hydrates an explicit cycle and invokes one single-pass PR review."
 when_to_use: "Use for the opening steps of each optional cycle iteration."
 ---

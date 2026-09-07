@@ -1,18 +1,6 @@
 ---
-title: "Mermaid Best Practices"
 description: "Lists general best practices for writing maintainable, readable Mermaid diagrams."
 when_to_use: "Use when writing a new Mermaid diagram and want the general best-practices checklist."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Mermaid Best Practices

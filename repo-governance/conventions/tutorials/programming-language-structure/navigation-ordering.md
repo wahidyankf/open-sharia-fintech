@@ -1,16 +1,6 @@
 ---
-title: "Navigation Ordering"
 description: Why By-Example, then By-Concept, then foundational tutorials is the required navigation order.
 when_to_use: Use when ordering or auditing the tutorials/_index.md navigation list for a language.
-category: explanation
-subcategory: conventions
-tags:
-  - programming-languages
-  - tutorials
-  - ayokoding-www
-  - education
-  - structure
-created: 2025-12-27
 ---
 
 # Navigation Ordering

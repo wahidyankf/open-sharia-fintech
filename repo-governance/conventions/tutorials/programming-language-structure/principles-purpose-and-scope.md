@@ -1,16 +1,6 @@
 ---
-title: "Principles, Purpose, and Scope"
 description: Core principles, purpose, and applicability scope for the programming language tutorial structure convention.
 when_to_use: Use when you need the rationale, goals, or applicability boundaries behind the programming language tutorial structure convention.
-category: explanation
-subcategory: conventions
-tags:
-  - programming-languages
-  - tutorials
-  - ayokoding-www
-  - education
-  - structure
-created: 2025-12-27
 ---
 
 # Principles, Purpose, and Scope

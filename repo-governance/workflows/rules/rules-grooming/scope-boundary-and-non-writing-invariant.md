@@ -1,5 +1,4 @@
 ---
-title: "Scope Boundary and the Non-Writing Invariant"
 description: The four admitted candidate classes, the reductions explicitly refused, and why this workflow hands every edit to rules-propagation instead of writing.
 when_to_use: Use when checking whether a proposed reduction is in scope, or why this workflow does not write.
 ---

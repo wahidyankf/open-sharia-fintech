@@ -1,14 +1,5 @@
 ---
-title: "Commit Message Convention"
 description: Understanding Conventional Commits and why we use them in open-sharia-enterprise
-category: explanation
-subcategory: development
-tags:
-  - conventional-commits
-  - git
-  - development
-  - code-quality
-created: 2025-11-24
 when_to_use: Use when writing a commit message, choosing its type/scope, or troubleshooting a Commitlint rejection.
 ---
 

@@ -1,5 +1,4 @@
 ---
-title: "Example Usage"
 description: A worked transcript of the UI quality gate running end to end in strict mode.
 when_to_use: Use when you want to see what a UI quality gate run looks like in practice.
 ---

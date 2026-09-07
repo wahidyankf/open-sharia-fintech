@@ -1,15 +1,5 @@
 ---
-title: "How It Applies — Environment, Containers, and Setup Docs"
 description: Shows reproducible patterns for environment variable configuration, Docker Compose service definitions, and documented setup steps.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - reproducibility
-  - environment
-  - determinism
-  - version-pinning
-created: 2025-12-28
 when_to_use: Use when configuring environment variables, containerizing a multi-service local setup, or writing onboarding setup instructions.
 ---
 

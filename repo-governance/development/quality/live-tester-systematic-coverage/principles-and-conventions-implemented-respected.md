@@ -1,16 +1,5 @@
 ---
-title: "Principles and Conventions Implemented/Respected"
 description: "Principles/conventions implemented."
-category: explanation
-subcategory: development
-tags:
-  - testing
-  - live-testing
-  - usability
-  - ux
-  - quality
-  - systematic
-created: 2026-06-22
 when_to_use: "Use to trace this practice's rationale."
 ---
 

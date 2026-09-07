@@ -1,5 +1,4 @@
 ---
-title: "Test-Driven Development Convention"
 description: "Mandates TDD (Red→Green→Refactor) as the required practice for all code changes across the repository"
 when_to_use: "Read this index to find the right Test-Driven Development Convention child document."
 ---

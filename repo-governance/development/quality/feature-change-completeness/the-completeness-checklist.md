@@ -1,16 +1,5 @@
 ---
-title: "The Completeness Checklist"
 description: "The checklist to verify before declaring a feature change complete."
-category: explanation
-subcategory: development
-tags:
-  - feature-completeness
-  - specs
-  - contracts
-  - testing
-  - documentation
-  - quality
-created: 2026-04-04
 when_to_use: "Use as a final check before declaring a feature change done."
 ---
 

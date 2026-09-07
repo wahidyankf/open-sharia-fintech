@@ -1,15 +1,5 @@
 ---
-title: "Operating Budgets — Harness Capability Gating"
 description: "Defines how orchestration behaviour is gated by the current harness's capabilities."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - workflow
-  - orchestration
-created: 2025-11-23
 when_to_use: Use when an orchestration behaviour depends on whether the current harness supports it.
 ---
 

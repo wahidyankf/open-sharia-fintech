@@ -1,15 +1,5 @@
 ---
-title: Security By-Example Tutorial Convention
 description: Standards for security-domain by-example tutorials using tool output, lab scenarios, and annotated security artifacts — extends the SWE By-Example Convention
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - security
-  - tool-output
-created: 2026-05-21
 when_to_use: Use when authoring, reviewing, or scoping a security-domain by-example tutorial (Foundations, Red Team, or Blue Team) and need the security-specific adaptations of the SWE By-Example convention.
 ---
 

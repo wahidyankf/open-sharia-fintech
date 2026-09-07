@@ -1,16 +1,6 @@
 ---
-title: "Platform Binding Examples"
 description: The concrete, per-harness file names and binding-tier assignments that instantiate the Multi-Harness Binding Convention's rules — vendor-specific content, exempt from the vendor-audit scanner under this heading.
 when_to_use: Read this when you need the actual file names that shadow AGENTS.md, or the current per-harness Tier-1/Tier-2 assignment for a specific coding-agent harness.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - governance
-  - platform-bindings
-  - agents
-  - compatibility
-created: 2026-05-24
 ---
 
 # Platform Binding Examples

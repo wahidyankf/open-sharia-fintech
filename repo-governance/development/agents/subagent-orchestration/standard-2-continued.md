@@ -1,14 +1,5 @@
 ---
-title: "Standard 2 — 3-Minute Stuck-Detection Polling (Continued)"
 description: "Continues Standard 2 with the healthy-vs-stuck empirical signal table and worked examples."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - subagents
-  - orchestration
-  - development
-created: 2025-11-23
 when_to_use: Use when distinguishing a healthy slow-running agent from a genuinely stuck one.
 ---
 

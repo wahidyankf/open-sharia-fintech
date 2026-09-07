@@ -1,5 +1,4 @@
 ---
-title: "Step 6: Write and Subject-Scoped Tidy"
 description: Writing the rule, then deduplicating, retiring, and reindexing every surface that states its subject — and the boundary that keeps the sweep bounded.
 when_to_use: Use once placement is decided, to execute the write and the tidy that accompanies it.
 ---

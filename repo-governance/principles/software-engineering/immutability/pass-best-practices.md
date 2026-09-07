@@ -1,15 +1,5 @@
 ---
-title: "PASS: Best Practices"
 description: Summarizes six concrete best practices for writing immutable code, from const-by-default to typed readonly enforcement.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - functional-programming
-  - immutability
-  - data-structures
-  - concurrency
-created: 2025-12-28
 when_to_use: Use as a quick checklist when writing or reviewing TypeScript code for immutability compliance.
 ---
 

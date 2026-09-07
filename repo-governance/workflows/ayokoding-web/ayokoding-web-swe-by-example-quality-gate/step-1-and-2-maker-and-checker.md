@@ -1,5 +1,4 @@
 ---
-title: "Steps 1-2: Maker and Checker"
 description: Documents the maker step (manual/AI-assisted example creation) and the checker step (validation against by-example standards, including the mandatory Examples-by-Level section).
 when_to_use: Use when creating or updating by-example tutorial content, or when running/interpreting the apps-ayokoding-www-by-example-checker agent.
 ---

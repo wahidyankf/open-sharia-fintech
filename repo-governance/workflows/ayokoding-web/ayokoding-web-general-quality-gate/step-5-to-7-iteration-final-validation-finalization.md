@@ -1,5 +1,4 @@
 ---
-title: "Steps 5-7: Iteration Control, Final Validation, and Finalization"
 description: Documents the loop-continuation logic, the final confirmation check, and the finalization step that reports status for the general quality gate.
 when_to_use: Use when determining whether a run should continue iterating, running the final confirmation check, or reporting final status.
 ---

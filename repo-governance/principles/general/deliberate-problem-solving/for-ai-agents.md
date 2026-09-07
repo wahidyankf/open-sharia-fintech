@@ -1,12 +1,5 @@
 ---
-title: "For AI Agents"
 description: States the five agent-specific obligations for deliberate problem-solving, including verification tools and stating limitations.
-category: explanation
-subcategory: principles
-tags:
-  - problem-solving
-  - clarity
-created: 2026-01-29
 when_to_use: Use when defining or auditing how an AI agent must apply deliberate problem-solving in its own behaviour.
 ---
 

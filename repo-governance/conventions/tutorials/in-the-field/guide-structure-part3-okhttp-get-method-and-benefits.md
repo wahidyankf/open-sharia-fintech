@@ -1,16 +1,6 @@
 ---
-title: "Guide Structure Part 3: OkHttp GET Method and Benefits"
 description: The OkHttp client's get() method implementation and the rationale for choosing OkHttp over the standard library.
 when_to_use: Use when writing the request/response half of an OkHttp example or justifying OkHttp's use.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Guide Structure Part 3: OkHttp GET Method and Benefits

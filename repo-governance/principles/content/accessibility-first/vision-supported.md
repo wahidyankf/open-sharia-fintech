@@ -1,14 +1,5 @@
 ---
-title: "Vision Supported"
 description: How the accessibility-first principle advances the Open Sharia Enterprise Vision of universal, inclusive access.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - accessibility
-  - inclusive-design
-  - universal-access
-created: 2025-12-15
 when_to_use: Use when explaining why accessibility work matters to the project's mission, not just how to implement it.
 ---
 

@@ -1,16 +1,5 @@
 ---
-title: "What Must Be Updated"
 description: "The full list of artifact types (specs, contracts, tests, docs) a feature change must keep in sync."
-category: explanation
-subcategory: development
-tags:
-  - feature-completeness
-  - specs
-  - contracts
-  - testing
-  - documentation
-  - quality
-created: 2026-04-04
 when_to_use: "Use when unsure which companion artifact a feature change must also update."
 ---
 

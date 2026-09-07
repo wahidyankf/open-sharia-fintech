@@ -1,14 +1,5 @@
 ---
-title: "Tools and References"
 description: The validating tooling and agents that enforce this convention, and related development standards and naming conventions.
-category: explanation
-subcategory: development
-tags:
-  - github-actions
-  - ci-cd
-  - naming
-  - workflow
-created: 2026-03-13
 when_to_use: Use when locating the tooling/agents that enforce this convention or finding related naming conventions.
 ---
 

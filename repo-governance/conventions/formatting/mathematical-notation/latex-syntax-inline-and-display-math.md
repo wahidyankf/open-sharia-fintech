@@ -1,16 +1,6 @@
 ---
-title: "LaTeX Syntax: Inline and Display Math"
 description: The `$...$` inline math syntax and `$$...$$` display math syntax, with when to use each.
 when_to_use: Use when writing a LaTeX expression and deciding between inline and display math syntax.
-category: explanation
-subcategory: conventions
-tags:
-  - latex
-  - mathematics
-  - formulas
-  - notation
-  - conventions
-created: 2025-12-02
 ---
 
 # LaTeX Syntax: Inline and Display Math

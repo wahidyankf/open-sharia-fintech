@@ -1,32 +1,6 @@
 ---
-name: pr-leak-review
-title: "pr-leak-review"
 description: "Run the mandatory focused leak review once for an exact current PR head."
 when_to_use: "Use for every open pull request before merge and again whenever its head changes."
-goal: "Detect real sensitive values, protected environment properties, and machine-specific absolute paths without broad semantic review"
-termination: "Return pass/findings after one authenticated current-head review, or stale/failed without retrying inside the run"
-inputs:
-  - name: pr
-    type: string
-    description: Open PR number or URL
-    required: true
-outputs:
-  - name: final-status
-    type: enum
-    values: [pass, findings, stale, failed]
-    description: Focused leak-review result for the pinned head
-  - name: reviewed-head
-    type: string
-    description: Exact PR head SHA reviewed
-  - name: review-id
-    type: string
-    description: Authenticated GitHub review ID, or null before posting
-  - name: finding-counts
-    type: string
-    description: Sanitized counts by leak category
-  - name: evidence
-    type: string
-    description: Authenticated ose-pr-leak-review:v1 current-head evidence
 ---
 
 # Focused PR Leak Review Workflow
@@ -38,6 +12,24 @@ pass, CI wait, retry, or consecutive-clean confirmation.
 
 Run [`pr-review-security-maker`](../../../.claude/agents/pr-review/pr-review-security-maker.md) in
 **exact leak-only mode**. Its ordinary security charter is disabled for this invocation.
+
+## Goal and Termination
+
+**Goal**: Detect real sensitive values, protected environment properties, and machine-specific absolute paths without broad semantic review
+
+**Termination**: Return pass/findings after one authenticated current-head review, or stale/failed without retrying inside the run
+
+## Inputs
+
+- **`pr`** (string, required) — Open PR number or URL
+
+## Outputs
+
+- **`final-status`** (enum: pass, findings, stale, failed) — Focused leak-review result for the pinned head
+- **`reviewed-head`** (string) — Exact PR head SHA reviewed
+- **`review-id`** (string) — Authenticated GitHub review ID, or null before posting
+- **`finding-counts`** (string) — Sanitized counts by leak category
+- **`evidence`** (string) — Authenticated ose-pr-leak-review:v1 current-head evidence
 
 ## Contents
 

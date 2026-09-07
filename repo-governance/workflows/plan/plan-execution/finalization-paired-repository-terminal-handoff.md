@@ -1,5 +1,4 @@
 ---
-title: "Finalization and Archival — Paired-Repository Terminal Handoff"
 description: "Defines post-merge sibling-handoff emission and authenticated read-back."
 when_to_use: "Use after a paired source PR merges and its successor PR opens, before successor scouting."
 ---

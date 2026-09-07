@@ -1,10 +1,5 @@
 ---
-title: "Best Practices for Infrastructure Development"
 description: Index of best practices for managing development infrastructure — temporary files, report generation, execution tracking, acceptance criteria, and audit trails — split across focused child documents.
-category: explanation
-subcategory: development
-tags: [infrastructure, best-practices]
-created: 2026-05-12
 when_to_use: Use when looking for best-practice guidance on temporary file handling, report naming/generation, execution tracking, Gherkin acceptance criteria, or audit-trail hygiene in development infrastructure, and need to find the right child document.
 ---
 

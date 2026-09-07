@@ -1,64 +1,6 @@
 ---
-name: docs-quality-gate
-title: "docs-quality-gate"
 description: "Validates all docs/ content (factual accuracy, pedagogical structure, link validity) and applies fixes iteratively via Maker-Checker-Fixer."
 when_to_use: "Use after creating/updating documentation, before releases, periodically, or after bulk restructuring."
-goal: Validate all docs/ content quality (factual accuracy, pedagogical structure, link validity), apply fixes iteratively until zero findings achieved
-termination: "Zero findings across all validators on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)"
-inputs:
-  - name: scope
-    type: string
-    description: Documentation to validate (e.g., "all", "docs/tutorials/", "specific-file.md")
-    required: false
-    default: all
-  - name: mode
-    type: enum
-    values: [lax, normal, strict, ocd]
-    description: "Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ocd: all levels)"
-    required: false
-    default: strict
-  - name: min-iterations
-    type: number
-    description: Minimum check-fix cycles before allowing zero-finding termination (prevents premature success)
-    required: false
-  - name: max-iterations
-    type: number
-    description: Maximum check-fix cycles to prevent infinite loops
-    required: false
-    default: 7
-  - name: max-concurrency
-    type: number
-    description: "N+1 background-agent cap. Raise only for independent work with capacity and budget; lower under pressure; never self-promote."
-    required: false
-    default: 3
-outputs:
-  - name: final-status
-    type: enum
-    values: [pass, partial, fail]
-    description: Final validation status
-  - name: lifecycle-status
-    type: enum
-    values: [verified, pending, not-applicable]
-    description: Lifecycle evidence state, separate from final-status
-  - name: iterations-completed
-    type: number
-    description: Number of check-fix cycles executed
-  - name: docs-report
-    type: file
-    pattern: local-tmp/docs/docs__*__audit.md
-    description: Final factual accuracy validation report
-  - name: tutorial-report
-    type: file
-    pattern: local-tmp/docs-tutorial/docs-tutorial__*__audit.md
-    description: Final pedagogical quality validation report
-  - name: links-report
-    type: file
-    pattern: local-tmp/docs-link/docs-link__*__audit.md
-    description: Final link validity validation report
-  - name: execution-scope
-    type: string
-    description: Scope identifier for UUID chain tracking (default "docs")
-    required: false
 ---
 
 # Documentation Quality Gate Workflow
@@ -70,6 +12,30 @@ structure, link validity), apply fixes iteratively until all issues are resolved
 quality assurance, after bulk documentation changes, or when migrating/refactoring documentation.
 
 This workflow implements the **Maker-Checker-Fixer pattern** across three validation dimensions.
+
+## Goal and Termination
+
+**Goal**: Validate all docs/ content quality (factual accuracy, pedagogical structure, link validity), apply fixes iteratively until zero findings achieved
+
+**Termination**: Zero findings across all validators on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)
+
+## Inputs
+
+- **`scope`** (string, optional, default `all`) — Documentation to validate (e.g., "all", "docs/tutorials/", "specific-file.md")
+- **`mode`** (enum: lax, normal, strict, ocd, optional, default `strict`) — Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ocd: all levels)
+- **`min-iterations`** (number, optional) — Minimum check-fix cycles before allowing zero-finding termination (prevents premature success)
+- **`max-iterations`** (number, optional, default `7`) — Maximum check-fix cycles to prevent infinite loops
+- **`max-concurrency`** (number, optional, default `3`) — N+1 background-agent cap. Raise only for independent work with capacity and budget; lower under pressure; never self-promote.
+
+## Outputs
+
+- **`final-status`** (enum: pass, partial, fail) — Final validation status
+- **`lifecycle-status`** (enum: verified, pending, not-applicable) — Lifecycle evidence state, separate from final-status
+- **`iterations-completed`** (number) — Number of check-fix cycles executed
+- **`docs-report`** (file, pattern `local-tmp/docs/docs__*__audit.md`) — Final factual accuracy validation report
+- **`tutorial-report`** (file, pattern `local-tmp/docs-tutorial/docs-tutorial__*__audit.md`) — Final pedagogical quality validation report
+- **`links-report`** (file, pattern `local-tmp/docs-link/docs-link__*__audit.md`) — Final link validity validation report
+- **`execution-scope`** (string) — Scope identifier for UUID chain tracking (default "docs")
 
 ## Contents
 

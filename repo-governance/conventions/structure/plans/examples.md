@@ -1,14 +1,5 @@
 ---
-title: "Examples"
 description: Shows the retired single-file boundary, the current mature formal-plan layout, and a full two-pager idea brief example.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when you want a concrete mature-plan layout, transition example, or two-pager.
 ---
 

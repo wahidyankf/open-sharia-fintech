@@ -1,15 +1,5 @@
 ---
-title: "Language Consistency, Density, and Validation"
 description: "Distinguishes universal from customizable content elements, sets content-density ratios, and defines the validation process across creation, publishing, and post-publishing."
-category: explanation
-subcategory: conventions
-tags:
-  - programming-languages
-  - ayokoding
-  - tutorials
-  - education
-  - content-standards
-created: 2025-12-18
 when_to_use: "Use when deciding whether a piece of content should be identical across languages or language-specific, sizing a section relative to the Beginner tutorial, or running the validation pipeline."
 ---
 

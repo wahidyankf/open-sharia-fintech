@@ -1,18 +1,6 @@
 ---
-title: "Standard 4 — Spec Tree Shape: Canonical Layout and Folder Purposes"
 description: The canonical logical-owner-corpus spec tree layout and why each entry sits where it does.
 when_to_use: Use when creating a new app's spec tree or checking whether an existing tree matches the canonical corpus shape.
-category: explanation
-subcategory: conventions
-status: "Pilot — initial issue"
-tags:
-  - conventions
-  - readme
-  - specs
-  - spec-tree-shape
-  - pm-readability
-  - c4
-created: 2026-05-09
 ---
 
 # Standard 4 — Spec Tree Shape: Canonical Layout and Folder Purposes

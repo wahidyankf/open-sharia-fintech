@@ -1,5 +1,4 @@
 ---
-title: "Phase 9: .NET Ecosystem (Sequential)"
 description: "Phase 9 (full scope only): install the .NET SDK at the major version pinned by organiclever-be's global.json."
 when_to_use: "Use when setting up .NET for the F# backends and libraries."
 ---

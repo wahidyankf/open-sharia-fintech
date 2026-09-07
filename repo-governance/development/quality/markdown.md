@@ -1,16 +1,5 @@
 ---
-title: "Markdown Quality Standards"
 description: Automated markdown linting and formatting standards using Prettier and markdownlint-cli2
-category: explanation
-subcategory: development
-tags:
-  - markdown
-  - linting
-  - formatting
-  - prettier
-  - markdownlint
-  - quality
-created: 2026-01-17
 when_to_use: "Use when checking how markdown linting/formatting is configured, fixing a violation, or troubleshooting a markdown quality gate."
 ---
 

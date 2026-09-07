@@ -1,16 +1,6 @@
 ---
-title: "Learning-Plan Syllabus: Scope"
 description: What the syllabus convention covers (trigger, folder layout, tiering, disposition, custody, grandfathering) versus what it explicitly leaves to the authoring plan or other governance.
 when_to_use: Read this to check whether a specific question — like course content quality or a deterministic validator — is covered by this convention or lies elsewhere.
-category: explanation
-subcategory: conventions
-tags:
-  - plans
-  - syllabus
-  - learning-bearing
-  - custody
-  - governance
-created: 2026-07-22
 ---
 
 # Learning-Plan Syllabus: Scope

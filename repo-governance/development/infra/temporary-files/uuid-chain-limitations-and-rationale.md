@@ -1,10 +1,5 @@
 ---
-title: "UUID Chain Generation — Limitations, Compatibility, and Rationale"
 description: The concurrency limitation, backward compatibility for old filenames, and why the scheme is mandatory.
-category: explanation
-subcategory: development
-tags: [temporary-files, ai-agents, file-organization, best-practices]
-created: 2025-12-01
 when_to_use: Use when parsing an old-format report filename.
 ---
 

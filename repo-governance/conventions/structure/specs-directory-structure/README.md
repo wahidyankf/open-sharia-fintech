@@ -1,5 +1,4 @@
 ---
-title: "Specs Directory Structure Convention"
 description: "Canonical logical-owner-corpus directory structure for specs/ — Gherkin feature files, as-built architecture documents, and OpenAPI contracts"
 when_to_use: "Read this index to find the right Specs Directory Structure Convention child document."
 ---

@@ -1,16 +1,5 @@
 ---
-title: "Overview"
 description: "The two classes of harm from machine-specific values entering git history: portability failures and information disclosure."
-category: explanation
-subcategory: development
-tags:
-  - git
-  - commits
-  - security
-  - portability
-  - environment
-  - quality
-created: 2026-03-24
 when_to_use: "Use when orienting to why machine-specific commits are prohibited."
 ---
 

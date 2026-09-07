@@ -1,5 +1,4 @@
 ---
-title: "Notes"
 description: "Summary notes: three-dimensional and parallel validation, sequential fixing order, mode-based flexibility, idempotency, and the link-fix limitation."
 when_to_use: "Use for a quick-reference summary of the workflow's key operating characteristics."
 ---

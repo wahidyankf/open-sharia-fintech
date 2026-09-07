@@ -1,18 +1,6 @@
 ---
-title: "Common Mermaid Syntax Errors: Colons in State Diagram Edge Labels"
 description: "Documents Error 6: how colons in Mermaid state diagram edge labels cause parse errors, with the fix."
 when_to_use: "Use when a Mermaid state diagram edge label containing a colon fails to parse."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Common Mermaid Syntax Errors: Colons in State Diagram Edge Labels

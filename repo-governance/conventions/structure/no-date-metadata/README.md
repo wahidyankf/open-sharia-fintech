@@ -1,5 +1,4 @@
 ---
-title: "No Manual Date Metadata Convention"
 description: "Non-website markdown files must not contain manual date metadata of any kind. Git history is the single source of truth for when files changed and why."
 when_to_use: "Read this index to find the right No Manual Date Metadata Convention child document."
 ---

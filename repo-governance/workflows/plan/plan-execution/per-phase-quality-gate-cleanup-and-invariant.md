@@ -1,5 +1,4 @@
 ---
-title: "Per-Phase Quality Gate — Cleanup and Boundary Assertion"
 description: Defines terminal cleanup and verifies each boundary used the resolved delivery mode's integration mechanism.
 when_to_use: Use when deciding whether delivery artifacts are safe to remove or verifying a boundary reached its mode-specific integration target.
 ---

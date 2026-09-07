@@ -1,5 +1,4 @@
 ---
-title: "rules-grooming Workflow"
 description: "Sweeps the repo-rules corpus for volume that carries no obligation — fragmentation overhead, cross-surface duplication, non-normative scaffolding, dead rules — and hands every reduction to rules-propagation."
 when_to_use: "Read this index to find the right rules-grooming Workflow child document."
 ---

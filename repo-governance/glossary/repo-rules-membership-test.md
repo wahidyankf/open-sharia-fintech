@@ -1,14 +1,6 @@
 ---
-title: "Repo Rules — Membership Test"
 description: The two-question test for deciding whether an unlisted file is a repo rule, worked verdicts, and the obligations membership carries.
 when_to_use: Use when a file is not named in the scope-boundaries table and you must decide whether a rule or a sweep reaches it.
-category: explanation
-subcategory: governance
-tags:
-  - governance
-  - glossary
-  - conventions
-created: 2026-08-21
 ---
 
 # Repo Rules — Membership Test

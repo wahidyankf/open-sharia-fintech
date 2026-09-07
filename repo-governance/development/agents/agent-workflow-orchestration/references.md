@@ -1,15 +1,5 @@
 ---
-title: "References"
 description: "Links to related conventions and workflows referenced throughout this convention."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - workflow
-  - orchestration
-created: 2025-11-23
 when_to_use: Use when looking for further reading on agent workflow orchestration.
 ---
 

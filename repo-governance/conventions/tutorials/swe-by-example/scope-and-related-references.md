@@ -1,15 +1,5 @@
 ---
-title: "Scope and Related References"
 description: "States what by-example convention covers and does not cover, and links to related documentation, agents, workflows, and agent skills."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - education
-  - code-first
-created: 2025-12-25
 when_to_use: "Read when you need to confirm whether a topic falls inside this convention's scope, or need links to the related agents/workflows/skills that implement it."
 ---
 

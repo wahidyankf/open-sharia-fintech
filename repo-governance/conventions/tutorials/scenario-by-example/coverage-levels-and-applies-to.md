@@ -1,16 +1,5 @@
 ---
-title: Coverage Levels and Applies To
 description: The Beginner/Intermediate/Advanced coverage bands for scenario by-example content and which ayokoding-www tracks this convention governs.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - scenario
-  - governance
-  - decision-making
-created: 2026-05-21
 when_to_use: Use when placing an example into a coverage level or confirming whether a given tutorial track is governed by this convention.
 ---
 

@@ -1,16 +1,5 @@
 ---
-title: "Example: UI Feature Verification (multi-locale app)"
 description: "A worked example of manually verifying a UI feature across locales."
-category: explanation
-subcategory: development
-tags:
-  - verification
-  - testing
-  - playwright
-  - api
-  - quality
-  - manual-testing
-created: 2026-04-04
 when_to_use: "Use for a concrete example of multi-locale UI verification."
 ---
 

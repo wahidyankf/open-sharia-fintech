@@ -1,14 +1,5 @@
 ---
-title: "Anti-Patterns"
 description: Common accessibility mistakes - color-only signaling, missing alt text, red-green combinations, and low-contrast text.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - accessibility
-  - wcag
-  - inclusive-design
-created: 2025-12-15
 when_to_use: Use when auditing content or diagrams for accessibility anti-patterns before publishing.
 ---
 

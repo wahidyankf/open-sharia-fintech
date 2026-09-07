@@ -1,15 +1,5 @@
 ---
-title: "What"
 description: Defines immutability and mutability and contrasts their core characteristics.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - functional-programming
-  - immutability
-  - data-structures
-  - concurrency
-created: 2025-12-28
 when_to_use: Use when clarifying the precise meaning of "immutable" versus "mutable" before applying the principle.
 ---
 

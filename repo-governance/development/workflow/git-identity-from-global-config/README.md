@@ -1,5 +1,4 @@
 ---
-title: "Git Identity From Global Config Convention"
 description: "Prohibits per-repo [user] overrides in .git/config; git author identity must come exclusively from the global git config"
 when_to_use: "Read this index to find the right Git Identity From Global Config Convention child document."
 ---

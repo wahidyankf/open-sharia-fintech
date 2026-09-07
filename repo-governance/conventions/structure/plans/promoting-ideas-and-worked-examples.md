@@ -1,14 +1,5 @@
 ---
-title: "Promoting a Two-Pager, Ideas as a Home for Learnings, and Worked Examples"
 description: Explains the four-step promotion of a ripe two-pager into a full backlog/ plan, how execution learnings route into ideas/, and points to worked two-pager examples in the repo.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when promoting a two-pager to a backlog/ plan or routing a plan-execution learning into the ideas folder.
 ---
 

@@ -1,5 +1,4 @@
 ---
-title: "User-Facing Delivery Hardening Convention"
 description: "Sixteen durable rules for planning, executing, verifying, and archiving user-facing feature work so design-parity and behavioural defects cannot ship past green gates"
 when_to_use: "Read this index to find the right User-Facing Delivery Hardening Convention child document."
 ---

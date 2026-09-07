@@ -1,10 +1,5 @@
 ---
-title: "Anti-Pattern 6: Monolithic Functions"
 description: "A single large function performs many unrelated responsibilities instead of composing small functions."
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: "Use when reviewing a function that mixes validation, transformation, filtering, and aggregation together."
 ---
 

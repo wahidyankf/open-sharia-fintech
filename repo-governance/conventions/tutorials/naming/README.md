@@ -1,5 +1,4 @@
 ---
-title: "Tutorial Naming Convention"
 description: "Standardized tutorial naming and depth levels for consistent learning experiences"
 when_to_use: "Read this index to find the right Tutorial Naming Convention child document."
 ---

@@ -1,15 +1,5 @@
 ---
-title: "Principles, Conventions, and Sweep Scope"
 description: Enumerates the principles and conventions the build-artifact sweeper implements, and defines exactly what it may remove and what it never touches
-category: explanation
-subcategory: development
-tags:
-  - build-artifacts
-  - environment
-  - ai-agents
-  - infrastructure
-  - cleanup
-created: 2026-08-05
 when_to_use: Use when you need to know why the sweeper exists, which conventions govern its scope, or whether a specific missing file falls inside or outside what it removes.
 ---
 

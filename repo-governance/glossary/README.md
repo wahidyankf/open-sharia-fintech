@@ -1,5 +1,6 @@
 ---
-title: "Glossary"
+description: "Definitions for the shared vocabulary the governance corpus runs on — repo rules, content trees, plan terms, governance surfaces, and the vendored-exception subclasses."
+when_to_use: "Read this index to find the right glossary entry."
 ---
 
 # Glossary

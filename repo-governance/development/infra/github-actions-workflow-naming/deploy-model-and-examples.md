@@ -1,14 +1,5 @@
 ---
-title: "Deploy Model and Examples"
 description: How "deploy" maps to branch force-pushes for web and backend tiers, and worked PASS/FAIL examples of the filename/name derivation rule.
-category: explanation
-subcategory: development
-tags:
-  - github-actions
-  - ci-cd
-  - naming
-  - workflow
-created: 2026-03-13
 when_to_use: Use when tracing what a workflow's "deploy" step actually does, or when checking a candidate filename/name pair against PASS/FAIL examples.
 ---
 

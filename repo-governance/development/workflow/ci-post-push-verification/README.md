@@ -1,5 +1,4 @@
 ---
-title: "CI Post-Push Verification Convention"
 description: "After pushing app or library code, manually trigger all related GitHub CI workflows and verify they pass before considering the work complete."
 when_to_use: "Read this index to find the right CI Post-Push Verification Convention child document."
 ---

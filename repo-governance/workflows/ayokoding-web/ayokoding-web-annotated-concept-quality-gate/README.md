@@ -1,5 +1,4 @@
 ---
-title: "AyoKoding Content Annotated-Concept Quality Gate Workflow"
 description: "Iterative Maker-Checker-Fixer quality gate for Annotated-concept tutorials, validating worked-example count, annotation density, mode integrity, and diagram accessibility."
 when_to_use: "Read this index to find the right AyoKoding Content Annotated-Concept Quality Gate Workflow child document."
 ---

@@ -1,16 +1,6 @@
 ---
-title: By-Concept Tutorial Convention
 description: Standards for creating comprehensive concept-driven tutorials with 95% coverage, heavily annotated code, and rich diagrams
 when_to_use: Use when authoring, reviewing, or scoping a By-Concept (narrative-driven) tutorial for any language or framework.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-concept
-  - education
-  - narrative-driven
-created: 2026-01-30
 ---
 
 # By-Concept Tutorial Convention

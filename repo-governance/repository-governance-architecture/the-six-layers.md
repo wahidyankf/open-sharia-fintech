@@ -1,12 +1,5 @@
 ---
-title: "The Six Layers"
 description: The six-layer diagram and quick-reference table
-category: explanation
-subcategory: architecture
-tags:
-  - architecture
-  - governance
-created: 2026-02-09
 when_to_use: Use for an at-a-glance view of all six layers.
 ---
 

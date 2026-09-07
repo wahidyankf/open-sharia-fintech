@@ -1,17 +1,5 @@
 ---
-title: "User Decisions Required Envelope"
 description: The exact outbound envelope a subagent returns to the root orchestrator instead of rendering a user prompt itself.
-category: explanation
-subcategory: development
-tags:
-  - planning
-  - grill-me
-  - user-interaction
-  - plan-maker
-  - design-decisions
-  - interaction
-  - agents
-created: 2026-05-26
 when_to_use: Use when a subagent must hand an unresolved design decision back to the root orchestrator instead of asking the user directly.
 ---
 

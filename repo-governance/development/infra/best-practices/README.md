@@ -1,5 +1,4 @@
 ---
-title: "Best Practices for Infrastructure Development"
 description: "Index of best practices for managing development infrastructure — temporary files, report generation, execution tracking, acceptance criteria, and audit trails — split across focused child documents."
 when_to_use: "Read this index to find the right Best Practices for Infrastructure Development child document."
 ---

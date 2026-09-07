@@ -1,16 +1,5 @@
 ---
-title: Reproducible Environments
 description: Practices for creating consistent, reproducible development and build environments
-category: explanation
-subcategory: development
-tags:
-  - development
-  - reproducibility
-  - volta
-  - docker
-  - environment
-  - dependencies
-created: 2025-12-28
 when_to_use: Use when setting up, documenting, or troubleshooting Node.js/npm pinning, lockfiles, container-based local services, or the shared cargo target-directory cache.
 ---
 

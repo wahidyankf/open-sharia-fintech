@@ -1,14 +1,5 @@
 ---
-title: "Agent Invocation Patterns — Patterns and Decision Matrix"
 description: "Defines the two agent invocation patterns (Task tool vs. direct execution) and the decision matrix for choosing between them."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when deciding whether an agent should be invoked via the Task tool or executed directly in the main context.
 ---
 

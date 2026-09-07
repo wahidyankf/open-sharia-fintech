@@ -1,15 +1,5 @@
 ---
-title: "The Rule"
 description: The delegation threshold and the three documented exceptions to mandatory web-researcher delegation
-category: explanation
-subcategory: conventions
-tags:
-  - ai-agents
-  - web-research
-  - delegation
-  - factual-validation
-  - governance
-created: 2026-04-16
 when_to_use: Read this to apply the bright-line test for whether a piece of web research must delegate to web-researcher.
 ---
 

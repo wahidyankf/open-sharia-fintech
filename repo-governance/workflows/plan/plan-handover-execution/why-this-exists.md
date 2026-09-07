@@ -1,5 +1,4 @@
 ---
-title: "Why This Exists"
 description: Explains the two kinds of knowledge delivery.md alone can't capture — non-checkbox state and paid-for gotchas — and the three outcomes skipping a handover risks.
 when_to_use: Use when justifying why a handover is worth writing instead of relying on delivery.md alone.
 ---

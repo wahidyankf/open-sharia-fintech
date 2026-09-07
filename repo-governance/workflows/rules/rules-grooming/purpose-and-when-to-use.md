@@ -1,5 +1,4 @@
 ---
-title: "Purpose and When to Use"
 description: What this workflow reduces in the rule corpus, what it deliberately leaves alone, and the falsifiable recurrence trigger that says a sweep is due.
 when_to_use: Use when deciding whether the rule corpus is due a grooming sweep.
 ---

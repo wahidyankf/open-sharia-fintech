@@ -1,14 +1,5 @@
 ---
-title: "Tool Access Patterns — Report-Generating Agents: Mandatory Tool Requirements"
 description: "States the mandatory Write and Bash tool requirement for any agent that writes to its per-family local-tmp/ directory, and lists which checker agents it applies to."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when creating or auditing a checker agent's frontmatter tools list.
 ---
 

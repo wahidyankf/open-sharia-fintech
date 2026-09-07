@@ -1,15 +1,6 @@
 ---
-title: "Convention Writing Convention — Examples and Common Mistakes"
 description: A worked good-vs-bad example of full convention document structure, plus a table of common authoring mistakes and their fixes.
 when_to_use: Use when you need a concrete template to copy or want to check a draft against known authoring pitfalls.
-category: explanation
-subcategory: conventions
-tags:
-  - meta
-  - conventions
-  - standards
-  - documentation
-created: 2025-12-07
 ---
 
 # Examples and Common Mistakes
@@ -20,14 +11,8 @@ created: 2025-12-07
 
 ```markdown
 ---
-title: "Example Convention"
 description: Brief, clear description
-category: explanation
-subcategory: conventions
-tags:
-  - example
-  - standard
-created: 2025-01-15
+when_to_use: Use when <the situation this convention governs>.
 ---
 
 # Example Convention

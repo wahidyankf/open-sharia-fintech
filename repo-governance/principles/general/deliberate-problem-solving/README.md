@@ -1,5 +1,4 @@
 ---
-title: "Deliberate Problem-Solving"
 description: "Think before coding - surface assumptions, tradeoffs, and confusion rather than hiding them"
 when_to_use: "Read this index to find the right Deliberate Problem-Solving child document."
 ---

@@ -1,14 +1,5 @@
 ---
-title: "ADRs: Storage, Lifecycle, and Review"
 description: "Where ADRs live and how they are named, their immutability rule and status transitions, and the review meeting format"
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - documentation
-  - open-source
-  - repository-standards
-created: 2026-04-04
 when_to_use: "Read this to file, supersede, or run a review meeting for an ADR."
 ---
 

@@ -1,15 +1,5 @@
 ---
-title: "The Offload Decision Tree"
 description: "The decision tree for choosing an offload option."
-category: explanation
-subcategory: development
-tags:
-  - content-preservation
-  - condensation
-  - offload
-  - zero-loss
-  - documentation
-created: 2025-12-14
 when_to_use: "Use when deciding which of the four offload options to apply."
 ---
 

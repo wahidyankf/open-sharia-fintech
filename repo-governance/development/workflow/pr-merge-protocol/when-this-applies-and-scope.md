@@ -1,15 +1,5 @@
 ---
-title: "When This Applies and Scope"
 description: Which delivery modes and PR types this protocol governs, which it does not, and which agents and automation it binds.
-category: explanation
-subcategory: development
-tags:
-  - pull-request
-  - merge
-  - quality-gates
-  - workflow
-  - merge-preconditions
-created: 2026-04-04
 when_to_use: Use when determining whether a given PR, phase, or delivery mode is governed by this protocol.
 ---
 

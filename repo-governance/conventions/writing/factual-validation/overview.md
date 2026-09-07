@@ -1,16 +1,6 @@
 ---
-title: "Factual Validation Convention — Overview"
 description: What factual validation is, why it matters (with and without it), and which content types across the repository it applies to.
 when_to_use: Use when introducing someone to what factual validation means in this repository, or checking which content type's validation focus applies to a document you're reviewing.
-category: explanation
-subcategory: conventions
-tags:
-  - factual-validation
-  - verification
-  - web-research
-  - accuracy
-  - quality-assurance
-created: 2025-12-16
 ---
 
 # Overview

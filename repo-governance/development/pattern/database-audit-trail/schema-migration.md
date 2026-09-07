@@ -1,16 +1,5 @@
 ---
-title: "Schema Migration"
 description: "Requirements every migration must satisfy, plus the F#/DbUp versioned-SQL-script pattern for applying audit columns."
-category: explanation
-subcategory: development
-tags:
-  - database
-  - audit-trail
-  - soft-delete
-  - dbup
-  - ef-core
-  - migrations
-created: 2026-03-09
 when_to_use: "Use when writing a DbUp migration script that must include the six audit columns correctly."
 ---
 

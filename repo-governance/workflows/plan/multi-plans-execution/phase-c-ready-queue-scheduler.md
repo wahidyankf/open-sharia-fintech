@@ -1,5 +1,4 @@
 ---
-title: "Phase C — Ready-Queue Scheduler"
 description: Covers C1-C6 — computing the ready set, filling to the concurrency ceiling, work-location isolation, executing a node, looping, and streaming status.
 when_to_use: Use when implementing or debugging the core scheduling loop that pulls ready nodes and drives each plan through its lifecycle.
 ---

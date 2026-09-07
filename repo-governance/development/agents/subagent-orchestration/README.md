@@ -1,5 +1,4 @@
 ---
-title: "Subagent Orchestration Convention"
 description: "Standards for concurrency caps and stuck-detection when a main agent spawns subagents via the Agent tool, capping concurrent background subagents at two (three total including the main agent/thread) to control token burn and avoid Claude API rate-limit hits"
 when_to_use: "Read this index to find the right Subagent Orchestration Convention child document."
 ---

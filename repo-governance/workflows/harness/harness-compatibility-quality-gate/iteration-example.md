@@ -1,5 +1,4 @@
 ---
-title: "Iteration Example"
 description: Worked traces for pending lifecycle evidence and an out-of-scope external-drift finding.
 when_to_use: Use when you want a concrete trace of how iterations, fixes, and re-validation play out.
 ---

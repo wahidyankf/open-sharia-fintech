@@ -1,5 +1,4 @@
 ---
-title: "UI Quality Gate Workflow"
 description: "Validates UI component quality through a bounded discovery, optional fix, and scoped verification run."
 when_to_use: "Read this index to find the right UI Quality Gate Workflow child document."
 ---

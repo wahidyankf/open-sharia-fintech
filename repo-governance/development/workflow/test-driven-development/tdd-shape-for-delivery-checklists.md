@@ -1,14 +1,5 @@
 ---
-title: "TDD Shape for Delivery Checklists"
 description: The mandatory granular RED/GREEN/REFACTOR checklist sequence within one outcome section.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - testing
-  - tdd
-  - delivery
-created: 2025-12-05
 when_to_use: Use when writing a delivery outcome section that ships code and must preserve detailed TDD proof.
 ---
 

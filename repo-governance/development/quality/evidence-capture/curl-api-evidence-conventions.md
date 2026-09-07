@@ -1,17 +1,5 @@
 ---
-title: "curl / API Evidence Conventions"
 description: "How to capture and format curl/API evidence during plan execution."
-category: explanation
-subcategory: development
-tags:
-  - evidence
-  - testing
-  - screenshots
-  - plans
-  - verification
-  - locale
-  - manual-testing
-created: 2026-06-20
 when_to_use: "Use when capturing curl or API-response evidence for a plan."
 ---
 

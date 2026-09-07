@@ -1,16 +1,6 @@
 ---
-title: "Standards"
 description: The core rule, pattern recognition, path-calculation method, common path examples, language selection, and link-text guidelines for AyoKoding relative-path linking.
 when_to_use: Use when writing or reviewing a link from docs/ to apps/ayokoding-www/ and you need the exact relative-path rule and examples.
-category: explanation
-subcategory: conventions
-tags:
-  - linking
-  - cross-reference
-  - relative-paths
-  - portability
-  - ayokoding-www
-created: 2026-02-07
 ---
 
 # Standards

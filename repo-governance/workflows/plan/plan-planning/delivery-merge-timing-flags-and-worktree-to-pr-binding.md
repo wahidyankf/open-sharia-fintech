@@ -1,5 +1,4 @@
 ---
-title: "Delivery-Unit Integration Timing, Temporary Flags, and worktree-to-pr Binding"
 description: States when a delivery unit integrates, when incomplete behaviour requires a temporary flag, and how the worktree-to-pr default binds.
 when_to_use: Use when deciding when a unit should integrate, whether incomplete behaviour needs a flag, or how the worktree-to-pr default applies.
 ---

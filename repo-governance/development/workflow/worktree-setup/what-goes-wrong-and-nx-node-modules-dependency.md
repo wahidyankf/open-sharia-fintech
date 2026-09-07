@@ -1,18 +1,5 @@
 ---
-title: "What Goes Wrong Without Both Steps, and Nx's `node_modules` Dependency"
 description: The concrete failure modes (build, test, lint, cache, cryptic errors) from skipping the two-step init, and why Nx's caching depends on consistent node_modules state.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - git
-  - worktree
-  - npm
-  - nx
-  - dependencies
-  - toolchain
-  - doctor
-created: 2026-03-28
 when_to_use: Use when diagnosing a build, test, lint, or Nx-cache failure that may trace back to a skipped worktree init step.
 ---
 

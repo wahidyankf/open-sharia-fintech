@@ -1,14 +1,5 @@
 ---
-title: "OSS Documentation Convention"
 description: Standards for repository documentation files (README, CONTRIBUTING, ADRs, security)
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - documentation
-  - open-source
-  - repository-standards
-created: 2026-04-04
 when_to_use: Read this before creating or reviewing a repository-level documentation file such as README, CONTRIBUTING, an ADR, or SECURITY.md.
 ---
 

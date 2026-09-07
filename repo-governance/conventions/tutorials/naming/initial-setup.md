@@ -1,15 +1,6 @@
 ---
-title: "Initial Setup"
 description: Definition, content scope, and example titles for the Initial Setup tutorial type covering 0-5% of domain knowledge.
 when_to_use: Use when writing or naming a 0-5%-coverage getting-started tutorial for a language, framework, or tool.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - tutorials
-  - naming
-  - learning-paths
-created: 2025-12-03
 ---
 
 # Initial Setup

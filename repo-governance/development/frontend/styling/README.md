@@ -1,5 +1,4 @@
 ---
-title: "Styling Convention"
 description: "CSS and Tailwind v4 styling patterns for frontend applications in the open-sharia-enterprise monorepo"
 when_to_use: "Read this index to find the right Styling Convention child document."
 ---

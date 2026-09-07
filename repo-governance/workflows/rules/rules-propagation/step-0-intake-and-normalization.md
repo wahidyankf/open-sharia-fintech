@@ -1,5 +1,4 @@
 ---
-title: "Step 0: Intake and Normalization"
 description: Turning free prose into a falsifiable rule statement, and the halt condition when a rule cannot be made falsifiable.
 when_to_use: Use at the start of a propagation run, before any classification or placement decision.
 ---

@@ -1,5 +1,4 @@
 ---
-title: "Best Practices for Workflow Development"
 description: "Twelve recommended workflow patterns covering branching, commits, feature flags, staged implementation, dependencies, CI, config, and push discipline."
 when_to_use: "Read this index to find the right Best Practices for Workflow Development child document."
 ---

@@ -1,16 +1,6 @@
 ---
-title: "Core Characteristics"
 description: "Defines the concept-driven approach, 95% coverage target, and 40-60 section count that characterize By-Concept tutorials."
 when_to_use: "Read when scoping how many sections a By-Concept tutorial needs and what coverage percentage it must achieve."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-concept
-  - education
-  - narrative-driven
-created: 2026-01-30
 ---
 
 # Core Characteristics

@@ -1,5 +1,4 @@
 ---
-title: "Multi-Plans Execution Workflow"
 description: "Schedules several ready plans together via a dependency DAG and bounded parallelism."
 when_to_use: "Read this index to find the right Multi-Plans Execution Workflow child document."
 ---

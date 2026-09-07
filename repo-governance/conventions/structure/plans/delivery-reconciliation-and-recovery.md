@@ -1,10 +1,5 @@
 ---
-title: "Delivery Reconciliation and Conditional Recovery"
 description: Places governance and architecture reconciliation with the change and gives conditional recovery work explicit terminal states.
-category: explanation
-subcategory: conventions
-tags: [conventions, plans, delivery, recovery]
-created: 2026-08-30
 when_to_use: Use when delivery may change repository rules, documented C4 elements, or invoke rollback/recovery work.
 ---
 

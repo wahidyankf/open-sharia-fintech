@@ -1,5 +1,4 @@
 ---
-title: "PR-Review Cycle — Participants"
 description: "Rosters the eleven pipeline agents, including the trivial-tier and plans-only branches."
 when_to_use: "Use when identifying review participants, including the trivial-tier and plans-only branches."
 ---

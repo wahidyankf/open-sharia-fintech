@@ -1,15 +1,5 @@
 ---
-title: "Cache and Inputs Convention — Canonical Inputs"
 description: Why explicit inputs are required for correct cache invalidation, with canonical application, library, and executable examples.
-category: explanation
-subcategory: development
-tags:
-  - nx
-  - targets
-  - project-json
-  - build
-  - scripts
-created: 2026-02-23
 when_to_use: Use when declaring or auditing the inputs array on a project's test:unit or test:quick target.
 ---
 

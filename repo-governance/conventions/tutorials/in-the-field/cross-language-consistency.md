@@ -1,16 +1,6 @@
 ---
-title: "Cross-Language Consistency"
 description: How the In-the-Field convention's structure and standards stay consistent across programming languages.
 when_to_use: Use when applying the In-the-Field convention to a new programming language.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Cross-Language Consistency

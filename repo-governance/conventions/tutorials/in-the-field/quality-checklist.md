@@ -1,16 +1,6 @@
 ---
-title: "Quality Checklist"
 description: The full pre-publish checklist covering production readiness, standard-library-first, code quality, structure, diagrams, framework integration, and frontmatter.
 when_to_use: Use as a final checklist before publishing an In-the-Field guide.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Quality Checklist

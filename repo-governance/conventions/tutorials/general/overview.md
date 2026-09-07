@@ -1,17 +1,6 @@
 ---
-title: "Overview"
 description: "Explains that tutorials are learning-oriented documentation and states the convention's purpose and scope of application."
 when_to_use: "Read for a one-paragraph orientation to what tutorials are and where this convention applies before diving into details."
-category: explanation
-subcategory: conventions
-tags:
-  - tutorials
-  - diataxis
-  - learning
-  - pedagogy
-  - documentation
-  - teaching
-created: 2025-12-03
 ---
 
 # Overview

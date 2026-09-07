@@ -1,5 +1,4 @@
 ---
-title: "Agent Workflow Orchestration Convention"
 description: "Standards for how AI agents plan, execute, verify, and self-improve during multi-step tasks"
 when_to_use: "Read this index to find the right Agent Workflow Orchestration Convention child document."
 ---

@@ -1,15 +1,5 @@
 ---
-title: "Avoiding Common Pitfalls"
 description: "Common functional-programming mistakes - mutating function arguments, class-based mutable state, and mixing validation with I/O."
-category: explanation
-subcategory: development
-tags:
-  - development
-  - functional-programming
-  - immutability
-  - pure-functions
-  - typescript
-created: 2025-12-28
 when_to_use: "Use when reviewing code for accidental mutation, mutable class state, or side effects mixed into pure logic."
 ---
 

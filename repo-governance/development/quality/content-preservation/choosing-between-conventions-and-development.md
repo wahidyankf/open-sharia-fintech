@@ -1,15 +1,5 @@
 ---
-title: "Choosing Between conventions/ and development/"
 description: "How to decide whether offloaded content belongs in conventions/ or development/."
-category: explanation
-subcategory: development
-tags:
-  - content-preservation
-  - condensation
-  - offload
-  - zero-loss
-  - documentation
-created: 2025-12-14
 when_to_use: "Use when deciding where to offload extracted content."
 ---
 

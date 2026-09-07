@@ -1,5 +1,4 @@
 ---
-title: "Functional Programming Practices"
 description: "Guidelines for applying functional programming principles in TypeScript/JavaScript"
 when_to_use: "Read this index to find the right Functional Programming Practices child document."
 ---

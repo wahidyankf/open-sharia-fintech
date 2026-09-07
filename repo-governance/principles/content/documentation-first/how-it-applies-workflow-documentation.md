@@ -1,12 +1,5 @@
 ---
-title: "How It Applies — Workflow Documentation"
 description: Requirements for documenting multi-step workflows.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - documentation
-created: 2025-12-28
 when_to_use: Use when documenting a deployment, validation, or content workflow.
 ---
 

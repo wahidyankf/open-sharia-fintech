@@ -1,16 +1,5 @@
 ---
-title: "File-Touch Discipline — Anti-Patterns: Ledger Integrity"
 description: Four anti-patterns that corrupt ledger integrity - post-compaction blanket staging, reconstructing authorship from the diff, tidying the tree, and trusting a clean-looking worktree
-category: explanation
-subcategory: development
-tags:
-  - git
-  - safety
-  - concurrency
-  - ai-agents
-  - compaction
-  - discipline
-created: 2026-08-01
 when_to_use: Use when reviewing your own staging behaviour for signs of these four failure patterns, or when explaining why a specific staging shortcut is unsafe.
 ---
 

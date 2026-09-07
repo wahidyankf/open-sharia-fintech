@@ -1,5 +1,4 @@
 ---
-title: "Accessibility First"
 description: "Design for universal access from the start - WCAG compliance, color-blind friendly palettes, screen reader support"
 when_to_use: "Read this index to find the right Accessibility First child document."
 ---

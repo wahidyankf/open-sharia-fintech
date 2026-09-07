@@ -1,18 +1,6 @@
 ---
-title: "Application Contexts: AI Agent Color Categorization"
 description: "Defines the colored-square emoji scheme used to categorize AI agents by role in agent index files."
 when_to_use: "Use when assigning or reviewing a colored-square emoji for an agent definition in an agents README index."
-category: explanation
-subcategory: conventions
-tags:
-  - accessibility
-  - color-blindness
-  - wcag
-  - design
-  - conventions
-  - mermaid-diagrams
-  - color-palette
-created: 2025-12-04
 ---
 
 # Application Contexts: AI Agent Color Categorization

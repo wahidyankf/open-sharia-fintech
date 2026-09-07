@@ -1,16 +1,5 @@
 ---
-title: "Migration Tooling Pitfalls"
 description: "Lessons learned from adding migration tooling across eight language ecosystems, covering schema fidelity, coverage tooling, embedded filesystems, locale, and Docker environment differences."
-category: explanation
-subcategory: development
-tags:
-  - database
-  - audit-trail
-  - soft-delete
-  - dbup
-  - ef-core
-  - migrations
-created: 2026-03-09
 when_to_use: "Use when adding or debugging migration tooling for a new language ecosystem and want to avoid known pitfalls."
 ---
 

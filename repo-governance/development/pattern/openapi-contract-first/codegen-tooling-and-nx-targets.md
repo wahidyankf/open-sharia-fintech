@@ -1,15 +1,5 @@
 ---
-title: "Codegen Tooling and Nx Targets"
 description: "Which codegen tool runs for each app, and the Nx targets that invoke codegen and spec linting."
-category: explanation
-subcategory: development
-tags:
-  - openapi
-  - contract-first
-  - codegen
-  - api
-  - drift-enforcement
-created: 2026-05-26
 when_to_use: "Use when running codegen for an app or looking up which tool generates its client/server types."
 ---
 

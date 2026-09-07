@@ -1,18 +1,5 @@
 ---
-title: "Surgical Changes — Orphans, Checklist, and Application"
 description: What to remove when your own changes create orphaned code, the pre-commit checklist, and how surgical changes relate to core principles and AI agents.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - workflow
-  - implementation
-  - optimization
-  - refactoring
-  - surgical-changes
-  - goal-driven
-  - test-driven
-created: 2025-12-15
 when_to_use: Use when deciding whether to remove code your change made unused, or before committing a surgical change.
 ---
 

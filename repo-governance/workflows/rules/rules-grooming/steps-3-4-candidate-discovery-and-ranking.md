@@ -1,5 +1,4 @@
 ---
-title: "Steps 3-4 — Candidate Discovery and Ranking"
 description: The four class-scoped discovery sweeps and the yield-over-risk ordering that decides which candidates reach the checkpoint first.
 when_to_use: Use when running a grooming sweep's discovery pass, or ordering the resulting candidates.
 ---

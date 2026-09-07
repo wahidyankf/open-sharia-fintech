@@ -1,16 +1,5 @@
 ---
-title: "UI Verification Checklist"
 description: "The checklist to run through when verifying a UI change."
-category: explanation
-subcategory: development
-tags:
-  - verification
-  - testing
-  - playwright
-  - api
-  - quality
-  - manual-testing
-created: 2026-04-04
 when_to_use: "Use when manually verifying a UI change."
 ---
 

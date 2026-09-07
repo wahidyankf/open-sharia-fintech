@@ -1,16 +1,5 @@
 ---
-title: "Live-Tester Systematic Coverage"
 description: The SSOT practice that mandates enumerate-not-sample forcing-functions for the three live-site testers and the web-ux-test-fixing-planning workflow
-category: explanation
-subcategory: development
-tags:
-  - testing
-  - live-testing
-  - usability
-  - ux
-  - quality
-  - systematic
-created: 2026-06-22
 when_to_use: "Use when a live-site tester agent needs to enumerate coverage instead of sampling it."
 ---
 

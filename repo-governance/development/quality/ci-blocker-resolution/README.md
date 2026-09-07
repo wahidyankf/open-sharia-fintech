@@ -1,5 +1,4 @@
 ---
-title: "CI Blocker Resolution Convention"
 description: "Practice mandating that preexisting CI blockers are investigated at the root cause and fixed properly, never bypassed"
 when_to_use: "Read this index to find the right CI Blocker Resolution Convention child document."
 ---

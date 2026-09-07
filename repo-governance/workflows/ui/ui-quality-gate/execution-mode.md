@@ -1,5 +1,4 @@
 ---
-title: "Execution Mode"
 description: Preferred and fallback execution modes for the UI quality gate, and example invocations.
 when_to_use: Use when starting the UI quality gate, to decide between Agent Delegation and Manual Orchestration.
 ---

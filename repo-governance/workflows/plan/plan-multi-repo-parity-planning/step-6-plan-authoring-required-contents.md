@@ -1,5 +1,4 @@
 ---
-title: "Step 6 — Plan Authoring (Required Contents)"
 description: The required parity contents of every mature-core plan.
 when_to_use: Use when verifying an authored plan carries everything this workflow requires before it can pass the quality gate.
 ---

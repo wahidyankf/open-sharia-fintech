@@ -1,15 +1,5 @@
 ---
-title: "Cost/Noise Control: Plans-Only Review Route"
 description: "Defines the freshly recomputed specialist route and mandatory probes for plans-only PRs."
-category: explanation
-subcategory: development
-tags:
-  - pr-review
-  - governance
-  - agents
-  - quality-gates
-  - plans
-created: 2026-08-25
 when_to_use: "Use when the current PR cycle may contain only qualifying hand-authored plan artifacts."
 ---
 

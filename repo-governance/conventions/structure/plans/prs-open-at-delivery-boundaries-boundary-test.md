@@ -1,14 +1,5 @@
 ---
-title: "PRs Open at Delivery Boundaries — Boundary Test and Rationale"
 description: Gives the boundary test for a cohesive, green, production-deployable, reviewable increment and explains why phases group into delivery units.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when testing whether a specific phase qualifies as a delivery boundary.
 ---
 

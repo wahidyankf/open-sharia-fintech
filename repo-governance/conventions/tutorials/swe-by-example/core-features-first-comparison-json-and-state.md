@@ -1,15 +1,5 @@
 ---
-title: "Core Features First: Comparison for JSON Processing and State Management"
 description: "Shows worked PASS/FAIL comparisons of core-features-first vs framework-first teaching for JSON processing and React state management."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - education
-  - code-first
-created: 2025-12-25
 when_to_use: "Read when you need worked PASS/FAIL comparison snippets for teaching JSON processing or React state management progressively."
 ---
 

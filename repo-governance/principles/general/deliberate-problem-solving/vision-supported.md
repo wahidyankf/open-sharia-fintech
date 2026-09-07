@@ -1,12 +1,5 @@
 ---
-title: "Vision Supported"
 description: Explains how deliberate problem-solving serves the Open Sharia Enterprise vision of trustworthy, transparent, and educational Shariah-compliant systems.
-category: explanation
-subcategory: principles
-tags:
-  - problem-solving
-  - communication
-created: 2026-01-29
 when_to_use: Use when explaining why deliberate problem-solving matters to the project's mission, not just as a technical practice.
 ---
 

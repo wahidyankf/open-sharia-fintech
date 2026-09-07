@@ -1,5 +1,4 @@
 ---
-title: "Best Practices for AI Agents Development"
 description: "Proven practices for developing maintainable, secure, and effective AI agents in the .claude/agents/ directory."
 when_to_use: "Read this index to find the right Best Practices for AI Agents Development child document."
 ---

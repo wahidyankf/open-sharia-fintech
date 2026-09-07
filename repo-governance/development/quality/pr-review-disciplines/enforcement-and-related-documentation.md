@@ -1,15 +1,5 @@
 ---
-title: "Enforcement and Related Documentation"
 description: "How this convention is enforced, and related references."
-category: explanation
-subcategory: development
-tags:
-  - pr-review
-  - governance
-  - agents
-  - quality-gates
-  - boundary-rules
-created: 2026-07-23
 when_to_use: "Use to locate the automated enforcement or a related convention."
 ---
 

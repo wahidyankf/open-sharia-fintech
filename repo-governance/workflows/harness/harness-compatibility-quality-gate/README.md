@@ -1,5 +1,4 @@
 ---
-title: "Repository Harness Compatibility Quality Gate Workflow"
 description: "Validates internal cross-vendor parity and external harness-conformance drift, then fixes iteratively until zero findings."
 when_to_use: "Read this index to find the right Repository Harness Compatibility Quality Gate Workflow child document."
 ---

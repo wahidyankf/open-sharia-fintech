@@ -1,14 +1,6 @@
 ---
-title: "YAML and Code Block Indentation"
 description: The required 2-space YAML frontmatter indentation and the language-specific idiomatic indentation rules for code blocks embedded in markdown.
 when_to_use: Use when indenting YAML frontmatter or writing a code block inside a markdown file.
-category: explanation
-subcategory: conventions
-tags:
-  - indentation
-  - formatting
-  - markdown
-created: 2025-12-12
 ---
 
 # YAML and Code Block Indentation
@@ -26,7 +18,6 @@ category: explanation
 tags:
   - primary-topic # 2 spaces before dash
   - secondary-topic # 2 spaces before dash
-created: 2025-12-12
 ---
 ```
 
@@ -35,6 +26,11 @@ created: 2025-12-12
 - **YAML specification**: YAML standard uses spaces for indentation
 - **Tool compatibility**: All YAML parsers expect consistent space indentation
 - **Critical for ALL nested frontmatter fields**: This applies to `tags`, any list fields, and any nested objects
+
+**Scope**: this rule binds wherever frontmatter can nest — `docs/`, the harness binding trees, and
+site content. Files under `repo-governance/` carry only `description` and `when_to_use`, both flat
+scalars, so nothing there indents; a nested key in that tree is a schema failure before it is an
+indentation question.
 
 **After frontmatter**: All markdown content (including bullets) continues using standard markdown formatting (space indentation).
 

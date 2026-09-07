@@ -1,5 +1,4 @@
 ---
-title: "Nx Target Naming Convention"
 description: "Derivation rules for Nx target names, covering the {domain}:{work} scheme for governance and validation targets and the lifecycle naming scheme for build/test targets"
 when_to_use: "Read this index to find the right Nx Target Naming Convention child document."
 ---

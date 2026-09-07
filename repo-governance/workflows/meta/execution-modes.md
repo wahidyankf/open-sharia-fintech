@@ -1,15 +1,6 @@
 ---
-title: "Workflow Execution Mode Convention"
 description: Defines execution modes for workflows — Agent Delegation (preferred) and Manual Orchestration (fallback) — explaining how to use the Agent tool for delegated agent invocation and when to fall back to direct execution
 when_to_use: Use when a workflow step needs to invoke an agent or run its logic directly, and you need to decide which execution mode applies and how to execute it correctly.
-category: explanation
-subcategory: workflows
-tags:
-  - workflows
-  - execution-mode
-  - orchestration
-  - conventions
-created: 2026-01-05
 ---
 
 # Workflow Execution Mode Convention

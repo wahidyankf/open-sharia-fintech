@@ -1,14 +1,5 @@
 ---
-title: "Explicit Over Implicit"
 description: Choose explicit composition and configuration over magic, convenience, and hidden behaviour
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - explicit-configuration
-  - transparency
-  - clarity
-created: 2025-12-15
 when_to_use: Use when deciding whether code or configuration should rely on defaults, or when looking for explicit-vs-implicit examples.
 ---
 

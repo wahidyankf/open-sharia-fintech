@@ -1,18 +1,5 @@
 ---
-title: "Surgical Changes — Principle"
 description: The touch-only-what-you-must principle for editing existing code, its four core rules, and the one-sentence test for scope.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - workflow
-  - implementation
-  - optimization
-  - refactoring
-  - surgical-changes
-  - goal-driven
-  - test-driven
-created: 2025-12-15
 when_to_use: Use when editing existing code and deciding what is and is not in scope for the change.
 ---
 

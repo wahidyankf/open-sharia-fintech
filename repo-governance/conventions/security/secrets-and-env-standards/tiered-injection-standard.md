@@ -1,17 +1,6 @@
 ---
-title: "Tiered Injection Standard"
 description: How a declared .env.example key is injected into each running surface across GitHub Actions, Vercel, and the backend container/k3s path — introduction and source-of-truth rule.
 when_to_use: Use when you need the entry point for how an app-runtime env key gets from .env.example into a real deployed environment.
-category: explanation
-subcategory: conventions
-tags:
-  - security
-  - secrets
-  - env-files
-  - guard-env-file-access
-  - naming
-  - reproducibility
-created: 2026-06-10
 ---
 
 # Tiered Injection Standard

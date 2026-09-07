@@ -1,5 +1,4 @@
 ---
-title: "Feature Change Completeness Convention"
 description: "Practice requiring all related specs, contracts, tests, and documentation to be updated as part of any feature change -- binding both the direct-code path and the plan path"
 when_to_use: "Read this index to find the right Feature Change Completeness Convention child document."
 ---

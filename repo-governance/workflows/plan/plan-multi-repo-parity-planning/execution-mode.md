@@ -1,5 +1,4 @@
 ---
-title: "Execution Mode"
 description: States the preferred Agent Delegation execution mode, the Manual Orchestration fallback, and the orchestrator's eight-step outline.
 when_to_use: Use when starting this workflow, to confirm which execution mode applies and what the orchestrator does step by step.
 ---

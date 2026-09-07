@@ -1,14 +1,5 @@
 ---
-title: "Agent File Structure — Agent skills References"
 description: "Defines the agent skills frontmatter field format and when to reference a Skill instead of inlining knowledge."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when deciding whether an agent should reference a Skill via frontmatter or document knowledge inline.
 ---
 

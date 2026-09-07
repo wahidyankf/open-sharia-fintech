@@ -1,14 +1,5 @@
 ---
-title: "Anti-Pattern 11: Verification Prompts That Presuppose Their Conclusion"
 description: "Describes the anti-pattern of a verification prompt whose wording presupposes the answer it should be checking."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - anti-patterns
-  - development
-  - best-practices
-created: 2025-11-23
 when_to_use: Use when writing or reviewing a verification prompt that a checker or fixer agent will run.
 ---
 

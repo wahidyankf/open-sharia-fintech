@@ -1,16 +1,5 @@
 ---
-title: "Runtime Version Management with Volta"
 description: How Volta pins and auto-switches Node.js/npm versions per project, plus installation and CI/CD integration.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - reproducibility
-  - volta
-  - docker
-  - environment
-  - dependencies
-created: 2025-12-28
 when_to_use: Use when pinning, installing, updating, or wiring Volta-managed Node.js/npm versions into CI.
 ---
 

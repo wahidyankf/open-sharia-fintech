@@ -1,13 +1,5 @@
 ---
-title: "Trustworthy Measurement — Rule 6: An Assertion Must Outlive Its Moment"
 description: A test that can only pass in one repository, or only before the change is committed, is a transcript of a moment rather than a regression test
-category: explanation
-subcategory: development
-tags:
-  - measurement
-  - verification
-  - parity
-created: 2026-08-19
 when_to_use: Use when writing a test that reads the repository around it, or that states a before-and-after claim.
 ---
 

@@ -1,15 +1,5 @@
 ---
-title: "Design Tokens — OKLCH Naming and Usage"
 description: The hue/ink/wash and warm-neutral naming convention for OKLCH tokens, the rule against hardcoding OKLCH literals, and how to apply a runtime-determined hue via inline style
-category: explanation
-subcategory: development/frontend
-tags:
-  - design-tokens
-  - css
-  - tailwind
-  - theming
-  - dark-mode
-created: 2026-03-28
 when_to_use: Use when naming a new OKLCH token, reviewing a component for hardcoded color literals, or building a component whose color varies at runtime.
 ---
 

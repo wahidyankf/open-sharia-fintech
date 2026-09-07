@@ -1,16 +1,5 @@
 ---
-title: "Plan Anti-Hallucination Convention"
 description: Mandatory pre-write verification, repo-grounding, refuse-on-uncertainty, and confidence-labeling rules for plan content authored by AI agents
-category: explanation
-subcategory: development
-tags:
-  - plans
-  - ai-agents
-  - factual-validation
-  - anti-hallucination
-  - web-research
-  - verification
-created: 2026-05-03
 when_to_use: "Use when an AI agent authors or checks plan content that makes a factual claim."
 ---
 

@@ -1,5 +1,4 @@
 ---
-title: "Explicit Over Implicit"
 description: "Choose explicit composition and configuration over magic, convenience, and hidden behaviour"
 when_to_use: "Read this index to find the right Explicit Over Implicit child document."
 ---

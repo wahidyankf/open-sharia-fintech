@@ -1,5 +1,4 @@
 ---
-title: "CI Quality Gate Workflow"
 description: "Validates all projects conform to CI/CD standards and iteratively fixes non-compliance until zero findings are confirmed twice."
 when_to_use: "Read this index to find the right CI Quality Gate Workflow child document."
 ---

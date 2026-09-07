@@ -1,14 +1,5 @@
 ---
-title: "Consumer Integrity, State, and Evidence"
 description: How the pinned release is verified, what the shared root and owner ceiling mean across checkouts, the container reaping-init requirement, and what evidence may contain.
-category: explanation
-subcategory: development
-tags:
-  - resource-management
-  - parallelism
-  - development
-  - tooling
-created: 2026-09-05
 when_to_use: Use when changing the pin, the local policy example, HIPPO_ROOT, or a test that touches HIPPO state.
 ---
 

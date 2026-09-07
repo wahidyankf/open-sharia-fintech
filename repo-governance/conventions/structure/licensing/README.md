@@ -1,5 +1,4 @@
 ---
-title: "Per-Directory Licensing Convention"
 description: "Standards for the per-directory licensing strategy using MIT for all code in this repository"
 when_to_use: "Read this index to find the right Per-Directory Licensing Convention child document."
 ---

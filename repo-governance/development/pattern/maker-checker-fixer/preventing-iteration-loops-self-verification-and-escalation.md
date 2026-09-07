@@ -1,16 +1,5 @@
 ---
-title: "Preventing Iteration Loops — Self-Verification and Escalation"
 description: "The remaining two safeguards."
-category: explanation
-subcategory: development
-tags:
-  - maker-checker-fixer
-  - workflow
-  - content-quality
-  - agent-patterns
-  - validation
-  - automation
-created: 2025-12-14
 when_to_use: "Use when a bash/sed fix may have failed."
 ---
 

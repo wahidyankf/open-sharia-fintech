@@ -1,16 +1,6 @@
 ---
-title: "Guide Structure Part 2: Database Example Limitations"
 description: The production limitations of the standard-library JDBC approach shown in the database example.
 when_to_use: Use when documenting why the JDBC standard-library approach is insufficient for production.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Guide Structure Part 2: Database Example Limitations

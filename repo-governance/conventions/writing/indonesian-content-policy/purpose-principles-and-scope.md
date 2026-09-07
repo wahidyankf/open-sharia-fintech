@@ -1,16 +1,6 @@
 ---
-title: "Indonesian Content Policy — Purpose, Principles, and Scope"
 description: Why ayokoding-www is English-first for technical tutorials, the principles this policy implements, and what language-selection topics are in vs. out of scope.
 when_to_use: Use when deciding whether a piece of content's language policy falls under this convention, or citing why English-first reduces maintenance burden.
-category: explanation
-subcategory: conventions
-tags:
-  - ayokoding-www
-  - indonesian
-  - bilingual
-  - content-policy
-  - translation
-created: 2026-02-07
 ---
 
 # Purpose, Principles, and Scope

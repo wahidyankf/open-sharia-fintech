@@ -1,15 +1,6 @@
 ---
-title: "Per-Directory Licensing Convention"
 description: Standards for the per-directory licensing strategy using MIT for all code in this repository
 when_to_use: Read this when you need the repository's licensing rule set — placing a LICENSE file, checking the copyright notice format, or auditing licensing compliance.
-category: explanation
-subcategory: conventions
-tags:
-  - licensing
-  - structure
-  - mit
-  - per-directory
-created: 2026-04-04
 ---
 
 # Per-Directory Licensing Convention

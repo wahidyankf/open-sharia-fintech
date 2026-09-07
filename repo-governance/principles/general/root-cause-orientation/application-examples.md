@@ -1,13 +1,5 @@
 ---
-title: "Application Examples"
 description: Walks through three worked examples (bug fix, cascading failure, scope creep) contrasting symptom fixes with root cause fixes.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - root-cause
-  - minimal-impact
-created: 2026-03-09
 when_to_use: Use when you need a worked example of applying root cause orientation to a realistic task.
 ---
 

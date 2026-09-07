@@ -1,15 +1,5 @@
 ---
-title: "How It Applies"
 description: Shows immutable versus mutable patterns for variables and array operations in TypeScript.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - functional-programming
-  - immutability
-  - data-structures
-  - concurrency
-created: 2025-12-28
 when_to_use: Use when implementing immutable variable declarations or array updates and needing a concrete before/after example.
 ---
 

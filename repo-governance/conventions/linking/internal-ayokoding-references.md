@@ -1,16 +1,6 @@
 ---
-title: "Internal AyoKoding Reference Links Convention"
 description: Standards for linking from docs/ to apps/ayokoding-www/ content using relative paths instead of public web URLs
 when_to_use: Use when linking from docs/ to educational content in apps/ayokoding-www/ and unsure whether to use a relative path or a public URL.
-category: explanation
-subcategory: conventions
-tags:
-  - linking
-  - cross-reference
-  - relative-paths
-  - portability
-  - ayokoding-www
-created: 2026-02-07
 ---
 
 # Internal AyoKoding Reference Links Convention

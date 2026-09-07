@@ -1,5 +1,4 @@
 ---
-title: "Termination Criteria"
 description: The four terminal states — no-op, groomed, halted, partial — and the conditions that produce each.
 when_to_use: Use when deciding whether a grooming run is finished, and what to report.
 ---

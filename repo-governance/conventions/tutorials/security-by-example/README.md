@@ -1,5 +1,4 @@
 ---
-title: "Security By-Example Tutorial Convention"
 description: "Standards for security-domain by-example tutorials using tool output, lab scenarios, and annotated security artifacts — extends the SWE By-Example Convention"
 when_to_use: "Read this index to find the right Security By-Example Tutorial Convention child document."
 ---

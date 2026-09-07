@@ -1,5 +1,4 @@
 ---
-title: "Step 9 — Record and Recurrence"
 description: The durable run record, what it must carry, and the re-evaluation that sets the next sweep's due date from measurement rather than assumption.
 when_to_use: Use when recording a completed grooming run and arming its recurrence trigger.
 ---

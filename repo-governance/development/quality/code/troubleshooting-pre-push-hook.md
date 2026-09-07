@@ -1,17 +1,5 @@
 ---
-title: "Troubleshooting: Pre-push Hook"
 description: "Fixes for a slow or failing pre-push hook."
-category: explanation
-subcategory: development
-tags:
-  - development
-  - code-quality
-  - prettier
-  - husky
-  - lint-staged
-  - git-hooks
-  - automation
-created: 2026-05-12
 when_to_use: "Use when pre-push is slow or a check fails."
 ---
 

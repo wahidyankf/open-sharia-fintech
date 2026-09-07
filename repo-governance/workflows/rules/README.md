@@ -1,11 +1,6 @@
 ---
-title: "Rules Workflows"
 description: Orchestrated workflows for propagating and validating repository rules
 when_to_use: Use when routing to a workflow that propagates or validates repository rules.
-category: explanation
-subcategory: workflows
-tags: []
-created: 2026-05-12
 ---
 
 # Rules Workflows

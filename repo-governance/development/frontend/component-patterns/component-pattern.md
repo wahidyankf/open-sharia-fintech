@@ -1,15 +1,5 @@
 ---
-title: "Component Patterns — Component Pattern"
 description: React.ComponentProps over forwardRef, importing Radix from the unified radix-ui package, the data-slot attribute, and the cn() class-merging utility
-category: explanation
-subcategory: development/frontend
-tags:
-  - components
-  - react
-  - radix
-  - cva
-  - shadcn
-created: 2026-03-28
 when_to_use: Use when writing a new component's function signature, importing a Radix primitive, or merging class names.
 ---
 

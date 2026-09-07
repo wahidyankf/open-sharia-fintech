@@ -1,5 +1,4 @@
 ---
-title: "Principles Implemented/Respected"
 description: Traces this workflow's design back to Explicit Over Implicit, Automation Over Manual, Simplicity Over Complexity, Accessibility First, Progressive Disclosure, No Time Estimates, and Root Cause Orientation.
 when_to_use: Use when auditing this workflow for traceability back to foundational principles.
 ---

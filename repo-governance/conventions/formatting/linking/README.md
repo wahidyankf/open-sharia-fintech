@@ -1,5 +1,4 @@
 ---
-title: "Documentation Linking Convention"
 description: "Standards for linking between documentation files in open-sharia-enterprise"
 when_to_use: "Read this index to find the right Documentation Linking Convention child document."
 ---

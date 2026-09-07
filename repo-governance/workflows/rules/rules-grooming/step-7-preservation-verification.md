@@ -1,5 +1,4 @@
 ---
-title: "Step 7 — Preservation Verification"
 description: The obligation diff and line-containment check that together prove a grooming run removed representation without removing any obligation.
 when_to_use: Use when verifying that a completed grooming sweep preserved every obligation.
 ---

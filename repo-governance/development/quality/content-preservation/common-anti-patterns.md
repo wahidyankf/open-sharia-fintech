@@ -1,15 +1,5 @@
 ---
-title: "Common Anti-Patterns"
 description: "Common anti-patterns when condensing or offloading content."
-category: explanation
-subcategory: development
-tags:
-  - content-preservation
-  - condensation
-  - offload
-  - zero-loss
-  - documentation
-created: 2025-12-14
 when_to_use: "Use when reviewing a condensation for a common anti-pattern."
 ---
 

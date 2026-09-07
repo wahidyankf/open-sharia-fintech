@@ -1,17 +1,6 @@
 ---
-title: "FP-Variant Multi-Language Convention — Examples: FAIL Non-Idiomatic Patterns"
 description: Two non-compliant examples — a Clojure tab mechanically simulating an F# DU, and an F# tab suppressing a DU to mirror Clojure's tagged-map approach.
 when_to_use: Use when reviewing an FP-variant example and suspecting one tab was mechanically translated from the other rather than written idiomatically.
-category: explanation
-subcategory: conventions
-tags:
-  - fp
-  - clojure
-  - fsharp
-  - by-example
-  - ayokoding-www
-  - tutorial
-created: 2026-05-17
 ---
 
 # Examples: FAIL Non-Idiomatic Patterns

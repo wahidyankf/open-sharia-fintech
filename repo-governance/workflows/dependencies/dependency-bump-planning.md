@@ -1,58 +1,6 @@
 ---
-name: dependency-bump-planning
-title: "dependency-bump-planning"
 description: "Surveys monorepo dependency manifests, classifies bumps per the Dependency Bump Policy, and produces a validated backlog plan — never edits a manifest itself."
 when_to_use: "Use for a dependency-hygiene sweep, a pre-release bump snapshot, or an LTS-line upgrade."
-goal: >
-  Survey every dependency manifest across the monorepo — apps/, libs/, workspace-root pins,
-  infra/, and CI toolchain pins under .github/ — classify each candidate bump per the Dependency
-  Bump Stability & Safety Policy, and produce a validated backlog plan. The deliverable is the
-  plan, never the dependency edits.
-termination: >
-  A grill-validated plan exists at plans/backlog/<identifier>/, passes plan-quality-gate at
-  strict mode, and a dependency clearance report is written to local-tmp/dependency-bump-planning/. No manifest
-  or lockfile is modified by this workflow.
-inputs:
-  - name: scope-filter
-    type: string
-    description: >
-      Optional comma-separated glob filter limiting which manifests are inventoried. Default:
-      every dependency-bearing manifest in the monorepo (see Phase 1: Inventory).
-    required: false
-  - name: ecosystems
-    type: string
-    description: >
-      Optional comma-separated filter of ecosystems (npm, cargo, dotnet, go, docker,
-      github-actions). Default: all ecosystems present in the inventory.
-    required: false
-  - name: as-of-date
-    type: string
-    description: >
-      The "today" used for the Path B 60-day cutoff computation (YYYY-MM-DD). Defaults to the
-      current date; recorded verbatim in the clearance report.
-    required: false
-  - name: plan-identifier
-    type: string
-    description: "Slug for the backlog plan folder. Default: dependency-bump."
-    required: false
-    default: dependency-bump
-  - name: push-target
-    type: string
-    description: "Git push destination for the backlog plan. Forwarded to plan-planning."
-    required: false
-    default: "origin main"
-outputs:
-  - name: clearance-report
-    type: file
-    pattern: local-tmp/dependency-bump-planning/dependency-bump-planning__*__report.md
-    description: Inventory + Security & Functional Clearance Status table + cutoff computation. Always written.
-  - name: plan-path
-    type: string
-    description: Path to the created backlog plan in plans/backlog/<identifier>/
-  - name: final-status
-    type: enum
-    values: [pass, partial, fail]
-    description: Final status after the backlog plan's quality gate
 ---
 
 # Repository Dependency Bump Planning Workflow
@@ -66,6 +14,26 @@ never edits a manifest, updates a lockfile, or runs a bump. The
 [Plan Execution workflow](../plan/plan-execution.md)'s own Step 0 promotes the plan to
 `plans/in-progress/` later; the policy's Application Workflow steps 8–12 become that plan's
 delivery checklist.
+
+## Goal and Termination
+
+**Goal**: Survey every dependency manifest across the monorepo — apps/, libs/, workspace-root pins, infra/, and CI toolchain pins under .github/ — classify each candidate bump per the Dependency Bump Stability & Safety Policy, and produce a validated backlog plan. The deliverable is the plan, never the dependency edits.
+
+**Termination**: A grill-validated plan exists at plans/backlog/<identifier>/, passes plan-quality-gate at strict mode, and a dependency clearance report is written to local-tmp/dependency-bump-planning/. No manifest or lockfile is modified by this workflow.
+
+## Inputs
+
+- **`scope-filter`** (string, optional) — Optional comma-separated glob filter limiting which manifests are inventoried. Default: every dependency-bearing manifest in the monorepo (see Phase 1: Inventory).
+- **`ecosystems`** (string, optional) — Optional comma-separated filter of ecosystems (npm, cargo, dotnet, go, docker, github-actions). Default: all ecosystems present in the inventory.
+- **`as-of-date`** (string, optional) — The "today" used for the Path B 60-day cutoff computation (YYYY-MM-DD). Defaults to the current date; recorded verbatim in the clearance report.
+- **`plan-identifier`** (string, optional, default `dependency-bump`) — Slug for the backlog plan folder. Default: dependency-bump.
+- **`push-target`** (string, optional, default `origin main`) — Git push destination for the backlog plan. Forwarded to plan-planning.
+
+## Outputs
+
+- **`clearance-report`** (file, pattern `local-tmp/dependency-bump-planning/dependency-bump-planning__*__report.md`) — Inventory + Security & Functional Clearance Status table + cutoff computation. Always written.
+- **`plan-path`** (string) — Path to the created backlog plan in plans/backlog/<identifier>/
+- **`final-status`** (enum: pass, partial, fail) — Final status after the backlog plan's quality gate
 
 ## Contents
 

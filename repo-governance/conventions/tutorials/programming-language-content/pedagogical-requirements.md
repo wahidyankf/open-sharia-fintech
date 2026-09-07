@@ -1,15 +1,5 @@
 ---
-title: "Pedagogical Requirements"
 description: "Defines the mandatory content patterns every tutorial, how-to guide, and explanation document must follow for programming language content."
-category: explanation
-subcategory: conventions
-tags:
-  - programming-languages
-  - ayokoding
-  - tutorials
-  - education
-  - content-standards
-created: 2025-12-18
 when_to_use: "Use when authoring or reviewing a tutorial, how-to guide, or explanation document for programming language content, to check it against the mandatory patterns."
 ---
 

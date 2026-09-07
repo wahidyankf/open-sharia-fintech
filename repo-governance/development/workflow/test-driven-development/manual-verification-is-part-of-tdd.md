@@ -1,15 +1,5 @@
 ---
-title: "Manual verification is part of TDD"
 description: The five-step Red/Run/Green/Refactor/Promote cycle for treating a manual verification script like an automated test.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - workflow
-  - tdd
-  - testing
-  - red-green-refactor
-created: 2026-05-02
 when_to_use: Use when a behaviour cannot or should not be automated and needs a written, repeatable manual verification script instead.
 ---
 

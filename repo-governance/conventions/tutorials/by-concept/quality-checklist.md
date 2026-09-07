@@ -1,16 +1,6 @@
 ---
-title: "Quality Checklist"
 description: "Provides the pre-publish checklist covering coverage, code quality, narrative quality, diagrams, and structure."
 when_to_use: "Read before publishing a By-Concept tutorial to verify it meets all quality requirements."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-concept
-  - education
-  - narrative-driven
-created: 2026-01-30
 ---
 
 # Quality Checklist

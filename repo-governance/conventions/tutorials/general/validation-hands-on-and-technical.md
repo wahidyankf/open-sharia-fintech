@@ -1,17 +1,6 @@
 ---
-title: "Validation Criteria: Hands-On and Technical Validation"
 description: "Lists the hands-on and technical validation checklist items that docs-tutorial-checker verifies on a tutorial."
 when_to_use: "Read when checking a tutorial's hands-on elements or technical correctness against the validation checklist."
-category: explanation
-subcategory: conventions
-tags:
-  - tutorials
-  - diataxis
-  - learning
-  - pedagogy
-  - documentation
-  - teaching
-created: 2025-12-03
 ---
 
 # Validation Criteria: Hands-On and Technical Validation

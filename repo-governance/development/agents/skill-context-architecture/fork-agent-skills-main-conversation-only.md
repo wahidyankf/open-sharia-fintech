@@ -1,14 +1,5 @@
 ---
-title: "Fork agent skills: Main Conversation Only"
 description: "Explains when a Skill needs fork behaviour and lists fork-skill use cases outside the repository."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - agent-skills
-  - architecture
-  - development
-created: 2025-11-23
 when_to_use: Use when a Skill needs to run in an isolated context outside the current conversation.
 ---
 

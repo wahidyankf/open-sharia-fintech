@@ -1,5 +1,4 @@
 ---
-title: "Steps 4-5 — Residency Decision and Relocation"
 description: The three fixed-order residency rules, and the fail-safe-toward-duplication relocation sequence used when residency changes.
 when_to_use: Use when deciding which repo an idea belongs in, or moving an idea to its correct repo.
 ---

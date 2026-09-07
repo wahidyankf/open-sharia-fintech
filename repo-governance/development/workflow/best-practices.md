@@ -1,10 +1,5 @@
 ---
-title: "Best Practices for Workflow Development"
 description: Twelve recommended workflow patterns covering branching, commits, feature flags, staged implementation, dependencies, CI, config, and push discipline.
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use when looking for the recommended pattern for a workflow decision — branching, commits, CI, config, or push strategy.
 ---
 

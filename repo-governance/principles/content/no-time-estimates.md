@@ -1,15 +1,5 @@
 ---
-title: "No Time Estimates"
 description: People work and learn at vastly different speeds - focus on outcomes and deliverables, not arbitrary time constraints
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - no-time-estimates
-  - learning
-  - productivity
-  - outcomes
-created: 2025-12-15
 when_to_use: Use when deciding whether content should describe outcomes instead of a time-to-complete estimate.
 ---
 

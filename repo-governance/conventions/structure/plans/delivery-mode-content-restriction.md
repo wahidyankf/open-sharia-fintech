@@ -1,14 +1,5 @@
 ---
-title: "Delivery Mode — main-to-origin-main Content Restriction"
 description: States the two-condition test (.md-only changes or explicit standing go-ahead) that must hold before main-to-origin-main is a valid selection.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when deciding whether a plan may select main-to-origin-main as its delivery mode.
 ---
 

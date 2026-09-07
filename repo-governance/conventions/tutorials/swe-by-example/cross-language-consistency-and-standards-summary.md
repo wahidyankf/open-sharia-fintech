@@ -1,15 +1,5 @@
 ---
-title: "Cross-Language Consistency, Standards Summary, and Principles"
 description: "Defines what must stay consistent vs vary across languages, summarizes the production-validated numeric standards, and lists the principles this convention implements."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - education
-  - code-first
-created: 2025-12-25
 when_to_use: "Read when creating by-example tutorials for a new language, to know what must match across languages and what is allowed to vary, plus the target numbers to hit."
 ---
 

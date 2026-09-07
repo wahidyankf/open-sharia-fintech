@@ -1,5 +1,4 @@
 ---
-title: "AyoKoding Content Primer Quality Gate Workflow"
 description: "Iterative Maker-Checker-Fixer quality gate for Primer ('Just Enough X') tutorials, validating example count, annotation density, and scope discipline."
 when_to_use: "Read this index to find the right AyoKoding Content Primer Quality Gate Workflow child document."
 ---

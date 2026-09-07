@@ -1,15 +1,5 @@
 ---
-title: "The Three Confidence Levels: FALSE_POSITIVE"
 description: "FALSE_POSITIVE: skip, report to the user."
-category: explanation
-subcategory: development
-tags:
-  - fixer-agents
-  - confidence-levels
-  - validation
-  - automation
-  - quality-assurance
-created: 2025-12-14
 when_to_use: "Use when deciding whether a finding is a false positive."
 ---
 

@@ -1,5 +1,4 @@
 ---
-title: "Authorization and Sanctioned Callers"
 description: Who may start this gate, the one workflow permitted to invoke it, why propagation is not, and how a grooming invocation's scope differs from a single-rule one.
 when_to_use: Use when deciding whether a given trigger may start this gate, or how wide its audit reaches.
 ---

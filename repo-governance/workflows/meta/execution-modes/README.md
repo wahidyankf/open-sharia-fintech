@@ -1,5 +1,4 @@
 ---
-title: "Workflow Execution Mode Convention"
 description: "Defines execution modes for workflows — Agent Delegation (preferred) and Manual Orchestration (fallback) — explaining how to use the Agent tool for delegated agent invocation and when to fall back to direct execution"
 when_to_use: "Read this index to find the right Workflow Execution Mode Convention child document."
 ---

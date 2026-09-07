@@ -1,5 +1,4 @@
 ---
-title: "4. Re-validate (Sequential)"
 description: "Step 4: re-runs the checker to verify fixes resolved issues and no new issues were introduced."
 when_to_use: "Use when implementing or debugging the re-validation step."
 ---

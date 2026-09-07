@@ -1,5 +1,4 @@
 ---
-title: "Root Cause Orientation"
 description: "Find root causes and fix them properly - no temporary fixes, no laziness, senior engineer standards"
 when_to_use: "Read this index to find the right Root Cause Orientation child document."
 ---

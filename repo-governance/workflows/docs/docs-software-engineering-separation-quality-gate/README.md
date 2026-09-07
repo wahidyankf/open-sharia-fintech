@@ -1,5 +1,4 @@
 ---
-title: "Software Engineering Documentation Separation Quality Gate Workflow"
 description: "Validates separation between OSE Platform style guides and AyoKoding educational content, then fixes violations iteratively."
 when_to_use: "Read this index to find the right Software Engineering Documentation Separation Quality Gate Workflow child document."
 ---

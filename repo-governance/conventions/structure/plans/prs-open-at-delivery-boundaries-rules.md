@@ -1,14 +1,5 @@
 ---
-title: "PRs Open at Delivery Boundaries, Not Every Phase (HARD RULE)"
 description: States the first four of seven rules for when a PR may open.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when deciding if a phase should open a PR.
 ---
 

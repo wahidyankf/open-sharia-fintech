@@ -1,13 +1,5 @@
 ---
-title: "Manual Orchestration Mode (Fallback)"
 description: Defines Manual Orchestration mode — executing workflow logic directly with Read/Write/Edit/Bash tools when agents aren't available as delegated agent types.
-category: explanation
-subcategory: workflows
-tags:
-  - workflows
-  - execution-mode
-  - orchestration
-created: 2026-01-05
 when_to_use: Use when workflow agents are not available as defined delegated agent types, or when step-by-step visibility and manual iteration control are wanted.
 ---
 

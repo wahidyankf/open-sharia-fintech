@@ -1,15 +1,5 @@
 ---
-title: "How It Applies — Functional Core and Hidden Dependencies"
 description: Shows the Functional Core, Imperative Shell pattern and how to avoid hidden global-config dependencies.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - functional-programming
-  - pure-functions
-  - testability
-  - determinism
-created: 2025-12-28
 when_to_use: Use when separating pure logic from I/O or removing a hidden dependency on global state.
 ---
 

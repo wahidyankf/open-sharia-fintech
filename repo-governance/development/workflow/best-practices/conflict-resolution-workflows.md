@@ -1,10 +1,5 @@
 ---
-title: "Conflict Resolution Workflows"
 description: How to resolve conflicts during a rebase versus during a merge, and the decision tree for choosing between them.
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use when a pull produces conflicts, to work through resolving them under rebase or merge.
 ---
 

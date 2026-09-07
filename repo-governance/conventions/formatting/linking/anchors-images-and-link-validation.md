@@ -1,15 +1,6 @@
 ---
-title: "Anchors, Images, and Link Validation"
 description: Anchor-link syntax and slug validation rules, image link syntax, and the pre-commit link verification checklist.
 when_to_use: Use when linking to a heading within a page, embedding an image, or verifying links before committing.
-category: explanation
-subcategory: conventions
-tags:
-  - linking
-  - markdown
-  - conventions
-  - github-compatibility
-created: 2025-11-22
 ---
 
 # Anchors, Images, and Link Validation

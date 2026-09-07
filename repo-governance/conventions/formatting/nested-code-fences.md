@@ -1,16 +1,6 @@
 ---
-title: "Nested Code Fence Convention"
 description: Standards for properly nesting code fences when documenting markdown structure within markdown content
 when_to_use: Use when a markdown example itself needs to show a fenced code block, and the outer/inner fence depth must be chosen correctly.
-category: explanation
-subcategory: conventions
-tags:
-  - markdown
-  - code-fences
-  - nesting
-  - syntax
-  - documentation
-created: 2025-12-23
 ---
 
 # Nested Code Fence Convention

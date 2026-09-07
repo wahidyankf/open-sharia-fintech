@@ -1,5 +1,4 @@
 ---
-title: "Conventions Implemented/Respected"
 description: "Lists the file-naming, linking, and content-quality conventions this workflow follows."
 when_to_use: "Use when auditing this workflow against repository-wide structural conventions."
 ---

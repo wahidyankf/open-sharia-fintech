@@ -1,15 +1,5 @@
 ---
-title: "Accessibility Testing"
 description: The two-level accessibility testing requirement (static a11y linting and runtime axe-core E2E tests) for UI projects.
-category: explanation
-subcategory: development
-tags:
-  - nx
-  - targets
-  - project-json
-  - build
-  - scripts
-created: 2026-02-23
 when_to_use: Use when adding accessibility coverage to a new or existing UI project.
 ---
 

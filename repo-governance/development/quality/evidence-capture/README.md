@@ -1,5 +1,4 @@
 ---
-title: "Evidence Capture Convention"
 description: "Standards for capturing and organizing testing evidence (screenshots, curl outputs, console logs) in plan folders and delivery.md during plan execution"
 when_to_use: "Read this index to find the right Evidence Capture Convention child document."
 ---

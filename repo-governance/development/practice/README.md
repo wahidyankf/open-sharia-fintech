@@ -1,10 +1,5 @@
 ---
-title: "Development Practices"
 description: Day-to-day practices for solving repository work carefully and collaboratively
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use when the work is ambiguous, shared, or already in motion, and you need a behavioural practice rather than a code pattern or tool configuration.
 ---
 

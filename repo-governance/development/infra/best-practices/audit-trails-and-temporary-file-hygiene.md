@@ -1,10 +1,5 @@
 ---
-title: "Best Practices: Audit Trails and Temporary File Hygiene"
 description: Covers best practices for pairing audit and fix reports with matching identifiers, periodically cleaning up temporary files, and documenting the purpose of long-lived temporary files.
-category: explanation
-subcategory: development
-tags: [infrastructure, best-practices, temporary-files, audit-trail]
-created: 2026-05-12
 when_to_use: Use when generating a fix report that follows an audit, scheduling cleanup of temporary files, or documenting why a temporary file or directory exists.
 ---
 

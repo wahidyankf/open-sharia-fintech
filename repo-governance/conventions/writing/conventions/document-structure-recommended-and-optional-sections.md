@@ -1,15 +1,6 @@
 ---
-title: "Convention Document Structure — Recommended and Optional Sections"
 description: The recommended Examples, Comparison Tables, Special Considerations, Tools and Automation, and References sections, plus the optional Quick Reference/Migration Guide/FAQ/Rationale sections.
 when_to_use: Use when deciding whether to add optional or recommended sections to a convention document beyond the required minimum.
-category: explanation
-subcategory: conventions
-tags:
-  - meta
-  - conventions
-  - standards
-  - documentation
-created: 2025-12-07
 ---
 
 # Convention Document Structure — Recommended and Optional Sections

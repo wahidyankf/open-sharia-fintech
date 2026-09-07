@@ -1,14 +1,5 @@
 ---
-title: "CONTRIBUTING.md: Essential Components and Writing Principles"
 description: "The required sections a CONTRIBUTING.md must have and the writing principles for contributor-facing process docs"
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - documentation
-  - open-source
-  - repository-standards
-created: 2026-04-04
 when_to_use: "Read this when drafting or reviewing a CONTRIBUTING.md file's required content and tone."
 ---
 

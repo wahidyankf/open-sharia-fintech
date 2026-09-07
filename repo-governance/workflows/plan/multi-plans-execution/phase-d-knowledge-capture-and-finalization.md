@@ -1,5 +1,4 @@
 ---
-title: "Phase D — Cross-Plan Knowledge Capture and Finalization"
 description: Covers D5-D6 of Phase D — the mandatory cross-plan learnings consolidation pass and the final summary report before the run reports pass.
 when_to_use: Use when consolidating recurring or cross-cutting learnings across every plan in a run, or emitting the run's final summary report.
 ---

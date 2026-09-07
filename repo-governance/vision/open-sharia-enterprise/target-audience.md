@@ -1,13 +1,5 @@
 ---
-title: "Target Audience"
 description: Who Open Sharia Enterprise serves — developers, businesses and entrepreneurs, and individuals — and what each gives and gets
-category: explanation
-subcategory: vision
-tags:
-  - vision
-  - purpose
-  - islamic-enterprise
-created: 2025-12-24
 when_to_use: Use when identifying who a piece of work or messaging is aimed at within the OSE audience.
 ---
 

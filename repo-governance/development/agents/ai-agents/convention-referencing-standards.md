@@ -1,14 +1,5 @@
 ---
-title: "Convention Referencing Standards"
 description: "Defines the required Reference Documentation section, its categories, and the link format agents must use."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when writing or validating an agent's Reference Documentation section.
 ---
 

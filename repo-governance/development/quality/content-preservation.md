@@ -1,15 +1,5 @@
 ---
-title: "Content Preservation Convention"
 description: Principles and processes for preserving knowledge when condensing files and extracting duplications
-category: explanation
-subcategory: development
-tags:
-  - content-preservation
-  - condensation
-  - offload
-  - zero-loss
-  - documentation
-created: 2025-12-14
 when_to_use: "Use when condensing a file or extracting duplicated content, to preserve it rather than delete it."
 ---
 

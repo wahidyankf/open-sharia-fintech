@@ -1,13 +1,5 @@
 ---
-title: "References"
 description: External references on documentation practice and knowledge management.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - documentation
-  - knowledge-transfer
-created: 2025-12-28
 when_to_use: Use when seeking external sources on documentation practice.
 ---
 

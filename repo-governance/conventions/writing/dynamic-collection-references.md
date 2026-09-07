@@ -1,15 +1,6 @@
 ---
-title: "Dynamic Collection References Convention"
 description: Standards for referencing dynamic collections (agents, principles, conventions, practices, skills) in documentation without hardcoding counts that become stale
 when_to_use: Use when writing a sentence, layer description, index summary, or directory-tree comment that mentions how many agents, skills, conventions, principles, practices, or workflows exist.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - documentation
-  - maintenance
-  - collections
-created: 2026-02-22
 ---
 
 # Dynamic Collection References Convention

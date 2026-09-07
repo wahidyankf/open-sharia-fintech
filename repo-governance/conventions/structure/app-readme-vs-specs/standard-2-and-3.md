@@ -1,18 +1,6 @@
 ---
-title: "Standard 2 and 3 — Required/Forbidden README Sections, and Line-Count Caps"
 description: The required and forbidden headings in app READMEs, and the hard line-count caps per README location.
 when_to_use: Use when writing or reviewing an app or infra README and checking its headings and length against the required shape.
-category: explanation
-subcategory: conventions
-status: "Pilot — initial issue"
-tags:
-  - conventions
-  - readme
-  - specs
-  - spec-tree-shape
-  - pm-readability
-  - c4
-created: 2026-05-09
 ---
 
 # Standard 2 and 3 — Required/Forbidden README Sections, and Line-Count Caps

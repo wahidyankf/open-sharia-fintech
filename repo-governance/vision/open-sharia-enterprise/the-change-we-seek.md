@@ -1,13 +1,5 @@
 ---
-title: "The Change We Seek"
 description: The world Open Sharia Enterprise envisions — where anyone can build Shariah-compliant solutions and ethical business is the default
-category: explanation
-subcategory: vision
-tags:
-  - vision
-  - purpose
-  - islamic-enterprise
-created: 2025-12-24
 when_to_use: Use when describing the future state Open Sharia Enterprise is working toward.
 ---
 

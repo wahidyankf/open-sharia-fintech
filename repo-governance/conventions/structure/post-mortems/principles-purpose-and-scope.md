@@ -1,16 +1,6 @@
 ---
-title: "Post-Mortem Convention: Principles, Purpose, and Scope"
 description: Why the post-mortem convention exists, the core principles it implements, and what it covers versus what it explicitly does not cover
 when_to_use: Read this when you need the rationale for post-mortems, or to confirm whether a topic falls inside or outside this convention's scope.
-category: explanation
-subcategory: conventions
-tags:
-  - post-mortem
-  - incidents
-  - blameless
-  - reliability
-  - structure
-created: 2026-06-05
 ---
 
 # Principles, Purpose, and Scope

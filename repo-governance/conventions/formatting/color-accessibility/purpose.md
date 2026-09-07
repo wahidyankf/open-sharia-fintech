@@ -1,18 +1,6 @@
 ---
-title: "Purpose"
 description: "States why color accessibility matters and lists the five core rules for using color across the repository."
 when_to_use: "Use when applying or auditing the five core color-accessibility rules before adding color to any content."
-category: explanation
-subcategory: conventions
-tags:
-  - accessibility
-  - color-blindness
-  - wcag
-  - design
-  - conventions
-  - mermaid-diagrams
-  - color-palette
-created: 2025-12-04
 ---
 
 # Purpose

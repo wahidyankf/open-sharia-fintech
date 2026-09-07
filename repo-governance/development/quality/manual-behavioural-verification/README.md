@@ -1,5 +1,4 @@
 ---
-title: "Manual Behavioural Verification Convention"
 description: "Practice requiring manual verification of UI features and API endpoints using Playwright MCP tools and curl after implementing changes"
 when_to_use: "Read this index to find the right Manual Behavioural Verification Convention child document."
 ---

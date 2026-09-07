@@ -1,5 +1,4 @@
 ---
-title: "Emoji Usage Convention"
 description: "Standards for semantic emoji usage to enhance document scannability and engagement with accessible colored emojis"
 when_to_use: "Read this index to find the right Emoji Usage Convention child document."
 ---

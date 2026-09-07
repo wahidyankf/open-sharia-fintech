@@ -1,13 +1,5 @@
 ---
-title: Cross-Language Lint Strictness
 description: Uniform warning-and-above lint threshold across every language and artifact type in this repository.
-category: development
-subcategory: quality
-tags:
-  - lint
-  - quality
-  - ci
-created: 2026-06-10
 when_to_use: Use when adding, changing, or auditing a lint gate, or checking which tool and threshold gate a given artifact type.
 ---
 

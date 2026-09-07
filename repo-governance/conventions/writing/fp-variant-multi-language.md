@@ -1,17 +1,6 @@
 ---
-title: "FP-Variant Multi-Language Convention"
 description: Bidirectional idiomatic-language rule requiring F# AND Clojure tabs in FP-variant by-example tutorials in ayokoding-www, with each language kept idiomatically native rather than mechanically translated from the other
 when_to_use: Use when writing or reviewing an FP-variant by-example tutorial page in ayokoding-www that presents F# and Clojure code side by side.
-category: explanation
-subcategory: conventions
-tags:
-  - fp
-  - clojure
-  - fsharp
-  - by-example
-  - ayokoding-www
-  - tutorial
-created: 2026-05-17
 ---
 
 # FP-Variant Multi-Language Convention

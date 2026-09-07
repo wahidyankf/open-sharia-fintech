@@ -1,14 +1,5 @@
 ---
-title: "Implementation Checklist and References"
 description: "The phased checklist for setting up new-repository documentation, plus related and further-reading references"
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - documentation
-  - open-source
-  - repository-standards
-created: 2026-04-04
 when_to_use: "Read this when setting up documentation for a brand-new repository, or to find related conventions."
 ---
 

@@ -1,15 +1,6 @@
 ---
-title: "Convention Writing Convention — Creation Criteria and Length Guidelines"
 description: Decision criteria for creating a new convention vs. updating or merging an existing one, and expected length ranges (short/medium/long) for convention documents.
 when_to_use: Use when deciding whether a new topic warrants its own convention document or belongs inside an existing one.
-category: explanation
-subcategory: conventions
-tags:
-  - meta
-  - conventions
-  - standards
-  - documentation
-created: 2025-12-07
 ---
 
 # Creation Criteria and Length Guidelines

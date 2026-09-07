@@ -1,5 +1,4 @@
 ---
-title: "Live-Tester Systematic Coverage"
 description: "The SSOT practice that mandates enumerate-not-sample forcing-functions for the three live-site testers and the web-ux-test-fixing-planning workflow"
 when_to_use: "Read this index to find the right Live-Tester Systematic Coverage child document."
 ---

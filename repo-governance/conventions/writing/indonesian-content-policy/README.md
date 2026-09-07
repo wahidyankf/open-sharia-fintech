@@ -1,5 +1,4 @@
 ---
-title: "Indonesian Content Policy - ayokoding-www"
 description: "Policy defining when and how to create Indonesian content in ayokoding-www bilingual platform"
 when_to_use: "Read this index to find the right Indonesian Content Policy - ayokoding-www child document."
 ---

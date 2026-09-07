@@ -1,14 +1,5 @@
 ---
-title: "Why — Knowledge Transfer and Maintainability"
 description: Documentation transfers knowledge and keeps systems maintainable and onboardable.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - documentation
-  - knowledge-transfer
-  - maintainability
-created: 2025-12-28
 when_to_use: Use when arguing undocumented systems become unmaintainable.
 ---
 

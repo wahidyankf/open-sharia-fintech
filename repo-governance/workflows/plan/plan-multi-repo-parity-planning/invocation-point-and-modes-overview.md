@@ -1,5 +1,4 @@
 ---
-title: "Invocation Point and Modes Overview"
 description: Where this workflow runs from, and the two non-default delivery modes for the plan documents it authors — main-to-origin-main and worktree-to-origin-main.
 when_to_use: Use when determining the anchor repo for a run, or choosing a direct-push delivery mode for the plan documents themselves.
 ---

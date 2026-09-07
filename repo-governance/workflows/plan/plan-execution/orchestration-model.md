@@ -1,5 +1,4 @@
 ---
-title: "Orchestration Model"
 description: States that the calling context orchestrates plan execution, routing substantive work to specialized agents.
 when_to_use: Use when confirming whether the orchestrator may implement a delivery item directly or must delegate it.
 ---

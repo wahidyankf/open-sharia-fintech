@@ -1,14 +1,5 @@
 ---
-title: "Delivery Mode — Merge Authority and Resolution Precedence"
 description: Explains the default [AI]-merges-by-default policy, when a plan should add an explicit [HUMAN] merge gate, and the three-tier precedence algorithm for resolving the active delivery mode.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when determining which delivery mode actually applies to a plan, or when deciding whether a merge step needs an explicit [HUMAN] gate.
 ---
 

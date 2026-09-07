@@ -1,10 +1,5 @@
 ---
-title: "Overview and Purpose"
 description: Why understanding workflow anti-patterns matters and what this document covers.
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use when orienting to why the anti-patterns document exists and what it covers before reading individual entries.
 ---
 

@@ -1,15 +1,5 @@
 ---
-title: "Test-Driven Development Convention"
 description: Mandates TDD (Red→Green→Refactor) as the required practice for all code changes across the repository
-category: explanation
-subcategory: development
-tags:
-  - development
-  - workflow
-  - tdd
-  - testing
-  - red-green-refactor
-created: 2026-05-02
 when_to_use: Use when writing any delivery checklist step that ships code, or when starting implementation of a code change.
 ---
 

@@ -1,5 +1,4 @@
 ---
-title: "Phase A — Load Plans and Build the Dependency DAG (Scope and Nodes)"
 description: Covers A1-A3 — resolving plan scope, gating unvetted plans, and parsing delivery checklists into DAG nodes.
 when_to_use: Use when resolving plan scope, gating on plan-quality-gate, or building DAG nodes from a delivery.md.
 ---

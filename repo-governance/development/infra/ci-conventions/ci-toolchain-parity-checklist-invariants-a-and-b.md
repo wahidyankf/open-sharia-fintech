@@ -1,10 +1,5 @@
 ---
-title: "Parity Checklist — Invariants A and B"
 description: Requirement tables for CI Workflow Shape and Git Hook Lifecycle.
-category: explanation
-subcategory: development
-tags: [ci-cd, github-actions, git-hooks]
-created: 2026-03-31
 when_to_use: Use when auditing a workflow's shape or a hook's steps.
 ---
 

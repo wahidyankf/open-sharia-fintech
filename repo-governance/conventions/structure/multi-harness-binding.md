@@ -1,16 +1,6 @@
 ---
-title: "Multi-Harness Binding Convention"
 description: Rules governing how this repository stays compatible with many AI coding-agent harnesses while keeping AGENTS.md as the single canonical instruction surface.
 when_to_use: Read this before adding, changing, or auditing any file that wires a coding-agent harness to the repository's instruction content.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - governance
-  - platform-bindings
-  - agents
-  - compatibility
-created: 2026-05-24
 ---
 
 # Multi-Harness Binding Convention

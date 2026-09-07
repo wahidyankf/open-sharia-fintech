@@ -1,15 +1,5 @@
 ---
-title: "Accessibility First"
 description: Design for universal access from the start - WCAG compliance, color-blind friendly palettes, screen reader support
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - accessibility
-  - wcag
-  - inclusive-design
-  - universal-access
-created: 2025-12-15
 when_to_use: Use when deciding whether or how a design, document, or diagram meets the repository's accessibility requirements.
 ---
 

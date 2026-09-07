@@ -1,14 +1,5 @@
 ---
-title: "Model Tiers — Ultra"
 description: "Defines the ultra tier: the frontier grade reserved for work that demonstrably exceeds the planning grade."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - model-selection
-  - development
-  - standards
-created: 2026-09-06
 when_to_use: Use when deciding whether an agent's task genuinely exceeds the planning grade and justifies the ultra tier.
 ---
 

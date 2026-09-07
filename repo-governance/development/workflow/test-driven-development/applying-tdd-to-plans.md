@@ -1,15 +1,5 @@
 ---
-title: "Applying TDD to Plans"
 description: How plan-maker must express code-shipping delivery items as TDD-shaped steps, and how plan-executor and swe-*-dev agents follow TDD during execution.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - workflow
-  - tdd
-  - testing
-  - red-green-refactor
-created: 2026-05-02
 when_to_use: Use when authoring a plan's delivery.md checklist, or when executing a delivery item that ships code.
 ---
 

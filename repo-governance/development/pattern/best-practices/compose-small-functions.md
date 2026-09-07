@@ -1,10 +1,5 @@
 ---
-title: "Practice 7: Compose Small Functions"
 description: "Build complex behaviour from small, composable, reusable functions rather than one large function."
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: "Use when a function is growing large and could be decomposed into smaller composable functions."
 ---
 

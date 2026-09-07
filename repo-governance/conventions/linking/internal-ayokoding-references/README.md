@@ -1,5 +1,4 @@
 ---
-title: "Internal AyoKoding Reference Links Convention"
 description: "Standards for linking from docs/ to apps/ayokoding-www/ content using relative paths instead of public web URLs"
 when_to_use: "Read this index to find the right Internal AyoKoding Reference Links Convention child document."
 ---

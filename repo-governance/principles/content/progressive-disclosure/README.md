@@ -1,5 +1,4 @@
 ---
-title: "Progressive Disclosure"
 description: "Start simple and layer complexity gradually - beginners see simple patterns, experts access advanced features when needed"
 when_to_use: "Read this index to find the right Progressive Disclosure child document."
 ---

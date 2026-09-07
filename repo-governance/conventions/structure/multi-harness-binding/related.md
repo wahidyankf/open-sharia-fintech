@@ -1,16 +1,6 @@
 ---
-title: "Multi-Harness Binding: Related Documentation"
 description: Links to the platform-bindings catalog, the vendor-independence convention, and the periodic compatibility-audit workflow that complement this convention.
 when_to_use: Read this when you need the catalog, the vendor-neutral-prose companion rule, or the external-drift-detection workflow this convention cross-references.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - governance
-  - platform-bindings
-  - agents
-  - compatibility
-created: 2026-05-24
 ---
 
 # Multi-Harness Binding: Related Documentation

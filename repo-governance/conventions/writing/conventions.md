@@ -1,15 +1,6 @@
 ---
-title: "Convention Writing Convention"
 description: Meta-convention defining how to write and organize convention documents in the conventions/ directory
 when_to_use: Use when writing, restructuring, or reviewing a convention document under repo-governance/conventions/.
-category: explanation
-subcategory: conventions
-tags:
-  - meta
-  - conventions
-  - standards
-  - documentation
-created: 2025-12-07
 ---
 
 # Convention Writing Convention

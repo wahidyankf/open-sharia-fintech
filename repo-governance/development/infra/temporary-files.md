@@ -1,14 +1,5 @@
 ---
-title: "Temporary Files Convention"
 description: Guidelines for AI agents creating temporary uncommitted files and folders
-category: explanation
-subcategory: development
-tags:
-  - temporary-files
-  - ai-agents
-  - file-organization
-  - best-practices
-created: 2025-12-01
 when_to_use: Use when an AI agent needs to create a temporary uncommitted file or folder — a report, a scratch file, or anything not meant for git.
 ---
 

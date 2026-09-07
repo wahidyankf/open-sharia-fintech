@@ -1,15 +1,6 @@
 ---
-title: "Quick Start"
 description: Definition, content scope, and example titles for the Quick Start tutorial type covering 5-30% of domain knowledge.
 when_to_use: Use when writing or naming a 5-30%-coverage tutorial that lets learners start exploring a domain independently.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - tutorials
-  - naming
-  - learning-paths
-created: 2025-12-03
 ---
 
 # Quick Start

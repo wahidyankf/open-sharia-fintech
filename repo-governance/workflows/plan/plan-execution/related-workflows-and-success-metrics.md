@@ -1,5 +1,4 @@
 ---
-title: "Related Workflows"
 description: Lists workflows this one composes with and the recommended workflow sequence, plus the success metrics tracked across executions.
 when_to_use: Use when composing plan execution with other workflows, or when tracking success metrics across plan executions.
 ---

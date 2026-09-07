@@ -1,15 +1,5 @@
 ---
-title: "Continuous Integration and Small, Incremental Changes"
 description: What runs on every push, the pre-push checklist, and how to break work into small, independently reviewable commits.
-category: explanation
-subcategory: development
-tags:
-  - trunk-based-development
-  - git
-  - workflow
-  - development
-  - continuous-integration
-created: 2025-11-26
 when_to_use: Use before pushing, to run the pre-push checklist, or when planning how to break a feature into small commits.
 ---
 

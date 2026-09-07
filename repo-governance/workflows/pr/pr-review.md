@@ -1,57 +1,6 @@
 ---
-name: pr-review
-title: "pr-review"
 description: "Run one explicitly requested semantic PR-review pass and post one consolidated COMMENT review."
 when_to_use: "Use only when a user explicitly requests one semantic review pass for an open pull request."
-goal: "Review one pinned pull-request head through risk-routed specialists and publish one stale-safe consolidated review"
-termination: "Return after one consolidated review post, or return stale/failed without retrying"
-inputs:
-  - name: pr
-    type: string
-    description: PR number or URL identifying the open pull request
-    required: true
-  - name: probe-class
-    type: string
-    description: Optional semantic angle supplied by an explicit caller or enclosing cycle
-    required: false
-    default: general
-  - name: prior-review-state
-    type: string
-    description: Authenticated settled findings to deduplicate; empty for an independent pass
-    required: false
-    default: empty
-  - name: delegated-gate-ids
-    type: string
-    description: Exact lifecycle-owned predicates supplied by a caller; empty suppresses nothing
-    required: false
-    default: empty
-  - name: lifecycle-evidence
-    type: string
-    description: Caller-supplied lifecycle evidence carried unchanged; this workflow never waits for it
-    required: false
-    default: empty
-  - name: leak-review-evidence
-    type: string
-    description: Authenticated current-head ose-pr-leak-review:v1 evidence, or pending
-    required: false
-    default: pending
-outputs:
-  - name: final-status
-    type: enum
-    values: [clean, findings, stale, failed]
-    description: Terminal result of this single pass
-  - name: reviewed-head
-    type: string
-    description: Pinned head SHA used by every reviewer and line anchor
-  - name: review-id
-    type: string
-    description: GitHub review ID, or null when no review was posted
-  - name: severity-counts
-    type: string
-    description: Counts for critical, high, medium, and low findings
-  - name: pass-record
-    type: string
-    description: Authenticated ose-pr-review-pass:v1 record, or null when posting did not occur
 ---
 
 # Single-Pass PR Review Workflow
@@ -65,6 +14,29 @@ selects a risk route, and builds shared context. Selected specialists review con
 [`pr-review-synthesis-maker`](../../../.claude/agents/pr-review/pr-review-synthesis-maker.md)
 deduplicates and posts exactly one GitHub `COMMENT` review. A trivial route still gets a generalist
 synthesis pass. `pr-review-fixer` never participates.
+
+## Goal and Termination
+
+**Goal**: Review one pinned pull-request head through risk-routed specialists and publish one stale-safe consolidated review
+
+**Termination**: Return after one consolidated review post, or return stale/failed without retrying
+
+## Inputs
+
+- **`pr`** (string, required) — PR number or URL identifying the open pull request
+- **`probe-class`** (string, optional, default `general`) — Optional semantic angle supplied by an explicit caller or enclosing cycle
+- **`prior-review-state`** (string, optional, default `empty`) — Authenticated settled findings to deduplicate; empty for an independent pass
+- **`delegated-gate-ids`** (string, optional, default `empty`) — Exact lifecycle-owned predicates supplied by a caller; empty suppresses nothing
+- **`lifecycle-evidence`** (string, optional, default `empty`) — Caller-supplied lifecycle evidence carried unchanged; this workflow never waits for it
+- **`leak-review-evidence`** (string, optional, default `pending`) — Authenticated current-head ose-pr-leak-review:v1 evidence, or pending
+
+## Outputs
+
+- **`final-status`** (enum: clean, findings, stale, failed) — Terminal result of this single pass
+- **`reviewed-head`** (string) — Pinned head SHA used by every reviewer and line anchor
+- **`review-id`** (string) — GitHub review ID, or null when no review was posted
+- **`severity-counts`** (string) — Counts for critical, high, medium, and low findings
+- **`pass-record`** (string) — Authenticated ose-pr-review-pass:v1 record, or null when posting did not occur
 
 ## Contents
 

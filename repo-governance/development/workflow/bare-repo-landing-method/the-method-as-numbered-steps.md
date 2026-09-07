@@ -1,15 +1,5 @@
 ---
-title: "The Method, As Numbered Steps"
 description: The eight-step numbered sequence for landing a change through a bare repository or a side worktree.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - worktree
-  - bare-repo
-  - safety
-created: 2026-07-21
 when_to_use: Use as the step-by-step checklist while executing a bare-repo or side-worktree landing.
 ---
 

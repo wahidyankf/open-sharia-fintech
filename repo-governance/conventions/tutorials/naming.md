@@ -1,15 +1,6 @@
 ---
-title: "Tutorial Naming Convention"
 description: Standardized tutorial naming and depth levels for consistent learning experiences
 when_to_use: Use when naming, scoping, or choosing the type of a new tutorial anywhere in the repository.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - tutorials
-  - naming
-  - learning-paths
-created: 2025-12-03
 ---
 
 # Tutorial Naming Convention

@@ -1,14 +1,5 @@
 ---
-title: "AI Agent Model Selection Convention"
 description: "Standards for selecting the appropriate model grade (ultra, planning-grade, execution-grade, fast) for AI agents based on task complexity"
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - model-selection
-  - standards
-  - development
-created: 2026-04-03
 when_to_use: Use when deciding which model tier a new or existing agent should declare, or translating a tier to a concrete model ID.
 ---
 

@@ -1,15 +1,6 @@
 ---
-title: "Choosing the Right Tutorial Type"
 description: A decision tree and quick-reference table for picking the correct tutorial type based on prior experience and learning goal.
 when_to_use: Use when you are unsure which of the six tutorial types fits a piece of content you are about to write.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - tutorials
-  - naming
-  - learning-paths
-created: 2025-12-03
 ---
 
 # Choosing the Right Tutorial Type

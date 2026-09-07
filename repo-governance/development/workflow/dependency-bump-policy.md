@@ -1,15 +1,5 @@
 ---
-title: "Dependency Bump Stability & Safety Policy"
 description: Three-path decision tree (LTS, 60-day soak, security waiver) governing every dependency bump across the polyglot monorepo.
-category: explanation
-subcategory: development
-tags:
-  - dependencies
-  - security
-  - versioning
-  - reproducibility
-  - workflow
-created: 2026-05-15
 when_to_use: Use whenever bumping a dependency, runtime, or base image version, to classify the path and pin exactly.
 ---
 

@@ -1,15 +1,6 @@
 ---
-title: "Naming Examples"
 description: Worked title examples for each tutorial type across programming languages, frameworks and tools, and domain topics.
 when_to_use: Use when you need a concrete title template to copy while naming a new tutorial.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - tutorials
-  - naming
-  - learning-paths
-created: 2025-12-03
 ---
 
 # Naming Examples
