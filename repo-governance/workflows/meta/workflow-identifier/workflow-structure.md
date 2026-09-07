@@ -5,7 +5,8 @@ when_to_use: Use when authoring a new workflow file and needing the canonical fr
 
 # Workflow Structure
 
-Frontmatter carries **exactly two keys**, as it does for every file under `repo-governance/`. A
+Frontmatter carries **exactly two keys**, as it does for every file under `repo-governance/` —
+see [Governance Frontmatter](../../../conventions/structure/governance-frontmatter.md). A
 workflow's contract — goal, termination, inputs, outputs — lives in the body, where it is readable
 without a YAML parser and countable against the word budget like any other prose.
 

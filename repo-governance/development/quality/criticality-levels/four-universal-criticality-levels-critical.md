@@ -28,7 +28,7 @@ when_to_use: "Use when classifying a finding as CRITICAL."
 
 **Repository Governance**:
 
-- Missing `description` or `when_to_use`, or any other key present, in a `repo-governance/` document's frontmatter
+- Missing `description` or `when_to_use`, or any other key present, in a `repo-governance/` document's frontmatter (see [Governance Frontmatter](../../../conventions/structure/governance-frontmatter.md))
 - Agent `name` field doesn't match filename (breaks agent discovery)
 - Broken internal link to non-existent file in documentation
 

@@ -28,7 +28,8 @@ tags:
 - **Critical for ALL nested frontmatter fields**: This applies to `tags`, any list fields, and any nested objects
 
 **Scope**: this rule binds wherever frontmatter can nest — `docs/`, the harness binding trees, and
-site content. Files under `repo-governance/` carry only `description` and `when_to_use`, both flat
+site content. Per [Governance Frontmatter](../../structure/governance-frontmatter.md), files under
+`repo-governance/` carry only `description` and `when_to_use`, both flat
 scalars, so nothing there indents; a nested key in that tree is a schema failure before it is an
 indentation question.
 
