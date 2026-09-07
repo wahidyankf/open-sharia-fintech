@@ -10,7 +10,7 @@ Before any execution, verify for EVERY target repo:
 
 1. The plan folder exists at `plans/in-progress/<objective-slug>/` with the mature core and exactly
    one reader-led technical form.
-2. The plan reached `pass` on plan-quality-gate (double-zero at the selected gate-mode).
+2. The plan received a `PASS` verdict from plan-quality-gate.
 3. The planning-phase commits are on that repo's `origin main` (`git fetch origin && git log
 origin/main --oneline -5` shows the plan delivery commits).
 4. The plan declares its `## Worktree` section per

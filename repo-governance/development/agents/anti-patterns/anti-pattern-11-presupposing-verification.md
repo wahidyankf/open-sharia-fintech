@@ -21,7 +21,7 @@ hypothesis and stops looking.
 **Bad Example:**
 
 ```markdown
-The previous fix to `plan-fixer.md` introduced a regression in the merge-gate guard.
+The previous fix to `plan-checker.md` introduced a regression in the merge-gate guard.
 Confirm the regression and describe it.
 ```
 
@@ -30,7 +30,7 @@ name agreement itself as a failure mode:
 
 ```markdown
 Hypothesis (may be WRONG — treat it as a lead, not a conclusion): the previous fix to
-`plan-fixer.md` introduced a regression in the merge-gate guard.
+`plan-checker.md` introduced a regression in the merge-gate guard.
 
 Investigate independently. Reporting "the hypothesis is wrong, and here is the evidence" is a
 FULLY VALID and equally valuable outcome. Reflexive agreement is the failure mode being guarded

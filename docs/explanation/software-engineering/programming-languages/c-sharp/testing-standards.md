@@ -357,7 +357,7 @@ var result = await _service.ProcessAsync(payerId, wealth); // loses explicitness
 
 ## Real Local-Resource Integration Tests
 
-**MUST** keep Integration tests free of every network path, including loopback. Exercise a real,
+**MUST** keep Integration tests free of every external network path. Exercise a real,
 isolated same-machine resource such as a temporary SQLite database file. An in-memory repository or
 mocked `DbContext` is a Unit double, not Integration proof.
 
@@ -502,7 +502,7 @@ dotnet test --collect:"XPlat Code Coverage" --results-directory ./coverage \
 - [ ] FluentAssertions used for all assertions
 - [ ] Arrange-Act-Assert structure with blank line separators
 - [ ] Unit tests replace repositories, database clients, and network clients with injected doubles
-- [ ] Integration tests use a real isolated local resource and no network, including loopback
+- [ ] Integration tests use a real isolated local resource and no external network
 - [ ] API E2E tests invoke the public HTTP boundary; networked backing services remain behind it
 - [ ] `CancellationToken.None` passed explicitly in test calls
 

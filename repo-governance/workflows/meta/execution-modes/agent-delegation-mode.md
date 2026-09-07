@@ -27,7 +27,7 @@ Invoke specialized agents via the Agent tool with `subagent_type` when the workf
 
 ## When to Use Agent Delegation
 
-- Workflow step references a named agent (e.g., `plan-checker`, `rules-fixer`)
+- Workflow step references a named agent (e.g., `plan-checker`, `docs-fixer`)
 - That agent exists as a defined delegated agent type in the primary binding directory (e.g., `.claude/agents/`)
 - The step requires persistent file changes (audit reports, fixes)
 - You want the agent's full specialized validation/fixing logic applied
@@ -40,8 +40,8 @@ AI: [Invokes plan-checker via Agent tool]
 1. Agent tool invokes plan-checker subagent
    → plan-checker reads plan files, validates, writes audit report to local-tmp/plan/
    → audit report persists on filesystem
-2. Agent tool invokes plan-fixer subagent with audit report path
-   → plan-fixer reads audit, applies fixes to plan files, writes fix report
+2. Agent tool invokes docs-fixer subagent with audit report path
+   → docs-fixer reads audit, applies fixes to doc files, writes fix report
    → fixes and fix report persist on filesystem
 3. Repeat until zero findings
 4. Show git status with modified files
@@ -58,7 +58,7 @@ Agent tool invocation:
   prompt: "Validate plans/backlog/my-plan/ and write audit report"
 
 Agent tool invocation:
-  subagent_type: plan-fixer
+  subagent_type: docs-fixer
   prompt: "Apply fixes from local-tmp/plan/plan__abc123__2026-03-24--10-00__audit.md"
 ```
 

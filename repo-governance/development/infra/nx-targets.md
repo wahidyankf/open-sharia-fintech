@@ -38,7 +38,7 @@ Standard Nx targets for apps and libs, and the naming rules that keep them consi
 - [Mandatory and Applicable Nx Targets](./nx-targets/mandatory-targets-all-projects-six-and-required.md) — Capability-based target rules. Use when scaffolding project.json.
 - [Mandatory test:quick Composition and Gate Surfaces](./nx-targets/mandatory-targets-all-projects-quick-and-gate.md) — Static coverage and fast-runtime composition. Use when wiring test:quick.
 - [Mandatory Targets — Type, Build, Server, and Unit-Test Requirements](./nx-targets/mandatory-targets-type-build-server-unit.md) — typecheck/build/dev/start/unit conditions. Use to check which apply.
-- [Projects with Integration Tests](./nx-targets/mandatory-targets-integration-tests.md) — Isolated real local-resource boundaries with no network path. Use when writing test:integration.
+- [Projects with Integration Tests](./nx-targets/mandatory-targets-integration-tests.md) — Isolated real local-resource boundaries with no external network reach. Use when writing test:integration.
 - [Mandatory Targets — CLI and E2E Test Projects](./nx-targets/mandatory-targets-cli-e2e.md) — run/install and E2E-runner requirements. For CLI or \*-e2e projects.
 - [Mandatory Static Behaviour Coverage](./nx-targets/mandatory-targets-behaviour-coverage.md) — Static corpus and adapter validation. Use when debugging coverage targets.
 - [Accessibility Testing](./nx-targets/mandatory-targets-accessibility-testing.md) — Static a11y lint plus axe-core E2E. Use when adding a11y coverage.

@@ -25,7 +25,7 @@ created: 2025-12-04
 | ----- | ------ | -------- | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
 | 🟦    | Blue   | #0173B2  | **Writers/Creators** - Agents that create or write new content      | docs-maker, docs-tutorial-maker, agent-maker, plan-maker                            |
 | 🟩    | Green  | #029E73  | **Checkers/Validators** - Agents that validate or check consistency | docs-checker, docs-link-checker, docs-tutorial-checker, plan-checker, rules-checker |
-| 🟨    | Yellow | #F1C40F  | **Fixers** - Agents that apply validated fixes to existing content  | docs-file-manager, rules-fixer                                                      |
+| 🟨    | Yellow | #F1C40F  | **Fixers** - Agents that apply validated fixes to existing content  | docs-file-manager, repo-workflow-fixer                                              |
 | 🟪    | Purple | #CC78BC  | **Implementors/Executors** - Agents that execute or implement plans | plan-execution-checker, deployers                                                   |
 
 ## Implementation in Agent Index Files

@@ -20,7 +20,7 @@ The Repo-Grounding Rule above governs **presence** claims ("this file exists"). 
 claims — **absence** ("no file does X") and **completeness** ("this doc lists every Y") — fail in a
 different and more dangerous way: the verification command returns a clean-looking result while
 having verified nothing at all. These rules bind every agent that asserts absence or completeness —
-`plan-maker`, `plan-checker`, `plan-execution-checker`, `plan-fixer`, and any checker or fixer agent
+`plan-maker`, `plan-checker`, `plan-execution-checker`, and any checker or fixer agent
 reporting "zero occurrences found" or "the list is complete".
 
 ## A zero-result search is evidence only if the command could have produced a non-zero result

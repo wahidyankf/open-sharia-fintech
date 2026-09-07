@@ -37,4 +37,4 @@ Continues [Executor Tagging — Git-Mechanical Steps](./executor-tagging-git-mec
 
 **Execution semantics**: when the [plan-execution workflow](../../../workflows/plan/plan-execution.md) reaches a `[HUMAN]` item, it STOPS, surfaces the item to the user with the instruction and the acceptance criterion, and waits for the human to confirm completion before continuing. A `[HUMAN]` step is a legitimate, expected stop — it overrides the "never stop between phases" execution default.
 
-**Enforcement**: `plan-checker` flags as **HIGH** any delivery checkbox describing an action no agent can perform (physical or out-of-band) that is tagged `[AI]` or left unmarked, and flags a missing top-of-file legend as **MEDIUM**. `plan-fixer` adds the legend and corrects mis-tags.
+**Enforcement**: `plan-checker` admits to the ledger any delivery checkbox describing an action no agent can perform (physical or out-of-band) that is tagged `[AI]` or left unmarked, and admits a missing top-of-file legend. The `plan-quality-gate` repair pass adds the legend and corrects mis-tags.

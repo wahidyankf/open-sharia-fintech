@@ -20,7 +20,7 @@ when_to_use: "Use to check whether this applies to an agent."
 
 - All content authored into `plans/` by `plan-maker` (or a human invoking the planning skill).
 - All validation performed by `plan-checker` and `plan-execution-checker`.
-- All remediation performed by `plan-fixer`.
+- All remediation performed by the `plan-quality-gate` repair pass.
 - Every step of the `plan-quality-gate` and `plan-execution` workflows.
 - The pre-execution gate that refuses to start when claims are unverifiable.
 - **Absence and completeness claims made by any validating agent** — the

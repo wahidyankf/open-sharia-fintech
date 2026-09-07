@@ -8,18 +8,20 @@ when_to_use: "Use when checking the plan-quality-gate args/output for this workf
 
 ## Phase 5 — Plan Quality Gate (Nested Workflow)
 
-**Workflow**: `plan/plan-quality-gate`
+**Workflow**: `plan/plan-quality-gate` — this phase is one of that gate's three named
+pre-authorizations.
 
-- **Args**: `scope: {plan-path}, mode: {input.mode}`
-- **Output**: `{final-status}`
+- **Args**: `plan-path: {plan-path}, checkpoint: pre-execution`
+- **Output**: `{verdict}`, `{ledger}`
 
-Iterates `plan-checker` → `plan-fixer` to double-zero at the requested mode, confirming the plan's
-requirements completeness, technical clarity, and delivery-checklist executability (including the
-TDD shape and specs-coverage steps).
+The gate runs a delegated read-only `plan-checker` sweep, freezes a ledger, and repairs it inside at
+most two cycles, confirming the plan's requirements completeness, technical clarity, and
+delivery-checklist executability (including the TDD shape and specs-coverage steps). It takes no
+mode.
 
-**Success criteria**: `plan-quality-gate` returns `pass`.
-**On failure**: If it returns `partial` after max-iterations, surface the residual findings to the
-user before pushing.
+**Success criteria**: the gate returns `PASS`.
+**On any `BLOCKED_*` verdict**: surface the returned ledger's residual rows to the user before
+pushing. Do not re-run the gate in a loop.
 
 ## Phase 6 — Push & Hand-back (Sequential)
 

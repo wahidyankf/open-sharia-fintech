@@ -21,12 +21,6 @@ inputs:
     description: "Planning-phase delivery mode. Public OSE parity planning uses worktree-to-pr; each gated plan-document PR must pass exact-head gates and merge under default [AI] authority before execution."
     required: false
     default: worktree-to-pr
-  - name: gate-mode
-    type: enum
-    values: [lax, normal, strict, ocd]
-    description: "Mode passed through to plan-quality-gate for each plan"
-    required: false
-    default: strict
   - name: max-iterations
     type: number
     description: Maximum execute-check cycles per plan during the execution phase (passed to plan-execution)
@@ -48,7 +42,7 @@ outputs:
     description: One plan folder path per target repo (archived to plans/done/ on success)
   - name: gate-results
     type: string
-    description: "plan-quality-gate final status per plan (pass/partial/fail)"
+    description: "plan-quality-gate verdict per plan (PASS/BLOCKED_*)"
   - name: execution-results
     type: string
     description: "plan-execution final status per repo (pass/partial/fail) with iterations-completed"

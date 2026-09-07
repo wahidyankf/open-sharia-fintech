@@ -25,7 +25,7 @@ They update, in the same commit or PR:
 1. `specs/apps/organiclever/be/contracts/` -- add path and response schema
 2. `specs/apps/organiclever/be/behaviours/products/get-product.feature` -- add scenarios
 3. Unit tests -- test service function with mocked repository
-4. Integration tests -- test persistence with a real isolated embedded database file and no network
+4. Integration tests -- test persistence with a real isolated embedded database file, no external network
 5. E2E tests -- test the full public HTTP flow with synthetic isolated data
 6. `specs/apps/organiclever/be/architecture.md` -- update the component view if new component
 

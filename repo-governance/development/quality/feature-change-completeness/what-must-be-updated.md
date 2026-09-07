@@ -52,7 +52,7 @@ so stale specs invalidate test and static-validation caches.
 - **Unit tests**: Every active scenario requires substantive in-process Unit proof. Unit has no
   exemption, and runtime line coverage must meet the repository's 99% floor.
 - **Integration tests**: Local deterministic resource boundaries such as filesystems, databases,
-  queues, and subprocesses require Integration proof without network, including loopback.
+  queues, and subprocesses require Integration proof with no external network reach.
 - **E2E tests**: Public browser, HTTP, API, or executable-process boundaries require E2E proof with
   isolated synthetic data and no production identity or production data.
 - **Accessibility tests**: UI changes require accessibility verification (static analysis via oxlint jsx-a11y plugin, manual WCAG AA checks).

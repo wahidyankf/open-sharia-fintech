@@ -28,7 +28,7 @@ when_to_use: "Use when deciding whether a finding is HIGH_CONFIDENCE."
 
 **Examples Across Domains:**
 
-**rules-fixer:**
+**repo-workflow-fixer:**
 
 - Missing `subcategory` field verified by re-reading frontmatter
 - Broken internal link verified by checking file doesn't exist at target path
@@ -71,7 +71,7 @@ when_to_use: "Use when deciding whether a finding is HIGH_CONFIDENCE."
 - LaTeX delimiter error verified by pattern match (single `$` on own line for display math)
 - Diagram color accessibility violation verified against accessible palette
 
-**plan-fixer:**
+**docs-fixer:**
 
 - Missing required section verified by heading search (Introduction, Requirements, Technical Documentation)
 - Broken internal link to codebase file verified by file existence check

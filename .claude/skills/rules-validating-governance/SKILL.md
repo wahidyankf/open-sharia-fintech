@@ -43,5 +43,5 @@ consolidation**: when uncertain whether Skills should merge, recommend KEEP SEPA
 **Conventions**: all conventions in `repo-governance/conventions/`, all practices in
 `repo-governance/development/`, [AI Agents Convention](../../../repo-governance/development/agents/ai-agents.md).
 
-**Agents**: `rules-checker` (implements this methodology), `rules-fixer`,
+**Agents**: `rules-checker` (implements this methodology),
 `rules-maker`.

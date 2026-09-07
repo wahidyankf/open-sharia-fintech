@@ -19,7 +19,7 @@ when_to_use: "Use when checking whether a fixer is in scope."
 
 All fixer agents implement this confidence level system:
 
-- **rules-fixer** - Repository-wide structural consistency fixes
+- **repo-workflow-fixer** - Repository workflow structural consistency fixes
 - **apps-ayokoding-www-general-fixer** - ayokoding-www general content fixes
 - **apps-ayokoding-www-by-example-fixer** - ayokoding-www by-example tutorial fixes
 - **apps-ayokoding-www-facts-fixer** - ayokoding-www factual accuracy fixes
@@ -29,7 +29,7 @@ All fixer agents implement this confidence level system:
 - **apps-ose-www-content-fixer** - ose-www Next.js content fixes
 - **readme-fixer** - README quality fixes
 - **docs-fixer** - Documentation factual accuracy fixes
-- **plan-fixer** - Plan structural and format fixes
+- **docs-fixer** - Documentation factual-accuracy fixes
 - **docs-software-engineering-separation-fixer** - Software engineering documentation separation fixes
 - **repo-workflow-fixer** - Repository workflow structural consistency fixes
 

@@ -15,7 +15,7 @@ Use these workflows when a change creates, updates, supersedes, or validates rep
 ## Purpose
 
 These workflows define **WHEN and HOW to place and validate repository rules**, orchestrating
-`rules-maker`, `rules-checker`, and `rules-fixer` without replacing their atomic
+`rules-maker` and `rules-checker` without replacing their atomic
 responsibilities.
 
 ## Scope
@@ -36,9 +36,9 @@ responsibilities.
 
 ## Workflows
 
-- [rules-quality-gate](./rules-quality-gate.md) — Bounded checker–fixer iterations: check,
-  apply validated fixes while in-scope findings remain, and revalidate until two consecutive checker
-  passes are clean or the iteration ceiling stops the run. Use after changing rules or agent sources.
+- [rules-quality-gate](./rules-quality-gate.md) — Read-only governance gate producing one semantic
+  verdict on a proposed or effective rule state, in `PROPOSAL` or `EFFECTIVE` mode. It never writes:
+  every finding hands off to rules-propagation, the sole writer. Use only when explicitly named.
 - [rules-propagation](./rules-propagation.md) — Places newly-stated rules on the correct surface — instruction surface first, governance layers below — de-conflicting, deduplicating, and arming enforcement. Use when a decided rule must be written into the repository, or an existing rule superseded.
 
 ## Related Documentation

@@ -113,7 +113,7 @@ Positive Skip List, escalation after repeated disagreements, and the 3-5 iterati
 [Test-Driven Development Convention](../../repo-governance/development/workflow/test-driven-development.md).
 
 **Related Agents/Workflows**: `plan-maker` (creates plans); [plan-execution workflow](../../repo-governance/workflows/plan/plan-execution.md);
-`plan-execution-checker` (validates completed work); `plan-fixer` (fixes plan issues).
+`plan-execution-checker` (validates completed work); repair belongs to `plan-quality-gate`, never here.
 
 - Follow [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md).
 

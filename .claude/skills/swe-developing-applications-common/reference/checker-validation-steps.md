@@ -43,7 +43,7 @@ Reference: `docs/explanation/software-engineering/programming-languages/typescri
 
 - **Vitest coverage**: `vitest.config.ts` configures thresholds, v8 provider preferred — HIGH.
 - **Test structure**: Unit remains in-process with all boundaries replaced; Integration exercises
-  deterministic local resources/processes without any network, including loopback — MEDIUM.
+  deterministic local resources/processes with no external network reach — MEDIUM.
 - **ESLint**: lint target present, no per-project overrides that weaken rules — MEDIUM.
 
 ## Step 5: Rust-Specific Standards

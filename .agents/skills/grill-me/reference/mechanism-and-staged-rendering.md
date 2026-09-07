@@ -6,7 +6,7 @@ Grilling in an interactive root thread MUST use the harness's native interactive
 multiple-choice tool when available, not free-text prose questions. It renders options as
 selectable choices and returns a structured answer, eliminating parse ambiguity. The root
 orchestrator owns every grill and passes resolved answers to a delegated `plan-maker` or
-`plan-fixer`; it MUST NOT delegate the user interaction itself.
+`plan-checker`; it MUST NOT delegate the user interaction itself.
 
 Use the harness-specific invocation contract in
 [Platform Binding Examples](#platform-binding-examples). In all bindings, put the Recommended

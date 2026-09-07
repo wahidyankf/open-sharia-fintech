@@ -32,5 +32,5 @@ not in `README.md`, `brd.md`, `tech-docs.md`, or any separate file:
 **Enforcement**: a UI-bearing plan whose `prd.md` does NOT contain the complete funnel record
 (all four stages, embedded mockup links, at minimum both the mobile and desktop low-fi wireframes
 where they differ) fails the plan quality gate. `plan-checker` Step 5k flags each missing or
-misplaced element as **HIGH**. `plan-fixer` scaffolds missing funnel sections directly into
+misplaced element as a ledger row. The gate's repair pass scaffolds missing funnel sections directly into
 `prd.md`.

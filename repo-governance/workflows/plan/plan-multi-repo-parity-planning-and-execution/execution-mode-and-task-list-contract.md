@@ -11,7 +11,7 @@ orchestrator for the whole composite. This is mandatory, not preferred: plan-exe
 calling-context orchestration so the live Task list stays visible to the user in real time.
 Within the planning phase, the orchestrator delegates exactly as
 plan-multi-repo-parity-planning specifies (`plan-maker`, `web-researcher`, `plan-checker`,
-`plan-fixer` via the Agent tool). Within the execution phase, it delegates per-item work to
+`plan-checker` via the Agent tool). Within the execution phase, it delegates per-item work to
 specialized agents exactly as plan-execution specifies, and invokes `plan-execution-checker` for
 independent validation.
 

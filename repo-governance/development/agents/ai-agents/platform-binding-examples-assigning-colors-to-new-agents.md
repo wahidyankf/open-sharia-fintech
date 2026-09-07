@@ -37,7 +37,7 @@ Start: What is the agent's primary capability?
     ├─ Modifies/updates existing content only
     │   └─> color: yellow (Fixer)
     │       - Has `Edit` but NOT `Write`
-    │       - Examples: docs-file-manager, readme-fixer, rules-fixer
+    │       - Examples: docs-file-manager, readme-fixer, repo-workflow-fixer
     │
     └─ Executes plans/orchestrates tasks
         └─> color: purple (Implementor)
@@ -64,7 +64,7 @@ Start: What is the agent's primary capability?
   - Yellow (Fixers) should have Edit but NOT Write
   - If Write is needed for creating new convention files → keep yellow, document exception
   - If Write can be removed → remove Write to match yellow categorization
-  - Example: readme-fixer, rules-fixer (fixer agents that generate audit reports, keep Write for report writing)
+  - Example: readme-fixer, repo-workflow-fixer (fixer agents that generate audit reports, keep Write for report writing)
 - **Agent doesn't fit any category**: Consider if it should be split or if a new category is needed
 - **Unsure**: Default to the most restrictive category based on tools, or omit the color field
 

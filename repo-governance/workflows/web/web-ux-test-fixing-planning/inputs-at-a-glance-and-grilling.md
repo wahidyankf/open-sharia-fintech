@@ -8,17 +8,16 @@ when_to_use: "Use when checking a specific input's default/requirement, or when 
 
 ## Inputs at a glance
 
-| Input              | Required | Default               | Notes                                      |
-| ------------------ | -------- | --------------------- | ------------------------------------------ |
-| `target-urls`      | yes      | —                     | Same set handed to all three testers       |
-| `testing-goal`     | yes      | —                     | Shared charter, interpreted per lens       |
-| `plan-mode`        | no       | `new`                 | `new` creates a plan; `merge` updates one  |
-| `plan-identifier`  | no       | derived from target   | New-plan slug (no date prefix)             |
-| `target-plan-path` | no       | —                     | Required when `plan-mode=merge`            |
-| `breakpoints`      | no       | testers' standard set | Responsive viewports                       |
-| `locales`          | no       | ALL supported locales | Locale path segments (never default-only)  |
-| `mode`             | no       | `strict`              | Threshold for the nested plan-quality-gate |
-| `push-target`      | no       | `origin main`         | Git destination for the finished plan      |
+| Input              | Required | Default               | Notes                                     |
+| ------------------ | -------- | --------------------- | ----------------------------------------- |
+| `target-urls`      | yes      | —                     | Same set handed to all three testers      |
+| `testing-goal`     | yes      | —                     | Shared charter, interpreted per lens      |
+| `plan-mode`        | no       | `new`                 | `new` creates a plan; `merge` updates one |
+| `plan-identifier`  | no       | derived from target   | New-plan slug (no date prefix)            |
+| `target-plan-path` | no       | —                     | Required when `plan-mode=merge`           |
+| `breakpoints`      | no       | testers' standard set | Responsive viewports                      |
+| `locales`          | no       | ALL supported locales | Locale path segments (never default-only) |
+| `push-target`      | no       | `origin main`         | Git destination for the finished plan     |
 
 ## Grilling (Human Checkpoints)
 

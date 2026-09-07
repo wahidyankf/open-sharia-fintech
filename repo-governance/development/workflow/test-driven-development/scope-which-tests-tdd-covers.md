@@ -22,7 +22,7 @@ higher-layer adapter's failing test before its production implementation lands.
 | Test level                       | What it covers                                                       | Tooling examples                                                         |
 | -------------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | **Unit**                         | A single function, class, or module in isolation; deps mocked        | Vitest, Go `testing` + Godog, JUnit, ExUnit, xUnit, Pytest, Hspec        |
-| **Integration**                  | Real isolated local resources/processes with no network              | Temporary files, local database, child processes, standard streams       |
+| **Integration**                  | Real isolated local resources/processes, no external network         | Temporary files, local database, child processes, standard streams       |
 | **E2E (UI + API)**               | Real HTTP, real browser, end-to-end flow across services             | Playwright (UI), Playwright API tests (HTTP), Pact-style contract checks |
 | **Contract**                     | API contracts (OpenAPI, Pact) — request/response shape and semantics | OpenAPI spec lint, codegen drift checks, contract round-trip tests       |
 | **Property / fuzz**              | Invariants over generated inputs, not handwritten cases              | fast-check (TS), gopter (Go), QuickCheck-family in F#/Elixir/Rust        |

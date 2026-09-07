@@ -13,7 +13,7 @@ full two-step toolchain sequence (guarded `npm install` + transactional
 [Worktree Toolchain Initialization](../../../development/workflow/worktree-setup.md)
 practice.
 
-**Gate-before-delivery**: No plan is pushed until it reaches `pass` on plan-quality-gate. An
+**Gate-before-delivery**: No plan is pushed until plan-quality-gate returns `PASS`. An
 un-gated plan is a blocked delivery, not an exception.
 
 **No implementation**: This workflow is type `planning`. It produces plans, not code, not

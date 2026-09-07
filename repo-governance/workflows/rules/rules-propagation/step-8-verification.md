@@ -28,14 +28,19 @@ Where a gate was already failing before the run, establish that baseline explici
 run's paths are absent from the failure set. A pre-existing failure is not this run's to fix, but
 "pre-existing" is a claim that has to be demonstrated.
 
-## 3. Composed Quality Gate
+## 3. Semantic Closure
 
-Run [rules-quality-gate](../rules-quality-gate.md) at the run's `mode`. This is where
-repository-wide duplication, contradiction, and traceability findings surface — the ones Step 6's
-subject-scoped sweep deliberately did not look for.
+Read the repaired surfaces once for semantic closure. Resolve only repair-caused conflicts, using
+layer-aware precedence and the
+[Minimal Sufficiency Test](../../../principles/general/simplicity-over-complexity/minimal-sufficiency-test.md).
+Never broaden the ledger, reopen a settled preference, or seek perfection. Every semantic row must
+now be closed, or have returned its specific blocker from Step 3 or Step 4.
 
-Findings attributable to this run's edits are fixed here and re-verified. Findings that predate the
-run are reported, not absorbed.
+This step never invokes [rules-quality-gate](../rules-quality-gate.md). That gate hands work _to_
+propagation and propagation never calls back: the two form an acyclic pair, and a gate that ran
+inside its own sole writer would make its verdict circular. Where a repository-wide duplication,
+contradiction, or traceability concern is suspected beyond this run's subject, invoke `rules-checker`
+directly and treat anything it finds as new propagation input, not as this run's blocker.
 
 ## 4. Reconcile the Ledger
 

@@ -28,7 +28,7 @@ User prompt: "Plan a governance update for Y."
 ```
 
 No `## Delivery Mode` field justifies skipping the `worktree-to-pr` default. `plan-checker` must flag
-this. `plan-fixer` must either add a justified `## Delivery Mode` override or correct the checklist to
+this. The gate's repair pass must either add a justified `## Delivery Mode` override or correct the checklist to
 the default PR-branch flow.
 
 ## FAIL: Incorrect plan-maker behaviour — `[HUMAN]` tag on a git-mechanical step
@@ -47,7 +47,7 @@ All three are plain git-mechanical steps an agent performs directly. Under `work
 step — including the final PR merge — is `[AI]` by default; a `[HUMAN]` merge gate applies only
 where a plan's own step says so explicitly. These are mis-tags per
 [Plans Organization Convention §Executor Tagging](../../../conventions/structure/plans/executor-tagging-tags-and-bias.md#executor-tagging--ai-vs-human-hard-rule).
-`plan-checker` flags them; `plan-fixer` retags them `[AI]`.
+`plan-checker` admits them to the ledger; the gate's repair pass retags them `[AI]`.
 
 ## PASS: Correct plan-maker behaviour — git-mechanical steps and the merge both tagged `[AI]`
 

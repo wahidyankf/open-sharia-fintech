@@ -21,12 +21,12 @@ Feature: Governance of the word-budget rule
     Then it reports qualitative bloat concerns across the whole instruction-file class
     And it annotates that the word ceiling is enforced by the deterministic "governance-word-budget" gate
 
-  # Exemption(e2e): workflow delegation is repository governance content with no public Rhino process route; alternative-proof: rhino-cli:test:integration / The quality-gate workflow delegates the validator by exact gate ID
+  # Exemption(e2e): workflow delegation is repository governance content with no public Rhino process route; alternative-proof: rhino-cli:test:integration / The quality gate leaves the word-budget validator to deterministic tooling
   @e2e-exempt
-  Scenario: The quality-gate workflow delegates the validator by exact gate ID
+  Scenario: The quality gate leaves the word-budget validator to deterministic tooling
     Given the plan is complete
     When I read "repo-governance/workflows/rules/rules-quality-gate.md"
-    Then "governance-word-budget" is skipped locally and delegated from Step 0.5
+    Then "governance-word-budget" is skipped locally and delegated by exact gate ID
 
   Scenario: The preflight envelope carries the governance-word-budget category
     Given a repo with instruction files within the configured budgets

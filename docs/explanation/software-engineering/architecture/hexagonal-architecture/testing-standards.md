@@ -27,7 +27,7 @@ created: 2026-05-17
 
 OSE Platform standards for testing hexagonal architecture implementations. The hexagonal structure
 supports Unit proof for pure/application behaviour, Integration proof for real isolated local
-resources without network transport, and E2E proof through a public boundary. Each tier maps to a
+resources without external network reach, and E2E proof through a public boundary. Each tier maps to a
 specific Nx target.
 
 ## Standard 1: Nx Target to Test Tier Mapping
@@ -39,7 +39,7 @@ specific Nx target.
 | Domain Unit tests      | `test:unit`        | None                                  | Yes       | Injected in-process fakes      |
 | Application Unit tests | `test:unit`        | None                                  | Yes       | Injected in-process fakes      |
 | Port contract Unit     | `test:unit`        | None                                  | Yes       | Injected in-process fakes      |
-| Adapter Integration    | `test:integration` | Isolated local resource; no network   | No        | Real non-network adapters      |
+| Adapter Integration    | `test:integration` | Isolated local resource; no external  | No        | Real owned local adapters      |
 | End-to-end             | `test:e2e`         | Public browser, HTTP, or process path | No        | Full production boundary stack |
 
 **See**: [Nx Target Standards](../../../../../repo-governance/development/infra/nx-targets.md) for caching rules and the three-level testing standard.
@@ -132,7 +132,7 @@ class InMemoryPurchaseOrderRepositoryAdapterTest
   }
 }
 
-// Real filesystem implementation — runs in test:integration (no network)
+// Real filesystem implementation — runs in test:integration (no external network)
 class FilePurchaseOrderRepositoryAdapterTest
     extends PurchaseOrderRepositoryPortContract {
 
@@ -174,7 +174,7 @@ let ``InMemory satisfies repository port contract`` () =
   let adapter = InMemoryPurchaseOrderRepository.makePort ()
   PurchaseOrderRepositoryPortContract.run adapter
 
-// Real filesystem run — test:integration, isolated temporary directory, no network
+// Real filesystem run — test:integration, isolated temporary directory, no external network
 [<Fact>]
 let ``File repository satisfies repository port contract`` () =
   use fixture = TemporaryDirectory.create ()
@@ -218,7 +218,7 @@ class CreatePurchaseOrderServiceTest {
 **REQUIRED**: `test:integration` tests MUST use an isolated real local-resource boundary wired
 through the production adapter, such as a temporary filesystem, embedded database accessed without
 network transport, process environment, or child-process standard streams. They MUST NOT use
-in-memory substitutes for the boundary under proof and MUST NOT use HTTP, TCP, UDP, loopback,
+in-memory substitutes for the boundary under proof and MUST NOT reach an external network,
 `localhost`, `127.0.0.1`, or a local server.
 
 **REQUIRED**: `test:integration` targets MUST NOT be cacheable. Add `"cache": false` in `project.json` for these targets.
@@ -230,7 +230,7 @@ in-memory substitutes for the boundary under proof and MUST NOT use HTTP, TCP, U
 - Cross-adapter interaction through the same isolated local resource
 
 **Out of scope for `test:integration`**: business logic and domain invariants (Unit); PostgreSQL,
-Kafka, NATS, HTTP, and any other network path (E2E through a public boundary).
+Kafka, NATS, HTTP, and any other external network path (E2E through a public boundary).
 
 ## Standard 6: E2E Test Scope
 

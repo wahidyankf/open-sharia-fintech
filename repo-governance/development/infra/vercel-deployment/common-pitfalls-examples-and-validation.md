@@ -114,4 +114,4 @@ The `rules-checker` agent validates that:
 **Agents:**
 
 - `rules-checker` - Validates `vercel.json` build command alignment
-- `rules-fixer` - Corrects misaligned `buildCommand` entries
+- `repo-workflow-fixer` - Corrects misaligned `buildCommand` entries

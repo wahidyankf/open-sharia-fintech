@@ -34,4 +34,4 @@ when_to_use: Use when looking for further reading on model selection.
 
 - `agent-maker` -- Creates agents following these model selection standards
 - `rules-checker` -- Validates model selection compliance
-- `rules-fixer` -- Fixes model selection issues
+- `repo-workflow-fixer` -- Fixes model selection issues

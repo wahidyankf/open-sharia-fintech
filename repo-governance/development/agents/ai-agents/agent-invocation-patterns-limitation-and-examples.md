@@ -47,7 +47,7 @@ when_to_use: Use when an agent needs conversation continuity and you must judge 
 **FAIL: Wrong - Using Task Tool for Fixer**:
 
 ```
-Task(plan-fixer, "apply fixes from audit report")
+Task(docs-fixer, "apply fixes from audit report")
 → Fixes applied in isolated context
 → Real plan files unchanged
 → git status shows nothing
@@ -57,7 +57,7 @@ Task(plan-fixer, "apply fixes from audit report")
 
 ```
 User: "Apply plan fixes in manual mode"
-→ Execute plan-fixer logic directly
+→ Execute docs-fixer logic directly
 → Edit tool modifies real plan files
 → Write tool creates real fix report
 → git status shows modified files

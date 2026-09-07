@@ -18,7 +18,7 @@ when_to_use: "Use as a checklist for AP-1 - AP-4."
 
 ## Anti-Pattern Catalog
 
-Each pattern below is a known hallucination shape. `plan-checker` flags occurrences as HIGH; `plan-fixer` rewrites mechanically.
+Each pattern below is a known hallucination shape. `plan-checker` admits occurrences to the ledger; the gate's repair pass rewrites them mechanically.
 
 ### AP-1: Citing a version without grep
 

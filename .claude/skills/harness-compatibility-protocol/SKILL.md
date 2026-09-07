@@ -49,4 +49,4 @@ detects; the fixer remediates what's safely mechanical and flags the rest for hu
 ## Related Agents
 
 `harness-compatibility-checker`, `harness-compatibility-fixer`, `web-researcher`
-(delegated Phase 1 research), `rules-checker`/`rules-fixer` (different scope).
+(delegated Phase 1 research), `rules-checker` and `rules-propagation` (different scope).

@@ -104,7 +104,7 @@ rule domains, checked against the post-execution repo state instead of the autho
 
 - `plan-maker` - Creates plans
 - `plan-checker` - Validates plans (authoring-time sibling)
-- `plan-fixer` - Fixes plan issues
+- `plan-quality-gate` - Repairs plan issues in its own bounded cycles
 - [plan-execution workflow](../../repo-governance/workflows/plan/plan-execution.md) - Execute plans
   (calling context orchestrates; no dedicated subagent)
 

@@ -17,7 +17,7 @@ when_to_use: Use for a quick-reference summary of plan execution's operating cha
 
 **Key Differences from plan-quality-gate**:
 
-1. **Execution-focused**: Orchestrated directly by the calling context (which delegates per-item work to specialized agents) instead of by `plan-fixer` (which edits plan documents)
+1. **Execution-focused**: Orchestrated directly by the calling context (which delegates per-item work to specialized agents) instead of by `plan-quality-gate` (which edits plan documents)
 2. **End-to-end**: Covers full plan lifecycle from execution through validation to archival
 3. **Progressive delivery**: Continuously ticks delivery checklist items and updates task status throughout execution
 4. **Archival automation**: Moves completed plans to plans/done/ automatically

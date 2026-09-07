@@ -37,7 +37,7 @@ outcome, then check the corresponding element is present. **Exempt the final PR-
 and (c) — a governance gate whose acceptance criterion is the PR Merge Protocol's five preconditions,
 not a scripted command; this exemption does not extend to (a), nor to phase-gate/verification
 checkboxes merely mentioning merging. Treat each missing element as a separate **HIGH** finding (one
-per element per checkbox — plan-fixer batch-resolves).
+per element per checkbox — the gate's repair pass batch-resolves).
 
 **Finding severity**: bare action verbs without path/command/criterion outside a valid controlled
 runbook-reference exception: **HIGH** per checkbox. Path

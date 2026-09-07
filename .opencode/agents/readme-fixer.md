@@ -62,7 +62,7 @@ required output, and convergence safeguards.
 [README Quality Convention](../../repo-governance/conventions/writing/readme-quality.md),
 [Repository Validation Methodology](../../repo-governance/development/quality/repository-validation.md).
 Related: `readme-checker` (generates the audit reports this agent processes), `readme-maker`,
-`rules-fixer` (similar fixer pattern).
+`repo-workflow-fixer` (similar fixer pattern).
 
 - [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) -
   Keep a ledger of every path you touch, carry it through every compaction, leave anything not on

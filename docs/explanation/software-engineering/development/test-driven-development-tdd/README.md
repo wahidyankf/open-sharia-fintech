@@ -105,7 +105,7 @@ TDD standards in OSE Platform align with core software engineering principles:
 **[Three-Tier Testing Model](./three-tier-testing.md) — Authoritative OSE Platform definition of unit, integration, and E2E test tiers**
 
 - REQUIRED: Unit tests remain in-process and use no real filesystem, environment, process, network, clock, or random boundary
-- REQUIRED: Integration tests may use deterministic local resources and processes but no network, including loopback
+- REQUIRED: Integration tests may use deterministic local resources, processes, and an allowlisted loopback socket the test owns, but no external network
 - REQUIRED: E2E tests exercise a public browser, HTTP/API, or process boundary with isolated synthetic data
 - REQUIRED: Separate unit, integration, and E2E tests by directory
 
@@ -115,9 +115,9 @@ TDD standards in OSE Platform align with core software engineering principles:
 
 - REQUIRED: Use isolated local fixtures, embedded databases accessed without network transport,
   filesystems, process environment, or subprocess streams only when the exercised boundary requires them
-- REQUIRED: Replace outbound network dependencies with in-process fakes; loopback HTTP still belongs to E2E
+- REQUIRED: Replace outbound network dependencies with in-process fakes; a loopback server the test did not start belongs to E2E
 - REQUIRED: Separate unit tests from integration tests
-- PROHIBITED: Networked databases, HTTP/TCP/UDP, loopback, local servers, or any other network path in Integration tests
+- PROHIBITED: Networked databases, external HTTP/TCP/UDP, or an unallowlisted loopback socket in Integration tests
 
 ### 6. TDD with Domain-Driven Design
 
@@ -223,7 +223,7 @@ apps/
     src/
       test/
         unit/          # Fast unit tests
-        integration/   # Real isolated local resources; zero network
+        integration/   # Real isolated local resources; no external network
         e2e/           # Public browser, HTTP/API, or process flows
 ```
 
@@ -258,7 +258,7 @@ Before merging code, verify:
 - [ ] **Value objects immutable**: Tests verify immutability
 - [ ] **Domain events emitted**: Tests verify event emission on domain actions
 - [ ] **99% Unit line coverage minimum**: `test:unit` owns and enforces the native runtime threshold
-- [ ] **Integration boundary is real and non-networked**: Isolated local resources only; no HTTP/TCP/UDP/loopback/local server
+- [ ] **Integration boundary is real and owned**: Isolated local resources, plus loopback only when allowlisted; no external network
 - [ ] **E2E enters through a public boundary**: Browser, HTTP/API, or process path with isolated synthetic data; no uncontrolled external service
 - [ ] **No flaky tests**: All tests pass consistently
 

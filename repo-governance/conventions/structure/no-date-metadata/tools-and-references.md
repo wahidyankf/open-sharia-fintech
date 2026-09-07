@@ -20,7 +20,7 @@ Enforcement agents and related documents for the
 ## Tools and Automation
 
 - **`rules-checker`** — validates that non-website markdown files do not contain `updated:` frontmatter, `**Last Updated**` footer blocks, or inline body date annotations
-- **`rules-fixer`** — removes these fields from non-website files when found
+- **`rules-propagation`** — removes these fields from non-website files when found
 
 ## References
 
@@ -36,4 +36,4 @@ Enforcement agents and related documents for the
 **Agents:**
 
 - `rules-checker` — enforces this convention during governance audits
-- `rules-fixer` — removes disallowed fields from non-website files
+- `rules-propagation` — removes disallowed fields from non-website files

@@ -27,7 +27,7 @@ when_to_use: "Use when deciding whether a finding is a false positive."
 
 **Examples Across Domains:**
 
-**rules-fixer:**
+**repo-workflow-fixer:**
 
 - Checker flagged markdown headings as YAML comments (searched entire file instead of just frontmatter)
 - Checker reported missing field that actually exists (case sensitivity issue)
@@ -66,7 +66,7 @@ when_to_use: "Use when deciding whether a finding is a false positive."
 - Checker misinterpreted accessible diagram colors as inaccessible
 - Checker reported contradiction but statements apply to different contexts
 
-**plan-fixer:**
+**docs-fixer:**
 
 - Checker reported missing section that actually exists (different heading variation)
 - Checker flagged technology as "deprecated" but it's still maintained (outdated info)

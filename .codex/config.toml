@@ -208,10 +208,6 @@ config_file = "agents/plan-checker.toml"
 description = "Validates completed plan implementation by verifying all requirements met, code quality standards followed, and acceptance criteria satisfied. Final quality gate before marking plan complete."
 config_file = "agents/plan-execution-checker.toml"
 
-[agents.plan-fixer]
-description = "Applies validated fixes from plan-checker audit reports. Re-validates plan findings before applying changes. Use after reviewing plan-checker output."
-config_file = "agents/plan-fixer.toml"
-
 [agents.plan-maker]
 description = "Creates project plans with requirements, technical documentation, and delivery checklists. Returns unresolved pre-write and post-write decisions to the calling root orchestrator for grilling, then resumes with resolved answers. Structures plans for systematic execution via the plan-execution workflow (orchestrated by the calling context)."
 config_file = "agents/plan-maker.toml"
@@ -295,10 +291,6 @@ config_file = "agents/repo-workflow-maker.toml"
 [agents.rules-checker]
 description = "Validates repository-wide consistency including file naming, linking, emoji usage, convention compliance, agent-to-agent duplication, agent-Skill duplication, Skill-to-Skill consolidation opportunities, and rules governance (contradictions, inaccuracies, inconsistencies). Outputs to local-tmp/repo-rules/ with progressive streaming."
 config_file = "agents/rules-checker.toml"
-
-[agents.rules-fixer]
-description = "Applies validated fixes from repository rules audit reports including agent-Skill duplication removal, Skills coverage gap remediation, rules governance fixes (contradictions, inaccuracies, inconsistencies), licensing convention fixes, and software-documentation fixes."
-config_file = "agents/rules-fixer.toml"
 
 [agents.rules-maker]
 description = "Creates repository rules and conventions in repo-governance/ directories. Documents standards, patterns, and quality requirements."

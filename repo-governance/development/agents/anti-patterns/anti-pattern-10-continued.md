@@ -15,7 +15,7 @@ when_to_use: Use when writing up a finding about a denylist guard that fails ope
 # Anti-Pattern 10: Enumeration-Based Guards (Continued)
 
 ```markdown
-# plan-fixer
+# plan-checker
 
 ## Invariant (read before any recipe below)
 

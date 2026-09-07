@@ -86,7 +86,7 @@ type HarnessWordBudgetRuleSteps() =
         Assert.Equal("passed", checks.[1].Status)
 
     [<Then>]
-    member _.``"governance-word-budget" is skipped locally and delegated from Step 0\.5``() =
+    member _.``"governance-word-budget" is skipped locally and delegated by exact gate ID``() =
         Assert.Equal("passed", checks.[2].Status)
 
     [<Then>]
@@ -127,7 +127,7 @@ let ``quality gate delegates exact word-budget ID`` () =
     let s = HarnessWordBudgetRuleSteps()
     s.``the plan is complete`` ()
     s.``I read "repo-governance/workflows/rules/rules-quality-gate\.md"`` ()
-    s.``"governance-word-budget" is skipped locally and delegated from Step 0\.5`` ()
+    s.``"governance-word-budget" is skipped locally and delegated by exact gate ID`` ()
 
 [<Fact>]
 let ``preflight envelope contains word-budget category`` () =

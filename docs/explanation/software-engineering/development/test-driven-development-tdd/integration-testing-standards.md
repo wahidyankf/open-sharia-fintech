@@ -20,13 +20,14 @@ Complete the AyoKoding TDD learning path, then read the canonical
 
 Integration tests exercise production code against at least one real resource that the project
 owns locally: a temporary filesystem, local database, environment state, child process, or standard
-stream. They must not use any network path, including HTTP, TCP, UDP, loopback, `localhost`,
-`127.0.0.1`, or a local test server.
+stream. They may also bind a loopback socket the test starts and stops itself, when the project is
+allowlisted in `repo-config.yml`. They must not reach an external network or a service the test did
+not start.
 
 An injected in-memory repository, MSW handler, WireMock endpoint, or other test double is Unit proof,
-not Integration proof. HTTP dispatch is E2E because it crosses a network/public boundary. A real
-isolated local database connection without network transport is Integration; a container reached
-over TCP is E2E.
+not Integration proof. A real isolated local database connection is Integration, and so is a server
+the test itself starts on a controlled loopback port; a container or long-running service the test
+did not start is E2E, because the test observes a public boundary it does not own.
 
 ## Isolation
 
@@ -49,7 +50,7 @@ Scheduled/manual full-quality CI runs the complete Integration suite before comp
 
 ## Review Checklist
 
-- [ ] The test uses a real owned local resource and no network path.
+- [ ] The test uses a real owned local resource and reaches no external network.
 - [ ] Setup, subject, and assertions stay within the Integration boundary.
 - [ ] Resources and synthetic data are isolated and cleaned deterministically.
 - [ ] The scenario has mandatory Unit proof and an exact Integration binding or valid exemption.

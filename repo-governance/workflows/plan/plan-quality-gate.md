@@ -1,75 +1,91 @@
 ---
 name: plan-quality-gate
 title: "plan-quality-gate"
-description: >
-  Iteratively runs plan-checker and plan-fixer against a plan's documents until zero
-  threshold-level findings are confirmed on two consecutive checks, or max-iterations is reached.
-when_to_use: >
-  Use before starting plan execution, after creating or updating a plan, or periodically to
-  re-validate plan completeness and technical accuracy.
-goal: Validate plan completeness and technical accuracy, apply fixes iteratively until zero findings achieved
-termination: "Zero findings on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)"
+description: "Governance gate producing exactly one terminal verdict on one formal plan's semantic readiness, from a frozen ledger repaired in at most two cycles."
+when_to_use: "Use only when the user explicitly names this gate, or when plan-planning Step 6 invokes it."
+goal: Produce one terminal verdict on one formal plan's semantic readiness
+termination: "PASS, or a BLOCKED_* verdict after at most one stabilization cycle"
 inputs:
-  - name: scope
+  - name: plan-path
     type: string
-    description: Plan files to validate (e.g., "all", "plans/in-progress/", "specific-plan.md")
-    required: false
-    default: all
-  - name: mode
+    description: The formal plan directory under audit
+    required: true
+  - name: checkpoint
     type: enum
-    values: [lax, normal, strict, ocd]
-    description: "Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ocd: all levels)"
-    required: false
-    default: strict
-  - name: min-iterations
-    type: number
-    description: Minimum check-fix cycles before allowing zero-finding termination (prevents premature success)
-    required: false
-  - name: max-iterations
-    type: number
-    description: Maximum check-fix cycles to prevent infinite loops
-    required: false
-    default: 7
-  - name: max-concurrency
-    type: number
-    description: "Background agents run concurrently — the N in the N+1 model (1 main thread + N background agents = N+1 total). Raise only when independent work, machine capacity, and budget headroom all allow; lower under budget, runner, or disk pressure. Never self-promoted beyond the declared value."
-    required: false
-    default: 3
+    values: [pre-execution, post-material-change, completion]
+    description: The authorized checkpoint this run serves
+    required: true
 outputs:
-  - name: final-status
+  - name: verdict
     type: enum
-    values: [pass, partial, fail]
-    description: Final validation status
-  - name: lifecycle-status
-    type: enum
-    values: [verified, pending, not-applicable]
-    description: Lifecycle evidence state, separate from final-status
-  - name: iterations-completed
-    type: number
-    description: Number of check-fix cycles executed
-  - name: final-report
+    values: [PASS, BLOCKED_INPUT_CHANGED, BLOCKED_NON_CONVERGENT, BLOCKED_TOOLING]
+    description: The single terminal result
+  - name: ledger
     type: file
-    pattern: local-tmp/plan/plan__*__audit.md
-    description: Final audit report
+    pattern: local-tmp/plan/plan-quality-gate__*__ledger.md
+    description: The frozen finding ledger
 ---
 
-# Plan Quality Gate Workflow
+# Plan Quality Gate
 
-**Purpose**: Automatically validate plan completeness, technical accuracy, and implementation readiness, then apply fixes iteratively until all issues are resolved.
+A [governance gate](../meta/workflow-identifier/governance-gate-class.md), not a `*-check-fix`
+workflow. It produces exactly one terminal result for one formal plan and never recurses.
+
+## Authorization
+
+Run only when the user explicitly names this gate or unambiguously directs its semantic audit, or
+when one of its three named callers invokes it:
+[plan-planning Step 6](./plan-planning/step-6-quality-gate.md),
+[plan-multi-repo-parity-planning Step 7](./plan-multi-repo-parity-planning/step-7-and-8-quality-gate-and-delivery.md),
+and [web-ux-test-fixing-planning Phase 5](../web/web-ux-test-fixing-planning/phase-5-and-6-quality-gate-and-push.md).
+That list is exhaustive; extending it is a rule change. Never infer authorization from creating,
+editing, reviewing, or executing a plan, from Plan mode, or from any other workflow. One instruction may authorize several named checkpoints;
+otherwise it authorizes one run. This gate never starts another gate run.
+
+## Snapshot and Ledger
+
+Freeze the plan path and stage, the Git revision and dirty paths, scope, relevant specification and
+governance paths, unresolved decisions, and cycle `1`. A material change to any frozen input ends
+the run as `BLOCKED_INPUT_CHANGED`; it never restarts automatically.
+
+Audit before editing. Record a finite ledger — `ID`, canonical rule, location, material gap,
+required repair, proof, and status `OPEN`, `FIXED`, `NOT_APPLICABLE`, or `BLOCKED` — at
+`local-tmp/plan/plan-quality-gate__<slug>__ledger.md`. Admit a row only where it violates a rule or
+makes scoped execution unsafe, ambiguous, or unprovable; there is no severity, confidence, or mode
+threshold. Mandatory findings cannot be waived, and `NOT_APPLICABLE` requires evidence. Preserve the
+snapshot, cycle, ledger, pending verification, and authorization across compaction or handoff.
+
+## Bounded Procedure
+
+1. Recursively read the plan, its assets, relevant implementation, specifications, and governance.
+   Skip machine-owned concerns entirely.
+2. Complete one semantic audit without editing, covering every item of the audit checklist below.
+3. Freeze the ledger. Repair only its rows, in dependency and safety order, without expanding
+   product scope. A missing decision, absent authority, or irreconcilable rule becomes `BLOCKED`;
+   never invent the answer.
+4. Re-read only the repaired meaning and its cross-document effects, then run the deterministic
+   verification below.
+5. Return `PASS` when no row is `OPEN` or `BLOCKED`, tooling passes, no new material semantic gap
+   appeared, and the snapshot changed only through recorded repairs.
+6. Otherwise allow exactly one stabilization cycle: add only repair-caused semantic gaps and
+   deterministic-tool findings, set cycle `2`, repair once, and repeat step 4. A `FIXED` row cannot
+   reopen without changed input; changed input yields `BLOCKED_INPUT_CHANGED`.
+7. After cycle `2`, return `PASS` if step 5 holds, else `BLOCKED_NON_CONVERGENT` with the remaining
+   ledger and evidence. Never repair again, restart, or reinvoke this workflow automatically.
+
+HIPPO capacity recovery is infrastructure handling, not another cycle. Where verification cannot
+reach a deterministic verdict, return `BLOCKED_TOOLING` with the failure evidence.
+
+## Terminal Contract
+
+`PASS` authorizes neither execution nor commit and push. Every `BLOCKED_*` result names its reason,
+the remaining rows, and the external change required. Resume only after new input and explicit user
+direction authorize a fresh run; [plan execution](./plan-execution.md) consumes this result but
+never starts it.
 
 ## Contents
 
-- [Lifecycle validation ownership](../meta/workflow-identifier/check-fix-lifecycle-validation-ownership.md) — shared Step 0.
-- [Execution Mode](./plan-quality-gate/execution-mode.md) — agent delegation vs. manual orchestration.
-- [Research Delegation](./plan-quality-gate/research-delegation.md) — when plan-checker delegates to web-researcher.
-- [Step 1 — Initial Validation](./plan-quality-gate/step-1-initial-validation.md) — full validation scope.
-- [Steps 2-3 — Check for Findings and Apply Fixes](./plan-quality-gate/steps-2-3-check-and-apply-fixes.md) — plan-fixer and its envelope loop.
-- [Steps 4-6 — Re-validate, Iteration Control, Finalization](./plan-quality-gate/steps-4-5-6-revalidate-iterate-finalize.md) — the loop logic.
-- [Termination Criteria and Delivery-Mode Relationship](./plan-quality-gate/termination-criteria-and-delivery-mode-relationship.md) — pass/partial/fail, and the merge-precondition tie-in.
-- [Example Usage](./plan-quality-gate/example-usage.md) — worked invocation examples.
-- [Iteration Example and Safety Features](./plan-quality-gate/iteration-example-and-safety-features.md) — convergence walkthrough, safeguards.
-- [Plan-Specific Validation — Completeness Through Clarity](./plan-quality-gate/plan-specific-validation-completeness-through-clarity.md) — first half of the checklist.
-- [Plan-Specific Validation — Operational Readiness](./plan-quality-gate/plan-specific-validation-operational-readiness.md) — remaining checklist.
-- [Final Audit Report Structure and Observability](./plan-quality-gate/final-audit-report-structure-and-observability.md) — report shape, tracked metrics.
-- [Related Workflows and Success Metrics](./plan-quality-gate/related-workflows-and-success-metrics.md) — composition, metrics.
-- [Notes, Principles, and Conventions](./plan-quality-gate/notes-principles-and-conventions.md) — operational notes, catalog entries.
+- [Execution and Delegation](./plan-quality-gate/execution-and-delegation.md) — the read-only checker sweep and root-owned repair.
+- [Sufficiency and Ownership](./plan-quality-gate/sufficiency-and-ownership.md) — what PASS asserts, and the checks this gate must never reproduce.
+- [Audit Checklist](./plan-quality-gate/audit-checklist.md) — the seven semantic checks of step 2.
+- [Deterministic Verification](./plan-quality-gate/deterministic-verification.md) — the tooling this gate consumes and never reproduces.

@@ -27,7 +27,7 @@ Use the [BDD standard](../../../repo-governance/development/behaviour-driven-dev
 ## Boundary and Execution Contract
 
 Unit replaces every OS-facing dependency through injection. Integration may use isolated local
-resources/processes but no network, including loopback or a local server. E2E observes a real
+resources/processes plus an allowlisted loopback socket it owns, never an external network. E2E observes a real
 public browser, HTTP, or process boundary with synthetic isolated data.
 
 Runtime `test:*` targets execute tests. Static `test:coverage:*` targets never execute or depend on

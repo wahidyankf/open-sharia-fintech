@@ -51,7 +51,7 @@ flowchart TD
     A[Plan in backlog/] -->|maker promotes| B[Plan in in-progress/]
     B --> C{plan-execution-checker passes?}
     C -->|Yes| D[Move to done/]
-    C -->|No| E[plan-fixer iterates]
+    C -->|No| E[gate repairs ledger]
     E --> C
 
     style A fill:#CA9161,stroke:#000,color:#FFF

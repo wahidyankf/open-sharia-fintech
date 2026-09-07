@@ -14,7 +14,7 @@ goal: >
 termination: >
   A grill-validated plan exists under plans/in-progress/<identifier>/ containing README.md, brd.md,
   prd.md, findings.md (with separate Exploratory, Usability, and Design sections), tech-docs.md, and
-  delivery.md, passes plan-quality-gate at strict mode, and is pushed to the requested git target.
+  delivery.md, receives a PASS verdict from plan-quality-gate, and is pushed to the requested git target.
   No application or library source under apps/ or libs/ is modified by this workflow.
 ---
 

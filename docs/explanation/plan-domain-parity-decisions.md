@@ -142,6 +142,10 @@ links.
 
 **Rationale**: same as row 8.
 
+**Superseded**: `plan-fixer` was later retired. `plan-quality-gate` became a governance gate that
+repairs its own frozen ledger, so no separate fixer agent exists in either repository. This row is
+kept as the historical record of the decision taken at the time.
+
 ### Row 10 — plan-execution-checker Agent Drift
 
 **Decision**: best-of merge.

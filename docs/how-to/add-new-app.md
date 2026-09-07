@@ -319,7 +319,7 @@ satisfy these additional requirements:
 - [ ] `test:quick` — typecheck, lint, mandatory Unit runtime, and applicable static coverage;
       never Integration or E2E runtime
 - [ ] `test:integration` — only when the app owns a genuine deterministic local-resource boundary;
-      no network path, including loopback
+      no external network reach
 - [ ] a dedicated `*-e2e:test:e2e` — only when the app exposes a real public browser, HTTP, API, or
       process boundary
 
@@ -327,10 +327,11 @@ Omit inapplicable Integration/E2E targets; never add an echo or no-op placeholde
 Gherkin scenario still has Unit proof. An applicable higher layer may be exempt only with the
 canonical explicit boundary reason and named alternative proof.
 
-**Integration setup**: Apps with `test:integration` isolate real non-network resources such as
-temporary files, embedded databases accessed without network transport, process environment, or
-child-process standard streams. The target must use no HTTP, TCP, UDP, loopback, local server, or
-Docker-hosted network service and must set `"cache": false` in `project.json`.
+**Integration setup**: Apps with `test:integration` isolate real local resources such as temporary
+files, embedded databases, process environment, or child-process standard streams. A loopback socket
+the test starts and stops is allowed only when `repo-config.yml` allowlists the project. The target
+must reach no external network and no Docker-hosted service, and must set `"cache": false` in
+`project.json`.
 
 **E2E stack setup**: Put Docker-hosted PostgreSQL, message brokers, and other networked services in
 the app's E2E stack. The E2E target must enter through the app's public browser, HTTP/API, or process

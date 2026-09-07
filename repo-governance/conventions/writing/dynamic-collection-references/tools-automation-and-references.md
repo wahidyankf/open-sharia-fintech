@@ -19,7 +19,7 @@ created: 2026-02-22
 The following agents check and enforce this convention:
 
 - **rules-checker** - Validates repository-wide consistency including hardcoded counts
-- **rules-fixer** - Applies fixes for governance violations including count removal
+- **rules-propagation** - Applies fixes for governance violations including count removal
 
 ## References
 
@@ -36,4 +36,4 @@ The following agents check and enforce this convention:
 
 - `rules-maker` - Creates governance documents following this convention
 - `rules-checker` - Validates convention compliance across the repository
-- `rules-fixer` - Fixes convention violations
+- `rules-propagation` - Fixes convention violations

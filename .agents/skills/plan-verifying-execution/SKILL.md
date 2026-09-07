@@ -58,6 +58,7 @@ rollback, and removal.
 ## Related
 
 `plan-validating-quality` (the authoring-time sibling methodology — Anti-Hallucination and
-criticality-table shapes track it closely), `plan-applying-fixes` (repairs findings this skill's
-pre-execution counterpart raises), `repo-generating-validation-reports` (report format),
+criticality-table shapes track it closely), `plan-quality-gate` (whose root-owned repair pass now
+resolves what this skill's pre-execution counterpart raises, since `plan-applying-fixes` was
+retired), `repo-generating-validation-reports` (report format),
 `repo-assessing-criticality-confidence` (criticality/confidence framework).
