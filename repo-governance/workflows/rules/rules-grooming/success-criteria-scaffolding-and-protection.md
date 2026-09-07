@@ -15,6 +15,19 @@ Feature: Repository rules grooming — scaffolding and protected entry points
     Then the item requires explicit authorization naming that document
     And no class-level or batch approval removes it
 
+  Scenario: Scaffolding is approved against the verbatim text
+    Given a batch of admitted scaffolding candidates
+    When the checkpoint is presented
+    Then every sentence to be deleted is enumerated verbatim
+    And an approval given against a count alone is not accepted
+
+  Scenario: Entry-point authorization is not carried by a batch approval
+    Given a batch-approved fragmentation or scaffolding candidate
+    And the item would delete or hollow a named <name>.md
+    When the hand-off is prepared
+    Then the item is withheld until authorization naming that document is given
+    And the batch approval does not stand in for it
+
   Scenario: A shard folder is ordinary corpus
     Given a shard inside a <name>/ folder
     When any discovery sweep admits it under its class rules

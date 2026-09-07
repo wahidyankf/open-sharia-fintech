@@ -13,10 +13,21 @@ Approval is per class, and the classes are not equivalent:
 
 - **Fragmentation and duplication** — approved as a batch. These change representation only, and
   Step 7's preservation diff is a sufficient check on that claim.
+- **Scaffolding** — approved as a batch, but **only against the verbatim text to be deleted**,
+  enumerated sentence by sentence in the checkpoint. Unlike the two above, this class makes text
+  disappear rather than move, so a reviewer who cannot see the exact sentences is approving a count
+  rather than a deletion. Its yield is small enough that enumerating costs nothing.
 - **Retirement** — approved **per item**, each with its own evidence and an explicit retirement
   rationale. A batch approval of retirements is not accepted. This is the only class that removes
   an obligation, and a reviewer scanning a list of thirty is not meaningfully approving any of
   them.
+
+**Entry-point authorization cuts across all four.** If an item would delete or hollow a `<name>.md`
+naming a workflow, principle, or convention, it needs its own authorization **naming that
+document** — whatever class proposed it, and regardless of that class's granularity above. A batch
+approval never carries one. Check the candidate set for entry points before presenting it — the
+classes are defined by what they reduce, not what they touch, so nothing else here catches it. See
+[Refused Reductions](./refused-reductions.md).
 
 Record each item as approved, rejected, or deferred, with a reason for every non-approval. A
 deferred item stays in the manifest so the next run does not rediscover it as though it were new.
