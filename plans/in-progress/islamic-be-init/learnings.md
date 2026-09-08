@@ -303,3 +303,48 @@ apps/islamic-be`. Same source tree, same linter, same version; the gate passes a
   fired against is not a guard.
 - **Disposition**: _pending Phase 7_ — both halves resolved in-flight. Worth proposing that any new
   changed-file-driven gate be exercised once against a deliberately awkward input before it lands.
+
+### DU3: a gate that runs on a clean checkout cannot depend on a gitignored artefact
+
+- **Observed**: `internal/router/router.go` imports the module's own generated contract types.
+  `nx run islamic-be:lint` passes, because the target declares `dependsOn: ["codegen"]`. CI's
+  `lint` gate group fails with `could not import .../generated-contracts`, because that job invokes
+  the gate binary directly — no Nx graph, no `dependsOn`, and `generated-contracts/` is gitignored
+  by repository-wide convention.
+- **Generalizes because**: the repository has two ways to run the same predicate — through the Nx
+  target graph, and through the flat gate registry — and only one of them materializes derived
+  inputs. Any gate whose tool typechecks (golangci-lint, `tsc`, a compiler-backed linter) inherits
+  this the moment its language's project generates code. The pre-commit surface hides it
+  permanently: a developer's working tree already holds the generated output, so the gate can be
+  red on every clean checkout and green on every machine that has ever built the project.
+- **What made the fix non-obvious**: three tempting shortcuts were all wrong. Committing the
+  generated file breaks the repository-wide `generated-contracts/` convention. Dropping the gate's
+  `ci` surface deletes coverage of Go files no Nx project owns. Narrowing its glob to skip the
+  module is a silent exemption. The honest fix was to provision the job properly — give the `lint`
+  group the `setup-go` composite and one `nx affected -t codegen` scoped to Go projects — which
+  removes no gate and weakens nothing.
+- **Also**: the hand-rolled `go install golangci-lint` step in that job predated `setup-go`, which
+  already pins the same version. Fixing the provisioning gap also deleted the duplicate.
+- **Disposition**: _pending Phase 7_ — resolved in-flight. Worth proposing that a gate declaring a
+  `ci` surface be required to state whether its inputs are all tracked, since "works at pre-commit"
+  is not evidence for "works on a clean checkout."
+
+### Incidental: the pre-commit surface never lints workflow files
+
+- **Observed**: committing a change to `.github/workflows/pr-quality-gate.yml` printed
+  `Skipping gate actionlint` and `Skipping gate artifact-retention`. Reproduced deliberately with
+  `GATE_CHANGED_BASE=HEAD~1 rhino-bin.sh gate run --surface=pre-commit` against a commit that
+  changes exactly that file: both gates skip. Both declare
+  `glob: ".github/workflows/*.{yml,yaml}"`, and every other pre-commit glob in `repo-config.yml`
+  is basename-only (`*.go`, `*.md`, `*.{ex,exs}`), so the matcher most likely does not handle a
+  path-bearing pattern.
+- **Not caused by this plan**: both gates predate it; DU1 added only `lint-golangci`. Recorded
+  because it was found here, not because it belongs here.
+- **Why it stayed invisible**: both gates also declare `ci: { scope: all-file-type }`, so CI's
+  `shell-docker-actions` group lints every workflow on every PR regardless. The pre-commit half
+  has been dead without any red signal — the CI half covers for it.
+- **Generalizes because**: a gate declared on two surfaces can be silently dead on one of them.
+  Nothing asserts that a declared surface actually resolves any file, so a glob the matcher cannot
+  interpret degrades to "always skip" rather than to an error.
+- **Disposition**: _pending Phase 7_ — reported, not fixed. Correcting the matcher or the glob is a
+  repo-rules change outside this plan's authorization and belongs in its own delivery unit.

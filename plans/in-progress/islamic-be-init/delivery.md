@@ -1059,6 +1059,32 @@ must enforce at least 99% line coverage`. DU1 taught the extractor to read Go _b
 
 - [ ] [AI] Commit on `islamic-be-init/du3-service`, push, open a draft PR, poll CI every 2 minutes, and merge when green — acceptance: the PR merges to `main`
 
+  > **Implementation note (2026-09-09).** CI's `lint` gate group failed twice on this head, each
+  > time for a reason that could not reproduce locally, because `nx run islamic-be:lint` and the
+  > gate are not the same invocation.
+  >
+  > **First failure** — `build constraints exclude all Go files in apps/islamic-be`. `./...` skips
+  > a directory whose files are all build-excluded; the gate names it explicitly and golangci-lint
+  > makes that a typechecking error. Fixed at the instance (the `//go:build tools` file is gone,
+  > replaced by a go.mod `tool` directive) and at the class (`scripts/lint-golangci.sh` now drops
+  > directories `go list -e` reports with no `GoFiles` and no `TestGoFiles`).
+  >
+  > **Second failure** — `could not import .../generated-contracts`. golangci-lint typechecks, so a
+  > Go module importing its own generated contract types cannot be linted from a clean checkout:
+  > `generated-contracts/` is gitignored, the gate-group job runs the gate binary with no Nx graph
+  > to resolve `lint`'s `dependsOn: [codegen]`, and a developer's pre-commit run never sees it
+  > because their working tree already holds the generated output. Fixed by provisioning that job
+  > properly — the `lint` group now uses the `setup-go` composite (which already pins the same
+  > golangci-lint the hand-rolled step installed) and runs `nx affected -t codegen` scoped to Go
+  > projects before the gate.
+  >
+  > Both halves were proven by reproduction, not by reasoning: deleting `generated-contracts/` and
+  > running `rhino-bin.sh gate run --surface=ci --group=lint` reproduces the exact CI error, the
+  > new codegen step turns it into `0 issues.` at exit 0, and a throwaway `//go:build neverbuilt`
+  > package exercises the wrapper guard.
+  >
+  > No gate was narrowed, exempted, or dropped to reach green.
+
 - [x] [AI] Add the reciprocal links the specs corpus could not carry before this DU existed: link `specs/apps/islamic/README.md` and `specs/apps/islamic/be/README.md` to `apps/islamic-be/README.md`, and link back — acceptance: `rhino-bin.sh md links validate --exclude plans/done` reports no broken links
 
   > **Implementation note (2026-09-09).** `md links validate --exclude plans/done` reports
@@ -1077,11 +1103,27 @@ must enforce at least 99% line coverage`. DU1 taught the extractor to read Go _b
 
 > All checks below must pass before starting Phase 4.
 
-- [ ] [AI] `npm exec nx -- run islamic-be:test:quick` — exits zero, including the 99% coverage floor and both static coverage validators
-- [ ] [AI] `npm exec nx -- run islamic-be:lint` — `golangci-lint` reports no findings
-- [ ] [AI] `npm exec nx -- run islamic-be:build` — produces `apps/islamic-be/dist/islamic-be`
+- [x] [AI] `npm exec nx -- run islamic-be:test:quick` — exits zero, including the 99% coverage floor and both static coverage validators
+
+  > **Implementation note (2026-09-09).** Exits zero with `coverage-gate: PASS - 100.0% meets the
+99% floor`, re-run under `--skip-nx-cache` after deleting every generated artefact so the pass
+  > proves the tracked sources, not a warm cache. Captured to `evidence/du3-quick.txt`.
+
+- [x] [AI] `npm exec nx -- run islamic-be:lint` — `golangci-lint` reports no findings
+
+  > **Implementation note (2026-09-09).** `0 issues.` Captured to `evidence/du3-lint-build.txt`
+  > alongside the build. Note that this target is a weaker check than CI's gate — see the
+  > integration step above.
+
+- [x] [AI] `npm exec nx -- run islamic-be:build` — produces `apps/islamic-be/dist/islamic-be`
+
+  > **Implementation note (2026-09-09).** The binary is produced and runs. Captured to
+  > `evidence/du3-lint-build.txt`.
+
 - [ ] [AI] Confirm the merged PR's CI run shows the `go` job green **and** the `typescript`, `dotnet`, `flutter`, and `java` jobs not selecting any Go target — acceptance: the `go` job log lists `islamic-be` and none of the other four does; save to `evidence/du3-ci-routing.txt`
-- [ ] [AI] `curl -s localhost:8402/api/v1/health` against a locally running instance — returns 200 with `{"status":"healthy"}`, captured to `evidence/phase-3-health.txt`
+- [x] [AI] `curl -s localhost:8402/api/v1/health` against a locally running instance — returns 200 with `{"status":"healthy"}`, captured to `evidence/phase-3-health.txt`
+
+  > **Implementation note (2026-09-09).** 200 with `{"status":"healthy"}` from a real process on 8402.
 
 > **Pause Safety**: `islamic-be` builds, tests, lints, and serves its health endpoint; its Gherkin is
 > bound at the Unit layer. The E2E layer is not yet implemented, so `test:coverage:e2e` reports its

@@ -258,9 +258,11 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+      # The lint group additionally needs node_modules for the generated-source step below --
+      # Nx resolves the codegen graph and Redocly bundles the contract, both npm-managed.
       - uses: ./.github/actions/setup-node
         with:
-          run-npm-ci: ${{ contains(matrix.group.doctor_tools, 'npm') }}
+          run-npm-ci: ${{ contains(matrix.group.doctor_tools, 'npm') || matrix.group.group == 'lint' }}
       # Every matrix member executes the downloaded framework-dependent
       # gate-profile apphost. The composite also installs Fantomas for the
       # formatting-verify group.
@@ -284,17 +286,24 @@ jobs:
       # JDK the Java quality gate uses, exactly as it already does for Dart and Ruff.
       - uses: ./.github/actions/setup-java
         if: matrix.group.group == 'formatting-verify'
-      # lint-golangci invokes golangci-lint, which has no usable apt package: Debian ships 1.x,
-      # and a 1.x binary cannot read the `version: "2"` config the 2.x schema requires. Installed
-      # through the Go module proxy instead, which is checksum-verified against GOSUMDB, scoped to
-      # the one group whose gate needs it -- the same shape as the Ruff install above. GOPATH/bin is
-      # appended explicitly rather than assumed to be on the image's PATH, because the provisioning
-      # step below probes by PATH lookup and would report a just-installed binary as missing.
-      - name: Install golangci-lint
+      # lint-golangci needs the toolchain go.mod pins plus a 2.x golangci-lint -- Debian ships 1.x,
+      # and a 1.x binary cannot read the `version: "2"` config the 2.x schema requires. The setup-go
+      # composite installs both from the module proxy (checksum-verified against GOSUMDB) and puts
+      # GOPATH/bin on PATH, which the provisioning step below probes by PATH lookup. Scoped to the
+      # one group whose gate needs it, the same shape as the Ruff and Java installs above.
+      - uses: ./.github/actions/setup-go
         if: matrix.group.group == 'lint'
-        run: |
-          go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.11.3
-          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+      # golangci-lint typechecks, so a Go module that imports its own generated contract types
+      # cannot be linted from a clean checkout: generated-contracts/ is gitignored, and this job
+      # runs the gate binary directly with no Nx graph to resolve `lint`'s dependsOn: [codegen].
+      # A developer's pre-commit run does not hit this because their working tree already holds
+      # the generated output. Materialize it here for affected Go projects only -- the exclude
+      # list keeps another language's codegen (dotnet, Java) out of a job that provisions neither,
+      # while `codegen`'s own dependsOn still pulls in the contract bundle it needs. Serial, for
+      # the same shared-module-cache reason the Go quality gate runs --parallel=1.
+      - name: Materialize generated Go sources
+        if: matrix.group.group == 'lint'
+        run: npx nx affected -t codegen --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:rust,tag:lang:dart,tag:lang:java' --parallel=1
       - uses: actions/download-artifact@v4
         with:
           name: rhino-cli-gate-binary
