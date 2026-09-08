@@ -26,7 +26,7 @@ stranded in individual archived plan folders:
    secret/sensitivity gate and the repo-relevance gate) to every surviving item: a recurring
    engineering insight → the relevant `repo-governance/` convention or development doc; a scheduling
    or workflow insight → this workflow or `plan-execution.md`; a follow-up worth its own work → a new
-   user-authorized `plans/ideas/` two-pager, never a directly created backlog entry; otherwise
+   user-authorized `plans/ideas/` two-pager, never a `plans/backlog/` artifact; otherwise
    `Reported without plan authorization` with handoff evidence; anything that fails a gate or the
    litmus test → discarded with a one-line reason. **Zero cross-cutting themes may be left in an
    open, undecided state.**

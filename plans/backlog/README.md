@@ -1,8 +1,8 @@
 # Backlog Plans
 
-Full, ready-to-execute plans waiting to start. A plan lands here only when it has been **promoted
-from a two-pager** in [`../ideas/`](../ideas/README.md) — i.e. its open questions have shrunk to ones
-that genuinely need a full plan's depth to answer.
+Full, ready-to-execute plans waiting to start. A plan lands here **only** by promotion from a
+two-pager in [`../ideas/`](../ideas/README.md) — when its open questions have shrunk to ones that
+genuinely need a full plan's depth to answer.
 
 ## Start here 🧭
 
@@ -14,29 +14,11 @@ step-by-step execution record.
 
 ## Planned Projects
 
-- [`remove-dead-shadow-diff-script`](./remove-dead-shadow-diff-script/README.md) — `shadow-diff.sh`'s
-  Rust-vs-F# comparison is permanently unreachable since `rewrite-rhino-cli-to-fsharp` Phase 9c
-  deleted the Rust crate; delete or repurpose it.
-- [`remove-stale-compat-min-version-stubs`](./remove-stale-compat-min-version-stubs/README.md) — 27
-  `project.json` files carry a no-op echo `compat:min-version` target that does no real check.
-- [`rhino-bin-resolver-shim-coverage`](./rhino-bin-resolver-shim-coverage/README.md) — the simplified
-  `rhino-bin.sh` resolver shim's three tiers (override, dist binary, `dotnet run` fallback) have zero
-  scenario-level test coverage since the Rust-era `gate-binary-resolution.feature` was retired.
+**The queue is empty.** Every proposed piece of work currently lives as a two-pager idea brief in
+[`../ideas/`](../ideas/README.md), sorted into Eisenhower quadrants. Promote one here when it is
+ripe — when its open questions have shrunk to ones only a full plan can answer.
 
-These three were filed directly from `rewrite-rhino-cli-to-fsharp`'s Phase 12 knowledge-capture
-triage under that plan's own code-routing rule (a learning whose natural home is `apps/`, `libs/`,
-or a test suite is filed here, not landed inline in the plan's own commits) rather than promoted
-from an `../ideas/` two-pager — a deliberate, explicitly-instructed exception to the normal
-promotion flow described below.
-
-`rewrite-rhino-cli-to-fsharp` itself — started on 2026-08-25 — passed through this queue and now
-lives in [`../in-progress/`](../in-progress/README.md).
-
-Everything else lives as a two-pager idea brief in [`../ideas/`](../ideas/README.md), sorted into
-Eisenhower quadrants. Promote one here when it is ripe — when its open questions have shrunk to ones
-only a full plan can answer.
-
-Two waves emptied this queue before that entry landed:
+Three waves emptied this queue:
 
 - **Demoted to two-pagers 2026-08-05** — the Ruff config, the bulk-link concurrency fix, merge-queue
   adoption, the `ayokoding-www` cost reduction, the `reuseExistingServer` audit, the Vitest glob
@@ -51,14 +33,30 @@ Two waves emptied this queue before that entry landed:
   [harness-mirror-and-test-isolation-defects](../ideas/q1-urgent-important/harness-mirror-and-test-isolation-defects.md),
   and
   [declare-vite-peer-dependency](../ideas/q2-not-urgent-important/declare-vite-peer-dependency.md).
+- **Demoted to two-pagers 2026-09-08** — the three follow-ups
+  [`rewrite-rhino-cli-to-fsharp`](../done/2026-08-30__rewrite-rhino-cli-to-fsharp/README.md)'s Phase
+  12 Knowledge Capture triage had filed straight into this queue:
+  [remove-stale-compat-min-version-stubs](../ideas/q1-urgent-important/remove-stale-compat-min-version-stubs.md),
+  [remove-dead-shadow-diff-script](../ideas/q2-not-urgent-important/remove-dead-shadow-diff-script.md),
+  and
+  [rhino-bin-resolver-shim-coverage](../ideas/q2-not-urgent-important/rhino-bin-resolver-shim-coverage.md).
+  Knowledge Capture may not write here — see [Instructions](#instructions) below — so the three were
+  relocated to `../ideas/` rather than retained under a plan-local exception.
 
 The `ayokoding-learning-path-*` programme, which once filled this queue, has completed: plans `01`
-through `18` are archived in [`../done/`](../done/README.md).
+through `18` are archived in [`../done/`](../done/README.md). `rewrite-rhino-cli-to-fsharp` passed
+through here and is now archived alongside them.
 
 ## Instructions
 
 **Idea Capture**: For ideas not ready for formal planning, write a two-pager in
 [`../ideas/`](../ideas/README.md) — not here.
+
+**Knowledge Capture may never write here.** A plan's Knowledge Capture phase files future work as an
+explicitly authorized `../ideas/<slug>.md` two-pager, or records `Reported without plan
+authorization`. It may not create, move, or write any file or folder under `backlog/`, and no
+instruction to a plan creates an exception — the promotion path below is the only route in. See the
+[Knowledge Capture Convention](../../repo-governance/development/quality/knowledge-capture/routing-timing-destination-aware-inline-vs-ideas.md).
 
 **Naming**: Plans in `backlog/` use NO date prefix — just the slug (e.g.,
 `doc-command-existence-validation/`). A date prefix is applied only when a plan is archived to

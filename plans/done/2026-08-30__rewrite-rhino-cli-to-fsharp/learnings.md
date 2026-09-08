@@ -508,7 +508,9 @@ agree (`rust=1 fsharp=1`) — only the ordering betrays it. CI never hits this b
 protocol has no remaining live subject: Phase 9c deleted the Rust crate entirely, so `shadow-diff.sh`'s
 Rust-vs-F# comparison is now permanently unreachable (confirmed by the Phase 9c-follow-up entry
 below). The script's own disposition is filed separately as
-[`plans/backlog/remove-dead-shadow-diff-script/`](../../backlog/remove-dead-shadow-diff-script/README.md).
+[`remove-dead-shadow-diff-script`](../../ideas/q2-not-urgent-important/remove-dead-shadow-diff-script.md)
+(originally filed to `plans/backlog/`; relocated to `plans/ideas/` on 2026-09-08, because Knowledge
+Capture may not write under `plans/backlog/`).
 
 ## 2026-08-28 — Phase 6: two Wave D defects only `ose-private`'s corpus could expose
 
@@ -936,7 +938,9 @@ concrete `ParityManifestSteps.fs` fixture-drift bug is fixed. The one piece that
 the `rhino-bin.sh` simplification's own "Scope note" declined authoring fresh F#-only-tier resolver
 scenarios, and nobody picked that up in any later phase — real, live, zero-scenario-coverage
 behavior, code-homed per the code-routing rule. Filed as
-[`plans/backlog/rhino-bin-resolver-shim-coverage/`](../../backlog/rhino-bin-resolver-shim-coverage/README.md).
+[`rhino-bin-resolver-shim-coverage`](../../ideas/q2-not-urgent-important/rhino-bin-resolver-shim-coverage.md)
+(originally filed to `plans/backlog/`; relocated to `plans/ideas/` on 2026-09-08, because Knowledge
+Capture may not write under `plans/backlog/`).
 
 ## 2026-08-29 — Phase 9c follow-up: three findings surfaced only once external projects flipped to F
 
@@ -1057,7 +1061,9 @@ exits 0 on every touched workflow file.
 **Terminal state**: Discard — migration-mechanical CI teardown, fully shipped and
 self-documenting in `.github/workflows/pr-quality-gate.yml`. The one flagged loose thread (26-27
 stale `compat:min-version` echo stubs — reconfirmed at 27 today) is filed as
-[`plans/backlog/remove-stale-compat-min-version-stubs/`](../../backlog/remove-stale-compat-min-version-stubs/README.md).
+[`remove-stale-compat-min-version-stubs`](../../ideas/q1-urgent-important/remove-stale-compat-min-version-stubs.md)
+(originally filed to `plans/backlog/`; relocated to `plans/ideas/` on 2026-09-08, because Knowledge
+Capture may not write under `plans/backlog/`).
 
 ## 2026-08-29/30 — Phase 9d follow-up: CI's floating SDK surfaced a real analyzer gap, then a real `GATE_CHANGED_BASE` leak bug
 
