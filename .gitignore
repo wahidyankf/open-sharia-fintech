@@ -178,6 +178,11 @@ coverage.xml
 # Bundled OpenAPI spec + docs
 specs/apps/a-demo/contracts/generated/
 specs/apps/ose/lms-be/contracts/generated/
+# The islamic contract keeps a hand-written README in its generated/ folder, so the folder
+# itself is ignored by glob and the README negated back in. The two siblings above ignore
+# the whole directory instead; theirs hold nothing but build output.
+specs/apps/islamic/be/contracts/generated/*
+!specs/apps/islamic/be/contracts/generated/README.md
 
 # MemSearch vector index (local user-specific data)
 .memsearch/

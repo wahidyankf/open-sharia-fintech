@@ -689,12 +689,54 @@ platform linux`. Root cause: the `gate` matrix job provisions the **union** of a
 
 > All checks below must pass before starting Phase 3. Phase 2 (DU2) may proceed in parallel.
 
-- [ ] [AI] `npm run test:validators` — exits zero with the new Go extractor cases present
-- [ ] [AI] `npm exec nx -- run rhino-cli:repo-config:validation` — exits zero
-- [ ] [AI] `npm exec nx -- run-many -t test:quick --projects=ose-be,ose-be-e2e` — exits zero, proving no regression to existing lanes
-- [ ] [AI] Confirm the merged `pr-quality-gate.yml` excludes `tag:lang:go` in the `typescript`, `dotnet`, `flutter`, **and** `java` jobs — acceptance: `rtk grep -c 'tag:lang:go' .github/workflows/pr-quality-gate.yml` reports 5
-- [ ] [AI] `rtk npm run doctor` — reports a `go` row with a real version
-- [ ] [AI] `rtk git log -1 --stat -- apps/rhino-cli/` — shows this delivery unit touched no `rhino-cli` file
+- [x] [AI] `npm run test:validators` — exits zero with the new Go extractor cases present
+
+  > **Verified (2026-09-08).** Exit 0, `fail 0`. Nine tests naming Godog are present and passing.
+  > Captured to `evidence/du1-gate-validators.txt` — the full run, not a `tail`; the first capture
+  > was piped through `tail -20` and silently held only the last file's summary, which would have
+  > made the Go cases look absent.
+
+- [x] [AI] `npm exec nx -- run rhino-cli:repo-config:validation` — exits zero
+
+  > **Verified (2026-09-08).** The target named in this checkbox does not exist. The real entrypoint
+  > is `apps/rhino-cli/scripts/rhino-bin.sh repo-config validate`, which exits 0 with
+  > `repo-config.yml matches the canonical schema (key set + enums OK)`. Captured to
+  > `evidence/du1-gate-repo-config.txt`.
+
+- [x] [AI] `npm exec nx -- run-many -t test:quick --projects=ose-be,ose-be-e2e` — exits zero, proving no regression to existing lanes
+
+  > **Verified (2026-09-08).** Exit 0. Re-run with `--skip-nx-cache` after the first attempt came
+  > back entirely from cache: `test:coverage:{unit,integration,e2e,behaviour}` all genuinely
+  > re-executed against the modified `behaviour-coverage.mjs`, so `ose-be`'s F# bindings are proven
+  > unbroken rather than assumed. (The cache hit was in fact legitimate —
+  > `{workspaceRoot}/scripts/behaviour-coverage.mjs` is a declared input to both targets — but that
+  > was confirmed after the fact, not before.) Captured to `evidence/du1-gate-ose-be.txt`.
+
+- [x] [AI] Confirm the merged `pr-quality-gate.yml` excludes `tag:lang:go` in the `typescript`, `dotnet`, `flutter`, **and** `java` jobs — acceptance: `rtk grep -c 'tag:lang:go' .github/workflows/pr-quality-gate.yml` reports 5
+
+  > **Verified (2026-09-08) against `origin/main` at `f9e40bc67`.** The count is 5 as stated, but
+  > the count alone is not the invariant — the real property is _which_ lists. `tag:lang:go` appears
+  > in the typescript (:331), dotnet (:360 and :363, two lines), flutter (:387), and java (:402)
+  > lists, and is absent from the go job's own (:417). Note the checkbox names four jobs while the
+  > count is 5, because the dotnet job carries two invocations.
+  >
+  > Two things this check surfaces that it was not looking for. There is no `tag:lang:dotnet` tag at
+  > all — .NET projects carry `lang:fsharp`/`lang:csharp`, so a naive `grep -c tag:lang:dotnet`
+  > returns 0 and proves nothing. And `tag:lang:rust` appears in only 4 lists: the dotnet job never
+  > excludes it, so a Rust project would be swept into the .NET job. That hole predates this plan
+  > and stays out of scope, recorded in `learnings.md`.
+
+- [x] [AI] `rtk npm run doctor` — reports a `go` row with a real version
+
+  > **Verified (2026-09-08).** `✓ go v1.26.1 (required: ≥1.26)` and, unasked,
+  > `✓ golangci-lint v2.11.3 (required: ≥2.11)`. Both resolve real detected versions rather than
+  > echoing the pin. Captured to `evidence/du1-gate-doctor.txt`.
+
+- [x] [AI] `rtk git log -1 --stat -- apps/rhino-cli/` — shows this delivery unit touched no `rhino-cli` file
+
+  > **Verified (2026-09-08).** `git diff --name-only 63ce3eea6..d534cadf3` filtered to
+  > `apps/rhino-cli/` returns nothing across all three commits — a stronger check than `log -1`,
+  > which would only have inspected the last commit of the three.
 
 > **Pause Safety**: the Go lane exists and every gate is registered, but no Go project does — the
 > `go` job is correct and dormant. Nothing else changed behaviour. Safe to stop. To resume:
@@ -704,14 +746,86 @@ platform linux`. Root cause: the `gate` matrix job provisions the **union** of a
 
 Delivery boundary. Independent of DU1; may run before, after, or concurrently.
 
-- [ ] [AI] Create `specs/apps/islamic/README.md` and `specs/apps/islamic/overview.md` following the shape of `specs/apps/ose/` — acceptance: `rhino-cli specs structure validate` accepts the new product folder
-- [ ] [AI] Create `specs/apps/islamic/be/README.md` describing the corpus, and `architecture.md` with C4 context, container, and component diagrams using the accessible palette — acceptance: both files exist and every Mermaid `classDef` uses palette hex codes
-- [ ] [AI] Create `specs/apps/islamic/be/behaviours/health/` with `README.md` and `health.feature` carrying the three US-1 scenarios from `prd.md` verbatim — acceptance: `npx gherkin` parses the feature and scenario names match `prd.md`
-- [ ] [AI] Create `specs/apps/islamic/be/behaviours/config/` with `README.md` and `port-resolution.feature` carrying the five US-3 scenarios — acceptance: the feature parses and all five scenarios are present
-- [ ] [AI] Create `specs/apps/islamic/be/contracts/openapi.yaml` (OpenAPI 3.1) with `paths/health.yaml`, `schemas/health.yaml`, and `schemas/error.yaml`, plus a README for each folder — acceptance: the root document references the fragments and every folder carries an annotated index
-- [ ] [AI] Copy `.spectral.yaml` from `specs/apps/ose/be/contracts/` unchanged — acceptance: the two ruleset files are byte-identical
-- [ ] [AI] Create `specs/apps/islamic/be/contracts/project.json` registering `islamic-contracts` with `lint`, `bundle`, `docs`, `typecheck`, `test:quick`, `deps:audit`, `compat:min-version`, and `specs:structure-validation` targets, plus `namedInputs.specs` — acceptance: `npx nx show project islamic-contracts` resolves
-- [ ] [AI] Create `specs/apps/islamic/be/contracts/generated/README.md` explaining that bundles are generated — acceptance: the file exists and the folder is otherwise gitignored
+- [x] [AI] Create `specs/apps/islamic/README.md` and `specs/apps/islamic/overview.md` following the shape of `specs/apps/ose/` — acceptance: `rhino-cli specs structure validate` accepts the new product folder
+
+  > **Implementation note (2026-09-08).** `rhino-bin.sh specs structure validate` reports
+  > `0 finding(s) for "islamic"` alongside the five existing products. Also added the `Islamic` row
+  > to `specs/apps/README.md` — the annotated index the readme-completeness gate checks; the
+  > checkbox did not name it, but a new product folder with no index entry is an orphan.
+
+- [x] [AI] Create `specs/apps/islamic/be/README.md` describing the corpus, and `architecture.md` with C4 context, container, and component diagrams using the accessible palette — acceptance: both files exist and every Mermaid `classDef` uses palette hex codes
+
+  > **Implementation note (2026-09-08).** Both exist. `architecture.md` carries a C4 context
+  > diagram and a container/component diagram, 6 `classDef` rules across them. Every hex used —
+  > `#0173B2`, `#DE8F05`, `#029E73`, `#CA9161`, `#000000`, `#FFFFFF` — is in the verified accessible
+  > palette, checked mechanically against
+  > `repo-governance/conventions/formatting/color-accessibility/verified-color-palette.md`. Every
+  > Mermaid label is within the `md-mermaid-strict` 20-character cap.
+
+- [x] [AI] Create `specs/apps/islamic/be/behaviours/health/` with `README.md` and `health.feature` carrying the three US-1 scenarios from `prd.md` verbatim — acceptance: `npx gherkin` parses the feature and scenario names match `prd.md`
+
+  > **Implementation note (2026-09-08).** `validateFeatureSource` reports no errors. The three
+  > scenario names and every step line are **byte-identical** to `prd.md` US-1, verified by `diff`
+  > rather than by eye. Each scenario carries an `Exemption(integration)` with an
+  > `islamic-be-e2e:test:e2e` alternative-proof: the corpus has no Integration adapter because the
+  > service owns no local resource boundary.
+
+- [x] [AI] Create `specs/apps/islamic/be/behaviours/config/` with `README.md` and `port-resolution.feature` carrying the five US-3 scenarios — acceptance: the feature parses and all five scenarios are present
+
+  > **Implementation note (2026-09-08).** All five scenarios present and parsing; names and step
+  > lines byte-identical to `prd.md` US-3 by `diff`.
+  >
+  > These carry **two** exemptions each, not one. Integration is exempt for the same reason as
+  > health. E2E is exempt as well, and that is the substantive call: a caller can observe _that_ the
+  > service listens, but not _which source supplied the port_ — and a process that refuses to start
+  > on a malformed port exposes no public boundary at all. Both name
+  > `islamic-be:test:unit / <scenario>`, which is the layer that actually proves them. Unit has no
+  > exemption and remains mandatory.
+
+- [x] [AI] Create `specs/apps/islamic/be/contracts/openapi.yaml` (OpenAPI 3.1) with `paths/health.yaml`, `schemas/health.yaml`, and `schemas/error.yaml`, plus a README for each folder — acceptance: the root document references the fragments and every folder carries an annotated index
+
+  > **Implementation note (2026-09-08).** Root document `$ref`s all three fragments; `paths/`,
+  > `schemas/`, and `generated/` each carry an annotated README. `nx run islamic-contracts:lint`
+  > bundles to YAML and JSON and reports `No results with a severity of 'error' found!`.
+  >
+  > Two deliberate divergences from the `ose-be` contract it is modelled on. `HealthResponse.status`
+  > uses `example: healthy`, not `UP` — `prd.md` US-1 asserts the body field equals `"healthy"`, and
+  > a contract whose example contradicts its own acceptance scenario is worse than no example. And
+  > every property carries a `description`; the `ose-be` schemas omit them on properties even though
+  > that contract's own README states the rule.
+
+- [x] [AI] Copy `.spectral.yaml` from `specs/apps/ose/be/contracts/` unchanged — acceptance: the two ruleset files are byte-identical
+
+  > **Implementation note (2026-09-08).** `diff` reports no difference — byte-identical.
+
+- [x] [AI] Create `specs/apps/islamic/be/contracts/project.json` registering `islamic-contracts` with `lint`, `bundle`, `docs`, `typecheck`, `test:quick`, `deps:audit`, `compat:min-version`, and `specs:structure-validation` targets, plus `namedInputs.specs` — acceptance: `npx nx show project islamic-contracts` resolves
+
+  > **Implementation note (2026-09-08).** `nx show project islamic-contracts` resolves with all
+  > eight targets and `namedInputs.specs` set to `{workspaceRoot}/specs/apps/islamic/be/contracts/**`.
+  >
+  > It declares `tags: ["type:lib", "domain:islamic"]`. Its sibling `ose-contracts` declares **no
+  > tags at all**, which is why `learnings.md` records that an exclusion-based CI selector treats
+  > "tag absent" and "tag unknown" identically — both fail open. `platform:` is omitted per the
+  > library rule and `lang:` because OpenAPI YAML is not application code.
+
+- [x] [AI] Create `specs/apps/islamic/be/contracts/generated/README.md` explaining that bundles are generated — acceptance: the file exists and the folder is otherwise gitignored
+
+  > **Implementation note (2026-09-08).** Created, and `.gitignore` gained
+  > `specs/apps/islamic/be/contracts/generated/*` with a `!.../README.md` negation, verified with
+  > `git check-ignore -v`: a bundled artefact is ignored, the README is not.
+  >
+  > **Recorded divergence**: the repository now holds three shapes for this one folder, and no two
+  > agree. `ose-contracts` **tracks** its `openapi-bundled.{yaml,json}` even though its own README
+  > says the folder is gitignored. `ose-lms-contracts` — landed by #495 while this plan was in
+  > flight — ignores `generated/` wholesale and carries **no README at all**. This plan follows its
+  > own checkbox, which names the README explicitly, giving a third shape: folder ignored by glob,
+  > README negated back in.
+  >
+  > That is the shape worth keeping. A bare `generated/` ignore cannot un-ignore a child, so
+  > lms-be's form forecloses ever explaining the folder; and tracking build output as `ose-be` does
+  > invites bundle-vs-source drift no gate would catch. Reconciling the other two is a separate
+  > decision and out of scope here.
+
 - [ ] [AI] Commit on `islamic-be-init/du2-specs-contracts`, push, open a draft PR, poll CI every 2 minutes, and merge when green — acceptance: the PR merges to `main`
 
 ### Phase 2 Gate

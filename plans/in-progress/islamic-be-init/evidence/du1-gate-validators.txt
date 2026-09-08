@@ -1,0 +1,69 @@
+
+> open-sharia-enterprise@1.0.0 test:validators
+> ./hippo run --class ephemeral --disk-path . -- node --test scripts/behaviour-coverage.test.mjs scripts/dotnet-unit-coverage.test.mjs
+
+✔ accepts independently documented Integration and E2E exemptions (3.960875ms)
+✔ requires each exemption on its own tag line with its own adjacent comment (0.488375ms)
+✔ rejects difficulty, runtime, flakiness, cost, and unfinished-work reasons (0.715875ms)
+✔ requires boundary language and a canonical alternative proof (0.170542ms)
+✔ rejects forbidden exemption, WIP, no-layer, and positive selection tags (0.30775ms)
+✔ does not interpret doc-string content as tags (0.24475ms)
+✔ rejects malformed and empty features and scenarios without explicit When and Then (0.257708ms)
+✔ expands every Scenario Outline example row (0.615083ms)
+✔ extracts TypeScript, TSX, and F# TickSpec bindings (0.884709ms)
+✔ ignores commented-out TypeScript and F# bindings (0.214041ms)
+✔ extracts one binding per Java Cucumber annotation (0.284042ms)
+✔ reports an undefined Unit binding when a Java step definition is missing (7.833417ms)
+✔ reports an unused Unit binding when a Java step definition matches no step (1.37325ms)
+✔ extracts one binding per Godog registration (0.378375ms)
+✔ treats a Godog ctx.Step registration as keyword-agnostic (0.06325ms)
+✔ accepts an interpreted Go string literal as a Godog pattern (0.051708ms)
+✔ ignores a Godog registration inside a Go comment (0.078334ms)
+✔ does not mask a comment marker that is inside a Go raw-string pattern (0.072042ms)
+✔ extracts a Godog registration wrapped in regexp.MustCompile (0.081209ms)
+✔ ignores Go regex and backtick literals that are not Godog registrations (0.064625ms)
+✔ reports an undefined Unit binding when a Godog step definition is missing (3.164958ms)
+✔ reports an unused Unit binding when a Godog step definition matches no step (1.265166ms)
+✔ scopes duplicate Godog bindings to explicit feature literals (2.484833ms)
+✔ scopes duplicate F# TickSpec bindings to explicit feature literals (1.466ms)
+✔ keeps duplicate F# TickSpec bindings ambiguous without explicit feature ownership (1.250042ms)
+✔ matches standard and custom Cucumber expression parameters (1.363625ms)
+✔ matches vitest-cucumber Scenario Outline placeholders after pickle expansion (1.521917ms)
+✔ matches escaped literal Cucumber metacharacters in Playwright-BDD strings (1.162083ms)
+✔ treats TypeScript Cucumber registration keywords as matching synonyms (1.47575ms)
+✔ requires Unit coverage even when both higher layers are exempt (1.188375ms)
+✔ exempts only the named adapter (1.533625ms)
+✔ reports ambiguous and unused bindings (1.415375ms)
+✔ validates scoped vitest-cucumber scenarios without cross-scenario ambiguity (2.054041ms)
+✔ scopes duplicate TypeScript Background bindings to their loaded feature (1.958917ms)
+✔ does not report feature-scoped bindings outside a manifest corpus as unused (1.245458ms)
+✔ requires a non-empty recursive corpus and an existing driver (1.161959ms)
+✔ aggregate behaviour mode checks every configured adapter without executing tests (1.249416ms)
+✔ loads a project-local aggregate config with paths relative to that config (1.082958ms)
+✔ CLI is deterministic and never invokes a configured runtime (1.583709ms)
+✔ accepts the closed project target contract (1.609958ms)
+✔ rejects runtime coverage, incomplete quick composition, and missing adapter pairs (1.038959ms)
+✔ rejects a Unit line coverage threshold below the 99% hard minimum (0.554208ms)
+✔ accepts a 99% Coverlet Unit line coverage hard gate (0.610625ms)
+✔ accepts a 99% XPlat collector Unit line coverage hard gate (0.785792ms)
+✔ rejects a bare line-threshold argument without the XPlat hard-gate helper (0.5295ms)
+✔ dedicated E2E projects do not need to own the Unit runtime (0.638375ms)
+✔ accepts a 99% JaCoCo Unit line coverage hard gate (0.693708ms)
+✔ rejects a JaCoCo verification task that declares no line minimum (0.656541ms)
+✔ rejects a coverage target that executes the Gradle test task (1.472083ms)
+✔ accepts exact 99 percent line coverage (0.797ms)
+✔ rejects a rounded line rate whose exact coverage is below 99 percent (0.4755ms)
+✔ rejects coverage without exact line counts (0.207958ms)
+✔ rejects a zero line denominator (0.114792ms)
+✔ rejects an impossible covered line count (0.07125ms)
+✔ accepts only a results directory nested inside the workspace (0.092125ms)
+✔ passes explicit whole-boundary source exclusions to the XPlat collector (0.078333ms)
+ℹ tests 56
+ℹ suites 0
+ℹ pass 56
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 122.600625
+EXIT=0

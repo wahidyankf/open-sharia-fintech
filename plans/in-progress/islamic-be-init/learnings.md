@@ -213,3 +213,35 @@ Doctor tool "golangci-lint"` until the linter was declared there too. So `extra-
      **The link belongs to the DU that makes it resolvable**, not to the DU that wants it.
 - **Disposition**: _pending Phase 7_ — resolved in-flight by naming the projects in prose and moving
   the link into DU3 and DU4 as explicit steps.
+
+### DU1: a conflicted PR emits no CI at all, which is not the same as a slow CI
+
+- **Observed**: two pushes to `islamic-be-init/du1-go-lane` produced **zero** workflow runs. Not
+  queued, not failed — absent. `gh run list` showed nothing newer than the first commit's run, so
+  the obvious reading was "still queued" and the obvious response was to keep waiting. Both wrong.
+- **Cause**: `origin/main` had advanced to #495, which touched the same three files DU1 touches, so
+  PR #496 went to `mergeStateStatus: DIRTY`. GitHub builds `refs/pull/<n>/merge` before dispatching
+  a `pull_request` event; for a conflicted PR that ref cannot be constructed, so `synchronize` never
+  fires. The moment the rebase landed, `DIRTY` became `BLOCKED` and both workflows dispatched
+  within seconds — the causal link is not inferred, it was observed.
+- **Generalizes**: "no run exists for this SHA" and "the run for this SHA has not finished" look
+  identical in `gh run list` and mean opposite things. Only the first is actionable by the author.
+  A CI poll keyed on _run status_ cannot distinguish them, because there is no run to have a status.
+- **Disposition**: _pending Phase 7_ — worth proposing that any CI poll assert
+  `mergeStateStatus != DIRTY` **and** that a run exists for the pinned head before it begins
+  waiting on that run's conclusion. A poll that cannot fail is not a check.
+
+### DU2: three incompatible shapes for `contracts/generated/` now coexist
+
+- **Observed**: `ose-be` tracks `openapi-bundled.{yaml,json}` **and** a hand-written README, though
+  its own README claims the folder is gitignored. `ose-lms-be` — landed by #495 mid-flight — ignores
+  `generated/` wholesale and carries no README. This plan's checkbox names a README explicitly,
+  producing a third shape: `generated/*` ignored by glob, README negated back in.
+- **Why the third shape is the one to keep**: a bare `generated/` ignore cannot un-ignore a child,
+  so lms-be's form permanently forecloses documenting the folder; and tracking build output as
+  `ose-be` does invites bundle-vs-source drift that no gate currently detects.
+- **Generalizes**: a convention that is only ever expressed as copied precedent, never as a rule,
+  will fork silently every time two delivery units run concurrently. Neither author was careless —
+  there was simply nothing to be wrong against.
+- **Disposition**: _pending Phase 7_ — the divergence is recorded, not resolved. Reconciling the two
+  siblings is outside this plan's authorization.

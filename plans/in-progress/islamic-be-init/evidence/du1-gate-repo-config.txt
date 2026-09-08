@@ -1,0 +1,2 @@
+repo-config validate: repo-config.yml matches the canonical schema (key set + enums OK)
+EXIT=0
