@@ -1,0 +1,64 @@
+name: "Setup Java"
+description: "Install the Temurin JDK and configure Gradle with its dependency cache"
+inputs:
+  java-version:
+    description: "JDK major version"
+    required: false
+    default: "25"
+  java-distribution:
+    description: "JDK distribution understood by actions/setup-java"
+    required: false
+    default: "temurin"
+runs:
+  using: "composite"
+  steps:
+    - name: Probe for an already-persisted JDK
+      if: runner.environment == 'self-hosted'
+      id: probe
+      shell: bash
+      run: |
+        # Self-hosted runners keep the Actions tool cache between jobs, so a JDK an earlier job
+        # installed is still on disk and re-downloading it only costs time. GitHub-hosted runners
+        # are ephemeral, so they always take the setup-java path below.
+        want="${{ inputs.java-version }}"
+        dist="${{ inputs.java-distribution }}"
+        tool_cache="${RUNNER_TOOL_CACHE:-$HOME/actions-runner/_work/_tool}"
+        found=""
+        # setup-java lays the cache out as <tool cache>/Java_<distribution>_jdk/<version>/<arch>.
+        # The version segment is the full release, which is `25.0.4` for a patch release but a bare
+        # `25` for an initial one, so both shapes are globbed rather than only the dotted one.
+        # An unmatched glob stays literal, and a literal path fails the -x test, so a missing
+        # cache is reported as absent rather than claimed as a usable JDK.
+        for candidate in "$tool_cache"/Java_"$dist"*_jdk/"$want"/* "$tool_cache"/Java_"$dist"*_jdk/"$want".*/*; do
+          if [ -x "$candidate/bin/java" ]; then
+            found="$candidate"
+          fi
+        done
+        if [ -n "$found" ]; then
+          echo "present=true" >> "$GITHUB_OUTPUT"
+          echo "JAVA_HOME=$found" >> "$GITHUB_ENV"
+          echo "$found/bin" >> "$GITHUB_PATH"
+          echo "SETUP_JAVA_REUSED_PERSISTENT_JDK=true — JDK ${want} already at ${found}"
+        else
+          echo "present=false" >> "$GITHUB_OUTPUT"
+          echo "SETUP_JAVA_REUSED_PERSISTENT_JDK=false — installing ${dist} JDK ${want}"
+        fi
+
+    - name: Setup Java
+      if: runner.environment == 'github-hosted' || steps.probe.outputs.present != 'true'
+      uses: actions/setup-java@v5
+      with:
+        distribution: ${{ inputs.java-distribution }}
+        java-version: ${{ inputs.java-version }}
+
+    # Gradle's own dependency cache is left to setup-gradle rather than duplicated through
+    # setup-java's `cache` input, so exactly one action owns ~/.gradle.
+    # Self-hosted runners already retain $HOME between jobs, so sending the same dependency tree to
+    # GitHub storage adds transfer time without improving reuse — the same reasoning the .NET action
+    # applies to its NuGet cache. Pull requests restore the default branch's cache but never write a
+    # ref-scoped copy; only main refreshes it.
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v6
+      with:
+        cache-disabled: ${{ runner.environment != 'github-hosted' }}
+        cache-read-only: ${{ github.ref != 'refs/heads/main' }}

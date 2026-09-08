@@ -96,3 +96,72 @@
   related-repositories reference which surfaces are parity-bound and which are deliberately
   independent, so a divergence like this is legible as intentional or accidental rather than
   ambiguous.
+
+## Learning: a controlled vocabulary nobody validates fails open, not closed
+
+- **Context**: DU2 rules-propagation Step 7. The plan expected the `lang:`/`platform:` tag
+  vocabulary to be "enforced by `repo-config validate` plus the tag convention". Checking that
+  claim disproved it: `repo-config validate` reads `repo-config.yml`, which has no tag schema and
+  no `tags` key; no `gates:` entry reads `project.json` tags; `nx.json` declares no tag
+  constraints and there is no ESLint config, so `@nx/enforce-module-boundaries` is not configured
+  to constrain values either; and no F# validator reads project tags.
+- **Observation**: the vocabulary table is enforced by human review and nothing else, and the one
+  machine consequence of an undeclared value is silent in the dangerous direction. The `detect`
+  job's per-tag `case` has an arm per admitted value; an unrecognized `lang:` value matches no arm,
+  so the project gets **no** language quality-gate job. The PR then goes green having run nothing
+  for that project. A typo in a tag reads as "this language is not affected" rather than as an
+  error.
+- **Corroborating evidence that this is already live, not hypothetical**: the table admits `rust`
+  and `dotnet`, which no `project.json` uses, and omits `fsharp` and `giraffe`, which 6 and 2
+  projects respectively do use. The drift survived because nothing measures it.
+- **Why it might generalize**: the pattern is "documented controlled vocabulary + consumer that
+  silently ignores unknown values". Any such pair fails open. Candidate durable fixes to weigh at
+  triage: a `governance-tag-vocabulary` gate reading every `project.json` `tags` array against the
+  four-dimension table; and separately, a `*)` default arm in the `detect` case that emits
+  `::error::` for an unrecognized `lang:` value, so an unknown tag fails loudly at the point it
+  would otherwise be dropped. Reconcile the four stale table entries first, or the gate lands red
+  across 23 existing projects.
+
+## Learning: an Nx-cached target is not evidence that a gate ran
+
+- **Context**: DU2-089. The plan's acceptance was "run `nx run rhino-cli:test:quick`; exit 0",
+  intended to prove the word-budget gate measured a newly written `.claude/` file.
+- **Observation**: the first run exited 0 while reporting "Nx read the output from the cache
+  instead of running the command for 1 out of 1 tasks". The target's declared inputs did not
+  include the file just written, so a green exit code proved only that a previous run had been
+  green. Re-running with `--skipNxCache` produced a real run, also 0.
+- **Why it might generalize**: any acceptance phrased as "run `<nx target>`; it exits 0" is
+  satisfiable by a cache hit whose inputs exclude the change under test. This is the same shape as
+  Trustworthy Measurement Rule 7 — a green signal that does not prove the thing you wanted proven.
+  Candidate durable fixes to weigh at triage: state in the measurement rules that an Nx-cached
+  result is not evidence for a file the target's inputs do not declare, and that a verification run
+  must either disable the cache or assert the absence of a cache-hit line; or fix the affected
+  targets' `inputs` so the relevant files are declared.
+
+## Learning: a manual sanitization step with no gate leaks on its second chance, not its first
+
+- **Context**: DU2-PP-114. The current-head `pr-leak-review` on PR #493 returned **fail** with
+  seven category-3 findings — three `file:///Users/<user>/.../scripts/behaviour-coverage.test.mjs`
+  stack-trace lines and four `/var/folders/<user-hash>/<session-hash>/T/...` assertion-diff lines,
+  all in the newly added `evidence/du2-red-validator.txt`.
+- **Observation**: this is the **second** occurrence of the identical leak class inside one plan.
+  DU1 hit it on PR #491, and the fix applied then was to broaden the sanitizer's pattern list
+  (adding `/var/folders` and `/private/tmp`) and re-run it over all 13 evidence files that existed
+  at that moment. That fix was correct and it held — every one of those 13 files is still clean.
+  It simply had no reach over a fourteenth file written later. The sanitizer is a step an agent
+  remembers to run, and the failure mode of a remembered step is not "it runs wrong", it is "it
+  does not run at all on the next artifact". Nothing in the repository fails when a tracked file
+  under `plans/**/evidence/` contains a host path; the only thing that catches it is a leak review
+  that runs after the commit is already pushed.
+- **Why it might generalize**: every recurrence of this class has been caught downstream of the
+  commit, by a reviewer rather than by a gate, which is the most expensive place to catch it and
+  the one place it can slip through if the review is skipped. The pattern list is already written
+  down and already proven — it is only unattached to anything that runs automatically. Candidate
+  durable fixes to weigh at triage: a `check`-type gate in the `repo-config.yml` registry, scoped
+  by glob to `plans/**/evidence/**` and `plans/**/*.md`, that fails on `/Users/`, `/home/<name>/`,
+  `/var/folders/`, and `/private/tmp/`, wired to the pre-commit surface so the leak never reaches
+  a push; and, because the same evidence-capture habit exists in `generated-reports/` and
+  `local-tmp/`, deciding explicitly whether the glob should cover those too or whether being
+  untracked is sufficient protection. Note the gate must not match a relative source path that
+  merely contains the substring `home/` — `components/home/entry-item.tsx` appears in existing
+  committed evidence and is not a leak, so the rule needs a leading-slash anchor.

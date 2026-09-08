@@ -1,0 +1,42 @@
+DU2-092 — doctor reports the config-declared java tool
+
+Command: rtk npm run doctor
+Repository: ose-public, branch lms-init/du2-java-enablement
+Declared in repo-config.yml under doctor.extra-tools with version-stream: stderr
+
+----- output -----
+> .github/scripts/run-doctor.sh
+Doctor Report
+=============
+✓ git        v2.39.5        (no version requirement)
+✓ volta      v2.0.2         (no version requirement)
+✓ node       v24.16.0       (required: 24.16.0)
+⚠ npm        v11.16.0       (required: 11.11.0, version mismatch)
+✓ rust       v1.95.0        (no version requirement)
+✓ cargo-llvm-cov v0.8.5         (no version requirement)
+✓ dotnet     v10.0.300      (required: ≥10.0.204 (major))
+✓ docker     v29.7.2        (no version requirement)
+✓ jq         v1.8.1         (no version requirement)
+✓ shellcheck v0.11.0        (no version requirement)
+✓ hadolint   v2.14.0        (no version requirement)
+✓ actionlint v1.7.12        (no version requirement)
+✓ playwright v1.60.0        (no version requirement)
+✓ shfmt      v3.13.1        (no version requirement)
+✓ tofu       v1.12.3        (required: ≥1.12.3)
+✓ clang-format v22.1.8        (no version requirement)
+✓ java       v25            (required: ≥25)
+Summary: 16/17 tools OK, 1 warning, 0 missing
+Target-share: all crates already share their target/ via the cache.
+----- end output -----
+
+TERMINAL_EXIT=0
+
+Notes:
+- The 'java  v25' row proves the stderr probe works on a real machine:
+  'java -version' writes its banner to stderr, so a stdout-only probe
+  would have reported this installed JDK as missing.
+- The single warning (npm v11.16.0 vs required 11.11.0) is pre-existing
+  cross-repository Volta pin divergence, unrelated to this delivery unit.
+  It is a warning, not a failure; doctor still exits 0.
+- No machine-specific absolute path appears in this file (scanned for
+  /Users/, /home/, /private/, /opt/, /var/ — zero matches).

@@ -19,6 +19,7 @@ created: 2026-08-14
 | organiclever-app-web | TBD                                                      | 3202 | `prod-organiclever-app-web` |
 | ose-app-web          | [app.oseplatform.com](https://app.oseplatform.com) (TBD) | 3300 | `prod-ose-app-web` (TBD)    |
 | ose-be               | api.oseplatform.com (F# / Giraffe / ASP.NET 10)          | 8302 | —                           |
+| ose-lms-be           | (Java 25 / Spring Boot 4)                                | 8303 | —                           |
 | organiclever-be      | (F# / Giraffe / ASP.NET 10, Kubernetes)                  | 8202 | —                           |
 
 ## Overriding a port
@@ -36,6 +37,7 @@ than falling back silently.
 | ose-app-web          | `OSE_APP_WEB_PORT`          |
 | organiclever-be      | `ORGANICLEVER_BE_PORT`      |
 | ose-be               | `OSE_BE_PORT`               |
+| ose-lms-be           | `OSE_LMS_BE_PORT`           |
 
 ```bash
 ./hippo run --class service --disk-path . -- npm exec nx -- dev ose-www --port=4000       # flag

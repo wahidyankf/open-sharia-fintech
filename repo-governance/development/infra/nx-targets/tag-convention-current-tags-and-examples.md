@@ -38,6 +38,15 @@ A library has no platform boundary, so it omits `platform:` and declares the oth
 }
 ```
 
+A Java/Spring Boot backend app follows the same four-dimension shape:
+
+```json
+{
+  "name": "ose-lms-be",
+  "tags": ["type:app", "platform:springboot", "lang:java", "domain:ose"]
+}
+```
+
 ## Anti-Patterns
 
 - **Omitting required dimensions**: Every project must declare `type:` and `domain:`. Omitting them breaks graph queries and boundary rules that rely on these dimensions.

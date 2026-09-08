@@ -28,7 +28,7 @@ This directory contains documentation on programming languages used throughout t
 2. **Best Practices** - Proven approaches for writing clean, maintainable code
 3. **Antipatterns** - Common mistakes and pitfalls to avoid
 
-**Domain-Specific Standards Pattern** (Rust, F#, C#):
+**Domain-Specific Standards Pattern** (Rust, F#, C#, Java):
 
 Multiple domain-focused standards files covering specific areas (testing, security, concurrency, etc.) as separate documents rather than three consolidated files. See each language's README for their specific document structure.
 
@@ -43,6 +43,7 @@ Multiple domain-focused standards files covering specific areas (testing, securi
 | Real-time updates and WebSocket handling | TypeScript           | [TypeScript Standards](./typescript/README.md) — TypeScript development for frontend applications and Node.js services |
 | Complex domain logic with DDD            | F#                   | See language-specific README files                                                                                     |
 | Enterprise API with .NET interop         | C#/F#                | See c-sharp/ and f-sharp/ README files                                                                                 |
+| LMS backend (ose-lms-be only)            | Java/Spring Boot     | [Java Standards](./java/README.md) — active for the LMS backend only; not the default for new backends                 |
 
 **Platform Guidance**:
 
@@ -50,6 +51,7 @@ Multiple domain-focused standards files covering specific areas (testing, securi
 - **F#**: Active for REST API backends (organiclever-be, ose-be) and CLI tooling (rhino-cli, crane-cli — Content Retrieval And Normalization Engine)
 - **Rust**: Retained for the AyoKoding Rust course content standards only; no active platform app (rhino-cli was ported to F# 2026-08-30)
 - **C#**: Retained for potential .NET interop with F#
+- **Java**: Active for the LMS backend (ose-lms-be) only — not the default for new backends, which remain F#
 
 ## Purpose
 
@@ -98,7 +100,7 @@ Each language directory contains a README.md (language overview and version info
 └── antipatterns.md        # Common antipatterns
 ```
 
-**Domain-Specific Standards Pattern** (Rust, F#, C#):
+**Domain-Specific Standards Pattern** (Rust, F#, C#, Java):
 
 ```
 [language-name]/
@@ -164,6 +166,16 @@ F# is a functional-first .NET language where immutability is the default and dis
 - Pure computation engines with units of measure
 - Content pipeline tooling (PDF-to-Markdown conversion, crane-cli)
 
+### ☕ [Java](./java/README.md) — Java development with Spring Boot for the LMS backend
+
+**Java development with Spring Boot for the LMS backend**
+
+Java is active for exactly one project — `ose-lms-be`, the Learning Management System backend — because the LMS targets an ecosystem where Spring Boot is the incumbent. It is not the default for new backends; that remains F#. Introducing Java elsewhere needs its own recorded decision.
+
+**Use Java when you need:**
+
+- The LMS backend, where Spring Boot is the incumbent ecosystem choice
+
 ### 🦀 [Rust](./rust/README.md) — Rust development with ownership-based memory safety, zero-cost abstractions, and Axum
 
 **Rust development with ownership-based memory safety, zero-cost abstractions, and Axum**
@@ -226,6 +238,7 @@ Languages in this documentation are chosen based on:
 | -------------- | ---------------------------------------------- | --------------------------------------------------------------- |
 | **C#**         | Enterprise APIs, .NET interop with F#          | 📋 Retained — .NET interop                                      |
 | **F#**         | REST API backends, CLI tools, content pipeline | ✅ Active — organiclever-be, ose-be, rhino-cli, crane-cli       |
+| **Java**       | LMS backend (Spring Boot)                      | ✅ Active — ose-lms-be only; not the default for new backends   |
 | **Rust**       | AyoKoding course content standards             | 📋 Retained — no active app (rhino-cli ported to F# 2026-08-30) |
 | **TypeScript** | Frontend applications, tRPC backends           | ✅ Active — all Next.js apps                                    |
 
