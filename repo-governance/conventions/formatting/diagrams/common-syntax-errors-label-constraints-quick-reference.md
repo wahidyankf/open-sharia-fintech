@@ -11,9 +11,10 @@ when_to_use: "Use when you want the full label-constraint rules summarized in on
 | Edge label `\|"text"\|`                | No                 | 20 chars   | No (`.` breaks parser)        |
 
 **Automated enforcement**: Run `rhino-cli md mermaid validate` to check these rules
-mechanically instead of counting characters manually. Use `--max-label-len 20` to enforce
-the 20-character limit (the default is 30, matching Mermaid's `wrappingWidth`
-baseline). The tool also checks parallel rank width (Rule 2 above) and single-diagram-per-block.
+mechanically instead of counting characters manually. Pass `--max-label-len 20` to check the
+20-character limit above; the bare default is 30, matching Mermaid's `wrappingWidth` baseline. The
+`md-mermaid-strict` gate applies the 20 automatically to every changed `.md` file. The tool also
+checks parallel rank width (Rule 2 above) and single-diagram-per-block.
 
 **Real-World Context**: All five rules were verified when fixing C4 architecture diagrams in the monorepo. Failures observed:
 

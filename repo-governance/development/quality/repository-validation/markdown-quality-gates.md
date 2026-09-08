@@ -5,8 +5,9 @@ when_to_use: "Use when locating a markdown quality gate's command or exclusions.
 
 # Markdown Quality Gates
 
-Seven gates carry `ci-group: markdown` in `repo-config.yml`: `markdownlint`, `md-mermaid`,
-`md-heading-hierarchy`, `md-naming`, `md-frontmatter`, `md-links`, and `governance-readme-index`.
+Eight gates carry `ci-group: markdown` in `repo-config.yml`: `markdownlint`, `md-mermaid`,
+`md-mermaid-strict`, `md-heading-hierarchy`, `md-naming`, `md-frontmatter`, `md-links`, and
+`governance-readme-index`.
 The registry is the source of truth for every command, argument, and surface below — read
 `repo-config.yml` when this page and the registry disagree.
 
@@ -17,16 +18,27 @@ CI matrix derived from `ci-group` execute them; the commands below are what thos
 
 **Command**: `md mermaid validate`
 
-Checks maximum horizontal width (4 nodes per rank), label line length (≤ 30 chars), single diagram
-per fenced block, and valid syntax. Diagram types covered: `flowchart`/`graph` (all directions) and
+Checks maximum horizontal width (4 nodes per rank), label line length, single diagram per fenced
+block, and valid syntax. Diagram types covered: `flowchart`/`graph` (all directions) and
 `stateDiagram-v2`/`stateDiagram` (v1) — state node count contributes to width; state display names
-and transition edge labels are subject to the ≤ 30-char limit.
+and transition edge labels are subject to the label-length limit.
 
 **Registry exclusions**: `apps/rhino-cli/tests/fixtures`, `plans/done`,
 `apps/ayokoding-www/content`. The `--exclude` flag is repeatable; pass extra prefixes to suppress
 noise in project-specific runs.
 
 **Surfaces**: pre-commit (staged `.md` files) and CI (all `.md` files).
+
+## 1a. Mermaid Label Length, Strict
+
+**Command**: `md mermaid validate --max-label-len 20` (gate `md-mermaid-strict`)
+
+`md-mermaid` above runs at the validator's default of 30 — Mermaid's `wrappingWidth` baseline, a
+backstop. The binding limit is 20 (see
+[Rule 3](../../../conventions/formatting/diagrams/common-syntax-errors-label-constraints-rule-3-line-length.md));
+this gate closes that gap. Same command, same exclusions, same surfaces — but scoped to **changed**
+`.md` files on both, so it ratchets new and edited diagrams to 20 without failing on the untouched
+legacy corpus.
 
 ## 2. Markdown Link Validation
 

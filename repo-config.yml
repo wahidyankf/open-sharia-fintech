@@ -747,6 +747,37 @@ gates:
       pre-commit: { scope: affected-file-type, glob: "*.md" }
       ci: { scope: all-file-type }
 
+  # Rule 3 (common-syntax-errors-label-constraints-rule-3-line-length.md) binds
+  # Mermaid labels at 20 characters per `<br/>` segment, because renderers clip
+  # past roughly 20-22 with no error. The `md-mermaid` entry above runs at the
+  # validator's 30-character default -- Mermaid's `wrappingWidth` baseline, a
+  # backstop, not the rule -- so a green run there proves only that a diagram is
+  # under the backstop. This entry closes that 10-character gap.
+  #
+  # Deliberately scoped `affected-file-type` on BOTH surfaces, never
+  # `all-file-type`: the legacy corpus carries 413 violations across 155 files at
+  # the 20 threshold (measured 2026-09-08 by running the command below with
+  # `--max-label-len 20` over the same excludes). A repo-wide failing gate would
+  # turn `main` red on 155 files nobody touched, which is exactly the corpus-size
+  # objection mermaid-render-fidelity-caveat.md raises. Scoping to changed files
+  # ratchets instead: new and edited diagrams meet Rule 3, untouched ones stay on
+  # the 30 backstop until someone edits them. Widen to `all-file-type` only after
+  # a sweep clears the 413.
+  - id: md-mermaid-strict
+    type: check
+    command: md mermaid validate
+    kind: rhino-cli
+    ci-group: markdown
+    args:
+      max-label-len: ["20"]
+      exclude:
+        - apps/rhino-cli/tests/fixtures
+        - plans/done
+        - apps/ayokoding-www/content
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.md" }
+      ci: { scope: affected-file-type, glob: "*.md" }
+
   - id: md-heading-hierarchy
     type: check
     command: md heading-hierarchy validate
