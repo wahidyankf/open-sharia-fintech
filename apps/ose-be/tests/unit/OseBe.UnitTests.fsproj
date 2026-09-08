@@ -36,9 +36,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Keep the SDK's implicit F# runtime aligned with fsharp-env-loader's
-         explicit floor so clean test-project restores cannot select 10.1.300. -->
-    <PackageReference Update="FSharp.Core" Version="10.1.400" />
+    <!-- Must be >= the FSharp.Core the .NET SDK implicitly references, or NuGet
+         reports NU1605: the referenced app project takes the SDK's implicit
+         version, this project takes the literal below, and a lower literal is a
+         downgrade. `setup-dotnet` floats `10.0.x`, so the implicit version moves
+         when a patch SDK ships; 10.0.401 raised it to 10.1.401. -->
+    <PackageReference Update="FSharp.Core" Version="10.1.401" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
     <PackageReference Include="xunit.v3" Version="3.2.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">

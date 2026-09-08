@@ -314,3 +314,54 @@
   ever left the machine. The narrower lesson stands on its own: after adding a workspace package,
   run the installer and diff the lockfile, rather than trusting that local gates going green means
   the dependency graph is actually consistent.
+
+## A shed and a test failure are indistinguishable in the output that a human reads
+
+- **What happened**: the DU4 push was rejected seven times. Two of those rejections exited 75, and
+  the surrounding output read as a test failure — `NX Running target test:unit for project
+ayokoding-www failed`, then `Failed tasks: - ayokoding-www:test:unit`. It was not a test failure.
+  The pre-push surface is re-executed through an outer `./hippo run --class ephemeral` guard
+  declared in `repo-config.yml`, and HIPPO "admits, supervises, and **sheds**" work from host
+  resource evidence. Sampling `hippo status` every five seconds through a run caught the moment:
+  `state=critical reason=swap-critical availableGiB=7.68`, and the vitest child died right there
+  with nothing printed after `Coverage enabled with v8`. HIPPO killed the process, Nx saw a
+  non-zero child, and reported the task as failed. The only truthful token in the whole output was
+  the exit code — 75, EX_TEMPFAIL, which the repository already treats as an admission deferral
+  rather than a gate failure.
+- **Why it might generalize**: the reader of that output has to already know that 75 means
+  deferral, and has to notice it under many screens of Nx text that say the opposite. Everything
+  visually prominent — the red NX banner, the named project, the "Failed tasks" list — points at a
+  test defect that does not exist. The cost is not theoretical: it sent this delivery unit down a
+  flaky-test investigation, and the flaky-tests-are-defects rule makes that investigation
+  mandatory and expensive precisely so nobody retries past a real defect. Two candidate durable
+  fixes to weigh at triage. First, the `gate-surface-guards.pre-push` entry could pass
+  `--wait-for-admission`, so a shed waits for capacity instead of surfacing as a rejected push;
+  that is strictly more patient than the current behaviour, not weaker. Second, and independent of
+  the first, the gate runner could detect a 75 from its HIPPO wrapper and print one line saying the
+  run was shed and no gate verdict was reached — so the exit code's meaning appears where the
+  reader is already looking. Neither touches HIPPO itself, which is an independent upstream
+  repository and is never modified from here.
+
+## Recording a failure as unexplained is a result, not an omission
+
+- **What happened**: alongside the two shed rejections above, five more pre-push runs exited 1 —
+  a different code, with the host measured at `state=normal` immediately beforehand each time, and
+  always naming the same project. The shed explanation did not cover them, and an early draft of the
+  evidence file claimed it did. Ten forced executions failed to reproduce the signature: the target
+  alone under both HIPPO classes, four vitest suites concurrently, four sequentially in one Nx
+  invocation, and finally the entire pre-push surface re-run with `NX_SKIP_NX_CACHE=true` so that
+  every task genuinely executed rather than replaying a cached pass — 206 targets, zero failed
+  tasks, and the suspect project really running 52 files and 547 tests inside the gate. The
+  signature was written up as OPEN, with every measurement attached, and the branch was pushed only
+  after the forced uncached run proved the surface green.
+- **Why it might generalize**: there were two comfortable exits available and both were wrong. One
+  was to stretch the confirmed shed mechanism to cover the second signature, which would have left a
+  false explanation in the repository that the next investigator would trust. The other was to call
+  it flaky and re-run until it passed, which is the exact evasion the flaky-tests rule forbids. What
+  made the third option safe was evidence rather than optimism: a cached pass proves nothing about a
+  gate, so the run that justified pushing was the one that forced every task to execute. The
+  transferable habits are narrow and concrete — when a diagnosis explains some of the evidence,
+  say which part; prefer a forced uncached run over an incidental green one when the green is what
+  you are relying on; and treat "not reproduced across N specified attempts" as a finding worth
+  writing down, because the next person to meet the signature then starts from measurements instead
+  of from scratch.
