@@ -1,0 +1,53 @@
+name: "Setup Go"
+description: "Install the Go toolchain pinned by apps/islamic-be/go.mod, with module and build caches and a pinned golangci-lint"
+inputs:
+  go-version-file:
+    description: "go.mod whose `go` directive pins the toolchain"
+    required: false
+    default: "apps/islamic-be/go.mod"
+  cache-dependency-path:
+    description: "go.sum used as the module-cache key"
+    required: false
+    default: "apps/islamic-be/go.sum"
+  golangci-lint-version:
+    description: "golangci-lint version (used by the lint-golangci gate)"
+    required: false
+    default: "v2.11.3"
+runs:
+  using: "composite"
+  steps:
+    # The version lives in go.mod rather than in an input default, so the toolchain CI installs and
+    # the toolchain `go build` demands can never drift apart. setup-go owns both the module cache
+    # (~/go/pkg/mod) and the build cache (~/.cache/go-build); no second cache action touches them.
+    - name: Setup Go
+      uses: actions/setup-go@v6
+      with:
+        go-version-file: ${{ inputs.go-version-file }}
+        cache-dependency-path: ${{ inputs.cache-dependency-path }}
+
+    # Installed through the module proxy rather than the upstream `install.sh`: the proxy path is
+    # checksum-verified against GOSUMDB, whereas the shell installer is fetched from an unpinned
+    # `HEAD` ref and piped straight into a shell. `@v2` is part of the module path, not a version
+    # selector -- golangci-lint 2.x publishes under a /v2 major-version suffix.
+    #
+    # The `command -v` guard mirrors setup-rust's cargo-install steps: a self-hosted runner keeps
+    # $GOPATH/bin between jobs, so a reinstall would only cost time. The version is asserted after
+    # the guard, so a runner holding a *different* pinned version is corrected rather than silently
+    # reused -- 2.x cannot read a 1.x config and vice versa.
+    - name: Install golangci-lint
+      shell: bash
+      env:
+        WANT: ${{ inputs.golangci-lint-version }}
+      run: |
+        set -euo pipefail
+        gobin="$(go env GOPATH)/bin"
+        echo "$gobin" >> "$GITHUB_PATH"
+        want="${WANT#v}"
+        have=""
+        if [ -x "$gobin/golangci-lint" ]; then
+          have="$("$gobin/golangci-lint" --version 2>/dev/null | sed -n 's/.*version \([0-9][^ ]*\).*/\1/p')"
+        fi
+        if [ "$have" != "$want" ]; then
+          go install "github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v${want}"
+        fi
+        "$gobin/golangci-lint" --version

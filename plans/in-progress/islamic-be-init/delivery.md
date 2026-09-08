@@ -358,43 +358,295 @@ Delivery boundary. Lands every gate a Go project needs, before any Go project ex
 
 **Tag vocabulary (rules-propagation)**
 
-- [ ] [AI] Run the rules-propagation workflow for the tag-vocabulary amendment: normalise the rule, scan for contradictions, and record an enforcement disposition — acceptance: the workflow's preflight output is captured in `learnings.md`
-- [ ] [AI] Edit `repo-governance/development/infra/nx-targets/tag-convention-four-dimension-scheme.md`: admit `go` to `lang:`, `gin` to `platform:`, and `islamic` to `domain:` — acceptance: all three values appear in the Allowed Values column
-- [ ] [AI] Edit `repo-governance/development/infra/nx-targets/tag-convention-current-tags-and-examples.md`: add rows for `islamic-be`, `islamic-be-e2e`, and `islamic-contracts` — acceptance: the three rows exist with the tag sets from `tech-docs.md`
-- [ ] [AI] Verify neither file exceeds its 750-word governance budget — acceptance: `npm exec nx -- run rhino-cli:governance:word-budget` (or the equivalent gate) reports no failure for either path
+- [x] [AI] Run the rules-propagation workflow for the tag-vocabulary amendment: normalise the rule, scan for contradictions, and record an enforcement disposition — acceptance: the workflow's preflight output is captured in `learnings.md`
+
+  > **Implementation note (2026-09-08).** Preflight recorded in
+  > `local-tmp/rules-propagation/rules-propagation__islamic-be-init-du1__manifest.md`; the finding and
+  > its enforcement disposition are captured in `learnings.md`. Three statements normalised (R1 `lang:go`,
+  > R2 `platform:gin`, R3 `domain:islamic`), each falsifiable by reading a `project.json` `tags` array.
+  > No rule contradicts them. Canonical home is the existing tag-convention pair; no new file, no
+  > eviction from the instruction surface. **Enforcement: unenforced by decision** — no gate validates
+  > tags against the vocabulary, and the conflict scan found the table already drifted from reality
+  > (`lang:fsharp`, `platform:giraffe`, `domain:config` all in use but undocumented). Adding those
+  > three is in scope as tidy; arming a validator is not. `axum`/`dotnet` are documented but unused
+  > in `ose-public` and left alone — this run cannot see whether `ose-private` uses them. No sibling
+  > obligation: both files sit outside `parity-manifest.sha256`.
+
+- [x] [AI] Edit `repo-governance/development/infra/nx-targets/tag-convention-four-dimension-scheme.md`: admit `go` to `lang:`, `gin` to `platform:`, and `islamic` to `domain:` — acceptance: all three values appear in the Allowed Values column
+
+  > **Implementation note (2026-09-08).** All three admitted. Two Special Rules added: values are now
+  > listed alphabetically so an omission is visible, and `domain:islamic` is scoped to generic
+  > Sharia-compliance capability while `domain:ose` stays with the OSE product surface. Per the
+  > preflight, the pre-existing in-use-but-undocumented values `lang:fsharp`, `platform:giraffe`, and
+  > `domain:config` were admitted in the same edit — adding `go` beside those gaps would have
+  > entrenched them. `axum` and `dotnet` were left in place.
+
+- [x] [AI] Edit `repo-governance/development/infra/nx-targets/tag-convention-current-tags-and-examples.md`: add rows for `islamic-be`, `islamic-be-e2e`, and `islamic-contracts` — acceptance: the three rows exist with the tag sets from `tech-docs.md`
+
+  > **Implementation note (2026-09-08).** Three rows added, marked `†` with a footnote naming this
+  > plan and the DU that lands each project — they document vocabulary DU1 admits, ahead of the
+  > `project.json` files DU2–DU4 create. Tag sets: `islamic-be` =
+  > `["type:app", "platform:gin", "lang:go", "domain:islamic"]`; `islamic-be-e2e` =
+  > `["type:e2e", "platform:playwright", "lang:ts", "domain:islamic"]`, mirroring every other e2e
+  > project; `islamic-contracts` = `["type:lib", "domain:islamic"]`, omitting `platform:` per the
+  > library rule and `lang:` because OpenAPI YAML is not application code.
+  >
+  > **Two pre-existing defects fixed in the same edit** (rules-propagation tidy obligation): the table
+  > claimed `rhino-cli` was `lang:rust` and `organiclever-be` was `lang:dotnet`; both are `lang:fsharp`
+  > in the tree, and the second contradicted its own worked example, captioned "An F#/Giraffe backend
+  > app". The table also listed 8 of 23 projects while calling itself "Current Project Tags"; it now
+  > lists all 23 plus the 3 planned. `lang:rust` now has **zero** projects in `ose-public` —
+  > `rhino-cli` was its last holder — which the stale row had been concealing.
+
+- [x] [AI] Verify neither file exceeds its 750-word governance budget — acceptance: `npm exec nx -- run rhino-cli:governance:word-budget` (or the equivalent gate) reports no failure for either path
+
+  > **Implementation note (2026-09-08).** `npm exec nx -- run rhino-cli:governance-word-budget:validation`
+  > succeeded; evidence in `evidence/du1-word-budget.txt`. Raw counts: scheme 338, current-tags 488,
+  > against a 650 target / 750 fail for `repo-governance/**/*.md`. The gate emitted 18 WARN findings,
+  > all pre-existing and none on either edited file — recorded so a later reader does not mistake
+  > them for this change's output.
 
 **Linting gate**
 
-- [ ] [AI] Add a `lint-golangci` entry to `repo-config.yml`'s `gates:` list with `ci` and `pre-commit` surfaces scoped to `glob: "*.go"` — acceptance: `npm exec nx -- run rhino-cli:repo-config:validation` exits zero
-- [ ] [AI] Confirm the pre-existing `format-gofmt` and `format-verify-gofmt` entries still resolve and that `scripts/verify-gofmt.sh` is executable — acceptance: `ls -l scripts/verify-gofmt.sh` shows mode 755 and both gate ids appear in the registry
-- [ ] [AI] Confirm no top-level key was added to `repo-config.yml` — acceptance: `diff <(git show HEAD:repo-config.yml | grep -E '^[a-z-]+:') <(grep -E '^[a-z-]+:' repo-config.yml)` reports no difference
+- [x] [AI] Add a `lint-golangci` entry to `repo-config.yml`'s `gates:` list with `ci` and `pre-commit` surfaces scoped to `glob: "*.go"` — acceptance: `npm exec nx -- run rhino-cli:repo-config:validation` exits zero
+
+  > **Implementation note (2026-09-08) — plan shape corrected before it could ship broken.** The
+  > checkbox specified `command: golangci-lint run` behind `scope: affected-file-type, glob: "*.go"`.
+  > Probing 2.11.3 against a two-package throwaway module showed that shape cannot work:
+  > `golangci-lint run pkg/a/a.go pkg/b/b.go` exits **7** with `named files must all be in one
+directory`, and running it from a directory with no `go.mod` exits **5** with `no go files to
+analyze`. The gate hands its command a flat repository-relative file list from the repository
+  > root, so both failure modes were guaranteed the first time a commit touched two Go packages.
+  >
+  > **Deviation**: added `scripts/lint-golangci.sh` `[N]`, which maps each path to its owning module
+  > and package directory and runs `golangci-lint` once per module from that module's root, with
+  > `--path-prefix` restoring repository-relative output. This is the same wrapper precedent
+  > `scripts/verify-gofmt.sh` already sets for `gofmt -l`'s always-zero exit. Verified against a
+  > throwaway module for four cases: two packages clean (exit 0), no arguments (exit 0), a deleted
+  > path skipped (exit 0), and a real finding (exit 1, path reported repository-relative).
+  > `shellcheck --severity=warning` is clean. `ci-group: lint` — a group that already exists.
+
+- [x] [AI] Confirm the pre-existing `format-gofmt` and `format-verify-gofmt` entries still resolve and that `scripts/verify-gofmt.sh` is executable — acceptance: `ls -l scripts/verify-gofmt.sh` shows mode 755 and both gate ids appear in the registry
+
+  > **Implementation note (2026-09-08).** Both ids resolve — `format-gofmt` at `repo-config.yml:605`
+  > and `format-verify-gofmt` at `:614`. `scripts/verify-gofmt.sh` is mode 755.
+
+- [x] [AI] Confirm no top-level key was added to `repo-config.yml` — acceptance: `diff <(git show HEAD:repo-config.yml | grep -E '^[a-z-]+:') <(grep -E '^[a-z-]+:' repo-config.yml)` reports no difference
+
+  > **Implementation note (2026-09-08).** `diff` of the top-level key lines between `HEAD` and the
+  > working tree reports no difference. **The acceptance command named a target that does not
+  > exist**: `rhino-cli:repo-config:validation` is absent from `apps/rhino-cli/project.json`. The
+  > real entrypoint is `apps/rhino-cli/scripts/rhino-bin.sh repo-config validate`, which
+  > `package.json`'s lint-staged block already invokes; it reports `repo-config.yml matches the
+canonical schema (key set + enums OK)`. Corrected wherever the plan repeats the phantom target.
 
 **Doctor registration**
 
-- [ ] [AI] Declare `go` under `repo-config.yml`'s `doctor.extra-tools` using the shape in `tech-docs.md` §2 D-9 and the Phase 0 resolved Go version — acceptance: `rtk npm run doctor` output now includes a `go` row reporting the installed version, proving the probe works on a real machine; save to `evidence/du1-doctor-go.txt`
-- [ ] [AI] Confirm this added a **list item**, not a key — acceptance: `doctor.extra-tools` already existed from `lms-init` DU1 in both repositories, so the top-level key set is unchanged and `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- run rhino-cli:repo-config:validation` exits zero
-- [ ] [AI] Confirm no `rhino-cli` source file was touched by this registration — acceptance: `rtk git status --porcelain apps/rhino-cli/` reports nothing, proving D-9's zero-parity-cost claim held
+- [x] [AI] Declare `go` under `repo-config.yml`'s `doctor.extra-tools` using the shape in `tech-docs.md` §2 D-9 and the Phase 0 resolved Go version — acceptance: `rtk npm run doctor` output now includes a `go` row reporting the installed version, proving the probe works on a real machine; save to `evidence/du1-doctor-go.txt`
+
+  > **Implementation note (2026-09-08).** Declared per D-9, and `golangci-lint` alongside it.
+  > Evidence in `evidence/du1-doctor-go.txt`; `npm run doctor` exits 0 and prints
+  > `go v1.26.1 (required: ≥1.26)` and `golangci-lint v2.11.3 (required: ≥2.11)`.
+  >
+  > **Deviation, forced by the gate above**: `lint-golangci` declares `doctor-tools:
+[golangci-lint]`, and `repo-config validate` rejected it with `unknown Doctor tool
+"golangci-lint"` until the tool was declared in `extra-tools`. Declaring it is also what D-9's
+  > own reasoning demands — its rejected alternative "no doctor entry at all" was rejected because a
+  > contributor without the toolchain gets an opaque hook failure instead of a doctor row, and that
+  > argument applies verbatim to the linter. This **widens D-9's dividend**: the config-driven
+  > inventory satisfies a gate's `doctor-tools:` dependency, not just a doctor row, still at zero
+  > `rhino-cli` cost.
+  >
+  > Both entries name `brew` only. Debian ships `golang-go` well behind 1.26 and `golangci-lint` at
+  > 1.x — which cannot read a `version: "2"` config at all — so an `apt` line would have handed a
+  > contributor an install command that cannot satisfy `required-version`.
+
+- [x] [AI] Confirm this added a **list item**, not a key — acceptance: `doctor.extra-tools` already existed from `lms-init` DU1 in both repositories, so the top-level key set is unchanged and `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- run rhino-cli:repo-config:validation` exits zero
+
+  > **Implementation note (2026-09-08).** Confirmed by the same top-level key `diff` as above: no
+  > difference. `doctor.extra-tools` already existed from `lms-init` DU1 in both repositories.
+  > `repo-config validate` exits zero.
+
+- [x] [AI] Confirm no `rhino-cli` source file was touched by this registration — acceptance: `rtk git status --porcelain apps/rhino-cli/` reports nothing, proving D-9's zero-parity-cost claim held
+
+  > **Implementation note (2026-09-08).** `git status --porcelain apps/rhino-cli/` reports nothing.
+  > `grep -c golangci-lint` against `RepoConfig.fs` reports 0 — neither tool reaches the hardcoded
+  > inventory. D-9's zero-parity-cost claim held for two tools, not one.
 
 **CI job**
 
-- [ ] [AI] Create `.github/actions/setup-go/action.yml` reading `go-version-file: apps/islamic-be/go.mod`, with module and build caching and a pinned `golangci-lint` install — acceptance: the action file parses and pins the versions named in `tech-docs.md` §5
-- [ ] [AI] Edit `.github/workflows/pr-quality-gate.yml`: add `has-go` to the `detect` job outputs and a `lang:go)` case to its tag switch — acceptance: the `detect` job initialises and sets `has-go` alongside `has-ts`, `has-dotnet-projects`, and `has-dart`
-- [ ] [AI] Add a `go` job gated on `has-go == 'true'` running `npx nx affected -t typecheck lint test:quick compat:min-version --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:rust,tag:lang:dart,tag:lang:java' --parallel=1` — acceptance: the job exists, provisions `setup-node` plus `setup-go`, and mirrors the `java` job's structure at `:365`–`:377`
-- [ ] [AI] Add `tag:lang:go` to the `--exclude` list of **all four** existing language jobs — `typescript` (`:306`), `dotnet` (both `:335` and `:338`), `flutter` (`:362`), and `java` (`:377`). Each selects by excluding known tags, so omitting any one leaves Go running on a toolchain-less runner. Acceptance: `rtk grep -c "tag:lang:go" .github/workflows/pr-quality-gate.yml` reports exactly 5 — one per exclusion, counting `dotnet` twice. Compare with `rtk grep -c "tag:lang:java"`, which reports 4 for the same reason
-- [ ] [AI] Give the new `go` job an exclude list naming every other language: `tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:rust,tag:lang:dart,tag:lang:java`, modelled on the `java` job at `:377`. Acceptance: the `go` job's own list does **not** contain `tag:lang:go`
-- [ ] [AI] Add the `go` job to the `quality-gate` aggregation job's `needs` list — acceptance: `needs:` names `go`, so the aggregate cannot report success while the Go job failed
-- [ ] [AI] Run `rtk actionlint` — acceptance: exit code 0
+- [x] [AI] Create `.github/actions/setup-go/action.yml` reading `go-version-file: apps/islamic-be/go.mod`, with module and build caching and a pinned `golangci-lint` install — acceptance: the action file parses and pins the versions named in `tech-docs.md` §5
+
+  > **Implementation note (2026-09-08).** Created, plus a row in `.github/actions/README.md` so the
+  > index stays complete. `go-version-file: apps/islamic-be/go.mod` and
+  > `cache-dependency-path: apps/islamic-be/go.sum` — both land in DU3; until then the `go` job is
+  > gated off, because `has-go` cannot be true without a `lang:go` project. `actions/setup-go@v6`
+  > owns both the module and build caches, so no second cache action touches them.
+  >
+  > `golangci-lint` is pinned to `v2.11.3` — the version this machine runs and the floor
+  > `doctor.extra-tools` asserts — and installed with
+  > `go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.11.3`, verified to resolve
+  > against the module proxy. **Not** the upstream `install.sh`, which is fetched from an unpinned
+  > `HEAD` ref and piped into a shell; the proxy path is checksum-verified against GOSUMDB. The
+  > `command -v` reuse guard follows `setup-rust`, but asserts the _exact_ version after the guard
+  > rather than accepting any installed binary — a 1.x leftover cannot read a `version: "2"` config.
+  >
+  > `rtk actionlint` exits 0. Note for later readers: pointing actionlint at a composite `action.yml`
+  > directly reports `"jobs" section is missing` — it parses any given file as a workflow.
+  > `setup-rust/action.yml` reports the same, so the gate scans `.github/workflows` only and no
+  > composite action in this repository is actionlint-covered. The embedded `run:` block was
+  > shellchecked separately, clean at `--severity=warning`.
+
+- [x] [AI] Edit `.github/workflows/pr-quality-gate.yml`: add `has-go` to the `detect` job outputs and a `lang:go)` case to its tag switch — acceptance: the `detect` job initialises and sets `has-go` alongside `has-ts`, `has-dotnet-projects`, and `has-dart`
+
+  > **Implementation note (2026-09-08).** `has-go` added in all four places the detect job needs it,
+  > not just the two the checkbox named: the `outputs:` block, the `lang:go)` case, the
+  > **initialisation** block that seeds every flag `false`, and the **fail-closed fallback** that
+  > seeds every flag `true` when detection itself errors. Omitting the last would have meant a
+  > detection failure silently skips the Go gate while claiming to run every language's — the exact
+  > failure the fallback's own comment says it exists to prevent. Also corrected a stale job name in
+  > that comment: it listed `rust`, a job deleted in Phase 9d.
+
+- [x] [AI] Add a `go` job gated on `has-go == 'true'` running `npx nx affected -t typecheck lint test:quick compat:min-version --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:rust,tag:lang:dart,tag:lang:java' --parallel=1` — acceptance: the job exists, provisions `setup-node` plus `setup-go`, and mirrors the `java` job's structure at `:365`–`:377`
+
+  > **Implementation note (2026-09-08).** Added after `java` at `:384`, mirroring its structure:
+  > `setup-node` then `setup-go`, `--parallel=1` for the same codegen-download-race reason.
+
+- [x] [AI] Add `tag:lang:go` to the `--exclude` list of **all four** existing language jobs — `typescript` (`:306`), `dotnet` (both `:335` and `:338`), `flutter` (`:362`), and `java` (`:377`). Each selects by excluding known tags, so omitting any one leaves Go running on a toolchain-less runner. Acceptance: `rtk grep -c "tag:lang:go" .github/workflows/pr-quality-gate.yml` reports exactly 5 — one per exclusion, counting `dotnet` twice. Compare with `rtk grep -c "tag:lang:java"`, which reports 4 for the same reason
+
+  > **Implementation note (2026-09-08).** Done — `grep -c "tag:lang:go"` reports **5**, as predicted
+  > (`dotnet` counts twice: it has a separate `install` list at `:339` and a `test` list at `:342`).
+  >
+  > **The comparison assertion in this checkbox is now wrong, by its own change.** It says
+  > `grep -c "tag:lang:java"` reports 4. It reports **5** — because the `go` job added above carries
+  > its own exclude list, and that list names `tag:lang:java`. The plan measured the java baseline
+  > before adding a sixth list. The invariant it was reaching for still holds and is stated properly
+  > below.
+  >
+  > **The real invariant**: there are six exclude lists across five jobs. A language must appear in
+  > every list except the one(s) its own job owns. Measured:
+  >
+  > | Language | Own job's lists  | Expected | Actual |
+  > | -------- | ---------------- | -------- | ------ |
+  > | `ts`     | 1 (`typescript`) | 5        | 5      |
+  > | `fsharp` | 2 (`dotnet`)     | 4        | 4      |
+  > | `csharp` | 2 (`dotnet`)     | 4        | 4      |
+  > | `dart`   | 1 (`flutter`)    | 5        | 5      |
+  > | `java`   | 1 (`java`)       | 5        | 5      |
+  > | `go`     | 1 (`go`)         | 5        | 5      |
+  > | `rust`   | **0 — no job**   | 6        | **4**  |
+  >
+  > `rust` is the pre-existing hole this plan is not fixing: its job was deleted in Phase 9d and
+  > `tag:lang:rust` was never added to `dotnet`'s two lists, so a `lang:rust` project would run in
+  > the `dotnet` job on a runner with no Rust toolchain. No project carries `lang:rust` today
+  > (`rhino-cli`, its last holder, is `lang:fsharp`), so it is latent, not live. Routed to
+  > `learnings.md`; fixing it is a one-line change that belongs to whoever revives a Rust lane.
+
+- [x] [AI] Give the new `go` job an exclude list naming every other language: `tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:rust,tag:lang:dart,tag:lang:java`, modelled on the `java` job at `:377`. Acceptance: the `go` job's own list does **not** contain `tag:lang:go`
+
+  > **Implementation note (2026-09-08).** Verified: the `go` job's own list at `:396` is
+  > `tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:rust,tag:lang:dart,tag:lang:java` and does
+  > not contain `tag:lang:go`.
+
+- [x] [AI] Add the `go` job to the `quality-gate` aggregation job's `needs` list — acceptance: `needs:` names `go`, so the aggregate cannot report success while the Go job failed
+
+  > **Implementation note (2026-09-08).** `needs:` now names `go`. Prettier wrapped the list across
+  > two lines; the array is unchanged.
+
+- [x] [AI] Run `rtk actionlint` — acceptance: exit code 0
+
+  > **Implementation note (2026-09-08).** Exit 0.
 
 **Behaviour-coverage Go extractor**
 
-- [ ] [AI] **Read before editing**: re-read the merged `BINDING_FILE` and `extractBindings` and compare against `evidence/phase-0-extractor-shape.txt` — acceptance: the shape matches what `lms-init` DU2 left; a mismatch is a stop-and-report, not a local refactor
-- [ ] [AI] **RED**: add fixtures to `scripts/behaviour-coverage.test.mjs` covering each Godog registration form plus negative cases (a regex literal in non-registration code, a commented-out registration, a backtick string that is not a step) — acceptance: `rtk npm run test:validators` fails because `.go` is not scanned; save to `evidence/du1-red-validator.txt`
-- [ ] [AI] Extend `BINDING_FILE` to include `go` — acceptance: the regex admits `.go` alongside `.ts`, `.tsx`, `.fs`, and `.java`
-- [ ] [AI] Add `extractGoBindings(resourceName, source)` to `scripts/behaviour-coverage.mjs` handling interpreted strings, backtick raw strings, `regexp.MustCompile` wrappers, and the `Given`/`When`/`Then` keyword-sensitive forms — acceptance: the function is exported alongside the F# and TypeScript extractors
-- [ ] [AI] Extend `extractBindings` to dispatch `.go` to the new extractor — acceptance: a `.go` resource no longer falls through to `extractTypescriptBindings`
-- [ ] [AI] Reuse the shared quoted-literal feature-reference helper `lms-init` DU2 factored out rather than adding a fourth near-copy — acceptance: `extractGoBindings` calls the helper; no duplicated scan is introduced
-- [ ] [AI] **GREEN**: rerun `rtk npm run test:validators` — acceptance: exits zero with the new Go cases passing
-- [ ] [AI] Confirm Go comment and raw-string handling does not corrupt the existing F#/TypeScript/Java paths — acceptance: the pre-existing validator tests still pass unchanged, and `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- affected -t test:coverage:behaviour` leaves every existing project's coverage result unchanged
+- [x] [AI] **Read before editing**: re-read the merged `BINDING_FILE` and `extractBindings` and compare against `evidence/phase-0-extractor-shape.txt` — acceptance: the shape matches what `lms-init` DU2 left; a mismatch is a stop-and-report, not a local refactor
+
+  > **Implementation note (2026-09-08).** Shape matches `evidence/phase-0-extractor-shape.txt`
+  > exactly: `BINDING_FILE` is `/\.(?:ts|tsx|fs|java)$/iu` at `:20`, `extractBindings` at `:405` is
+  > the same three-way chain, and `featureReferences(source, literalPattern)` at `:302` is present
+  > with three per-language wrappers over it. No stop-and-report condition.
+  >
+  > Also read the two extractors this arm models. `extractJavaBindings` reuses
+  > `maskJavascriptComments`, which is exactly right for Java and **not** exactly right for Go —
+  > recorded here because it changes what the Go arm should do, and resolved at the extractor task
+  > below.
+
+- [x] [AI] **RED**: add fixtures to `scripts/behaviour-coverage.test.mjs` covering each Godog registration form plus negative cases (a regex literal in non-registration code, a commented-out registration, a backtick string that is not a step) — acceptance: `rtk npm run test:validators` fails because `.go` is not scanned; save to `evidence/du1-red-validator.txt`
+
+  > **Implementation note (2026-09-08).** Ten Go tests added. RED captured in
+  > `evidence/du1-red-validator.txt` by a method that isolates the variable: `behaviour-coverage.mjs`
+  > **as it stands on `origin/main`** placed beside the **new** test file, so identical tests run
+  > against only the old implementation. Result: 46 tests, 40 pass, **6 fail — every failure a Go
+  > case, no pre-existing test regressed**.
+  >
+  > Four of the ten pass even against the old extractor, and that is worth recording rather than
+  > hiding: `extractBindings` falls through to `extractTypescriptBindings` for an unknown extension,
+  > and the TypeScript pattern `\b(Given|When|Then|And|But)\s*\(` happens to match inside
+  > `ctx.Given(` — so a Godog file was already being half-read, with the wrong keyword semantics.
+  > The discriminating assertions are `keywordSensitive` and `expression`, exactly as the Java tests
+  > note for the same reason.
+  >
+  > Beyond the fixtures the checkbox named, added: `ctx.Step` keyword-agnosticism, an interpreted
+  > (escape-processing) literal alongside the raw one, and a negative case pinning that a bare
+  > `regexp.MustCompile`, a multi-line raw string that merely quotes Gherkin, and a locally declared
+  > `func Then(...)` all fail to register.
+
+- [x] [AI] Extend `BINDING_FILE` to include `go` — acceptance: the regex admits `.go` alongside `.ts`, `.tsx`, `.fs`, and `.java`
+
+  > **Implementation note (2026-09-08).** Now `/\.(?:ts|tsx|fs|java|go)$/iu`.
+
+- [x] [AI] Add `extractGoBindings(resourceName, source)` to `scripts/behaviour-coverage.mjs` handling interpreted strings, backtick raw strings, `regexp.MustCompile` wrappers, and the `Given`/`When`/`Then` keyword-sensitive forms — acceptance: the function is exported alongside the F# and TypeScript extractors
+
+  > **Implementation note (2026-09-08).** Added at `:405`. Handles all four registration forms —
+  > `ctx.Given`/`When`/`Then`/`Step`, each with a raw or interpreted literal, each optionally wrapped
+  > in `regexp.MustCompile(...)`. Three points where copying the Java arm would have been wrong:
+  >
+  > 1. **`expression: false`.** Godog compiles the argument as a Go regexp; Cucumber-JVM treats it as
+  >    a Cucumber expression. Verified against `go doc godog.ScenarioContext.Step`: _"applied to all
+  >    steps matching the given Regexp expr"_.
+  > 2. **`keywordSensitive: keyword !== "Step"`.** `go doc ...Given` says a Given binding _"will only
+  >    be matched if the step starts with Given"_, but `ctx.Step` matches any keyword. Recording
+  >    `Step` as sensitive would report a correctly-bound `Then` as an undefined binding.
+  > 3. **A Go-aware literal decoder.** `decodeQuotedLiteral` would rewrite a backtick literal's
+  >    `\n` into a real newline and collapse `\\` — but a Go **raw** literal processes no escapes at
+  >    all, and Godog patterns are written raw precisely because they are regexps. `decodeGoLiteral`
+  >    returns a raw body verbatim and delegates the interpreted form unchanged.
+  >
+  > The checkbox says "exported alongside the F# and TypeScript extractors". Those are **not**
+  > exported — only `extractBindings` is. `extractGoBindings` matches its siblings' module-private
+  > visibility; exporting it would have been a new public surface the acceptance text did not intend.
+  >
+  > On comment masking: `maskJavascriptComments` is reused, as the Java arm does. Its one divergence
+  > from Go is treating a backslash inside a backtick literal as an escape. That can only mislead it
+  > when a raw literal ends in an **odd** number of backslashes — which is not a valid regexp, so it
+  > cannot appear in a Godog pattern. A test pins the even case (`\\`) and a `//` inside a raw
+  > pattern.
+
+- [x] [AI] Extend `extractBindings` to dispatch `.go` to the new extractor — acceptance: a `.go` resource no longer falls through to `extractTypescriptBindings`
+
+  > **Implementation note (2026-09-08).** `if (name.endsWith(".go")) return extractGoBindings(...)`
+  > added before the TypeScript fallback.
+
+- [x] [AI] Reuse the shared quoted-literal feature-reference helper `lms-init` DU2 factored out rather than adding a fourth near-copy — acceptance: `extractGoBindings` calls the helper; no duplicated scan is introduced
+
+  > **Implementation note (2026-09-08).** `goFeatureReferences` calls the shared
+  > `featureReferences(source, literalPattern, decode)`; no fourth scan was written. The helper
+  > gained a third parameter defaulting to `decodeQuotedLiteral`, so the F#, Java, and TypeScript
+  > call sites are untouched and only Go passes `decodeGoLiteral`. A test covers duplicate Go
+  > bindings scoped by feature literal, matching the F# TickSpec test beside it.
+
+- [x] [AI] **GREEN**: rerun `rtk npm run test:validators` — acceptance: exits zero with the new Go cases passing
+
+  > **Implementation note (2026-09-08).** Exit 0 — **53 tests, 53 pass, 0 fail**. Evidence in
+  > `evidence/du1-green-validator.txt`, listing each Go case now green.
+
+- [x] [AI] Confirm Go comment and raw-string handling does not corrupt the existing F#/TypeScript/Java paths — acceptance: the pre-existing validator tests still pass unchanged, and `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- affected -t test:coverage:behaviour` leaves every existing project's coverage result unchanged
+
+  > **Implementation note (2026-09-08).** Both halves hold. All 40 pre-existing validator tests pass
+  > unchanged (the RED capture shows the same 40 green against the old extractor, so none was edited
+  > into passing). And
+  > `npm exec nx -- affected -t test:coverage:behaviour --base=origin/main` succeeded for **23
+  > projects**, every existing project's coverage result unchanged.
 
 **Integration**
 

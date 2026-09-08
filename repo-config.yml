@@ -169,8 +169,11 @@ doctor:
   # `install` map keyed by package manager, whose value is the full argv with
   # the command first. Doctor maps `darwin` to `brew` and `linux` to `apt`.
   #
-  # `java` is the first and only entry: the LMS backend (`ose-lms-be`) needs a
-  # JDK, and it is the tool that motivated `version-stream` in the first place.
+  # `java` came first: the LMS backend (`ose-lms-be`) needs a JDK, and it is the
+  # tool that motivated `version-stream` in the first place. `go` and
+  # `golangci-lint` follow for the Islamic-tools backend lane. Every entry here is
+  # a list item under a key both repositories already declare, so the cross-repo
+  # schema-parity rule on top-level key sets is unaffected.
   extra-tools:
     - name: java
       binary: java
@@ -183,6 +186,34 @@ doctor:
       install:
         brew: ["install", "--cask", "temurin@25"]
         apt: ["apt-get", "install", "-y", "temurin-25-jdk"]
+
+    - name: go
+      binary: go
+      # `go version` writes to stdout — the ordinary case. Declared explicitly
+      # rather than left to a default so it reads side by side with the java
+      # entry above, whose stderr banner motivated the field.
+      version-stream: stdout
+      version-args: ["version"]
+      # The Phase 0 resolved toolchain. Compared with >=, so a newer Go passes.
+      required-version: "1.26"
+      install:
+        # brew only, deliberately. Debian's `golang-go` tracks well behind 1.26,
+        # so naming it here would hand a contributor an install command that
+        # cannot satisfy required-version.
+        brew: ["install", "go"]
+
+    - name: golangci-lint
+      binary: golangci-lint
+      version-stream: stdout
+      version-args: ["--version"]
+      # 2.x carries a different config schema from 1.x; `.golangci.yml` declares
+      # `version: "2"`, so a 1.x binary cannot read it. Pinning the major here
+      # turns that into a doctor row rather than an opaque gate failure.
+      required-version: "2.11"
+      install:
+        # brew only, for the same reason as `go` above: Debian ships 1.x under
+        # this name, which cannot read a `version: "2"` config at all.
+        brew: ["install", "golangci-lint"]
 
 # governance-word-budget: registered here (config-only) at Phase 1 of
 # plans/done/2026-08-15__optimize-governance-md and armed as a `gates:` entry at
@@ -588,6 +619,22 @@ gates:
     ci-group: formatting-verify
     verifies: format-gofmt
     surfaces:
+      ci: { scope: affected-file-type, glob: "*.go" }
+
+  - id: lint-golangci
+    type: check
+    # golangci-lint cannot consume the gate's flat repository-relative file list:
+    # a list spanning two directories fails with "named files must all be in one
+    # directory" (exit 7), and it resolves the module from its working directory,
+    # so a repository-root invocation fails with "no go files to analyze" (exit 5).
+    # Both verified against 2.11.3. The wrapper groups paths by owning module and
+    # runs golangci-lint once per module from that module's root.
+    command: scripts/lint-golangci.sh
+    kind: external
+    ci-group: lint
+    doctor-tools: [golangci-lint]
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.go" }
       ci: { scope: affected-file-type, glob: "*.go" }
 
   - id: format-elixir

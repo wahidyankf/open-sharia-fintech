@@ -1,0 +1,11 @@
+# DU1 evidence — doctor rows for the Go toolchain
+# Date: 2026-09-08 · Command: npm run doctor (exit 0)
+
+✓ java       v25            (required: ≥25)
+✓ go         v1.26.1        (required: ≥1.26)
+✓ golangci-lint v2.11.3        (required: ≥2.11)
+
+## Proof that doctor.extra-tools carries these, not a rhino-cli edit
+$ grep -c 'golangci-lint\|"go"' apps/rhino-cli/src/RhinoCli.Application/src/RepoConfig.fs
+0
+0 (absent from the hardcoded inventory)

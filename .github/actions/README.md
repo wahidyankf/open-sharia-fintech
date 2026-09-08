@@ -13,6 +13,7 @@ to run locally. For a local first success, start from the
 | `setup-dotnet`       | .NET tooling and its cache                               | A workflow validates F# work                 |
 | `setup-java`         | The pinned Temurin JDK and the Gradle dependency cache   | A workflow validates Java work               |
 | `setup-rust`         | The pinned Rust toolchain and Rust quality tools         | A workflow validates Rust work               |
+| `setup-go`           | The pinned Go toolchain, its caches, and golangci-lint   | A workflow validates Go work                 |
 | `setup-playwright`   | Browsers and operating-system dependencies               | A workflow runs browser E2E checks           |
 | `setup-docker-cache` | Docker Buildx and its layer cache                        | A workflow needs an integration or E2E stack |
 
