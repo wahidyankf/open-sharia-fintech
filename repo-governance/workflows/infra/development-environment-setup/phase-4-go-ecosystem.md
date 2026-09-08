@@ -1,18 +1,21 @@
 ---
-description: "Phase 4: install Go and Lua solely so gofmt and stylua can format the AyoKoding course corpora."
-when_to_use: "Use when setting up or verifying the Go and Lua toolchains needed by the formatter gates."
+description: "Phase 4: install Go for the islamic-be backend and gofmt, and Lua for stylua."
+when_to_use: "Use when setting up or verifying the Go and Lua toolchains."
 ---
 
-# Phase 4: Go and Lua Formatter Toolchains (Sequential)
+# Phase 4: Go and Lua Toolchains (Sequential)
 
-No application or library in `apps/` or `libs/` is written in Go or Lua. Both toolchains exist for
-exactly one reason: the `*.go` and `*.lua` course corpora under
-`apps/ayokoding-www/content/**` must stay formatted, and the `format-gofmt` /
-`format-verify-gofmt` and `format-stylua` / `format-verify-stylua` gates in `repo-config.yml`
-enforce that at pre-commit and in CI.
+The two toolchains in this phase are no longer alike. **Go is a build-and-test dependency**:
+`apps/islamic-be` is written in it, so Go is needed to build, test, and lint that project as well
+as to run `gofmt` over the `*.go` course corpus under `apps/ayokoding-www/content/**`. **Lua is
+formatter-only**: no project is written in it, and `stylua` exists solely for the `*.lua` corpus.
+The `format-gofmt` / `format-verify-gofmt` and `format-stylua` / `format-verify-stylua` gates in
+`repo-config.yml` enforce the formatting half at pre-commit and in CI.
 
-`rhino-cli doctor` does not check either tool — `doctor --fix` will not install them. Skip this
-phase entirely if you never touch course code.
+That difference decides whether you can skip this phase. `rhino-cli doctor` checks Go — it is
+declared under `doctor.extra-tools` with a version floor, so `doctor --fix` installs it, and 4.1
+below is only the manual equivalent. Doctor does **not** check `stylua`, so 4.2 stays a hand
+install you can skip if you never touch course code.
 
 ## 4.1 Install Go
 
@@ -23,9 +26,12 @@ brew install go
 # Linux — download from https://go.dev/dl/
 ```
 
-No `go.mod` pins a version; any current Go release is fine, because only `gofmt` is invoked.
+`apps/islamic-be/go.mod` pins the language version, and `doctor.extra-tools` carries the matching
+`required-version` floor compared with `>=`. A release below that floor fails the doctor row even
+though `gofmt` alone would have run fine on it.
 
-**Success criteria**: `gofmt --help` runs without error.
+**Success criteria**: `go version` reports at or above the `required-version` in `repo-config.yml`,
+and `gofmt --help` runs without error.
 
 ## 4.2 Install Lua formatting
 

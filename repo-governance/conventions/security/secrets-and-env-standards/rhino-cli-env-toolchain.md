@@ -41,6 +41,10 @@ env-contract:
       kind: app
       lang: rust
       allowlist: []
+    - root: apps/islamic-be
+      kind: app
+      lang: go
+      allowlist: []
     - root: apps/ose-www
       kind: app
       lang: typescript
@@ -51,3 +55,16 @@ env-contract:
 `rhino-cli env validate` compares declared keys in `.env.example` against read keys in source code,
 reporting `declared-but-unread` (stale template entry) and `read-but-undeclared` (undocumented read)
 drift findings. Invoked by `.husky/pre-push` and `.github/workflows/validate-env.yml`.
+
+## Keeping a read visible to the scanner
+
+`env validate` is a **static** scanner: it finds a key by matching the key literal beside the
+reader it is passed to. Injecting the reader is good design — it is what lets a resolver be
+unit-tested without touching the OS — so the rule is not "call the reader directly" but **keep the
+key literal at the composition root, beside the reader**. `ose-be`'s `Program.fs` passes
+`readEnvironment "OSE_BE_PORT"`; `islamic-be`'s `main.go` passes
+`os.LookupEnv, "ISLAMIC_BE_PORT"`. Move the key into a constant the resolver dereferences and the
+scanner sees no read at all, reporting a key that is genuinely read as `declared-but-unread`.
+
+`allowlist:` is for keys that are legitimately not read. Using it to silence a key the scanner
+merely cannot see turns a correctness gate into decoration — fix the call site instead.

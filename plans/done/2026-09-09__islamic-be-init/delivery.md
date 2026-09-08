@@ -14,7 +14,7 @@ than guessing it.
 
 ## Upstream Dependency
 
-This plan does not begin until [`lms-init`](../lms-init/README.md) has **merged** both:
+This plan does not begin until [`lms-init`](../../in-progress/lms-init/README.md) has **merged** both:
 
 - **DU1** — config-driven doctor tool inventory, landed byte-identically in `ose-public` and
   `ose-private`, with `doctor.extra-tools` present in both `repo-config.yml` files.
@@ -75,17 +75,18 @@ authenticated clean current-head `pr-leak-review`, and the applicable surface ga
 
 ### Delivery Branch Inventory
 
-| Branch                                | Repository    | Mode    | Lifecycle state | Proof                                                                                                                                                      |
-| ------------------------------------- | ------------- | ------- | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `worktree/ose-islamic`                | `ose-public`  | `to-pr` | `active`        | carries the plan-authoring PR #488 and every Phase 0 record; removed by the terminal cleanup gate                                                          |
-| `worktree/islamic-be-init`            | `ose-private` | `to-pr` | `active`        | provisioned at Phase 5; hosts the `ose-private` half of the DU5 pair; removed by the terminal cleanup gate                                                 |
-| `islamic-be-init/du1-go-lane`         | `ose-public`  | `to-pr` | `delivered`     | PR #496, reviewed head `d534cadf3e6c5a3d93ee980c1f1c3b041ca48612`, squashed to `f9e40bc675824719b13fa8d32e48b297dc7c75c7`; branch deleted local and remote |
-| `islamic-be-init/du2-specs-contracts` | `ose-public`  | `to-pr` | `delivered`     | PR #497, reviewed head `bbf0d709e964968cd6fb0a226f9c24354a9c2dc8`, squashed to `fbb459cad0a567dcace99ec6f555c493a17f58c9`; branch deleted local and remote |
-| `islamic-be-init/du3-service`         | `ose-public`  | `to-pr` | `delivered`     | PR #498, reviewed head `5554cd6f7e205ffa7b2b35270af5b2da6c964683`, squashed to `1ee0672909de1acf1f339a1b31c00cf78c5a7387`; branch deleted local and remote |
-| `islamic-be-init/du4-e2e`             | `ose-public`  | `to-pr` | `delivered`     | PR #499, reviewed head `26b236814f930af738ab8f7ad4a845d9ddfd4f4b`, squashed to `78ef5ae26c87144f908207b4020b67966dd4834a`; branch deleted local and remote |
-| `islamic-be-init/du5-rhino-go-env`    | `ose-public`  | `to-pr` | `active`        | branched from `78ef5ae26c87144f908207b4020b67966dd4834a`; record merged PR number and 40-character head SHA at DU5                                         |
-| `islamic-be-init/du5-rhino-go-env`    | `ose-private` | `to-pr` | `active`        | branched from `bacbfbc322`; paired counterpart of the `ose-public` DU5 PR; record merged PR number and 40-character head SHA at DU5                        |
-| `islamic-be-init/du6-registry`        | `ose-public`  | `to-pr` | `pending`       | record merged PR number and 40-character head SHA at DU6                                                                                                   |
+| Branch                                | Repository    | Mode    | Lifecycle state | Proof                                                                                                                                                       |
+| ------------------------------------- | ------------- | ------- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `worktree/ose-islamic`                | `ose-public`  | `to-pr` | `active`        | carries the plan-authoring PR #488 and every Phase 0 record; removed by the terminal cleanup gate                                                           |
+| `worktree/islamic-be-init`            | `ose-private` | `to-pr` | `active`        | provisioned at Phase 5; hosts the `ose-private` half of the DU5 pair; removed by the terminal cleanup gate                                                  |
+| `islamic-be-init/du1-go-lane`         | `ose-public`  | `to-pr` | `delivered`     | PR #496, reviewed head `d534cadf3e6c5a3d93ee980c1f1c3b041ca48612`, squashed to `f9e40bc675824719b13fa8d32e48b297dc7c75c7`; branch deleted local and remote  |
+| `islamic-be-init/du2-specs-contracts` | `ose-public`  | `to-pr` | `delivered`     | PR #497, reviewed head `bbf0d709e964968cd6fb0a226f9c24354a9c2dc8`, squashed to `fbb459cad0a567dcace99ec6f555c493a17f58c9`; branch deleted local and remote  |
+| `islamic-be-init/du3-service`         | `ose-public`  | `to-pr` | `delivered`     | PR #498, reviewed head `5554cd6f7e205ffa7b2b35270af5b2da6c964683`, squashed to `1ee0672909de1acf1f339a1b31c00cf78c5a7387`; branch deleted local and remote  |
+| `islamic-be-init/du4-e2e`             | `ose-public`  | `to-pr` | `delivered`     | PR #499, reviewed head `26b236814f930af738ab8f7ad4a845d9ddfd4f4b`, squashed to `78ef5ae26c87144f908207b4020b67966dd4834a`; branch deleted local and remote  |
+| `islamic-be-init/du5-rhino-go-env`    | `ose-public`  | `to-pr` | `delivered`     | PR #500, reviewed head `72c3b65675d07883bdb4ce7a4e98ad0feb74820f`, squashed to `4127ff43c5f5d862538fac9202fdc7ae0c90bf7f`; branch deleted local and remote  |
+| `islamic-be-init/du5-rhino-go-env`    | `ose-private` | `to-pr` | `delivered`     | PR #169, reviewed head `a79332f8bf78332ab627317d4df129fc489b561e`, squashed to `2ba5397da07403598097eddb1a57d5876a7a0f39`; remote branch deleted at cleanup |
+| `islamic-be-init/du6-registry`        | `ose-public`  | `to-pr` | `delivered`     | PR #501, reviewed head `d7f5ebbed089908376fc3f9afe4e491c10beff18`, squashed to `e1746881a541725b19ef13bdbbb9a97fcc59f93c`; branch deleted local and remote  |
+| `islamic-be-init/phase7-knowledge`    | `ose-public`  | `to-pr` | `active`        | branched from `e1746881a541725b19ef13bdbbb9a97fcc59f93c`; carries the Phase 7 routings and the Phase 8 archival; record its PR and head SHA at merge        |
 
 Append every plan-created delivery branch before use. Before removal, classify every entry as
 delivered, unused, or retained/escalated; an active or unrecorded branch blocks cleanup.
@@ -1350,19 +1351,19 @@ Delivery boundary. Requires DU3, DU4, and DU5 merged.
 
 Opens a PR only if a learning routes to a durable home in this repository.
 
-- [ ] [AI] Run both safety gates — secret/sensitivity and repo-relevance — over every `learnings.md` entry — acceptance: each entry is cleared or removed with a stated reason
-- [ ] [AI] Route each surviving entry to exactly one durable home: a convention, a doc, an agent, a skill, code, a test, or a post-mortem — acceptance: every entry names its destination
-- [ ] [AI] Land small non-code routings inline in this plan's commits — acceptance: the routed content exists at its destination
-- [ ] [AI] For each large non-code routing and **every** code routing, author a `plans/ideas/` two-pager only with literal user authorization; otherwise record `Reported without plan authorization` and surface it to the user — acceptance: no `plans/backlog/` folder is created directly
-- [ ] [AI] Discard non-generalizable entries with a one-line reason each — acceptance: no entry is left untriaged
-- [ ] [AI] If nothing generalizable emerged, record the explicit `No generalizable learnings — <reason>` escape — acceptance: the escape text is present in `learnings.md`
+- [x] [AI] Run both safety gates — secret/sensitivity and repo-relevance — over every `learnings.md` entry — acceptance: each entry is cleared or removed with a stated reason. Secret/sensitivity: zero machine paths, home directories, token shapes, hostnames, or IPs across all 27 entries. Repo-relevance: the four `ose-private` mentions name the parity relationship and two PR numbers, both already public in `AGENTS.md` §Related Repositories; no infra-private content.
+- [x] [AI] Route each surviving entry to exactly one durable home: a convention, a doc, an agent, a skill, code, a test, or a post-mortem — acceptance: every entry names its destination
+- [x] [AI] Land small non-code routings inline in this plan's commits — acceptance: the routed content exists at its destination. Nine routings landed across eight `repo-governance/` files; each was checked first for whether its home already stated the rule, and the halves that were already documented (the paired-PR obligation, the generate-reads-the-index order, the npm-install step) were discarded rather than restated.
+- [x] [AI] For each large non-code routing and **every** code routing, author a `plans/ideas/` two-pager only with literal user authorization; otherwise record `Reported without plan authorization` and surface it to the user — acceptance: no `plans/backlog/` folder is created directly. No literal authorization was given, so no two-pager was authored and no `plans/backlog/` folder exists; 17 entries carry `Reported without plan authorization` with executable handoff evidence.
+- [x] [AI] Discard non-generalizable entries with a one-line reason each — acceptance: no entry is left untriaged. One entry discarded (`believe the discovery step over the plan's own layer wording`): the existing conventions were right, and nothing would catch it next time.
+- [x] [AI] If nothing generalizable emerged, record the explicit `No generalizable learnings — <reason>` escape — acceptance: the escape text is present in `learnings.md`. **Not applicable** — 26 of 27 entries generalized; the escape would be false.
 
 ### Phase 7 Gate
 
 > All checks below must pass before starting Phase 8.
 
-- [ ] [AI] Confirm every `learnings.md` entry has reached a terminal state — routed inline, filed as a two-pager, reported without plan authorization, or discarded — acceptance: no entry lacks a disposition
-- [ ] [AI] `npm run lint:md` — exits zero across any newly routed documentation
+- [x] [AI] Confirm every `learnings.md` entry has reached a terminal state — routed inline, filed as a two-pager, reported without plan authorization, or discarded — acceptance: no entry lacks a disposition. 27 entries, 27 dispositions: 8 routed inline, 1 split (inline + reported), 17 reported, 1 discarded. The single remaining `_pending Phase 7_` string is the template in the Format section.
+- [x] [AI] `npm run lint:md` — exits zero across any newly routed documentation. `Summary: 0 error(s)` over 7,650 files. Also verified: `governance-word-budget:validation` reports no finding on any touched file, `md links validate` reports `All links valid!`, and Prettier is clean.
 
 > **Pause Safety**: all knowledge is routed to durable homes; `learnings.md` holds nothing the
 > repository still depends on. Safe to stop. To resume: re-read `learnings.md` and confirm every
@@ -1370,12 +1371,12 @@ Opens a PR only if a learning routes to a durable home in this repository.
 
 ## Phase 8: Plan Archival
 
-- [ ] [AI] Confirm every phase gate above is ticked and every PR is merged — acceptance: Phases 0 through 7 show no unticked gate item
-- [ ] [AI] Reconcile the Delivery Branch Inventory: mark each branch `delivered` with its PR number and reviewed head SHA — acceptance: no branch remains `pending`
+- [x] [AI] Confirm every phase gate above is ticked and every PR is merged — acceptance: Phases 0 through 7 show no unticked gate item. All six PRs merged: `ose-public` #496, #497, #498, #499, #500, #501 and `ose-private` #169, each verified `MERGED` against the GitHub API rather than from notes.
+- [x] [AI] Reconcile the Delivery Branch Inventory: mark each branch `delivered` with its PR number and reviewed head SHA — acceptance: no branch remains `pending`. Every 40-character head and squash SHA re-read from `gh pr view`; DU5 (both repos) and DU6 were still carrying placeholders and are now recorded. `islamic-be-init/phase7-knowledge` appended before use.
 - [ ] [AI] Remove `worktrees/islamic-be-init/` and its branches after confirming nothing is uncommitted — acceptance: `git worktree list` no longer lists the route and the identity block authorizes the removal
-- [ ] [AI] Update `plans/in-progress/README.md` to remove this plan from Active Plans — acceptance: the list no longer names it
-- [ ] [AI] `git mv plans/in-progress/islamic-be-init/ plans/done/YYYY-MM-DD__islamic-be-init/` using the completion date — acceptance: the folder carries a date prefix
-- [ ] [AI] Update the plan README status to Complete — acceptance: the status line no longer reads In Progress
+- [x] [AI] Update `plans/in-progress/README.md` to remove this plan from Active Plans — acceptance: the list no longer names it. Only `lms-init` remains.
+- [x] [AI] `git mv plans/in-progress/islamic-be-init/ plans/done/2026-09-09__islamic-be-init/` — acceptance: the folder carries a date prefix. Six `../lms-init/README.md` links were repointed to `../../in-progress/lms-init/README.md` first, since the move changes their depth.
+- [x] [AI] Update the plan README status to Complete — acceptance: the status line no longer reads In Progress. Both the H1 and the `**Status**:` line updated, and an entry added to `plans/done/README.md`.
 
 ### Phase 8 Gate
 

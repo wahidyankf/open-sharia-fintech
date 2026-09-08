@@ -18,3 +18,5 @@ Without running both steps after worktree creation or entry, these failures can 
 ## Nx Workspace Dependency on `node_modules` State
 
 Nx task caching, project graph resolution, and executor plugins all depend on a consistent `node_modules/` state in the workspace root. When `node_modules/` diverges from `package-lock.json`, the entire workspace behaves unpredictably — not just the files that changed.
+
+The label this surfaces under is misleading. Because `node_modules/` is not a declared Nx input, one task hash can fail before an install and pass after it, and Nx reports `Nx detected a flaky task` — a statement about that hash's observation history, not about nondeterminism in the test. See [Flaky tests are defects](../test-driven-development/flaky-tests-are-defects.md) for the check that separates the two before the flake rule is applied.

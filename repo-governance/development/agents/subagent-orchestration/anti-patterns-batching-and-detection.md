@@ -1,5 +1,5 @@
 ---
-description: "Covers launching a full batch without waiting, relying solely on task-notifications for stuck detection, reading the transcript file to check progress, and self-promoting the concurrency cap."
+description: "Covers launching a full batch without waiting, relying solely on task-notifications for stuck detection, reading the transcript file to check progress, self-promoting the concurrency cap, and handing concurrent agents the same working filename."
 when_to_use: Use when reviewing an orchestrator's batching or stuck-detection behaviour for a common mistake.
 ---
 
@@ -36,3 +36,19 @@ when_to_use: Use when reviewing an orchestrator's batching or stuck-detection be
 **Why it fails**: Completion speed varies. A batch that starts fast can become rate-limited as all agents hit their tool-intensive middle sections simultaneously. The default N is set deliberately at 3 background agents (N+1 total including the main thread) — balancing parallel throughput against API headroom and token/compute-budget burn — to stay safely below the saturation threshold at all batch phases.
 
 **Fix**: Hold at the declared N background agents (N+1 total including the main thread; N defaults to 3). N is adjusted deliberately — per-plan or along the way — never self-promoted by the main agent mid-batch.
+
+## Handing Concurrent Agents the Same Working Filename
+
+**Problem**: Several agents in one fan-out each write an intermediate artefact — a review body, a
+findings file, a JSON result — to the same generic path in the shared session scratchpad
+(`review-body.md`, `out.json`, `tmp.txt`).
+
+**Why it fails**: The scratchpad is isolated from other _sessions_, not from your own fan-out. Two
+agents running at once share it as mutable global state, and one can overwrite the other between
+its own write and its own read. The corruption is silent: each agent's write succeeds, each read
+succeeds, and the artefact that ships belongs to a different agent. When the artefact is a merge
+precondition — a leak review carrying a head SHA — that is evidence for a commit nobody reviewed.
+
+**Fix**: Give every concurrently-running agent a task-unique path, and require any agent that
+posts to an external system to verify by reading the posted object back, not by the call's exit
+status.

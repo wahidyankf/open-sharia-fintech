@@ -40,14 +40,22 @@ field. The one worth knowing here is `version-stream`: a tool whose version bann
 rather than stdout (`java -version` does) must say so, or the probe reads an empty string and
 reports an installed tool as missing.
 
-This repository currently declares no extra tools, so the table above is the complete inventory
-today.
+A gate's `doctor-tools:` dependency resolves against the same closed set: `repo-config validate`
+rejects a gate naming a tool in neither the built-in table nor `doctor.extra-tools`. So declaring a
+tool here is also what lets a new gate depend on an external binary with no `apps/rhino-cli` change.
+
+This repository declares three: `java` for the LMS backend's JDK, and `go` and `golangci-lint` for
+the Islamic-tools backend lane. The table above plus those three is today's complete inventory.
 
 ## Not checked by doctor
 
-The toolchains that exist only to format the AyoKoding course corpora — Go (`gofmt`), Lua
-(`stylua`), Python (`ruff`), and Elixir (`mix format`). They are installed by hand in Phases 4, 6,
-and 8, and enforced by their own `format-*` gates in `repo-config.yml`. `doctor --fix` will not
-install them. They are absent from `doctor.extra-tools` deliberately: `doctor` reports on the
-toolchain a contributor needs to build and test, and these are needed only to format one content
-corpus.
+The toolchains that exist only to format the AyoKoding course corpora — Lua (`stylua`), Python
+(`ruff`), and Elixir (`mix format`). They are installed by hand in Phases 4, 6, and 8, and enforced
+by their own `format-*` gates in `repo-config.yml`. `doctor --fix` will not install them. They are
+absent from `doctor.extra-tools` deliberately: `doctor` reports on the toolchain a contributor
+needs to build and test, and these are needed only to format one content corpus.
+
+Go used to be on that list. Once `apps/islamic-be` shipped it became a build-and-test toolchain
+rather than a formatter-only one, and moved into `doctor.extra-tools` with a `required-version`
+floor. A language crosses that line when the first project is written in it, not when its formatter
+gate is added.

@@ -34,12 +34,25 @@ work that did.
 Two nodes are independent only when neither reads what the other writes. A shared output file, a
 shared branch, or an ordering constraint makes them dependent however separable they look.
 
+**A declaration belongs to the delivery unit that makes it resolvable, not to the unit that wants
+it.** Cross-references are reads: a Markdown link to a project, an adapter entry naming a test
+driver, a config key pointing at a surface. Writing one in an earlier unit than its target creates a
+backwards edge that no merge conflict reveals — it surfaces as a red gate on a diff that is
+internally correct. Two mechanisms make it unavoidable rather than merely likely. A gate declared
+`scope: all-file-type` reads the whole working tree, so preparing a later unit's files in the same
+worktree puts them on the current unit's critical path. And a validator reads a declaration
+literally, so an adapter naming a driver the plan has not built yet fails on a true statement about
+the present. The remedy is never to silence the validator with an exemption, a tag, or a dropped
+target: name the thing in prose now and add the reference in the unit that creates its referent.
+
 **Enforcement**: `plan-checker` flags a non-trivial plan lacking a `## Parallelization Model` section
 as **MEDIUM**, flags a declared-parallel node set with a genuine write conflict as **HIGH**, and for
 a multi-repository plan verifies that every compute node has a guard/class and that every declared
 serial edge names a logical or correctness reason. `plan-execution-checker` verifies delivery
 evidence against that schedule, including HIPPO admission/deferral evidence and preserved serial
 edges. Live host capacity remains **unenforced by decision** because a repository-local check cannot
-authenticate it.
+authenticate it. The resolvability rule is likewise **unenforced by decision** at plan
+time: whether a reference resolves depends on the state of `main` when its unit lands, which a
+plan-time check cannot evaluate. It surfaces at push, in the all-file-type gates themselves.
 
 See [Delivery Checklists Express a DAG — Delivery Units and Planning Granularity](./delivery-checklists-express-a-dag-continued.md) for how DAG nodes map to natural units and mode-specific integration.

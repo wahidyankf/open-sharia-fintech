@@ -194,7 +194,7 @@ and no executor treats them as implied work:
 - Persistence, caching layers, message bus, authentication, rate limiting, quotas.
 - Container publication, staging branch, Kubernetes manifest, public domain.
 - Client SDK generation for any consumer.
-- **The config-driven doctor refactor** — delivered by [`lms-init`](../lms-init/README.md) DU1, which
+- **The config-driven doctor refactor** — delivered by [`lms-init`](../../in-progress/lms-init/README.md) DU1, which
   this plan depends on and does not duplicate.
 - **Generalizing `extractBindings` to a multi-language dispatch** — delivered by `lms-init` DU2. This
   plan adds a `.go` arm to the dispatch that unit leaves behind.

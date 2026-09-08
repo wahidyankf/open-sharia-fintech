@@ -8,6 +8,21 @@ when_to_use: Use the moment a test passes and fails on the same code, before dec
 A test that passes and fails on the same code is a **defect in the test or in the code under
 test**. It is never noise to tolerate, and never a reason to re-run the job.
 
+## The antecedent has to hold first
+
+This rule binds when a test passes and fails **on the same code**. A build tool's flake label is
+not evidence that it did. Nx reports `Nx detected a flaky task` whenever one task hash produced
+two outcomes, and a task hash covers only Nx's _declared_ inputs — `node_modules/` is not one of
+them. An `npm install`, a toolchain install, or a cache wipe between the two runs therefore
+produces the label with no nondeterminism anywhere.
+
+So before step 1, name what changed outside the declared inputs between the two runs. If something
+did, the defect is the unprovisioned environment — see
+[Worktree Toolchain Initialization](../worktree-setup.md) — and the fix is to provision it, not to
+hunt a race. If nothing did, the antecedent holds and the required response below is mandatory.
+"The environment changed" is a claim to be checked and stated at the change, never a default
+explanation for an inconvenient red.
+
 ## Required response
 
 Always fix an intermittent failure at its root cause:
@@ -44,7 +59,10 @@ users will eventually hit.
 **Unenforced by decision.** No validator can distinguish a timeout raised to model real latency
 from one raised to outlast a race, and intent is not mechanically observable. The nearest
 mechanical support is the pre-push and CI gate set, which fails on a red test rather than
-tolerating one; the judgement about how it is made green stays with the author and reviewer.
+tolerating one; the judgement about how it is made green stays with the author and reviewer. The
+antecedent check above is unenforced for the same reason: what changed outside Nx's declared inputs
+between two runs is a fact about the machine, which no repository-local check can reconstruct
+after the fact.
 Complementary review coverage lives in the
 [CI blocker resolution convention](../../quality/ci-blocker-resolution.md) and the
 [pr-review integrity discipline](../../quality/pr-review-disciplines.md).

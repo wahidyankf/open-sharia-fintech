@@ -1,11 +1,11 @@
-# Plan: islamic-be-init (In Progress)
+# Plan: islamic-be-init (Complete)
 
 Stand up `islamic-be` — a Go/Gin REST API serving generic Islamic tools — and its Playwright
 companion `islamic-be-e2e`, on top of the Go language lane this monorepo still lacks.
 
-**Status**: In Progress — planning complete; implementation has not started
+**Status**: Complete — all eight phases delivered; six delivery units merged to `origin/main` as PRs #496–#501 in `ose-public` and #169 in `ose-private`
 **Delivery Mode**: `worktree-to-pr`
-**Depends on**: [`lms-init`](../lms-init/README.md) DU1 and DU2 — **both merged and verified**
+**Depends on**: [`lms-init`](../../in-progress/lms-init/README.md) DU1 and DU2 — **both merged and verified**
 (`c6fffc3` and #493)
 
 ## Context
@@ -96,7 +96,7 @@ Phase 7 captures knowledge; Phase 8 archives the plan.
 
 ## Related
 
-- [`lms-init`](../lms-init/README.md) — the Java lane plan this one builds on; authored in PR
+- [`lms-init`](../../in-progress/lms-init/README.md) — the Java lane plan this one builds on; authored in PR
   #487, execution pending
 - [BDD standard](../../../repo-governance/development/behaviour-driven-development.md)
 - [Nx Target Standards](../../../repo-governance/development/infra/nx-targets.md)
