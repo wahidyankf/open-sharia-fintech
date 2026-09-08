@@ -1,10 +1,5 @@
 ---
-title: "Parity Checklist — Invariants E, F, and G"
 description: Nx naming scheme, governance-currency checklist, Mermaid rules.
-category: explanation
-subcategory: development
-tags: [ci-cd, nx]
-created: 2026-03-31
 when_to_use: Use when naming a target or writing a state diagram.
 ---
 

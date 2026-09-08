@@ -1,5 +1,4 @@
 ---
-title: "Resume Reconciliation (Disk Is Truth)"
 description: Defines how execution rebuilds the action-level Task list from delivery.md on every entry or re-entry, including a first invocation after work already began.
 when_to_use: Use whenever plan execution starts or resumes, including mid-run invocation, handoff, compaction, or Task-list/checkbox disagreement.
 ---

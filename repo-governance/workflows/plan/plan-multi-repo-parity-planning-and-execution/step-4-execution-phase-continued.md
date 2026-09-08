@@ -1,5 +1,4 @@
 ---
-title: "Step 4 — Execution Phase (Continued)"
 description: Covers propagation shape, the parity-manifest gate, per-repo delivery shape, and shared-machine safety.
 when_to_use: Use when deciding whether to run repos concurrently, or the parity-manifest gate fires.
 ---

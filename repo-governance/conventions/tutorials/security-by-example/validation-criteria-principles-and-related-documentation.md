@@ -1,15 +1,5 @@
 ---
-title: Validation Criteria, Principles, and Related Documentation
 description: The validation checklist for security by-example content, the content principles it implements, and links to related conventions.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - security
-  - tool-output
-created: 2026-05-21
 when_to_use: Use when validating a finished security by-example page before publishing or tracing which principles and conventions it must satisfy.
 ---
 

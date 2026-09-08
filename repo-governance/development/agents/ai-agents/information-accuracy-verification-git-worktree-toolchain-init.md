@@ -1,14 +1,5 @@
 ---
-title: "Information Accuracy and Verification — Git Worktree Awareness: Toolchain Initialization Rule"
 description: "States the guarded-install and transactional-Doctor toolchain initialization required after creating a worktree."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when an agent has just created a git worktree and needs to converge the polyglot toolchain before running any gated task.
 ---
 

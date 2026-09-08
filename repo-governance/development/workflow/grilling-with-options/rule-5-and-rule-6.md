@@ -1,17 +1,5 @@
 ---
-title: "Rule 5 and Rule 6 — One Decision Per Question; the Native-Tool Mechanism"
 description: The rule that each question resolves exactly one decision (batching only tightly-coupled ones), and the opening statement of the native-tool-first mechanism.
-category: explanation
-subcategory: development
-tags:
-  - planning
-  - grill-me
-  - user-interaction
-  - plan-maker
-  - design-decisions
-  - interaction
-  - agents
-created: 2026-05-26
 when_to_use: Use when deciding whether two decisions may be batched into one grilling prompt, or when starting to render a grill through a native interactive tool.
 ---
 

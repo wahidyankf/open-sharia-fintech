@@ -1,5 +1,4 @@
 ---
-title: "Steps 1-2: Maker and Checker"
 description: Documents the maker step (manual/AI-assisted example creation scoped to "just enough") and the checker step (validation against Primer standards, including scope discipline).
 when_to_use: Use when creating or updating Primer tutorial content, or when running/interpreting the apps-ayokoding-www-primer-checker agent.
 ---

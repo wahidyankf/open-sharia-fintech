@@ -1,5 +1,4 @@
 ---
-title: "Safety Features"
 description: The guards bounding a run's authority to rewrite, relocate, and delete existing rules, and the failure modes each one addresses.
 when_to_use: Use when reviewing a propagation run's diff, or when extending the workflow's authority.
 ---

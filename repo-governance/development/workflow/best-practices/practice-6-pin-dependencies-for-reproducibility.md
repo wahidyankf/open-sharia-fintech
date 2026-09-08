@@ -1,10 +1,5 @@
 ---
-title: "Practice 6: Pin Dependencies for Reproducibility"
 description: Lock versions using package-lock.json and Volta.
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use when adding a dependency or configuring runtime/tool version pinning.
 ---
 

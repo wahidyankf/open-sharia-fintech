@@ -1,14 +1,5 @@
 ---
-title: "Agent Invocation Patterns — Workflow Execution, Current Limitation, and Examples"
 description: "States that workflows require direct execution, covers the current Task-tool isolation limitation, and gives worked invocation-pattern examples."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when an agent needs conversation continuity and you must judge whether Task-tool isolation is a blocker.
 ---
 

@@ -1,16 +1,6 @@
 ---
-title: "Forbidden Vendor Terms — Models and Branded Concepts"
 description: Forbidden model-family/model names and vendor-branded concept terms, part 2 of the Forbidden Vendor Terms catalog, plus the combined audit regex and false-positive notes.
 when_to_use: Use when checking whether a model name or vendor-branded concept term in governance prose is forbidden, or when you need the combined vendor-audit regex.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - governance
-  - vendor-independence
-  - agents
-  - platform-bindings
-created: 2026-05-02
 ---
 
 # Forbidden Vendor Terms — Models and Branded Concepts

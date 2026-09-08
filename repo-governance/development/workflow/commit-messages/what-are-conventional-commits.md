@@ -1,14 +1,5 @@
 ---
-title: "What are Conventional Commits?"
 description: What the Conventional Commits specification is and the overall header/body/footer structure it defines.
-category: explanation
-subcategory: development
-tags:
-  - conventional-commits
-  - git
-  - development
-  - code-quality
-created: 2025-11-24
 when_to_use: Use when first learning what Conventional Commits is and why the project adopted it.
 ---
 

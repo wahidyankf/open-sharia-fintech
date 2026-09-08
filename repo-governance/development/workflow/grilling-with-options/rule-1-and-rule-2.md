@@ -1,17 +1,5 @@
 ---
-title: "Rule 1 and Rule 2 — Explore Before Asking; Structured Options"
 description: The requirement to read repo artifacts before grilling, and the 2-4 mutually-exclusive substantive-option cap.
-category: explanation
-subcategory: development
-tags:
-  - planning
-  - grill-me
-  - user-interaction
-  - plan-maker
-  - design-decisions
-  - interaction
-  - agents
-created: 2026-05-26
 when_to_use: Use before composing a grilling question, to confirm the answer isn't already discoverable and that the option count is within bounds.
 ---
 

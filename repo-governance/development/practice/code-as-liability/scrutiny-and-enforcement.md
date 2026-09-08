@@ -1,13 +1,5 @@
 ---
-title: "Scrutiny and Enforcement"
 description: How the cost/benefit bar scales with a change's blast radius, and the enforcement disposition for the code-as-liability practice.
-category: explanation
-subcategory: development
-tags:
-  - code-quality
-  - review
-  - maintenance
-created: 2026-08-21
 when_to_use: Use when judging how much justification a specific addition needs, or when asking how this practice is enforced.
 ---
 

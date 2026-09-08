@@ -1,14 +1,5 @@
 ---
-title: "Validation and Compliance"
 description: "Gives the Skill validation checklist and lists common context-architecture mistakes."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - agent-skills
-  - architecture
-  - development
-created: 2025-11-23
 when_to_use: Use when validating that a new or edited Skill declares the correct context mode.
 ---
 

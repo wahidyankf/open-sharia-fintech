@@ -1,15 +1,5 @@
 ---
-title: "Why There Is No Guard"
 description: Why no automated hook can enforce the terminal reconcile step, and what primitive a future guard would have to use.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - worktree
-  - bare-repo
-  - safety
-created: 2026-07-21
 when_to_use: Use before proposing an automated guard for the terminal reconcile step, to understand why none exists today.
 ---
 

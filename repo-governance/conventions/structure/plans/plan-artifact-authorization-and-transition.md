@@ -1,10 +1,5 @@
 ---
-title: "Plan-Artifact Authorization and Transition"
 description: Defines literal authorization for plans/ artifacts and the prospective applicability of the mature-plan contract.
-category: explanation
-subcategory: conventions
-tags: [conventions, plans, authorization, transition]
-created: 2026-08-30
 when_to_use: Use before creating a plans/ artifact or deciding whether an existing plan must adopt the current contract.
 ---
 

@@ -1,16 +1,6 @@
 ---
-title: "Common Mistakes to Avoid"
 description: Three worked FAIL/PASS pairs showing the most common ways teams accidentally duplicate educational content, omit prerequisites, or misplace repository-specific content
 when_to_use: Read this when reviewing a docs/explanation/ or ayokoding-www draft for the most common content-separation mistakes before publishing.
-category: explanation
-subcategory: conventions
-tags:
-  - documentation
-  - programming-languages
-  - style-guides
-  - content-separation
-  - dry-principle
-created: 2026-02-04
 ---
 
 # Common Mistakes to Avoid

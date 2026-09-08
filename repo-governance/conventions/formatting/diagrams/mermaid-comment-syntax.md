@@ -1,18 +1,6 @@
 ---
-title: "Mermaid Comment Syntax"
 description: "Documents Mermaid's comment syntax (%%) and how to use it for documenting diagram intent."
 when_to_use: "Use when adding explanatory comments inside a Mermaid diagram definition."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Mermaid Comment Syntax

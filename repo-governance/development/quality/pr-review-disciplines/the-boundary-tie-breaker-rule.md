@@ -1,15 +1,5 @@
 ---
-title: "The Boundary Tie-Breaker Rule"
 description: "The three-step cross-discipline tie-breaker."
-category: explanation
-subcategory: development
-tags:
-  - pr-review
-  - governance
-  - agents
-  - quality-gates
-  - boundary-rules
-created: 2026-07-23
 when_to_use: "Use for an ambiguous-ownership finding."
 ---
 

@@ -1,18 +1,5 @@
 ---
-title: "Workflow Overview, Principles, and Conventions"
 description: The three-stage workflow at a glance, and the principles and conventions it implements/respects.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - workflow
-  - implementation
-  - optimization
-  - refactoring
-  - surgical-changes
-  - goal-driven
-  - test-driven
-created: 2025-12-15
 when_to_use: Use when orienting to the three-stage workflow's shape, or tracing it back to the principles and conventions it implements.
 ---
 

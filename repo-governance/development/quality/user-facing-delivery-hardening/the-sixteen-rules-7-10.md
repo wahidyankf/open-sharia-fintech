@@ -1,16 +1,5 @@
 ---
-title: "The Sixteen Rules (7-10)"
 description: "Rules 7-10: green gates insufficient, theme-token colors, per-breakpoint responsive, done means verified."
-category: explanation
-subcategory: development
-tags:
-  - quality
-  - planning
-  - ui
-  - verification
-  - testing
-  - deployment
-created: 2026-06-19
 when_to_use: "Use when authoring or verifying a UI plan against rules 7-10."
 ---
 

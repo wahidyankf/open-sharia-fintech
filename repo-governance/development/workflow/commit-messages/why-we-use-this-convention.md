@@ -1,14 +1,5 @@
 ---
-title: "Why We Use This Convention"
 description: The benefits Conventional Commits provides to developers, teams, the project, and users.
-category: explanation
-subcategory: development
-tags:
-  - conventional-commits
-  - git
-  - development
-  - code-quality
-created: 2025-11-24
 when_to_use: Use when justifying why the project requires Conventional Commits.
 ---
 

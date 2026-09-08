@@ -1,17 +1,6 @@
 ---
-title: "Visual Completeness Requirements: Code Examples and Visual Aids"
 description: "Defines requirements for runnable code examples and for visual aids (timelines, tables, comparisons) that make abstract tutorial concepts concrete."
 when_to_use: "Read when adding a code example or a non-diagram visual aid (timeline, table, comparison) to a tutorial."
-category: explanation
-subcategory: conventions
-tags:
-  - tutorials
-  - diataxis
-  - learning
-  - pedagogy
-  - documentation
-  - teaching
-created: 2025-12-03
 ---
 
 # Visual Completeness Requirements: Code Examples and Visual Aids

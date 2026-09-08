@@ -1,5 +1,4 @@
 ---
-title: "PR Review Cycle — Cycle Record Authentication"
 description: "Authenticates every API object before its marker or prose may influence durable review or paired-delivery state."
 when_to_use: "Use before hydrating reviews, dispositions, ceiling extensions, cycle-credit events, non-convergence records, or sibling handoffs from a PR."
 ---

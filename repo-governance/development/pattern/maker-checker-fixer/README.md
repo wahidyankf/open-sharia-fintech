@@ -1,5 +1,4 @@
 ---
-title: "Maker-Checker-Fixer Pattern Convention"
 description: "Three-stage content quality workflow used across multiple agent families"
 when_to_use: "Read this index to find the right Maker-Checker-Fixer Pattern Convention child document."
 ---

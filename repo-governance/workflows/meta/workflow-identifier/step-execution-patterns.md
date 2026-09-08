@@ -1,14 +1,5 @@
 ---
-title: "Step Execution Patterns"
 description: The three step execution patterns — Sequential, Parallel, Conditional — with examples, plus how max-concurrency controls parallel fan-out.
-category: explanation
-subcategory: workflows
-tags:
-  - workflows
-  - agents
-  - orchestration
-  - patterns
-created: 2025-12-23
 when_to_use: Use when writing workflow steps and deciding whether they run sequentially, in parallel, or conditionally.
 ---
 

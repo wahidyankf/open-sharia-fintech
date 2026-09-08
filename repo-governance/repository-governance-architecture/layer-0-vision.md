@@ -1,13 +1,5 @@
 ---
-title: "Layer 0: Vision (WHY WE EXIST)"
-description: The foundational-purpose layer: location, vision statement, pillars
-category: explanation
-subcategory: architecture
-tags:
-  - architecture
-  - governance
-  - vision
-created: 2026-02-09
+description: "The foundational-purpose layer: location, vision statement, pillars"
 when_to_use: Use for Layer 0's scope and relationship to Layer 1.
 ---
 

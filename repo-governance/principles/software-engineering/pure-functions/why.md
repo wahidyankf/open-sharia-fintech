@@ -1,15 +1,5 @@
 ---
-title: "Why"
 description: Lists the benefits of pure functions, the problems side effects cause, and when each applies.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - functional-programming
-  - pure-functions
-  - testability
-  - determinism
-created: 2025-12-28
 when_to_use: Use when justifying a choice to isolate side effects and keep logic pure.
 ---
 

@@ -1,10 +1,5 @@
 ---
-title: "Best Practices for Development Patterns"
 description: "Recommended techniques for the Maker-Checker-Fixer pattern and functional programming practices."
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: "Use when applying the Maker-Checker-Fixer pattern or functional programming practices."
 ---
 

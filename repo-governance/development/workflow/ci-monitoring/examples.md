@@ -1,14 +1,5 @@
 ---
-title: "Examples"
 description: Worked pass/fail examples covering correct polling, trigger checks, and rate-limit recovery versus forbidden stream-watching and tight loops.
-category: explanation
-subcategory: development
-tags:
-  - ci
-  - github-actions
-  - rate-limiting
-  - monitoring
-  - workflow
 when_to_use: Use when you need a concrete example of correct or incorrect CI monitoring behaviour.
 ---
 

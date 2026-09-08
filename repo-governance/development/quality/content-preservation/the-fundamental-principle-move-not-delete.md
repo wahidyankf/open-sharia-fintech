@@ -1,15 +1,5 @@
 ---
-title: "The Fundamental Principle: MOVE, NOT DELETE"
 description: "The core rule: condensed content is moved, never deleted."
-category: explanation
-subcategory: development
-tags:
-  - content-preservation
-  - condensation
-  - offload
-  - zero-loss
-  - documentation
-created: 2025-12-14
 when_to_use: "Use before condensing or trimming any file with substantive content."
 ---
 

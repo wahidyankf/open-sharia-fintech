@@ -1,5 +1,4 @@
 ---
-title: "2. Validate Fidelity (Sequential)"
 description: "Step 2: invokes pdf-to-md-checker to validate the generated Markdown against the source PDF across all fidelity dimensions."
 when_to_use: "Use when implementing or debugging the fidelity-validation step of the quality gate."
 ---

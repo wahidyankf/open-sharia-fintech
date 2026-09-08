@@ -1,13 +1,5 @@
 ---
-title: "Scheme 3 — CLI Command Naming: `{domain} {noun…} {verb}` (Verb-Last)"
 description: The verb-last `{domain} {noun...} {verb}` grammar for rhino-cli subcommands, including the old-to-new command mapping and cross-domain moves.
-category: explanation
-subcategory: development
-tags:
-  - nx
-  - naming
-  - conventions
-created: 2026-06-13
 when_to_use: Use when adding or renaming a rhino-cli subcommand, or looking up the verb-last replacement for a retired verb-middle command.
 ---
 

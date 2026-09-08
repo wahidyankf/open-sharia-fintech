@@ -1,17 +1,6 @@
 ---
-title: "Real-World Relevance"
 description: "Defines the requirement that every major tutorial concept connect to a real-world case study, industry context, or decision framework."
 when_to_use: "Read when connecting a tutorial concept to real-world relevance through a case study, industry context, or common-mistake example."
-category: explanation
-subcategory: conventions
-tags:
-  - tutorials
-  - diataxis
-  - learning
-  - pedagogy
-  - documentation
-  - teaching
-created: 2025-12-03
 ---
 
 # Real-World Relevance

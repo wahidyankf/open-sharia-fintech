@@ -1,14 +1,5 @@
 ---
-title: "Standard 3 and Standard 4 — Chunk Sizing and Task-Notification Handling"
 description: "Defines Standard 3 (chunk sizing for background agents) and Standard 4 (agent ID and task-notification handling)."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - subagents
-  - orchestration
-  - development
-created: 2025-11-23
 when_to_use: Use when sizing a chunk of work for a background agent, or handling its task-notification and agent ID.
 ---
 

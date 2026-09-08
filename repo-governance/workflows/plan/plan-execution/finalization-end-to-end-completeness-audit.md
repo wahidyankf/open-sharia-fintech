@@ -1,5 +1,4 @@
 ---
-title: "Finalization and Archival — End-to-End Delivery Completeness Audit"
 description: Reconciles the full plan from its first requirement through final proof before completion can be declared.
 when_to_use: Use preliminarily after pre-archival gates pass, then repeat terminally after the final delivery is pushed or merged and before assigning pass.
 ---

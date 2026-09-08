@@ -1,15 +1,5 @@
 ---
-title: "Design Tokens — Token Format and Dark Mode"
 description: The double-indirection and direct-value token formatting approaches (direct value is recommended), and the requirement that every visual token have a .dark counterpart
-category: explanation
-subcategory: development/frontend
-tags:
-  - design-tokens
-  - css
-  - tailwind
-  - theming
-  - dark-mode
-created: 2026-03-28
 when_to_use: Use when writing a new token's globals.css declaration, or adding dark-mode support for a token.
 ---
 

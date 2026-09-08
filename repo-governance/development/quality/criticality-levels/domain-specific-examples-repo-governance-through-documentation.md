@@ -1,15 +1,5 @@
 ---
-title: "Examples: Repo-Governance through Documentation"
 description: "Examples for repo-governance, ayokoding-www, ose-www, docs checkers."
-category: explanation
-subcategory: development
-tags:
-  - criticality
-  - validation
-  - checker-agents
-  - fixer-agents
-  - quality-assurance
-created: 2025-12-27
 when_to_use: "Use for a domain example in these checkers."
 ---
 
@@ -21,7 +11,7 @@ when_to_use: "Use for a domain example in these checkers."
 
 **CRITICAL**:
 
-- Missing required `subcategory` field in convention document (breaks organization)
+- Missing `description` or `when_to_use` in a governance document, or any other frontmatter key present (breaks routing and fails validation)
 - Agent `name` field doesn't match filename (agent discovery fails)
 - YAML comment in agent frontmatter (parsing error)
 

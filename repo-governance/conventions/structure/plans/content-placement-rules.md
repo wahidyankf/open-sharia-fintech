@@ -1,14 +1,5 @@
 ---
-title: "Content-Placement Rules (brd.md vs prd.md)"
 description: Gives the authoritative split of which content belongs in brd.md versus prd.md, including how to write success metrics and handle cross-cutting concerns.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when deciding whether a piece of plan content belongs in brd.md or prd.md.
 ---
 

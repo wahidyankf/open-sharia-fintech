@@ -1,5 +1,4 @@
 ---
-title: "UI Quality Gate Workflow"
 description: "Validates UI component quality through a bounded discovery, optional fix, and scoped verification run."
 when_to_use: "Read this index to find the right UI Quality Gate Workflow child document."
 ---
@@ -10,4 +9,3 @@ when_to_use: "Read this index to find the right UI Quality Gate Workflow child d
 - [Steps](./steps.md) — The bounded discovery, optional fix, scoped verification, and finalization flow. Use when executing or auditing the gate.
 - [Bounded Run](./bounded-run.md) — The scope and termination safeguards for a finite UI gate run. Use when deciding whether another pass is allowed.
 - [Example Usage](./example-usage.md) — A worked transcript of the UI quality gate running end to end in strict mode. Use when you want to see what a UI quality gate run looks like in practice.
-- [Related Documentation](./related-documentation.md) — Cross-references from the UI quality gate to its checker, fixer, and maker agents, and to frontend conventions. Use when looking for documentation related to the UI quality gate.

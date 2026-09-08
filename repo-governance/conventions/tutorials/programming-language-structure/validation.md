@@ -1,16 +1,6 @@
 ---
-title: "Validation"
 description: Automated checker coverage and the manual pre-publish verification checklist for tutorial structure.
 when_to_use: Use when running or interpreting automated tutorial-structure checks, or before publishing new language tutorials.
-category: explanation
-subcategory: conventions
-tags:
-  - programming-languages
-  - tutorials
-  - ayokoding-www
-  - education
-  - structure
-created: 2025-12-27
 ---
 
 # Validation

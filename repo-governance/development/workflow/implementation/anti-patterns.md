@@ -1,18 +1,5 @@
 ---
-title: "Anti-Patterns"
 description: Four implementation-workflow anti-patterns - premature optimization, skipping "make it right," optimizing everything, and optimizing without measurement.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - workflow
-  - implementation
-  - optimization
-  - refactoring
-  - surgical-changes
-  - goal-driven
-  - test-driven
-created: 2025-12-15
 when_to_use: Use when reviewing a change to check it isn't optimizing prematurely, skipping cleanup, over-optimizing, or optimizing on a guess.
 ---
 

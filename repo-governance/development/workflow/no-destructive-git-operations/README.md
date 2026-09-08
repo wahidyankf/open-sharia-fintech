@@ -1,5 +1,4 @@
 ---
-title: "No Destructive Git Operations Convention"
 description: "Forbids destructive git operations that can discard a concurrent actor's uncommitted work on a shared machine, and prescribes the safe equivalent."
 when_to_use: "Read this index to find the right No Destructive Git Operations Convention child document."
 ---

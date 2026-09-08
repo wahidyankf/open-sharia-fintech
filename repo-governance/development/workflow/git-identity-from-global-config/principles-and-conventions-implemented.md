@@ -1,15 +1,5 @@
 ---
-title: "Principles and Conventions Implemented"
 description: The principles and companion convention the Git Identity From Global Config Convention implements and respects.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - identity
-  - commits
-  - security
-  - reproducibility
-created: 2026-05-19
 when_to_use: Use when tracing why per-repo git identity overrides are prohibited back to the principles and conventions this rule respects.
 ---
 

@@ -1,15 +1,5 @@
 ---
-title: "Cookbook Weight Resets and Summary"
 description: "Shows how sibling category folders independently reset their child weights, and summarizes the full level-based weight system."
-category: explanation
-subcategory: conventions
-tags:
-  - programming-languages
-  - ayokoding
-  - tutorials
-  - education
-  - content-standards
-created: 2025-12-18
 when_to_use: "Use when you need to confirm that two sibling files can safely share the same weight number, or want a one-glance summary of the weight system."
 ---
 

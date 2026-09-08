@@ -1,17 +1,6 @@
 ---
-title: "Purpose"
 description: "States that this convention establishes standards across all tutorial types and defines the Full Set Tutorial Package."
 when_to_use: "Read when you need to understand why this general Tutorial Convention exists and how it relates to type-specific conventions."
-category: explanation
-subcategory: conventions
-tags:
-  - tutorials
-  - diataxis
-  - learning
-  - pedagogy
-  - documentation
-  - teaching
-created: 2025-12-03
 ---
 
 # Purpose

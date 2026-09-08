@@ -1,16 +1,5 @@
 ---
-title: "Running Linting Locally"
 description: "npm commands to check and auto-fix markdown lint/format violations locally."
-category: explanation
-subcategory: development
-tags:
-  - markdown
-  - linting
-  - formatting
-  - prettier
-  - markdownlint
-  - quality
-created: 2026-01-17
 when_to_use: "Use when you need to check or fix markdown violations before committing."
 ---
 

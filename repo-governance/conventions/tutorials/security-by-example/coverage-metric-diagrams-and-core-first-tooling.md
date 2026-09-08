@@ -1,15 +1,5 @@
 ---
-title: Coverage Metric, Diagram Use Cases, and Core-First Tooling
 description: How security by-example tutorials measure coverage, use Mermaid diagrams, and introduce tools in core-first order across Beginner/Intermediate/Advanced levels.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - security
-  - tool-output
-created: 2026-05-21
 when_to_use: Use when scoping coverage percentages, choosing which diagrams to include, or deciding when to introduce a specialized security tool.
 ---
 

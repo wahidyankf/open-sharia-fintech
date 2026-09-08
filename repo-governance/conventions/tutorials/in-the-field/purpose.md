@@ -1,16 +1,6 @@
 ---
-title: "Purpose"
 description: Why the In-the-Field tutorial type exists and its target audience of developers with by-example/by-concept foundations.
 when_to_use: Use when you need the rationale and target audience for In-the-Field tutorials.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Purpose

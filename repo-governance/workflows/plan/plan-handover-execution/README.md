@@ -1,5 +1,4 @@
 ---
-title: "Plan Handover Execution Workflow"
 description: "Writes a structured handover document capturing an in-progress plan's state for the next agent, session, or human."
 when_to_use: "Read this index to find the right Plan Handover Execution Workflow child document."
 ---
@@ -11,4 +10,3 @@ when_to_use: "Read this index to find the right Plan Handover Execution Workflow
 - [Required Document Structure](./required-document-structure.md) — The contractual section shape every handover uses. Use as the template for a handover's section structure.
 - [Notes and Execution Mode](./notes-and-execution-mode.md) — The two load-bearing sections of the template, and why writing a handover doesn't warrant a delegated agent. Use when confirming which template sections must never be empty, or who performs this workflow.
 - [Steps](./steps.md) — The seven steps for resolving scope, gathering per-repo state, and writing a handover document. Use as the step-by-step procedure when actually writing a handover document.
-- [Related Documentation](./related-documentation.md) — Links to plan-takeover-execution.md, plan-execution.md, Knowledge Capture, and the Agent Workflow Orchestration Convention. Use when navigating from this workflow to the read-side workflow it feeds, or to the conventions its rules mirror.

@@ -1,15 +1,5 @@
 ---
-title: "Reading a File From Another Repository"
 description: How to safely read a file out of a sibling repository by git ref, and the staleness hazard the ref form does not fix.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - worktree
-  - bare-repo
-  - safety
-created: 2026-07-21
 when_to_use: Use when propagating a change across sibling repositories requires reading a file out of one repository while standing in another.
 ---
 

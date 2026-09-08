@@ -1,16 +1,5 @@
 ---
-title: "Documentation"
 description: README setup-instruction template, troubleshooting entries, and common development-task documentation examples.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - reproducibility
-  - volta
-  - docker
-  - environment
-  - dependencies
-created: 2025-12-28
 when_to_use: Use when writing or reviewing a README's setup/troubleshooting sections, or a project's common-tasks documentation.
 ---
 

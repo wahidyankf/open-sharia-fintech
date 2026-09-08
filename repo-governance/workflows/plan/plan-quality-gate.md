@@ -1,29 +1,6 @@
 ---
-name: plan-quality-gate
-title: "plan-quality-gate"
 description: "Governance gate producing exactly one terminal verdict on one formal plan's semantic readiness, from a frozen ledger repaired in at most two cycles."
 when_to_use: "Use only when the user explicitly names this gate, or when plan-planning Step 6 invokes it."
-goal: Produce one terminal verdict on one formal plan's semantic readiness
-termination: "PASS, or a BLOCKED_* verdict after at most one stabilization cycle"
-inputs:
-  - name: plan-path
-    type: string
-    description: The formal plan directory under audit
-    required: true
-  - name: checkpoint
-    type: enum
-    values: [pre-execution, post-material-change, completion]
-    description: The authorized checkpoint this run serves
-    required: true
-outputs:
-  - name: verdict
-    type: enum
-    values: [PASS, BLOCKED_INPUT_CHANGED, BLOCKED_NON_CONVERGENT, BLOCKED_TOOLING]
-    description: The single terminal result
-  - name: ledger
-    type: file
-    pattern: local-tmp/plan/plan-quality-gate__*__ledger.md
-    description: The frozen finding ledger
 ---
 
 # Plan Quality Gate
@@ -82,6 +59,22 @@ reach a deterministic verdict, return `BLOCKED_TOOLING` with the failure evidenc
 the remaining rows, and the external change required. Resume only after new input and explicit user
 direction authorize a fresh run; [plan execution](./plan-execution.md) consumes this result but
 never starts it.
+
+## Goal and Termination
+
+**Goal**: Produce one terminal verdict on one formal plan's semantic readiness
+
+**Termination**: PASS, or a BLOCKED\_\* verdict after at most one stabilization cycle
+
+## Inputs
+
+- **`plan-path`** (string, required) — The formal plan directory under audit
+- **`checkpoint`** (enum: pre-execution, post-material-change, completion, required) — The authorized checkpoint this run serves
+
+## Outputs
+
+- **`verdict`** (enum: PASS, BLOCKED_INPUT_CHANGED, BLOCKED_NON_CONVERGENT, BLOCKED_TOOLING) — The single terminal result
+- **`ledger`** (file, pattern `local-tmp/plan/plan-quality-gate__*__ledger.md`) — The frozen finding ledger
 
 ## Contents
 

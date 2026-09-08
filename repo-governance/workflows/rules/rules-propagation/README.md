@@ -1,5 +1,4 @@
 ---
-title: "Repository Rules Propagation Workflow"
 description: "Places newly-stated rules on the correct surface — instruction surface first, governance layers below — de-conflicting, deduplicating, arming enforcement."
 when_to_use: "Read this index to find the right Repository Rules Propagation Workflow child document."
 ---

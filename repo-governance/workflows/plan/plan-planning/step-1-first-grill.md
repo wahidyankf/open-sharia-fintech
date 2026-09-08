@@ -1,5 +1,4 @@
 ---
-title: "Step 1 — First Grill: Scope, Constraints, Push Target"
 description: Specifies the ten decisions the first grill session must resolve before research begins, and the hard gate on proceeding.
 when_to_use: Use when running the first grill session of plan-establishment, or when checking which decisions must be confirmed before Step 2.
 ---

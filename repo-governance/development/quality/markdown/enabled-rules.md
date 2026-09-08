@@ -1,16 +1,5 @@
 ---
-title: "Enabled Rules"
 description: "The structural, formatting, link, and code markdownlint rules enforced here."
-category: explanation
-subcategory: development
-tags:
-  - markdown
-  - linting
-  - formatting
-  - prettier
-  - markdownlint
-  - quality
-created: 2026-01-17
 when_to_use: "Use when checking which markdownlint rule is active and why."
 ---
 

@@ -1,10 +1,5 @@
 ---
-title: "Usage and Implementation for AI Agents"
 description: When these directories apply and don't, plus implementation steps for both agent types.
-category: explanation
-subcategory: development
-tags: [temporary-files, ai-agents, file-organization, best-practices]
-created: 2025-12-01
 when_to_use: Use when deciding if a file belongs here.
 ---
 

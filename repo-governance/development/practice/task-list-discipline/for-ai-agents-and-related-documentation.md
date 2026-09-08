@@ -1,15 +1,5 @@
 ---
-title: "Task List Discipline — For AI Agents and Related Documentation"
 description: The five-point checklist for AI agents doing qualifying multi-step work, its relationship to plan delivery checklists, and links to related documentation
-category: explanation
-subcategory: development
-tags:
-  - task-management
-  - planning
-  - execution
-  - ai-agents
-  - discipline
-created: 2026-06-23
 when_to_use: Use as a quick-reference checklist before starting qualifying multi-step work, or to find related conventions and principles.
 ---
 

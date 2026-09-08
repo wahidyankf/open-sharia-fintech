@@ -1,13 +1,5 @@
 ---
-title: "Anti-Patterns 7-9"
 description: "Ignoring criticality in fixes, no CI quality gates, undocumented validation rules."
-category: explanation
-subcategory: development
-tags:
-  - anti-patterns
-  - quality
-  - development
-created: 2026-05-12
 when_to_use: "Use when reviewing for these three quality anti-patterns."
 ---
 

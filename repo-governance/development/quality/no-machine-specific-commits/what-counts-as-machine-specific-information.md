@@ -1,16 +1,5 @@
 ---
-title: "What Counts as Machine-Specific Information"
 description: "The prohibited categories: absolute local paths, embedded usernames, local IPs/hostnames, and environment-specific literals."
-category: explanation
-subcategory: development
-tags:
-  - git
-  - commits
-  - security
-  - portability
-  - environment
-  - quality
-created: 2026-03-24
 when_to_use: "Use when deciding whether a specific value is machine-specific and must not be committed."
 ---
 

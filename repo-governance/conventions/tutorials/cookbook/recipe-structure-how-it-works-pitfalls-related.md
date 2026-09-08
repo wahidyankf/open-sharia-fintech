@@ -1,17 +1,6 @@
 ---
-title: "Recipe Structure Standards: How It Works, Common Pitfalls, and Related Recipes"
 description: "Specifies the remaining required and optional parts of a cookbook recipe: how-it-works explanation, common pitfalls, related recipes, and learn-more links."
 when_to_use: "Read when drafting the explanation, pitfalls, and cross-reference sections of a cookbook recipe."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - cookbook
-  - education
-  - problem-solving
-  - recipes
-created: 2026-01-30
 ---
 
 # Recipe Structure Standards: How It Works, Common Pitfalls, and Related Recipes

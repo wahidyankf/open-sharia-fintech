@@ -1,17 +1,5 @@
 ---
-title: "The Rule: Six Mandatory Layers (Standard 1)"
 description: "Standard 1: cap discovery (GIT_CEILING_DIRECTORIES)."
-category: explanation
-subcategory: development
-tags:
-  - testing
-  - git
-  - test-fixtures
-  - isolation
-  - regression
-  - safety
-  - defense-in-depth
-created: 2026-07-19
 when_to_use: "Use when implementing capped git-discovery in a fixture."
 ---
 

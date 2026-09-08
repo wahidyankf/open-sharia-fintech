@@ -1,17 +1,6 @@
 ---
-title: "Startup Validation"
 description: How Rust backends (dotenvy + envy) and TypeScript webs (@t3-oss/env-nextjs + zod) validate required env vars at startup or build time.
 when_to_use: Use when wiring up or debugging typed env-var validation for a new Rust backend or Next.js web app.
-category: explanation
-subcategory: conventions
-tags:
-  - security
-  - secrets
-  - env-files
-  - guard-env-file-access
-  - naming
-  - reproducibility
-created: 2026-06-10
 ---
 
 # Startup Validation

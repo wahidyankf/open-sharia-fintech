@@ -1,18 +1,5 @@
 ---
-title: "Absolute Source Paths in Delivery-Checklist Commands (Same-Repo Worktree vs. Primary Checkout)"
 description: Why a hardcoded absolute path to a repo's primary checkout silently resolves to stale content instead of the worktree's in-progress copy, and how to verify it before running.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - git
-  - worktree
-  - npm
-  - nx
-  - dependencies
-  - toolchain
-  - doctor
-created: 2026-03-28
 when_to_use: Use before running any delivery-checklist command that reads from an absolute path into a repo the same plan is also modifying.
 ---
 

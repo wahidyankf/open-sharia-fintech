@@ -1,14 +1,5 @@
 ---
-title: "Mature Formal-Plan Structure"
 description: Shows the fixed core, one reader-led technical shape, and the purpose of the core formal-plan documents.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when scaffolding a multi-file plan folder or clarifying what belongs in README.md, brd.md, or prd.md.
 ---
 

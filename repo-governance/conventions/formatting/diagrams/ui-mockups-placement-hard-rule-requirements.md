@@ -1,18 +1,6 @@
 ---
-title: "Placement — the UI Lives in prd.md (HARD RULE): Requirements and Enforcement"
 description: "States the hard rule that all UI design funnel artefacts must live in prd.md, plus its enforcement mechanics."
 when_to_use: "Use when deciding where to place UI mockups and funnel records in a plan, or when a plan fails the placement gate."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Placement — the UI Lives in prd.md (HARD RULE): Requirements and Enforcement

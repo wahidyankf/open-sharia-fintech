@@ -1,15 +1,5 @@
 ---
-title: "Example Structure: Key Takeaway and Why It Matters"
 description: "Defines Parts 4 and 5 of the mandatory five-part example format: the key takeaway sentence and the production-relevance Why It Matters paragraph."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - education
-  - code-first
-created: 2025-12-25
 when_to_use: "Read when writing the closing Key Takeaway or Why It Matters sections of an example, or checking their length and content requirements."
 ---
 

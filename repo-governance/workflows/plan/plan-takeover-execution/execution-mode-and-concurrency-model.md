@@ -1,5 +1,4 @@
 ---
-title: "Execution Mode and Concurrency Model"
 description: States that this workflow runs as direct orchestration with no delegated discovery agent, and how the N+1 concurrency model applies across repos and cleanup candidates.
 when_to_use: Use when determining whether discovery probes should fan out across repos, or how many background agents may run concurrently during takeover.
 ---

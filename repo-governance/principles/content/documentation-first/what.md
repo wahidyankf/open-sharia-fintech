@@ -1,12 +1,5 @@
 ---
-title: "What"
 description: Defines the documentation types Documentation First requires.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - documentation
-created: 2025-12-28
 when_to_use: Use for a quick definition of required documentation types.
 ---
 

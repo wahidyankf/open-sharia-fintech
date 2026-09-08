@@ -1,15 +1,5 @@
 ---
-title: "Styling — Inline Styles, Class Ordering, and Defensive CSS"
 description: No inline style={} props (except temporary migrations), automatic Tailwind class sorting via prettier-plugin-tailwindcss, and defensive CSS patterns that prevent layout breakage
-category: explanation
-subcategory: development/frontend
-tags:
-  - styling
-  - tailwind
-  - css
-  - responsive
-  - mobile-first
-created: 2026-03-28
 when_to_use: Use when tempted to add an inline style prop, when Tailwind classes appear unsorted after save, or when a layout risks content overflow.
 ---
 

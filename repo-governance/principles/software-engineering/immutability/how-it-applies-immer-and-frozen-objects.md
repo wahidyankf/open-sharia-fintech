@@ -1,15 +1,5 @@
 ---
-title: "How It Applies — Immer and Frozen Objects"
 description: Shows immutable object updates plus Immer and Object.freeze techniques for complex or runtime-enforced immutability.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - functional-programming
-  - immutability
-  - data-structures
-  - concurrency
-created: 2025-12-28
 when_to_use: Use when updating deeply nested objects immutably or when runtime enforcement of immutability is required.
 ---
 

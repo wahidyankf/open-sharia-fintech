@@ -1,10 +1,5 @@
 ---
-title: "BDD Spec-to-Test Mapping"
 description: "Compatibility entry point for canonical recursive Gherkin corpus and adapter mapping"
-category: explanation
-subcategory: development
-tags: [bdd, gherkin, testing]
-created: 2026-03-06
 when_to_use: "Use when tracing an older BDD mapping reference to the canonical repository standard."
 ---
 

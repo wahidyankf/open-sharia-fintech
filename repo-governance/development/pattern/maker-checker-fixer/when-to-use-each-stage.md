@@ -1,16 +1,5 @@
 ---
-title: "When to Use Each Stage"
 description: "Decision guidance for maker vs. fixer."
-category: explanation
-subcategory: development
-tags:
-  - maker-checker-fixer
-  - workflow
-  - content-quality
-  - agent-patterns
-  - validation
-  - automation
-created: 2025-12-14
 when_to_use: "Use when unsure which stage applies."
 ---
 

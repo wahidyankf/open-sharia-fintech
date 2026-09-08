@@ -1,15 +1,5 @@
 ---
-title: "Principles and Conventions"
 description: "The core principles and conventions this pattern implements - explicitness, reproducibility, automation, simplicity, and the backend hexagonal-architecture layering."
-category: explanation
-subcategory: development
-tags:
-  - openapi
-  - contract-first
-  - codegen
-  - api
-  - drift-enforcement
-created: 2026-05-26
 when_to_use: "Use when you need to trace an OpenAPI contract-first rule back to the principle or convention it implements."
 ---
 

@@ -1,5 +1,4 @@
 ---
-title: "Phase 13: Verification (Sequential)"
 description: "Phase 13: verify the pre-commit hook, pre-push gate set, one backend's integration tests, and one backend's E2E tests all work end to end."
 when_to_use: "Use as the final smoke test confirming the whole environment setup actually works."
 ---

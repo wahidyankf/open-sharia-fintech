@@ -1,14 +1,5 @@
 ---
-title: "Scope and Pre-Push Hook Coverage"
 description: What kinds of pushes this convention applies to, what it excludes, and how it complements the pre-push hook.
-category: explanation
-subcategory: development
-tags:
-  - ci
-  - github-actions
-  - verification
-  - quality-gates
-  - workflow
 when_to_use: Use when deciding whether a push requires CI post-push verification, or checking what the pre-push hook already covers.
 ---
 

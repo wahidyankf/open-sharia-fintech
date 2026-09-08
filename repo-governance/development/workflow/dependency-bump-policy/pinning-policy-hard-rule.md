@@ -1,15 +1,5 @@
 ---
-title: "Pinning Policy (Hard Rule)"
 description: The required exact-pin form for every manifest type — npm, Cargo, .NET, Dockerfile, GitHub Actions — and the caret/tilde verification command.
-category: explanation
-subcategory: development
-tags:
-  - dependencies
-  - security
-  - versioning
-  - reproducibility
-  - workflow
-created: 2026-05-15
 when_to_use: Use when writing or reviewing a version string in any manifest to confirm it is an exact pin.
 ---
 

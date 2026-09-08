@@ -1,17 +1,5 @@
 ---
-title: "The Rule: Six Mandatory Layers (Standards 3-4)"
 description: "Standards 3-4: identity/config hygiene, escape guard."
-category: explanation
-subcategory: development
-tags:
-  - testing
-  - git
-  - test-fixtures
-  - isolation
-  - regression
-  - safety
-  - defense-in-depth
-created: 2026-07-19
 when_to_use: "Use when implementing identity blanking or an escape guard."
 ---
 

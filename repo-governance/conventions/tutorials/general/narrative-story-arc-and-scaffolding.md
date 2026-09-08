@@ -1,17 +1,6 @@
 ---
-title: "Narrative Requirements: Story Arc and Progressive Scaffolding"
 description: "Defines the beginning/middle/end story arc and the progressive-scaffolding technique for tutorial narrative."
 when_to_use: "Read when structuring a tutorial's narrative arc or deciding how much scaffolding to provide at each stage."
-category: explanation
-subcategory: conventions
-tags:
-  - tutorials
-  - diataxis
-  - learning
-  - pedagogy
-  - documentation
-  - teaching
-created: 2025-12-03
 ---
 
 # Narrative Requirements: Story Arc and Progressive Scaffolding

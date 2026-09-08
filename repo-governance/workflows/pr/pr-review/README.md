@@ -1,5 +1,4 @@
 ---
-title: "Single-Pass PR Review Workflow"
 description: "Index of single-pass semantic review execution, evidence, and success criteria."
 when_to_use: "Use to locate the normative mechanics of pr-review."
 ---

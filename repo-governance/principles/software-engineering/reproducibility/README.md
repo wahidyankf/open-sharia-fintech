@@ -1,5 +1,4 @@
 ---
-title: "Reproducibility First"
 description: "Development environments and builds should be reproducible from the start"
 when_to_use: "Read this index to find the right Reproducibility First child document."
 ---

@@ -1,15 +1,5 @@
 ---
-title: "Flaky tests are defects"
 description: Requires every intermittent test failure to be fixed at its root cause, and forbids the masking remedies.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - workflow
-  - tdd
-  - testing
-  - flaky-tests
-created: 2026-09-07
 when_to_use: Use the moment a test passes and fails on the same code, before deciding what to do about it.
 ---
 

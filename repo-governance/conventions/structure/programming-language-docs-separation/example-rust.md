@@ -1,16 +1,6 @@
 ---
-title: "Example 1: Rust — Correct Separation"
 description: A worked example contrasting an ayokoding-www By Example variables lesson with the corresponding docs/explanation/ OSE Platform naming-conventions page
 when_to_use: Read this when you need a concrete Rust-based illustration of how educational and repository-specific content should be split.
-category: explanation
-subcategory: conventions
-tags:
-  - documentation
-  - programming-languages
-  - style-guides
-  - content-separation
-  - dry-principle
-created: 2026-02-04
 ---
 
 # Example 1: Rust - Correct Separation

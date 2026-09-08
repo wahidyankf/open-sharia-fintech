@@ -1,15 +1,6 @@
 ---
-title: "PR Review Workflows"
 description: Optional semantic pull-request review workflows
 when_to_use: Use when a user explicitly requests semantic PR review.
-category: explanation
-subcategory: workflows
-tags:
-  - index
-  - workflows
-  - pr
-  - review
-created: 2026-08-14
 ---
 
 # PR Review Workflows

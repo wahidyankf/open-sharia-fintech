@@ -5,7 +5,7 @@ companion `islamic-be-e2e`, on top of the Go language lane this monorepo still l
 
 **Status**: In Progress — planning complete; implementation has not started
 **Delivery Mode**: `worktree-to-pr`
-**Depends on**: `lms-init` ([PR #487](https://github.com/wahidyankf/ose-public/pull/487)) DU1 and DU2, both merged
+**Depends on**: [`lms-init`](../lms-init/README.md) DU1 and DU2, both merged
 
 ## Context
 
@@ -91,7 +91,8 @@ Phase 7 captures knowledge; Phase 8 archives the plan.
 
 ## Related
 
-- `lms-init` ([PR #487](https://github.com/wahidyankf/ose-public/pull/487)) — the Java lane plan this one builds on
+- [`lms-init`](../lms-init/README.md) — the Java lane plan this one builds on; authored in PR
+  #487, execution pending
 - [BDD standard](../../../repo-governance/development/behaviour-driven-development.md)
 - [Nx Target Standards](../../../repo-governance/development/infra/nx-targets.md)
 - [Cross-Repo rhino-cli Byte-Identity Standard](../../../repo-governance/development/infra/nx-targets/cache-cross-repo-byte-identity.md)

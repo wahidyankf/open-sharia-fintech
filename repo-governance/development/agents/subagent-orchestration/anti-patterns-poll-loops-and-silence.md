@@ -1,14 +1,5 @@
 ---
-title: "Anti-Patterns — Open-Ended Poll Loops and Going Silent"
 description: "Covers delegating an open-ended poll loop inside a long chunk and going silent while background agents run."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - subagents
-  - orchestration
-  - development
-created: 2025-11-23
 when_to_use: Use when reviewing whether an orchestrator delegated a poll loop it should have owned, or went quiet during a long run.
 ---
 

@@ -1,16 +1,6 @@
 ---
-title: "Tutorial Folder Arrangement Standard"
 description: The manual, non-pedagogical weight-ordered arrangement standard for tutorial folders (overview, setup, quick-start, by-example, by-concept) across all content types.
 when_to_use: Use when arranging or validating tutorial folder order and weights for any content type (languages, infrastructure tools, data tools, platforms).
-category: explanation
-subcategory: conventions
-tags:
-  - programming-languages
-  - tutorials
-  - ayokoding-www
-  - education
-  - structure
-created: 2025-12-27
 ---
 
 # Tutorial Folder Arrangement Standard

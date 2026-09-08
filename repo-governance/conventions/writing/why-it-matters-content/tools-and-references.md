@@ -1,15 +1,5 @@
 ---
-title: "Tools, Automation, and References"
 description: The agents that enforce this convention and the related conventions and principles it builds on
-category: explanation
-subcategory: conventions
-tags:
-  - ayokoding-www
-  - tutorial-content
-  - factual-accuracy
-  - why-it-matters
-  - hallucination-prevention
-created: 2026-05-09
 when_to_use: Read this to find which checker or fixer agent enforces this convention, or to trace its related conventions.
 ---
 

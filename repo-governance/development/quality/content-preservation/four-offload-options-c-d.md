@@ -1,15 +1,5 @@
 ---
-title: "Four Offload Options (C-D)"
 description: "Option C (extract shared pattern) and Option D (add to development conventions)."
-category: explanation
-subcategory: development
-tags:
-  - content-preservation
-  - condensation
-  - offload
-  - zero-loss
-  - documentation
-created: 2025-12-14
 when_to_use: "Use when extracting a shared pattern or adding to development conventions."
 ---
 

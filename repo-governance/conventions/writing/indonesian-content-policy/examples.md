@@ -1,16 +1,6 @@
 ---
-title: "Indonesian Content Policy — Examples"
 description: Three worked examples — creating a technical tutorial under the English-first policy, creating unique Indonesian content, and handling an explicit translation request.
 when_to_use: Use as a concrete template when creating a new technical tutorial, a unique Indonesian essay, or fulfilling an explicit translation request.
-category: explanation
-subcategory: conventions
-tags:
-  - ayokoding-www
-  - indonesian
-  - bilingual
-  - content-policy
-  - translation
-created: 2026-02-07
 ---
 
 # Examples

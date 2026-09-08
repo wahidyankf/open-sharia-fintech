@@ -1,16 +1,5 @@
 ---
-title: "Two Paths: With a Plan and Without a Plan"
 description: "How the mandate binds a direct fix versus a planned fix."
-category: explanation
-subcategory: development
-tags:
-  - regression
-  - testing
-  - bug-fix
-  - quality
-  - gherkin
-  - specs
-created: 2026-06-22
 when_to_use: "Use when a bug fix has a plan doc and needs a tracked test step."
 ---
 

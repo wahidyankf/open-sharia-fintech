@@ -1,15 +1,5 @@
 ---
-title: "Nx Target Standards"
 description: Standardized Nx target definitions for apps and libs in the monorepo
-category: explanation
-subcategory: development
-tags:
-  - nx
-  - targets
-  - project-json
-  - build
-  - scripts
-created: 2026-02-23
 when_to_use: Use when defining, naming, or auditing Nx targets in a project's project.json.
 ---
 

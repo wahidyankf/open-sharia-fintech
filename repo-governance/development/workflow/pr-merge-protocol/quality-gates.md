@@ -1,15 +1,5 @@
 ---
-title: "Quality Gates"
 description: The exact-head PR CI, applicable surface gates, universal secret check, and no-bypass rule.
-category: explanation
-subcategory: development
-tags:
-  - pull-request
-  - merge
-  - quality-gates
-  - workflow
-  - merge-preconditions
-created: 2026-04-04
 when_to_use: Use when confirming which gates a PR must pass before merge, or when a secret exposure is suspected in a PR diff.
 ---
 

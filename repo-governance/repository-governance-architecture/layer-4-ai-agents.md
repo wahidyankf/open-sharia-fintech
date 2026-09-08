@@ -1,13 +1,5 @@
 ---
-title: "Layer 4: AI Agents (WHO - Executors)"
-description: The automated-implementer layer: color families, requirements
-category: explanation
-subcategory: architecture
-tags:
-  - architecture
-  - governance
-  - agents
-created: 2026-02-09
+description: "The automated-implementer layer: color families, requirements"
 when_to_use: Use for Layer 4's scope and agent requirements.
 ---
 

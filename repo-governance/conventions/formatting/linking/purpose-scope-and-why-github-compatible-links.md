@@ -1,15 +1,6 @@
 ---
-title: "Purpose, Scope, and Why GitHub-Compatible Links"
 description: Defines what the Linking Convention covers, the principles it implements, and why the repository standardizes on GitHub-compatible relative markdown links.
 when_to_use: Use when you need to understand why this repository avoids wiki-style links or what the linking convention covers.
-category: explanation
-subcategory: conventions
-tags:
-  - linking
-  - markdown
-  - conventions
-  - github-compatibility
-created: 2025-11-22
 ---
 
 # Purpose, Scope, and Why GitHub-Compatible Links

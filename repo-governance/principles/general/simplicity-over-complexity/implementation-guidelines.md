@@ -1,13 +1,5 @@
 ---
-title: "Implementation Guidelines"
 description: Applies the minimal-sufficiency test to lasting mechanisms, completion, and mandatory safeguards.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - simplicity
-  - over-engineering
-created: 2025-12-15
 when_to_use: Use when choosing an implementation or deciding when work is complete.
 ---
 

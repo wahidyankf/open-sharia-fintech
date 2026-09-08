@@ -1,14 +1,5 @@
 ---
-title: "Two-Pager Template"
 description: Specifies the eight required sections of a two-pager idea brief, in order, with the content each section must contain.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when writing or reviewing the section structure of a plans/ideas/<slug>.md file.
 ---
 

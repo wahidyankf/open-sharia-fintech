@@ -1,5 +1,4 @@
 ---
-title: "Purpose, Scope, and Execution Mode"
 description: What multi-plans-execution does, when (not) to use it, its pre-execution grill requirement, and who orchestrates it.
 when_to_use: Use when deciding whether to run several ready plans together, and who owns the DAG, Task list, and scheduler.
 ---

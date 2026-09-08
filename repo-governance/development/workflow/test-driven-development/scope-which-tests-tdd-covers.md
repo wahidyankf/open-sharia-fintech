@@ -1,15 +1,5 @@
 ---
-title: "Scope: Which Tests TDD Covers"
 description: The ten verification levels TDD applies to, from unit tests through security testing, and the rule for each.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - workflow
-  - tdd
-  - testing
-  - red-green-refactor
-created: 2026-05-02
 when_to_use: Use when deciding which test level (unit, integration, E2E, contract, etc.) a behaviour's first failing test belongs at.
 ---
 

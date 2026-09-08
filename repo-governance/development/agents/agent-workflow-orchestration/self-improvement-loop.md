@@ -1,15 +1,5 @@
 ---
-title: "Self-Improvement Loop"
 description: "Defines the self-improvement process, the lessons file format, and what makes a good lesson."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - workflow
-  - orchestration
-created: 2025-11-23
 when_to_use: Use when an agent wants to record a lesson learned from a mistake or a surprising result.
 ---
 

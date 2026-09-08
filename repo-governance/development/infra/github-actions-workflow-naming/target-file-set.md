@@ -1,14 +1,5 @@
 ---
-title: "Target File Set"
 description: The canonical 17-workflow-file set established by the standardize-github-actions-pipeline-naming plan, organized by tier.
-category: explanation
-subcategory: development
-tags:
-  - github-actions
-  - ci-cd
-  - naming
-  - workflow
-created: 2026-03-13
 when_to_use: Use when checking whether a workflow filename already exists in the canonical set, or when adding a new filename to it.
 ---
 

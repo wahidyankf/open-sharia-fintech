@@ -1,5 +1,4 @@
 ---
-title: "Step 7 — Push and Verify"
 description: Describes the commit, push, CI-monitoring, and complete worktree, branch, and build-output cleanup sequence that finishes plan-establishment.
 when_to_use: Use when pushing a finished plan to its confirmed target, monitoring CI, and running the canonical three-class cleanup gate.
 ---

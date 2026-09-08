@@ -1,18 +1,6 @@
 ---
-title: "App README vs Specs — Example: Spec Tree Migration"
 description: A worked before/after example and checklist for migrating a five-folder C4 spec tree to the logical owner corpus.
 when_to_use: Use when you need a concrete worked example of migrating an existing spec tree to the logical owner corpus.
-category: explanation
-subcategory: conventions
-status: "Pilot — initial issue"
-tags:
-  - conventions
-  - readme
-  - specs
-  - spec-tree-shape
-  - pm-readability
-  - c4
-created: 2026-05-09
 ---
 
 # Example: Spec Tree Migration (Five-Folder to Logical Owner Corpus)

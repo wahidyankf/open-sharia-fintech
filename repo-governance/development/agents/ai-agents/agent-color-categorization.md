@@ -1,14 +1,5 @@
 ---
-title: "Agent Color Categorization"
 description: "Defines the color field and its role-to-category mapping for agent definitions."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when assigning or validating the color field on an agent definition.
 ---
 

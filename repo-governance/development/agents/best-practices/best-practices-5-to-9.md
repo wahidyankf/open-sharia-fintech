@@ -1,14 +1,5 @@
 ---
-title: "Best Practices — Tool Usage Docs, Testing, Frontmatter Context, Naming, and Dependencies"
 description: "Covers Practices 5-9: documenting tool usage in the agent body, testing with edge cases, frontmatter context, naming conventions, and documenting agent dependencies."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - best-practices
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when finishing an agent definition and checking its tool-usage docs, test scenarios, naming, or dependency notes.
 ---
 

@@ -1,5 +1,4 @@
 ---
-title: "No Time Estimates"
 description: "People work and learn at vastly different speeds - focus on outcomes and deliverables, not arbitrary time constraints"
 when_to_use: "Read this index to find the right No Time Estimates child document."
 ---
@@ -13,6 +12,3 @@ when_to_use: "Read this index to find the right No Time Estimates child document
 - [Anti-Patterns](./anti-patterns.md) — Common time-estimate mistakes - daily schedules, clickbait titles, speed marketing, and speed comparisons. Use when auditing content for time-pressure anti-patterns before publishing.
 - [PASS: Best Practices](./pass-best-practices.md) — Practices for describing outcomes, using coverage percentages, completion criteria, and headings over time blocks. Use as a checklist when writing outcome-focused educational content.
 - [Examples from This Repository](./examples-from-this-repository.md) — Real examples from this repository of outcome-focused tutorial naming and structure. Use when looking for worked examples of no-time-estimates applied in this repository.
-- [Relationship to Other Principles](./relationship-to-other-principles.md) — How No Time Estimates relates to Progressive Disclosure, Accessibility First, and Simplicity Over Complexity. Use when tracing how this principle interacts with other governance principles.
-- [Related Conventions](./related-conventions.md) — Links to the tutorial and content-quality conventions that enforce this principle. Use when looking for the specific conventions that enforce this principle's rules.
-- [References](./references.md) — External references on learning science, educational psychology, and outcome-focused documentation. Use when seeking authoritative external sources on self-paced learning.

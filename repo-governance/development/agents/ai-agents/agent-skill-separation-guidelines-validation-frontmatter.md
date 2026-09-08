@@ -1,14 +1,5 @@
 ---
-title: "Agent-Skill Separation — Guidelines, Validation, and Frontmatter Field"
 description: "Covers guidelines for future agent creation, the validation checklist, and the agent skills frontmatter field."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when validating that a new agent correctly separates its knowledge from agent skills, or when filling in its agent skills frontmatter field.
 ---
 

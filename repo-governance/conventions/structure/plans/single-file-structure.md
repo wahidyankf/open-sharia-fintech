@@ -1,14 +1,5 @@
 ---
-title: "Retired Single-File Structure"
 description: Records the prospective boundary for existing plans created under the retired single-file exception.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when reviewing an existing single-file plan against the prospective transition rule.
 ---
 

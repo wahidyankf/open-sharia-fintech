@@ -1,16 +1,5 @@
 ---
-title: "Anti-Patterns: AP-1 - AP-4"
 description: "Version/path/target/name fabrication."
-category: explanation
-subcategory: development
-tags:
-  - plans
-  - ai-agents
-  - factual-validation
-  - anti-hallucination
-  - web-research
-  - verification
-created: 2026-05-03
 when_to_use: "Use as a checklist for AP-1 - AP-4."
 ---
 

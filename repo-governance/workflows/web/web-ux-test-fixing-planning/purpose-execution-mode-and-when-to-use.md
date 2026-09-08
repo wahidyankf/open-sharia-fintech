@@ -1,5 +1,4 @@
 ---
-title: "Web UX Test-Fixing Planning — Purpose, Execution Mode, and When to Use"
 description: "States the workflow's purpose (a combined fix plan, never live fixes), its execution modes, and when to run it."
 when_to_use: "Use when deciding whether this workflow applies, or how it will be executed (delegated vs manual)."
 ---

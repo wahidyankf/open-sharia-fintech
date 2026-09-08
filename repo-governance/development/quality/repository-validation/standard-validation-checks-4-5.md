@@ -1,16 +1,5 @@
 ---
-title: "Standard Validation Checks (4-5)"
 description: "Checks 4-5: broken link detection, file naming convention."
-category: explanation
-subcategory: development
-tags:
-  - validation
-  - consistency
-  - bash
-  - awk
-  - frontmatter
-  - automation
-created: 2025-12-14
 when_to_use: "Use when implementing or debugging the link or naming checks."
 ---
 

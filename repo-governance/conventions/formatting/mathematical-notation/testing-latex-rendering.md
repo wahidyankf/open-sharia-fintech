@@ -1,16 +1,6 @@
 ---
-title: "Testing LaTeX Rendering"
 description: How to verify LaTeX renders correctly on GitHub, and the common rendering issues (delimiter, missing signs, spacing) with fixes.
 when_to_use: Use when a LaTeX formula is not rendering correctly and you need to diagnose why.
-category: explanation
-subcategory: conventions
-tags:
-  - latex
-  - mathematics
-  - formulas
-  - notation
-  - conventions
-created: 2025-12-02
 ---
 
 # Testing LaTeX Rendering

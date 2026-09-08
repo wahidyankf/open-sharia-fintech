@@ -1,16 +1,6 @@
 ---
-title: "Workflow Pattern Convention"
 description: Standards for creating orchestrated multi-step processes that compose agents, procedures, and/or other workflows
 when_to_use: Use when defining, structuring, or validating a new workflow document, or when deciding whether a task should become a workflow at all.
-category: explanation
-subcategory: workflows
-tags:
-  - workflows
-  - agents
-  - orchestration
-  - patterns
-  - conventions
-created: 2025-12-23
 ---
 
 # Workflow Pattern Convention
@@ -23,7 +13,6 @@ and body structure, step execution patterns, state/error handling, composability
 
 ## Contents
 
-- [Overview](./workflow-identifier/overview.md) — what a workflow is.
 - [Repository Hierarchy](./workflow-identifier/repository-hierarchy.md) — where workflows sit.
 - [What Workflows Are](./workflow-identifier/what-workflows-are.md) — the seven properties.
 - [What Workflows Are NOT](./workflow-identifier/what-workflows-are-not.md) — boundary cases.
@@ -53,4 +42,15 @@ and body structure, step execution patterns, state/error handling, composability
 - [Token Budget Philosophy](./workflow-identifier/token-budget-philosophy.md) — don't economize tokens.
 - [Principles Implemented/Respected](./workflow-identifier/principles-implemented-respected.md) — traceability.
 - [Conventions Implemented/Respected](./workflow-identifier/conventions-implemented-respected.md) — traceability.
-- [Related Documentation](./workflow-identifier/related-documentation.md) — composing references.
+
+## Overview
+
+Workflows are **composed multi-step processes** that orchestrate agents, procedures, and/or other workflows to achieve specific goals with clear termination criteria. They represent the fifth layer in the repository's governance hierarchy, sitting above individual agents to coordinate complex tasks.
+
+## Related Documentation
+
+- [AI Agents Convention](../../development/agents/ai-agents.md) - How agents work
+- [Maker-Checker-Fixer Pattern](../../development/pattern/maker-checker-fixer.md) - Core workflow pattern
+- [Plans Organization](../../conventions/structure/plans.md) - How plans relate to workflows
+- [Implementation Workflow](../../development/workflow/implementation.md) - Development process workflow
+- [Workflows Index](../README.md) - All available workflows

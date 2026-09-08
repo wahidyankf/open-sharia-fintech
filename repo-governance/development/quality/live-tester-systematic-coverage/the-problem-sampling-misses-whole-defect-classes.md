@@ -1,16 +1,5 @@
 ---
-title: "The Problem: Sampling Misses Whole Defect Classes"
 description: "Why sampling-based live testing misses entire defect classes."
-category: explanation
-subcategory: development
-tags:
-  - testing
-  - live-testing
-  - usability
-  - ux
-  - quality
-  - systematic
-created: 2026-06-22
 when_to_use: "Use when deciding whether a live-test pass can sample instead of enumerate."
 ---
 

@@ -1,5 +1,4 @@
 ---
-title: "Termination Criteria"
 description: Defines the success, partial, and failure termination conditions for the by-example quality gate across all four strictness modes.
 when_to_use: Use when determining whether a quality-gate run has reached a terminal excellent, needs-improvement, or failing state.
 ---

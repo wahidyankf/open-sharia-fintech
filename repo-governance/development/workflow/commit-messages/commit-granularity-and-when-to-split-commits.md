@@ -1,14 +1,5 @@
 ---
-title: "Thematic Commit Composition and Boundaries"
 description: Choose the fewest build-valid, independently reviewable and revertible commits after explicit authorization.
-category: explanation
-subcategory: development
-tags:
-  - conventional-commits
-  - git
-  - development
-  - code-quality
-created: 2025-11-24
 when_to_use: Use after the user authorizes committing a named change set and before staging it.
 ---
 

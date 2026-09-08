@@ -1,5 +1,4 @@
 ---
-title: "Surface-Conditional Tester Gates"
 description: States which quality gates a plan must run based on whether it ships a UI, an API, both, or neither.
 when_to_use: Use when determining which tester gates a plan's shipped surface requires before archival.
 ---

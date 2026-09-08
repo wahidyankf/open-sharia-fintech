@@ -1,15 +1,5 @@
 ---
-title: "Feature Flags for Incomplete Work"
 description: Feature-flag patterns for complete-and-inert increments, production-disabled defaults, both-path testing, and rollout, rollback, and removal.
-category: explanation
-subcategory: development
-tags:
-  - trunk-based-development
-  - git
-  - workflow
-  - development
-  - continuous-integration
-created: 2025-11-26
 when_to_use: Use when incomplete behaviour must integrate safely behind a temporary production-disabled toggle, or when rolling back or retiring that flag.
 ---
 

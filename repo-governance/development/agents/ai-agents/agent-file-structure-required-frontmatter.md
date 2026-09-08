@@ -1,14 +1,5 @@
 ---
-title: "Agent File Structure — Required Frontmatter"
 description: "Defines the mandatory frontmatter fields every agent definition file must include."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when authoring or validating an agent's required frontmatter fields.
 ---
 

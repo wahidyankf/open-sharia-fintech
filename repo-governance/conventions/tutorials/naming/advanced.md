@@ -1,15 +1,6 @@
 ---
-title: "Advanced"
 description: Definition, content scope, and example titles for the Advanced tutorial type covering 85-95% of domain knowledge.
 when_to_use: Use when writing or naming an expert-level tutorial covering optimization, architecture, and internals for complex systems.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - tutorials
-  - naming
-  - learning-paths
-created: 2025-12-03
 ---
 
 # Advanced

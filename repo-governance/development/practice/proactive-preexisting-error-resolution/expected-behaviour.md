@@ -1,16 +1,5 @@
 ---
-title: "Proactive Preexisting Error Resolution — Expected Behaviour"
 description: The five-step response to a discovered preexisting error - diagnose, fix, verify, scope, and communicate
-category: explanation
-subcategory: development
-tags:
-  - root-cause
-  - quality
-  - preexisting-errors
-  - proactive
-  - bug-fixing
-  - ai-agents
-created: 2026-03-28
 when_to_use: Use when you've decided to fix a discovered preexisting error and need to know the steps to take.
 ---
 

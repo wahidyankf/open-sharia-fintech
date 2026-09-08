@@ -1,5 +1,4 @@
 ---
-title: "Bare-Repo Base-Worktree Landing Method"
 description: "The base-worktree procedure for landing changes into a repository with no primary checkout — topology verification, the seven-step landing sequence, and the terminal reconcile."
 when_to_use: "Read this index to find the right Bare-Repo Base-Worktree Landing Method child document."
 ---

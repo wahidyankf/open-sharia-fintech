@@ -1,16 +1,6 @@
 ---
-title: "Production-Validated Standards Summary"
 description: "Summarizes the section-count, diagram-density, and annotation-density targets validated against ayokoding-www production content."
 when_to_use: "Read for a condensed summary of the numeric targets a By-Concept tutorial must hit, with current production gaps noted."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-concept
-  - education
-  - narrative-driven
-created: 2026-01-30
 ---
 
 # Production-Validated Standards Summary

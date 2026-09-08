@@ -1,5 +1,4 @@
 ---
-title: "Anti-Patterns in Development Patterns"
 description: "Common mistakes when applying the development patterns in this directory."
 when_to_use: "Read this index to find the right Anti-Patterns in Development Patterns child document."
 ---

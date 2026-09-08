@@ -1,5 +1,4 @@
 ---
-title: "Phase C — Take Over the Live Work: Recording an Existing PR and Reconciling delivery.md"
 description: Covers Phase C steps 4-5 — recording an existing PR's state and CI status, and reconciling delivery.md to the discovered ground truth before Phase E hands off.
 when_to_use: Use when a Bucket-3 repo already has an open PR to resume against, or when delivery.md needs to be brought in line with evidence discovered elsewhere in Phase A.
 ---

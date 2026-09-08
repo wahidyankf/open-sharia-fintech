@@ -1,14 +1,5 @@
 ---
-title: "How It's Enforced"
 description: The Commitlint tool, the Husky commit-msg hook that runs it, and the overall commit workflow.
-category: explanation
-subcategory: development
-tags:
-  - conventional-commits
-  - git
-  - development
-  - code-quality
-created: 2025-11-24
 when_to_use: Use when understanding what automatically rejects a malformed commit message, and why.
 ---
 

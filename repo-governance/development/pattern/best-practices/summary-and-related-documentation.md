@@ -1,10 +1,5 @@
 ---
-title: "Summary and Related Documentation"
 description: "Consolidated summary of all ten best practices and links to related pattern documentation."
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: "Use when you need a quick-reference summary of every best practice, or links to related docs."
 ---
 

@@ -1,16 +1,6 @@
 ---
-title: "Where NOT to Use LaTeX"
 description: "Where LaTeX notation must not be used: code blocks, Mermaid diagrams, ASCII art diagrams, and configuration files."
 when_to_use: Use when deciding whether a formula inside a code block, diagram, or config file should stay plain text instead of LaTeX.
-category: explanation
-subcategory: conventions
-tags:
-  - latex
-  - mathematics
-  - formulas
-  - notation
-  - conventions
-created: 2025-12-02
 ---
 
 # Where NOT to Use LaTeX

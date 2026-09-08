@@ -242,14 +242,32 @@ type MdSteps() =
             "---\ntitle: T\ndescription: D\ncategory: random\nsubcategory: S\ntags: [a]\n---\nbody\n"
 
     [<Given>]
-    member _.``a governance doc carrying only a title frontmatter field``() =
-        writeDoc "repo-governance/conventions/foo.md" "---\ntitle: T\n---\nbody\n"
+    member _.``a governance doc carrying only a description frontmatter field``() =
+        writeDoc "repo-governance/conventions/foo.md" "---\ndescription: D\n---\nbody\n"
 
     [<Given>]
-    member _.``a governance doc with title, description, and when_to_use frontmatter``() =
+    member _.``a governance doc carrying only a when_to_use frontmatter field``() =
+        writeDoc "repo-governance/conventions/foo.md" "---\nwhen_to_use: Use when W.\n---\nbody\n"
+
+    [<Given>]
+    member _.``a governance doc with description and when_to_use frontmatter``() =
+        writeDoc "repo-governance/conventions/foo.md" "---\ndescription: D\nwhen_to_use: Use when W.\n---\nbody\n"
+
+    [<Given>]
+    member _.``a governance doc with description, when_to_use, and a title field``() =
         writeDoc
             "repo-governance/conventions/foo.md"
             "---\ntitle: T\ndescription: D\nwhen_to_use: Use when W.\n---\nbody\n"
+
+    [<Given>]
+    member _.``a governance doc with description, when_to_use, and a category field``() =
+        writeDoc
+            "repo-governance/conventions/foo.md"
+            "---\ndescription: D\nwhen_to_use: Use when W.\ncategory: explanation\n---\nbody\n"
+
+    [<Given>]
+    member _.``a governance doc under repo-governance/glossary carrying only a title field``() =
+        writeDoc "repo-governance/glossary/foo.md" "---\ntitle: T\n---\nbody\n"
 
     [<Given>]
     member _.``a software-engineering doc with title, description, category tutorial, subcategory, and tags frontmatter``
@@ -708,6 +726,11 @@ type MdSteps() =
         frontmatterDatesFileNeedle <- Some "repo-governance/dated.md"
 
     [<Given>]
+    member _.``a governance markdown file whose frontmatter contains a forbidden created field``() =
+        writeDoc "repo-governance/created-frontmatter.md" "---\ntitle: T\ncreated: 2026-01-01\n---\n\nbody\n"
+        frontmatterDatesFileNeedle <- Some "repo-governance/created-frontmatter.md"
+
+    [<Given>]
     member _.``a governance markdown file whose body contains a Last Updated footer block``() =
         writeDoc "repo-governance/footer.md" "# Title\n\nBody.\n\n**Last Updated**: 2026-01-01\n"
         frontmatterDatesFileNeedle <- Some "repo-governance/footer.md"
@@ -983,6 +1006,14 @@ type MdSteps() =
     [<Then>]
     member _.``the frontmatter output identifies the missing description field``() =
         assertHasBlockingFindingContaining "\"description\" is missing"
+
+    [<Then>]
+    member _.``the frontmatter output identifies title as a key outside the allow-list``() =
+        assertHasBlockingFindingContaining "field \"title\" is not permitted in repo-governance/ frontmatter"
+
+    [<Then>]
+    member _.``the frontmatter output identifies category as a key outside the allow-list``() =
+        assertHasBlockingFindingContaining "field \"category\" is not permitted in repo-governance/ frontmatter"
 
     // ---- Then (docs-validate-heading-hierarchy.feature) ----
 
@@ -1272,6 +1303,10 @@ type MdSteps() =
         assertHasBlockingFindingInPathWithMessage (frontmatterDatesFileNeedleValue ()) "updated:"
 
     [<Then>]
+    member _.``the output identifies the forbidden created field and its location``() =
+        assertHasBlockingFindingInPathWithMessage (frontmatterDatesFileNeedleValue ()) "created:"
+
+    [<Then>]
     member _.``the output identifies the forbidden footer block and its location``() =
         assertHasBlockingFindingInPathWithMessage (frontmatterDatesFileNeedleValue ()) "Last Updated"
 
@@ -1355,16 +1390,42 @@ let ``Software-engineering doc with category other than software fails`` () =
         "Software-engineering doc with category other than software fails"
 
 [<Fact>]
-let ``Governance doc with only title fails once when_to_use and description are armed`` () =
+let ``Governance doc with only a description fails on the missing when_to_use`` () =
     FeatureRunner.run
         "docs-validate-frontmatter.feature"
-        "Governance doc with only title fails once when_to_use and description are armed"
+        "Governance doc with only a description fails on the missing when_to_use"
 
 [<Fact>]
-let ``Governance doc with title, description, and when_to_use passes the lighter schema`` () =
+let ``Governance doc with only a when_to_use fails on the missing description`` () =
     FeatureRunner.run
         "docs-validate-frontmatter.feature"
-        "Governance doc with title, description, and when_to_use passes the lighter schema"
+        "Governance doc with only a when_to_use fails on the missing description"
+
+[<Fact>]
+let ``Governance doc with description and when_to_use passes the two-key schema`` () =
+    FeatureRunner.run
+        "docs-validate-frontmatter.feature"
+        "Governance doc with description and when_to_use passes the two-key schema"
+
+[<Fact>]
+let ``Governance doc carrying a title field fails the allow-list`` () =
+    FeatureRunner.run "docs-validate-frontmatter.feature" "Governance doc carrying a title field fails the allow-list"
+
+[<Fact>]
+let ``Governance doc carrying any other key fails the allow-list`` () =
+    FeatureRunner.run "docs-validate-frontmatter.feature" "Governance doc carrying any other key fails the allow-list"
+
+[<Fact>]
+let ``Governance subtree outside the four sub-trees is still validated`` () =
+    FeatureRunner.run
+        "docs-validate-frontmatter.feature"
+        "Governance subtree outside the four sub-trees is still validated"
+
+[<Fact>]
+let ``The software-engineering schema is unaffected by the governance allow-list`` () =
+    FeatureRunner.run
+        "docs-validate-frontmatter.feature"
+        "The software-engineering schema is unaffected by the governance allow-list"
 
 [<Fact>]
 let ``Software-engineering doc with Diataxis tutorial category passes`` () =
@@ -1711,6 +1772,10 @@ let ``Clean directory passes the audit`` () =
 [<Fact>]
 let ``Frontmatter with forbidden updated field fails`` () =
     FeatureRunner.run "repo-governance-frontmatter-audit.feature" "Frontmatter with forbidden updated field fails"
+
+[<Fact>]
+let ``Frontmatter with forbidden created field fails`` () =
+    FeatureRunner.run "repo-governance-frontmatter-audit.feature" "Frontmatter with forbidden created field fails"
 
 [<Fact>]
 let ``Body containing Last Updated footer block fails`` () =

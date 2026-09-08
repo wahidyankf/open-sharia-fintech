@@ -1,16 +1,5 @@
 ---
-title: "Tools"
 description: "Version, config file, ignore patterns, and triggers for Prettier and markdownlint-cli2."
-category: explanation
-subcategory: development
-tags:
-  - markdown
-  - linting
-  - formatting
-  - prettier
-  - markdownlint
-  - quality
-created: 2026-01-17
 when_to_use: "Use when checking which config or script controls markdown formatting or linting."
 ---
 

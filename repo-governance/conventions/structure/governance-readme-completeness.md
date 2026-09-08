@@ -1,15 +1,6 @@
 ---
-title: "Governance README Completeness Convention"
 description: Two-gate README index enforcement — orphan/ghost link detection plus missing/unannotated completeness checks
 when_to_use: Use when a directory's README.md fails an orphan, ghost, missing, or unannotated finding.
-category: explanation
-subcategory: conventions
-tags:
-  - readme
-  - governance
-  - rhino-cli
-  - index
-created: 2026-08-15
 ---
 
 # Governance README Completeness Convention

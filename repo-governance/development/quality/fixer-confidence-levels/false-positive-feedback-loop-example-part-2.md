@@ -1,15 +1,5 @@
 ---
-title: "False Positive Feedback Loop: Example (part 2)"
 description: "A worked feedback-loop example: checker update through references."
-category: explanation
-subcategory: development
-tags:
-  - fixer-agents
-  - confidence-levels
-  - validation
-  - automation
-  - quality-assurance
-created: 2025-12-14
 when_to_use: "Use for the second half of a worked feedback-loop example."
 ---
 

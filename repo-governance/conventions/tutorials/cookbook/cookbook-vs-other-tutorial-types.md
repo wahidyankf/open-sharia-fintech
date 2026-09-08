@@ -1,17 +1,6 @@
 ---
-title: "Cookbook vs Other Tutorial Types"
 description: "Compares Cookbook against By-Example, How-To Guides, and By-Concept tutorial types to clarify when each applies."
 when_to_use: "Read when deciding whether content should be a cookbook recipe, a by-example tutorial, a how-to guide, or a by-concept tutorial."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - cookbook
-  - education
-  - problem-solving
-  - recipes
-created: 2026-01-30
 ---
 
 # Cookbook vs Other Tutorial Types

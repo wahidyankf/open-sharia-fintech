@@ -1,5 +1,4 @@
 ---
-title: "Planning Granularity and Mode-Specific Delivery Mapping"
 description: Introduces the planning-granularity rules and maps each independent delivery unit to the integration mechanism of the resolved delivery mode.
 when_to_use: Use when cutting a plan into phases or deciding whether two phases belong in one delivery unit or separate deliveries.
 ---

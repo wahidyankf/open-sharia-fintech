@@ -1,14 +1,5 @@
 ---
-title: "Agent-Skill Separation — Purpose and Knowledge Classification"
 description: "Explains why agent content and agent skills content must stay separated and gives the knowledge-classification decision tree."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when deciding whether a piece of knowledge belongs in an agent's body or in a Skill.
 ---
 

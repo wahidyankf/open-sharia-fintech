@@ -1,5 +1,4 @@
 ---
-title: "Governance Word-Budget Convention"
 description: "Per-surface word thresholds for auto-loaded instruction files, enforced by rhino-cli and git hooks"
 when_to_use: "Read this index to find the right Governance Word-Budget Convention child document."
 ---

@@ -1,5 +1,4 @@
 ---
-title: "Notes"
 description: "Notes on version pinning, idempotency, macOS focus, lack of Windows support, CI parity, and git worktree compatibility."
 when_to_use: "Use when you need background on why this workflow behaves the way it does."
 ---

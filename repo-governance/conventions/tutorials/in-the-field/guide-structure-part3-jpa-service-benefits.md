@@ -1,16 +1,6 @@
 ---
-title: "Guide Structure Part 3: JPA/Hibernate Benefits"
 description: Why JPA/Hibernate is chosen over raw JDBC for production persistence.
 when_to_use: Use when justifying JPA/Hibernate's use over standard-library JDBC.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Guide Structure Part 3: JPA/Hibernate Benefits

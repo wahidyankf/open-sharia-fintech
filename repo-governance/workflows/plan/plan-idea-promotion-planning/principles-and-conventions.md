@@ -1,5 +1,4 @@
 ---
-title: "Principles and Conventions Implemented/Respected"
 description: The four general/software-engineering principles and six repo conventions this workflow implements.
 when_to_use: Use when checking which cross-cutting principles or repo-governance conventions govern a specific rule in this workflow.
 ---

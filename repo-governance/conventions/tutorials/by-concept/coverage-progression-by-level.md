@@ -1,16 +1,6 @@
 ---
-title: "Coverage Progression by Level"
 description: "Defines the topic coverage and section-count expectations for beginner, intermediate, and advanced levels."
 when_to_use: "Read when assigning a concept to a beginner, intermediate, or advanced level and checking its section-count budget."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-concept
-  - education
-  - narrative-driven
-created: 2026-01-30
 ---
 
 # Coverage Progression by Level

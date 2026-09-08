@@ -1,5 +1,4 @@
 ---
-title: "Per-Phase Quality Gate — Push Targets"
 description: Defines the push target per delivery mode and the direct-push vs. *-to-pr branch/PR mechanics.
 when_to_use: Use when deciding where a phase's changes should push to under the plan's resolved delivery mode.
 ---

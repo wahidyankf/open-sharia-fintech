@@ -1,15 +1,5 @@
 ---
-title: "Mandatory Targets — CLI and E2E Test Projects"
 description: The run/install targets required on CLI applications and the install/test:e2e/test:e2e:ui/test:e2e:report targets required on *-e2e projects.
-category: explanation
-subcategory: development
-tags:
-  - nx
-  - targets
-  - project-json
-  - build
-  - scripts
-created: 2026-02-23
 when_to_use: Use when scaffolding a new CLI application or a new *-e2e Playwright runner project.
 ---
 

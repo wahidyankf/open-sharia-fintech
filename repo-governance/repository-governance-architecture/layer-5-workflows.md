@@ -1,13 +1,5 @@
 ---
-title: "Layer 5: Workflows (WHEN - Multi-Step Processes)"
-description: The orchestration layer: workflow families, requirements
-category: explanation
-subcategory: architecture
-tags:
-  - architecture
-  - governance
-  - workflows
-created: 2026-02-09
+description: "The orchestration layer: workflow families, requirements"
 when_to_use: Use for Layer 5's scope and workflow requirements.
 ---
 

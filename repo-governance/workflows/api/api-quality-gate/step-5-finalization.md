@@ -1,5 +1,4 @@
 ---
-title: "Step 5: Finalization"
 description: Final pass, partial, fail, and lifecycle rules for one bounded API quality gate run.
 when_to_use: Use when closing an API quality gate run.
 ---

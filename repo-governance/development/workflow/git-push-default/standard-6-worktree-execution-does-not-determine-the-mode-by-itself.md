@@ -1,15 +1,5 @@
 ---
-title: "Standard 6: Worktree Execution Does Not Determine the Mode by Itself"
 description: Work location and integration target are independent axes; running from a worktree resolves to worktree-to-pr unless explicitly overridden.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - push
-  - trunk-based-development
-  - ai-agents
-created: 2026-04-25
 when_to_use: Use when an agent or session is running inside a git worktree and must decide which delivery mode applies.
 ---
 

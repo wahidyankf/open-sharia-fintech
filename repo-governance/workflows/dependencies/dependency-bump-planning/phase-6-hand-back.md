@@ -1,5 +1,4 @@
 ---
-title: "Phase 6: Hand-back"
 description: Emits the final user-visible summary and the re-run reminder for plans whose promotion is delayed past the cutoff.
 when_to_use: Use when finishing the workflow and reporting the plan path, report path, and final status.
 ---

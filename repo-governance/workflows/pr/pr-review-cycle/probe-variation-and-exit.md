@@ -1,5 +1,4 @@
 ---
-title: "PR Review Cycle — Probe Variation and What Makes a Cycle Clean"
 description: "The probe-class register, and the two-clean-cycle exit rule."
 when_to_use: "Use when a scout plans a cycle's probe, and whenever deciding that a clean cycle ends the loop."
 ---

@@ -1,16 +1,6 @@
 ---
-title: "Tasteful Usage: Where Emojis Help and Hurt"
 description: The jobs emojis can usefully do (section markers, status indicators, navigation signposts) versus the anti-patterns that add visual noise without benefit.
 when_to_use: Use when deciding whether adding an emoji to a specific spot in a document will help or hurt scannability.
-category: explanation
-subcategory: conventions
-tags:
-  - emoji
-  - accessibility
-  - scannability
-  - conventions
-  - markdown
-created: 2025-12-04
 ---
 
 # Tasteful Usage: Where Emojis Help and Hurt

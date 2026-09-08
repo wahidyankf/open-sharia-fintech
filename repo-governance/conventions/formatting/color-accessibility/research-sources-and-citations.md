@@ -1,18 +1,6 @@
 ---
-title: "Research Sources and Citations"
 description: "Cites the color science, accessibility standards, and color-blindness research underlying the verified palette."
 when_to_use: "Use when you need the scientific or standards citation backing a claim made in this convention."
-category: explanation
-subcategory: conventions
-tags:
-  - accessibility
-  - color-blindness
-  - wcag
-  - design
-  - conventions
-  - mermaid-diagrams
-  - color-palette
-created: 2025-12-04
 ---
 
 # Research Sources and Citations

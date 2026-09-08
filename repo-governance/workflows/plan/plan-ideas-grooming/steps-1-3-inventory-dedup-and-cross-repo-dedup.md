@@ -1,5 +1,4 @@
 ---
-title: "Steps 1-3 — Inventory, Dedup Pass, and Cross-Repo Dedup"
 description: Listing every idea file per repo, merging or splitting within-repo near-duplicates, then resolving cross-repo duplicate pairs before merging.
 when_to_use: Use when starting a grooming sweep — building the working set and running the first two dedup passes.
 ---

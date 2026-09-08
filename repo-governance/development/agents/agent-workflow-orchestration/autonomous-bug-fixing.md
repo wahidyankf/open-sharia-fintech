@@ -1,15 +1,5 @@
 ---
-title: "Autonomous Bug Fixing"
 description: "Defines the expected behaviour for autonomous bug fixing, what autonomous means, handling failing CI tests, and preexisting errors found during other work."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - workflow
-  - orchestration
-created: 2025-11-23
 when_to_use: Use when an agent discovers a bug or a failing test while doing unrelated work and must decide whether to fix it autonomously.
 ---
 

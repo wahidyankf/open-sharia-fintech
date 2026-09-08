@@ -1,5 +1,6 @@
 ---
-title: "Open Sharia Enterprise"
+description: "The Open Sharia Enterprise vision — why it exists, the problem it solves, its Islamic foundation, audience, scope, and how success is measured."
+when_to_use: "Read this index to find the right vision child document."
 ---
 
 # Open Sharia Enterprise

@@ -1,18 +1,6 @@
 ---
-title: "App README vs Specs — Purpose and Scope"
 description: The three decisions this convention governs, its rollout status, and exactly what it covers vs. what other conventions cover.
 when_to_use: Use when checking whether a topic falls inside this convention's scope, or which conventions govern related concerns.
-category: explanation
-subcategory: conventions
-status: "Pilot — initial issue"
-tags:
-  - conventions
-  - readme
-  - specs
-  - spec-tree-shape
-  - pm-readability
-  - c4
-created: 2026-05-09
 ---
 
 # Purpose and Scope

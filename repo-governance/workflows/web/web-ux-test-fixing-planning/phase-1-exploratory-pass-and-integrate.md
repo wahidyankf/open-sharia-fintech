@@ -1,5 +1,4 @@
 ---
-title: "Web UX Test-Fixing Planning — Phase 1: Exploratory Pass + Integrate"
 description: "Runs web-exploratory-tester first and alone, then integrates its EWT-### findings and SG-### spec-gap proposals into the plan skeleton before Phase 2 starts."
 when_to_use: "Use when checking exactly what the exploratory tester is dispatched with, or how its results get folded into the new/merged plan."
 ---

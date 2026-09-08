@@ -1,16 +1,6 @@
 ---
-title: "Related Resources"
 description: Related documentation, agents, workflows, and skills for creating and validating In-the-Field content.
 when_to_use: Use when looking for the agent, workflow, or skill that creates or validates In-the-Field tutorials.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Related Resources

@@ -1,19 +1,6 @@
 ---
-title: "Specs Directory Structure Convention"
 description: Canonical logical-owner-corpus directory structure for specs/ — Gherkin feature files, as-built architecture documents, and OpenAPI contracts
 when_to_use: Read this when placing a Gherkin feature file, C4 diagram, DDD artifact, or OpenAPI contract, or when scaffolding specs/ for a new app or library.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - specs
-  - gherkin
-  - directory-structure
-  - organization
-  - c4-diagrams
-  - openapi
-  - c4
-created: 2026-04-02
 ---
 
 # Specs Directory Structure Convention

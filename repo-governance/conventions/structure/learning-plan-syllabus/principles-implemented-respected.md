@@ -1,16 +1,6 @@
 ---
-title: "Learning-Plan Syllabus: Principles Implemented/Respected"
 description: The four core principles this convention implements — documentation-first deliverables, explicit triggers and ownership, a copy-paste template over a new directory, and a re-derivable measured tiering method.
 when_to_use: Read this to understand why the syllabus convention is shaped the way it is before applying its rules to a specific plan.
-category: explanation
-subcategory: conventions
-tags:
-  - plans
-  - syllabus
-  - learning-bearing
-  - custody
-  - governance
-created: 2026-07-22
 ---
 
 # Principles Implemented/Respected

@@ -1,16 +1,6 @@
 ---
-title: "Post-Mortem Convention: Optional Sections and Severity Scale"
 description: The two optional post-mortem sections (Background, Supporting Data) and the authoritative Sev-1 through Sev-4 severity tier scale with software examples
 when_to_use: Read this when deciding whether to add optional Background or Supporting Data content, or when classifying an incident's severity tier.
-category: explanation
-subcategory: conventions
-tags:
-  - post-mortem
-  - incidents
-  - blameless
-  - reliability
-  - structure
-created: 2026-06-05
 ---
 
 # Optional Sections and Severity Scale

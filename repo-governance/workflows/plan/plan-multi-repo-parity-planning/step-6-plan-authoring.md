@@ -1,5 +1,4 @@
 ---
-title: "Step 6 — Plan Authoring"
 description: Authors the mature-core plan per repo via plan-maker, with the required handoff prompt including delivery-mode instructions.
 when_to_use: Use when authoring each repo's plan after both grills close, to build the plan-maker handoff correctly.
 ---

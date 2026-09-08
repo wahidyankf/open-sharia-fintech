@@ -1,16 +1,6 @@
 ---
-title: "Post-Mortem Convention"
 description: Standards for writing and organizing blameless incident post-mortems in this repository, including location, naming, mandatory sections, severity scale, and action-item tracking
 when_to_use: Read this when you need to write, name, or review a blameless incident post-mortem, or to look up the mandatory sections and severity scale it must use.
-category: explanation
-subcategory: conventions
-tags:
-  - post-mortem
-  - incidents
-  - blameless
-  - reliability
-  - structure
-created: 2026-06-05
 ---
 
 # Post-Mortem Convention

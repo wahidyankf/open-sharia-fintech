@@ -1,15 +1,5 @@
 ---
-title: "Conventions Implemented/Respected"
 description: "Conventions this convention implements."
-category: explanation
-subcategory: development
-tags:
-  - criticality
-  - validation
-  - checker-agents
-  - fixer-agents
-  - quality-assurance
-created: 2025-12-27
 when_to_use: "Use to trace this convention's cross-references."
 ---
 

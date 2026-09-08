@@ -1,15 +1,5 @@
 ---
-title: "Accessibility: Alt Text and Semantic HTML"
 description: "Writing descriptive image alt text and using semantic markdown elements instead of bold-as-heading substitutes"
-category: explanation
-subcategory: conventions
-tags:
-  - content-quality
-  - markdown
-  - writing-standards
-  - accessibility
-  - documentation
-created: 2025-12-07
 when_to_use: "Read this when adding an image or reviewing whether markdown elements are used semantically."
 ---
 

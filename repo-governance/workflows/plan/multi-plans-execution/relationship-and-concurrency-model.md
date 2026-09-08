@@ -1,5 +1,4 @@
 ---
-title: "Relationship to plan-execution.md and Concurrency Model"
 description: What this workflow inherits vs. adds relative to plan-execution.md, and the parallelism, N+1 model, and status-cadence rules bounding a run.
 when_to_use: Use when unsure whether a rule belongs here or in plan-execution.md, or when setting/reasoning about concurrency.
 ---

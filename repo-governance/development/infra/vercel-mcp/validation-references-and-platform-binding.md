@@ -1,13 +1,5 @@
 ---
-title: "Validation, References, and Platform Binding"
 description: The agents that validate this convention, related standards and workflows, and the platform-binding details for listing MCP servers.
-category: explanation
-subcategory: development
-tags:
-  - vercel
-  - mcp
-  - verification
-created: 2026-08-01
 when_to_use: Use when looking up which agent validates this convention, finding related documentation, or checking the MCP-listing binding for a harness.
 ---
 

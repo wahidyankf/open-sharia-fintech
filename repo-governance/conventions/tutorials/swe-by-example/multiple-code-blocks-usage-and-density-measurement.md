@@ -1,15 +1,5 @@
 ---
-title: "Multiple Code Blocks Pattern: Usage, Five-Part Integration, and Density Measurement"
 description: "Defines when to use vs avoid multiple code blocks, how the pattern integrates with the five-part format, and how density is measured per code block."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - education
-  - code-first
-created: 2025-12-25
 when_to_use: "Read when deciding whether an example needs multiple code blocks, how to slot them into the five-part format, or how to measure density across blocks."
 ---
 

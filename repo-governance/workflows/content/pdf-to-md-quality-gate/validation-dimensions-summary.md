@@ -1,5 +1,4 @@
 ---
-title: "Validation Dimensions Summary"
 description: "Table mapping each validation dimension to its responsible agent, crane command, and auto-fixability."
 when_to_use: "Use as a quick reference for which crane command backs a given validation dimension."
 ---

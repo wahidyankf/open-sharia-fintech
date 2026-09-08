@@ -1,15 +1,6 @@
 ---
-title: "Convention Writing Convention — Quality Checklist"
 description: The completeness, clarity, usability, convention-compliance, integration, and accessibility checks to run before publishing a convention document.
 when_to_use: Use immediately before publishing or merging a new or updated convention document.
-category: explanation
-subcategory: conventions
-tags:
-  - meta
-  - conventions
-  - standards
-  - documentation
-created: 2025-12-07
 ---
 
 # Quality Checklist

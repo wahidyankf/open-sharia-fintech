@@ -1,15 +1,5 @@
 ---
-title: "Common Pitfalls, Examples, and Validation"
 description: Common vercel.json misconfiguration pitfalls with fixes, PASS/FAIL examples of buildCommand alignment, and how the rules-checker agent validates this convention.
-category: explanation
-subcategory: development
-tags:
-  - vercel
-  - deployment
-  - nx
-  - build
-  - monorepo
-created: 2026-03-26
 when_to_use: Use when debugging a Vercel deployment that succeeded but has missing runtime files, or when verifying buildCommand matches dependsOn before merging.
 ---
 

@@ -1,14 +1,6 @@
 ---
-title: "Content Trees"
 description: What belongs in docs/, repo-governance/, plans/, and specs/, plus the temporary directories that may be swept at any time.
 when_to_use: Use when deciding which tree a new document belongs in, or when a file feels misfiled.
-category: explanation
-subcategory: governance
-tags:
-  - governance
-  - glossary
-  - repository-structure
-created: 2026-08-16
 ---
 
 # Content Trees

@@ -1,15 +1,5 @@
 ---
-title: "Progressive Disclosure"
 description: Start simple and layer complexity gradually - beginners see simple patterns, experts access advanced features when needed
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - progressive-disclosure
-  - learning-paths
-  - user-experience
-  - complexity-management
-created: 2025-12-15
 when_to_use: Use when deciding how much complexity to expose at once in a document, tutorial, or interface.
 ---
 
@@ -20,7 +10,6 @@ when_to_use: Use when deciding how much complexity to expose at once in a docume
 ## Foundations
 
 - [Vision Supported](./progressive-disclosure/vision-supported.md) — Explains how progressive disclosure advances the project's meet-people-at-their-level vision. Use when justifying layered complexity against the project's mission.
-- [What](./progressive-disclosure/what.md) — Contrasts progressive disclosure with immediate complexity. Use for a quick definition of progressive disclosure before applying it.
 - [Why](./progressive-disclosure/why.md) — Benefits of progressive disclosure, problems with immediate complexity, and its guiding principles. Use when justifying why complexity should be layered rather than exposed all at once.
 
 ## Applying the Principle
@@ -33,6 +22,29 @@ when_to_use: Use when deciding how much complexity to expose at once in a docume
 
 ## Reference
 
-- [Relationship to Other Principles](./progressive-disclosure/relationship-to-other-principles.md) — How Progressive Disclosure relates to Simplicity Over Complexity, No Time Estimates, and Accessibility First. Use when tracing how this principle interacts with other governance principles.
 - [Related Conventions](./progressive-disclosure/related-conventions.md) — Links to the tutorial, Diátaxis, file-naming, and word-budget conventions that enforce this principle. Use when looking for the specific conventions that enforce this principle's rules.
 - [References](./progressive-disclosure/references.md) — External references on UX progressive disclosure, cognitive load, and documentation structure. Use when seeking authoritative external sources on progressive disclosure as a UX principle.
+
+## Relationship to Other Principles
+
+- [Simplicity Over Complexity](../general/simplicity-over-complexity.md) - Start simple, add complexity only when needed
+- [No Time Estimates](./no-time-estimates.md) - Focus on learning outcomes, not duration
+- [Accessibility First](./accessibility-first.md) - Progressive disclosure improves accessibility
+
+## What
+
+**Progressive Disclosure** means:
+
+- Simple interfaces for common tasks
+- Advanced features discoverable but hidden
+- Learning paths from basic to expert
+- Complexity introduced incrementally
+- Each level complete and useful
+
+**Immediate Complexity** means:
+
+- All features exposed at once
+- Beginners overwhelmed
+- No clear learning path
+- Cognitive overload
+- Hard to get started

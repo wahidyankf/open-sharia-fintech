@@ -1,5 +1,4 @@
 ---
-title: "Task-Checklist Synchronization"
 description: Establishes that the live Task list and on-disk delivery.md are two views of one action-level state that must always agree.
 when_to_use: Use when reconciling the harness Task list against delivery.md, or confirming every checkbox maps to exactly one task.
 ---

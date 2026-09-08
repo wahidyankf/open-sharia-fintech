@@ -1,14 +1,5 @@
 ---
-title: "CI Monitoring Convention"
 description: Standards for monitoring GitHub Actions CI runs without exhausting the GitHub API rate limit — required tooling, default 2-minute poll interval, no stream-watching, trigger discipline, and recovery procedures
-category: explanation
-subcategory: development
-tags:
-  - ci
-  - github-actions
-  - rate-limiting
-  - monitoring
-  - workflow
 when_to_use: Use whenever monitoring a CI run to completion, to poll safely without exhausting the GitHub API rate limit.
 ---
 

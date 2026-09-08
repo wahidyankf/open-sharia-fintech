@@ -1,15 +1,5 @@
 ---
-title: "Self-Containment Rules: Where to Place Extensive Explanations"
 description: "Defines the split between what belongs inside code-block annotations (WHAT) versus markdown text sections (WHY), with anti-pattern and correct-pattern examples."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - education
-  - code-first
-created: 2025-12-25
 when_to_use: "Read when an annotation is getting too long or explanatory, to decide whether that content belongs in the code block or in a text section instead."
 ---
 

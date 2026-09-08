@@ -1,12 +1,5 @@
 ---
-title: "Related Conventions"
 description: Links to the tutorial, Diátaxis, file-naming, and word-budget conventions that enforce this principle.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - progressive-disclosure
-created: 2025-12-15
 when_to_use: Use when looking for the specific conventions that enforce this principle's rules.
 ---
 

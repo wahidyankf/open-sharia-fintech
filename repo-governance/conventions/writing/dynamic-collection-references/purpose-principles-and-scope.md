@@ -1,15 +1,6 @@
 ---
-title: "Dynamic Collection References Convention — Purpose, Principles, and Scope"
 description: Why hardcoded collection counts create a maintenance burden, which core principles this convention implements, and which collections and content types are in and out of scope.
 when_to_use: Use when deciding whether a numeric count you are about to write (agents, skills, conventions, principles, practices, workflows) is a dynamic collection this convention governs.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - documentation
-  - maintenance
-  - collections
-created: 2026-02-22
 ---
 
 # Purpose, Principles, and Scope

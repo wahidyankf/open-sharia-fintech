@@ -1,15 +1,5 @@
 ---
-title: "No Destructive Git Operations Convention"
 description: Forbids destructive git operations that can discard a concurrent actor's uncommitted work on a shared machine, and prescribes the safe equivalent.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - safety
-  - worktree
-  - parallelism
-created: 2026-07-20
 when_to_use: Use before any local git operation that could discard uncommitted work, rewrite history, or delete a branch/worktree.
 ---
 

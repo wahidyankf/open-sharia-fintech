@@ -1,17 +1,6 @@
 ---
-title: "Structure Integration with General Tutorial Standards"
 description: "Explains how Cookbook tutorials adapt the general tutorial structure into an overview, independent recipes, and recipe-level structure."
 when_to_use: "Read when mapping general tutorial structure requirements onto a Cookbook tutorial's problem-focused layout."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - cookbook
-  - education
-  - problem-solving
-  - recipes
-created: 2026-01-30
 ---
 
 # Structure Integration with General Tutorial Standards

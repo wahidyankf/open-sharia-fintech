@@ -1,16 +1,5 @@
 ---
-title: "Tools and Automation"
 description: "The validators and checks that enforce specs-application sync."
-category: explanation
-subcategory: development
-tags:
-  - specs
-  - architecture
-  - c4-diagrams
-  - gherkin
-  - synchronization
-  - quality
-created: 2026-03-24
 when_to_use: "Use when locating the automated check for a sync violation."
 ---
 

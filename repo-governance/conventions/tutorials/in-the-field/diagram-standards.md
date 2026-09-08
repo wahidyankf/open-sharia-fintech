@@ -1,16 +1,6 @@
 ---
-title: "Diagram Standards"
 description: How often diagrams should appear per guide and the color-blind-friendly palette they must use.
 when_to_use: Use when deciding diagram frequency for a guide or picking diagram colors.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Diagram Standards

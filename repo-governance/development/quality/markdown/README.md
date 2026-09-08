@@ -1,5 +1,4 @@
 ---
-title: "Markdown Quality Standards"
 description: "Automated markdown linting and formatting standards using Prettier and markdownlint-cli2"
 when_to_use: "Read this index to find the right Markdown Quality Standards child document."
 ---
@@ -18,6 +17,5 @@ when_to_use: "Read this index to find the right Markdown Quality Standards child
 - [Troubleshooting](./troubleshooting.md) — Fixes for a blocked push, a silent hook, and a violation backlog. Use when a markdown quality gate blocks you and you need a diagnostic path.
 - [Related Documentation](./related-documentation.md) — Cross-references to the conventions markdown quality tooling enforces. Use when you need the rationale behind a specific markdown quality rule.
 - [Maintenance](./maintenance.md) — How to update markdownlint rules and the Prettier/markdownlint-cli2 dependencies. Use when changing a rule or bumping a markdown-tooling dependency.
-- [Metrics](./metrics.md) — Repository-wide violation counts from the markdown-quality rollout. Use when you need the historical baseline for the markdown-quality rollout.
 - [Principles and Conventions Implemented/Respected](./principles-and-conventions-implemented-respected.md) — How markdown tooling implements core principles and aligns with related conventions. Use when tracing markdown quality tooling to the principles/conventions it implements.
 - [Archive Exclusion](./archive-exclusion.md) — Why plans/done/ and archived/ are excluded from markdown linting. Use when deciding whether archived content should be linted.

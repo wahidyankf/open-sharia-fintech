@@ -1,16 +1,6 @@
 ---
-title: "Fence Depth Rules and Complete Nesting Examples"
 description: The 4-backtick-outer/3-backtick-inner depth rule with no orphaned fences, plus three complete worked examples of correctly nested fences.
 when_to_use: Use when writing a markdown example that itself contains a code block, and you need the correct fence depth pattern.
-category: explanation
-subcategory: conventions
-tags:
-  - markdown
-  - code-fences
-  - nesting
-  - syntax
-  - documentation
-created: 2025-12-23
 ---
 
 # Fence Depth Rules and Complete Nesting Examples

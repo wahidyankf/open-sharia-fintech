@@ -1,10 +1,5 @@
 ---
-title: "Overview and the Rule"
 description: Why the convention exists and the mandatory directory rule itself.
-category: explanation
-subcategory: development
-tags: [temporary-files, ai-agents, file-organization, best-practices]
-created: 2025-12-01
 when_to_use: Use before creating any temporary file, to confirm the mandatory directory rule.
 ---
 

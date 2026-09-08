@@ -1,16 +1,6 @@
 ---
-title: "Migration Strategy and Validation Checklist"
 description: The phased rollout plan for adding emoji to existing documentation, and the pre-review validation checklist.
 when_to_use: Use when rolling out emoji to existing documentation or doing a final review pass before committing.
-category: explanation
-subcategory: conventions
-tags:
-  - emoji
-  - accessibility
-  - scannability
-  - conventions
-  - markdown
-created: 2025-12-04
 ---
 
 # Migration Strategy and Validation Checklist

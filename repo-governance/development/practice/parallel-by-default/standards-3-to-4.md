@@ -1,15 +1,5 @@
 ---
-title: "Parallel-by-Default — Standards 3-4: Background-Slot Preference and DAG-First Ordering"
 description: Preferring background slots to keep the main thread vacant, and declaring an explicit dependency DAG in every non-trivial task list or plan delivery checklist
-category: explanation
-subcategory: development
-tags:
-  - parallelism
-  - concurrency
-  - performance
-  - ai-agents
-  - efficiency
-created: 2026-06-23
 when_to_use: Use when deciding whether to run parallel work in the foreground or background, or when writing a task list's or delivery checklist's dependency structure.
 ---
 

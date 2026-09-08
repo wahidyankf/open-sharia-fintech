@@ -1,10 +1,5 @@
 ---
-title: "Summary, Conclusion, and Related Documentation"
 description: "Summary table of all ten anti-patterns, closing guidance, and links to related pattern documentation."
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: "Use when you need a quick-reference table of every anti-pattern and its solution, or links to related docs."
 ---
 

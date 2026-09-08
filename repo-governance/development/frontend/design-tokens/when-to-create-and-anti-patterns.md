@@ -1,15 +1,5 @@
 ---
-title: "Design Tokens — When to Create a New Token, and Anti-Patterns"
 description: The three-question decision rule for tokenizing a value, and four common mistakes - hardcoded hex values, !important on token definitions, duplicated structural tokens, and partial dark mode coverage
-category: explanation
-subcategory: development/frontend
-tags:
-  - design-tokens
-  - css
-  - tailwind
-  - theming
-  - dark-mode
-created: 2026-03-28
 when_to_use: Use when deciding whether a repeated value warrants a new token, or when reviewing CSS for token-system violations.
 ---
 

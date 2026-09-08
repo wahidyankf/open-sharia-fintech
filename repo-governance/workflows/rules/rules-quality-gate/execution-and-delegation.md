@@ -1,5 +1,4 @@
 ---
-title: "Execution and Delegation"
 description: How the rules quality gate delegates its read-only sweep and why it has no fixer.
 when_to_use: Use when running the rules quality gate, to decide what the subagent does and what the root must keep.
 ---

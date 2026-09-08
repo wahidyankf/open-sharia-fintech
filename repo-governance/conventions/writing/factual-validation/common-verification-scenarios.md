@@ -1,16 +1,6 @@
 ---
-title: "Factual Validation Convention — Common Verification Scenarios"
 description: Four worked verification scenarios — technical tool documentation, REST API documentation, framework documentation, and installation/setup guides.
 when_to_use: Use when you need a concrete step-by-step verification walkthrough for a tool, API, framework, or installation guide.
-category: explanation
-subcategory: conventions
-tags:
-  - factual-validation
-  - verification
-  - web-research
-  - accuracy
-  - quality-assurance
-created: 2025-12-16
 ---
 
 # Common Verification Scenarios

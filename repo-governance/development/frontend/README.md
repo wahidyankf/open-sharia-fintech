@@ -1,16 +1,5 @@
 ---
-title: Frontend Development
 description: UI development conventions for the open-sharia-enterprise monorepo's frontend applications
-category: explanation
-subcategory: development/frontend
-tags:
-  - index
-  - frontend
-  - ui
-  - conventions
-  - accessibility
-  - styling
-created: 2026-03-28
 when_to_use: Use when building, styling, or testing a UI component in any frontend app in this monorepo.
 ---
 

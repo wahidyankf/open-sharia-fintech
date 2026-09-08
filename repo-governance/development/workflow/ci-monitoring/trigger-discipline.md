@@ -1,14 +1,5 @@
 ---
-title: "Trigger Discipline"
 description: Rules preventing redundant concurrent CI runs — never trigger the same workflow more than once every 10 minutes.
-category: explanation
-subcategory: development
-tags:
-  - ci
-  - github-actions
-  - rate-limiting
-  - monitoring
-  - workflow
 when_to_use: Use before triggering a CI workflow, to confirm no run for it is already active.
 ---
 

@@ -1,15 +1,5 @@
 ---
-title: "What"
 description: Defines reproducibility and non-reproducibility and contrasts their environment, build, and documentation characteristics.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - reproducibility
-  - environment
-  - determinism
-  - version-pinning
-created: 2025-12-28
 when_to_use: Use when clarifying the precise meaning of "reproducible environment" before applying the principle.
 ---
 

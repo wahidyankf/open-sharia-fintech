@@ -1,15 +1,5 @@
 ---
-title: "Overview and Directory Layout"
 description: "How CLI argument parsing maps to the inbound adapter, plus the canonical directory layout across all four CLI apps."
-category: explanation
-subcategory: development
-tags:
-  - architecture
-  - hexagonal
-  - cli
-  - rust
-  - fsharp
-created: 2026-05-26
 when_to_use: "Use when scaffolding a new CLI app or command and need the canonical directory layout."
 ---
 

@@ -1,14 +1,5 @@
 ---
-title: "Agent-Skill Separation — Benefits of Proper Separation"
 description: "Lists the benefits of keeping agent content and agent skills content properly separated."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when justifying to a reviewer why agent-skill separation is worth the extra structure.
 ---
 

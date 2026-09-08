@@ -1,10 +1,5 @@
 ---
-title: "Anti-Pattern — Echo and No-Op Test Targets"
 description: "Why an inapplicable test boundary must be omitted instead of represented by a placeholder"
-category: explanation
-subcategory: development
-tags: [nx, targets, testing]
-created: 2026-02-23
 when_to_use: "Use when a project lacks an applicable runtime or coverage layer."
 ---
 

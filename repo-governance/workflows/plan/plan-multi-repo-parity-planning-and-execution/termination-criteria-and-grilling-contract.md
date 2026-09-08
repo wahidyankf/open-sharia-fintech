@@ -1,5 +1,4 @@
 ---
-title: "Termination Criteria and Grilling Contract"
 description: Defines the composite's pass/partial/fail outcomes and summarizes its three mandatory hard-gated grill sessions.
 when_to_use: Use when determining the composite's final status, or confirming which grill sessions are required before proceeding.
 ---

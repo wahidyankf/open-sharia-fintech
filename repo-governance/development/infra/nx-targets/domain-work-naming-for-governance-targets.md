@@ -1,15 +1,5 @@
 ---
-title: "`{domain}:{work}` Naming for Governance and Validation Targets"
 description: Defines the {domain}:{work} naming scheme for governance, validation, lint, and format targets, with the canonical target list.
-category: explanation
-subcategory: development
-tags:
-  - nx
-  - targets
-  - project-json
-  - build
-  - scripts
-created: 2026-02-23
 when_to_use: Use when adding a new governance or validation Nx target and deciding its key name.
 ---
 

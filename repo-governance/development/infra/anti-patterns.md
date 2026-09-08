@@ -1,10 +1,5 @@
 ---
-title: "Anti-Patterns in Infrastructure Development"
 description: Common anti-patterns in infrastructure development — scattered files, placeholder values, missing tools, vague criteria — with problems, examples, and solutions for each.
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use when reviewing infrastructure code, checker agents, or Gherkin scenarios for a common mistake before it ships, or when explaining why a pattern is discouraged.
 ---
 

@@ -1,5 +1,4 @@
 ---
-title: "Code as Liability"
 description: "Every line of code is a maintenance liability, so a pull request that adds code states what it buys, what it costs to maintain, and which simpler alternative was rejected"
 when_to_use: "Read this index to find the right Code as Liability child document."
 ---

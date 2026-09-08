@@ -1,13 +1,5 @@
 ---
-title: "Examples"
 description: Worked PASS and FAIL examples of applying the Vercel MCP capability boundary and probe-recording rule.
-category: explanation
-subcategory: development
-tags:
-  - vercel
-  - mcp
-  - verification
-created: 2026-08-01
 when_to_use: Use when checking a plan against worked examples of correct and incorrect Vercel MCP usage.
 ---
 

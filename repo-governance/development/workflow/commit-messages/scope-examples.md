@@ -1,14 +1,5 @@
 ---
-title: "Scope Examples"
 description: Common scope names used across the project and example commit headers using them.
-category: explanation
-subcategory: development
-tags:
-  - conventional-commits
-  - git
-  - development
-  - code-quality
-created: 2025-11-24
 when_to_use: Use when choosing a scope name for a commit.
 ---
 

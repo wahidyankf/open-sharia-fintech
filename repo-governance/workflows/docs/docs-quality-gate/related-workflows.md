@@ -1,5 +1,4 @@
 ---
-title: "Related Workflows"
 description: "Lists workflows this one composes with: rules-quality-gate, deployment, content-creation, and migration workflows."
 when_to_use: "Use when looking for a workflow to run before or after this one."
 ---

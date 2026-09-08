@@ -1,14 +1,5 @@
 ---
-title: "Standard 1 — Default Concurrency (Continued)"
 description: "Continues Standard 1 with worked examples of the default-concurrency cap."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - subagents
-  - orchestration
-  - development
-created: 2025-11-23
 when_to_use: Use when you need a worked example of applying the default concurrency cap.
 ---
 

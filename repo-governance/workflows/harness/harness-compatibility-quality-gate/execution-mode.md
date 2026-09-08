@@ -1,5 +1,4 @@
 ---
-title: "Execution Mode"
 description: How to invoke harness-compatibility-checker and -fixer via Agent Delegation, with the Manual Orchestration fallback and how each is triggered.
 when_to_use: Use when starting a harness compatibility quality gate run and deciding preferred vs. fallback execution mode.
 ---

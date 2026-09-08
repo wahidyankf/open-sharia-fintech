@@ -1,16 +1,6 @@
 ---
-title: "LaTeX Reference"
 description: A quick-reference table of essential LaTeX commands, the aligned multi-line environment, text-in-formulas syntax, and common finance symbols.
 when_to_use: Use as a lookup table for a specific LaTeX command, symbol, or the aligned multi-line syntax.
-category: explanation
-subcategory: conventions
-tags:
-  - latex
-  - mathematics
-  - formulas
-  - notation
-  - conventions
-created: 2025-12-02
 ---
 
 # LaTeX Reference

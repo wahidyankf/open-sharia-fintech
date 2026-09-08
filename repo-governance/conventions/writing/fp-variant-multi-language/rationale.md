@@ -1,17 +1,6 @@
 ---
-title: "FP-Variant Multi-Language Convention — Rationale"
 description: Why two languages, why the bidirectional idiomatic constraint, and why closest-native-equivalent-plus-annotation rather than forced translation.
 when_to_use: Use when you need to justify this convention's requirements to a reviewer or explain the reasoning behind the bidirectional rule.
-category: explanation
-subcategory: conventions
-tags:
-  - fp
-  - clojure
-  - fsharp
-  - by-example
-  - ayokoding-www
-  - tutorial
-created: 2026-05-17
 ---
 
 # Rationale

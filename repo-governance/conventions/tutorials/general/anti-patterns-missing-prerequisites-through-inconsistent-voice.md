@@ -1,17 +1,6 @@
 ---
-title: "Anti-Patterns: Missing Prerequisites Through Inconsistent Voice or Tone (9-12)"
 description: "Documents the final four anti-patterns: missing prerequisites, missing checkpoints, unexplained solutions, and inconsistent voice."
 when_to_use: "Read when reviewing a tutorial draft for missing prerequisites, missing checkpoints, unexplained solutions, or inconsistent tone."
-category: explanation
-subcategory: conventions
-tags:
-  - tutorials
-  - diataxis
-  - learning
-  - pedagogy
-  - documentation
-  - teaching
-created: 2025-12-03
 ---
 
 # Anti-Patterns: Missing Prerequisites Through Inconsistent Voice or Tone (9-12)

@@ -1,17 +1,5 @@
 ---
-title: "Conventions Implemented/Respected"
 description: "Conventions this convention implements."
-category: explanation
-subcategory: development
-tags:
-  - testing
-  - git
-  - test-fixtures
-  - isolation
-  - regression
-  - safety
-  - defense-in-depth
-created: 2026-07-19
 when_to_use: "Use to trace this convention's cross-references."
 ---
 

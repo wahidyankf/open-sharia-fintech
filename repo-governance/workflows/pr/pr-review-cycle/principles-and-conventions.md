@@ -1,5 +1,4 @@
 ---
-title: "PR Review Cycle — Principles and Conventions Implemented/Respected"
 description: "The five principles (Explicit Over Implicit, Root Cause Orientation, Accessibility First, No Time Estimates, Simplicity Over Complexity) and five conventions this workflow implements."
 when_to_use: "Use when auditing this workflow's principle/convention compliance, or tracing which convention governs a specific formatting choice (file naming, linking, diagrams)."
 ---

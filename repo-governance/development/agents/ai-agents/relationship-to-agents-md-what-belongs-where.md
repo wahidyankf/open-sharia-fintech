@@ -1,14 +1,5 @@
 ---
-title: "Relationship to AGENTS.md — What Belongs Where"
 description: "Summarizes what content belongs in AGENTS.md versus in an agent definition file."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when unsure whether a piece of guidance belongs in AGENTS.md or an agent file.
 ---
 

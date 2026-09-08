@@ -1,15 +1,5 @@
 ---
-title: "TBD Benefits for This Project"
 description: Why TBD helps solo/small teams, scaling the team, and continuous deployment.
-category: explanation
-subcategory: development
-tags:
-  - trunk-based-development
-  - git
-  - workflow
-  - development
-  - continuous-integration
-created: 2025-11-26
 when_to_use: Use when justifying TBD's value for this project's team size or deployment model.
 ---
 

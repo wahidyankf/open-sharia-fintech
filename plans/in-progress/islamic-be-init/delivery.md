@@ -14,7 +14,7 @@ than guessing it.
 
 ## Upstream Dependency
 
-This plan does not begin until `lms-init` ([PR #487](https://github.com/wahidyankf/ose-public/pull/487)) has **merged** both:
+This plan does not begin until [`lms-init`](../lms-init/README.md) has **merged** both:
 
 - **DU1** — config-driven doctor tool inventory, landed byte-identically in `ose-public` and
   `ose-private`, with `doctor.extra-tools` present in both `repo-config.yml` files.

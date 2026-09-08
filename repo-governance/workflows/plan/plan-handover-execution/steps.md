@@ -1,5 +1,4 @@
 ---
-title: "Steps"
 description: The seven steps for resolving scope, gathering per-repo state, and writing a handover document.
 when_to_use: Use as the step-by-step procedure when actually writing a handover document.
 ---

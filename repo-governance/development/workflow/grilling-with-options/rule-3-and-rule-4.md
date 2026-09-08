@@ -1,17 +1,5 @@
 ---
-title: "Rule 3 and Rule 4 — Trade-Off Per Option; Exactly One Recommended Option"
 description: The requirement that every option states a context-specific trade-off, and that exactly one option is marked Recommended.
-category: explanation
-subcategory: development
-tags:
-  - planning
-  - grill-me
-  - user-interaction
-  - plan-maker
-  - design-decisions
-  - interaction
-  - agents
-created: 2026-05-26
 when_to_use: Use when writing an option's trade-off sentence or deciding which single option to mark Recommended.
 ---
 

@@ -1,13 +1,5 @@
 ---
-title: "Vision Supported"
 description: Explains how no-time-estimates advances the project's global-inclusivity vision.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - no-time-estimates
-  - productivity
-created: 2025-12-15
 when_to_use: Use when justifying the no-time-estimates rule against the project's mission.
 ---
 

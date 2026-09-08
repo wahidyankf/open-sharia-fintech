@@ -1,16 +1,5 @@
 ---
-title: Five-Part Format (scenario-adapted)
 description: The five-part example structure adapted for scenario domains — coverage statement, scenario context, annotated artifact, key takeaway, and why it matters.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - scenario
-  - governance
-  - decision-making
-created: 2026-05-21
 when_to_use: Use when drafting or reviewing an individual scenario by-example example and you need the required five-part structure.
 ---
 

@@ -1,14 +1,5 @@
 ---
-title: "Information Accuracy and Verification — Git Worktree Awareness"
 description: "Explains why agents must use relative paths and re-read files fresh when running inside a git worktree, and gives the first four file-access rules."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when an agent spawned via the Agent tool needs to read or write files and may be running inside a worktree.
 ---
 

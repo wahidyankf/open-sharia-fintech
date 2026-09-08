@@ -1,15 +1,5 @@
 ---
-title: "Git Push Safety Convention"
 description: Requires explicit user approval for every git push --force, --force-with-lease, or --no-verify — no exceptions for AI agents or automation.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - safety
-  - automation
-  - human-approval
-created: 2026-03-30
 when_to_use: Use before git push --force, --force-with-lease, or --no-verify, or when auditing for a branch-protection bypass.
 ---
 

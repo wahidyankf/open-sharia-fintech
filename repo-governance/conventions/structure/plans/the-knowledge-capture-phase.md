@@ -1,14 +1,5 @@
 ---
-title: "The Knowledge Capture Phase (Final Phase Before Archival)"
 description: Requires every substantive plan's delivery.md to end with a Knowledge Capture phase that routes every learnings.md entry to a terminal state before archival.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when authoring or executing a plan's final Knowledge Capture phase before moving it to done/.
 ---
 

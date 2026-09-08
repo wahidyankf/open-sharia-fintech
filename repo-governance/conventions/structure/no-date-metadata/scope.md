@@ -1,15 +1,6 @@
 ---
-title: "No Manual Date Metadata: Scope"
 description: Which files this convention applies to, which website-content directories are exempt, and why the created field and in-content dates are unaffected.
 when_to_use: Read this when checking whether a specific file or directory (especially website content under apps/*-www) is subject to this convention or exempt from it.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - frontmatter
-  - maintenance
-  - git
-created: 2026-04-25
 ---
 
 # No Manual Date Metadata: Scope

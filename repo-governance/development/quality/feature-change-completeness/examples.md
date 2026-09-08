@@ -1,16 +1,5 @@
 ---
-title: "Examples"
 description: "Worked examples of feature changes and their required companion artifacts."
-category: explanation
-subcategory: development
-tags:
-  - feature-completeness
-  - specs
-  - contracts
-  - testing
-  - documentation
-  - quality
-created: 2026-04-04
 when_to_use: "Use when you need a concrete example of what a feature change must update."
 ---
 

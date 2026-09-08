@@ -1,16 +1,5 @@
 ---
-title: "Testing Reproducibility"
 description: A verification script that checks Node.js/npm versions and lockfile presence match expectations, runnable in CI.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - reproducibility
-  - volta
-  - docker
-  - environment
-  - dependencies
-created: 2025-12-28
 when_to_use: Use when writing or wiring an environment-verification script into local dev or CI.
 ---
 

@@ -1,15 +1,5 @@
 ---
-title: "Why"
 description: Lists the benefits of immutability, the problems mutability causes, and when immutability should and should not be used.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - functional-programming
-  - immutability
-  - data-structures
-  - concurrency
-created: 2025-12-28
 when_to_use: Use when justifying a choice to use (or avoid) immutable data structures in a design discussion or code review.
 ---
 

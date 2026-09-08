@@ -1,5 +1,4 @@
 ---
-title: "By-Concept Tutorial Convention"
 description: "Standards for creating concept-driven tutorials with 95% coverage, heavily annotated code, and rich diagrams"
 when_to_use: "Read this index to find the right By-Concept Tutorial Convention child document."
 ---
@@ -18,7 +17,6 @@ when_to_use: "Read this index to find the right By-Concept Tutorial Convention c
 - [Mermaid Diagram Guidelines](./mermaid-diagram-guidelines.md) — Defines when to include Mermaid diagrams, the target diagram frequency, and the mandatory color-blind friendly palette. Read when deciding whether a concept section needs a diagram and which colors to use for it.
 - [Coverage Progression by Level](./coverage-progression-by-level.md) — Defines the topic coverage and section-count expectations for beginner, intermediate, and advanced levels. Read when assigning a concept to a beginner, intermediate, or advanced level and checking its section-count budget.
 - [File Naming and Organization](./file-naming-and-organization.md) — Defines the by-concept directory structure, file naming pattern, and concept-hierarchy section organization. Read when creating or naming the beginner, intermediate, and advanced files for a new By-Concept tutorial.
-- [Frontmatter Requirements](./frontmatter-requirements.md) — Specifies the required frontmatter fields for By-Concept beginner, intermediate, and advanced pages. Read when writing the frontmatter block for a new By-Concept tutorial page.
 - [Quality Checklist](./quality-checklist.md) — Provides the pre-publish checklist covering coverage, code quality, narrative quality, diagrams, and structure. Read before publishing a By-Concept tutorial to verify it meets all quality requirements.
 - [Validation and Enforcement](./validation-and-enforcement.md) — Describes the automated validation performed by apps-ayokoding-www-general-checker and the quality-gate workflow. Read when you need to know what an automated checker validates on By-Concept content or how the quality-gate workflow runs.
 - [Relationship to Other Tutorial Types](./relationship-to-other-tutorial-types.md) — Compares By-Concept against Initial Setup, Quick Start, Beginner, By-Example, Intermediate, Advanced, and Cookbook tutorial types. Read when deciding whether a piece of content should be a By-Concept tutorial or another tutorial type.

@@ -1,10 +1,5 @@
 ---
-title: "Mandatory test:quick Composition and Gate Surfaces"
 description: "Closed fast-gate composition with static coverage and no higher-layer runtime"
-category: explanation
-subcategory: development
-tags: [nx, targets, testing, coverage]
-created: 2026-02-23
 when_to_use: "Use when wiring or auditing test:quick and its lifecycle surfaces."
 ---
 

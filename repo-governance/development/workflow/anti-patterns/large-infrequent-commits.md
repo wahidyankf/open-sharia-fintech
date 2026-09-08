@@ -1,10 +1,5 @@
 ---
-title: "Anti-Pattern: Large, Infrequent Commits"
 description: Committing large batches of changes infrequently makes review and revert difficult.
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use when about to commit a week's worth of changes in a single large commit instead of small incremental ones.
 ---
 

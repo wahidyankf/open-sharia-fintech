@@ -1,5 +1,4 @@
 ---
-title: "PR Review Cycle — GitHub Reviews API Mechanics (Part 2)"
 description: "The remaining Reviews API mechanics: listing unresolved threads, replying and resolving them, filtering untrusted PR-body/comment text for prompt-injection, minimal write scope, and the GraphQL casing spot-check note."
 when_to_use: "Use when implementing thread-reply/resolve logic, or when checking the untrusted-input filtering rule before trusting PR body/comment text as review context."
 ---

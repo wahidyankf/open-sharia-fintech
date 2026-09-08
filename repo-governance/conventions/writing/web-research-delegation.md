@@ -1,15 +1,5 @@
 ---
-title: "Web Research Delegation Convention"
 description: Normative rule requiring AI agents to delegate public-web information gathering to the web-researcher delegated agent, with a narrow documented exception list
-category: explanation
-subcategory: conventions
-tags:
-  - ai-agents
-  - web-research
-  - delegation
-  - factual-validation
-  - governance
-created: 2026-04-16
 when_to_use: Read this before adding WebSearch or WebFetch to an agent, skill, or workflow, or before auditing one for compliance.
 ---
 

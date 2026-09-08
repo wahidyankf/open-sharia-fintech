@@ -1,10 +1,5 @@
 ---
-title: "Practice 3: Use Conventional Commits"
 description: Follow conventional commit format for clear, parseable history.
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use when writing a commit message and choosing its type/scope/subject format.
 ---
 

@@ -1,10 +1,5 @@
 ---
-title: "Best Practices 4-6"
 description: "Preserve content during refactoring, run affected tests only, use standardized validation patterns."
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: "Use when applying these three quality best practices."
 ---
 

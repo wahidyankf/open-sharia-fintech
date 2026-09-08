@@ -1,5 +1,4 @@
 ---
-title: "PDF-to-Markdown Quality Gate Workflow"
 description: "Converts a PDF to verbatim Markdown and validates fidelity via Maker-Checker-Fixer until convergence."
 when_to_use: "Read this index to find the right PDF-to-Markdown Quality Gate Workflow child document."
 ---

@@ -1,5 +1,4 @@
 ---
-title: "Task List Discipline"
 description: "Before any task, including a purely conversational one, open the harness's native task list and keep it continuously in sync with actual progress"
 when_to_use: "Read this index to find the right Task List Discipline child document."
 ---

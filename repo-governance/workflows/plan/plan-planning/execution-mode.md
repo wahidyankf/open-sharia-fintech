@@ -1,5 +1,4 @@
 ---
-title: "Execution Mode — Plan Establishment"
 description: Describes the direct-orchestration execution mode for the plan-establishment workflow, the worktree default, and the provisioning commands.
 when_to_use: Use when setting up or entering the worktree that plan-establishment authors into, or when confirming that grill sessions run in the calling context.
 ---

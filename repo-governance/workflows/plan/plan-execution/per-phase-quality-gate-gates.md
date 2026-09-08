@@ -1,5 +1,4 @@
 ---
-title: "Per-Phase Quality Gate — Gates"
 description: Defines the Phase N Gate barrier check and the local pre-push and integration/e2e quality gates run after each delivery phase.
 when_to_use: Use when verifying a phase's own gate, or running local and integration/e2e quality gates after a phase completes.
 ---

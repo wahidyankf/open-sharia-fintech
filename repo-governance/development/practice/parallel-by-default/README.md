@@ -1,5 +1,4 @@
 ---
-title: "Parallel-by-Default Practice"
 description: "Runs independent work in parallel within the agent cap while HIPPO controls compute admission."
 when_to_use: "Read this index to find the right Parallel-by-Default Practice child document."
 ---

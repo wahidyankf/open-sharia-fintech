@@ -1,14 +1,5 @@
 ---
-title: "Overview and Absolute Floor"
 description: Why CI monitoring must be rate-limit-safe, the required default poll interval, and the hard 2-minute minimum spacing.
-category: explanation
-subcategory: development
-tags:
-  - ci
-  - github-actions
-  - rate-limiting
-  - monitoring
-  - workflow
 when_to_use: Use when starting CI monitoring, to confirm the default poll interval and the absolute floor on polling frequency.
 ---
 

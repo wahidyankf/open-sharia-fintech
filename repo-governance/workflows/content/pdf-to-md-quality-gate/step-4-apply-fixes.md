@@ -1,5 +1,4 @@
 ---
-title: "4. Apply Fixes (Sequential, Conditional)"
 description: "Step 4: invokes pdf-to-md-fixer to apply validated fixes by mode, including the confidence-downgrade rules that force MEDIUM_CONFIDENCE (manual review) instead of auto-apply."
 when_to_use: "Use when implementing or debugging the fix-application step, or when determining whether a fix should be auto-applied or downgraded for manual review."
 ---

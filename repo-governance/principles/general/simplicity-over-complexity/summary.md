@@ -1,12 +1,5 @@
 ---
-title: "Summary"
 description: Short recap of the smallest-responsible-change rule, its stop condition, and its safeguards.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - simplicity
-created: 2025-12-15
 when_to_use: Use for the shortest possible recap of this principle.
 ---
 

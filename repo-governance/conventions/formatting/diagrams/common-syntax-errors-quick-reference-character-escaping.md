@@ -1,18 +1,6 @@
 ---
-title: "Common Mermaid Syntax Errors: Quick Reference — Character Escaping"
 description: "Provides a quick-reference table summarizing which characters need escaping in Mermaid diagrams and how."
 when_to_use: "Use as a fast lookup when you need to know how to escape a specific character in Mermaid."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Common Mermaid Syntax Errors: Quick Reference — Character Escaping

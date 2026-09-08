@@ -1,16 +1,6 @@
 ---
-title: "Scope"
 description: What this convention covers (docs/ to apps/ayokoding-www/ relative linking) and what it explicitly excludes.
 when_to_use: Use when checking whether a specific linking scenario falls inside or outside this convention's coverage.
-category: explanation
-subcategory: conventions
-tags:
-  - linking
-  - cross-reference
-  - relative-paths
-  - portability
-  - ayokoding-www
-created: 2026-02-07
 ---
 
 # Scope

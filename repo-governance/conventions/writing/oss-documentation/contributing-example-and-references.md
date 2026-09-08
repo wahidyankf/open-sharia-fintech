@@ -1,14 +1,5 @@
 ---
-title: "CONTRIBUTING.md: Example Structure and References"
 description: "A full worked example CONTRIBUTING.md structure and the external references this section is based on"
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - documentation
-  - open-source
-  - repository-standards
-created: 2026-04-04
 when_to_use: "Read this for a complete template to copy when creating a new CONTRIBUTING.md file."
 ---
 

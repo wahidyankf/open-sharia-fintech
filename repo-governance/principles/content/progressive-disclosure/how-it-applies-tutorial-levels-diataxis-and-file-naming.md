@@ -1,13 +1,5 @@
 ---
-title: "How It Applies — Tutorial Levels, Diátaxis, and File Naming"
 description: Progressive structure in tutorial skill levels, the Diátaxis framework, and file naming.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - progressive-disclosure
-  - learning-paths
-created: 2025-12-15
 when_to_use: Use when designing a tutorial's skill-level progression, documentation category, or file names.
 ---
 

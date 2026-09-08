@@ -1,5 +1,4 @@
 ---
-title: "Step 5 — Cross-Repo Finalization"
 description: The final composite step — repairing sibling cross-links, verifying the parity outcome, and reporting composite-wide results.
 when_to_use: Use after the last repo's execution completes, to close out the composite run.
 ---

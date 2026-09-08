@@ -1,15 +1,5 @@
 ---
-title: "Build-Artifact Sweeper Convention"
 description: An ambient scheduled sweeper deletes gitignored build output and caches on the host machine at any time — a missing artifact is expected environmental behaviour to regenerate and continue from, never an incident to investigate
-category: explanation
-subcategory: development
-tags:
-  - build-artifacts
-  - environment
-  - ai-agents
-  - infrastructure
-  - cleanup
-created: 2026-08-05
 when_to_use: Use when a build artifact is unexpectedly missing and you need to decide whether it's a defect or expected sweeper behaviour.
 ---
 

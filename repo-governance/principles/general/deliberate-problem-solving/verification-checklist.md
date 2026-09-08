@@ -1,12 +1,5 @@
 ---
-title: "Verification Checklist"
 description: A pre-implementation checklist for confirming assumptions, alternatives, and tradeoffs have been surfaced before coding.
-category: explanation
-subcategory: principles
-tags:
-  - problem-solving
-  - clarity
-created: 2026-01-29
 when_to_use: Use as a checklist immediately before starting implementation on any nontrivial task.
 ---
 

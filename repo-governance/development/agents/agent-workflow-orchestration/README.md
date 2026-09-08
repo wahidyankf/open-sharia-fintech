@@ -1,5 +1,4 @@
 ---
-title: "Agent Workflow Orchestration Convention"
 description: "Standards for how AI agents plan, execute, verify, and self-improve during multi-step tasks"
 when_to_use: "Read this index to find the right Agent Workflow Orchestration Convention child document."
 ---
@@ -7,7 +6,6 @@ when_to_use: "Read this index to find the right Agent Workflow Orchestration Con
 # Agent Workflow Orchestration Convention
 
 - [Principles Implemented/Respected](./principles-implemented-respected.md) — Lists the core repository principles this convention implements and respects. Use when checking which principles justify a rule in the Agent Workflow Orchestration Convention.
-- [Conventions Implemented/Respected](./conventions-implemented-respected.md) — Lists the related repository conventions this convention implements and respects. Use when checking which sibling conventions govern agent workflow orchestration.
 - [When to Plan](./when-to-plan.md) — Defines when an agent should produce an explicit plan before acting, the plan format, and how to re-plan when things go wrong. Use when deciding whether a task needs an upfront plan before execution starts.
 - [Ask Last](./ask-last.md) — Defines the evidence and authority boundary an agent must exhaust before asking the user. Use before asking the user for information, preference, or authority during repository work.
 - [Delegated Agent Strategy](./delegated-agent-strategy.md) — Defines when to use delegated (sub)agents, the rules for delegating, and when not to delegate. Use when deciding whether to hand a piece of work off to a delegated agent.
@@ -20,7 +18,6 @@ when_to_use: "Read this index to find the right Agent Workflow Orchestration Con
 - [Operating Budgets — CI and GitHub Actions Monitoring Cadence](./operating-budgets-ci-monitoring-cadence.md) — Defines the cadence for monitoring CI and GitHub Actions while an orchestrated task runs. Use when deciding how often to poll CI status during an orchestrated multi-step task.
 - [Verification Before Done](./verification-before-done.md) — Defines the verification requirements before marking a task done, for different task types, and how to compare diffs and behaviour. Use before reporting any task complete, to confirm what still needs verifying.
 - [Autonomous Bug Fixing](./autonomous-bug-fixing.md) — Defines the expected behaviour for autonomous bug fixing, what autonomous means, handling failing CI tests, and preexisting errors found during other work. Use when an agent discovers a bug or a failing test while doing unrelated work and must decide whether to fix it autonomously.
-- [Demand Elegance (Balanced)](./demand-elegance-balanced.md) — States the balanced standard for code elegance an agent should hold itself to. Use when deciding how much polish a change needs before it is considered done.
 - [Self-Improvement Loop](./self-improvement-loop.md) — Defines the self-improvement process, the lessons file format, and what makes a good lesson. Use when an agent wants to record a lesson learned from a mistake or a surprising result.
 - [Task Management](./task-management.md) — Covers planning first, tracking progress, granular task items, using the Task tool for multi-step work, documenting results, and capturing lessons. Use when managing the task list for a multi-step piece of work.
 - [Continuation-State Integrity](./continuation-state-integrity.md) — Defines the durable active-decision record and reconciliation gate that preserve user-established repository-rule decisions across compaction, handoff, and continuation. Use before the first action after restored context or when a user establishes a rule preference during active work.

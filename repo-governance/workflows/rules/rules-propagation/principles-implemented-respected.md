@@ -1,5 +1,4 @@
 ---
-title: "Principles Implemented/Respected"
 description: Which governance principles this workflow implements and which it must not violate while running.
 when_to_use: Use when tracing a step of this workflow upward to the principle that justifies it.
 ---

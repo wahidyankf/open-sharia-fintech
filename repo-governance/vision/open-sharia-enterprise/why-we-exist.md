@@ -1,13 +1,5 @@
 ---
-title: "Why We Exist"
 description: The founding purpose — democratizing Shariah-compliant enterprise technology
-category: explanation
-subcategory: vision
-tags:
-  - vision
-  - purpose
-  - islamic-enterprise
-created: 2025-12-24
 when_to_use: Use when explaining to a newcomer why this project exists at all.
 ---
 

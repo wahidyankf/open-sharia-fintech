@@ -1,14 +1,5 @@
 ---
-title: "Multi-File Structure — Additional File Purposes"
 description: Defines the purpose of tech-docs.md, delivery.md, learnings.md, and the evidence/ folder within a multi-file plan.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when clarifying what belongs in tech-docs.md, delivery.md, learnings.md, or evidence/.
 ---
 

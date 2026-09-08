@@ -1,76 +1,37 @@
 ---
-name: ayokoding-web-swe-by-example-quality-gate
-title: "ayokoding-web-swe-by-example-quality-gate"
 description: Iterative Maker-Checker-Fixer quality gate for by-example tutorials, validating coverage, example count, annotation density, and the mandatory Examples-by-Level section.
 when_to_use: Use after creating or updating by-example tutorials, before publishing them, or periodically to confirm tutorial quality remains high.
-goal: Validate by-example tutorial quality and apply fixes iteratively until EXCELLENT status achieved with zero mechanical issues
-termination: "Tutorial achieves EXCELLENT status with 75-85 examples, 95% coverage, and zero mechanical issues on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)"
-inputs:
-  - name: tutorial-path
-    type: string
-    description: Path to by-example tutorial (e.g., "golang/tutorials/by-example/", "elixir/tutorials/by-example/")
-    required: true
-  - name: mode
-    type: enum
-    values: [lax, normal, strict, ocd]
-    description: "Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ocd: all levels)"
-    required: false
-    default: strict
-  - name: min-iterations
-    type: number
-    description: Minimum check-fix cycles before allowing zero-finding termination (prevents premature success)
-    required: false
-  - name: max-iterations
-    type: number
-    description: Maximum check-fix cycles to prevent infinite loops
-    required: false
-    default: 7
-  - name: max-concurrency
-    type: number
-    description: "Background agents run concurrently — the N in the N+1 model (1 main thread + N background agents = N+1 total). Raise only when independent work, machine capacity, and budget headroom all allow; lower under budget, runner, or disk pressure. Never self-promoted beyond the declared value."
-    required: false
-    default: 3
-  - name: auto-fix-level
-    type: enum
-    values: [high-only, high-and-medium, all]
-    description: Which confidence levels to auto-fix without user approval
-    required: false
-    default: high-only
-outputs:
-  - name: final-status
-    type: enum
-    values: [excellent, needs-improvement, failing]
-    description: Final tutorial quality status
-  - name: lifecycle-status
-    type: enum
-    values: [verified, pending, not-applicable]
-    description: Lifecycle evidence state, separate from final-status
-  - name: iterations-completed
-    type: number
-    description: Number of check-fix cycles executed
-  - name: checker-report
-    type: file
-    pattern: local-tmp/ayokoding-web-by-example/ayokoding-web-by-example__*__*__audit.md
-    description: Final validation report from apps-ayokoding-www-by-example-checker (4-part format with UUID chain)
-  - name: fixer-report
-    type: file
-    pattern: local-tmp/ayokoding-web-by-example/ayokoding-web-by-example__*__*__fix.md
-    description: Final fixes report from apps-ayokoding-www-by-example-fixer (4-part format with UUID chain)
-  - name: execution-scope
-    type: string
-    description: Scope identifier for UUID chain tracking (derived from tutorial-path, e.g., "golang" for golang tutorials)
-    required: false
-  - name: examples-count
-    type: number
-    description: Total number of examples in tutorial
-  - name: coverage-percentage
-    type: number
-    description: Estimated coverage percentage achieved
 ---
 
 # AyoKoding Content By-Example Quality Gate Workflow
 
 Iterative Maker-Checker-Fixer quality gate for by-example tutorials.
+
+## Goal and Termination
+
+**Goal**: Validate by-example tutorial quality and apply fixes iteratively until EXCELLENT status achieved with zero mechanical issues
+
+**Termination**: Tutorial achieves EXCELLENT status with 75-85 examples, 95% coverage, and zero mechanical issues on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)
+
+## Inputs
+
+- **`tutorial-path`** (string, required) — Path to by-example tutorial (e.g., "golang/tutorials/by-example/", "elixir/tutorials/by-example/")
+- **`mode`** (enum: lax, normal, strict, ocd, optional, default `strict`) — Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ocd: all levels)
+- **`min-iterations`** (number, optional) — Minimum check-fix cycles before allowing zero-finding termination (prevents premature success)
+- **`max-iterations`** (number, optional, default `7`) — Maximum check-fix cycles to prevent infinite loops
+- **`max-concurrency`** (number, optional, default `3`) — Background agents run concurrently — the N in the N+1 model (1 main thread + N background agents = N+1 total). Raise only when independent work, machine capacity, and budget headroom all allow; lower under budget, runner, or disk pressure. Never self-promoted beyond the declared value.
+- **`auto-fix-level`** (enum: high-only, high-and-medium, all, optional, default `high-only`) — Which confidence levels to auto-fix without user approval
+
+## Outputs
+
+- **`final-status`** (enum: excellent, needs-improvement, failing) — Final tutorial quality status
+- **`lifecycle-status`** (enum: verified, pending, not-applicable) — Lifecycle evidence state, separate from final-status
+- **`iterations-completed`** (number) — Number of check-fix cycles executed
+- **`checker-report`** (file, pattern `local-tmp/ayokoding-web-by-example/ayokoding-web-by-example__*__*__audit.md`) — Final validation report from apps-ayokoding-www-by-example-checker (4-part format with UUID chain)
+- **`fixer-report`** (file, pattern `local-tmp/ayokoding-web-by-example/ayokoding-web-by-example__*__*__fix.md`) — Final fixes report from apps-ayokoding-www-by-example-fixer (4-part format with UUID chain)
+- **`execution-scope`** (string) — Scope identifier for UUID chain tracking (derived from tutorial-path, e.g., "golang" for golang tutorials)
+- **`examples-count`** (number) — Total number of examples in tutorial
+- **`coverage-percentage`** (number) — Estimated coverage percentage achieved
 
 ## Contents
 

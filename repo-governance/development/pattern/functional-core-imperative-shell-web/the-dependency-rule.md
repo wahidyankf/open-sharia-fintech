@@ -1,15 +1,5 @@
 ---
-title: "The Dependency Rule"
 description: "The one-way dependency rule - shell/ may import core/, core/ must never import shell/ - and the forbidden-imports list that enforces it."
-category: explanation
-subcategory: development
-tags:
-  - architecture
-  - functional-core-imperative-shell
-  - nextjs
-  - functional-programming
-  - web
-created: 2026-06-17
 when_to_use: "Use when checking whether a core/ file has accidentally imported React, Next.js, or another effectful dependency."
 ---
 

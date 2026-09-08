@@ -1,14 +1,5 @@
 ---
-title: "Repository Hierarchy"
 description: Shows where Workflows sit in the six-layer governance hierarchy, from Vision down through Principles, Conventions, Development, Agents, to Workflows.
-category: explanation
-subcategory: workflows
-tags:
-  - workflows
-  - agents
-  - orchestration
-  - patterns
-created: 2025-12-23
 when_to_use: Use when explaining how workflows relate to the layers below them (agents, development, conventions, principles, vision).
 ---
 

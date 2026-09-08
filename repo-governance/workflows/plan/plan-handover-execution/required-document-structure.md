@@ -1,5 +1,4 @@
 ---
-title: "Required Document Structure"
 description: The contractual section shape every handover uses.
 when_to_use: Use as the template for a handover's section structure.
 ---

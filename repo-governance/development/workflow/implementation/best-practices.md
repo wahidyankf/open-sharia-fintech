@@ -1,18 +1,5 @@
 ---
-title: "Best Practices"
 description: Six best practices for the implementation workflow, from starting simple through re-measuring after optimization.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - workflow
-  - implementation
-  - optimization
-  - refactoring
-  - surgical-changes
-  - goal-driven
-  - test-driven
-created: 2025-12-15
 when_to_use: Use as a checklist when implementing, refactoring, or optimizing any change.
 ---
 

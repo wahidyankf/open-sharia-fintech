@@ -1,15 +1,5 @@
 ---
-title: "Purpose and Scope"
 description: "Purpose and scope of this convention."
-category: explanation
-subcategory: development
-tags:
-  - content-preservation
-  - condensation
-  - offload
-  - zero-loss
-  - documentation
-created: 2025-12-14
 when_to_use: "Use when checking whether a task is in scope for this convention."
 ---
 

@@ -1,15 +1,6 @@
 ---
-title: "Dynamic Collection References — Standards (Rules 1-4)"
 description: The first four normative rules — never hardcode counts, layer descriptions must omit counts, index summaries must omit counts, and directory tree comments must omit counts.
 when_to_use: Use when checking a specific piece of prose (a sentence, a layer description, an index summary, or a directory tree comment) against the no-hardcoded-count rules.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - documentation
-  - maintenance
-  - collections
-created: 2026-02-22
 ---
 
 # Standards (Rules 1-4)

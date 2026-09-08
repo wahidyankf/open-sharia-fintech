@@ -1,10 +1,5 @@
 ---
-title: "Best Practices 1-3"
 description: "Automate quality checks in git hooks, use criticality for prioritization, assess fixer confidence."
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: "Use when applying these three quality best practices."
 ---
 

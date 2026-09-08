@@ -1,5 +1,4 @@
 ---
-title: "AyoKoding Content In-the-Field Quality Gate Workflow"
 description: "Iterative Maker-Checker-Fixer quality gate for in-the-field production guides, validating guide count, standard-library-first ordering, annotation density, and production code quality."
 when_to_use: "Read this index to find the right AyoKoding Content In-the-Field Quality Gate Workflow child document."
 ---

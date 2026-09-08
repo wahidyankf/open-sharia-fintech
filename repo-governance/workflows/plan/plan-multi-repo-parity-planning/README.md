@@ -1,5 +1,4 @@
 ---
-title: "Plan Multi-Repo Parity Planning Workflow"
 description: "Authors aligned-but-divergent plans across sibling repos, grilling every deviation to a decision."
 when_to_use: "Read this index to find the right Plan Multi-Repo Parity Planning Workflow child document."
 ---

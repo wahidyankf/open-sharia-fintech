@@ -1,9 +1,5 @@
 ---
-title: "PR-Review Cycle — Scope-Deferral Exit"
 description: "How a valid finding deferred on scope grounds leaves the outstanding ledger, so the loop can still reach a clean exit."
-category: explanation
-subcategory: workflows
-created: 2026-08-22
 when_to_use: "Use when the optional cycle defers a valid MEDIUM+ finding as out of scope."
 ---
 

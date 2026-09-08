@@ -1,5 +1,4 @@
 ---
-title: "Workflow Overview"
 description: "Mermaid flow diagram summarizing the parallel-checker, aggregate, sequential-fixer, iterate loop."
 when_to_use: "Use when you need a visual summary of the workflow's control flow before reading the detailed steps."
 ---

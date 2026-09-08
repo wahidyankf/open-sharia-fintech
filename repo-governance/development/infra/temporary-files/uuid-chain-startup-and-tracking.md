@@ -1,10 +1,5 @@
 ---
-title: "UUID Chain Generation — Startup and Tracking"
 description: The startup logic that builds the UUID chain, the write-tracking rule, and concurrency isolation.
-category: explanation
-subcategory: development
-tags: [temporary-files, ai-agents, file-organization, best-practices]
-created: 2025-12-01
 when_to_use: Use when implementing a checker/fixer agent's startup logic.
 ---
 

@@ -1,16 +1,5 @@
 ---
-title: "File-Touch Discipline — Standard 6: Reconciling Before Commit"
 description: Comparing the ledger against the working tree in both directions before staging, and the bounded read-only diagnosis obligation for large foreign change sets
-category: explanation
-subcategory: development
-tags:
-  - git
-  - safety
-  - concurrency
-  - ai-agents
-  - compaction
-  - discipline
-created: 2026-08-01
 when_to_use: Use immediately before staging or committing any change, and whenever a foreign change set looks unusually large or persistent.
 ---
 

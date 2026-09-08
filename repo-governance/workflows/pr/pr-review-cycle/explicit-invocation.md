@@ -1,5 +1,4 @@
 ---
-title: "PR-Review Cycle — Explicit Invocation"
 description: "Defines the only signals that may start the optional iterative review cycle."
 when_to_use: "Use before starting pr-review-cycle."
 ---

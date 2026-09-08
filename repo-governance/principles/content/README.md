@@ -1,10 +1,5 @@
 ---
-title: "Content Principles"
 description: Values that make platform documentation and learning materials accessible and useful
-category: explanation
-subcategory: principles
-tags: []
-created: 2026-05-12
 when_to_use: Use when deciding whether a content or documentation value belongs here, or looking up a specific content principle.
 ---
 

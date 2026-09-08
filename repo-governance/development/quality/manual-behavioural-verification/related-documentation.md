@@ -1,16 +1,5 @@
 ---
-title: "Related Documentation"
 description: "Related testing and evidence conventions."
-category: explanation
-subcategory: development
-tags:
-  - verification
-  - testing
-  - playwright
-  - api
-  - quality
-  - manual-testing
-created: 2026-04-04
 when_to_use: "Use for a related convention on testing or evidence."
 ---
 

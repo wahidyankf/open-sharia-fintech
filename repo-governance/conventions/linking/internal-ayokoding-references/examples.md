@@ -1,16 +1,6 @@
 ---
-title: "Examples"
 description: Four worked examples of converting public AyoKoding URLs to correct relative repository paths, including a multi-link learning-resources block.
 when_to_use: Use when you want a concrete before/after example to copy while fixing or writing an AyoKoding cross-reference.
-category: explanation
-subcategory: conventions
-tags:
-  - linking
-  - cross-reference
-  - relative-paths
-  - portability
-  - ayokoding-www
-created: 2026-02-07
 ---
 
 # Examples

@@ -1,15 +1,5 @@
 ---
-title: "Terminal Reconcile"
 description: The topology-keyed command for step 8 — reconciling local main after a bare-repo or side-worktree landing.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - worktree
-  - bare-repo
-  - safety
-created: 2026-07-21
 when_to_use: Use when running step 8 of the method, to pick the correct reconcile command for the repository's topology.
 ---
 

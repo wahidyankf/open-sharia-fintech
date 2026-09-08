@@ -1,5 +1,4 @@
 ---
-title: "Phase 2 — Deep Prior-Art Study, and Phase 3 — Promotion Checkpoint"
 description: Delegating a fanned-out web-researcher prior-art survey, then presenting findings inline and getting explicit user approval to promote.
 when_to_use: Use when running the deferred deep research pass, or confirming go/no-go before authoring the backlog plan.
 ---

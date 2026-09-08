@@ -1,5 +1,4 @@
 ---
-title: "Mechanize Cross-File Invariants"
 description: "When a rule must hold across more than one file, generate the dependent file(s) from a single declared source and validate the result, rather than stating the rule in prose and trusting hand-sync"
 when_to_use: "Read this index to find the right Mechanize Cross-File Invariants child document."
 ---

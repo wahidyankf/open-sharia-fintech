@@ -1,10 +1,5 @@
 ---
-title: "Ask Last"
 description: Defines the evidence and authority boundary an agent must exhaust before asking the user.
-category: explanation
-subcategory: development
-tags: [ai-agents, orchestration, questions, autonomy]
-created: 2026-08-30
 when_to_use: Use before asking the user for information, preference, or authority during repository work.
 ---
 

@@ -1,14 +1,5 @@
 ---
-title: "*-check-fix Workflow Pattern — Required Steps"
 description: The five required steps of a *-check-fix workflow — Initial Validation, Check for Findings, Apply Fixes, Re-validate, Iteration Control.
-category: explanation
-subcategory: workflows
-tags:
-  - workflows
-  - agents
-  - orchestration
-  - patterns
-created: 2025-12-23
 when_to_use: Use when writing the Steps section of a new *-check-fix workflow.
 ---
 

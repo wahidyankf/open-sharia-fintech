@@ -1,5 +1,4 @@
 ---
-title: "PR-Review Cycle — Related Workflows and Metrics"
 description: "Relates the optional cycle to its single-pass primitive and independent PR CI gate."
 when_to_use: "Use when composing or evaluating explicitly requested iterative PR review."
 ---

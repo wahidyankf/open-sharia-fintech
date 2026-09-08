@@ -1,14 +1,5 @@
 ---
-title: "Mechanize Cross-File Invariants — The Rule"
 description: The four-step procedure - identify a single source of truth, generate dependents from it, validate generated output in the normal gate, and never hand-edit a generated file
-category: explanation
-subcategory: development
-tags:
-  - generate-and-validate
-  - drift
-  - automation
-  - governance
-created: 2026-08-07
 when_to_use: Use when you've identified a rule that must hold across two or more files and need the concrete steps to mechanize it.
 ---
 

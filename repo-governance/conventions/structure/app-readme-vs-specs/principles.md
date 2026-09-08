@@ -1,18 +1,6 @@
 ---
-title: "App README vs Specs — Principles Implemented/Respected"
 description: The core principles this convention implements — Documentation First, Explicit Over Implicit, Simplicity Over Complexity, Accessibility First, and Progressive Disclosure.
 when_to_use: Use when you need the rationale behind the README/specs split and PM-readability contract.
-category: explanation
-subcategory: conventions
-status: "Pilot — initial issue"
-tags:
-  - conventions
-  - readme
-  - specs
-  - spec-tree-shape
-  - pm-readability
-  - c4
-created: 2026-05-09
 ---
 
 # Principles Implemented/Respected

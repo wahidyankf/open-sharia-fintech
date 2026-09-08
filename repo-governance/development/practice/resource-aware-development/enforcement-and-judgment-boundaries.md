@@ -1,14 +1,5 @@
 ---
-title: "Enforcement and Judgment Boundaries"
 description: Which gates check this practice, and which parts are unenforced by decision with their reasons.
-category: explanation
-subcategory: development
-tags:
-  - resource-management
-  - parallelism
-  - development
-  - tooling
-created: 2026-09-05
 when_to_use: Use when asking how a resource-aware obligation is enforced, or why one deliberately is not.
 ---
 

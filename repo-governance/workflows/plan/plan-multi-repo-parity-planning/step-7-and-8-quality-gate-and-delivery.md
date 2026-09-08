@@ -1,5 +1,4 @@
 ---
-title: "Step 7 and 8 — Quality Gate and Delivery"
 description: Runs plan-quality-gate per plan to a PASS verdict, then delivers per the selected mode and reports the deviation count summary.
 when_to_use: Use when gating and delivering the authored plans, or reporting the run's final outcomes.
 ---

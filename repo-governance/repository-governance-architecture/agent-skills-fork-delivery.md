@@ -1,13 +1,5 @@
 ---
-title: "Agent skills: Fork Delivery and Layer Comparison"
 description: Fork-mode skill delegation and the skill-prefix catalog
-category: explanation
-subcategory: architecture
-tags:
-  - architecture
-  - governance
-  - agent-skills
-created: 2026-02-09
 when_to_use: Use when explaining fork-mode skill delegation.
 ---
 

@@ -1,16 +1,6 @@
 ---
-title: "Foundational Tutorials at Root"
 description: Why Initial Setup and Quick Start live at the tutorials root instead of being nested inside a learning path.
 when_to_use: Use when deciding where initial-setup.md and quick-start.md belong in a language's tutorials/ tree.
-category: explanation
-subcategory: conventions
-tags:
-  - programming-languages
-  - tutorials
-  - ayokoding-www
-  - education
-  - structure
-created: 2025-12-27
 ---
 
 # Foundational Tutorials at Root

@@ -1,14 +1,5 @@
 ---
-title: "Plans Organization Convention"
 description: Standards for organizing plans/ documents
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when placing, structuring, naming, or moving a plan.
 ---
 

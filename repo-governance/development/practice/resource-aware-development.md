@@ -1,14 +1,5 @@
 ---
-title: "Resource-Aware Development"
 description: Coordinates local compute through the checksum-pinned HIPPO consumer while preserving logical parallelism and correctness edges.
-category: explanation
-subcategory: development
-tags:
-  - resource-management
-  - parallelism
-  - development
-  - tooling
-created: 2026-09-05
 when_to_use: Use before running or wiring local builds, tests, generators, services, repository gates, or other compute-bearing work.
 ---
 

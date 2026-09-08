@@ -1,5 +1,4 @@
 ---
-title: "Notes"
 description: Summarizes the orchestrator model, automation posture, idempotency, and other operating characteristics of plan execution.
 when_to_use: Use for a quick-reference summary of plan execution's operating characteristics and how it differs from plan-quality-gate.
 ---

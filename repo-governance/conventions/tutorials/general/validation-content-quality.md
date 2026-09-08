@@ -1,17 +1,6 @@
 ---
-title: "Content Quality Validation"
 description: "Lists the accuracy, completeness, clarity, and engagement validation checklist items that docs-tutorial-checker verifies on a tutorial."
 when_to_use: "Read when checking a tutorial's accuracy, completeness, clarity, or engagement against the validation checklist."
-category: explanation
-subcategory: conventions
-tags:
-  - tutorials
-  - diataxis
-  - learning
-  - pedagogy
-  - documentation
-  - teaching
-created: 2025-12-03
 ---
 
 # Content Quality Validation

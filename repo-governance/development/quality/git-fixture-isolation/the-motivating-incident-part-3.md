@@ -1,17 +1,5 @@
 ---
-title: "The Motivating Incident (part 3)"
 description: "Why exit-status checking alone cannot catch this defect class."
-category: explanation
-subcategory: development
-tags:
-  - testing
-  - git
-  - test-fixtures
-  - isolation
-  - regression
-  - safety
-  - defense-in-depth
-created: 2026-07-19
 when_to_use: "Use when evaluating whether an exit-status check alone is sufficient isolation."
 ---
 

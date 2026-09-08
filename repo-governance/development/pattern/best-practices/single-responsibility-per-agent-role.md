@@ -1,10 +1,5 @@
 ---
-title: "Practice 1: Single Responsibility Per Agent Role"
 description: "Each agent in Maker-Checker-Fixer should have exactly one clear responsibility - create, validate, or fix."
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: "Use when designing a new agent or reviewing whether an existing agent mixes maker/checker/fixer responsibilities."
 ---
 

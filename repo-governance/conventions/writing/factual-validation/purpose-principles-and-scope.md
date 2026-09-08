@@ -1,16 +1,6 @@
 ---
-title: "Factual Validation Convention — Purpose, Principles, and Scope"
 description: Why systematic web-based fact verification matters, the core principles this convention respects, and what content and validation activities are in vs. out of scope.
 when_to_use: Use when deciding whether a claim, command, or reference needs web-based verification, or whether a validation task falls under this convention's scope.
-category: explanation
-subcategory: conventions
-tags:
-  - factual-validation
-  - verification
-  - web-research
-  - accuracy
-  - quality-assurance
-created: 2025-12-16
 ---
 
 # Purpose, Principles, and Scope

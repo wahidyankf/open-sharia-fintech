@@ -29,7 +29,7 @@ A secondary, deliberate benefit: this delivery makes Go a first-class language i
 capability was partially built for a demo backend and then orphaned when the demo was deleted. This
 plan finishes it against a real product rather than a throwaway one.
 
-It also **collects a dividend already paid for**. The parallel `lms-init` ([PR #487](https://github.com/wahidyankf/ose-public/pull/487))
+It also **collects a dividend already paid for**. The parallel [`lms-init`](../lms-init/README.md)
 plan refactors the `rhino-cli` doctor tool inventory to be config-driven, arguing that the cost is
 justified because it removes the two-repository parity charge from every _future_ language. This
 plan is that future language, and it is the first to test the claim: registering Go with the doctor
@@ -79,14 +79,14 @@ that and records the result.
 
 ## Business Risks and Mitigations
 
-| Risk                                                                                                                      | Likelihood | Mitigation                                                                                                                                                                                                      |
-| ------------------------------------------------------------------------------------------------------------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| The Go lane is built and then a second Go service never follows, leaving it orphaned.                                     | Medium     | The lane is justified by this service alone; every component is exercised by `islamic-be` in the same plan.                                                                                                     |
-| Islamic-tool endpoints never get built, leaving a service that only reports its health.                                   | Medium     | Deletion is cheap and explicitly documented as the rollback. No client, no data, no deploy target to unwind.                                                                                                    |
-| Religious-calculation correctness becomes a reputational risk once endpoints land.                                        | Low (here) | Out of scope by construction; `prd.md` records it as a Non-Goal so no endpoint ships without its own correctness plan.                                                                                          |
-| `rhino-cli` parity drifts between repositories during the paired change.                                                  | Medium     | Cross-Repository Parity Identity is recorded before the first mutation; the parity audit workflow gates convergence.                                                                                            |
-| This plan is blocked while `lms-init` ([PR #487](https://github.com/wahidyankf/ose-public/pull/487)) DU1 and DU2 execute. | High       | Accepted deliberately: the alternative duplicates six shared surfaces and races two parity PR pairs on one generated manifest. Phase 0 verifies the upstream state and stops rather than substituting the work. |
-| Two language lanes land close together and a reviewer cannot tell which plan owns a shared-surface line.                  | Low        | Each plan names the other in its README and decision records; `islamic-be-init` D-0 tabulates every overlapping file and states who lands it first.                                                             |
+| Risk                                                                                                     | Likelihood | Mitigation                                                                                                                                                                                                      |
+| -------------------------------------------------------------------------------------------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The Go lane is built and then a second Go service never follows, leaving it orphaned.                    | Medium     | The lane is justified by this service alone; every component is exercised by `islamic-be` in the same plan.                                                                                                     |
+| Islamic-tool endpoints never get built, leaving a service that only reports its health.                  | Medium     | Deletion is cheap and explicitly documented as the rollback. No client, no data, no deploy target to unwind.                                                                                                    |
+| Religious-calculation correctness becomes a reputational risk once endpoints land.                       | Low (here) | Out of scope by construction; `prd.md` records it as a Non-Goal so no endpoint ships without its own correctness plan.                                                                                          |
+| `rhino-cli` parity drifts between repositories during the paired change.                                 | Medium     | Cross-Repository Parity Identity is recorded before the first mutation; the parity audit workflow gates convergence.                                                                                            |
+| This plan is blocked while [`lms-init`](../lms-init/README.md) DU1 and DU2 execute.                      | High       | Accepted deliberately: the alternative duplicates six shared surfaces and races two parity PR pairs on one generated manifest. Phase 0 verifies the upstream state and stops rather than substituting the work. |
+| Two language lanes land close together and a reviewer cannot tell which plan owns a shared-surface line. | Low        | Each plan names the other in its README and decision records; `islamic-be-init` D-0 tabulates every overlapping file and states who lands it first.                                                             |
 
 ## See Also
 

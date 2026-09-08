@@ -1,15 +1,6 @@
 ---
-title: "Choosing the Right Category, and Common Mistakes to Avoid"
 description: A decision tree for picking a Diátaxis category, plus category-mixing and wrong-category mistakes to avoid with corrected examples.
 when_to_use: Use when you are unsure which Diátaxis category new content belongs in, or reviewing a document for miscategorization.
-category: explanation
-subcategory: conventions
-tags:
-  - diataxis
-  - documentation-framework
-  - organization
-  - conventions
-created: 2025-11-22
 ---
 
 # Choosing the Right Category, and Common Mistakes to Avoid

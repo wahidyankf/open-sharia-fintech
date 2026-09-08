@@ -1,5 +1,4 @@
 ---
-title: "Success Criteria"
 description: Gherkin scenarios for rules-propagation outcomes.
 when_to_use: Use to validate or extend this workflow.
 ---

@@ -1,16 +1,6 @@
 ---
-title: "Post-Mortem Convention: Mandatory Sections — Frontmatter Through Detection"
 description: The required Frontmatter, Metadata Table, Summary, Impact, and Detection sections of a post-mortem document, in reading order
 when_to_use: Read this when authoring the opening mandatory sections of a post-mortem, from frontmatter through how the incident was detected.
-category: explanation
-subcategory: conventions
-tags:
-  - post-mortem
-  - incidents
-  - blameless
-  - reliability
-  - structure
-created: 2026-06-05
 ---
 
 # Mandatory Sections: Frontmatter Through Detection

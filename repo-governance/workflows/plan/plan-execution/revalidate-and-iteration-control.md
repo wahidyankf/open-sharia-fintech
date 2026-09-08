@@ -1,5 +1,4 @@
 ---
-title: "Re-validate"
 description: Defines the re-validation step and the iteration-control logic that loops execution or proceeds to finalization.
 when_to_use: Use when deciding whether to loop back into execution again or proceed to finalization, based on remaining findings and iteration count.
 ---

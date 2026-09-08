@@ -1,16 +1,6 @@
 ---
-title: "Where to Use LaTeX"
 description: "Where LaTeX notation belongs: documentation files, README files, and plans, with a worked example for each."
 when_to_use: Use when deciding whether a specific file (docs, README, or plan) should use LaTeX for a formula.
-category: explanation
-subcategory: conventions
-tags:
-  - latex
-  - mathematics
-  - formulas
-  - notation
-  - conventions
-created: 2025-12-02
 ---
 
 # Where to Use LaTeX

@@ -1,16 +1,5 @@
 ---
-title: "The Sixteen Rules (11-14)"
 description: "Rules 11-14: deploy config as code, distinguishing assertions, checkbox lockstep, clean re-entry."
-category: explanation
-subcategory: development
-tags:
-  - quality
-  - planning
-  - ui
-  - verification
-  - testing
-  - deployment
-created: 2026-06-19
 when_to_use: "Use when executing or verifying a UI plan against rules 11-14."
 ---
 

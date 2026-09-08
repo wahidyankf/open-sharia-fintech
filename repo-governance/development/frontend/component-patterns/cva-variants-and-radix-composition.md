@@ -1,15 +1,5 @@
 ---
-title: "Component Patterns — CVA Variants and Radix Composition"
 description: Defining component variants with cva() from class-variance-authority, and composing Radix sub-parts by importing the component namespace
-category: explanation
-subcategory: development/frontend
-tags:
-  - components
-  - react
-  - radix
-  - cva
-  - shadcn
-created: 2026-03-28
 when_to_use: Use when defining a new set of component variants, or composing a multi-part Radix primitive (dialog, menu, tabs).
 ---
 

@@ -1,13 +1,5 @@
 ---
-title: "*-quality-gate Lifecycle Validation Ownership"
 description: Prevents domain quality gates from repeating checks owned by repository lifecycle gates.
-category: explanation
-subcategory: workflows
-tags:
-  - workflows
-  - quality-gates
-  - validation
-created: 2026-08-27
 when_to_use: Use before invoking any checker, fixer, or recheck in a *-quality-gate workflow.
 ---
 

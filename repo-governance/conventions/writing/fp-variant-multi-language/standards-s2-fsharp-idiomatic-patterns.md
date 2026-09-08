@@ -1,17 +1,6 @@
 ---
-title: "FP-Variant Multi-Language Convention — Standards S2: F# Idiomatic Patterns"
 description: The F# language patterns (discriminated unions, records, smart constructors, Result, async, units of measure, pipelines, pattern matching) required in the F# tab.
 when_to_use: Use when writing or reviewing the F# tab of an FP-variant example, to confirm it uses native F# idioms rather than Clojure-influenced equivalents.
-category: explanation
-subcategory: conventions
-tags:
-  - fp
-  - clojure
-  - fsharp
-  - by-example
-  - ayokoding-www
-  - tutorial
-created: 2026-05-17
 ---
 
 # Standards S2: F# Idiomatic Patterns

@@ -1,16 +1,6 @@
 ---
-title: "Corpus Census: Section Tiering Table"
 description: The measured section-frequency table across all 174 course files that the REQUIRED/RECOMMENDED/OPTIONAL tiering rule is derived from.
 when_to_use: Read this when you need the raw per-section frequency counts before applying the tiering rule and reproduction method.
-category: explanation
-subcategory: conventions
-tags:
-  - plans
-  - syllabus
-  - learning-bearing
-  - custody
-  - governance
-created: 2026-07-22
 ---
 
 # Corpus Census: Section Tiering Table

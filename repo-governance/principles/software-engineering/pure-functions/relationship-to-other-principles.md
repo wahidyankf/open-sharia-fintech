@@ -1,15 +1,5 @@
 ---
-title: "Relationship to Other Principles"
 description: Links pure functions to the immutability, explicit-over-implicit, simplicity-over-complexity, and automation-over-manual principles they support.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - functional-programming
-  - pure-functions
-  - testability
-  - determinism
-created: 2025-12-28
 when_to_use: Use when tracing how pure functions connect to other repository-wide software engineering principles.
 ---
 

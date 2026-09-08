@@ -1,15 +1,6 @@
 ---
-title: "Generating Current Timestamps"
 description: Bash commands AI agents and scripts must execute to generate real UTC+7 timestamps for full timestamps, dates, and filenames, plus anti-patterns to avoid.
 when_to_use: Use when an agent or script needs to generate a real current timestamp instead of a placeholder value.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - timestamps
-  - timezone
-  - formatting
-created: 2025-11-30
 ---
 
 # Generating Current Timestamps
@@ -45,7 +36,7 @@ TZ='Asia/Jakarta' date +"%Y-%m-%d"
 
 **Use for:**
 
-- Documentation frontmatter (`created` field)
+- Documentation frontmatter (`created` field) — outside `repo-governance/`, which refuses it
 - Date-only requirements
 
 ## Filename Format (with double dash)

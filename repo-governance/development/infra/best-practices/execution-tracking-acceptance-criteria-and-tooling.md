@@ -1,10 +1,5 @@
 ---
-title: "Best Practices: Execution Tracking, Acceptance Criteria, and Tooling"
 description: Covers best practices for scope-based execution tracking in concurrent workflows, writing Gherkin acceptance criteria, and required tools for report-generating checker agents.
-category: explanation
-subcategory: development
-tags: [infrastructure, best-practices, acceptance-criteria, agents]
-created: 2026-05-12
 when_to_use: Use when tracking concurrent workflow executions, writing Given-When-Then acceptance criteria, or configuring tools for a checker agent that generates reports.
 ---
 

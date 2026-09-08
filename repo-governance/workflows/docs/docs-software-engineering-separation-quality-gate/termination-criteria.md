@@ -1,5 +1,4 @@
 ---
-title: "Termination Criteria"
 description: "Defines pass, partial, and fail termination criteria, requiring zero findings on two consecutive validations."
 when_to_use: "Use when determining what condition ends the workflow."
 ---

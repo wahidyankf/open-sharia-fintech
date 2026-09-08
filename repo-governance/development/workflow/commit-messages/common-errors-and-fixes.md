@@ -1,14 +1,5 @@
 ---
-title: "Common Errors and Fixes"
 description: The most common Commitlint rejection errors and how to fix each one.
-category: explanation
-subcategory: development
-tags:
-  - conventional-commits
-  - git
-  - development
-  - code-quality
-created: 2025-11-24
 when_to_use: Use when a commit is rejected by Commitlint and you need to fix the specific error shown.
 ---
 

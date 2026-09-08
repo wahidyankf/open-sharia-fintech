@@ -1,14 +1,5 @@
 ---
-title: "Creating New Agents — Agent Template"
 description: "Provides the boilerplate template structure for a new agent definition file."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use as the starting skeleton when writing a brand-new agent definition file.
 ---
 

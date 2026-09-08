@@ -1,15 +1,5 @@
 ---
-title: "Understanding the Governance Folder Structure"
 description: "How the repo-governance/ folder structure maps to offload targets."
-category: explanation
-subcategory: development
-tags:
-  - content-preservation
-  - condensation
-  - offload
-  - zero-loss
-  - documentation
-created: 2025-12-14
 when_to_use: "Use when orienting to where a governance document type lives."
 ---
 

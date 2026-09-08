@@ -1,8 +1,9 @@
 ---
-title: "Finalization and Archival — Exact-Head PR CI Gate"
 description: Defines exact-current-head/base PR CI and optional-review handling before merge.
 when_to_use: Use when a *-to-pr plan approaches archival and must establish current PR evidence.
 ---
+
+# Finalization and Archival — Exact-Head PR CI Gate
 
 For `worktree-to-pr` and `main-to-pr`, finalization requires the `Quality gate` check from
 `.github/workflows/pr-quality-gate.yml` to be green for the PR's exact current head SHA and current

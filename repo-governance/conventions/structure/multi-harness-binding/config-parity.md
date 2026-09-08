@@ -1,5 +1,4 @@
 ---
-title: "Cross-Harness Config Parity (Rule 10)"
 description: Editing one harness's hand-authored config obliges the equivalent change in every other supported harness's config, or a recorded reason why it is absent.
 when_to_use: Use when changing any hand-authored harness configuration file, or when recording why a setting exists for one harness and not another.
 ---

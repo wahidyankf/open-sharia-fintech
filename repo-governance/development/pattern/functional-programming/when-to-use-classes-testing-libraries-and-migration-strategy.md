@@ -1,15 +1,5 @@
 ---
-title: "When to Use Classes, Testing, Libraries, and Migration Strategy"
 description: "When classes are acceptable, how pure functions simplify testing, recommended functional libraries, and how to migrate an existing codebase incrementally."
-category: explanation
-subcategory: development
-tags:
-  - development
-  - functional-programming
-  - immutability
-  - pure-functions
-  - typescript
-created: 2025-12-28
 when_to_use: "Use when deciding whether a class is appropriate, or planning an incremental migration to functional patterns."
 ---
 

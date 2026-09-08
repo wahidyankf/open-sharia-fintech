@@ -1,5 +1,4 @@
 ---
-title: "Step 4: Fixer - Apply Validated Fixes"
 description: Documents the apps-ayokoding-www-by-example-fixer agent invocation, its mode-scoped fix strategy, and which fixes are HIGH/MEDIUM confidence versus false-positive risks.
 when_to_use: Use when running or interpreting the fixer step of the by-example quality gate.
 ---

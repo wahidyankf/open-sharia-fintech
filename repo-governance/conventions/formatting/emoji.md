@@ -1,16 +1,6 @@
 ---
-title: "Emoji Usage Convention"
 description: Standards for semantic emoji usage to enhance document scannability and engagement with accessible colored emojis
 when_to_use: Use when deciding whether, where, or which emoji to use in repository documentation.
-category: explanation
-subcategory: conventions
-tags:
-  - emoji
-  - accessibility
-  - scannability
-  - conventions
-  - markdown
-created: 2025-12-04
 ---
 
 # Emoji Usage Convention
@@ -29,7 +19,6 @@ This document defines conventions for emoji usage in markdown documentation acro
 - [Emoji Usage Rule 7: Scope - Where to Use Emojis](./emoji/emoji-usage-rule-7-scope-where-to-use-emojis.md) — The full allowed-vs-forbidden file scope rule
 - [Document Type Specific Guidelines](./emoji/document-type-specific-guidelines.md) — Recommended emojis per document type with worked examples
 - [Migration Strategy and Validation Checklist](./emoji/migration-strategy-and-validation-checklist.md) — Phased rollout plan and pre-review checklist
-- [Notes](./emoji/notes.md) — Vocabulary rationale, cultural considerations, and adding a new emoji
 
 ## Related Conventions
 
@@ -38,3 +27,32 @@ This document defines conventions for emoji usage in markdown documentation acro
 - [Diátaxis Framework](../structure/diataxis-framework.md)
 - [AI Agents Convention](../../development/agents/ai-agents.md) — For agent color categorization using colored square emojis
 - [Color Accessibility Convention](../formatting/color-accessibility.md) — For accessible color palette and WCAG standards
+
+## Notes
+
+### Why These Specific Emojis?
+
+The emoji vocabulary was chosen based on:
+
+1. **Universal recognition** - Emojis with clear, consistent meanings
+2. **Professional context** - Appropriate for technical/enterprise documentation
+3. **Accessibility** - Screen reader friendly with clear alt text
+4. **Render consistency** - Display consistently across platforms (GitHub, VS Code)
+
+### Cultural Considerations
+
+While emojis generally have universal meanings, we've avoided:
+
+- Hand gestures (can have different cultural meanings)
+- Flags (potentially political)
+- Food/animals (may not render consistently)
+- Faces (except for status like PASS: FAIL: ️)
+
+### When in Doubt
+
+If unsure whether to use an emoji:
+
+1. Ask: "Does this emoji add semantic meaning or just decoration?"
+2. If decoration → skip it
+3. If semantic → check if it's in the vocabulary
+4. If not in vocabulary → consider if it should be added (propose via PR/issue)

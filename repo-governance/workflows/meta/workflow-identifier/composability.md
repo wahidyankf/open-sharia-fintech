@@ -1,14 +1,5 @@
 ---
-title: "Composability"
 description: A workflow step can itself be another workflow, an agent, or a procedure, in any combination — shown with mixed-composition and output-chaining examples.
-category: explanation
-subcategory: workflows
-tags:
-  - workflows
-  - agents
-  - orchestration
-  - patterns
-created: 2025-12-23
 when_to_use: Use when nesting one workflow inside another, or mixing agent/procedure/workflow steps in one document.
 ---
 

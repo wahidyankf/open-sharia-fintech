@@ -1,14 +1,5 @@
 ---
-title: "Delivery Checklists Express a DAG (HARD RULE)"
 description: Requires a Parallelization Model naming concurrent vs. serial delivery nodes.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when writing a plan's Parallelization Model.
 ---
 

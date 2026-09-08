@@ -1,13 +1,5 @@
 ---
-title: "Why This Matters"
 description: Explains how ignoring root causes produces compounding problems - hidden failures, multiplying patches, spreading bugs, and normalized mediocrity.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - quality
-  - root-cause
-created: 2026-03-09
 when_to_use: Use when justifying why root cause analysis is required before applying a fix.
 ---
 

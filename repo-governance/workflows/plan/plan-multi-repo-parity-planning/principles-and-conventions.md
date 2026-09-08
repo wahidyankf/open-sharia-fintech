@@ -1,5 +1,4 @@
 ---
-title: "Principles and Conventions Implemented/Respected"
 description: Lists the principles and conventions this workflow implements, for governance-alignment auditing.
 when_to_use: Use when auditing this workflow's governance alignment or citing which principle or convention a rule traces to.
 ---

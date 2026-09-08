@@ -1,16 +1,5 @@
 ---
-title: "Scope"
 description: "What file types this rule applies to, and the two exclusions (.env files and .gitignore entries)."
-category: explanation
-subcategory: development
-tags:
-  - git
-  - commits
-  - security
-  - portability
-  - environment
-  - quality
-created: 2026-03-24
 when_to_use: "Use when checking whether this rule applies to a specific file type."
 ---
 

@@ -1,5 +1,4 @@
 ---
-title: "Evidence and Outcomes"
 description: "Defines authenticated current-head evidence and terminal states."
 when_to_use: "Use when posting, authenticating, or consuming a leak result."
 ---

@@ -1,16 +1,5 @@
 ---
-title: "File-Touch Discipline — Standards 7-8: Scope and Foreign Files"
 description: The ledger is scoped to one (repository, worktree) pair, and foreign files not on the ledger get no action at all
-category: explanation
-subcategory: development
-tags:
-  - git
-  - safety
-  - concurrency
-  - ai-agents
-  - compaction
-  - discipline
-created: 2026-08-01
 when_to_use: Use when working across multiple repositories or worktrees, or when you encounter a file that is not on your ledger.
 ---
 

@@ -1,16 +1,5 @@
 ---
-title: "The Four Confidence Labels"
 description: "The four confidence labels for plan claims."
-category: explanation
-subcategory: development
-tags:
-  - plans
-  - ai-agents
-  - factual-validation
-  - anti-hallucination
-  - web-research
-  - verification
-created: 2026-05-03
 when_to_use: "Use when labeling a claim's confidence."
 ---
 

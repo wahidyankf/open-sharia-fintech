@@ -1,16 +1,5 @@
 ---
-title: "Overview"
 description: "What the pattern is and why it exists."
-category: explanation
-subcategory: development
-tags:
-  - maker-checker-fixer
-  - workflow
-  - content-quality
-  - agent-patterns
-  - validation
-  - automation
-created: 2025-12-14
 when_to_use: "Use when orienting to the pattern."
 ---
 

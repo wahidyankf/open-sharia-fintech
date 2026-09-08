@@ -1,5 +1,4 @@
 ---
-title: "Git Push Safety Convention"
 description: "Requires explicit user approval for every git push --force, --force-with-lease, or --no-verify — no exceptions for AI agents or automation."
 when_to_use: "Read this index to find the right Git Push Safety Convention child document."
 ---

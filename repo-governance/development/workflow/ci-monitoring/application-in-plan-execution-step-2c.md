@@ -1,14 +1,5 @@
 ---
-title: "Application in Plan Execution (Step 2c)"
 description: How the plan-execution workflow's Step 2c post-push CI verification applies this convention's monitoring rules.
-category: explanation
-subcategory: development
-tags:
-  - ci
-  - github-actions
-  - rate-limiting
-  - monitoring
-  - workflow
 when_to_use: Use when executing Step 2c of the plan-execution workflow, for the exact required monitoring pattern and forbidden shortcuts.
 ---
 

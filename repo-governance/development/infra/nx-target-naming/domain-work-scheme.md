@@ -1,14 +1,5 @@
 ---
-title: "Scheme 2 — `{domain}:{work}` for Governance and Validation Targets"
 description: Derivation rule and the canonical target table for the `{domain}:{work}` naming scheme used by governance, validation, lint, and format Nx targets.
-category: explanation
-subcategory: development
-tags:
-  - nx
-  - targets
-  - naming
-  - conventions
-created: 2026-06-13
 when_to_use: Use when naming a new governance, validation, lint, or format Nx target, or checking an existing `{domain}:{work}` target name against the canonical list.
 ---
 

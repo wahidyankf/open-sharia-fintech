@@ -1,10 +1,5 @@
 ---
-title: "Practice 4: Use Feature Flags Instead of Long-Lived Branches"
 description: Keep incomplete behaviour complete-and-inert behind temporary production-disabled feature flags, not branches.
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use when incomplete behaviour must merge as a complete-and-inert, both-path-tested increment without production exposure, with rollout, rollback, and removal recorded.
 ---
 

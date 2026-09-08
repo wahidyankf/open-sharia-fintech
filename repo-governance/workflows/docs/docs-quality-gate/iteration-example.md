@@ -1,5 +1,4 @@
 ---
-title: "Iteration Example"
 description: "A worked trace showing a partial result from unfixable broken links, followed by success after manual link fixes."
 when_to_use: "Use when you need to see a realistic multi-iteration run, including the broken-links partial-result case."
 ---

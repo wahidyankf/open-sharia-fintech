@@ -1,5 +1,4 @@
 ---
-title: "PR-Review Cycle — Steps 3-5: Fixer, CI, and Done"
 description: "Defines cycle-only fixing, exact-head CI, clean credit, and termination."
 when_to_use: "Use after authenticating a pass in an explicitly requested PR-review cycle."
 ---

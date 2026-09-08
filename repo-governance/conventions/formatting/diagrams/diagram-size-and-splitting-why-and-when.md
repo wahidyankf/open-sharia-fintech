@@ -1,18 +1,6 @@
 ---
-title: "Diagram Size and Splitting: Why It Matters and When to Split"
 description: "Explains why oversized diagrams are a problem, what makes a diagram too small/dense, and when to split it."
 when_to_use: "Use when a diagram feels cluttered or hard to read and you're deciding whether it needs to be split."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Diagram Size and Splitting: Why It Matters and When to Split

@@ -1,15 +1,5 @@
 ---
-title: "Integration with Fixer Agents"
 description: "How fixer agents integrate confidence assessment."
-category: explanation
-subcategory: development
-tags:
-  - fixer-agents
-  - confidence-levels
-  - validation
-  - automation
-  - quality-assurance
-created: 2025-12-14
 when_to_use: "Use when wiring confidence levels into a fixer agent."
 ---
 

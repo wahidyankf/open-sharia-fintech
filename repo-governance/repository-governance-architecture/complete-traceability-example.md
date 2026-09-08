@@ -1,13 +1,5 @@
 ---
-title: "Complete Traceability Example"
 description: A full worked example tracing Color Accessibility across all six layers
-category: explanation
-subcategory: architecture
-tags:
-  - architecture
-  - governance
-  - traceability
-created: 2026-02-09
 when_to_use: Use for a concrete end-to-end traceability example.
 ---
 

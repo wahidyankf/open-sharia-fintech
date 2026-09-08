@@ -1,5 +1,4 @@
 ---
-title: "Phase 4: Go and Lua Formatter Toolchains (Sequential)"
 description: "Phase 4: install Go and Lua solely so gofmt and stylua can format the AyoKoding course corpora."
 when_to_use: "Use when setting up or verifying the Go and Lua toolchains needed by the formatter gates."
 ---

@@ -1,16 +1,5 @@
 ---
-title: "Motivating Example"
 description: "The incident that motivated the six forcing-functions."
-category: explanation
-subcategory: development
-tags:
-  - testing
-  - live-testing
-  - usability
-  - ux
-  - quality
-  - systematic
-created: 2026-06-22
 when_to_use: "Use when you need the rationale behind these forcing-functions."
 ---
 

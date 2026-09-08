@@ -11,9 +11,14 @@ execution checklist.
 
 ## Active Plans
 
-- [islamic-be-init](./islamic-be-init/README.md) — stand up the `islamic-be` Go/Gin service
-  and its `islamic-be-e2e` Playwright suite, plus the first-class Go language lane the
-  monorepo needs to gate them.
+- **[lms-init](./lms-init/README.md)** — Initialize `ose-lms-be`, a Java 25 + Spring Boot REST
+  backend for the OSE Learning Management System, with a hello-world and a health endpoint. Teaches
+  the repository to build, format, test, and gate Java at all, and refactors the `rhino-cli` doctor
+  tool inventory to be config-driven across `ose-public` and `ose-private`.
+- **[islamic-be-init](./islamic-be-init/README.md)** — Stand up `islamic-be`, a Go 1.26 + Gin REST
+  service for generic Islamic tools with a health endpoint, and its `islamic-be-e2e` Playwright-BDD
+  suite. Adds the Go language lane on top of the shared surfaces `lms-init` generalizes; depends on
+  that plan's DU1 and DU2.
 
 ## Instructions
 

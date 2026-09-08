@@ -1,5 +1,4 @@
 ---
-title: "The Plan-Docs-Only Carve-Out (Superseded — Retired in ose-public)"
 description: Documents the retired plan-docs-only direct-push carve-out for historical context, and how it survives narrowed in ose-private.
 when_to_use: Use when researching why a plans/**-only change used to skip worktree-to-pr, or when working in ose-private and checking whether the narrowed carve-out still applies.
 ---

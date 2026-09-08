@@ -1,15 +1,5 @@
 ---
-title: "Overview and Directory Layout"
 description: "How bounded contexts and the api/ transport directory relate, plus the canonical F#/Giraffe directory layout."
-category: explanation
-subcategory: development
-tags:
-  - architecture
-  - hexagonal
-  - ddd
-  - fsharp
-  - backend
-created: 2026-05-26
 when_to_use: "Use when scaffolding a new bounded context and need the canonical directory layout."
 ---
 

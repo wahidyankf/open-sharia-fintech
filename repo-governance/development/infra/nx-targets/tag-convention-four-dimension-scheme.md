@@ -1,15 +1,5 @@
 ---
-title: "Tag Convention — Four-Dimension Scheme"
 description: Defines the four required project.json tag dimensions (type, platform, language, domain) and the special-case rules for Rust libs and tooling projects.
-category: explanation
-subcategory: development
-tags:
-  - nx
-  - targets
-  - project-json
-  - build
-  - scripts
-created: 2026-02-23
 when_to_use: Use when tagging a new project's project.json for the first time.
 ---
 

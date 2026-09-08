@@ -1,5 +1,4 @@
 ---
-title: "Step 9: Delivery and Sibling Obligation"
 description: Committing the ledger's paths, opening the PR, and recording the propagation obligation the sibling repository now carries.
 when_to_use: Use once verification is clean, to ship the run and record what it leaves owed elsewhere.
 ---

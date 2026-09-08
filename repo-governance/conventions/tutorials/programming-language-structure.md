@@ -1,16 +1,6 @@
 ---
-title: "Programming Language Tutorial Structure Convention"
 description: "Dual-path tutorial organization pattern for programming language education with by-concept and by-example learning tracks"
 when_to_use: Use when creating, auditing, or restructuring a programming language's Full Set Tutorial Package directory structure on ayokoding-www.
-category: explanation
-subcategory: conventions
-tags:
-  - programming-languages
-  - tutorials
-  - ayokoding-www
-  - education
-  - structure
-created: 2025-12-27
 ---
 
 # Programming Language Tutorial Structure Convention

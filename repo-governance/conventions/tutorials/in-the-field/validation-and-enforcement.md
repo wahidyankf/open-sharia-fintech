@@ -1,16 +1,6 @@
 ---
-title: "Validation and Enforcement"
 description: The automated checks and quality-gate workflow that validate In-the-Field guides.
 when_to_use: Use when you need to know which automated agent or workflow enforces a specific In-the-Field standard.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Validation and Enforcement

@@ -1,14 +1,5 @@
 ---
-title: "Agent File Structure — Document Structure"
 description: "Defines the required document structure sections for an agent definition file's body."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when laying out the body sections of a new agent definition file.
 ---
 

@@ -1,17 +1,6 @@
 ---
-title: "Screenshot Requirements (If Applicable)"
 description: "Defines when tutorials should include screenshots and the resolution, annotation, and alt-text requirements for them."
 when_to_use: "Read when a tutorial covers a tool or UI walkthrough and you need to decide whether and how to include screenshots."
-category: explanation
-subcategory: conventions
-tags:
-  - tutorials
-  - diataxis
-  - learning
-  - pedagogy
-  - documentation
-  - teaching
-created: 2025-12-03
 ---
 
 # Screenshot Requirements (If Applicable)

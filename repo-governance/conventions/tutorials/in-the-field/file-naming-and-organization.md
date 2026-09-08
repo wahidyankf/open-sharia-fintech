@@ -1,16 +1,6 @@
 ---
-title: "File Naming and Organization"
 description: The directory structure, file naming pattern, and topic-weight numbering scheme for In-the-Field guide files.
 when_to_use: Use when creating or naming a new In-the-Field guide file and assigning it a topic weight.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # File Naming and Organization

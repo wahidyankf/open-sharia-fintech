@@ -1,15 +1,5 @@
 ---
-title: "Vision Supported"
 description: Explains how pure functions make Shariah-compliant business logic verifiable, auditable, and trustworthy.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - functional-programming
-  - pure-functions
-  - testability
-  - determinism
-created: 2025-12-28
 when_to_use: Use when explaining why pure functions matter for auditable, transparent Islamic finance logic.
 ---
 

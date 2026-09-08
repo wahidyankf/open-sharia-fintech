@@ -1,18 +1,6 @@
 ---
-title: "App README vs Specs Convention"
 description: Defines what content lives in app/infra READMEs vs specs/, the logical-owner-corpus spec tree shape, and the PM-readability contract for specs/.
 when_to_use: Use when deciding whether content belongs in an app README or in its specs/ tree, or when shaping a specs/apps/ tree.
-category: explanation
-subcategory: conventions
-status: "Pilot — initial issue"
-tags:
-  - conventions
-  - readme
-  - specs
-  - spec-tree-shape
-  - pm-readability
-  - c4
-created: 2026-05-09
 ---
 
 # App README vs Specs Convention
@@ -20,6 +8,9 @@ created: 2026-05-09
 App READMEs drift. They accumulate routes tables, architecture diagrams, bounded-context narratives, and API endpoint listings — content that describes what a system does rather than how to run it locally. This drift makes READMEs long, makes specifications hard to find, and forces engineers to maintain the same information in two places.
 
 This convention draws a hard boundary. App and infra READMEs contain only dev-runtime content. Everything describing system behaviour, architecture, contracts, or design intent lives in `specs/apps/<app-family>/` as one logical owner corpus per deployed surface. Both audiences — engineers and Technical Product/Project Managers — benefit from knowing exactly where to look.
+
+**Status**: Pilot — initial issue. Refinements are recorded in the Validation and Refinement
+Log, indexed below.
 
 ## Children
 

@@ -1,5 +1,4 @@
 ---
-title: "Step 3 — Second Grill: Post-Research Validation"
 description: Describes the second grill session that validates direction against research findings and closes new decision branches before plan creation.
 when_to_use: Use when running the post-research grill session, or when checking what must be confirmed before Step 4.
 ---

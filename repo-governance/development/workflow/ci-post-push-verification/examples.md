@@ -1,14 +1,5 @@
 ---
-title: "Examples"
 description: Worked pass/fail examples of CI post-push verification, including how to fix a failure found during verification.
-category: explanation
-subcategory: development
-tags:
-  - ci
-  - github-actions
-  - verification
-  - quality-gates
-  - workflow
 when_to_use: Use when you need a concrete example of correct or incorrect CI post-push verification behaviour.
 ---
 

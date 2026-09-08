@@ -1,17 +1,6 @@
 ---
-title: "infra/dev/<stack> Compose Env — No Duplicate Templates"
 description: Why compose stacks must not introduce a second .env.example key list, and how they load a gitignored local .env with CI overrides instead.
 when_to_use: Use when adding or renaming a docker-compose dev stack under infra/dev/ and wiring its environment variables.
-category: explanation
-subcategory: conventions
-tags:
-  - security
-  - secrets
-  - env-files
-  - guard-env-file-access
-  - naming
-  - reproducibility
-created: 2026-06-10
 ---
 
 # infra/dev/<stack> Compose Env — No Duplicate Templates

@@ -1,5 +1,4 @@
 ---
-title: "Example Usage"
 description: Three worked examples — default worktree-to-pr, direct push with backlog stage, and a single-repo subset.
 when_to_use: Use when constructing an invocation of this workflow or explaining its behaviour with a concrete example.
 ---

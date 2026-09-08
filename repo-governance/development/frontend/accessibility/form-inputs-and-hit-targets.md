@@ -1,15 +1,5 @@
 ---
-title: "Accessibility — Form Inputs and Hit Targets"
 description: Visible label requirements, autoComplete and inputMode values for common fields, and minimum touch target sizes for desktop and mobile
-category: explanation
-subcategory: development/frontend
-tags:
-  - accessibility
-  - wcag
-  - a11y
-  - aria
-  - focus
-created: 2026-03-28
 when_to_use: Use when building any form input, select, or textarea, or any tappable interactive element.
 ---
 

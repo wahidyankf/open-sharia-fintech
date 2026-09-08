@@ -1,17 +1,5 @@
 ---
-title: "Examples"
 description: PASS and FAIL examples of grilling questions — a well-formed markdown fallback, native-tool usage, and five common violations.
-category: explanation
-subcategory: development
-tags:
-  - planning
-  - grill-me
-  - user-interaction
-  - plan-maker
-  - design-decisions
-  - interaction
-  - agents
-created: 2026-05-26
 when_to_use: Use when checking whether a specific grilling question is well-formed or violates one of the option-structure rules.
 ---
 

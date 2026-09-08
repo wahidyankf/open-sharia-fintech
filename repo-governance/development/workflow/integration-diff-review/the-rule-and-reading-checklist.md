@@ -1,16 +1,5 @@
 ---
-title: "The Rule and Reading Checklist"
 description: The integration checkpoint for reviewing an incoming diff and reconciling active work before the next action.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - safety
-  - rebase
-  - merge
-  - review
-created: 2026-08-06
 when_to_use: Use immediately after a rebase, pull, merge, cherry-pick, or fast-forward, before resuming any in-flight task.
 ---
 

@@ -1,10 +1,5 @@
 ---
-title: "Applicable Testing Targets — Summary Matrix"
 description: "Project-role applicability for runtime and static test-coverage targets"
-category: explanation
-subcategory: development
-tags: [nx, targets, testing, coverage]
-created: 2026-02-23
 when_to_use: "Use to determine which real testing targets a project role must expose."
 ---
 

@@ -1,10 +1,5 @@
 ---
-title: "Mandatory Static Behaviour Coverage"
 description: "Contract for test:coverage:behaviour and the per-adapter static coverage validators"
-category: explanation
-subcategory: development
-tags: [nx, targets, gherkin, coverage]
-created: 2026-02-23
 when_to_use: "Use when adding or debugging static Gherkin coverage validation."
 ---
 

@@ -1,16 +1,5 @@
 ---
-title: "Common Violations and Fixes"
 description: "Before/after examples for common markdown violations."
-category: explanation
-subcategory: development
-tags:
-  - markdown
-  - linting
-  - formatting
-  - prettier
-  - markdownlint
-  - quality
-created: 2026-01-17
 when_to_use: "Use when fixing a markdown lint violation and you want a concrete example."
 ---
 

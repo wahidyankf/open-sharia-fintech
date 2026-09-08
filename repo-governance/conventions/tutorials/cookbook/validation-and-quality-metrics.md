@@ -1,17 +1,6 @@
 ---
-title: "Validation and Quality Metrics"
 description: "Defines the recipe-count-by-category coverage metrics and the automated and manual quality validation checks."
 when_to_use: "Read when checking whether a cookbook has enough recipes per category or what an automated checker validates."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - cookbook
-  - education
-  - problem-solving
-  - recipes
-created: 2026-01-30
 ---
 
 # Validation and Quality Metrics

@@ -1,5 +1,4 @@
 ---
-title: "Agents"
 description: "Notes that this workflow uses manual orchestration and that rules-checker validates governance artifacts afterward."
 when_to_use: "Use when looking for which agent, if any, is involved in or follows this workflow."
 ---

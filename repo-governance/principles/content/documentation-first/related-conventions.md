@@ -1,12 +1,5 @@
 ---
-title: "Related Conventions"
 description: Links to conventions implementing documentation requirements.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - documentation
-created: 2025-12-28
 when_to_use: Use when finding conventions that enforce this principle.
 ---
 

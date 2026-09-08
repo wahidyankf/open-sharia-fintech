@@ -1,5 +1,4 @@
 ---
-title: "Code Quality Convention"
 description: "Automated code quality tools (Prettier, Husky, lint-staged, Commitlint) and git hooks for consistent formatting and commit message standards"
 when_to_use: "Read this index to find the right Code Quality Convention child document."
 ---

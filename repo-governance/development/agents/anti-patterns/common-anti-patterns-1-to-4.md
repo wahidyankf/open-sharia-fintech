@@ -1,14 +1,5 @@
 ---
-title: "Common Anti-Patterns — God Agent, Excessive Tools, Vague Descriptions, and Hardcoded Values"
 description: "Covers Anti-Patterns 1-4: the God Agent, requesting excessive tool permissions, vague or generic descriptions, and hardcoded paths and values."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - anti-patterns
-  - development
-  - best-practices
-created: 2025-11-23
 when_to_use: Use when reviewing an agent for an overly broad responsibility, over-requested tools, a vague description, or a hardcoded path.
 ---
 

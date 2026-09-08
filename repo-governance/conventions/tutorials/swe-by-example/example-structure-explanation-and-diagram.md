@@ -1,15 +1,5 @@
 ---
-title: "Example Structure: Brief Explanation, Diagram, and Annotation Density Standard"
 description: "Defines Parts 1 and 2 of the mandatory five-part example format (brief explanation and mermaid diagram) and introduces the annotation density standard for Part 3."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - education
-  - code-first
-created: 2025-12-25
 when_to_use: "Read when writing the brief explanation or diagram portion of an example, or when you need the annotation density requirement before writing annotated code."
 ---
 

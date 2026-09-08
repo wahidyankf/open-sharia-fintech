@@ -1,5 +1,4 @@
 ---
-title: "Why This Workflow Exists"
 description: States the two documented failure modes — hidden uncommitted evidence and concurrent same-plan work in a different location — that motivate a discovery pass before plan-execution.md.
 when_to_use: Use when explaining why skipping discovery and starting plan-execution.md cold risks re-implementing, abandoning, or orphaning work.
 ---

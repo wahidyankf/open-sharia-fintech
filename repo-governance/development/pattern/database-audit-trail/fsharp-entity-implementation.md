@@ -1,16 +1,5 @@
 ---
-title: "F# Entity Implementation"
 description: "How to map an audited table to an F# EF Core entity, run DbUp migrations at startup, and implement soft-delete in the repository layer."
-category: explanation
-subcategory: development
-tags:
-  - database
-  - audit-trail
-  - soft-delete
-  - dbup
-  - ef-core
-  - migrations
-created: 2026-03-09
 when_to_use: "Use when implementing the F# entity type, startup migration wiring, or repository soft-delete logic for an audited table."
 ---
 

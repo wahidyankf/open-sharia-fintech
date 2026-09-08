@@ -1,10 +1,5 @@
 ---
-title: "Anti-Patterns in Gherkin Journey Coherence and Acceptance Criteria"
 description: Covers unrelated actions hidden in one scenario and vague acceptance criteria.
-category: explanation
-subcategory: development
-tags: [anti-patterns, gherkin, acceptance-criteria, specs]
-created: 2026-05-12
 when_to_use: Use when reviewing whether a scenario expresses one coherent journey.
 ---
 

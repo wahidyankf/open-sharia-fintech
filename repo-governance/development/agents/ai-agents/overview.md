@@ -1,14 +1,5 @@
 ---
-title: "Overview"
 description: "Introduces what AI agents are in this repository, why agent conventions exist, the scope of this convention, and platform-binding directories."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when orienting to what an AI agent is in this repo or checking whether a topic is in scope for the AI Agents Convention.
 ---
 

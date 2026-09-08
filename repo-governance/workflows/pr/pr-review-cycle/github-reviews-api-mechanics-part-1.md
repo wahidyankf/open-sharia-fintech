@@ -1,5 +1,4 @@
 ---
-title: "PR Review Cycle — GitHub Reviews API Mechanics (Part 1)"
 description: "Why the pipeline uses the line-anchored Reviews API instead of top-level comments, and the mechanics of the once-per-cycle head SHA, deriving anchors from it, and posting one consolidated review."
 when_to_use: "Use when implementing or debugging the review-posting mechanics, or when a review is rejected with 422 Path could not be resolved."
 ---

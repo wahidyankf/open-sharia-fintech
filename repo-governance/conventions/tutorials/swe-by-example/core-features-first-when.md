@@ -1,15 +1,5 @@
 ---
-title: "Core Features First: When to Introduce Dependencies"
 description: "Defines the permitted exceptions for introducing external dependencies/abstractions and how to mark and justify them when they appear."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - education
-  - code-first
-created: 2025-12-25
 when_to_use: "Read when deciding at which coverage level (beginner/intermediate/advanced) an external dependency is finally permitted and how to introduce it."
 ---
 

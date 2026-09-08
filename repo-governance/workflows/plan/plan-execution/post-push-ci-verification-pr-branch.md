@@ -1,5 +1,4 @@
 ---
-title: "Post-Push CI Verification — PR-Branch Modes"
 description: Defines how execution monitors and resolves failures for GitHub Actions checks on a plan's PR branch.
 when_to_use: Use when monitoring CI after a push under worktree-to-pr or main-to-pr.
 ---

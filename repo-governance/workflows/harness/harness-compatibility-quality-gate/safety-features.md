@@ -1,5 +1,4 @@
 ---
-title: "Safety Features"
 description: Infinite-loop prevention, research-quality safeguards, false-positive protection, and error recovery for the harness compatibility gate.
 when_to_use: Use when auditing this workflow's guardrails against runaway iteration or stale research.
 ---

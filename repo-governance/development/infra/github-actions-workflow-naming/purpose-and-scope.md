@@ -1,14 +1,5 @@
 ---
-title: "Purpose and Scope"
 description: Why the GitHub Actions workflow naming convention exists, the principles/conventions it implements, and what it does and does not cover.
-category: explanation
-subcategory: development
-tags:
-  - github-actions
-  - ci-cd
-  - naming
-  - workflow
-created: 2026-03-13
 when_to_use: Use when orienting to why the workflow naming convention exists, or checking whether a topic is in scope for it.
 ---
 

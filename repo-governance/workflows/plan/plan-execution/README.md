@@ -1,5 +1,4 @@
 ---
-title: "Plan Execution Workflow"
 description: "Indexes end-to-end plan execution across its per-topic children."
 when_to_use: "Use to locate a plan-execution child document."
 ---

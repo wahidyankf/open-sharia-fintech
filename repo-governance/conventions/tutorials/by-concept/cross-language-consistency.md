@@ -1,16 +1,6 @@
 ---
-title: "Cross-Language Consistency"
 description: "Lists what must stay consistent versus what may vary when authoring By-Concept tutorials across multiple languages."
 when_to_use: "Read when authoring a By-Concept tutorial for a new language and checking it against prior languages' conventions."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-concept
-  - education
-  - narrative-driven
-created: 2026-01-30
 ---
 
 # Cross-Language Consistency

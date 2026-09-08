@@ -1,13 +1,6 @@
 ---
-title: "Harness Workflows"
 description: Workflows for coding-agent harness compatibility, binding parity, and upstream conformance
 when_to_use: Use when routing to a workflow that validates coding-agent bindings or current harness conventions.
-category: explanation
-subcategory: workflows
-tags:
-  - harness
-  - workflows
-created: 2026-08-27
 ---
 
 # Harness Workflows

@@ -1,15 +1,5 @@
 ---
-title: "Directory Layout and Zone Responsibilities"
 description: "The features/<name>/{core,shell}/ directory layout and what belongs in each zone."
-category: explanation
-subcategory: development
-tags:
-  - architecture
-  - functional-core-imperative-shell
-  - nextjs
-  - functional-programming
-  - web
-created: 2026-06-17
 when_to_use: "Use when deciding which files in a feature module belong in core/ versus shell/."
 ---
 

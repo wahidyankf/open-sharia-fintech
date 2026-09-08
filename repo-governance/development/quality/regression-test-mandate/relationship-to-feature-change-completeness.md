@@ -1,16 +1,5 @@
 ---
-title: "Relationship to Feature Change Completeness"
 description: "How this mandate and Feature Change Completeness divide obligations."
-category: explanation
-subcategory: development
-tags:
-  - regression
-  - testing
-  - bug-fix
-  - quality
-  - gherkin
-  - specs
-created: 2026-06-22
 when_to_use: "Use when deciding which rule(s) a change needs."
 ---
 

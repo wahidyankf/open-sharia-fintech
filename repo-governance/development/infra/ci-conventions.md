@@ -1,10 +1,5 @@
 ---
-title: "CI/CD Conventions"
 description: Central reference for CI/CD conventions in the multi-language Nx monorepo.
-category: explanation
-subcategory: development
-tags: [ci-cd, git-hooks, github-actions, docker, testing, nx, coverage]
-created: 2026-03-31
 when_to_use: Use when writing or reviewing a git hook, CI workflow, Dockerfile, or test setup.
 ---
 

@@ -1,10 +1,5 @@
 ---
-title: "Directory Status, Exceptions, and Related Conventions"
 description: Confirms both directories are gitignored and when another convention overrides this default.
-category: explanation
-subcategory: development
-tags: [temporary-files, ai-agents, file-organization, best-practices]
-created: 2025-12-01
 when_to_use: Use when confirming gitignore status.
 ---
 

@@ -1,15 +1,5 @@
 ---
-title: "Default Push and Worktree Execution"
 description: Overview framing that the four delivery modes are defined once canonically, and this document explains how each plays out for TBD and worktree execution.
-category: explanation
-subcategory: development
-tags:
-  - trunk-based-development
-  - git
-  - workflow
-  - development
-  - continuous-integration
-created: 2025-11-26
 when_to_use: Use as the entry point before reading the specific delivery-mode child documents that follow.
 ---
 

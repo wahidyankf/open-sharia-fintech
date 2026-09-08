@@ -1,16 +1,5 @@
 ---
-title: "F# Nullability Convention"
 description: "How F# option types map the six audit columns to nullable versus non-null fields."
-category: explanation
-subcategory: development
-tags:
-  - database
-  - audit-trail
-  - soft-delete
-  - dbup
-  - ef-core
-  - migrations
-created: 2026-03-09
 when_to_use: "Use when declaring the F# type for an audit column and deciding whether it should be an option type."
 ---
 

@@ -1,15 +1,5 @@
 ---
-title: "Emoji Usage and Common Mistakes"
 description: Strategic emoji use guidelines and the five most common README quality mistakes to avoid
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - readme
-  - engagement
-  - accessibility
-  - writing
-created: 2025-12-07
 when_to_use: Read this when deciding whether to use an emoji, or when reviewing a README draft for recurring quality mistakes.
 ---
 

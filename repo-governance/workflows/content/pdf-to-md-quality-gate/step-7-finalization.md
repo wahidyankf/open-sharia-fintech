@@ -1,5 +1,4 @@
 ---
-title: "7. Finalization (Sequential)"
 description: "Step 7: reports the final status (pass/partial/fail), iteration count, and summary report."
 when_to_use: "Use when implementing or debugging the workflow's final reporting step."
 ---

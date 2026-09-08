@@ -1,15 +1,5 @@
 ---
-title: "Future Work: Bot Identity Gap"
 description: "The bot-identity and REQUEST_CHANGES gap, not yet resolved."
-category: explanation
-subcategory: development
-tags:
-  - pr-review
-  - governance
-  - agents
-  - quality-gates
-  - boundary-rules
-created: 2026-07-23
 when_to_use: "Use when investigating the bot-identity review gap."
 ---
 

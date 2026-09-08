@@ -1,19 +1,6 @@
 ---
-title: "Canonical App Spec Tree"
 description: The logical owner corpus every app spec area uses, what each entry answers, and how the populated set varies by surface profile
 when_to_use: Read this when scaffolding a new app's specs/apps/<app-family>/ tree or checking which entries a given surface profile should populate.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - specs
-  - gherkin
-  - directory-structure
-  - organization
-  - c4-diagrams
-  - openapi
-  - c4
-created: 2026-04-02
 ---
 
 # Canonical App Spec Tree

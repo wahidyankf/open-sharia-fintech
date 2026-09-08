@@ -1,10 +1,5 @@
 ---
-title: "Gherkin Format and Journey Coherence"
 description: "Gherkin keyword syntax and the coherent-journey rule for repeated primary steps"
-category: explanation
-subcategory: development
-tags: [acceptance-criteria, gherkin, bdd]
-created: 2026-01-04
 when_to_use: "Use when writing or reviewing a Gherkin scenario."
 ---
 

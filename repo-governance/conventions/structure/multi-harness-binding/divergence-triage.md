@@ -1,16 +1,6 @@
 ---
-title: "Multi-Harness Binding: Divergence Triage and Reviewed Promotion (Rule 9)"
 description: Rule 9 — generation stays one-way by default, divergence is detected by content and never by timestamp, and promoting a mirror edit back into canonical source is a human-reviewed patch rather than an automatic write.
 when_to_use: Read this when a hand edit made inside a generated mirror needs keeping, or when `harness bindings validate` fails and you are deciding which side to change.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - governance
-  - platform-bindings
-  - agents
-  - compatibility
-created: 2026-08-19
 ---
 
 # Rule 9 — Divergence Triage and Reviewed Promotion

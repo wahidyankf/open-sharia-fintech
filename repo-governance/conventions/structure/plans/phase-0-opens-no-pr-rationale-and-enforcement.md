@@ -1,14 +1,5 @@
 ---
-title: "Phase 0 Opens No PR — Baseline Artifacts, Rationale, and Enforcement"
 description: Explains where Phase 0's evidence artifacts land, why opening a Phase 0 PR is prohibited, and how plan-maker, plan-checker, and plan-quality-gate enforce it.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when a Phase 0 step writes an evidence artifact, or when checking why a Phase 0 PR was flagged as a violation.
 ---
 

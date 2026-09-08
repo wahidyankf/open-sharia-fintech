@@ -1,5 +1,4 @@
 ---
-title: "PR-Review Cycle — What Code-Related Means"
 description: "Defines the code-related qualifier used by the optional cycle's exit and ceiling rules."
 when_to_use: "Use when deciding whether an outstanding MEDIUM/HIGH/CRITICAL finding blocks the optional cycle."
 ---

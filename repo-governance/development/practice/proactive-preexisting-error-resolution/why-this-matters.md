@@ -1,16 +1,5 @@
 ---
-title: "Proactive Preexisting Error Resolution — Why This Matters"
 description: The backlog problem, the monkey-patch problem, and the normalization problem that motivate fixing preexisting errors immediately rather than deferring them
-category: explanation
-subcategory: development
-tags:
-  - root-cause
-  - quality
-  - preexisting-errors
-  - proactive
-  - bug-fixing
-  - ai-agents
-created: 2026-03-28
 when_to_use: Use when you need to justify why a preexisting error should be fixed now rather than noted for later.
 ---
 

@@ -1,5 +1,4 @@
 ---
-title: "Vercel Deployment Convention"
 description: "Rules for configuring vercel.json when Nx build targets must run before the framework build"
 when_to_use: "Read this index to find the right Vercel Deployment Convention child document."
 ---

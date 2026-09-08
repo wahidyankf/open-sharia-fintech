@@ -1,16 +1,6 @@
 ---
-title: "Principles Implemented/Respected"
 description: "Lists the repository principles (Automation Over Manual, Progressive Disclosure, and others) that this convention implements."
 when_to_use: "Read when tracing which repository-wide principles the By-Concept convention is grounded in."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-concept
-  - education
-  - narrative-driven
-created: 2026-01-30
 ---
 
 # Principles Implemented/Respected

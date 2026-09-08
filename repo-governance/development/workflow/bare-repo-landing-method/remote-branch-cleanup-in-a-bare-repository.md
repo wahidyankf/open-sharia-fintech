@@ -1,15 +1,5 @@
 ---
-title: "Remote-Branch Cleanup in a Bare Repository"
 description: Why a bare repository cannot push a branch deletion directly, and the two routes that work around it.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - worktree
-  - bare-repo
-  - safety
-created: 2026-07-21
 when_to_use: Use when a branch-and-pull-request landing needs its merged remote branch deleted from a bare repository.
 ---
 

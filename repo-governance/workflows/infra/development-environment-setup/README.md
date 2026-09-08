@@ -1,5 +1,4 @@
 ---
-title: "Development Environment Setup Workflow"
 description: "Guides installing and verifying every toolchain needed for pre-commit, pre-push, integration, and E2E work in this monorepo."
 when_to_use: "Read this index to find the right Development Environment Setup Workflow child document."
 ---
@@ -25,7 +24,5 @@ when_to_use: "Read this index to find the right Development Environment Setup Wo
 - [Minimal Scope Quick Reference](./minimal-scope-quick-reference.md) — Table mapping scope=minimal to the specific phases/steps and tools it installs (core TypeScript development only). Use when you only need a minimal environment for TypeScript work, not the full polyglot toolchain.
 - [Notes](./notes.md) — Notes on version pinning, idempotency, macOS focus, lack of Windows support, CI parity, and git worktree compatibility. Use when you need background on why this workflow behaves the way it does.
 - [Principles Implemented/Respected](./principles-implemented-respected.md) — Lists the governance principles this workflow implements (reproducibility, explicit over implicit, automation, documentation first, progressive disclosure). Use when auditing this workflow against repository-wide governance principles.
-- [Conventions Implemented/Respected](./conventions-implemented-respected.md) — Lists the workflow-identifier and environment-reproducibility conventions this workflow follows. Use when auditing this workflow against repository-wide structural conventions.
-- [Related Workflows](./related-workflows.md) — Links to the CI Quality Gate workflow, which assumes the toolchain from this workflow is already set up. Use when looking for a workflow to run after environment setup completes.
 - [Related Documentation](./related-documentation.md) — Links to the developer-facing how-to guide and the reproducible-environments and code-quality governance docs. Use when looking for the human-facing companion guide or the underlying governance rationale.
 - [Agents](./agents.md) — Notes that this workflow uses manual orchestration and that rules-checker validates governance artifacts afterward. Use when looking for which agent, if any, is involved in or follows this workflow.

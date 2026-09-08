@@ -1,13 +1,5 @@
 ---
-title: "Vision Supported"
 description: Explains how root cause orientation serves the Open Sharia Enterprise vision of trustworthy, auditable, and sustainable Shariah-compliant systems.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - quality
-  - root-cause
-created: 2026-03-09
 when_to_use: Use when explaining why root cause orientation matters to the project's mission, not just as a technical practice.
 ---
 

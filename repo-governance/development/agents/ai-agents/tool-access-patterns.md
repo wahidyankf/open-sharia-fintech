@@ -1,14 +1,5 @@
 ---
-title: "Tool Access Patterns"
 description: "Introduces the tool-access patterns table (Read-Only, Checker, Documentation, Development) that governs which tools an agent's frontmatter should request."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when deciding the baseline tool-access pattern for a new agent.
 ---
 

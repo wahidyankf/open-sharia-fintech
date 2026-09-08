@@ -1,15 +1,5 @@
 ---
-title: "False Positive Feedback Loop: How False Positives Improve Checker Accuracy"
 description: "How false-positive findings feed back into checker accuracy."
-category: explanation
-subcategory: development
-tags:
-  - fixer-agents
-  - confidence-levels
-  - validation
-  - automation
-  - quality-assurance
-created: 2025-12-14
 when_to_use: "Use when reporting a false positive back to a checker's maintainer."
 ---
 

@@ -1,14 +1,5 @@
 ---
-title: "Common Patterns"
 description: Reusable Gherkin scenario patterns for CRUD operations, authentication and authorization, and error handling.
-category: explanation
-subcategory: development
-tags:
-  - acceptance-criteria
-  - gherkin
-  - testing
-  - requirements
-created: 2025-12-07
 when_to_use: Use when writing acceptance criteria for a CRUD feature, an auth-gated route, or an error-handling path and want a starting scenario shape.
 ---
 

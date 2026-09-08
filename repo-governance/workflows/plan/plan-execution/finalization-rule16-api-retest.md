@@ -1,8 +1,9 @@
 ---
-title: "Finalization and Archival — Rule-16 API Retest Gate"
 description: Defines the rule-16 API exploratory retest gate that runs against the running endpoint(s) before archival.
 when_to_use: Use when an API feature-change plan approaches archival and must run its near-end exploratory retest gate.
 ---
+
+# Finalization and Archival — Rule-16 API Retest Gate
 
 **Rule-16 API exploratory retest (near-end, before archival)**: For **API feature-change** plans
 specifically (REST or GraphQL endpoints in a backend or tRPC app), after the implementation lands and

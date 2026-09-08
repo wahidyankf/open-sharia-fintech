@@ -1,16 +1,5 @@
 ---
-title: "Absence/Completeness: Zero-Result Evidence (1)"
 description: "Why absence claims fail differently; the four-point checklist."
-category: explanation
-subcategory: development
-tags:
-  - plans
-  - ai-agents
-  - factual-validation
-  - anti-hallucination
-  - web-research
-  - verification
-created: 2026-05-03
 when_to_use: "Use before citing a zero-result search as evidence."
 ---
 

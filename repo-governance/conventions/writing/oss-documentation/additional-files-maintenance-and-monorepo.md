@@ -1,14 +1,5 @@
 ---
-title: "Additional Files, Maintenance, and Monorepo Considerations"
 description: "LICENSE, CHANGELOG.md, and AUTHORS requirements; keeping docs current; and monorepo-specific README/CONTRIBUTING/ADR guidance"
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - documentation
-  - open-source
-  - repository-standards
-created: 2026-04-04
 when_to_use: "Read this for the remaining repository-level files, ongoing maintenance triggers, and monorepo-specific placement rules."
 ---
 

@@ -1,14 +1,6 @@
 ---
-title: "Conventions"
 description: Documentation conventions and standards for open-sharia-enterprise
 when_to_use: Use when you need the repository's shared rules for writing, organizing, or checking documentation, or when routing to the specific conventions subdirectory (formatting, linking, writing, structure, tutorials, security) that governs a change.
-category: explanation
-subcategory: conventions
-tags:
-  - index
-  - conventions
-  - standards
-created: 2025-11-22
 ---
 
 # Conventions

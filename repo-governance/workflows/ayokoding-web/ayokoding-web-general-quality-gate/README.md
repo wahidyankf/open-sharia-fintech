@@ -1,5 +1,4 @@
 ---
-title: "AyoKoding Content General Quality Gate Workflow"
 description: "Fully automated quality gate that validates ayokoding-web content quality, factual accuracy, and links in parallel, then applies fixes iteratively until zero findings."
 when_to_use: "Read this index to find the right AyoKoding Content General Quality Gate Workflow child document."
 ---

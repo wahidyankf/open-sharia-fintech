@@ -1,15 +1,5 @@
 ---
-title: "Multiple Code Blocks Pattern: Structure, Benefits, and the Anti-Pattern"
 description: "Introduces the multiple-code-blocks pattern for comparisons, its structure and benefits, and the anti-pattern of cramming comparisons into a single over-commented block."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - education
-  - code-first
-created: 2025-12-25
 when_to_use: "Read when an example compares multiple approaches or libraries, to structure it as separate code blocks with text between them instead of one dense block."
 ---
 

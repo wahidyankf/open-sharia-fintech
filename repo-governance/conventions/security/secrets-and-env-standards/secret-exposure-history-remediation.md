@@ -1,17 +1,6 @@
 ---
-title: "Secret-Exposure History Remediation"
 description: The mandatory five-step incident procedure for a secret found in committed Git history — contain and rotate, inventory, rewrite, replace remote state, replace the PR.
 when_to_use: Use immediately when a suspected or confirmed secret is found anywhere in committed Git history, including a PR diff.
-category: explanation
-subcategory: conventions
-tags:
-  - security
-  - secrets
-  - env-files
-  - guard-env-file-access
-  - naming
-  - reproducibility
-created: 2026-06-10
 ---
 
 # Secret-Exposure History Remediation

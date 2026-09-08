@@ -1,5 +1,4 @@
 ---
-title: "3. Apply Fixes (Sequential, Conditional)"
 description: "Step 3: invokes docs-software-engineering-separation-fixer to add missing prerequisite statements and remove duplicated educational content."
 when_to_use: "Use when implementing or debugging the fix-application step."
 ---

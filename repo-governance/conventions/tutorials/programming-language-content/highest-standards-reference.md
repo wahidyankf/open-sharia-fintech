@@ -1,15 +1,5 @@
 ---
-title: "Highest Standards Reference"
 description: "Identifies Elixir as the current highest-standard reference implementation, documents alternative-excellence languages, and lists known quality gaps even in the benchmark."
-category: explanation
-subcategory: conventions
-tags:
-  - programming-languages
-  - ayokoding
-  - tutorials
-  - education
-  - content-standards
-created: 2025-12-18
 when_to_use: "Use when you need the single best existing example to model new or improved content on, or want to know the known gaps that remain even in the highest-standard content."
 ---
 

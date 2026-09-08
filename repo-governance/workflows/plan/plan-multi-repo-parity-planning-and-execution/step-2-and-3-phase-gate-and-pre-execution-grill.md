@@ -1,5 +1,4 @@
 ---
-title: "Step 2 and 3 — Phase Gate and Pre-Execution Grill"
 description: The hard-gate check that every plan is execution-ready, followed by the third (pre-execution) grill on order, failure policy, and worktree cleanup.
 when_to_use: Use before starting the execution phase, to verify readiness and record the operational decisions that govern it.
 ---

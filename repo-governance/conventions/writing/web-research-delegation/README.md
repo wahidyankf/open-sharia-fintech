@@ -1,5 +1,4 @@
 ---
-title: "Web Research Delegation Convention"
 description: "Normative rule requiring AI agents to delegate public-web information gathering to the web-researcher delegated agent, with a narrow documented exception list"
 when_to_use: "Read this index to find the right Web Research Delegation Convention child document."
 ---

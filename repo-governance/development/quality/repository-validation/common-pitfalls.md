@@ -1,16 +1,5 @@
 ---
-title: "Common Pitfalls"
 description: "Common pitfalls when writing validation scripts."
-category: explanation
-subcategory: development
-tags:
-  - validation
-  - consistency
-  - bash
-  - awk
-  - frontmatter
-  - automation
-created: 2025-12-14
 when_to_use: "Use when debugging a validation script that behaves unexpectedly."
 ---
 

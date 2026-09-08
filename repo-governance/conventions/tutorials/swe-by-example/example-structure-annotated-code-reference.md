@@ -1,15 +1,5 @@
 ---
-title: "Example Structure: Part 3 Annotated Code Reference Example"
 description: "Provides a production-quality reference example of heavily annotated code with measured density, plus the required annotation and code-organization checklists."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - education
-  - code-first
-created: 2025-12-25
 when_to_use: "Read when you need a worked reference for measuring annotation density on a real code block, or the required-annotations and code-organization checklists."
 ---
 

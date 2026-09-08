@@ -1,16 +1,5 @@
 ---
-title: "Principles and Conventions"
 description: "The core principles and conventions this pattern implements - explicit metadata, automated migrations, reproducibility, and documentation-first."
-category: explanation
-subcategory: development
-tags:
-  - database
-  - audit-trail
-  - soft-delete
-  - dbup
-  - ef-core
-  - migrations
-created: 2026-03-09
 when_to_use: "Use when you need to trace this pattern's audit-column requirement back to the principles and conventions it implements."
 ---
 

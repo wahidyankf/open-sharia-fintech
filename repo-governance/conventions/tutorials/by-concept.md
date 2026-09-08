@@ -1,16 +1,6 @@
 ---
-title: By-Concept Tutorial Convention
 description: Standards for creating comprehensive concept-driven tutorials with 95% coverage, heavily annotated code, and rich diagrams
 when_to_use: Use when authoring, reviewing, or scoping a By-Concept (narrative-driven) tutorial for any language or framework.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-concept
-  - education
-  - narrative-driven
-created: 2026-01-30
 ---
 
 # By-Concept Tutorial Convention
@@ -31,18 +21,31 @@ This convention extends the [Tutorials Convention](../tutorials/general.md) for 
 10. [Mermaid Diagram Guidelines](./by-concept/mermaid-diagram-guidelines.md) — When to include diagrams and the color-blind friendly palette.
 11. [Coverage Progression by Level](./by-concept/coverage-progression-by-level.md) — Topic and section-count expectations per level.
 12. [File Naming and Organization](./by-concept/file-naming-and-organization.md) — Directory structure and file naming pattern.
-13. [Frontmatter Requirements](./by-concept/frontmatter-requirements.md) — Required frontmatter fields for level pages.
-14. [Quality Checklist](./by-concept/quality-checklist.md) — The pre-publish checklist across coverage, code, narrative, diagrams, and structure.
-15. [Validation and Enforcement](./by-concept/validation-and-enforcement.md) — Automated validation and the quality-gate workflow.
-16. [Relationship to Other Tutorial Types](./by-concept/relationship-to-other-tutorial-types.md) — How By-Concept compares to the other tutorial types.
-17. [Cross-Language Consistency](./by-concept/cross-language-consistency.md) — What must stay consistent versus what may vary across languages.
-18. [Production-Validated Standards Summary](./by-concept/production-validated-standards-summary.md) — Condensed numeric targets and current production gaps.
-19. [Principles Implemented/Respected](./by-concept/principles-implemented-respected.md) — The repository principles this convention implements.
-20. [Scope](./by-concept/scope.md) — What this convention covers, does not cover, and where it applies.
-21. [Related Documentation](./by-concept/related-documentation.md) — Links to By-Example, Naming, Content Quality, and Diagrams conventions.
+13. [Quality Checklist](./by-concept/quality-checklist.md) — The pre-publish checklist across coverage, code, narrative, diagrams, and structure.
+14. [Validation and Enforcement](./by-concept/validation-and-enforcement.md) — Automated validation and the quality-gate workflow.
+15. [Relationship to Other Tutorial Types](./by-concept/relationship-to-other-tutorial-types.md) — How By-Concept compares to the other tutorial types.
+16. [Cross-Language Consistency](./by-concept/cross-language-consistency.md) — What must stay consistent versus what may vary across languages.
+17. [Production-Validated Standards Summary](./by-concept/production-validated-standards-summary.md) — Condensed numeric targets and current production gaps.
+18. [Principles Implemented/Respected](./by-concept/principles-implemented-respected.md) — The repository principles this convention implements.
+19. [Scope](./by-concept/scope.md) — What this convention covers, does not cover, and where it applies.
+20. [Related Documentation](./by-concept/related-documentation.md) — Links to By-Example, Naming, Content Quality, and Diagrams conventions.
 
 ## Related Documentation
 
 - [By-Example Tutorial Convention](../tutorials/swe-by-example.md): Code-first alternative achieving same 95% coverage
 - [Tutorial Naming Convention](../tutorials/naming.md): Tutorial type definitions and naming standards
 - [Tutorials Convention](../tutorials/general.md): Base tutorial standards that by-concept inherits
+
+## Frontmatter Requirements
+
+### Beginner/Intermediate/Advanced Pages
+
+```yaml
+---
+title: "Beginner" | "Intermediate" | "Advanced"
+date: YYYY-MM-DDTHH:MM:SS+07:00
+weight: 10000000 | 10000001 | 10000002
+description: "Comprehensive {Language} tutorial covering {coverage}% with hands-on exercises"
+tags: ["language-tag", "tutorial", "by-concept", "level-tag", "topic-tags"]
+---
+```

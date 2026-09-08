@@ -1,5 +1,4 @@
 ---
-title: "Finalization and Archival — Pre-Archival Gates"
 description: Defines the UI- and API-bearing plan pre-archival gates and the rule-15 three-tester web retest that must pass before archival.
 when_to_use: Use when a UI-bearing or web-UI feature-change plan approaches archival and must run its pre-archival visual and retest gates.
 ---

@@ -1,13 +1,5 @@
 ---
-title: "Agent skills: Delivery Infrastructure (Not a Governance Layer)"
 description: Why agent skills aren't a governance layer, and inline delivery
-category: explanation
-subcategory: architecture
-tags:
-  - architecture
-  - governance
-  - agent-skills
-created: 2026-02-09
 when_to_use: Use when explaining inline skill delivery.
 ---
 

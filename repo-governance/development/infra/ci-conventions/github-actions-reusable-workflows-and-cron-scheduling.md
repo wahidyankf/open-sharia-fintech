@@ -1,10 +1,5 @@
 ---
-title: "GitHub Actions Conventions — Reusable Workflows and CRON Scheduling"
 description: Reusable workflow structure and the staggered CRON tracks.
-category: explanation
-subcategory: development
-tags: [ci-cd, github-actions]
-created: 2026-03-31
 when_to_use: Use when writing a reusable workflow or scheduling a CRON job.
 ---
 

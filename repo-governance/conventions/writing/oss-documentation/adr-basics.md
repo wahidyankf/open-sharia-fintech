@@ -1,14 +1,5 @@
 ---
-title: "ADRs: When to Create and Structure"
 description: "When an architectural decision warrants an ADR and the required Status/Context/Decision/Consequences structure"
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - documentation
-  - open-source
-  - repository-standards
-created: 2026-04-04
 when_to_use: "Read this before deciding whether a decision needs an ADR, or when starting to write one."
 ---
 

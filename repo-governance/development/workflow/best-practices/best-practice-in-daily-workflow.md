@@ -1,10 +1,5 @@
 ---
-title: "Best Practice in Daily Workflow"
 description: A worked start-of-day-to-push walkthrough using rebase, including what to do when a conflict appears.
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use as a concrete daily-workflow template combining rebase config, pulling, committing, and pushing.
 ---
 

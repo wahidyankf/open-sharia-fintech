@@ -1,5 +1,4 @@
 ---
-title: "GitHub Actions Workflow Naming Convention"
 description: "Domain-first filename grammar and name-mirrors-filename rule for all workflow files"
 when_to_use: "Read this index to find the right GitHub Actions Workflow Naming Convention child document."
 ---

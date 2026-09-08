@@ -1,14 +1,5 @@
 ---
-title: "Retriggering a Stuck Run With No Contention (PR Branches)"
 description: Rebase-and-push as the last resort for a genuinely wedged worktree-to-pr run once contention has been ruled out.
-category: explanation
-subcategory: development
-tags:
-  - ci
-  - github-actions
-  - rate-limiting
-  - monitoring
-  - workflow
 when_to_use: Use when a worktree-to-pr run is stuck with contention already ruled out and cancel/rerun does not clear it.
 ---
 

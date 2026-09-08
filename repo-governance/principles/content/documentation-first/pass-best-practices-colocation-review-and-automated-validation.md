@@ -1,12 +1,5 @@
 ---
-title: "PASS: Best Practices — Co-location, Review, and Automated Validation"
 description: Co-locate docs with code, review them, and validate them automatically.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - documentation
-created: 2025-12-28
 when_to_use: Use as a checklist for where docs live and how they stay accurate.
 ---
 

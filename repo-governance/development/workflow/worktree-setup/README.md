@@ -1,5 +1,4 @@
 ---
-title: "Worktree Toolchain Initialization"
 description: "Practice for initializing dependencies, hooks, and the polyglot toolchain in each new worktree's root immediately after creation"
 when_to_use: "Read this index to find the right Worktree Toolchain Initialization child document."
 ---

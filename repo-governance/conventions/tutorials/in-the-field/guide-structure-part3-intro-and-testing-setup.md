@@ -1,16 +1,6 @@
 ---
-title: "Guide Structure Part 3: Introduction and Testing Framework Setup"
 description: Part 3 requirements for introducing a production framework, plus the JUnit 5 dependency setup.
 when_to_use: Use when starting the Part 3 framework-introduction section of a guide, or adding a JUnit 5 Maven dependency.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Guide Structure Part 3: Introduction and Testing Framework Setup

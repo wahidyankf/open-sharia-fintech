@@ -1,5 +1,4 @@
 ---
-title: "Enter the Designated Worktree — Freshness Gate"
 description: Defines the mandatory pull-latest-origin/main freshness gate that must pass before any implementation work begins.
 when_to_use: Use when syncing a work branch or worktree with origin/main before starting implementation.
 ---

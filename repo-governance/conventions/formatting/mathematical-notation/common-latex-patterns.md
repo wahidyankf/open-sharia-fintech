@@ -1,16 +1,6 @@
 ---
-title: "Common LaTeX Patterns"
 description: Reference patterns for subscripts/superscripts, Greek letters, fractions, summations/products, square roots, and mathematical operators.
 when_to_use: Use when you need the LaTeX command for a subscript, Greek letter, fraction, summation, square root, or operator.
-category: explanation
-subcategory: conventions
-tags:
-  - latex
-  - mathematics
-  - formulas
-  - notation
-  - conventions
-created: 2025-12-02
 ---
 
 # Common LaTeX Patterns

@@ -1,15 +1,5 @@
 ---
-title: "Styling — Tailwind Directives and Utility-First Approach"
 description: The Tailwind v4 globals.css directive set (@import, @source, @plugin, @custom-variant, @theme, @layer, @utility), and applying styles as utility classes directly in TSX rather than CSS rules
-category: explanation
-subcategory: development/frontend
-tags:
-  - styling
-  - tailwind
-  - css
-  - responsive
-  - mobile-first
-created: 2026-03-28
 when_to_use: Use when setting up a new app's globals.css, or deciding whether a style belongs as a utility class or a CSS rule.
 ---
 

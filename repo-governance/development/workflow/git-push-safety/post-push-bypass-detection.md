@@ -1,15 +1,5 @@
 ---
-title: "Post-Push Bypass Detection"
 description: The post-hoc obligation to read push output for ruleset-bypass language and treat a bypassed required check as a discovered violation.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - safety
-  - automation
-  - human-approval
-created: 2026-03-30
 when_to_use: Use immediately after any git push completes, to check whether branch protection was bypassed.
 ---
 

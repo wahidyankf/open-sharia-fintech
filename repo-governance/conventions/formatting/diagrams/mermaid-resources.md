@@ -1,18 +1,6 @@
 ---
-title: "Mermaid Resources"
 description: "Links to external Mermaid documentation and reference resources."
 when_to_use: "Use when looking for official Mermaid syntax references or tooling links."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Mermaid Resources

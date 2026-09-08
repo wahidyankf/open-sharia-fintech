@@ -1,5 +1,4 @@
 ---
-title: "Governance Vendor-Independence Convention"
 description: "Governance prose must be vendor-neutral. Vendor-specific bindings belong in platform-binding directories, not in repo-governance/."
 when_to_use: "Read this index to find the right Governance Vendor-Independence Convention child document."
 ---

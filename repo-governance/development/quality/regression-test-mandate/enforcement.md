@@ -1,16 +1,5 @@
 ---
-title: "Enforcement"
 description: "Which agents enforce this mandate and at what severity."
-category: explanation
-subcategory: development
-tags:
-  - regression
-  - testing
-  - bug-fix
-  - quality
-  - gherkin
-  - specs
-created: 2026-06-22
 when_to_use: "Use when you need to know which agent flags a missing test."
 ---
 

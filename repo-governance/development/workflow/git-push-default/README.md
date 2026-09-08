@@ -1,5 +1,4 @@
 ---
-title: "Git Push Default Convention"
 description: "Default git push behaviour — every plan uses worktree-to-pr; direct push to origin main is unavailable or restricted per-repo."
 when_to_use: "Read this index to find the right Git Push Default Convention child document."
 ---

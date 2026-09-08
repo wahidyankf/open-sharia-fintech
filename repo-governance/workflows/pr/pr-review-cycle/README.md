@@ -1,5 +1,4 @@
 ---
-title: "PR-Review Maker→Fixer Cycle Workflow"
 description: "Index of optional iterative PR-review cycle mechanics."
 when_to_use: "Use to locate an explicitly requested PR-review-cycle child document."
 ---

@@ -1,5 +1,4 @@
 ---
-title: "PR-Review Cycle — Cycle-Local Done Definition"
 description: "Defines completion of an explicitly requested iterative review cycle."
 when_to_use: "Use when deciding whether pr-review-cycle returns done or blocked."
 ---

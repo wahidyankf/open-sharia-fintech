@@ -1,19 +1,6 @@
 ---
-title: "Gherkin Feature File Placement and Lib Spec Structure"
 description: The canonical path pattern and domain-subdirectory rules for placing .feature files under behaviour/, plus the simpler layout used for library specs
 when_to_use: Read this when adding or locating a Gherkin .feature file for an app or a library.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - specs
-  - gherkin
-  - directory-structure
-  - organization
-  - c4-diagrams
-  - openapi
-  - c4
-created: 2026-04-02
 ---
 
 # Gherkin Feature File Placement, and Lib Spec Structure

@@ -1,14 +1,5 @@
 ---
-title: "Principles and Conventions Implemented"
 description: The principles and companion conventions that CI post-push verification respects.
-category: explanation
-subcategory: development
-tags:
-  - ci
-  - github-actions
-  - verification
-  - quality-gates
-  - workflow
 when_to_use: Use when tracing why CI post-push verification exists back to the principles and conventions it respects.
 ---
 

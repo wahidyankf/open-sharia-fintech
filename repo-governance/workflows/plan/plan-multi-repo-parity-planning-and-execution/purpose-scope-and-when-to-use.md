@@ -1,5 +1,4 @@
 ---
-title: "Purpose, Scope, and When to Use"
 description: Explains why the plan-multi-repo-parity-planning-and-execution composite exists and when to use it versus its standalone constituents.
 when_to_use: Use when deciding whether this end-to-end composite (vs. running planning and execution separately) fits the task at hand.
 ---

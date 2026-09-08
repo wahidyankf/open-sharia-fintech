@@ -1,5 +1,4 @@
 ---
-title: "Enter the Designated Worktree — Delivery-Mode Resolution"
 description: Defines the three-tier precedence for resolving a plan's delivery mode and the per-repository availability check.
 when_to_use: Use when resolving which delivery mode (worktree-to-pr, main-to-origin-main, etc.) a plan executes under.
 ---

@@ -1,5 +1,4 @@
 ---
-title: "AI Agents Convention"
 description: "Standards for creating and managing AI agents in the platform binding directory (primary) and secondary agent directories"
 when_to_use: "Read this index to find the right AI Agents Convention child document."
 ---

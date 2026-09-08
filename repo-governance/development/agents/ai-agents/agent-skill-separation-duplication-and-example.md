@@ -1,14 +1,5 @@
 ---
-title: "Agent-Skill Separation — Duplication Patterns and Before/After Example"
 description: "Lists common duplication patterns to avoid between agents and agent skills, and walks through a before/after simplification example."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when simplifying an agent that duplicates content already covered by one of its agent skills.
 ---
 

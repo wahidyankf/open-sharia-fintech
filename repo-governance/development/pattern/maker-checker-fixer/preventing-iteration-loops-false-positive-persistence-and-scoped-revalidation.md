@@ -1,16 +1,5 @@
 ---
-title: "Preventing Iteration Loops — False-Positive Persistence and Scoped Re-validation"
 description: "The first two safeguards against iteration loops."
-category: explanation
-subcategory: development
-tags:
-  - maker-checker-fixer
-  - workflow
-  - content-quality
-  - agent-patterns
-  - validation
-  - automation
-created: 2025-12-14
 when_to_use: "Use when a checker re-flags a false positive."
 ---
 

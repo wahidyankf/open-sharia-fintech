@@ -1,13 +1,5 @@
 ---
-title: "How It Applies"
 description: Pass/fail examples for tutorials, how-tos, coverage percentages, and the project-planning exception.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - no-time-estimates
-  - learning
-created: 2025-12-15
 when_to_use: Use when writing or reviewing tutorial, how-to, or plan content for time-estimate violations.
 ---
 

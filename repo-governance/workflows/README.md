@@ -1,15 +1,6 @@
 ---
-title: "Workflows"
 description: Orchestrated multi-step processes that compose agents, procedures, and/or other workflows to achieve specific goals
 when_to_use: Use when routing to the workflow that orchestrates a specific multi-step task, or when deciding whether a task should become a new workflow.
-category: explanation
-subcategory: workflows
-tags:
-  - index
-  - workflows
-  - orchestration
-  - agents
-created: 2026-01-04
 ---
 
 # Workflows Index

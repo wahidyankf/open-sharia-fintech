@@ -1,5 +1,4 @@
 ---
-title: "PR Review Cycle — Convergence Measurement"
 description: "How the loop distinguishes genuine convergence from its own exhaust: cause tags, the two series, and the cycle-three recovery checkpoint."
 when_to_use: "Use at cycle three and whenever deciding whether focused recovery is justified."
 ---

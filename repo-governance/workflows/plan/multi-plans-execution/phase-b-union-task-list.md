@@ -1,5 +1,4 @@
 ---
-title: "Phase B — Materialize the Very-Granular Union Task List"
 description: Covers B1-B5 — one harness task per DAG node across all plans, tagging, the multi-file Atomic Sync Ritual, resume reconciliation, and the per-plan in_progress invariant.
 when_to_use: Use when creating or tagging the union Task list, or reconciling it against multiple plans' delivery.md files.
 ---

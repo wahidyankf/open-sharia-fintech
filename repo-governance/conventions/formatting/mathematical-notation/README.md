@@ -1,5 +1,4 @@
 ---
-title: "Mathematical Notation Convention"
 description: "Standards for using LaTeX notation for mathematical equations and formulas in open-sharia-enterprise documentation"
 when_to_use: "Read this index to find the right Mathematical Notation Convention child document."
 ---

@@ -200,7 +200,7 @@ touch an overlapping set of shared files. Measured against the current commit:
   parallel. Rejected as a middle option that still duplicates the seam work in the five mechanical
   rows, and still leaves whichever plan lands second rebasing them.
 - _Fold both languages into one enablement plan._ Cleanest end state. Rejected because `lms-init` is
-  already authored, reviewed, and open as PR #487; re-cutting it would discard that work.
+  already authored, reviewed, and merged as PR #487; re-cutting it would discard that work.
 
 **What the dependency buys**, concretely:
 
@@ -215,7 +215,7 @@ touch an overlapping set of shared files. Measured against the current commit:
    `has-<lang>` detect/job/exclude/aggregate quintet; `setup-go` copies it rather than deriving it.
 
 **Accepted cost, stated plainly**: this plan cannot start until `lms-init` executes two delivery
-units, and PR #487 authors that plan — it does not execute it. If `lms-init` stalls, this plan
+units. PR #487 merged that plan's **authoring**; it did not execute it. If `lms-init` stalls, this plan
 stalls with it. The escape hatch is recorded in §6: the dependency is a **sequencing** choice, not a
 technical one, and every seam this plan inherits could be built here instead at the cost of the
 duplication D-0 was chosen to avoid.

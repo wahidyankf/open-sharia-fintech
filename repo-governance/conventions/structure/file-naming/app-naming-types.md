@@ -1,15 +1,6 @@
 ---
-title: "App Naming Types"
 description: The [domain]-[type] naming convention and type-suffix vocabulary used for apps under apps/.
 when_to_use: Use when naming a new app directory under apps/ and choosing its [type] suffix.
-category: explanation
-subcategory: conventions
-tags:
-  - naming
-  - files
-  - conventions
-  - github
-created: 2025-11-19
 ---
 
 # App Naming Types

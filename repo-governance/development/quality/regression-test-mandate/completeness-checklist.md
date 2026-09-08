@@ -1,16 +1,5 @@
 ---
-title: "Completeness Checklist"
 description: "Checklist before declaring a bug fix complete."
-category: explanation
-subcategory: development
-tags:
-  - regression
-  - testing
-  - bug-fix
-  - quality
-  - gherkin
-  - specs
-created: 2026-06-22
 when_to_use: "Use as a final check before declaring a bug fix done."
 ---
 

@@ -1,15 +1,5 @@
 ---
-title: "Pure Functions Over Side Effects"
 description: Prefer pure functions (deterministic, no side effects) for predictable, testable code
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - functional-programming
-  - pure-functions
-  - testability
-  - determinism
-created: 2025-12-28
 when_to_use: Use when deciding whether logic belongs in a pure function or an impure boundary, or when reviewing code for hidden side effects.
 ---
 

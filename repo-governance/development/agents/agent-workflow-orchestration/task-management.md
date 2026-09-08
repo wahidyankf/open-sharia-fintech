@@ -1,15 +1,5 @@
 ---
-title: "Task Management"
 description: "Covers planning first, tracking progress, granular task items, using the Task tool for multi-step work, documenting results, and capturing lessons."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - workflow
-  - orchestration
-created: 2025-11-23
 when_to_use: Use when managing the task list for a multi-step piece of work.
 ---
 

@@ -1,15 +1,5 @@
 ---
-title: "Parallel-by-Default — Anti-Patterns and References"
 description: Four common failure patterns (serial reads, serial searches, self-promoting the cap, parallelizing dependent work) plus links to related principles, practices, and agents
-category: explanation
-subcategory: development
-tags:
-  - parallelism
-  - concurrency
-  - performance
-  - ai-agents
-  - efficiency
-created: 2026-06-23
 when_to_use: Use when reviewing your own execution pattern for one of these four failure modes, or to find related documentation.
 ---
 

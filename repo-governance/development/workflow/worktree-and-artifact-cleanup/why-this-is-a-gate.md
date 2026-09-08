@@ -1,15 +1,5 @@
 ---
-title: "Why This Is a Gate"
 description: Why uncleaned worktree artifacts harm a shared machine — disk, ref namespace, and stale-state ambiguity.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - worktree
-  - cleanup
-  - parallelism
-created: 2026-07-20
 when_to_use: Use when justifying why cleanup is mandatory rather than optional on a shared machine.
 ---
 

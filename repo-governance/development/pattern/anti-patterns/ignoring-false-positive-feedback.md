@@ -1,10 +1,5 @@
 ---
-title: "Anti-Pattern 7: Ignoring False Positive Feedback"
 description: "Fixer-detected false positives are discarded instead of being fed back to improve the checker."
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: "Use when a fixer finds a false positive and there is no mechanism to report it back to the checker."
 ---
 

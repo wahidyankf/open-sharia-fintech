@@ -1,14 +1,5 @@
 ---
-title: "Delivery Checklists Express a DAG — Delivery Units and Planning Granularity"
 description: Explains how each independent DAG node maps to its own delivery unit and the resolved mode's integration mechanism.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when mapping a plan's DAG nodes onto delivery units and mode-specific integration opportunities.
 ---
 

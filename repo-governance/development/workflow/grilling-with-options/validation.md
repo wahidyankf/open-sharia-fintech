@@ -1,17 +1,5 @@
 ---
-title: "Validation"
 description: The checklist of conditions that make a grill question valid or invalid.
-category: explanation
-subcategory: development
-tags:
-  - planning
-  - grill-me
-  - user-interaction
-  - plan-maker
-  - design-decisions
-  - interaction
-  - agents
-created: 2026-05-26
 when_to_use: Use as a final checklist before sending any grilling question to the user.
 ---
 

@@ -1,10 +1,5 @@
 ---
-title: "Anti-Pattern 2: Skipping Validation Workflow"
 description: "Content is deployed without running a checker, skipping the quality gate between creation and publication."
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: "Use when a workflow proposes deploying maker output without a checker validation step."
 ---
 

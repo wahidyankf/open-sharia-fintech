@@ -1,5 +1,4 @@
 ---
-title: "Test-Driven Development"
 description: States the TDD requirement for delivery items that ship code, and lists the principles, conventions, and agents this workflow implements.
 when_to_use: Use when confirming TDD is required for a code-shipping checklist item, or checking which principles/conventions this workflow follows.
 ---

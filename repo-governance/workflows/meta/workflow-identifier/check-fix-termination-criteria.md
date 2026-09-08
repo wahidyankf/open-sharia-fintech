@@ -1,14 +1,5 @@
 ---
-title: "*-check-fix Workflow Pattern — Termination Criteria (Mandatory)"
 description: The mandatory success/partial/failure termination criteria every *-check-fix workflow must use, by mode level.
-category: explanation
-subcategory: workflows
-tags:
-  - workflows
-  - agents
-  - orchestration
-  - patterns
-created: 2025-12-23
 when_to_use: Use when writing the Termination Criteria section of a new *-check-fix workflow.
 ---
 

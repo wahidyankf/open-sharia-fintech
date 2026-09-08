@@ -1,16 +1,6 @@
 ---
-title: "API Workflows"
 description: Orchestrated processes for live REST and GraphQL API quality validation and remediation
 when_to_use: Use when routing to a workflow that exercises a running REST or GraphQL API against its contract and specs.
-category: explanation
-subcategory: workflows/api
-tags:
-  - index
-  - workflows
-  - api
-  - rest
-  - graphql
-created: 2026-07-20
 ---
 
 # API Workflows

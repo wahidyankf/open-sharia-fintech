@@ -1,14 +1,5 @@
 ---
-title: "Mechanize Cross-File Invariants"
 description: When a rule must hold across more than one file, generate the dependent file(s) from a single declared source and validate the result, rather than stating the rule in prose and trusting hand-sync
-category: explanation
-subcategory: development
-tags:
-  - generate-and-validate
-  - drift
-  - automation
-  - governance
-created: 2026-08-07
 when_to_use: Use when a rule, value, or structure must stay identical across two or more files, before writing it as prose you'd have to remember to keep in sync by hand.
 ---
 

@@ -1,17 +1,6 @@
 ---
-title: "Examples and Templates"
 description: "Provides a pointer to exemplary tutorials and a complete fill-in-the-blank tutorial template covering frontmatter through the first section."
 when_to_use: "Read when you need a starting template or a worked example to copy while drafting a new tutorial."
-category: explanation
-subcategory: conventions
-tags:
-  - tutorials
-  - diataxis
-  - learning
-  - pedagogy
-  - documentation
-  - teaching
-created: 2025-12-03
 ---
 
 # Examples and Templates

@@ -1,5 +1,4 @@
 ---
-title: "Task List Discipline for This Workflow"
 description: Extends plan-execution.md's granular 1:1 Task-list mapping to the discovery, anomaly, and cleanup phases this workflow adds before the delivery checklist loads.
 when_to_use: Use when materializing Tasks for a takeover-execution run, to confirm the granularity each phase requires.
 ---

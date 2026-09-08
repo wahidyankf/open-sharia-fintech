@@ -1,15 +1,6 @@
 ---
-title: "PASS: Best Practices"
 description: DO and DON'T checklists for applying the tutorial naming convention consistently.
 when_to_use: Use as a final checklist before publishing a new or renamed tutorial.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - tutorials
-  - naming
-  - learning-paths
-created: 2025-12-03
 ---
 
 # PASS: Best Practices

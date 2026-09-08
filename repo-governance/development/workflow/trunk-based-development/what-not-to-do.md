@@ -1,15 +1,5 @@
 ---
-title: "What NOT to Do"
 description: A ten-row anti-pattern-versus-TBD-approach table covering branch lifespan, commit granularity, and CI-gating mistakes.
-category: explanation
-subcategory: development
-tags:
-  - trunk-based-development
-  - git
-  - workflow
-  - development
-  - continuous-integration
-created: 2025-11-26
 when_to_use: Use as a quick reference to spot a TBD anti-pattern in a proposed workflow.
 ---
 

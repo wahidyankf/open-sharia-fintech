@@ -1,15 +1,5 @@
 ---
-title: "References"
 description: Lists external references on functional programming, immutability in practice, and Islamic finance transparency standards.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - functional-programming
-  - immutability
-  - data-structures
-  - concurrency
-created: 2025-12-28
 when_to_use: Use when seeking further reading on immutability theory or Shariah audit and transparency requirements.
 ---
 

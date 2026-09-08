@@ -1,17 +1,5 @@
 ---
-title: "Why Defense-in-Depth (Not a Single Assertion)"
 description: "Why all six layers are required, not just one assertion."
-category: explanation
-subcategory: development
-tags:
-  - testing
-  - git
-  - test-fixtures
-  - isolation
-  - regression
-  - safety
-  - defense-in-depth
-created: 2026-07-19
 when_to_use: "Use when tempted to implement only one of the six layers."
 ---
 

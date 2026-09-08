@@ -1,14 +1,5 @@
 ---
-title: "Integration with Test Automation"
 description: Mapping canonical Gherkin scenarios to owner-local Vitest Cucumber Unit and Playwright BDD E2E bindings.
-category: explanation
-subcategory: development
-tags:
-  - acceptance-criteria
-  - gherkin
-  - testing
-  - requirements
-created: 2025-12-07
 when_to_use: Use when wiring a canonical scenario to the repository's current TypeScript or F# test adapters.
 ---
 

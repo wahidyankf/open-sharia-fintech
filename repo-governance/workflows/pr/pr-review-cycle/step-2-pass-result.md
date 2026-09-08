@@ -1,5 +1,4 @@
 ---
-title: "PR-Review Cycle — Step 2: Authenticate Pass Result"
 description: "Joins the single-pass result to cycle history without duplicating review mechanics."
 when_to_use: "Use after pr-review returns inside an explicitly requested cycle."
 ---

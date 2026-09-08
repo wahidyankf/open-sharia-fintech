@@ -1,15 +1,5 @@
 ---
-title: "Validation, Tooling, and References"
 description: How compliance with this convention is validated and the agents, skills, and workflows that reference it
-category: explanation
-subcategory: conventions
-tags:
-  - ai-agents
-  - web-research
-  - delegation
-  - factual-validation
-  - governance
-created: 2026-04-16
 when_to_use: Read this when auditing an agent for Web Research Delegation compliance or tracing which tools enforce this convention.
 ---
 

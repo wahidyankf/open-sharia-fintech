@@ -1,10 +1,5 @@
 ---
-title: "General Principles"
 description: Foundational problem-solving values that apply across the repository
-category: explanation
-subcategory: principles
-tags: []
-created: 2026-05-12
 when_to_use: Use when deciding whether a cross-cutting, domain-independent value belongs here, or looking up a specific general principle.
 ---
 

@@ -1,14 +1,5 @@
 ---
-title: "The Repository Standard"
 description: "Defines the Skill context modes used in the primary binding agent skills directory, including inline context mode."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - agent-skills
-  - architecture
-  - development
-created: 2025-11-23
 when_to_use: Use when authoring a new Skill and deciding which context mode it declares.
 ---
 

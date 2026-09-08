@@ -1,15 +1,5 @@
 ---
-title: "Documentation First"
 description: Documentation is not optional - it is mandatory for knowledge transfer, maintainability, and democratization
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - documentation
-  - knowledge-transfer
-  - institutional-memory
-  - maintainability
-created: 2025-12-28
 when_to_use: Use when deciding whether, what, and how something in this repository must be documented.
 ---
 

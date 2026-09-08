@@ -1,10 +1,5 @@
 ---
-title: "Quality Development"
 description: Quality standards and evidence practices for trustworthy repository changes
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use to decide what evidence, test, or validation a change needs before it can be trusted.
 ---
 

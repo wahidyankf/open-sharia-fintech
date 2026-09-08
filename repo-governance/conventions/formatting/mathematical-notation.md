@@ -1,16 +1,6 @@
 ---
-title: "Mathematical Notation Convention"
 description: Standards for using LaTeX notation for mathematical equations and formulas in open-sharia-enterprise documentation
 when_to_use: Use when writing a mathematical equation or formula in any markdown file in this repository.
-category: explanation
-subcategory: conventions
-tags:
-  - latex
-  - mathematics
-  - formulas
-  - notation
-  - conventions
-created: 2025-12-02
 ---
 
 # Mathematical Notation Convention

@@ -1,15 +1,5 @@
 ---
-title: "Branch Cleanup"
 description: Safely delete plan-created branches after their PR is confirmed merged.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - worktree
-  - cleanup
-  - parallelism
-created: 2026-07-20
 when_to_use: Use when deleting local or remote branches after removing a repo's worktree.
 ---
 

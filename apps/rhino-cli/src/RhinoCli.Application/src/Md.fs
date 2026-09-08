@@ -95,13 +95,17 @@ open RhinoCli.Domain.Types
 /// [Repo-grounded — `frontmatter.rs::SOFTWARE_DOC_PREFIX`].
 let private softwareDocPrefix = "docs/explanation/software-engineering/"
 
-/// Path fragments that identify governance documents
+/// Path fragments that identify governance documents. The whole
+/// `repo-governance/` tree is covered, not four named sub-trees: `glossary/`,
+/// `vision/`, `repository-governance-architecture/`, and the tree's own root
+/// files bind exactly like the rest of it, and classifying them as
+/// `UnknownArea` meant they were the only governance files never validated
 /// [Repo-grounded — `frontmatter.rs::GOVERNANCE_DOC_PREFIXES`].
-let private governanceDocPrefixes: string list =
-    [ "repo-governance/conventions/"
-      "repo-governance/principles/"
-      "repo-governance/development/"
-      "repo-governance/workflows/" ]
+///
+/// Gherkin (binds) — "Governance subtree outside the four sub-trees is still
+/// validated" —
+/// `specs/apps/rhino/cli/behaviours/md/docs-validate-frontmatter.feature`.
+let private governanceDocPrefixes: string list = [ "repo-governance/" ]
 
 /// The allowed values for the `category` frontmatter field (Diátaxis
 /// framework) [Repo-grounded — `frontmatter.rs::VALID_CATEGORIES`].
@@ -297,35 +301,57 @@ let private validateSoftwareSchema (path: string) (fm: IDictionary<obj, obj>) : 
     @ subcategoryFinding
     @ tagsFinding
 
-/// Validates the lighter governance-document frontmatter schema. `title` is
-/// required; `description` and `when_to_use` are both `Blocking` too — FR-4
-/// armed at Phase 9/16, matching `frontmatter.rs`'s current (post-dark-launch)
-/// behaviour [Repo-grounded — `frontmatter.rs::validate_governance_schema`].
+/// The only frontmatter keys a `repo-governance/` file may carry. This is an
+/// allow-list, not a minimum: a key outside the set is a `Blocking` finding,
+/// which is what stops the metadata the sweep removed from accreting again
+/// [Repo-grounded — `repo-governance/conventions/structure/governance-frontmatter.md`].
+let private governanceAllowedKeys: Set<string> =
+    Set.ofList [ "description"; "when_to_use" ]
+
+/// Validates the governance-document frontmatter schema: `description` and
+/// `when_to_use` are both required and non-empty, and no other key may be
+/// present. `title` was dropped from the required set when the tree moved to
+/// the two-key allow-list — its sole consumer was
+/// `governance readme-index generate`'s link text, which falls back to the
+/// title-cased filename stem
+/// [Repo-grounded — `frontmatter.rs::validate_governance_schema`].
 ///
-/// Gherkin (binds) — "Governance doc with only title fails once when_to_use
-/// and description are armed" and "Governance doc with title, description,
-/// and when_to_use passes the lighter schema" —
+/// Gherkin (binds) — "Governance doc with only a description fails on the
+/// missing when_to_use", "Governance doc with only a when_to_use fails on the
+/// missing description", "Governance doc with description and when_to_use
+/// passes the two-key schema", "Governance doc carrying a title field fails
+/// the allow-list", and "Governance doc carrying any other key fails the
+/// allow-list" —
 /// `specs/apps/rhino/cli/behaviours/md/docs-validate-frontmatter.feature`.
 let private validateGovernanceSchema (path: string) (fm: IDictionary<obj, obj>) : Finding list =
-    let titleFinding =
-        if hasNonEmptyString fm "title" then
-            []
-        else
-            [ mkFail path "required field \"title\" is missing or empty" ]
-
     let descriptionFinding =
         if hasNonEmptyString fm "description" then
             []
         else
-            [ mkFail path "recommended field \"description\" is missing or empty" ]
+            [ mkFail path "required field \"description\" is missing or empty" ]
 
     let whenToUseFinding =
         if hasNonEmptyString fm "when_to_use" then
             []
         else
-            [ mkFail path "recommended field \"when_to_use\" is missing or empty" ]
+            [ mkFail path "required field \"when_to_use\" is missing or empty" ]
 
-    titleFinding @ descriptionFinding @ whenToUseFinding
+    // Keys are compared as their raw scalar text so a non-string key (which
+    // YAML permits) is reported rather than silently admitted.
+    let disallowedFindings =
+        fm.Keys
+        |> Seq.map (fun k -> if isNull k then "" else string<obj> k)
+        |> Seq.filter (fun k -> not (Set.contains k governanceAllowedKeys))
+        |> Seq.sort
+        |> Seq.map (fun k ->
+            mkFail
+                path
+                (sprintf
+                    "field \"%s\" is not permitted in repo-governance/ frontmatter; only \"description\" and \"when_to_use\" are allowed"
+                    k))
+        |> Seq.toList
+
+    descriptionFinding @ whenToUseFinding @ disallowedFindings
 
 /// Reads `path`, extracts its frontmatter block, parses it as YAML, and
 /// delegates to the area-specific schema validator. Returns a single
@@ -3225,13 +3251,33 @@ let private checkFrontmatterUpdatedFieldDetailed (path: string) (frontmatter: st
         try
             let parsed = deserializer.Deserialize<obj>(frontmatter)
 
-            match asRawMap parsed |> Option.bind (fun fm -> tryGetRawValue fm "updated") with
+            let forbidden =
+                // `updated` is forbidden everywhere this audit reaches.
+                // `created` is forbidden only under `repo-governance/`, whose
+                // frontmatter allow-list admits `description` and
+                // `when_to_use` alone; `docs/` and site content still carry a
+                // legitimate `created` date.
+                if path.Replace('\\', '/').Contains("repo-governance/", StringComparison.Ordinal) then
+                    [ "updated"; "created" ]
+                else
+                    [ "updated" ]
+
+            match asRawMap parsed with
             | None -> []
-            | Some _ ->
-                [ { File = path
-                    Line = findFieldLine frontmatter "updated"
-                    Severity = "high"
-                    Message = "forbidden \"updated:\" field in YAML frontmatter; remove per no-date-metadata convention" } ]
+            | Some fm ->
+                forbidden
+                |> List.choose (fun key ->
+                    match tryGetRawValue fm key with
+                    | None -> None
+                    | Some _ ->
+                        Some
+                            { File = path
+                              Line = findFieldLine frontmatter key
+                              Severity = "high"
+                              Message =
+                                sprintf
+                                    "forbidden \"%s:\" field in YAML frontmatter; remove per no-date-metadata convention"
+                                    key })
         with _ ->
             []
 

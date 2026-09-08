@@ -1,15 +1,5 @@
 ---
-title: "Rationale — Worktrees and the Doctor Pattern"
 description: Why Docker Dev Containers are incompatible with git worktree isolation, how rhino-cli doctor mirrors the IaC check-diff-apply pattern, and guidance for future toolchain decisions.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - toolchain
-  - doctor
-  - environment
-  - architecture-decision
-created: 2026-04-04
 when_to_use: Use when justifying the doctor-based check-diff-apply pattern, or when deciding whether a new tool fits native-first management.
 ---
 

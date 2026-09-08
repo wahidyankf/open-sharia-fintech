@@ -1,15 +1,5 @@
 ---
-title: "Forbidden Operations"
 description: The table of local git operations forbidden without explicit per-instance approval, what each one destroys, and the non-destructive equivalent.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - safety
-  - worktree
-  - parallelism
-created: 2026-07-20
 when_to_use: Use before running any git operation that could discard uncommitted work, rewrite history, or delete a branch or worktree.
 ---
 

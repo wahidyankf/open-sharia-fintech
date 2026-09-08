@@ -1,5 +1,4 @@
 ---
-title: "Phase E — Hand Off to plan-execution.md"
 description: Describes the final handoff step — invoking plan-execution.md per resolved repo, fanning out multi-repo handoffs, and closing the takeover-report.
 when_to_use: Use when a repo's takeover target (or fresh start) is resolved and ready to hand off to plan-execution.md.
 ---

@@ -1,16 +1,6 @@
 ---
-title: "Purpose"
 description: Why this convention exists — preventing broken AyoKoding links across offline, CI/CD, and cloned-repository development contexts.
 when_to_use: Use when you want to understand what problem this linking convention solves before applying it to a new document.
-category: explanation
-subcategory: conventions
-tags:
-  - linking
-  - cross-reference
-  - relative-paths
-  - portability
-  - ayokoding-www
-created: 2026-02-07
 ---
 
 # Purpose

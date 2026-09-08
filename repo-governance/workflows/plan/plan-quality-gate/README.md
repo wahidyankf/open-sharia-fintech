@@ -1,5 +1,4 @@
 ---
-title: "Plan Quality Gate"
 description: "Child documents of the plan-quality-gate governance gate"
 when_to_use: "Read this index to find the right plan-quality-gate child document."
 ---

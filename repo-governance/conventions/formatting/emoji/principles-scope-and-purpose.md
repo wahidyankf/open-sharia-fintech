@@ -1,16 +1,6 @@
 ---
-title: "Principles, Scope, and Purpose"
 description: The accessibility and consistency principles this convention implements, what it covers and does not cover, and the purpose emojis serve in documentation.
 when_to_use: Use when you need to understand why this repository allows emoji in documentation or what the emoji convention covers.
-category: explanation
-subcategory: conventions
-tags:
-  - emoji
-  - accessibility
-  - scannability
-  - conventions
-  - markdown
-created: 2025-12-04
 ---
 
 # Principles, Scope, and Purpose

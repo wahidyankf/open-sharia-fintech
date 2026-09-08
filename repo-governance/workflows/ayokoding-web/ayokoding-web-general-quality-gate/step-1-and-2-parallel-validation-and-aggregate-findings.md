@@ -1,5 +1,4 @@
 ---
-title: "Steps 1-2: Parallel Validation and Aggregate Findings"
 description: Documents the parallel checker invocation (general, facts, links) and the aggregation logic that decides whether fixes are needed.
 when_to_use: Use when running or interpreting the first two steps of the general quality gate.
 ---

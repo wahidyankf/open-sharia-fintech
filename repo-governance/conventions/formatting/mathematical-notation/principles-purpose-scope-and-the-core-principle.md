@@ -1,16 +1,6 @@
 ---
-title: "Principles, Purpose, Scope, and the Core Principle"
 description: The principles this convention implements, what it covers and does not cover, an overview of where math notation appears, and the core LaTeX rule.
 when_to_use: Use when you need to understand why this repository standardizes on LaTeX for math or what the convention covers.
-category: explanation
-subcategory: conventions
-tags:
-  - latex
-  - mathematics
-  - formulas
-  - notation
-  - conventions
-created: 2025-12-02
 ---
 
 # Principles, Purpose, Scope, and the Core Principle

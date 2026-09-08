@@ -1,15 +1,6 @@
 ---
-title: "Repository Working Language Convention"
 description: English working-language rules and exceptions for repository-authored material
 when_to_use: Use when choosing the natural language for repository-authored material or localized content.
-category: explanation
-subcategory: conventions
-tags:
-  - writing
-  - language
-  - english
-  - localization
-created: 2026-08-27
 ---
 
 # Repository Working Language Convention

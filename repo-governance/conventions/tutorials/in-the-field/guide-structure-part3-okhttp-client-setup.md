@@ -1,16 +1,6 @@
 ---
-title: "Guide Structure Part 3: OkHttp Client Setup"
 description: The worked OkHttp production HTTP client example - imports, fields, and the retry/logging-interceptor constructor.
 when_to_use: Use when writing the setup/configuration half of an OkHttp production example.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Guide Structure Part 3: OkHttp Client Setup

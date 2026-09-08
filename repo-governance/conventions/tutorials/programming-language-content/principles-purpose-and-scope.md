@@ -1,15 +1,5 @@
 ---
-title: "Principles, Purpose, and Scope"
 description: "Explains the core principles behind the Programming Language Content Standard, why it exists, and exactly which content and locations it applies to."
-category: explanation
-subcategory: conventions
-tags:
-  - programming-languages
-  - ayokoding
-  - tutorials
-  - education
-  - content-standards
-created: 2025-12-18
 when_to_use: "Use when you need to understand why this standard exists, what it guarantees, or whether a given piece of content falls inside its scope."
 ---
 

@@ -1,15 +1,5 @@
 ---
-title: "Future Work: Cost and Latency Budgeting"
 description: "A future per-PR cost and latency budget."
-category: explanation
-subcategory: development
-tags:
-  - pr-review
-  - governance
-  - agents
-  - quality-gates
-  - boundary-rules
-created: 2026-07-23
 when_to_use: "Use when proposing a cost/latency budget for review."
 ---
 

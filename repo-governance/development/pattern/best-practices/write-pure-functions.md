@@ -1,10 +1,5 @@
 ---
-title: "Practice 6: Write Pure Functions"
 description: "Functions should depend only on their inputs, not on external mutable state."
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: "Use when writing or reviewing a function to check whether it depends on hidden external state."
 ---
 

@@ -1,15 +1,5 @@
 ---
-title: "Core Features First: Implementation by Coverage Level"
 description: "Shows how core-features-first applies concretely across beginner, intermediate, and advanced coverage levels."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - education
-  - code-first
-created: 2025-12-25
 when_to_use: "Read when deciding exactly how much core-feature purity vs external tooling is expected at a specific coverage level (beginner/intermediate/advanced)."
 ---
 

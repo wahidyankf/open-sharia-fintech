@@ -1,5 +1,4 @@
 ---
-title: "Programming Language Content Standard"
 description: "Universal content architecture for programming language education on ayokoding-www with mandatory structure, coverage model, and quality benchmarks"
 when_to_use: "Read this index to find the right Programming Language Content Standard child document."
 ---

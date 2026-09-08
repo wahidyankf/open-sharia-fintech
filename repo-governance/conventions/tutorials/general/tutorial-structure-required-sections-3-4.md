@@ -1,17 +1,6 @@
 ---
-title: "Tutorial Structure Requirements: Required Sections (Items 3-4)"
 description: "Specifies the required prerequisites section and the learning-objectives section that follow a tutorial's introduction."
 when_to_use: "Read when drafting the prerequisites section or the learning-objectives section of a tutorial."
-category: explanation
-subcategory: conventions
-tags:
-  - tutorials
-  - diataxis
-  - learning
-  - pedagogy
-  - documentation
-  - teaching
-created: 2025-12-03
 ---
 
 # Tutorial Structure Requirements: Required Sections (Items 3-4)

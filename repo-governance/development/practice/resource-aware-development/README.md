@@ -1,5 +1,4 @@
 ---
-title: "Resource-Aware Development"
 description: "Coordinates local compute through the checksum-pinned HIPPO consumer while preserving logical parallelism and correctness edges"
 when_to_use: "Read this index to find the right Resource-Aware Development child document."
 ---

@@ -1,5 +1,4 @@
 ---
-title: "Bounded Run"
 description: Scope and termination safeguards for the UI quality gate's finite discovery-fix-verification run.
 when_to_use: Use when deciding whether a UI quality gate may start another pass.
 ---

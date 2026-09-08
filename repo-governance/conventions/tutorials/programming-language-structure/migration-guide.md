@@ -1,16 +1,6 @@
 ---
-title: "Migration Guide"
 description: Six-step walkthrough for completing the Full Set Tutorial Package for a language created before the Full Set requirement existed.
 when_to_use: Use when backfilling missing Full Set Tutorial Package components for an existing language.
-category: explanation
-subcategory: conventions
-tags:
-  - programming-languages
-  - tutorials
-  - ayokoding-www
-  - education
-  - structure
-created: 2025-12-27
 ---
 
 # Migration Guide

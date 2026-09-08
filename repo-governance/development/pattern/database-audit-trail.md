@@ -1,16 +1,5 @@
 ---
-title: Database Audit Trail Pattern
 description: Required 6-column audit trail for every database table in open-sharia-enterprise
-category: explanation
-subcategory: development
-tags:
-  - database
-  - audit-trail
-  - soft-delete
-  - dbup
-  - ef-core
-  - migrations
-created: 2026-03-09
 when_to_use: "Use when creating a database table or migration."
 ---
 

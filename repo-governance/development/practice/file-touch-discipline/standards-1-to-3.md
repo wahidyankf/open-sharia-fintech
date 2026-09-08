@@ -1,16 +1,5 @@
 ---
-title: "File-Touch Discipline — Standards 1-3: Opening and Building the Ledger"
 description: The first three ledger standards - open before the first mutation, append at the moment of mutation with a reason, and never reconstruct the ledger from the working tree
-category: explanation
-subcategory: development
-tags:
-  - git
-  - safety
-  - concurrency
-  - ai-agents
-  - compaction
-  - discipline
-created: 2026-08-01
 when_to_use: Use when starting a session that will mutate files, or when deciding what to write for each ledger entry.
 ---
 

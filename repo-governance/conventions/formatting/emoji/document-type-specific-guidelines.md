@@ -1,16 +1,6 @@
 ---
-title: "Document Type Specific Guidelines"
 description: Recommended emojis and worked examples for tutorials, how-to guides, reference docs, explanation docs, plans, and root files like AGENTS.md.
 when_to_use: Use when writing a new tutorial, how-to guide, reference doc, explanation doc, plan, or root file and want emoji guidance specific to that document type.
-category: explanation
-subcategory: conventions
-tags:
-  - emoji
-  - accessibility
-  - scannability
-  - conventions
-  - markdown
-created: 2025-12-04
 ---
 
 # Document Type Specific Guidelines

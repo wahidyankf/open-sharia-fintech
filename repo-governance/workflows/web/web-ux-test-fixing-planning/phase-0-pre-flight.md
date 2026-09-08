@@ -1,5 +1,4 @@
 ---
-title: "Web UX Test-Fixing Planning — Phase 0: Pre-flight"
 description: "The pre-flight checklist this workflow runs before any tester dispatches: clean tree, reachable targets, browser-tool discovery, plan-mode resolution, and recurrence/diff-since-last-run memory."
 when_to_use: "Use when checking exactly what pre-flight verifies and compiles before Phase 1 starts, or what aborts the workflow early."
 ---

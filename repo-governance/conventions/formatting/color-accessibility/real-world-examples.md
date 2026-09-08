@@ -1,18 +1,6 @@
 ---
-title: "Real-World Examples"
 description: "Shows a fully accessible Mermaid diagram and a fully inaccessible one, with a why breakdown of each."
 when_to_use: "Use when you need a complete worked example contrasting accessible and inaccessible diagram color usage."
-category: explanation
-subcategory: conventions
-tags:
-  - accessibility
-  - color-blindness
-  - wcag
-  - design
-  - conventions
-  - mermaid-diagrams
-  - color-palette
-created: 2025-12-04
 ---
 
 # Real-World Examples

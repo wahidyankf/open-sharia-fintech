@@ -1,16 +1,5 @@
 ---
-title: "Disabled Rules"
 description: "The markdownlint rules intentionally disabled, and why each is off."
-category: explanation
-subcategory: development
-tags:
-  - markdown
-  - linting
-  - formatting
-  - prettier
-  - markdownlint
-  - quality
-created: 2026-01-17
 when_to_use: "Use when confirming whether a markdownlint rule was deliberately disabled."
 ---
 

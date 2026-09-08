@@ -1,10 +1,5 @@
 ---
-title: "Practice 9: Split Independent Concerns"
 description: Split independently reviewable purposes, while keeping required cross-domain completion artifacts together.
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use after commit authorization when a change set contains more than one potentially independent purpose.
 ---
 

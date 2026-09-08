@@ -1,15 +1,6 @@
 ---
-title: "UI Workflows"
 description: Orchestrated processes for UI component quality validation and remediation
 when_to_use: Use when routing to a workflow that audits or fixes UI component quality.
-category: explanation
-subcategory: workflows/ui
-tags:
-  - index
-  - workflows
-  - ui
-  - components
-created: 2026-03-28
 ---
 
 # UI Workflows

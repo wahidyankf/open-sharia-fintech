@@ -1,12 +1,5 @@
 ---
-title: "Architectural Principles"
 description: How this architecture follows the repository's own core principles
-category: explanation
-subcategory: architecture
-tags:
-  - architecture
-  - governance
-created: 2026-02-09
 when_to_use: Use when checking a change to the architecture stays principle-aligned.
 ---
 

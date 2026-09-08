@@ -1,10 +1,5 @@
 ---
-title: "Nx Target Naming Rules"
 description: "Canonical lifecycle and testing target vocabulary"
-category: explanation
-subcategory: development
-tags: [nx, targets, project-json]
-created: 2026-02-23
 when_to_use: "Use when naming or reviewing an Nx target."
 ---
 

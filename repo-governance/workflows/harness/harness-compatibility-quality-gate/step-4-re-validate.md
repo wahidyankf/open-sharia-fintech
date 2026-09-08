@@ -1,5 +1,4 @@
 ---
-title: "Step 4: Re-Validate"
 description: Re-runs the harness compatibility check to confirm fixes resolved drift and no new drift was introduced, reusing research where conventions were unchanged.
 when_to_use: Use when re-checking after a fix cycle in a harness-compatibility quality-gate iteration.
 ---

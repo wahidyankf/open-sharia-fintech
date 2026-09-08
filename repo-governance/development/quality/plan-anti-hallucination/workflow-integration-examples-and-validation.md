@@ -1,16 +1,5 @@
 ---
-title: "Workflow, Examples, and Validation"
 description: "Workflow fit, worked examples, and how this is validated."
-category: explanation
-subcategory: development
-tags:
-  - plans
-  - ai-agents
-  - factual-validation
-  - anti-hallucination
-  - web-research
-  - verification
-created: 2026-05-03
 when_to_use: "Use for a worked example of this convention."
 ---
 

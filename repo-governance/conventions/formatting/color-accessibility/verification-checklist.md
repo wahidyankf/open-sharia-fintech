@@ -1,18 +1,6 @@
 ---
-title: "Verification Checklist"
 description: "Provides the pre-publish checklist confirming palette, borders, contrast, and testing requirements are all met."
 when_to_use: "Use as a final checklist immediately before committing content that uses color."
-category: explanation
-subcategory: conventions
-tags:
-  - accessibility
-  - color-blindness
-  - wcag
-  - design
-  - conventions
-  - mermaid-diagrams
-  - color-palette
-created: 2025-12-04
 ---
 
 # Verification Checklist

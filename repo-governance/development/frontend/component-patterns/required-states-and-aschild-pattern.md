@@ -1,15 +1,5 @@
 ---
-title: "Component Patterns — Required States and the asChild Pattern"
 description: The full state-coverage table (default, hover, focus-visible, active, disabled, loading, error, success) via Tailwind modifiers, and delegating rendering to a consumer element via Slot.Root
-category: explanation
-subcategory: development/frontend
-tags:
-  - components
-  - react
-  - radix
-  - cva
-  - shadcn
-created: 2026-03-28
 when_to_use: Use when styling an interactive component's states, or when a component needs to merge its behaviour onto an arbitrary consumer element.
 ---
 

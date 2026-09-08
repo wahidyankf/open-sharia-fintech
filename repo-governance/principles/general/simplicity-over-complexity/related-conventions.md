@@ -1,12 +1,5 @@
 ---
-title: "Related Conventions"
 description: Links to implementation workflow, monorepo structure, AI agents, and Diátaxis framework.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - simplicity
-created: 2025-12-15
 when_to_use: Use when looking for related conventions.
 ---
 

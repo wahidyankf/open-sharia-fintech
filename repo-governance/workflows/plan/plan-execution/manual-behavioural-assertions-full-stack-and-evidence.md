@@ -1,5 +1,4 @@
 ---
-title: "Manual Behavioural Assertions — Full-Stack Verification and Evidence"
 description: Defines full-stack verification covering both UI and API, and the evidence-capture requirements for delivery.md.
 when_to_use: Use when a phase touches both UI and API, or when documenting evidence for a manual behavioural assertion.
 ---

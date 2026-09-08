@@ -1,18 +1,6 @@
 ---
-title: "Application Contexts: Emoji Indicators with Text Labels"
 description: "Defines when standard emoji colors are acceptable because text labels always accompany them."
 when_to_use: "Use when adding emoji status indicators such as criticality or pass/fail markers to confirm the color choice is acceptable."
-category: explanation
-subcategory: conventions
-tags:
-  - accessibility
-  - color-blindness
-  - wcag
-  - design
-  - conventions
-  - mermaid-diagrams
-  - color-palette
-created: 2025-12-04
 ---
 
 # Application Contexts: Emoji Indicators with Text Labels

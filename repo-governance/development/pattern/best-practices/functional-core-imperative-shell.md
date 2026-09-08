@@ -1,10 +1,5 @@
 ---
-title: "Practice 10: Functional Core, Imperative Shell"
 description: "Keep pure logic in a core and push side effects to an imperative shell at the boundaries."
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: "Use when structuring code that mixes business logic with database, network, or other I/O calls."
 ---
 

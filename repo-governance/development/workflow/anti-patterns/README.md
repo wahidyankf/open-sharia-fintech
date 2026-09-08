@@ -1,5 +1,4 @@
 ---
-title: "Anti-Patterns in Workflow Development"
 description: "Common workflow anti-patterns and their corrected pattern."
 when_to_use: "Read this index to find the right Anti-Patterns in Workflow Development child document."
 ---

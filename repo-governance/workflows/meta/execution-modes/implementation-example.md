@@ -1,13 +1,5 @@
 ---
-title: "Implementation Example"
 description: Shows the "Execution Mode" section every workflow document should include, with a worked template.
-category: explanation
-subcategory: workflows
-tags:
-  - workflows
-  - execution-mode
-  - orchestration
-created: 2026-01-05
 when_to_use: Use when authoring a new workflow document and needing a template for its Execution Mode section.
 ---
 

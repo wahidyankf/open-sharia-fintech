@@ -1,14 +1,6 @@
 ---
-title: "Writing Conventions"
 description: Reader-focused writing and validation rules for repository documentation
 when_to_use: Use when writing or reviewing any markdown content and need the applicable content-quality, factual-validation, or documentation-writing rule.
-category: explanation
-tags:
-  - index
-  - conventions
-  - writing
-  - quality
-created: 2026-01-30
 ---
 
 # Writing Conventions

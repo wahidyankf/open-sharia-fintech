@@ -1,15 +1,5 @@
 ---
-title: "Content Completeness Criteria"
 description: "Defines the five mandatory components plus supporting documentation a programming language needs to have a complete Full Set Tutorial Package."
-category: explanation
-subcategory: conventions
-tags:
-  - programming-languages
-  - ayokoding
-  - tutorials
-  - education
-  - content-standards
-created: 2025-12-18
 when_to_use: "Use when assessing whether a programming language's content is complete, or when planning what remains to reach Full Set status."
 ---
 

@@ -1,5 +1,4 @@
 ---
-title: "Semantic Audit"
 description: The nine decisions the rules quality gate makes about an affected rule, without editing it.
 when_to_use: Use at step 2 of the rules quality gate, while auditing a proposed or effective rule state.
 ---

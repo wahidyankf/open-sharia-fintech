@@ -1,16 +1,6 @@
 ---
-title: "The Split — Deterministic vs AI Validation Categories"
 description: The table mapping each governance validation category to its owning layer (deterministic preflight or AI checker) and the rationale.
 when_to_use: Use when deciding, or looking up, which layer (deterministic preflight or AI checker) owns a given validation category.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - governance
-  - validation
-  - quality-gate
-  - automation
-created: 2026-08-13
 ---
 
 # The Split

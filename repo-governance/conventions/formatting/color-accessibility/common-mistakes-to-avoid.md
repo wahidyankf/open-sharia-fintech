@@ -1,18 +1,6 @@
 ---
-title: "Common Mistakes to Avoid"
 description: "Catalogs six common accessibility mistakes with wrong and correct Mermaid and CSS examples for each."
 when_to_use: "Use when reviewing color usage for common accessibility mistakes such as red-green combinations or color-only coding."
-category: explanation
-subcategory: conventions
-tags:
-  - accessibility
-  - color-blindness
-  - wcag
-  - design
-  - conventions
-  - mermaid-diagrams
-  - color-palette
-created: 2025-12-04
 ---
 
 # Common Mistakes to Avoid

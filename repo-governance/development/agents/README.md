@@ -1,10 +1,5 @@
 ---
-title: "AI Agents Development"
 description: "Standards for AI agents that work safely and predictably in this repository"
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use when defining or changing an AI agent, or when deciding where an agent-development topic belongs.
 ---
 

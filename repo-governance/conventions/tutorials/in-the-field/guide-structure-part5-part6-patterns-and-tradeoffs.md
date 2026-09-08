@@ -1,16 +1,6 @@
 ---
-title: "Guide Structure Part 5-6: Production Patterns and Trade-offs"
 description: Requirements for documenting enterprise patterns, test organization/naming/security considerations, and framework trade-off guidance.
 when_to_use: Use when writing the best-practices or trade-offs sections of a guide.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Guide Structure Part 5-6: Production Patterns and Trade-offs

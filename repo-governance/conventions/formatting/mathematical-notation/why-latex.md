@@ -1,16 +1,6 @@
 ---
-title: "Why LaTeX?"
 description: "Why LaTeX is the standard for mathematical notation: universal rendering, professional typographic quality, and version-control friendliness."
 when_to_use: Use when justifying to a reviewer why a formula should use LaTeX instead of plain text or an image.
-category: explanation
-subcategory: conventions
-tags:
-  - latex
-  - mathematics
-  - formulas
-  - notation
-  - conventions
-created: 2025-12-02
 ---
 
 # Why LaTeX?

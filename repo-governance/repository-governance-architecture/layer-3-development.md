@@ -1,13 +1,5 @@
 ---
-title: "Layer 3: Development (HOW - Software Practices)"
-description: The software-practices layer: scope, categories, requirements
-category: explanation
-subcategory: architecture
-tags:
-  - architecture
-  - governance
-  - development
-created: 2026-02-09
+description: "The software-practices layer: scope, categories, requirements"
 when_to_use: Use for Layer 3's scope and governance relationships.
 ---
 

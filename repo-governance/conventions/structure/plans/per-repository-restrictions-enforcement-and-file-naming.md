@@ -1,14 +1,5 @@
 ---
-title: "Per-Repository Delivery Mode Restrictions — Enforcement and File Naming"
 description: States that main-to-pr is unused despite being technically available, the plan-checker enforcement for invalid delivery-mode fields, and the file-naming rule for files inside a plan folder.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when checking why main-to-pr is never selected, or when naming a file inside a plan folder.
 ---
 

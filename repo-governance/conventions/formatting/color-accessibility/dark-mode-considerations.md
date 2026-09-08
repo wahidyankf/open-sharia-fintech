@@ -1,18 +1,6 @@
 ---
-title: "Dark Mode Considerations"
 description: "Confirms the accessible palette works unchanged on both light and dark backgrounds and shows a worked contrast example."
 when_to_use: "Use when testing whether a color renders with sufficient contrast in both light and dark mode."
-category: explanation
-subcategory: conventions
-tags:
-  - accessibility
-  - color-blindness
-  - wcag
-  - design
-  - conventions
-  - mermaid-diagrams
-  - color-palette
-created: 2025-12-04
 ---
 
 # Dark Mode Considerations

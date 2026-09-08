@@ -1,5 +1,4 @@
 ---
-title: "Scope Boundary (Hard) and Execution Mode"
 description: The hard plans/ideas/**-only write scope this workflow never exceeds, who orchestrates it, and its unconditional worktree-to-pr delivery mode.
 when_to_use: Use when checking whether an output belongs in this workflow's scope, or who runs it and under what delivery mode.
 ---

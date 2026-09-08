@@ -1,17 +1,5 @@
 ---
-title: "Evidence Capture Convention"
 description: Standards for capturing and organizing testing evidence (screenshots, curl outputs, console logs) in plan folders and delivery.md during plan execution
-category: explanation
-subcategory: development
-tags:
-  - evidence
-  - testing
-  - screenshots
-  - plans
-  - verification
-  - locale
-  - manual-testing
-created: 2026-06-20
 when_to_use: "Use when capturing, naming, or referencing testing evidence during plan execution."
 ---
 
@@ -30,5 +18,16 @@ This convention defines where testing evidence lives and how it must be named, f
 - [Locale Testing Evidence Requirements](./evidence-capture/locale-testing-evidence-requirements.md) — The evidence bar for locale/i18n testing across supported languages. Use when verifying a locale-sensitive feature and capturing its evidence.
 - [What plan-execution-checker Validates](./evidence-capture/what-plan-execution-checker-validates.md) — What the plan-execution-checker agent inspects in captured evidence. Use when you need to know what evidence the plan-execution-checker gate inspects.
 - [Examples](./evidence-capture/examples.md) — Worked examples of correctly captured evidence. Use when you need a concrete example of properly captured evidence.
-- [Relationship to Other Conventions](./evidence-capture/relationship-to-other-conventions.md) — How this convention relates to manual-behavioural-verification and other quality conventions. Use when deciding whether evidence capture or another convention governs a specific check.
 - [Related Documentation](./evidence-capture/related-documentation.md) — Cross-references to related verification and plan conventions. Use when you need a related convention on verification or plan structure.
+
+## Relationship to Other Conventions
+
+- **[Manual Behavioural Verification](./manual-behavioural-verification.md)** — defines WHAT to verify;
+  this convention defines WHERE to record the verification evidence.
+- **[User-Facing Delivery Hardening Convention](./user-facing-delivery-hardening.md)** — Rule 1
+  (per-breakpoint, per-locale visual sign-off) and Rule 10 (production visual sign-off before archival)
+  both require the evidence trail defined here.
+- **[Plans Organization Convention](../../conventions/structure/plans.md)** — plan folder structure,
+  lifecycle (in-progress → done), and the evidence/ subfolder naming.
+- **[Temporary Files Convention](../infra/temporary-files.md)** — evidence/ in a plan folder is NOT a
+  temporary file; it is committed and permanent. Use local-tmp/ for scratch work only.

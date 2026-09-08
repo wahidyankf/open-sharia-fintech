@@ -1,5 +1,4 @@
 ---
-title: "1. Parallel Validation (Parallel)"
 description: "Step 1: runs docs-checker, docs-tutorial-checker, and docs-link-checker concurrently, each writing an independent audit report."
 when_to_use: "Use when implementing or debugging the parallel-validation step of the quality gate."
 ---

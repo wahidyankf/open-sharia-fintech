@@ -1,10 +1,5 @@
 ---
-title: "Practice 1: Integrate Continuously via Short-Lived Branches"
 description: Keep every branch short-lived and single-purpose; TBD forbids long-lived branches, not branches.
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use when starting a plan branch, to confirm it will integrate within a day or two rather than living long-term.
 ---
 

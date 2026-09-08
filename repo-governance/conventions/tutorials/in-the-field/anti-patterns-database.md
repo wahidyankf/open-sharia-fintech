@@ -1,16 +1,6 @@
 ---
-title: "Anti-Pattern: ORM Without SQL Knowledge"
 description: The production consequences (N+1 queries, connection pool exhaustion) of using an ORM without understanding SQL.
 when_to_use: Use when explaining the risk of teaching an ORM before SQL/JDBC fundamentals.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Anti-Pattern: ORM Without SQL Knowledge (Database)

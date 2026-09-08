@@ -1,15 +1,5 @@
 ---
-title: "Scope"
 description: What the Git Push Default Convention covers — delivery-mode push behaviour and checklist authoring — and what it explicitly defers to companion conventions.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - push
-  - trunk-based-development
-  - ai-agents
-created: 2026-04-25
 when_to_use: Use when determining whether a git-push question is governed by this convention or by one of its companions.
 ---
 

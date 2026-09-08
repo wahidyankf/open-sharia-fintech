@@ -1,16 +1,5 @@
 ---
-title: "Examples"
 description: "Worked prohibited-vs-correct examples for hardcoded paths, test fixtures, and committed credentials."
-category: explanation
-subcategory: development
-tags:
-  - git
-  - commits
-  - security
-  - portability
-  - environment
-  - quality
-created: 2026-03-24
 when_to_use: "Use when you need a concrete before/after example of fixing a machine-specific value."
 ---
 

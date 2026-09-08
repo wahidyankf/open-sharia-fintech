@@ -1,5 +1,4 @@
 ---
-title: "Documentation Quality Gate Workflow"
 description: "Validates all docs/ content (factual accuracy, pedagogical structure, link validity) and applies fixes iteratively via Maker-Checker-Fixer."
 when_to_use: "Read this index to find the right Documentation Quality Gate Workflow child document."
 ---

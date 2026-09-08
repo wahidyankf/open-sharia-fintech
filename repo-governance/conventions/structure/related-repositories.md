@@ -1,14 +1,6 @@
 ---
-title: "Related Repositories Convention"
 description: Defines the OSE parity pair, independent-repository boundaries, required awareness surfaces, and propagation scope.
 when_to_use: Use when adding or changing a cross-repository reference, shared boundary, consumer integration, or propagation obligation.
-category: explanation
-subcategory: conventions
-tags:
-  - cross-repository
-  - parity
-  - structure
-  - governance
 ---
 
 # Related Repositories Convention

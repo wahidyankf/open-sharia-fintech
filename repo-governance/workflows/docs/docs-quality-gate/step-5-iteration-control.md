@@ -1,5 +1,4 @@
 ---
-title: "5. Iteration Control (Sequential)"
 description: "Step 5: re-runs all checkers and applies the consecutive-zero-count loop logic to decide continue vs. finalize."
 when_to_use: "Use when implementing or debugging the loop/termination decision logic between checkers and fixers."
 ---

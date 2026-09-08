@@ -1,16 +1,5 @@
 ---
-title: "The Six Forcing-Functions (5-6)"
 description: "Forcing-functions 5-6: usability probes, recurrence/diff/completeness critic."
-category: explanation
-subcategory: development
-tags:
-  - testing
-  - live-testing
-  - usability
-  - ux
-  - quality
-  - systematic
-created: 2026-06-22
 when_to_use: "Use when applying the usability-probe or recurrence-critic forcing-function."
 ---
 

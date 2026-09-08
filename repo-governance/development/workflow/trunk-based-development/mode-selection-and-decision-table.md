@@ -1,15 +1,5 @@
 ---
-title: "Mode Selection Does Not Depend on Execution Context Alone"
 description: Why work location and integration target are independent axes, plus a decision table resolving the delivery mode for common situations.
-category: explanation
-subcategory: development
-tags:
-  - trunk-based-development
-  - git
-  - workflow
-  - development
-  - continuous-integration
-created: 2025-11-26
 when_to_use: Use when unsure which delivery mode applies to a given situation, or explaining why worktree usage alone doesn't determine it.
 ---
 

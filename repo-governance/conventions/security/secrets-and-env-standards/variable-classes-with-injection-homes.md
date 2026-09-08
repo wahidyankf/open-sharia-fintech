@@ -1,17 +1,6 @@
 ---
-title: "Variable Classes with Injection Homes"
 description: The four variable classes (app-runtime server, app-runtime public build, CI test-harness, platform-injected) and where each is injected, including why VERCEL_AUTOMATION_BYPASS_SECRET is load-bearing.
 when_to_use: Use when classifying a new env var to decide whether it belongs in .env.example or in the CI test-harness registry instead.
-category: explanation
-subcategory: conventions
-tags:
-  - security
-  - secrets
-  - env-files
-  - guard-env-file-access
-  - naming
-  - reproducibility
-created: 2026-06-10
 ---
 
 # Variable Classes with Injection Homes

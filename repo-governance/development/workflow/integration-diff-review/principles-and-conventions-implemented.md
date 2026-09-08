@@ -1,16 +1,5 @@
 ---
-title: "Principles and Conventions Implemented"
 description: The principles and companion conventions the integration diff review convention implements and respects.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - safety
-  - rebase
-  - merge
-  - review
-created: 2026-08-06
 when_to_use: Use when tracing why integration diff review exists back to the principles and conventions it respects.
 ---
 

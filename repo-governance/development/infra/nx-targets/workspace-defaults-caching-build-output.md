@@ -1,15 +1,5 @@
 ---
-title: "Workspace Defaults, Caching, and Build Output"
 description: The nx.json targetDefaults block, the per-target caching-rules table, and the build output directory conventions.
-category: explanation
-subcategory: development
-tags:
-  - nx
-  - targets
-  - project-json
-  - build
-  - scripts
-created: 2026-02-23
 when_to_use: Use when deciding whether a target should be cached, or where a project's build output directory should live.
 ---
 

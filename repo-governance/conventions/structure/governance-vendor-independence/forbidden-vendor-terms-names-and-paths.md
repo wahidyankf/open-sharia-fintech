@@ -1,16 +1,6 @@
 ---
-title: "Forbidden Vendor Terms — Product Names and Paths"
 description: Forbidden coding-agent/harness product names and vendor-specific binding directory path patterns, part 1 of the Forbidden Vendor Terms catalog.
 when_to_use: Use when checking whether a coding-agent product name or a binding directory path in governance prose is forbidden.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - governance
-  - vendor-independence
-  - agents
-  - platform-bindings
-created: 2026-05-02
 ---
 
 # Forbidden Vendor Terms — Product Names and Paths

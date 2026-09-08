@@ -1,15 +1,5 @@
 ---
-title: "Principles Traceability"
 description: Maps each major Nx target design decision to the software-engineering principle it implements.
-category: explanation
-subcategory: development
-tags:
-  - nx
-  - targets
-  - project-json
-  - build
-  - scripts
-created: 2026-02-23
 when_to_use: Use when writing a rationale section that needs to cite which principle a target-design decision satisfies.
 ---
 

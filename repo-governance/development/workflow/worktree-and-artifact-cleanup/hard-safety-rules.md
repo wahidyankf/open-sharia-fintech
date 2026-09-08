@@ -1,15 +1,5 @@
 ---
-title: "Hard Safety Rules"
 description: The rules bounding every action the cleanup gate takes — self-created only, verify before deleting, never touch shared caches.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - worktree
-  - cleanup
-  - parallelism
-created: 2026-07-20
 when_to_use: Use when deciding whether a specific cleanup action is in-scope for a plan to perform.
 ---
 

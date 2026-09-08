@@ -1,14 +1,5 @@
 ---
-title: "Executor Tagging — Placement, Legend, and Execution Semantics"
 description: Covers the fourth PR-merge step's default [AI] tagging, where the tag goes in a checkbox, the required top-of-file legend, and how execution stops at a [HUMAN] item.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when adding the executor-tag legend to a delivery.md file or handling a [HUMAN] stop during execution.
 ---
 

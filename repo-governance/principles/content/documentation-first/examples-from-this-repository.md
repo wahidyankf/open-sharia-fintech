@@ -1,12 +1,5 @@
 ---
-title: "Examples from This Repository"
 description: Real examples of documentation-first applied in this repository.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - documentation
-created: 2025-12-28
 when_to_use: Use when looking for worked documentation examples.
 ---
 

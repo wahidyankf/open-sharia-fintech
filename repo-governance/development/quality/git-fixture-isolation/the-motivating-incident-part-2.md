@@ -1,17 +1,5 @@
 ---
-title: "The Motivating Incident (part 2)"
 description: "Root-cause investigation status and open hypotheses."
-category: explanation
-subcategory: development
-tags:
-  - testing
-  - git
-  - test-fixtures
-  - isolation
-  - regression
-  - safety
-  - defense-in-depth
-created: 2026-07-19
 when_to_use: "Use for the incident's root-cause status."
 ---
 

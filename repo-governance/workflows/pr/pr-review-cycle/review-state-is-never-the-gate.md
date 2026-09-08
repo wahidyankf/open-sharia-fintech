@@ -1,9 +1,5 @@
 ---
-title: "PR Review Cycle — Review STATE Is Never the Gate"
 description: "Why every review this workflow posts lands as COMMENT, and why blocking status is read from the finding's severity label rather than GitHub's review STATE field."
-category: explanation
-subcategory: workflows
-created: 2026-08-22
 when_to_use: "Use when writing or auditing any gate, script, or agent step that decides whether a PR is blocked."
 ---
 

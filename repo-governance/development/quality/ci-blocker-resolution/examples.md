@@ -1,16 +1,5 @@
 ---
-title: "Examples"
 description: "Worked examples of resolving a CI blocker correctly."
-category: explanation
-subcategory: development
-tags:
-  - ci
-  - quality-gates
-  - root-cause
-  - debugging
-  - anti-pattern
-  - preexisting-issues
-created: 2026-04-04
 when_to_use: "Use for a concrete example of a proper CI-blocker fix."
 ---
 

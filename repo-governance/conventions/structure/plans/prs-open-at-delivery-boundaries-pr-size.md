@@ -1,13 +1,5 @@
 ---
-title: "PR-Size Redirect"
 description: Legacy redirect.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - pr-review
-created: 2026-08-22
 when_to_use: Follow old links.
 ---
 
