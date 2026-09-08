@@ -1,0 +1,43 @@
+=== DU2 merged? ===
+PR 493 merge=2e3ff7a8e76b5a5b6c4fceebef196c4e953ced9c feat(repo): enable java projects across the quality surfaces
+
+=== BINDING_FILE (behaviour-coverage.mjs:18-22) ===
+const GHERKIN_DECLARATION = /^(?:Feature|Rule|Background|Scenario(?: Outline| Template)?|Examples?):/iu;
+const SCENARIO_DECLARATION = /^(?:Scenario(?: Outline| Template)?):/iu;
+const BINDING_FILE = /\.(?:ts|tsx|fs|java)$/iu;
+
+function normaliseSource(source) {
+
+=== extractBindings dispatch (:400-412) ===
+    });
+  }
+  return bindings;
+}
+
+export function extractBindings(resourceName, source) {
+  const name = resourceName.toLowerCase();
+  if (name.endsWith(".fs")) return extractFsharpBindings(resourceName, source);
+  if (name.endsWith(".java")) return extractJavaBindings(resourceName, source);
+  return extractTypescriptBindings(resourceName, source);
+}
+
+function escapeRegex(value) {
+
+=== shared helper ===
+function featureReferences(source, literalPattern) {
+  const references = [];
+  for (const match of source.matchAll(literalPattern)) {
+    const value = decodeQuotedLiteral(match[0]).replaceAll("\\", "/");
+    const specsOffset = value.lastIndexOf("specs/");
+function typescriptFeatureReferences(source) {
+  return featureReferences(source, TYPESCRIPT_LITERAL);
+}
+
+function fsharpFeatureReferences(source) {
+  return featureReferences(source, DOUBLE_QUOTED_LITERAL);
+}
+
+function javaFeatureReferences(source) {
+  return featureReferences(source, DOUBLE_QUOTED_LITERAL);
+}
+

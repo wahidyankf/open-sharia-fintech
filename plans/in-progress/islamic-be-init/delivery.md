@@ -41,19 +41,29 @@ authenticated clean current-head `pr-leak-review`, and the applicable surface ga
 
 ## Worktree
 
-- Public: `R-PUB:worktrees/islamic-be-init/`
+- Public: `R-PUB:worktrees/ose-islamic/`
 - Private: `R-PRI:worktrees/islamic-be-init/` — provisioned lazily at Phase 5, the only unit that
   touches `ose-private`
 
 ### Provisioned Worktree Identity
 
-- Public declared repository-relative route: `worktrees/islamic-be-init/`
-- Public initial branch: `worktree/islamic-be-init`
+- Public declared repository-relative route: `worktrees/ose-islamic/`
+- Public initial branch: `worktree/ose-islamic`
 - Private declared repository-relative route: `worktrees/islamic-be-init/`
 - Private initial branch: `worktree/islamic-be-init`
-- Created by: resolve at Phase 0 from `git worktree list --porcelain` and record here
-- Created at: resolve at Phase 0 (ISO-8601 UTC); do not hardcode a timestamp while authoring
+- Created by: the plan-authoring session, through `claude --worktree`
+- Created at: recorded at Phase 0 from `git worktree list --porcelain`
 
+> **Worktree-route amendment, recorded rather than silently applied.** This plan was authored to
+> provision a fresh `worktrees/islamic-be-init/` and delete the authoring workspace at Phase 0. That
+> is rejected at execution time. Execution runs inside `worktrees/ose-islamic/` and the route above
+> is amended to match. Three reasons: the cap is _one worktree per repository per plan_ and
+> `worktrees/ose-islamic/` already satisfies it, so provisioning a second breaches the cap before
+> deleting the first; deleting the checkout an execution is running inside is an avoidable failure
+> mode; and the route name carries no governance meaning — the Delivery Branch Inventory below, not
+> the directory name, is what cleanup reconciles against. The worktree is removed by the terminal
+> cleanup gate, not at Phase 0.
+>
 > **Branch-name note, recorded rather than hidden:** the canonical template suggests
 > `<plan-identifier>-base`. This plan uses `worktree/<plan-identifier>`, which is the shape
 > `claude --worktree` actually produces and the shape `lms-init` and the archived
@@ -65,18 +75,17 @@ authenticated clean current-head `pr-leak-review`, and the applicable surface ga
 
 ### Delivery Branch Inventory
 
-| Branch                                | Repository    | Mode      | Lifecycle state | Proof                                                                         |
-| ------------------------------------- | ------------- | --------- | --------------- | ----------------------------------------------------------------------------- |
-| `worktree/ose-islamic`                | `ose-public`  | `to-pr`   | `active`        | carries the plan-authoring PR #488; record its 40-character head SHA on merge |
-| `worktree/islamic-be-init`            | `ose-public`  | `pending` | `pending`       | `git worktree add` at Phase 0                                                 |
-| `worktree/islamic-be-init`            | `ose-private` | `pending` | `pending`       | `git worktree add` at Phase 5                                                 |
-| `islamic-be-init/du1-go-lane`         | `ose-public`  | `to-pr`   | `pending`       | record merged PR number and 40-character head SHA at DU1                      |
-| `islamic-be-init/du2-specs-contracts` | `ose-public`  | `to-pr`   | `pending`       | record merged PR number and 40-character head SHA at DU2                      |
-| `islamic-be-init/du3-service`         | `ose-public`  | `to-pr`   | `pending`       | record merged PR number and 40-character head SHA at DU3                      |
-| `islamic-be-init/du4-e2e`             | `ose-public`  | `to-pr`   | `pending`       | record merged PR number and 40-character head SHA at DU4                      |
-| `islamic-be-init/du5-rhino-go-env`    | `ose-public`  | `to-pr`   | `pending`       | record merged PR number and 40-character head SHA at DU5                      |
-| `islamic-be-init/du5-rhino-go-env`    | `ose-private` | `to-pr`   | `pending`       | record merged PR number and 40-character head SHA at DU5                      |
-| `islamic-be-init/du6-registry`        | `ose-public`  | `to-pr`   | `pending`       | record merged PR number and 40-character head SHA at DU6                      |
+| Branch                                | Repository    | Mode      | Lifecycle state | Proof                                                                                             |
+| ------------------------------------- | ------------- | --------- | --------------- | ------------------------------------------------------------------------------------------------- |
+| `worktree/ose-islamic`                | `ose-public`  | `to-pr`   | `active`        | carries the plan-authoring PR #488 and every Phase 0 record; removed by the terminal cleanup gate |
+| `worktree/islamic-be-init`            | `ose-private` | `pending` | `pending`       | `git worktree add` at Phase 5                                                                     |
+| `islamic-be-init/du1-go-lane`         | `ose-public`  | `to-pr`   | `pending`       | record merged PR number and 40-character head SHA at DU1                                          |
+| `islamic-be-init/du2-specs-contracts` | `ose-public`  | `to-pr`   | `pending`       | record merged PR number and 40-character head SHA at DU2                                          |
+| `islamic-be-init/du3-service`         | `ose-public`  | `to-pr`   | `pending`       | record merged PR number and 40-character head SHA at DU3                                          |
+| `islamic-be-init/du4-e2e`             | `ose-public`  | `to-pr`   | `pending`       | record merged PR number and 40-character head SHA at DU4                                          |
+| `islamic-be-init/du5-rhino-go-env`    | `ose-public`  | `to-pr`   | `pending`       | record merged PR number and 40-character head SHA at DU5                                          |
+| `islamic-be-init/du5-rhino-go-env`    | `ose-private` | `to-pr`   | `pending`       | record merged PR number and 40-character head SHA at DU5                                          |
+| `islamic-be-init/du6-registry`        | `ose-public`  | `to-pr`   | `pending`       | record merged PR number and 40-character head SHA at DU6                                          |
 
 Append every plan-created delivery branch before use. Before removal, classify every entry as
 delivered, unused, or retained/escalated; an active or unrecorded branch blocks cleanup.
@@ -109,46 +118,104 @@ baseline.
 > retained as the re-verification procedure — re-run them if this plan is resumed after a long gap,
 > since `main` moves.
 
-- [ ] [AI] Confirm `lms-init` DU1 is merged in **both** repositories:
-      `rtk gh pr list --repo wahidyankf/ose-public --state merged --search "du1-doctor-config"` and
-      the same for `wahidyankf/ose-private`. Acceptance: each returns a merged PR; record both
-      numbers and 40-character head SHAs in this file. If either is missing, **stop and report** —
+- [x] [AI] Confirm `lms-init` DU1 is merged in **both** repositories. Search by **branch**, not by
+      title — `du1-doctor-config` is the branch name and does not appear in the private repository's
+      PR title:
+      `rtk gh pr list --repo wahidyankf/ose-public --state merged --head lms-init/du1-doctor-config`
+      and the same for `wahidyankf/ose-private`. Acceptance: each returns a merged PR; record both
+      numbers and 40-character merge SHAs in this file. If either is missing, **stop and report** —
       do not build the doctor refactor here.
-- [ ] [AI] Confirm `doctor.extra-tools` exists in both `repo-config.yml` files:
+  - **Date**: 2026-09-08
+  - **Status**: done — DU1 merged in both repositories
+  - **Files Changed**: none (verification only)
+  - **`ose-public`**: PR #491, branch `lms-init/du1-doctor-config`, merge SHA
+    `c6fffc3844d9e5d912d6467967ab6ba433967314`
+  - **`ose-private`**: PR #167, branch `lms-init/du1-doctor-config`, merge SHA
+    `fc0a273fdc8aa9b4eb6d75520b23e83adeede0d5`
+  - **Note**: the originally-authored `--search "du1-doctor-config"` returned empty for
+    `ose-private` because that string is the branch name and does not appear in its PR title
+    (`refactor(rhino-cli): resolve the doctor tool inventory from repo-config`). The checkbox now
+    specifies `--head`, which matches in both repositories. Caught because an empty result was
+    treated as a stop-and-report rather than as absence of the work.
+- [x] [AI] Confirm `doctor.extra-tools` exists in both `repo-config.yml` files:
       `rtk grep -n "extra-tools" repo-config.yml` in each repository. Acceptance: present in both,
       satisfying the identical-key-set parity rule. Save both outputs to
       `evidence/phase-0-extra-tools.txt`.
-- [ ] [AI] Confirm `lms-init` DU2 is merged and read the shape it left behind:
+  - **Date**: 2026-09-08
+  - **Status**: done — key present in both repositories
+  - **Files Changed**: `plans/in-progress/islamic-be-init/evidence/phase-0-extra-tools.txt` (new)
+  - **`ose-public`**: `repo-config.yml:174`, `extra-tools:` carrying the `java` entry
+  - **`ose-private`**: `repo-config.yml:272`, `extra-tools: []`
+  - **Note**: an unsorted key-list diff reports a difference — `doctor` sits at position 4 in
+    `ose-public` and 7 in `ose-private`. That is ordering, not membership. Parity rule 4 constrains
+    the key _set_; the sorted comparison is identical. Recorded so a later reader does not
+    mistake the ordering diff for real drift and "fix" it by reordering a file.
+- [x] [AI] Confirm `lms-init` DU2 is merged and read the shape it left behind:
       `rtk sed -n '18,22p;400,412p' scripts/behaviour-coverage.mjs`. Acceptance: `BINDING_FILE`
       includes `java` and `extractBindings` dispatches more than two languages. **Verified:** an
       `if`-chain at `:405`–`:410`, with the shared `featureReferences(source, literalPattern)`
       helper at `:302` available to reuse. DU1 adds a `.go` arm to that chain; a shape different
       from `tech-docs.md` §4.2's assumption is a stop-and-report, not a work-around.
-- [ ] [AI] Confirm the CI pattern DU1 copies exists: `rtk ls .github/actions/setup-java/action.yml`
+  - **Date**: 2026-09-08
+  - **Status**: done — DU2 merged, shape matches the plan's assumption
+  - **Files Changed**: `plans/in-progress/islamic-be-init/evidence/phase-0-extractor-shape.txt` (new)
+  - **DU2**: PR #493, merge SHA `2e3ff7a8e76b5a5b6c4fceebef196c4e953ced9c`
+  - **`BINDING_FILE`** (`:20`): `/\.(?:ts|tsx|fs|java)$/iu` — the Go arm appends `|go`
+  - **`extractBindings`** (`:405`-`:410`): an `if`-chain on lowercased suffix, TypeScript as the
+    fallback. Adding `.go` is one line before the fallback
+  - **Shared helper** (`:302`): `featureReferences(source, literalPattern)`, already reused by
+    `typescriptFeatureReferences` (`:318`), `fsharpFeatureReferences` (`:322`), and
+    `javaFeatureReferences` (`:374`)
+  - **Carried forward to DU1**: the F# and Java wrappers both pass `DOUBLE_QUOTED_LITERAL`.
+    `goFeatureReferences` cannot — Go feature paths may sit in backtick raw strings, where `\` is
+    not an escape. DU1 needs a Go literal pattern covering both quote forms, and
+    `decodeQuotedLiteral` must not unescape a raw string. This is reuse of the helper, not of the
+    pattern, and the distinction was not visible before reading the merged code.
+- [x] [AI] Confirm the CI pattern DU1 copies exists: `rtk ls .github/actions/setup-java/action.yml`
       and `rtk grep -c "tag:lang:java" .github/workflows/pr-quality-gate.yml`. Acceptance: the
       action exists and the grep reports 4 — `typescript` ×1, `dotnet` ×2, `flutter` ×1.
       **Verified.** Note what this count does _not_ include: the `java` job's own exclude list names
       no `java`, and names no `go` either — which is why Go leaks into four jobs, not three.
-- [ ] [AI] Confirm `rhino-cli-parity-audit.yml` is currently green on `main`:
+  - **Date**: 2026-09-08
+  - **Status**: done
+  - **Files Changed**: none (verification only)
+  - `.github/actions/setup-java/action.yml` present (3.1 KB) — the composite-action model `setup-go`
+    copies
+  - `grep -c "tag:lang:java"` = **4**, as predicted: `typescript` ×1, `dotnet` ×2 (it has two `run`
+    lines), `flutter` ×1
+  - `grep -c "tag:lang:go"` = **0**, confirming Go is excluded nowhere and therefore selected by
+    every language job
+- [x] [AI] Confirm `rhino-cli-parity-audit.yml` is currently green on `main`:
       `rtk gh run list --workflow rhino-cli-parity-audit.yml --limit 1 --json conclusion,url`.
       Acceptance: `conclusion` is `success`; save the URL to `evidence/phase-0-parity-audit.txt`. A
       red audit before this plan starts is somebody else's in-flight parity work — stop and report.
+  - **Date**: 2026-09-08
+  - **Status**: done — green
+  - **Files Changed**: `plans/in-progress/islamic-be-init/evidence/phase-0-parity-audit.txt` (new)
+  - Latest run `34196758969` on `main`, `conclusion: success`, `2026-09-08T06:54Z`
+  - **Ordering check that makes this meaningful**: `ose-private` DU1 merged at `2026-09-08T05:15Z`,
+    so the 06:54Z audit ran _after_ both halves of the parity pair landed. A green audit dated
+    before the pair converged would have proven nothing about the current state; this one does.
 
 ### Environment Setup
 
 - [ ] [AI] Confirm the work location: run `rtk pwd` and confirm the path ends in
-      `worktrees/islamic-be-init`. If it does not, run `rtk git worktree list --porcelain` from the
-      `ose-public` repository root and enter the worktree whose route is `worktrees/islamic-be-init`.
-- [ ] [AI] Provision `worktrees/islamic-be-init/` from current `origin/main` if absent. Acceptance:
-      `rtk git worktree list --porcelain` shows the route and its branch. Record the route, branch,
-      and ISO-8601 UTC creation time in the Provisioned Worktree Identity block above; no
-      placeholder text remains.
+      `worktrees/ose-islamic`, the route the Worktree amendment above declares. If it does not, run
+      `rtk git worktree list --porcelain` from the `ose-public` repository root and enter that
+      worktree.
+- [ ] [AI] Record the worktree identity from disk rather than provisioning a second one. Run
+      `rtk git worktree list --porcelain` and write the actual route and branch into the Provisioned
+      Worktree Identity block above. Acceptance: the block names `worktrees/ose-islamic/` on
+      `worktree/ose-islamic`, no placeholder text remains, and exactly one `ose-public` worktree
+      belongs to this plan.
 - [ ] [AI] Sync the worktree: `rtk git fetch origin` then `rtk git merge --ff-only origin/main`.
       Acceptance: "Already up to date" or a fast-forward; a conflict here means stop and report,
       never force.
-- [ ] [AI] Remove the superseded `worktrees/ose-islamic/` checkout once PR #488 has merged.
-      Acceptance: `rtk git worktree list` no longer lists it, and the cap of one worktree per
-      repository per plan holds.
+- [ ] [AI] Confirm no second `ose-public` worktree exists for this plan, and that removal is
+      correctly deferred to the terminal cleanup gate rather than performed here. Acceptance:
+      `rtk git worktree list --porcelain` shows exactly one route belonging to this plan
+      (`worktrees/ose-islamic/`); any `worktrees/islamic-be-init/` left over from an earlier attempt
+      is removed now. Note `worktrees/lms-init/` belongs to a different plan and is never touched.
 - [ ] [AI] Install dependencies:
       `rtk ./hippo run --class ephemeral --disk-path . -- npm install`. Acceptance: exit code 0.
 - [ ] [AI] Converge tooling: `rtk npm run doctor -- --fix`. Acceptance: exit code 0. If it cannot
@@ -175,8 +242,8 @@ baseline.
 > All checks below must pass before starting Phase 1. If any check fails, fix it in Phase 0 before
 > proceeding.
 
-- [ ] [AI] `rtk git worktree list --porcelain` — shows `worktrees/islamic-be-init/` and no
-      `ose-islamic` entry
+- [ ] [AI] `rtk git worktree list --porcelain` — shows exactly one `ose-public` worktree for this
+      plan, `worktrees/ose-islamic/` on `worktree/ose-islamic`, and no `worktrees/islamic-be-init/`
 - [ ] [AI] `lms-init` DU1 and DU2 are both recorded as merged, with PR numbers and head SHAs written
       into this file
 - [ ] [AI] `rtk npm run doctor` — exits 0
