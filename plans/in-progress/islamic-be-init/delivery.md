@@ -102,6 +102,13 @@ baseline.
 
 ### Upstream Verification — stop-and-report, never substitute
 
+> **Completed 2026-09-08. Verdict: all prerequisites MET.** `lms-init` DU1 merged as `c6fffc3` and
+> DU2 as #493; both were verified against the merged tree rather than by commit title. The full
+> result, with every file and line number checked, is in
+> [`evidence/phase-0-upstream.md`](./evidence/phase-0-upstream.md). The checkboxes below are
+> retained as the re-verification procedure — re-run them if this plan is resumed after a long gap,
+> since `main` moves.
+
 - [ ] [AI] Confirm `lms-init` DU1 is merged in **both** repositories:
       `rtk gh pr list --repo wahidyankf/ose-public --state merged --search "du1-doctor-config"` and
       the same for `wahidyankf/ose-private`. Acceptance: each returns a merged PR; record both
@@ -112,14 +119,16 @@ baseline.
       satisfying the identical-key-set parity rule. Save both outputs to
       `evidence/phase-0-extra-tools.txt`.
 - [ ] [AI] Confirm `lms-init` DU2 is merged and read the shape it left behind:
-      `rtk sed -n '15,30p;370,400p' scripts/behaviour-coverage.mjs`. Acceptance: `BINDING_FILE`
-      includes `java` and `extractBindings` dispatches more than two languages. Record the actual
-      dispatch shape in `evidence/phase-0-extractor-shape.txt` — DU1 edits this exact code, and a
-      shape different from `tech-docs.md` §4.2's assumption is a stop-and-report, not a
-      work-around.
+      `rtk sed -n '18,22p;400,412p' scripts/behaviour-coverage.mjs`. Acceptance: `BINDING_FILE`
+      includes `java` and `extractBindings` dispatches more than two languages. **Verified:** an
+      `if`-chain at `:405`–`:410`, with the shared `featureReferences(source, literalPattern)`
+      helper at `:302` available to reuse. DU1 adds a `.go` arm to that chain; a shape different
+      from `tech-docs.md` §4.2's assumption is a stop-and-report, not a work-around.
 - [ ] [AI] Confirm the CI pattern DU1 copies exists: `rtk ls .github/actions/setup-java/action.yml`
       and `rtk grep -c "tag:lang:java" .github/workflows/pr-quality-gate.yml`. Acceptance: the
-      action exists and the grep reports at least 3 — one per exclude list.
+      action exists and the grep reports 4 — `typescript` ×1, `dotnet` ×2, `flutter` ×1.
+      **Verified.** Note what this count does _not_ include: the `java` job's own exclude list names
+      no `java`, and names no `go` either — which is why Go leaks into four jobs, not three.
 - [ ] [AI] Confirm `rhino-cli-parity-audit.yml` is currently green on `main`:
       `rtk gh run list --workflow rhino-cli-parity-audit.yml --limit 1 --json conclusion,url`.
       Acceptance: `conclusion` is `success`; save the URL to `evidence/phase-0-parity-audit.txt`. A
@@ -207,8 +216,9 @@ Delivery boundary. Lands every gate a Go project needs, before any Go project ex
 
 - [ ] [AI] Create `.github/actions/setup-go/action.yml` reading `go-version-file: apps/islamic-be/go.mod`, with module and build caching and a pinned `golangci-lint` install — acceptance: the action file parses and pins the versions named in `tech-docs.md` §5
 - [ ] [AI] Edit `.github/workflows/pr-quality-gate.yml`: add `has-go` to the `detect` job outputs and a `lang:go)` case to its tag switch — acceptance: the `detect` job initialises and sets `has-go` alongside `has-ts`, `has-dotnet-projects`, and `has-dart`
-- [ ] [AI] Add a `go` job gated on `has-go == 'true'` running `npx nx affected -t typecheck lint test:quick compat:min-version --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:rust,tag:lang:dart' --parallel=1` — acceptance: the job exists and provisions `setup-node` plus `setup-go`
-- [ ] [AI] Add `tag:lang:go` to the `--exclude` list of **all three** language jobs — `typescript`, `dotnet`, and `flutter`. Each selects by excluding known tags, so omitting any one leaves Go running on a toolchain-less runner. Acceptance: `rtk grep -c "tag:lang:go" .github/workflows/pr-quality-gate.yml` reports at least 4 — three exclusions plus the new job's own exclude list
+- [ ] [AI] Add a `go` job gated on `has-go == 'true'` running `npx nx affected -t typecheck lint test:quick compat:min-version --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:rust,tag:lang:dart,tag:lang:java' --parallel=1` — acceptance: the job exists, provisions `setup-node` plus `setup-go`, and mirrors the `java` job's structure at `:365`–`:377`
+- [ ] [AI] Add `tag:lang:go` to the `--exclude` list of **all four** existing language jobs — `typescript` (`:306`), `dotnet` (both `:335` and `:338`), `flutter` (`:362`), and `java` (`:377`). Each selects by excluding known tags, so omitting any one leaves Go running on a toolchain-less runner. Acceptance: `rtk grep -c "tag:lang:go" .github/workflows/pr-quality-gate.yml` reports exactly 5 — one per exclusion, counting `dotnet` twice. Compare with `rtk grep -c "tag:lang:java"`, which reports 4 for the same reason
+- [ ] [AI] Give the new `go` job an exclude list naming every other language: `tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:rust,tag:lang:dart,tag:lang:java`, modelled on the `java` job at `:377`. Acceptance: the `go` job's own list does **not** contain `tag:lang:go`
 - [ ] [AI] Add the `go` job to the `quality-gate` aggregation job's `needs` list — acceptance: `needs:` names `go`, so the aggregate cannot report success while the Go job failed
 - [ ] [AI] Run `rtk actionlint` — acceptance: exit code 0
 
@@ -236,7 +246,7 @@ Delivery boundary. Lands every gate a Go project needs, before any Go project ex
 - [ ] [AI] `npm run test:validators` — exits zero with the new Go extractor cases present
 - [ ] [AI] `npm exec nx -- run rhino-cli:repo-config:validation` — exits zero
 - [ ] [AI] `npm exec nx -- run-many -t test:quick --projects=ose-be,ose-be-e2e` — exits zero, proving no regression to existing lanes
-- [ ] [AI] Confirm the merged `pr-quality-gate.yml` excludes `tag:lang:go` in the `typescript`, `dotnet`, **and** `flutter` jobs — acceptance: `rtk grep -c 'tag:lang:go' .github/workflows/pr-quality-gate.yml` reports at least 4
+- [ ] [AI] Confirm the merged `pr-quality-gate.yml` excludes `tag:lang:go` in the `typescript`, `dotnet`, `flutter`, **and** `java` jobs — acceptance: `rtk grep -c 'tag:lang:go' .github/workflows/pr-quality-gate.yml` reports 5
 - [ ] [AI] `rtk npm run doctor` — reports a `go` row with a real version
 - [ ] [AI] `rtk git log -1 --stat -- apps/rhino-cli/` — shows this delivery unit touched no `rhino-cli` file
 
@@ -313,7 +323,7 @@ Delivery boundary. Requires DU1 and DU2 merged.
 - [ ] [AI] `npm exec nx -- run islamic-be:test:quick` — exits zero, including the 99% coverage floor and both static coverage validators
 - [ ] [AI] `npm exec nx -- run islamic-be:lint` — `golangci-lint` reports no findings
 - [ ] [AI] `npm exec nx -- run islamic-be:build` — produces `apps/islamic-be/dist/islamic-be`
-- [ ] [AI] Confirm the merged PR's CI run shows the `go` job green **and** the `typescript`, `dotnet`, and `flutter` jobs not selecting any Go target — acceptance: the `go` job log lists `islamic-be` and none of the other three does; save to `evidence/du3-ci-routing.txt`
+- [ ] [AI] Confirm the merged PR's CI run shows the `go` job green **and** the `typescript`, `dotnet`, `flutter`, and `java` jobs not selecting any Go target — acceptance: the `go` job log lists `islamic-be` and none of the other four does; save to `evidence/du3-ci-routing.txt`
 - [ ] [AI] `curl -s localhost:8402/api/v1/health` against a locally running instance — returns 200 with `{"status":"healthy"}`, captured to `evidence/phase-3-health.txt`
 
 > **Pause Safety**: `islamic-be` builds, tests, lints, and serves its health endpoint; its Gherkin is

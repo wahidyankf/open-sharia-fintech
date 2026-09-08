@@ -40,6 +40,26 @@ its terminal disposition.
   commit corrected it.
 - **Generalizes because**: this is a fail-open default in a merge-blocking gate. Any future language
   addition inherits the same defect unless the selection is inverted to an allowlist.
+- **Disposition**: _pending Phase 7_ — **route to a durable home; this one is now proven, not
+  predicted.** See the confirmation entry below.
+
+### Pre-execution: the fail-open prediction was confirmed within a day
+
+- **Observed**: the entry above predicted that "any future language addition inherits the same
+  defect unless the selection is inverted to an allowlist." `lms-init` DU2 then merged as #493 and
+  did exactly that. It added `tag:lang:java` to the three existing jobs — closing the Java leak —
+  and added a new `java` job that also selects by exclusion, naming `ts,fsharp,csharp,rust,dart`
+  and no `go` (`pr-quality-gate.yml:377`). The Go leak went from three jobs to four as a direct
+  consequence of fixing the Java leak.
+- **Generalizes because**: the exclusion strategy has a cost function nobody is paying attention
+  to. Each language added costs every _future_ language one more exclusion entry, so the work grows
+  quadratically while looking linear at each step. Five jobs now need editing to add language six.
+  The fix — invert to `--projects=tag:lang:<x>` per job — is small, but it is invisible from inside
+  any single language plan, because each plan only ever sees "add my tag to N lists" and N looks
+  manageable.
+- **Why this plan does not fix it**: changing the selection strategy for five jobs is a
+  quality-surface refactor, not a Go lane. Doing it here would couple an unrelated structural change
+  to a new-app delivery. Recorded for Phase 7 routing instead.
 - **Disposition**: _pending Phase 7_
 
 ### Pre-execution: two same-shaped plans collide on one generated parity file
@@ -64,4 +84,15 @@ its terminal disposition.
   stronger review instrument than re-reading one's own plan, because it independently re-derives the
   same repository facts. Where two plans exist for one problem shape, cross-reading them should be a
   named step rather than an accident.
+- **Disposition**: _pending Phase 7_
+
+### Pre-execution: a dependency verified by commit title is not verified
+
+- **Observed**: `lms-init` DU1 and DU2 landed as `c6fffc3` and #493, whose titles read exactly like
+  the prerequisites. Reading the tree instead of the titles confirmed both — and found that DU2 had
+  also widened this plan's CI defect from three jobs to four, which no commit title mentioned.
+- **Generalizes because**: an upstream dependency check that greps merge history proves the work
+  was _named_, not that it left the shape the downstream plan assumed. Phase 0 checks should assert
+  against files and line numbers, which is why this plan's Upstream Verification lists
+  `RepoConfig.fs:284` and `behaviour-coverage.mjs:302` rather than PR numbers alone.
 - **Disposition**: _pending Phase 7_

@@ -89,20 +89,30 @@ on `codegen`, matching the Codegen Dependency Chain convention's default.
 ### 1.4 CI Job Routing — the Defect This Plan Fixes
 
 `pr-quality-gate.yml`'s `detect` job classifies affected projects by `lang:` tag
-[Repo-grounded — `.github/workflows/pr-quality-gate.yml:95`]. Today a `lang:go` project matches no
-`case` arm, so no `has-go` output is ever set. Worse, the three language jobs select by _excluding_
-known `lang:` tags rather than by including their own, so an unrecognised tag is swept into **all
-three**:
+[Repo-grounded — `.github/workflows/pr-quality-gate.yml:102`]. Today a `lang:go` project matches no
+`case` arm, so no `has-go` output is ever set. Worse, every language job selects by _excluding_
+known `lang:` tags rather than by including its own, so an unrecognised tag is swept into **all
+four**:
 
-| Job                   | `--exclude` list today    | Excludes `go`? |
-| --------------------- | ------------------------- | -------------- |
-| `typescript` (`:302`) | `fsharp,csharp,rust,dart` | no             |
-| `dotnet` (`:334`)     | `ts,dart`                 | no             |
-| `flutter` (`:358`)    | `ts,fsharp,csharp,rust`   | no             |
+| Job                       | `--exclude` list today         | Excludes `go`? |
+| ------------------------- | ------------------------------ | -------------- |
+| `typescript` (`:306`)     | `fsharp,csharp,rust,dart,java` | no             |
+| `dotnet` (`:335`, `:338`) | `ts,dart,java`                 | no             |
+| `flutter` (`:362`)        | `ts,fsharp,csharp,rust,java`   | no             |
+| `java` (`:377`)           | `ts,fsharp,csharp,rust,dart`   | no             |
 
-[Repo-grounded — all three lines read from the current commit.] The exclusion style is a fail-open
-default: a new language is included everywhere until it is explicitly named. `lms-init` DU2 fixes
-this for Java by adding `tag:lang:java` to all three; this plan does the same for Go.
+[Repo-grounded — all four jobs read from the current commit, after `lms-init` DU2 merged as #493.]
+
+The exclusion style is a fail-open default: a new language is included everywhere until it is
+explicitly named. **`lms-init` DU2 demonstrated the defect rather than fixing it.** Adding Java
+closed the Java leak in three jobs and simultaneously opened a fourth leak for every future
+language, because the new `java` job also selects by exclusion and names no `go`. The defect is
+structural, not per-language: each language added makes the next language's leak one job wider.
+
+This plan adds `tag:lang:go` to all four and inherits the same weakness for language number six.
+Inverting the selection to an allowlist would fix it permanently and is **out of scope here** —
+changing the selection strategy for five existing jobs is not this plan's delivery. It is recorded
+in `learnings.md` for routing at Phase 7.
 
 ```mermaid
 graph LR
@@ -129,7 +139,7 @@ The `typescript` job's `if:` is `has-ts == 'true'` [Repo-grounded — `:291`], a
 `lang:ts`. Any change touching the app pair therefore satisfies that condition, so this is not a
 theoretical leak — it fires on the first PR that adds the app. The `quality-gate` aggregate job's
 `needs` list must also gain `go`, or the aggregate can report success while the Go job failed
-[Repo-grounded — `:373`].
+[Repo-grounded — `:392`, which `lms-init` DU2 has already extended with `java`].
 
 ### 1.5 Delivery Dependency Position
 
@@ -178,6 +188,10 @@ is exactly what `rhino-cli-parity-audit.yml` is built to catch
 **Decision**: `islamic-be-init` declares a hard dependency on `lms-init` DU1 and DU2, both merged,
 before its own DU1 begins.
 
+> **Status: satisfied.** DU1 merged as `c6fffc3` and DU2 as #493. Phase 0's Upstream Verification
+> has been run against the tree and every check passes — see `evidence/phase-0-upstream.md`. The
+> dependency is now historical; it is retained here because it explains the plan's shape.
+
 Both plans are the same shape — teach the monorepo a language, then ship an app on it — and they
 touch an overlapping set of shared files. Measured against the current commit:
 
@@ -214,11 +228,17 @@ touch an overlapping set of shared files. Measured against the current commit:
 3. **The CI pattern is established.** `setup-java` fixes the composite-action shape and the
    `has-<lang>` detect/job/exclude/aggregate quintet; `setup-go` copies it rather than deriving it.
 
-**Accepted cost, stated plainly**: this plan cannot start until `lms-init` executes two delivery
-units. PR #487 merged that plan's **authoring**; it did not execute it. If `lms-init` stalls, this plan
-stalls with it. The escape hatch is recorded in §6: the dependency is a **sequencing** choice, not a
-technical one, and every seam this plan inherits could be built here instead at the cost of the
-duplication D-0 was chosen to avoid.
+**Accepted cost, and how it resolved**: this plan could not start until `lms-init` executed two
+delivery units. That cost was real but short — both landed before this plan began, so the wait was
+zero. The escape hatch is no longer needed: the dependency was a **sequencing** choice, not a
+technical one, and it is now discharged.
+
+**What the wait actually bought**, measured against the merged tree: `featureReferences(source,
+literalPattern)` exists to reuse [Repo-grounded — `scripts/behaviour-coverage.mjs:302`],
+`doctorToolInventoryFor (config)` exists [Repo-grounded — `RepoConfig.fs:284`], `setup-java`
+exists as the composite-action model, and `ose-private` already carries `extra-tools: []` so no key
+set changes. Every claim in this decision record now checks out against real code rather than a
+prediction.
 
 **Revisit when**: `lms-init` DU1 or DU2 is abandoned, or a third language lane is proposed before
 either lands.
@@ -374,8 +394,10 @@ in the same delivery unit that surfaces it.
 
 ### D-9 — Register `go` through `doctor.extra-tools`, not a hardcoded inventory entry
 
-**Decision**: After `lms-init` DU1 lands, declare `go` under `repo-config.yml`'s
-`doctor.extra-tools`, using the schema `lms-init` §D-5 defines.
+**Decision**: Declare `go` under `repo-config.yml`'s `doctor.extra-tools`, using the schema
+`lms-init` DU1 shipped. The `DoctorExtraTool` record is `Name`, `Binary`, `VersionArgs`,
+`VersionStream`, `RequiredVersion`, `Install` [Repo-grounded — `RepoConfig.fs:214`–`:224`], and the
+YAML below matches it field for field.
 
 ```yaml
 doctor:
@@ -405,8 +427,10 @@ a default keeps the two entries symmetric and reviewable side by side.
   contributor without Go gets an opaque hook failure rather than a doctor row.
 
 **Consequence**: parity rule 4 holds both repositories' `repo-config.yml` top-level key sets
-identical. `lms-init` DU1 adds the `doctor.extra-tools` key to **both** repositories, so this plan
-adds a list item under an existing key and changes no key set. DU5's gate verifies that explicitly.
+identical. `lms-init` DU1 added the `doctor.extra-tools` key to **both** repositories — `ose-public`
+carries the `java` entry, `ose-private` carries `extra-tools: []`
+[Repo-grounded — `ose-private` `repo-config.yml:272`] — so this plan adds a list item under an
+existing key and changes no key set. DU5's gate verifies that explicitly.
 
 ## 3. File-Impact Analysis
 

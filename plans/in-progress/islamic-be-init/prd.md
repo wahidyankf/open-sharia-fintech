@@ -143,6 +143,7 @@ Feature: Go language lane
       | typescript |
       | dotnet     |
       | flutter    |
+      | java       |
 
   Scenario: The aggregate gate cannot pass while the Go job fails
     Given the "go" job has failed

@@ -5,7 +5,8 @@ companion `islamic-be-e2e`, on top of the Go language lane this monorepo still l
 
 **Status**: In Progress — planning complete; implementation has not started
 **Delivery Mode**: `worktree-to-pr`
-**Depends on**: [`lms-init`](../lms-init/README.md) DU1 and DU2, both merged
+**Depends on**: [`lms-init`](../lms-init/README.md) DU1 and DU2 — **both merged and verified**
+(`c6fffc3` and #493)
 
 ## Context
 
@@ -20,12 +21,12 @@ Go is **half-provisioned** here. `Brewfile` installs it, `repo-config.yml` regis
 and `rhino-cli` already parses Go `cover.out`. All of it is residue from the deleted
 `a-demo-be-golang-gin` demo, and none of it is load-bearing. Four surfaces still mis-handle Go:
 
-| Surface                                 | Verified failure mode                                                                                                                                                                                                                                                |
-| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `.github/workflows/pr-quality-gate.yml` | No `has-go` output and no `lang:go` detect arm; the `typescript` (`:302`), `dotnet` (`:334`), and `flutter` (`:358`) jobs each select by _excluding_ known `lang:` tags, and none excludes `go` — so a Go project runs in all three, on runners with no Go toolchain |
-| `scripts/behaviour-coverage.mjs`        | `BINDING_FILE` matches only `.ts`, `.tsx`, `.fs` (`:20`), and `extractBindings` dispatches `.fs` to F# and everything else to TypeScript (`:374`) — Godog registrations parse as nothing, so every scenario reports `undefined Unit binding`                         |
-| `rhino-cli` `Env.fs:1592`               | The env-contract scanner returns `Error "unsupported lang: %s"` for anything but `typescript` and `fsharp`                                                                                                                                                           |
-| Tag vocabulary                          | `lang:go`, `platform:gin`, and `domain:islamic` are outside the controlled vocabulary, and inventing values is a named anti-pattern                                                                                                                                  |
+| Surface                                 | Verified failure mode                                                                                                                                                                                                                                                                            |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `.github/workflows/pr-quality-gate.yml` | No `has-go` output and no `lang:go` detect arm; the `typescript` (`:306`), `dotnet` (`:335`, `:338`), `flutter` (`:362`), and `java` (`:377`) jobs each select by _excluding_ known `lang:` tags, and none excludes `go` — so a Go project runs in **all four**, on runners with no Go toolchain |
+| `scripts/behaviour-coverage.mjs`        | `BINDING_FILE` matches only `.ts`, `.tsx`, `.fs` (`:20`), and `extractBindings` dispatches `.fs` to F# and everything else to TypeScript (`:374`) — Godog registrations parse as nothing, so every scenario reports `undefined Unit binding`                                                     |
+| `rhino-cli` `Env.fs:1592`               | The env-contract scanner returns `Error "unsupported lang: %s"` for anything but `typescript` and `fsharp`                                                                                                                                                                                       |
+| Tag vocabulary                          | `lang:go`, `platform:gin`, and `domain:islamic` are outside the controlled vocabulary, and inventing values is a named anti-pattern                                                                                                                                                              |
 
 `Env.fs` sits at line 9 of `apps/rhino-cli/parity-manifest.sha256`, which makes the scanner change a
 **two-repository delivery**.
@@ -35,18 +36,22 @@ and `rhino-cli` already parses Go `cover.out`. All of it is residue from the del
 `lms-init` [Repo-grounded — `plans/in-progress/lms-init/`] solves the same class of problem for
 Java, and its first two delivery units generalize the exact seams Go needs:
 
-- **DU1** makes the `rhino-cli` doctor tool inventory config-driven via `doctor.extra-tools`.
-  `go` is absent from the hardcoded inventory today [Repo-grounded — `RepoConfig.fs:172`], and the
-  `gofmt` gates declare no `doctor-tools:`, so `npm run doctor` is silent about a missing Go
-  toolchain. After DU1, registering `go` is a `repo-config.yml` entry with **no `rhino-cli` change
-  and no parity cost** — the saving D-4 of `lms-init` was designed to produce.
-- **DU2** teaches `behaviour-coverage.mjs` a fourth language and factors the shared feature-reference
-  scan into one helper, adds the `has-java` CI detect/job pattern with a `setup-java` composite
-  action, and adds `tag:lang:java` to all three exclude lists. Go then follows an established
-  pattern instead of inventing one, and the two plans stop colliding in the same four files.
+- **DU1** made the `rhino-cli` doctor tool inventory config-driven via `doctor.extra-tools`.
+  `builtinDoctorToolInventory` and `doctorToolInventoryFor (config)` now split the resolution
+  [Repo-grounded — `RepoConfig.fs:174`, `:284`], and `go` remains absent from the built-in list, so
+  registering it is a `repo-config.yml` entry with **no `rhino-cli` change and no parity cost** —
+  the saving D-4 of `lms-init` was designed to produce. `ose-private` already carries
+  `extra-tools: []` [Repo-grounded — `ose-private` `repo-config.yml:272`], so the key set is
+  identical and this plan adds a list item, not a key.
+- **DU2** taught `behaviour-coverage.mjs` a fourth language and factored the shared
+  feature-reference scan into `featureReferences(source, literalPattern)`
+  [Repo-grounded — `scripts/behaviour-coverage.mjs:302`], added the `has-java` CI detect/job pattern
+  with a `setup-java` composite action, and added `tag:lang:java` to the other three jobs. Go
+  follows that established pattern instead of inventing one.
 
-Landing Go first would force `lms-init` to rebase every one of those seams. Landing it second makes
-the Go lane roughly 40% smaller. See [`tech-docs.md`](./tech-docs.md) §2 D-0 for the full record.
+Landing Go first would have forced `lms-init` to rebase every one of those seams. Landing it second
+made the Go lane roughly 40% smaller. Both units are now merged and Phase 0 has verified them
+against the tree, so this plan is unblocked. See [`tech-docs.md`](./tech-docs.md) §2 D-0.
 
 ## Scope
 
