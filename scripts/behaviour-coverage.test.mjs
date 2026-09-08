@@ -1042,3 +1042,120 @@ test("dedicated E2E projects do not need to own the Unit runtime", async () => {
     [],
   );
 });
+
+test("accepts a 99% JaCoCo Unit line coverage hard gate", async () => {
+  const root = await fixture({
+    "project.json": JSON.stringify({
+      name: "example",
+      targets: {
+        "test:unit": {
+          options: {
+            command:
+              "cd apps/example && ./gradlew --console=plain -Pcoverage.line.minimum=99 test jacocoTestCoverageVerification",
+          },
+        },
+        "test:coverage:unit": {
+          options: { command: "node scripts/behaviour-coverage.mjs --adapter unit" },
+        },
+        "test:coverage:behaviour": {
+          options: { command: "node scripts/behaviour-coverage.mjs --adapter behaviour" },
+        },
+        "test:coverage": {
+          options: {
+            commands: ["npx nx run example:test:coverage:unit", "npx nx run example:test:coverage:behaviour"],
+            parallel: false,
+          },
+        },
+        "test:quick": {
+          options: {
+            commands: ["npx nx run example:test:unit", "npx nx run example:test:coverage"],
+            parallel: false,
+          },
+        },
+      },
+    }),
+  });
+
+  assert.deepEqual(await validateProjectTargetContract(path.join(root, "project.json"), "example", { unit: {} }), []);
+});
+
+test("rejects a JaCoCo verification task that declares no line minimum", async () => {
+  const root = await fixture({
+    "project.json": JSON.stringify({
+      name: "example",
+      targets: {
+        "test:unit": {
+          options: { command: "cd apps/example && ./gradlew --console=plain test jacocoTestCoverageVerification" },
+        },
+        "test:coverage:unit": {
+          options: { command: "node scripts/behaviour-coverage.mjs --adapter unit" },
+        },
+        "test:coverage:behaviour": {
+          options: { command: "node scripts/behaviour-coverage.mjs --adapter behaviour" },
+        },
+        "test:coverage": {
+          options: {
+            commands: ["npx nx run example:test:coverage:unit", "npx nx run example:test:coverage:behaviour"],
+            parallel: false,
+          },
+        },
+        "test:quick": {
+          options: {
+            commands: ["npx nx run example:test:unit", "npx nx run example:test:coverage"],
+            parallel: false,
+          },
+        },
+      },
+    }),
+  });
+
+  const errors = await validateProjectTargetContract(path.join(root, "project.json"), "example", { unit: {} });
+  assert.ok(errors.some((error) => error.includes("must enforce at least 99% line coverage")));
+});
+
+test("rejects a coverage target that executes the Gradle test task", async () => {
+  const root = await fixture({
+    "project.json": JSON.stringify({
+      name: "example",
+      targets: {
+        "test:unit": {
+          options: {
+            command:
+              "cd apps/example && ./gradlew --console=plain -Pcoverage.line.minimum=99 test jacocoTestCoverageVerification",
+          },
+        },
+        "test:coverage:unit": {
+          options: {
+            commands: [
+              "cd apps/example && ./gradlew --console=plain test",
+              "node scripts/behaviour-coverage.mjs --adapter unit",
+            ],
+            parallel: false,
+          },
+        },
+        "test:coverage:behaviour": {
+          options: { command: "node scripts/behaviour-coverage.mjs --adapter behaviour" },
+        },
+        "test:coverage": {
+          options: {
+            commands: ["npx nx run example:test:coverage:unit", "npx nx run example:test:coverage:behaviour"],
+            parallel: false,
+          },
+        },
+        "test:quick": {
+          options: {
+            commands: ["npx nx run example:test:unit", "npx nx run example:test:coverage"],
+            parallel: false,
+          },
+        },
+      },
+    }),
+  });
+
+  const errors = await validateProjectTargetContract(path.join(root, "project.json"), "example", { unit: {} });
+  assert.ok(
+    errors.some((error) =>
+      error.includes("test:coverage:unit must be static and must not execute a runtime test target or runner"),
+    ),
+  );
+});
