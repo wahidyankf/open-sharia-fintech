@@ -32,7 +32,7 @@ That rule is not defensive styling. While this suite was being written, a stale 
 from an earlier `nx run islamic-be:dev` held the port, and a deliberately broken health handler
 still reported three green scenarios — the suite never executed the code under test. Reusing
 whatever answers on a port makes a green run meaningless, so this project refuses to do it. See
-[`plans/in-progress/islamic-be-init/evidence/phase-4-e2e.txt`](../../plans/in-progress/islamic-be-init/evidence/phase-4-e2e.txt)
+[`plans/done/2026-09-09__islamic-be-init/evidence/phase-4-e2e.txt`](../../plans/done/2026-09-09__islamic-be-init/evidence/phase-4-e2e.txt)
 for both runs.
 
 Set `API_BASE_URL` to point Playwright's `request` fixture at a different environment. Never commit

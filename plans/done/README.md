@@ -9,6 +9,27 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-09-09: islamic-be-init](./2026-09-09__islamic-be-init/README.md) — Taught the monorepo Go,
+  then shipped `islamic-be` (Go 1.26 + Gin, health endpoint) and its `islamic-be-e2e` Playwright-BDD
+  suite on that lane. Six delivery units, six PRs: `ose-public#496`–`#501` plus the parity
+  counterpart `ose-private#169`. Go was **half-provisioned** at the start — `Brewfile`, the `gofmt`
+  gate pair, and a `TestCoverage.Format.Go` arm had all survived the deletion of the last Go
+  project, while the CI job, the binding extractor, the coverage-threshold arm, the tag vocabulary,
+  and the env scanner had not — so a `lang: go` value read as supported and was in fact routed into
+  four other languages' jobs by their exclusion-based selectors. Five plan defects were found and
+  fixed during execution rather than worked around, the most serious being that the specified
+  two-regex Go env scanner returns **zero** keys against a codebase that injects `os.LookupEnv` as a
+  function value: the natural remedy would have been an `allowlist:` entry silencing a correct drift
+  detector on a variable that is genuinely read. It was fixed in both halves instead — a third regex
+  mirroring the existing F# reader-wrapper form, and a `ResolvePort` signature that keeps the key
+  literal at the composition root. Knowledge Capture routed nine learnings into eight
+  `repo-governance/` files — among them the rule that a declaration belongs to the delivery unit
+  that makes it resolvable, that Nx's flaky-task label does not establish the flake rule's
+  antecedent, that a new test harness needs its own demonstrated red, and that concurrent agents
+  sharing one scratchpad filename can corrupt a merge precondition — and reported seventeen more
+  without plan authorization, with handoff evidence. Eight phases. Delivery Mode: `worktree-to-pr`.
+  Started 2026-09-07.
+
 - [2026-09-04: update-tmp-folders](./2026-09-04__update-tmp-folders/README.md) — Re-founded the
   `local-tmp/` vs `generated-reports/` split on **who the artifact is for** rather than **what shape
   it has**, then propagated that definition across every rule, agent, skill, harness mirror, and the

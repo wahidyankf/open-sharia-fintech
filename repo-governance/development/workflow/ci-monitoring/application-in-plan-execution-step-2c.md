@@ -23,6 +23,21 @@ gh run view <run-id> --json conclusion,status,jobs
 gh run view <run-id> --log-failed
 ```
 
+**Step 1 can legitimately find nothing, and that is not the same as "not finished yet".** GitHub
+builds `refs/pull/<n>/merge` before dispatching a `pull_request` event, so a PR whose
+`mergeStateStatus` is `DIRTY` — conflicted with its base — dispatches **no run at all**: not
+queued, not failed, absent. In `gh run list` that is indistinguishable from a slow queue, and
+waiting is the wrong response, because only the author can clear it by rebasing. So assert that a
+run exists for the head you pinned before waiting on that run's conclusion:
+
+```bash
+gh pr view <n> --json mergeStateStatus,headRefOid
+gh run list --commit <head-sha> --limit 5
+```
+
+An empty second result alongside a `DIRTY` first result means rebase, not wait. A poll keyed on
+run status cannot distinguish the two, because there is no run to carry a status.
+
 **`gh run watch` is prohibited in Step 2c** (and all CI monitoring). Use `ScheduleWakeup` + single `gh run view --json status,conclusion` for all CI jobs regardless of expected duration.
 
 **Forbidden in Step 2c:**

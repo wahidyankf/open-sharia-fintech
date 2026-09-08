@@ -36,7 +36,7 @@ when_to_use: Use when copying an existing project's tag set as a template or che
 | `web-ui`                   | `["type:lib", "lang:ts", "domain:ui"]`                                   |
 | `web-ui-token`             | `["type:lib", "lang:ts", "domain:ui"]`                                   |
 
-† Declared by `plans/in-progress/islamic-be-init` and landing with the project in DU2–DU4.
+† Landed with the projects in `islamic-be-init` DU2–DU4.
 
 ## Example: Complete Tag Declaration
 

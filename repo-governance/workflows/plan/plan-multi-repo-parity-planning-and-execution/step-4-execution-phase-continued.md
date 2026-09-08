@@ -38,6 +38,11 @@ Regenerating the local manifest **does not discharge the propagation obligation*
 error text says so. It unblocks this repo's push and nothing more; the identical change still has to
 reach the other parity repo.
 
+**Byte-identity is a per-file fact.** A path outside the manifest may
+still be byte-identical across both repos — some `apps/rhino-cli/tests/` files are, others beside
+them are not. Diff each file before choosing between carrying it verbatim and re-authoring it;
+re-authoring an identical file starts a divergence no gate catches.
+
 **Per-repo delivery shape**: each repo's phases group into natural cohesive **delivery units**.
 Under `*-to-pr`, one branch → one PR → one unit, opened and merged at its boundary. Under a
 permitted direct mode, one unit reaches one direct integration checkpoint. Never integrate at every
