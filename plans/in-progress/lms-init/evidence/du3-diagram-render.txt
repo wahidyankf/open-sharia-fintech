@@ -1,0 +1,23 @@
+# DU3-127 — rendered architecture.md diagrams, confirmed on GitHub
+
+Viewed at:
+  github.com/wahidyankf/ose-public/blob/lms-init/du3-contract-and-service/specs/apps/ose/lms-be/architecture.md
+
+GitHub renders each Mermaid block in its own viewscreen iframe. Both rendered,
+at 781x254 and 781x358 CSS pixels, and both were screenshotted and inspected.
+
+Diagram 1 — Containers (flowchart LR):
+  Ops probe --GET health--> OSE LMS BE --> Actuator health
+  Feature author --GET hello--> OSE LMS BE
+  Every node label and every edge label is fully drawn. Nothing is clipped at
+  the right edge, which is the failure this plan's max-label-len 20 threshold
+  exists to prevent.
+
+Diagram 2 — Components (flowchart TD):
+  Application --> HealthController --> HealthResponse
+  Application --> HelloController  --> HelloResponse
+  Application --> PortResolver
+  All six node labels render complete; no text overflows its box.
+
+Result: PASS. The binding Rule-3 validation at --max-label-len 20 (DU3-126) and
+the rendered output agree.
