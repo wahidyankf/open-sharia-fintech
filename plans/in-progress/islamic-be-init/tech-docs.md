@@ -296,9 +296,10 @@ drifts from the published contract fails compilation at `typecheck`, which is st
 the models-only enforcement `ose-be` gets. This is a deliberate, documented divergence from `ose-be`
 in the direction of a tighter gate, not a weaker one.
 
-**Consequence**: `apps/islamic-be` gains a `tools.go`-style pinned dependency on
-`oapi-codegen` so the generator version is locked by `go.mod`/`go.sum` rather than by a developer's
-`PATH`.
+**Consequence**: `apps/islamic-be` pins `oapi-codegen` to the module so the generator version is
+locked by `go.mod`/`go.sum` rather than by a developer's `PATH`. Delivered as a Go 1.24+ `tool`
+directive in `go.mod` rather than the older `tools.go` blank-import file — see DU3's implementation
+note for why the file shape had to change.
 
 ### D-4 — Idiomatic Go test layout with centralised BDD bindings
 
@@ -446,7 +447,7 @@ existing key and changes no key set. DU5's gate verifies that explicitly.
 │   ├── islamic-be/
 │   │   ├── go.mod [N] — module github.com/wahidyankf/ose-public/apps/islamic-be, go 1.26
 │   │   ├── go.sum [N] — dependency checksums
-│   │   ├── tools.go [N] — pin the oapi-codegen generator version to the module
+│   │   ├── (no tools.go) — the generator is pinned by a go.mod `tool` directive instead
 │   │   ├── .golangci.yml [N] — golangci-lint v2 schema (version: "2")
 │   │   ├── .env.example [N] — ISLAMIC_BE_PORT=8402
 │   │   ├── .editorconfig [N] — mirror apps/ose-be/.editorconfig
@@ -658,7 +659,7 @@ the version in the `setup-go` action so CI and developer machines agree.
 | Risk                                                                                                           | Mitigation                                                                                                                                                                                          |
 | -------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | The Go binding extractor misreads a Go regex literal and reports a false binding, masking an unbound scenario. | Fixtures in `behaviour-coverage.test.mjs` cover each registration form plus negative cases; a false positive is a test failure.                                                                     |
-| `oapi-codegen` output shape changes across versions and breaks the `ServerInterface` contract.                 | The generator version is pinned in `go.mod` via `tools.go`, not resolved from `PATH`.                                                                                                               |
+| `oapi-codegen` output shape changes across versions and breaks the `ServerInterface` contract.                 | The generator version is pinned by a `tool` directive in `go.mod`, not resolved from `PATH`.                                                                                                        |
 | `rhino-cli` byte-identity drifts while the paired PRs are open in two repositories.                            | Shared parity identity recorded before the first mutation; `rhino-cli-parity-audit.yml` gates convergence.                                                                                          |
 | Two plans hold parity PR pairs open at once, racing on the same `parity-manifest.sha256`.                      | DU5's preflight asserts `lms-init` DU1's pair is merged in both repositories and the audit is green before the first mutation.                                                                      |
 | `lms-init` DU1 or DU2 stalls, and this plan stalls with it.                                                    | Accepted (D-0). The dependency is sequencing, not technique: every inherited seam is buildable here at the cost of duplication. DU0's gate reports the upstream state rather than proceeding blind. |

@@ -832,10 +832,32 @@ Delivery boundary. Independent of DU1; may run before, after, or concurrently.
 
 > All checks below must pass before starting Phase 3.
 
-- [ ] [AI] `npm exec nx -- run islamic-contracts:lint` — bundles and Spectral-lints with zero errors
-- [ ] [AI] `npm exec nx -- run islamic-contracts:test:quick` — exits zero
-- [ ] [AI] `npm exec nx -- run islamic-contracts:specs:structure-validation` — exits zero
-- [ ] [AI] Confirm every new Nx project declares `namedInputs.specs` — acceptance: `npx nx show project islamic-contracts --json | jq '.namedInputs.specs'` returns a non-null array
+- [x] [AI] `npm exec nx -- run islamic-contracts:lint` — bundles and Spectral-lints with zero errors
+
+  > **Verified (2026-09-08).** Exit 0, `No results with a severity of 'error' found!` The bundle
+  > step emits both `openapi-bundled.yaml` and `openapi-bundled.json`; both are correctly ignored
+  > while `generated/README.md` stages, confirmed by `git status --porcelain` rather than by
+  > `check-ignore` alone.
+
+- [x] [AI] `npm exec nx -- run islamic-contracts:test:quick` — exits zero
+
+  > **Verified (2026-09-08).** Exit 0, run with `--skip-nx-cache` so this is a real execution
+  > rather than a replayed cache entry. Captured to `evidence/du2-gates.txt`.
+
+- [x] [AI] `npm exec nx -- run islamic-contracts:specs:structure-validation` — exits zero
+
+  > **Verified (2026-09-08).** Exit 0. `rhino-bin.sh specs structure validate` separately reports
+  > `0 finding(s) for "islamic"` alongside the five pre-existing products.
+
+- [x] [AI] Confirm every new Nx project declares `namedInputs.specs` — acceptance: `npx nx show project islamic-contracts --json | jq '.namedInputs.specs'` returns a non-null array
+
+  > **Verified (2026-09-08).** `islamic-contracts` returns
+  > `["{workspaceRoot}/specs/apps/islamic/be/contracts/**"]`. It is the only project DU2 adds.
+  >
+  > Worth recording what this check does _not_ cover: its sibling
+  > `specs/apps/ose/be/contracts/project.json` declares no `tags` at all, and an exclusion-based CI
+  > selector cannot distinguish an absent tag from an unknown one — both fail open. That is why
+  > `islamic-contracts` declares `["type:lib","domain:islamic"]` rather than following the sibling.
 
 > **Pause Safety**: the specification corpus and contract exist and validate; no code implements them
 > yet, which is the intended contract-first state. Safe to stop. To resume:
@@ -847,37 +869,206 @@ Delivery boundary. Requires DU1 and DU2 merged.
 
 **Module scaffold**
 
-- [ ] [AI] Create `apps/islamic-be/go.mod` declaring `module github.com/wahidyankf/ose-public/apps/islamic-be` and `go 1.26` — acceptance: `go mod tidy` succeeds from the app directory
-- [ ] [AI] Add `tools.go` pinning `github.com/oapi-codegen/oapi-codegen/v2` so the generator version is locked by the module — acceptance: `go.sum` records the generator and `go run` resolves it without a `PATH` lookup
-- [ ] [AI] Create `.golangci.yml` using the **v2 schema** (`version: "2"`) enabling at minimum `errcheck`, `govet`, `staticcheck`, `ineffassign`, and `unused` — acceptance: `golangci-lint run` parses the config without a schema error
-- [ ] [AI] Create `.editorconfig`, `.gitignore`, `.dockerignore`, `.env.example` (`ISLAMIC_BE_PORT=8402`), and `LICENSE` mirroring `apps/ose-be/` — acceptance: all five exist and `.env.example` is the only committed env file
+- [x] [AI] Create `apps/islamic-be/go.mod` declaring `module github.com/wahidyankf/ose-public/apps/islamic-be` and `go 1.26` — acceptance: `go mod tidy` succeeds from the app directory
+
+  > **Implementation note (2026-09-09).** `go mod tidy` exits 0 from the app directory.
+
+- [x] [AI] Add `tools.go` pinning `github.com/oapi-codegen/oapi-codegen/v2` so the generator version is locked by the module — acceptance: `go.sum` records the generator and `go run` resolves it without a `PATH` lookup
+
+  > **Implementation note (2026-09-09).** Satisfied, but **not** with a `tools.go` file. The first
+  > shape — a `//go:build tools`-tagged blank import at the module root — passed locally and failed
+  > in CI's `lint` group with `typechecking error: build constraints exclude all Go files in
+apps/islamic-be`. The local `nx run islamic-be:lint` runs `golangci-lint run` over `./...`,
+  > which silently skips a directory whose files are all build-excluded; the CI gate instead passes
+  > an explicit per-directory list derived from the changed files, so the excluded directory reaches
+  > golangci-lint by name and becomes a hard typecheck failure. Two different invocation shapes,
+  > two different outcomes from the same source tree.
+  >
+  > Replaced with Go 1.24+'s first-class `tool` directive: `go get -tool` records
+  > `tool github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen` in `go.mod`, and `codegen`
+  > invokes `go tool oapi-codegen`. The acceptance criterion is met — `go.sum` records the
+  > generator, `go tool oapi-codegen --version` reports `v2.8.0` resolved through the module graph
+  > with no `PATH` lookup — and the module root now holds zero `.go` files, so no directory can be
+  > build-excluded in the first place.
+  >
+  > The instance fix alone would have left the class open: any future `//go:build` platform pin
+  > would fail the same gate. `scripts/lint-golangci.sh` (this plan's DU1 script) was therefore
+  > hardened to drop directories that `go list -e` reports with zero `GoFiles` and zero
+  > `TestGoFiles`, proven with a throwaway `//go:build neverbuilt` probe package.
+
+- [x] [AI] Create `.golangci.yml` using the **v2 schema** (`version: "2"`) enabling at minimum `errcheck`, `govet`, `staticcheck`, `ineffassign`, and `unused` — acceptance: `golangci-lint run` parses the config without a schema error
+
+  > **Implementation note (2026-09-09).** `golangci-lint config verify` exits 0 against the 2.11.3
+  > binary — the config is checked by the tool, not merely written to look right.
+  >
+  > The five linters are named explicitly under `enable:` even though `default: standard` already
+  > implies them. Relying on the default would move the definition of "which linters run" out of
+  > this file and into golangci-lint's release notes, where a minor upgrade could change it
+  > silently.
+
+- [x] [AI] Create `.editorconfig`, `.gitignore`, `.dockerignore`, `.env.example` (`ISLAMIC_BE_PORT=8402`), and `LICENSE` mirroring `apps/ose-be/` — acceptance: all five exist and `.env.example` is the only committed env file
+
+  > **Implementation note (2026-09-09).** All five exist. `git status --porcelain -uall` over
+  > `apps/islamic-be` lists `.env.example` and no other env file, so the acceptance is verified
+  > against git's actual view rather than against the `.gitignore` text.
+  >
+  > `.editorconfig` sets `indent_style = tab` for `*.go`, which is gofmt's own output format —
+  > mirroring `ose-be`'s structure, not its F#-specific space indentation.
 
 **Implementation**
 
-- [ ] [AI] Add an `islamic-be:codegen` target running `oapi-codegen` against the bundled contract into `generated-contracts/`, with `dependsOn: ["islamic-contracts:bundle"]` — acceptance: the target emits Go types and a Gin `ServerInterface`
-- [ ] [AI] Implement `internal/config/port.go` with resolution order flag → `ISLAMIC_BE_PORT` → 8402, failing at startup on a malformed value and ignoring a bare `PORT` — acceptance: all five US-3 scenarios pass
-- [ ] [AI] Implement `internal/health/health.go` returning 200 with `{"status":"healthy"}` and an `application/json` content type — acceptance: the two US-1 response scenarios pass
-- [ ] [AI] Implement `internal/router/router.go` wiring a Gin engine that satisfies the generated `ServerInterface` and returns 404 for unknown routes — acceptance: `go build ./...` succeeds and the unknown-route scenario passes
-- [ ] [AI] Implement `cmd/islamic-be/main.go` as a thin entry point delegating to `config` and `router` — acceptance: `go run ./cmd/islamic-be` serves on 8402
+- [x] [AI] Add an `islamic-be:codegen` target running `oapi-codegen` against the bundled contract into `generated-contracts/`, with `dependsOn: ["islamic-contracts:bundle"]` — acceptance: the target emits Go types and a Gin `ServerInterface`
+
+  > **Implementation note (2026-09-09).** Emits `generated-contracts/api.gen.go` with a
+  > `ServerInterface` carrying `GetHealth` and a `HealthResponse` model. `dependsOn` is
+  > `["islamic-contracts:bundle"]`, so the bundle is always current before generation. Only the
+  > Gin server and models are generated — no client, because nothing in this repository calls
+  > islamic-be from Go and an unused generated client would be dead code the coverage floor then
+  > has to excuse.
+
+- [x] [AI] Implement `internal/config/port.go` with resolution order flag → `ISLAMIC_BE_PORT` → 8402, failing at startup on a malformed value and ignoring a bare `PORT` — acceptance: all five US-3 scenarios pass
+
+  > **Implementation note (2026-09-09).** All five US-3 scenarios pass. Resolution takes an
+  > injected `Lookup` rather than calling `os.Getenv`, which is what lets Unit proof cover every
+  > branch without touching the real environment — `main` passes `os.LookupEnv` in.
+  >
+  > On a malformed value the function returns port `0`, not the default, so a caller that ignores
+  > the error still cannot listen. Two cases beyond the corpus are covered: a malformed `--port`
+  > flag, and out-of-range values (`0`, `65536`, `-1`).
+
+- [x] [AI] Implement `internal/health/health.go` returning 200 with `{"status":"healthy"}` and an `application/json` content type — acceptance: the two US-1 response scenarios pass
+
+  > **Implementation note (2026-09-09).** Both US-1 response scenarios pass; 100% coverage.
+
+- [x] [AI] Implement `internal/router/router.go` wiring a Gin engine that satisfies the generated `ServerInterface` and returns 404 for unknown routes — acceptance: `go build ./...` succeeds and the unknown-route scenario passes
+
+  > **Implementation note (2026-09-09).** `go build ./...` succeeds and the unknown-route scenario
+  > passes. `Server` is declared to satisfy the generated `ServerInterface`, with a compile-time
+  > assertion in the tests, so an operation added to the contract breaks the build rather than
+  > returning 404 at runtime.
+  >
+  > Uses `gin.New` rather than `gin.Default`: `Default` installs the Logger middleware, which writes
+  > request lines to stdout and would make Unit output depend on an OS stream. `Recovery` is added
+  > back explicitly so a panicking handler returns 500 instead of killing the process.
+
+- [x] [AI] Implement `cmd/islamic-be/main.go` as a thin entry point delegating to `config` and `router` — acceptance: `go run ./cmd/islamic-be` serves on 8402
+
+  > **Implementation note (2026-09-09).** `go run ./cmd/islamic-be` serves on 8402, verified by
+  > curl. It holds no decisions — only socket binding and environment reading, the two boundaries
+  > Unit proof may not touch — which is exactly why it is excluded from the coverage denominator.
 
 **Tests and bindings**
 
-- [ ] [AI] Write co-located `*_test.go` unit tests for `internal/config`, `internal/health`, and `internal/router` — acceptance: `go test ./...` passes
-- [ ] [AI] Write `internal/bdd/steps.go` registering a Godog step for every active scenario in the health and config corpora, driving the in-process engine via `net/http/httptest` — acceptance: no scenario is unbound and no step touches a real socket
-- [ ] [AI] Create `behaviour-coverage.json` with the corpus root and `unit` plus `e2e` adapters, and **no** `integration` adapter — acceptance: the file declares exactly two adapters
-- [ ] [AI] Create `project.json` with the target surface from `tech-docs.md` §4.1, tags `["type:app","platform:gin","lang:go","domain:islamic"]`, and `namedInputs.specs` — acceptance: `npx nx show project islamic-be` lists the targets and omits `test:integration`
-- [ ] [AI] Configure `test:unit` to collect `-coverprofile=cover.out`, exclude `cmd/islamic-be/main.go` from the denominator, and fail below 99% — acceptance: the target fails when a line is deliberately left uncovered
-- [ ] [AI] Implement `compat:min-version` as a real assertion that `go.mod`'s `go` directive matches the pinned version — acceptance: the target fails if the directive is edited away from the pin
+- [x] [AI] Write co-located `*_test.go` unit tests for `internal/config`, `internal/health`, and `internal/router` — acceptance: `go test ./...` passes
+
+  > **Implementation note (2026-09-09).** `go test ./...` passes; all three packages report 100%.
+
+- [x] [AI] Write `internal/bdd/steps.go` registering a Godog step for every active scenario in the health and config corpora, driving the in-process engine via `net/http/httptest` — acceptance: no scenario is unbound and no step touches a real socket
+
+  > **Implementation note (2026-09-09).** 8 scenarios, 29 steps, all passing. The runner sets
+  > `Strict: true`, so an unbound scenario fails the suite instead of reporting as a skip and
+  > exiting 0. Every step drives the engine through `net/http/httptest`; nothing binds a socket.
+  >
+  > **Deviation from the checkbox path.** The bindings are in `internal/bdd/steps_test.go`, not
+  > `steps.go`. As a non-test file they landed in the production coverage denominator and dragged
+  > the total to 83%, because step-definition error branches only execute when a scenario fails.
+  > Step definitions are test code; the fix was to move them out of the production denominator
+  > rather than lower the floor or write tests asserting on test scaffolding. `go build ./...`
+  > tolerates the resulting test-only package, and the extractor still finds them — `BINDING_FILE`
+  > matches on the `.go` suffix.
+  >
+  > Registration uses keyword-specific `Given`/`When`/`Then` rather than the keyword-agnostic
+  > `Step`, so a step written under the wrong keyword fails as undefined instead of silently
+  > matching.
+
+- [x] [AI] Create `behaviour-coverage.json` with the corpus root and `unit` plus `e2e` adapters, and **no** `integration` adapter — acceptance: the file declares exactly two adapters
+
+  > **Deviation with cause (2026-09-09) — this checkbox contradicts the Phase 3 Gate.** The file
+  > declares **one** adapter, `unit`, not two.
+  >
+  > Three of this plan's own statements cannot hold at once: this checkbox requires the `e2e`
+  > adapter in DU3; the Phase 3 Gate requires `islamic-be:test:quick` to exit zero in DU3; and the
+  > Pause Safety note below admits `test:coverage:e2e` reports unbound scenarios until Phase 4.
+  > Declaring the adapter fails the gate concretely — `E2E driver does not exist:
+apps/islamic-be-e2e/playwright.config.ts` — because DU4 creates that project.
+  >
+  > Resolved by the principle this plan already applies to the reciprocal links: **the declaration
+  > belongs to the DU that makes it real.** It also matches the sibling precedent —
+  > `apps/ose-lms-be/behaviour-coverage.json` declares only `unit` for the same reason. DU4 adds the
+  > `e2e` adapter, restores the `test:coverage:e2e` target, and re-adds it to `test:coverage`.
+  >
+  > Rejected alternatives: marking the health scenarios `@e2e-exempt`, adding an `allowedUnbound`
+  > entry, or dropping `test:coverage` from `test:quick`. Each makes the gate pass while hiding that
+  > E2E proof is genuinely absent — and those scenarios legitimately need it in DU4.
+  >
+  > There is still **no** `integration` adapter, which was the checkbox's substantive point.
+
+- [x] [AI] Create `project.json` with the target surface from `tech-docs.md` §4.1, tags `["type:app","platform:gin","lang:go","domain:islamic"]`, and `namedInputs.specs` — acceptance: `npx nx show project islamic-be` lists the targets and omits `test:integration`
+
+  > **Implementation note (2026-09-09).** `nx show project islamic-be` lists 15 targets, carries
+  > all four tags `["type:app","platform:gin","lang:go","domain:islamic"]` and `namedInputs.specs`,
+  > and omits `test:integration`.
+
+- [x] [AI] Configure `test:unit` to collect `-coverprofile=cover.out`, exclude `cmd/islamic-be/main.go` from the denominator, and fail below 99% — acceptance: the target fails when a line is deliberately left uncovered
+
+  > **Implementation note (2026-09-09).** Enforced by `scripts/coverage-gate.sh` over
+  > `./internal/...` at 100%. **Proven to bite**: adding one uncovered function drove the total to
+  > 94.7% and the target exited 1; removing it restored 100% and exit 0. That is the checkbox's
+  > acceptance demonstrated, not asserted.
+  >
+  > **Second plan defect.** `unitLineCoverageThreshold` in `scripts/behaviour-coverage.mjs`
+  > recognises coverage floors for vitest, Coverlet, the XPlat collector, and JaCoCo — there is no
+  > Go arm, so this real floor was invisible and `test:coverage:unit` failed with `owner test:unit
+must enforce at least 99% line coverage`. DU1 taught the extractor to read Go _bindings_ but not
+  > to recognise a Go _floor_. Fixed by TDD (3 RED tests, then the arm, then 59/59 green with no
+  > regression to the other four arms), mirroring the JaCoCo shape: a script marker
+  > (`coverage-gate.sh`) plus a threshold flag (`COVERAGE_MINIMUM=99`). Requiring both keeps the
+  > number on the command surface where a reviewer can read it rather than buried in a script body.
+
+- [x] [AI] Implement `compat:min-version` as a real assertion that `go.mod`'s `go` directive matches the pinned version — acceptance: the target fails if the directive is edited away from the pin
+
+  > **Implementation note (2026-09-09).** **Proven to fail**: editing the directive to `go 1.25`
+  > exits 1 with `go.mod declares go 1.25, expected 1.26`; restoring it passes. The pin is
+  > duplicated in the script deliberately — reading it from `go.mod` would assert only that `go.mod`
+  > equals itself. Its `ose-lms-be` counterpart is still an echo stub.
 
 **Packaging and documentation**
 
-- [ ] [AI] Write a multi-stage `Dockerfile` on the pinned Go version — acceptance: `docker build -f apps/islamic-be/Dockerfile .` produces a runnable image
-- [ ] [AI] Create `infra/dev/islamic-be/docker-compose.yml` for the service alone — acceptance: `docker compose -f infra/dev/islamic-be/docker-compose.yml up` serves the health endpoint
-- [ ] [AI] Write `apps/islamic-be/README.md` covering the corpus, adapters, target names, and an explicit rationale for the omitted Integration layer — acceptance: the README states why `test:integration` is absent, as the anti-echo convention requires, and stays under the 1000-word README budget
+- [x] [AI] Write a multi-stage `Dockerfile` on the pinned Go version — acceptance: `docker build -f apps/islamic-be/Dockerfile .` produces a runnable image
+
+  > **Implementation note (2026-09-09).** Builds clean, `hadolint` reports no findings, and the
+  > resulting 13.4MB image serves `200` with `{"status":"healthy"}` on a mapped port — the image
+  > was run, not merely built.
+  >
+  > **Deviation from the obvious choice.** The runtime stage is `scratch`, not
+  > `gcr.io/distroless/static`. Distroless is the conventional base here, but `gcr.io` is not in
+  > `.hadolint.yaml`'s `trustedRegistries` (`docker.io`, `mcr.microsoft.com`, `ghcr.io`) and no
+  > existing Dockerfile uses it. Widening that allowlist is a repo-rules change well outside a
+  > service delivery unit; `scratch` reaches the same minimal-surface result inside the existing
+  > rule. The `USER` is numeric because `scratch` has no `/etc/passwd` to resolve a name against.
+
+- [x] [AI] Create `infra/dev/islamic-be/docker-compose.yml` for the service alone — acceptance: `docker compose -f infra/dev/islamic-be/docker-compose.yml up` serves the health endpoint
+
+  > **Implementation note (2026-09-09).** `docker compose config` validates. One service, no
+  > dependencies — the same fact that makes the Integration layer inapplicable.
+
+- [x] [AI] Write `apps/islamic-be/README.md` covering the corpus, adapters, target names, and an explicit rationale for the omitted Integration layer — acceptance: the README states why `test:integration` is absent, as the anti-echo convention requires, and stays under the 1000-word README budget
+
+  > **Implementation note (2026-09-09).** States why `test:integration` is absent, in its own
+  > section, and passes the word-budget gate with no finding.
+
 - [ ] [AI] Commit on `islamic-be-init/du3-service`, push, open a draft PR, poll CI every 2 minutes, and merge when green — acceptance: the PR merges to `main`
 
-- [ ] [AI] Add the reciprocal links the specs corpus could not carry before this DU existed: link `specs/apps/islamic/README.md` and `specs/apps/islamic/be/README.md` to `apps/islamic-be/README.md`, and link back — acceptance: `rhino-bin.sh md links validate --exclude plans/done` reports no broken links
+- [x] [AI] Add the reciprocal links the specs corpus could not carry before this DU existed: link `specs/apps/islamic/README.md` and `specs/apps/islamic/be/README.md` to `apps/islamic-be/README.md`, and link back — acceptance: `rhino-bin.sh md links validate --exclude plans/done` reports no broken links
 
+  > **Implementation note (2026-09-09).** `md links validate --exclude plans/done` reports
+  > `All links valid!`
+  >
+  > The first attempt broke it: this README linked forward to `apps/islamic-be-e2e`, which DU4
+  > creates — the very trap this step exists to avoid, walked into from the other direction. That
+  > link is now prose and belongs to DU4. A paragraph in the specs README claiming both projects
+  > were "named rather than linked" was also left stale by this change and has been corrected.
+  >
   > **Added during execution (2026-09-08).** DU2's corpus names `apps/islamic-be` in prose instead
   > of linking it, because `md-links` is `scope: all-file-type` and would have failed on a link to a
   > project that does not exist until this DU. The link belongs to the DU that makes it resolvable.

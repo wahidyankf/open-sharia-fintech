@@ -595,6 +595,14 @@ const COVERLET_LINE_TYPE = /\/p:ThresholdType(?:=|\s+)line\b/iu;
 const COLLECTOR_LINE_THRESHOLD = /\bdotnet-unit-coverage\.mjs\b[^\n]*--line-threshold(?:=|\s+)(\d+(?:\.\d+)?)/iu;
 const JACOCO_VERIFY_TASK = /\bjacocoTestCoverageVerification\b/u;
 const JACOCO_LINE_THRESHOLD = /-Pcoverage\.line\.minimum(?:=|\s+)(\d+(?:\.\d+)?)/iu;
+// Go ships no build-tool-integrated coverage gate the way Gradle ships JaCoCo,
+// so a Go owner enforces its floor through a repo script. Both halves are
+// required for the same reason the JaCoCo arm requires both: the script marker
+// proves a gate actually runs, and the threshold flag keeps the number on the
+// command surface where a reviewer can read it, instead of buried in a script
+// body that this validator cannot see.
+const GO_COVERAGE_GATE = /\bcoverage-gate\.sh\b/u;
+const GO_LINE_THRESHOLD = /\bCOVERAGE_MINIMUM(?:=|\s+)(\d+(?:\.\d+)?)/iu;
 
 function unitLineCoverageThreshold(target) {
   const surface = commandSurface(target);
@@ -606,6 +614,8 @@ function unitLineCoverageThreshold(target) {
   if (collector !== null) return Number(collector[1]);
   const jacoco = JACOCO_LINE_THRESHOLD.exec(surface);
   if (jacoco !== null && JACOCO_VERIFY_TASK.test(surface)) return Number(jacoco[1]);
+  const go = GO_LINE_THRESHOLD.exec(surface);
+  if (go !== null && GO_COVERAGE_GATE.test(surface)) return Number(go[1]);
   return undefined;
 }
 

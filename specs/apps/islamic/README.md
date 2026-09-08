@@ -13,5 +13,4 @@ Application's GRC surface.
 
 ## Related
 
-- `apps/islamic-be` — the implementing project. DU3 creates it and adds the link back from here;
-  a link added now would point at nothing and fail the `md-links` gate.
+- [`apps/islamic-be`](../../../apps/islamic-be/README.md) — the implementing project.
