@@ -52,7 +52,7 @@ authenticated clean current-head `pr-leak-review`, and the applicable surface ga
 - Private declared repository-relative route: `worktrees/islamic-be-init/`
 - Private initial branch: `worktree/islamic-be-init`
 - Created by: the plan-authoring session, through `claude --worktree`
-- Created at: recorded at Phase 0 from `git worktree list --porcelain`
+- Created at: `2026-09-07T21:11:46Z`, recorded at Phase 0 from the worktree metadata directory
 
 > **Worktree-route amendment, recorded rather than silently applied.** This plan was authored to
 > provision a fresh `worktrees/islamic-be-init/` and delete the authoring workspace at Phase 0. That
@@ -199,57 +199,150 @@ baseline.
 
 ### Environment Setup
 
-- [ ] [AI] Confirm the work location: run `rtk pwd` and confirm the path ends in
+- [x] [AI] Confirm the work location: run `rtk pwd` and confirm the path ends in
       `worktrees/ose-islamic`, the route the Worktree amendment above declares. If it does not, run
       `rtk git worktree list --porcelain` from the `ose-public` repository root and enter that
       worktree.
-- [ ] [AI] Record the worktree identity from disk rather than provisioning a second one. Run
+  - **Date**: 2026-09-08
+  - **Status**: done
+  - **Files Changed**: none (verification only)
+  - `pwd` = `/Users/wkf/ose-projects/ose-public/worktrees/ose-islamic`, matching the amended
+    declared route
+- [x] [AI] Record the worktree identity from disk rather than provisioning a second one. Run
       `rtk git worktree list --porcelain` and write the actual route and branch into the Provisioned
       Worktree Identity block above. Acceptance: the block names `worktrees/ose-islamic/` on
       `worktree/ose-islamic`, no placeholder text remains, and exactly one `ose-public` worktree
       belongs to this plan.
-- [ ] [AI] Sync the worktree: `rtk git fetch origin` then `rtk git merge --ff-only origin/main`.
+  - **Date**: 2026-09-08
+  - **Status**: done
+  - **Files Changed**: `plans/in-progress/islamic-be-init/delivery.md` (identity block filled)
+  - `git worktree list --porcelain` reports three routes: the repository root on `main`,
+    `worktrees/lms-init` on `lms-init/du3-contract-and-service`, and `worktrees/ose-islamic` on
+    `worktree/ose-islamic`
+  - Created at `2026-09-07T21:11:46Z`; the identity block now carries it and no placeholder remains
+  - **`worktrees/lms-init/` is another plan's active worktree and is out of scope for every cleanup
+    step in this plan.** It is checked out on a DU3 branch, meaning `lms-init` is mid-execution in a
+    parallel session. Recorded here so the terminal cleanup gate does not mistake it for a stale
+    artifact of this plan.
+- [x] [AI] Sync the worktree: `rtk git fetch origin` then `rtk git merge --ff-only origin/main`.
       Acceptance: "Already up to date" or a fast-forward; a conflict here means stop and report,
       never force.
-- [ ] [AI] Confirm no second `ose-public` worktree exists for this plan, and that removal is
+  - **Date**: 2026-09-08
+  - **Status**: done
+  - **Files Changed**: none
+  - `git rev-list --count HEAD..origin/main` = 0; merge reported "Already up to date"
+  - The branch already carried `origin/main` from the merge commit `046c5dc` made while aligning
+    the plan with `lms-init`
+- [x] [AI] Confirm no second `ose-public` worktree exists for this plan, and that removal is
       correctly deferred to the terminal cleanup gate rather than performed here. Acceptance:
       `rtk git worktree list --porcelain` shows exactly one route belonging to this plan
       (`worktrees/ose-islamic/`); any `worktrees/islamic-be-init/` left over from an earlier attempt
       is removed now. Note `worktrees/lms-init/` belongs to a different plan and is never touched.
-- [ ] [AI] Install dependencies:
+  - **Date**: 2026-09-08
+  - **Status**: done
+  - **Files Changed**: none
+  - Exactly one route belongs to this plan: `worktrees/ose-islamic` on `worktree/ose-islamic`
+  - No `worktrees/islamic-be-init/` exists, so nothing to remove
+  - Remote branches matching `islamic`: only `refs/heads/worktree/ose-islamic`
+  - `worktrees/lms-init` on `lms-init/du3-contract-and-service` left untouched — another plan's
+    active worktree
+- [x] [AI] Install dependencies:
       `rtk ./hippo run --class ephemeral --disk-path . -- npm install`. Acceptance: exit code 0.
-- [ ] [AI] Converge tooling: `rtk npm run doctor -- --fix`. Acceptance: exit code 0. If it cannot
+  - **Date**: 2026-09-08
+  - **Status**: done — exit 0
+  - **Files Changed**: none tracked (`node_modules/` is gitignored)
+  - `npm warn allow-scripts` warnings for `nx`, `protobufjs`, `sharp`, `fsevents`, `unrs-resolver`
+    are the repository's normal blocked-postinstall posture, not failures
+- [x] [AI] Converge tooling: `rtk npm run doctor -- --fix`. Acceptance: exit code 0. If it cannot
       converge, capture the output in `evidence/phase-0-doctor.txt` and report before continuing —
       do not proceed on a divergent toolchain.
-- [ ] [AI] Resolve every version `tech-docs.md` §5 marks "resolve at DU0" and record the resolved
+  - **Date**: 2026-09-08
+  - **Status**: done — exit 0, `16/17 tools OK, 1 warning, 0 missing`
+  - **Files Changed**: `plans/in-progress/islamic-be-init/evidence/phase-0-doctor.txt` (new)
+  - **D-9 validated ahead of DU1**: the report includes a `java v25 (required: ≥25)` row. That row
+    exists only because `lms-init` DU1 declared `java` under `doctor.extra-tools` — it is not in
+    `builtinDoctorToolInventory`. The config-driven path therefore works end to end on a real
+    machine, which is precisely the mechanism D-9 registers `go` through. The dividend is
+    demonstrated, not assumed.
+  - **One warning, not blocking**: `npm v11.16.0 (required: 11.11.0, version mismatch)`. The tool
+    reports it as a warning and still exits 0, so no gate fails. Not "fixed" here: downgrading the
+    developer's npm is an environment mutation outside this plan's scope, and it is pre-existing
+    and unrelated to the Go lane. Recorded rather than silently passed over.
+  - `go` is absent from the report, as expected — DU1 of this plan adds it.
+- [x] [AI] Resolve every version `tech-docs.md` §5 marks "resolve at DU0" and record the resolved
       value there: Gin, Godog, and `govulncheck`. Acceptance: each row carries a concrete version
       and its resolution date, replacing the placeholder.
-- [ ] [AI] Verify the Go toolchain: `rtk go version`, `rtk golangci-lint --version`, and
+  - **Date**: 2026-09-08
+  - **Status**: done — zero placeholders remain in §5
+  - **Files Changed**: `plans/in-progress/islamic-be-init/tech-docs.md`
+  - Resolved with `go list -m -versions` against the live module proxy:
+    - `github.com/gin-gonic/gin` → **v1.12.0**
+    - `github.com/cucumber/godog` → **v0.16.0**
+    - `golang.org/x/vuln/cmd/govulncheck` → **v1.7.0**
+  - **Two corrections to §5 while resolving.** The Godog row was authored expecting v0.15.x; the
+    current release is v0.16.0, so DU3 must check its step-registration API rather than assume the
+    v0.15 shape `tech-docs.md` §4.2 describes. The `govulncheck` row named a bare tool; the
+    versioned Go module is `golang.org/x/vuln`, and the row now names the module path a `go.mod`
+    can actually pin.
+  - Every §5 row is now `[Machine-verified]`; the `[Web-cited]` label no longer appears in the
+    table, so the preamble was rewritten to stop promising a mixture.
+- [x] [AI] Verify the Go toolchain: `rtk go version`, `rtk golangci-lint --version`, and
       `rtk oapi-codegen --version`. Acceptance: all three print versions matching `tech-docs.md` §5;
       save to `evidence/phase-0-toolchain.txt`.
+  - **Date**: 2026-09-08
+  - **Status**: done — all three match §5
+  - **Files Changed**: `plans/in-progress/islamic-be-init/evidence/phase-0-toolchain.txt` (new)
+  - `go version go1.26.1 darwin/arm64` — matches the §5 pin
+  - `golangci-lint has version 2.11.3 built with go1.26.1` — matches, and confirms the **v2 config
+    schema** requirement `tech-docs.md` §5 flags (a 1.x-shaped `.golangci.yml` will not parse)
+  - `oapi-codegen v2.6.0` — matches
 
 ### Baseline
 
-- [ ] [AI] Run the scoped baseline
+- [x] [AI] Run the scoped baseline
       `rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- run-many -t test:quick --projects=ose-be,ose-be-e2e,rhino-cli`.
       Acceptance: all three pass, or every pre-existing failure is resolved before Phase 1 begins.
       Save to `evidence/phase-0-baseline.txt`.
-- [ ] [AI] Run `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- run rhino-cli:env:validation`.
+  - **Date**: 2026-09-08
+  - **Status**: done — exit 0, `Successfully ran target test:quick for 3 projects`
+  - **Files Changed**: `plans/in-progress/islamic-be-init/evidence/phase-0-baseline.txt` (new)
+  - No pre-existing failures to resolve; Iron Rule 3 has nothing to act on here
+  - `rhino-cli` reports `57 features, 497 expanded scenarios, adapters: unit, integration, e2e` —
+    the pre-change behaviour-coverage figure DU5 will be measured against
+- [x] [AI] Run `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- run rhino-cli:env:validation`.
       Acceptance: exits zero, establishing the pre-change env-contract baseline.
+  - **Date**: 2026-09-08
+  - **Status**: done — exit 0
+  - **Files Changed**: none
+  - Output: `env validate: no drift detected across all surfaces; env-injection manifest consistent`
+  - This is the baseline DU6 must still satisfy after registering the `apps/islamic-be` surface with
+    `lang: go`, and DU5 must satisfy after teaching `Env.fs` the `go` dispatch
 
 ### Phase 0 Gate
 
 > All checks below must pass before starting Phase 1. If any check fails, fix it in Phase 0 before
 > proceeding.
 
-- [ ] [AI] `rtk git worktree list --porcelain` — shows exactly one `ose-public` worktree for this
+- [x] [AI] `rtk git worktree list --porcelain` — shows exactly one `ose-public` worktree for this
       plan, `worktrees/ose-islamic/` on `worktree/ose-islamic`, and no `worktrees/islamic-be-init/`
-- [ ] [AI] `lms-init` DU1 and DU2 are both recorded as merged, with PR numbers and head SHAs written
+  - **Date**: 2026-09-08 — **Status**: pass. One matching route:
+    `worktrees/ose-islamic e2e51e684 [worktree/ose-islamic]`. No `islamic-be-init` route exists.
+- [x] [AI] `lms-init` DU1 and DU2 are both recorded as merged, with PR numbers and head SHAs written
       into this file
-- [ ] [AI] `rtk npm run doctor` — exits 0
-- [ ] [AI] `rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- run-many -t test:quick --projects=ose-be,ose-be-e2e,rhino-cli` — exits zero
-- [ ] [AI] `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- run rhino-cli:env:validation` — exits zero
-- [ ] [AI] `rtk go version && rtk golangci-lint --version && rtk oapi-codegen --version` — all three resolve
+  - **Date**: 2026-09-08 — **Status**: pass. Recorded in the Upstream Verification notes above and in
+    `evidence/phase-0-upstream.md`:
+    - DU1 `ose-public` PR #491 → `c6fffc3844d9e5d912d6467967ab6ba433967314`
+    - DU1 `ose-private` PR #167 → `fc0a273fdc8aa9b4eb6d75520b23e83adeede0d5`
+    - DU2 `ose-public` PR #493 → `2e3ff7a8e76b5a5b6c4fceebef196c4e953ced9c`
+- [x] [AI] `rtk npm run doctor` — exits 0
+  - **Date**: 2026-09-08 — **Status**: pass, exit 0. `16/17 tools OK, 1 warning, 0 missing`; the
+    single warning is the pre-existing npm minor-version mismatch, which does not fail the tool.
+- [x] [AI] `rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- run-many -t test:quick --projects=ose-be,ose-be-e2e,rhino-cli` — exits zero
+  - **Date**: 2026-09-08 — **Status**: pass, exit 0, all 3 projects green.
+- [x] [AI] `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- run rhino-cli:env:validation` — exits zero
+  - **Date**: 2026-09-08 — **Status**: pass, exit 0, no drift across all surfaces.
+- [x] [AI] `rtk go version && rtk golangci-lint --version && rtk oapi-codegen --version` — all three resolve
+  - **Date**: 2026-09-08 — **Status**: pass, exit 0. go 1.26.1, golangci-lint 2.11.3, oapi-codegen v2.6.0.
 
 > **Pause Safety**: the repository is unchanged apart from this plan's own files; the upstream
 > `lms-init` state is verified and recorded, a correctly named worktree exists, and the toolchain is

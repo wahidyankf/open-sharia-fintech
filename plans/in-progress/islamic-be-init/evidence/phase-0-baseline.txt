@@ -1,0 +1,799 @@
+
+ NX   Running target test:quick for 3 projects:
+
+- ose-be
+- ose-be-e2e
+- rhino-cli
+
+
+
+> nx run ose-be-e2e:"test:quick"
+
+> npm exec -- nx run ose-be-e2e:typecheck
+
+
+[2m> [22m[2mnx run[22m ose-be-e2e:typecheck
+
+[2m> [22mnpx bddgen && npx tsc --noEmit
+
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mtypecheck[22m for project ose-be-e2e[39m
+
+
+> npm exec -- nx run ose-be-e2e:lint
+
+
+[2m> [22m[2mnx run[22m ose-be-e2e:lint
+
+[2m> [22mnpx oxlint .
+
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mlint[22m for project ose-be-e2e[39m
+
+
+> npm exec -- nx run ose-be-e2e:specs:structure-validation
+
+
+[2m> [22m[2mnx run[22m ose-be-e2e:"specs:structure-validation"
+
+[2m> [22mdotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs structure validate
+
+specs structure validate: 0 finding(s) for "ayokoding"
+specs structure validate: 0 finding(s) for "crane"
+specs structure validate: 0 finding(s) for "organiclever"
+specs structure validate: 0 finding(s) for "ose"
+specs structure validate: 0 finding(s) for "rhino"
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mspecs:structure-validation[22m for project ose-be-e2e[39m
+
+
+> npm exec -- nx run ose-be-e2e:test:coverage
+
+
+[2m> [22m[2mnx run[22m ose-be-e2e:"test:coverage"
+
+[2m> [22mnpm exec -- nx run ose-be-e2e:test:coverage:e2e
+
+
+[2m> [22m[2mnx run[22m ose-be-e2e:"test:coverage:e2e"
+
+[2m> [22mnode scripts/behaviour-coverage.mjs --config apps/ose-be-e2e/behaviour-coverage.json --adapter e2e
+
+ose-be-e2e: 10 features, 15 expanded scenarios, adapters: e2e.
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mtest:coverage:e2e[22m for project ose-be-e2e[39m
+
+
+[2m> [22mnpm exec -- nx run ose-be-e2e:test:coverage:behaviour
+
+
+[2m> [22m[2mnx run[22m ose-be-e2e:"test:coverage:behaviour"
+
+[2m> [22mnode scripts/behaviour-coverage.mjs --config apps/ose-be-e2e/behaviour-coverage.json --adapter behaviour
+
+ose-be-e2e: 10 features, 15 expanded scenarios, adapters: unit, e2e.
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mtest:coverage:behaviour[22m for project ose-be-e2e[39m
+
+
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mtest:coverage[22m for project ose-be-e2e[39m
+
+
+(node:96572) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 14 exit listeners added to [process]. MaxListeners is 13. Use emitter.setMaxListeners() to increase limit
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> nx run ose-be:"test:quick"
+
+> npm exec -- nx run ose-be:typecheck
+
+
+[7m[1m[36m NX [39m[22m[27m  [36mRunning target [1mtypecheck[22m for project ose-be and [1m2[22m tasks it depends on:[39m
+
+[2m[36m[39m[22m
+
+[2m> [22m[2mnx run[22m ose-contracts:bundle
+
+[2m> [22mmkdir -p specs/apps/ose/be/contracts/generated && npx @redocly/cli bundle specs/apps/ose/be/contracts/openapi.yaml -o specs/apps/ose/be/contracts/generated/openapi-bundled.yaml && npx @redocly/cli bundle specs/apps/ose/be/contracts/openapi.yaml -o specs/apps/ose/be/contracts/generated/openapi-bundled.json
+
+
+    [33m╔[33m═══════════════════════════════════════════════════════[33m╗[39m
+    [33m║                                                       ║[39m
+    [33m║[39m  A new version of [36mRedocly CLI[39m ([32m2.51.2[39m) is available.  [33m║[39m
+    [33m║[39m  Update now: `[36mnpm i -g @redocly/cli@latest[39m`.          [33m║[39m
+    [33m║[39m  Changelog: https://redocly.com/docs/cli/changelog/   [33m║[39m
+    [33m║                                                       ║[39m
+    [33m╚[33m═══════════════════════════════════════════════════════[33m╝[39m
+
+[90mbundling specs/apps/ose/be/contracts/openapi.yaml...
+[39m📦 Created a bundle for [34mspecs/apps/ose/be/contracts/openapi.yaml[39m at [34mspecs/apps/ose/be/contracts/generated/openapi-bundled.yaml[39m [32m9ms[39m.
+
+    [33m╔[33m═══════════════════════════════════════════════════════[33m╗[39m
+    [33m║                                                       ║[39m
+    [33m║[39m  A new version of [36mRedocly CLI[39m ([32m2.51.2[39m) is available.  [33m║[39m
+    [33m║[39m  Update now: `[36mnpm i -g @redocly/cli@latest[39m`.          [33m║[39m
+    [33m║[39m  Changelog: https://redocly.com/docs/cli/changelog/   [33m║[39m
+    [33m║                                                       ║[39m
+    [33m╚[33m═══════════════════════════════════════════════════════[33m╝[39m
+
+[90mbundling specs/apps/ose/be/contracts/openapi.yaml...
+[39m📦 Created a bundle for [34mspecs/apps/ose/be/contracts/openapi.yaml[39m at [34mspecs/apps/ose/be/contracts/generated/openapi-bundled.json[39m [32m33ms[39m.
+
+[2m> [22m[2mnx run[22m ose-be:codegen
+
+[2m> [22mnpx openapi-generator-cli generate -i $(pwd)/specs/apps/ose/be/contracts/generated/openapi-bundled.yaml -g fsharp-giraffe-server -o $(pwd)/apps/ose-be/generated-contracts --model-package OseBe.Contracts --global-property=models,modelDocs=false,apiDocs=false
+
+[33mDownload 7.20.0 ...[39m
+[32mDownloaded 7.20.0[39m
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.github.benmanes.caffeine.cache.UnsafeAccess (file:/Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/node_modules/@openapitools/openapi-generator-cli/versions/7.20.0.jar)
+WARNING: Please consider reporting this to the maintainers of class com.github.benmanes.caffeine.cache.UnsafeAccess
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+[main] WARN  o.o.codegen.DefaultCodegen - OpenAPI 3.1 support is still in beta. To report an issue related to 3.1 spec, please kindly open an issue in the Github repo: https://github.com/openAPITools/openapi-generator.
+[main] INFO  o.o.codegen.DefaultGenerator - Generating with dryRun=false
+[main] INFO  o.o.c.ignore.CodegenIgnoreProcessor - Output directory (/Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/generated-contracts) does not exist, or is inaccessible. No file (.openapi-generator-ignore) will be evaluated.
+[main] INFO  o.o.codegen.DefaultGenerator - OpenAPI Generator: fsharp-giraffe-server (server)
+[main] INFO  o.o.codegen.DefaultGenerator - Generator 'fsharp-giraffe-server' is considered beta.
+[main] WARN  o.o.codegen.DefaultCodegen - OpenAPI 3.1 support is still in beta. To report an issue related to 3.1 spec, please kindly open an issue in the Github repo: https://github.com/openAPITools/openapi-generator.
+[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/HealthResponse.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/ErrorResponse.fs
+[main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of APIs.
+[main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of Webhooks.
+[main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of supporting files.
+################################################################################
+# Thanks for using OpenAPI Generator.                                          #
+# Please consider donation to help us maintain this project 🙏                 #
+# https://opencollective.com/openapi_generator/donate                          #
+#                                                                              #
+# This generator's contributed by Nick Fisher (https://github.com/nmfisher)    #
+# Please support his work directly via https://paypal.me/nickfisher1984 🙏     #
+################################################################################
+
+[2m> [22m[2mnx run[22m ose-be:typecheck
+
+[2m> [22mdotnet build apps/ose-be/src/OseBe/OseBe.fsproj
+
+  Determining projects to restore...
+  Restored /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/libs/fsharp-env-loader/fsharp-env-loader.fsproj (in 1.15 sec).
+  Restored /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/OseBe.fsproj (in 1.15 sec).
+  fsharp-env-loader -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/libs/fsharp-env-loader/bin/Debug/net10.0/fsharp-env-loader.dll
+  OseBe -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/bin/Debug/net10.0/OseBe.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:06.46
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mtypecheck[22m for project ose-be and [1m2[22m tasks it depends on[39m
+
+
+> npm exec -- nx run ose-be:lint
+
+
+[7m[1m[36m NX [39m[22m[27m  [36mRunning target [1mlint[22m for project ose-be and [1m3[22m tasks it depends on:[39m
+
+[2m[36m[39m[22m
+
+[2m> [22m[2mnx run[22m ose-contracts:bundle  [2m[existing outputs match the cache, left as is][22m
+
+
+[2m> [22m[2mnx run[22m ose-be:codegen  [2m[existing outputs match the cache, left as is][22m
+
+[2m> [22mnpx openapi-generator-cli generate -i $(pwd)/specs/apps/ose/be/contracts/generated/openapi-bundled.yaml -g fsharp-giraffe-server -o $(pwd)/apps/ose-be/generated-contracts --model-package OseBe.Contracts --global-property=models,modelDocs=false,apiDocs=false
+
+[33mDownload 7.20.0 ...[39m
+[32mDownloaded 7.20.0[39m
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.github.benmanes.caffeine.cache.UnsafeAccess (file:/Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/node_modules/@openapitools/openapi-generator-cli/versions/7.20.0.jar)
+WARNING: Please consider reporting this to the maintainers of class com.github.benmanes.caffeine.cache.UnsafeAccess
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+[main] WARN  o.o.codegen.DefaultCodegen - OpenAPI 3.1 support is still in beta. To report an issue related to 3.1 spec, please kindly open an issue in the Github repo: https://github.com/openAPITools/openapi-generator.
+[main] INFO  o.o.codegen.DefaultGenerator - Generating with dryRun=false
+[main] INFO  o.o.c.ignore.CodegenIgnoreProcessor - Output directory (/Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/generated-contracts) does not exist, or is inaccessible. No file (.openapi-generator-ignore) will be evaluated.
+[main] INFO  o.o.codegen.DefaultGenerator - OpenAPI Generator: fsharp-giraffe-server (server)
+[main] INFO  o.o.codegen.DefaultGenerator - Generator 'fsharp-giraffe-server' is considered beta.
+[main] WARN  o.o.codegen.DefaultCodegen - OpenAPI 3.1 support is still in beta. To report an issue related to 3.1 spec, please kindly open an issue in the Github repo: https://github.com/openAPITools/openapi-generator.
+[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/HealthResponse.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/ErrorResponse.fs
+[main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of APIs.
+[main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of Webhooks.
+[main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of supporting files.
+################################################################################
+# Thanks for using OpenAPI Generator.                                          #
+# Please consider donation to help us maintain this project 🙏                 #
+# https://opencollective.com/openapi_generator/donate                          #
+#                                                                              #
+# This generator's contributed by Nick Fisher (https://github.com/nmfisher)    #
+# Please support his work directly via https://paypal.me/nickfisher1984 🙏     #
+################################################################################
+
+[2m> [22m[2mnx run[22m ose-be:typecheck  [2m[existing outputs match the cache, left as is][22m
+
+[2m> [22mdotnet build apps/ose-be/src/OseBe/OseBe.fsproj
+
+  Determining projects to restore...
+  Restored /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/libs/fsharp-env-loader/fsharp-env-loader.fsproj (in 1.15 sec).
+  Restored /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/OseBe.fsproj (in 1.15 sec).
+  fsharp-env-loader -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/libs/fsharp-env-loader/bin/Debug/net10.0/fsharp-env-loader.dll
+  OseBe -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/bin/Debug/net10.0/OseBe.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:06.46
+
+[2m> [22m[2mnx run[22m ose-be:lint
+
+[2m> [22mdotnet tool restore
+
+Tool 'fantomas' (version '7.0.5') was restored. Available commands: fantomas
+Tool 'dotnet-fsharplint' (version '0.26.10') was restored. Available commands: dotnet-fsharplint
+Tool 'fsharp-analyzers' (version '0.36.0') was restored. Available commands: fsharp-analyzers
+
+Restore was successful.
+[2m> [22mdotnet tool run fantomas --check apps/ose-be/src
+
+[2m> [22mdotnet fsharplint lint apps/ose-be/src/OseBe/OseBe.fsproj --lint-config apps/ose-be/fsharplint.json
+
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/obj/Debug/net10.0/OseBe.AssemblyInfo.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/HealthResponse.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Domain/Readiness.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Infrastructure/AppDbContext.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Infrastructure/Repositories/RepositoryTypes.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Infrastructure/Repositories/EfRepositories.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Infrastructure/OpenRouterClient.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Infrastructure/OpenRouterConnect.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Infrastructure/Database.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Infrastructure/NatsClient.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Infrastructure/NatsConnect.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/Config/Infrastructure/EnvTier.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/Db/Infrastructure/DbMigrations.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/Db/Application/MigrationStatus.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/Db/Api/MigrationStatusApi.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/Health/Domain/HealthDomain.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/Health/Application/HealthService.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/Health/Infrastructure/HealthInfrastructure.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/Health/Api/HealthApi.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/RegulatorySource/Domain/RegulatorySourceDomain.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/RegulatorySource/Application/RegulatorySourceService.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/RegulatorySource/Infrastructure/RegulatorySourceInfrastructure.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/RegulatorySource/Api/RegulatorySourceApi.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/InternalPolicy/Domain/InternalPolicyDomain.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/InternalPolicy/Application/InternalPolicyService.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/InternalPolicy/Infrastructure/InternalPolicyInfrastructure.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/InternalPolicy/Api/InternalPolicyApi.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/GapAnalysis/Domain/GapAnalysisDomain.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/GapAnalysis/Application/GapAnalysisService.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/GapAnalysis/Infrastructure/GapAnalysisInfrastructure.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/GapAnalysis/Api/GapAnalysisApi.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/AiOrchestration/Domain/AiOrchestrationDomain.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/AiOrchestration/Application/AiOrchestrationService.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/AiOrchestration/Infrastructure/AiOrchestrationInfrastructure.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/AiOrchestration/Api/AiOrchestrationApi.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/Messaging/Domain/MessagingDomain.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/Messaging/Application/MessagingStatus.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/Messaging/Infrastructure/JetStreamDemo.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/Messaging/Api/MessagingApi.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/WebApp.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Program.fs ==========
+========== Finished: 0 warnings ==========
+========== Summary: 0 warnings ==========
+[2m> [22mdotnet fsharp-analyzers --project apps/ose-be/src/OseBe/OseBe.fsproj --analyzers-path $(find $(dotnet nuget locals global-packages --list | sed 's/.*: //')g-research.fsharp.analyzers -path '*/analyzers/dotnet/fs' -type d | head -1) --treat-as-error GRA-STRING-001 GRA-STRING-002 GRA-STRING-003 GRA-STRING-004 GRA-UNIONCASE-001 GRA-VIRTUALCALL-001 GRA-JSONOPTS-001 GRA-DISPBEFOREASYNC-001 GRA-IMMUTABLECOLLECTIONEQUALITY-001 GRA-LOGARGFUNCFULLAPP-001 GRA-LOGTEMPLMISSVALS-001 GRA-TYPE-ANNOTATE-001 GRA-INTERPOLATED-001
+
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mlint[22m for project ose-be and [1m3[22m tasks it depends on[39m
+
+[2mNx read the output from the cache instead of running the command for 3 out of 4 tasks.[22m
+
+> npm exec -- nx run ose-be:test:unit
+
+
+[7m[1m[36m NX [39m[22m[27m  [36mRunning target [1mtest:unit[22m for project ose-be and [1m3[22m tasks it depends on:[39m
+
+[2m[36m[39m[22m
+
+[2m> [22m[2mnx run[22m ose-contracts:bundle  [2m[existing outputs match the cache, left as is][22m
+
+
+[2m> [22m[2mnx run[22m ose-be:codegen  [2m[existing outputs match the cache, left as is][22m
+
+[2m> [22mnpx openapi-generator-cli generate -i $(pwd)/specs/apps/ose/be/contracts/generated/openapi-bundled.yaml -g fsharp-giraffe-server -o $(pwd)/apps/ose-be/generated-contracts --model-package OseBe.Contracts --global-property=models,modelDocs=false,apiDocs=false
+
+[33mDownload 7.20.0 ...[39m
+[32mDownloaded 7.20.0[39m
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.github.benmanes.caffeine.cache.UnsafeAccess (file:/Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/node_modules/@openapitools/openapi-generator-cli/versions/7.20.0.jar)
+WARNING: Please consider reporting this to the maintainers of class com.github.benmanes.caffeine.cache.UnsafeAccess
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+[main] WARN  o.o.codegen.DefaultCodegen - OpenAPI 3.1 support is still in beta. To report an issue related to 3.1 spec, please kindly open an issue in the Github repo: https://github.com/openAPITools/openapi-generator.
+[main] INFO  o.o.codegen.DefaultGenerator - Generating with dryRun=false
+[main] INFO  o.o.c.ignore.CodegenIgnoreProcessor - Output directory (/Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/generated-contracts) does not exist, or is inaccessible. No file (.openapi-generator-ignore) will be evaluated.
+[main] INFO  o.o.codegen.DefaultGenerator - OpenAPI Generator: fsharp-giraffe-server (server)
+[main] INFO  o.o.codegen.DefaultGenerator - Generator 'fsharp-giraffe-server' is considered beta.
+[main] WARN  o.o.codegen.DefaultCodegen - OpenAPI 3.1 support is still in beta. To report an issue related to 3.1 spec, please kindly open an issue in the Github repo: https://github.com/openAPITools/openapi-generator.
+[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/HealthResponse.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/ErrorResponse.fs
+[main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of APIs.
+[main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of Webhooks.
+[main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of supporting files.
+################################################################################
+# Thanks for using OpenAPI Generator.                                          #
+# Please consider donation to help us maintain this project 🙏                 #
+# https://opencollective.com/openapi_generator/donate                          #
+#                                                                              #
+# This generator's contributed by Nick Fisher (https://github.com/nmfisher)    #
+# Please support his work directly via https://paypal.me/nickfisher1984 🙏     #
+################################################################################
+
+[2m> [22m[2mnx run[22m ose-be:typecheck  [2m[existing outputs match the cache, left as is][22m
+
+[2m> [22mdotnet build apps/ose-be/src/OseBe/OseBe.fsproj
+
+  Determining projects to restore...
+  Restored /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/libs/fsharp-env-loader/fsharp-env-loader.fsproj (in 1.15 sec).
+  Restored /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/OseBe.fsproj (in 1.15 sec).
+  fsharp-env-loader -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/libs/fsharp-env-loader/bin/Debug/net10.0/fsharp-env-loader.dll
+  OseBe -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/bin/Debug/net10.0/OseBe.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:06.46
+
+[2m> [22m[2mnx run[22m ose-be:"test:unit"
+
+[2m> [22mif grep -rn -E --include='*.fs' 'Skip\s*=' apps/ose-be/tests/unit; then echo 'ERROR: xunit Skip= attribute found in test files above'; exit 1; fi && dotnet test apps/ose-be/tests/unit/OseBe.UnitTests.fsproj /p:CollectCoverage=true /p:Threshold=99 "/p:Include=[OseBe]*" /p:ThresholdType=line "/p:ExcludeByFile=**/OseBe/Program.fs%2C**/Contexts/Db/Infrastructure/DbMigrations.fs%2C**/Contexts/RegulatorySource/Infrastructure/RegulatorySourceInfrastructure.fs%2C**/Contexts/InternalPolicy/Infrastructure/InternalPolicyInfrastructure.fs%2C**/Infrastructure/Repositories/EfRepositories.fs%2C**/Contexts/Messaging/Infrastructure/JetStreamDemo.fs%2C**/Infrastructure/NatsConnect.fs%2C**/Infrastructure/OpenRouterConnect.fs"
+
+  Determining projects to restore...
+  Restored /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/tests/unit/OseBe.UnitTests.fsproj (in 568 ms).
+  2 of 3 projects are up-to-date for restore.
+  fsharp-env-loader -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/libs/fsharp-env-loader/bin/Debug/net10.0/fsharp-env-loader.dll
+  OseBe -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/bin/Debug/net10.0/OseBe.dll
+  OseBe.UnitTests -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/tests/unit/bin/Debug/net10.0/OseBe.UnitTests.dll
+  [coverlet] _mapping file name: 'CoverletSourceRootsMapping_OseBe.UnitTests'
+Test run for /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/tests/unit/bin/Debug/net10.0/OseBe.UnitTests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    44, Skipped:     0, Total:    44, Duration: 2 s - OseBe.UnitTests.dll (net10.0)
+  [coverlet] 
+  Calculating coverage result...
+   Generating report '/Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/tests/unit/coverage.json'
+
++--------+------+--------+--------+
+| Module | Line | Branch | Method |
++--------+------+--------+--------+
+| OseBe  | 100% | 87.5%  | 100%   |
++--------+------+--------+--------+
+
++---------+------+--------+--------+
+|         | Line | Branch | Method |
++---------+------+--------+--------+
+| Total   | 100% | 87.5%  | 100%   |
++---------+------+--------+--------+
+| Average | 100% | 87.5%  | 100%   |
++---------+------+--------+--------+
+
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mtest:unit[22m for project ose-be and [1m3[22m tasks it depends on[39m
+
+[2mNx read the output from the cache instead of running the command for 3 out of 4 tasks.[22m
+
+> npm exec -- nx run ose-be:specs:structure-validation
+
+
+[2m> [22m[2mnx run[22m ose-be:"specs:structure-validation"
+
+[2m> [22mdotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs structure validate
+
+specs structure validate: 0 finding(s) for "ayokoding"
+specs structure validate: 0 finding(s) for "crane"
+specs structure validate: 0 finding(s) for "organiclever"
+specs structure validate: 0 finding(s) for "ose"
+specs structure validate: 0 finding(s) for "rhino"
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mspecs:structure-validation[22m for project ose-be[39m
+
+
+> npm exec -- nx run ose-be:test:coverage
+
+
+[2m> [22m[2mnx run[22m ose-be:"test:coverage"
+
+[2m> [22mnpm exec -- nx run ose-be:test:coverage:unit
+
+
+[2m> [22m[2mnx run[22m ose-be:"test:coverage:unit"
+
+[2m> [22mnode scripts/behaviour-coverage.mjs --config apps/ose-be/behaviour-coverage.json --adapter unit
+
+ose-be: 10 features, 15 expanded scenarios, adapters: unit.
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mtest:coverage:unit[22m for project ose-be[39m
+
+
+[2m> [22mnpm exec -- nx run ose-be:test:coverage:integration
+
+
+[2m> [22m[2mnx run[22m ose-be:"test:coverage:integration"
+
+[2m> [22mnode scripts/behaviour-coverage.mjs --config apps/ose-be/behaviour-coverage.json --adapter integration
+
+ose-be: 10 features, 15 expanded scenarios, adapters: integration.
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mtest:coverage:integration[22m for project ose-be[39m
+
+
+[2m> [22mnpm exec -- nx run ose-be:test:coverage:e2e
+
+
+[2m> [22m[2mnx run[22m ose-be:"test:coverage:e2e"
+
+[2m> [22mnode scripts/behaviour-coverage.mjs --config apps/ose-be/behaviour-coverage.json --adapter e2e
+
+ose-be: 10 features, 15 expanded scenarios, adapters: e2e.
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mtest:coverage:e2e[22m for project ose-be[39m
+
+
+[2m> [22mnpm exec -- nx run ose-be:test:coverage:behaviour
+
+
+[2m> [22m[2mnx run[22m ose-be:"test:coverage:behaviour"
+
+[2m> [22mnode scripts/behaviour-coverage.mjs --config apps/ose-be/behaviour-coverage.json --adapter behaviour
+
+ose-be: 10 features, 15 expanded scenarios, adapters: unit, integration, e2e.
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mtest:coverage:behaviour[22m for project ose-be[39m
+
+
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mtest:coverage[22m for project ose-be[39m
+
+
+(node:96572) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 14 SIGINT listeners added to [process]. MaxListeners is 13. Use emitter.setMaxListeners() to increase limit
+(node:96572) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 14 SIGTERM listeners added to [process]. MaxListeners is 13. Use emitter.setMaxListeners() to increase limit
+(node:96572) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 14 SIGHUP listeners added to [process]. MaxListeners is 13. Use emitter.setMaxListeners() to increase limit
+
+> nx run rhino-cli:"test:quick"
+
+> npm exec -- nx run rhino-cli:typecheck
+
+
+[2m> [22m[2mnx run[22m rhino-cli:typecheck
+
+[2m> [22mdotnet build apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj --no-restore
+
+  RhinoCli.Infrastructure -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Infrastructure/bin/Debug/net10.0/RhinoCli.Infrastructure.dll
+  RhinoCli.Domain -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Domain/bin/Debug/net10.0/RhinoCli.Domain.dll
+  RhinoCli.Application -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/bin/Debug/net10.0/RhinoCli.Application.dll
+  RhinoCli.Cli -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Cli/bin/Debug/net10.0/RhinoCli.Cli.dll
+  RhinoCli.Program -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Program/bin/Debug/net10.0/rhino-cli-fsharp.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.23
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mtypecheck[22m for project rhino-cli[39m
+
+
+> npm exec -- nx run rhino-cli:lint
+
+
+[7m[1m[36m NX [39m[22m[27m  [36mRunning target [1mlint[22m for project rhino-cli and [1m1[22m task it depends on:[39m
+
+[2m[36m[39m[22m
+
+[2m> [22m[2mnx run[22m rhino-cli:typecheck  [2m[existing outputs match the cache, left as is][22m
+
+[2m> [22mdotnet build apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj --no-restore
+
+  RhinoCli.Infrastructure -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Infrastructure/bin/Debug/net10.0/RhinoCli.Infrastructure.dll
+  RhinoCli.Domain -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Domain/bin/Debug/net10.0/RhinoCli.Domain.dll
+  RhinoCli.Application -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/bin/Debug/net10.0/RhinoCli.Application.dll
+  RhinoCli.Cli -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Cli/bin/Debug/net10.0/RhinoCli.Cli.dll
+  RhinoCli.Program -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Program/bin/Debug/net10.0/rhino-cli-fsharp.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.23
+
+[2m> [22m[2mnx run[22m rhino-cli:lint
+
+[2m> [22mdotnet tool restore
+
+Tool 'fantomas' (version '7.0.5') was restored. Available commands: fantomas
+Tool 'dotnet-fsharplint' (version '0.26.10') was restored. Available commands: dotnet-fsharplint
+Tool 'fsharp-analyzers' (version '0.36.0') was restored. Available commands: fsharp-analyzers
+
+Restore was successful.
+[2m> [22mdotnet tool run fantomas --check apps/rhino-cli/src
+
+[2m> [22mfor p in RhinoCli.Domain RhinoCli.Infrastructure RhinoCli.Application RhinoCli.Cli RhinoCli.Program; do dotnet fsharplint lint apps/rhino-cli/src/$p/$p.fsproj --lint-config apps/rhino-cli/src/fsharplint.json || exit 1; done
+
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Domain/obj/Debug/net10.0/RhinoCli.Domain.AssemblyInfo.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Domain/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Domain/src/Types.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Domain/src/Finding.fs ==========
+========== Finished: 0 warnings ==========
+========== Summary: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Infrastructure/obj/Debug/net10.0/RhinoCli.Infrastructure.AssemblyInfo.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Infrastructure/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Infrastructure/src/GitRoot.fs ==========
+========== Finished: 0 warnings ==========
+========== Summary: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/obj/Debug/net10.0/RhinoCli.Application.AssemblyInfo.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/src/Convention.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/src/Parity.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/src/RepoConfig.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/src/Env.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/src/DoctorResource.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/src/Doctor.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/src/TestCoverage.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/src/Md.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/src/Governance.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/src/Git.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/src/HarnessPolicy.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/src/HarnessRuntime.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/src/Specs.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/src/Contracts.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/src/TestBoundary.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/src/RepoGovernance.fs ==========
+========== Finished: 0 warnings ==========
+========== Summary: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Cli/obj/Debug/net10.0/RhinoCli.Cli.AssemblyInfo.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Cli/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Cli/src/RootArgs.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Cli/src/HelpText.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Cli/src/Formatters.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Cli/src/Gate.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Cli/src/Dispatch.fs ==========
+========== Finished: 0 warnings ==========
+========== Summary: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Program/obj/Debug/net10.0/RhinoCli.Program.AssemblyInfo.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Program/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Program/src/Program.fs ==========
+========== Finished: 0 warnings ==========
+========== Summary: 0 warnings ==========
+[2m> [22mANALYZERS_PATH=$(find $(dotnet nuget locals global-packages --list | sed 's/.*: //')g-research.fsharp.analyzers -path '*/analyzers/dotnet/fs' -type d | head -1); for p in RhinoCli.Domain RhinoCli.Infrastructure RhinoCli.Application RhinoCli.Cli RhinoCli.Program; do dotnet fsharp-analyzers --project apps/rhino-cli/src/$p/$p.fsproj --analyzers-path "$ANALYZERS_PATH" --treat-as-error GRA-STRING-001 GRA-STRING-002 GRA-STRING-003 GRA-STRING-004 GRA-UNIONCASE-001 GRA-VIRTUALCALL-001 GRA-JSONOPTS-001 GRA-DISPBEFOREASYNC-001 GRA-IMMUTABLECOLLECTIONEQUALITY-001 GRA-LOGARGFUNCFULLAPP-001 GRA-LOGTEMPLMISSVALS-001 GRA-TYPE-ANNOTATE-001 GRA-INTERPOLATED-001 || exit 1; done
+
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mlint[22m for project rhino-cli and [1m1[22m task it depends on[39m
+
+[2mNx read the output from the cache instead of running the command for 1 out of 2 tasks.[22m
+
+> npm exec -- nx run rhino-cli:test:unit
+
+
+[2m> [22m[2mnx run[22m rhino-cli:"test:unit"
+
+[2m> [22mif grep -rn -E --include='*.fs' 'Skip\s*=\s*"' apps/rhino-cli/tests/unit; then echo 'ERROR: xunit Skip= attribute found in test files above'; exit 1; fi && node scripts/dotnet-unit-coverage.mjs --project apps/rhino-cli/tests/unit/RhinoCli.UnitTests.fsproj --results apps/rhino-cli/tests/unit/coverage --line-threshold 99 --exclude-by-file '**/GitRoot.fs' --exclude-by-file '**/Parity.fs' --exclude-by-file '**/Dispatch.fs' --exclude-by-file '**/HarnessRuntime.fs' --exclude-by-file '**/DoctorResource.fs'
+
+  Determining projects to restore...
+  Restored /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/tests/unit/RhinoCli.UnitTests.fsproj (in 690 ms).
+  4 of 5 projects are up-to-date for restore.
+  RhinoCli.Infrastructure -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Infrastructure/bin/Debug/net10.0/RhinoCli.Infrastructure.dll
+  RhinoCli.Domain -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Domain/bin/Debug/net10.0/RhinoCli.Domain.dll
+  RhinoCli.Application -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/bin/Debug/net10.0/RhinoCli.Application.dll
+  RhinoCli.Cli -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Cli/bin/Debug/net10.0/RhinoCli.Cli.dll
+  RhinoCli.UnitTests -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/tests/unit/bin/Debug/net10.0/RhinoCli.UnitTests.dll
+Test run for /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/tests/unit/bin/Debug/net10.0/RhinoCli.UnitTests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:   756, Skipped:     0, Total:   756, Duration: 3 s - RhinoCli.UnitTests.dll (net10.0)
+
+Attachments:
+  /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/tests/unit/coverage/collector/0b4ed801-a968-421f-8ff8-671477b55aac/coverage.cobertura.xml
+Unit line coverage: 7554/7625 (99.07%; required: 99.00%)
+Coverage report: /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/tests/unit/coverage/coverage.cobertura.xml
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mtest:unit[22m for project rhino-cli[39m
+
+
+> npm exec -- nx run rhino-cli:specs:structure-validation
+
+
+[2m> [22m[2mnx run[22m rhino-cli:"specs:structure-validation"
+
+[2m> [22mdotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs structure validate
+
+specs structure validate: 0 finding(s) for "ayokoding"
+specs structure validate: 0 finding(s) for "crane"
+specs structure validate: 0 finding(s) for "organiclever"
+specs structure validate: 0 finding(s) for "ose"
+specs structure validate: 0 finding(s) for "rhino"
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mspecs:structure-validation[22m for project rhino-cli[39m
+
+
+> npm exec -- nx run rhino-cli:test:coverage
+
+
+[2m> [22m[2mnx run[22m rhino-cli:"test:coverage"
+
+[2m> [22mnpm exec -- nx run rhino-cli:test:coverage:unit
+
+
+[2m> [22m[2mnx run[22m rhino-cli:"test:coverage:unit"
+
+[2m> [22mnode scripts/behaviour-coverage.mjs --config apps/rhino-cli/behaviour-coverage.json --adapter unit
+
+rhino-cli: 57 features, 497 expanded scenarios, adapters: unit.
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mtest:coverage:unit[22m for project rhino-cli[39m
+
+
+[2m> [22mnpm exec -- nx run rhino-cli:test:coverage:integration
+
+
+[2m> [22m[2mnx run[22m rhino-cli:"test:coverage:integration"
+
+[2m> [22mnode scripts/behaviour-coverage.mjs --config apps/rhino-cli/behaviour-coverage.json --adapter integration
+
+rhino-cli: 57 features, 497 expanded scenarios, adapters: integration.
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mtest:coverage:integration[22m for project rhino-cli[39m
+
+
+[2m> [22mnpm exec -- nx run rhino-cli:test:coverage:e2e
+
+
+[2m> [22m[2mnx run[22m rhino-cli:"test:coverage:e2e"
+
+[2m> [22mnode scripts/behaviour-coverage.mjs --config apps/rhino-cli/behaviour-coverage.json --adapter e2e
+
+rhino-cli: 57 features, 497 expanded scenarios, adapters: e2e.
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mtest:coverage:e2e[22m for project rhino-cli[39m
+
+
+[2m> [22mnpm exec -- nx run rhino-cli:test:coverage:behaviour
+
+
+[2m> [22m[2mnx run[22m rhino-cli:"test:coverage:behaviour"
+
+[2m> [22mnode scripts/behaviour-coverage.mjs --config apps/rhino-cli/behaviour-coverage.json --adapter behaviour
+
+rhino-cli: 57 features, 497 expanded scenarios, adapters: unit, integration, e2e.
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mtest:coverage:behaviour[22m for project rhino-cli[39m
+
+
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mtest:coverage[22m for project rhino-cli[39m
+
+
+
+
+
+ NX   Successfully ran target test:quick for 3 projects
+
+

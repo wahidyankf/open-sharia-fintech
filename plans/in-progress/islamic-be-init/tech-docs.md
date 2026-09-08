@@ -631,20 +631,20 @@ repository-wide rule that one exported `PORT` must not retarget every app at onc
 
 ## 5. Dependencies
 
-Every pinned version below is re-resolved in DU0 rather than trusted from this document. Versions
-marked **[Machine-verified]** were read from the development machine while authoring; those marked
-**[Web-cited]** carry their source and access date.
+Every version below is **[Machine-verified]** — read from the development machine, not from a
+changelog. The three pending at authoring time were resolved during Phase 0 with
+`go list -m -versions` against the live module proxy on 2026-09-08.
 
-| Dependency                                | Version         | Provenance                                                                        | Role                             |
-| ----------------------------------------- | --------------- | --------------------------------------------------------------------------------- | -------------------------------- |
-| Go toolchain                              | 1.26.1          | [Machine-verified — `go version`, 2026-09-08]                                     | Language; pinned via `go.mod`    |
-| `github.com/oapi-codegen/oapi-codegen/v2` | 2.6.0           | [Machine-verified — `oapi-codegen --version`, 2026-09-08]                         | Contract-to-Go generation        |
-| `golangci-lint`                           | 2.11.3          | [Machine-verified — `golangci-lint --version`, 2026-09-08]                        | Linting; **v2 config schema**    |
-| `github.com/gin-gonic/gin`                | resolve at DU0  | [Web-cited — `github.com/gin-gonic/gin/releases`, accessed 2026-09-08]            | HTTP framework                   |
-| `github.com/cucumber/godog`               | resolve at DU0  | [Web-cited — `github.com/cucumber/godog/releases`, accessed 2026-09-08]           | Gherkin runner for unit bindings |
-| `govulncheck`                             | resolve at DU0  | [Web-cited — `pkg.go.dev/golang.org/x/vuln/cmd/govulncheck`, accessed 2026-09-08] | `deps:audit`                     |
-| `@redocly/cli`, `@stoplight/spectral-cli` | already present | [Repo-grounded — root `package.json`]                                             | Contract bundling and linting    |
-| `playwright`, `playwright-bdd`            | already present | [Repo-grounded — `apps/ose-be-e2e/package.json`]                                  | E2E suite                        |
+| Dependency                                | Version         | Provenance                                                                | Role                             |
+| ----------------------------------------- | --------------- | ------------------------------------------------------------------------- | -------------------------------- |
+| Go toolchain                              | 1.26.1          | [Machine-verified — `go version`, 2026-09-08]                             | Language; pinned via `go.mod`    |
+| `github.com/oapi-codegen/oapi-codegen/v2` | 2.6.0           | [Machine-verified — `oapi-codegen --version`, 2026-09-08]                 | Contract-to-Go generation        |
+| `golangci-lint`                           | 2.11.3          | [Machine-verified — `golangci-lint --version`, 2026-09-08]                | Linting; **v2 config schema**    |
+| `github.com/gin-gonic/gin`                | v1.12.0         | [Machine-verified — `go list -m -versions`, 2026-09-08]                   | HTTP framework                   |
+| `github.com/cucumber/godog`               | v0.16.0         | [Machine-verified — `go list -m -versions`, 2026-09-08]                   | Gherkin runner for unit bindings |
+| `golang.org/x/vuln/cmd/govulncheck`       | v1.7.0          | [Machine-verified — `go list -m -versions golang.org/x/vuln`, 2026-09-08] | `deps:audit`                     |
+| `@redocly/cli`, `@stoplight/spectral-cli` | already present | [Repo-grounded — root `package.json`]                                     | Contract bundling and linting    |
+| `playwright`, `playwright-bdd`            | already present | [Repo-grounded — `apps/ose-be-e2e/package.json`]                          | E2E suite                        |
 
 `golangci-lint` 2.x uses a different configuration schema from 1.x — `.golangci.yml` must declare
 `version: "2"` and nest linters under `linters:`. A 1.x-shaped config fails to parse. DU1 pins
