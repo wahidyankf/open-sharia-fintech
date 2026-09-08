@@ -1,0 +1,47 @@
+DU2 — proof that format-java and format-verify-java actually fire
+Captured: 2026-09-08T15:06:00+0700
+
+Fixture: an isolated no-origin git repo outside the worktree, holding only a minimal
+repo-config.yml with the two Java gates, a copy of format-java.sh, a package.json whose
+lint-staged block was produced by 'rhino gate emit --surface=pre-commit', and one
+deliberately misformatted src/Steps.java (no indentation, stray space in the parameter list).
+
+Note on the expected string. The plan anticipated 'Running gate format-java' for the
+pre-commit surface. That line does not appear, and its absence is not a failure: a
+pre-commit gate scoped affected-file-type is dispatched by the registry to lint-staged
+rather than executed directly, so the gate shows up as its own command under the matched
+glob. The ci-surface check gate IS executed directly and does print 'Running gate'.
+
+===== gate run --surface=pre-commit (format-java) =====
+Running lint-staged batch
+⚠ Skipping backup because there’s no initial commit yet. This might result in data loss.
+
+[STARTED] Preparing lint-staged...
+[COMPLETED] Preparing lint-staged...
+[STARTED] Running tasks for staged files...
+[STARTED] package.json — 4 files
+[STARTED] *.java — 1 file
+[STARTED] ./format-java.sh
+[COMPLETED] ./format-java.sh
+[COMPLETED] *.java — 1 file
+[COMPLETED] package.json — 4 files
+[COMPLETED] Running tasks for staged files...
+[STARTED] Applying modifications from tasks...
+[COMPLETED] Applying modifications from tasks...
+PRECOMMIT_TERMINAL_EXIT=0
+
+===== gate run --surface=ci --group=formatting-verify (format-verify-java) =====
+Running gate format-verify-java
+Warning: No Gradle build file found for src/Steps.java, skipping
+format-verify-java	PASS
+CI_TERMINAL_EXIT=0
+
+Reading. Pre-commit: '*.java — 1 file' then './format-java.sh' STARTED and COMPLETED —
+the glob matched and the wrapper ran. CI: 'Running gate format-verify-java' then PASS.
+Both wrappers report 'No Gradle build file found ... skipping' because no Gradle project
+exists until DU3; the point proven here is that the gates are wired and fire, not that
+Spotless formatted anything.
+
+Registry change this proof forced: *.java was ABSENT from package.json's generated
+lint-staged block until 'gate emit --surface=pre-commit' was run. Registering the gate in
+repo-config.yml alone would have left format-java silently never firing at pre-commit.

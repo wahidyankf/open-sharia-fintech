@@ -124,6 +124,9 @@
     "*.dart": [
       "dart format"
     ],
+    "*.java": [
+      "scripts/format-java.sh"
+    ],
     "*.sh": [
       "shfmt -w",
       "shellcheck --severity=warning"

@@ -1,0 +1,43 @@
+P1-GATE-071 / P1-GATE-072 — validate:config and doctor on the merged main
+Captured: 2026-09-08T14:55:37+0700
+Public worktree HEAD:  9787582a71b25902fa097ddf5985cfd0e693a38f
+Private worktree HEAD: fc0a273fdc8aa9b4eb6d75520b23e83adeede0d5
+doctor.extra-tools: [] in both repo-config.yml (public line 174, private line 272)
+
+===== pub-validate =====
+Total Checks: 1648
+Passed: 1645
+Warnings: 3
+Failed: 0
+Warnings:
+Status: ⚠ VALIDATION PASSED WITH WARNINGS
+Status: ✓ SUCCESS
+Total Checks: 92
+Passed: 92
+Failed: 0
+Status: ✓ VALIDATION PASSED
+TERMINAL_EXIT=0
+
+===== pub-doctor =====
+⚠ npm        v11.16.0       (required: 11.11.0, version mismatch)
+Summary: 15/16 tools OK, 1 warning, 0 missing
+TERMINAL_EXIT=0
+
+===== priv-validate =====
+Total Checks: 1087
+Passed: 1085
+Warnings: 2
+Failed: 0
+Warnings:
+Status: ⚠ VALIDATION PASSED WITH WARNINGS
+Status: ✓ SUCCESS
+Total Checks: 57
+Passed: 57
+Failed: 0
+Status: ✓ VALIDATION PASSED
+TERMINAL_EXIT=0
+
+===== priv-doctor =====
+Summary: 16/16 tools OK, 0 warning, 0 missing
+TERMINAL_EXIT=0
+

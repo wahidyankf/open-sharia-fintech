@@ -26,6 +26,7 @@ jobs:
       has-ts: ${{ steps.detect.outputs.has-ts }}
       has-dotnet-projects: ${{ steps.detect.outputs.has-dotnet-projects }}
       has-dart: ${{ steps.detect.outputs.has-dart }}
+      has-java: ${{ steps.detect.outputs.has-java }}
       has-markdown: ${{ steps.detect.outputs.has-markdown }}
     steps:
       - uses: actions/checkout@v6
@@ -76,6 +77,7 @@ jobs:
               echo "has-ts=true"
               echo "has-dotnet-projects=true"
               echo "has-dart=true"
+              echo "has-java=true"
               echo "has-markdown=true"
             } >> "$GITHUB_OUTPUT"
             exit 0
@@ -86,6 +88,7 @@ jobs:
             echo "has-ts=false"
             echo "has-dotnet-projects=false"
             echo "has-dart=false"
+            echo "has-java=false"
             echo "has-markdown=false"
           } >> "$GITHUB_OUTPUT"
 
@@ -96,6 +99,7 @@ jobs:
                 lang:ts) echo "has-ts=true" >> "$GITHUB_OUTPUT" ;;
                 lang:fsharp | lang:csharp) echo "has-dotnet-projects=true" >> "$GITHUB_OUTPUT" ;;
                 lang:dart) echo "has-dart=true" >> "$GITHUB_OUTPUT" ;;
+                lang:java) echo "has-java=true" >> "$GITHUB_OUTPUT" ;;
               esac
             done
           done
@@ -299,7 +303,7 @@ jobs:
       # shared-lib change).
       # test:quick owns Unit runtime plus every applicable static test:coverage:*
       # validator. Integration and E2E remain manual/scheduled-only.
-      - run: npx nx affected -t typecheck lint test:quick compat:min-version --exclude='tag:lang:fsharp,tag:lang:csharp,tag:lang:rust,tag:lang:dart' --parallel=2
+      - run: npx nx affected -t typecheck lint test:quick compat:min-version --exclude='tag:lang:fsharp,tag:lang:csharp,tag:lang:rust,tag:lang:dart,tag:lang:java' --parallel=2
 
   dotnet:
     name: .NET quality gate
@@ -328,10 +332,10 @@ jobs:
       # the NuGet package cache above only warms `~/.nuget/packages`, it does not generate
       # each project's `obj/project.assets.json`. Every dotnet-tagged project's `install`
       # target runs `dotnet restore`, so run it explicitly before typecheck.
-      - run: npx nx affected -t install --exclude='tag:lang:ts,tag:lang:dart' --parallel=1
+      - run: npx nx affected -t install --exclude='tag:lang:ts,tag:lang:dart,tag:lang:java' --parallel=1
       # Both affected F# backends invoke OpenAPI Generator during codegen. It initializes a shared
       # downloaded JAR, so serial execution prevents a first-run download race.
-      - run: npx nx affected -t typecheck lint test:quick compat:min-version --exclude='tag:lang:ts,tag:lang:dart' --parallel=1
+      - run: npx nx affected -t typecheck lint test:quick compat:min-version --exclude='tag:lang:ts,tag:lang:dart,tag:lang:java' --parallel=1
 
   flutter:
     name: Flutter quality gate
@@ -355,7 +359,22 @@ jobs:
           echo "$HOME/.pub-cache/bin" >> "$GITHUB_PATH"
       - name: Install the repository Flutter SDK
         run: fvm install
-      - run: npx nx affected -t typecheck lint test:quick --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:rust' --parallel=1
+      - run: npx nx affected -t typecheck lint test:quick --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:rust,tag:lang:java' --parallel=1
+
+  java:
+    name: Java quality gate
+    needs: detect
+    if: needs.detect.outputs.has-java == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/setup-java
+      # Java projects invoke OpenAPI Generator during codegen, which initializes a shared
+      # downloaded JAR; serial execution prevents a first-run download race, matching `dotnet`.
+      - run: npx nx affected -t typecheck lint test:quick compat:min-version --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:rust,tag:lang:dart' --parallel=1
 
   specs-structure:
     name: Specs structure validation (all affected)
@@ -370,7 +389,7 @@ jobs:
 
   quality-gate:
     name: Quality gate
-    needs: [build-rhino, format, enumerate, gate, typescript, dotnet, flutter, specs-structure]
+    needs: [build-rhino, format, enumerate, gate, typescript, dotnet, flutter, java, specs-structure]
     if: always()
     runs-on: ubuntu-latest
     steps:

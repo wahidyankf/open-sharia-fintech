@@ -19,7 +19,8 @@ graph. Everything else belongs in an Nx target (project-scoped) or a dedicated h
 The following checks satisfy both criteria and belong in `lint-staged`:
 
 - **Formatters**: `prettier`, `rustfmt`, `fantomas`, `gofmt`, `ruff format`, `dart format`,
-  `cljfmt`, `csharpier`, and `mix format` (via wrapper for project-root config).
+  `cljfmt`, `csharpier`, and — each via a wrapper, because it is invoked from a project root
+  rather than on bare file paths — `mix format` and Spotless (`*.java`).
 - **File-type linters**: `shellcheck` (`*.sh`), `hadolint` (`Dockerfile`/`*.Dockerfile`),
   `actionlint` (`.github/workflows/*.{yml,yaml}`).
 - **Per-file markdown validators**: `markdownlint-cli2`, `md mermaid validate`,

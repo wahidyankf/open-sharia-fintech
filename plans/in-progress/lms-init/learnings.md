@@ -96,3 +96,44 @@
   related-repositories reference which surfaces are parity-bound and which are deliberately
   independent, so a divergence like this is legible as intentional or accidental rather than
   ambiguous.
+
+## Learning: a controlled vocabulary nobody validates fails open, not closed
+
+- **Context**: DU2 rules-propagation Step 7. The plan expected the `lang:`/`platform:` tag
+  vocabulary to be "enforced by `repo-config validate` plus the tag convention". Checking that
+  claim disproved it: `repo-config validate` reads `repo-config.yml`, which has no tag schema and
+  no `tags` key; no `gates:` entry reads `project.json` tags; `nx.json` declares no tag
+  constraints and there is no ESLint config, so `@nx/enforce-module-boundaries` is not configured
+  to constrain values either; and no F# validator reads project tags.
+- **Observation**: the vocabulary table is enforced by human review and nothing else, and the one
+  machine consequence of an undeclared value is silent in the dangerous direction. The `detect`
+  job's per-tag `case` has an arm per admitted value; an unrecognized `lang:` value matches no arm,
+  so the project gets **no** language quality-gate job. The PR then goes green having run nothing
+  for that project. A typo in a tag reads as "this language is not affected" rather than as an
+  error.
+- **Corroborating evidence that this is already live, not hypothetical**: the table admits `rust`
+  and `dotnet`, which no `project.json` uses, and omits `fsharp` and `giraffe`, which 6 and 2
+  projects respectively do use. The drift survived because nothing measures it.
+- **Why it might generalize**: the pattern is "documented controlled vocabulary + consumer that
+  silently ignores unknown values". Any such pair fails open. Candidate durable fixes to weigh at
+  triage: a `governance-tag-vocabulary` gate reading every `project.json` `tags` array against the
+  four-dimension table; and separately, a `*)` default arm in the `detect` case that emits
+  `::error::` for an unrecognized `lang:` value, so an unknown tag fails loudly at the point it
+  would otherwise be dropped. Reconcile the four stale table entries first, or the gate lands red
+  across 23 existing projects.
+
+## Learning: an Nx-cached target is not evidence that a gate ran
+
+- **Context**: DU2-089. The plan's acceptance was "run `nx run rhino-cli:test:quick`; exit 0",
+  intended to prove the word-budget gate measured a newly written `.claude/` file.
+- **Observation**: the first run exited 0 while reporting "Nx read the output from the cache
+  instead of running the command for 1 out of 1 tasks". The target's declared inputs did not
+  include the file just written, so a green exit code proved only that a previous run had been
+  green. Re-running with `--skipNxCache` produced a real run, also 0.
+- **Why it might generalize**: any acceptance phrased as "run `<nx target>`; it exits 0" is
+  satisfiable by a cache hit whose inputs exclude the change under test. This is the same shape as
+  Trustworthy Measurement Rule 7 — a green signal that does not prove the thing you wanted proven.
+  Candidate durable fixes to weigh at triage: state in the measurement rules that an Nx-cached
+  result is not evidence for a file the target's inputs do not declare, and that a verification run
+  must either disable the cache or assert the absence of a cache-hit line; or fix the affected
+  targets' `inputs` so the relevant files are declared.

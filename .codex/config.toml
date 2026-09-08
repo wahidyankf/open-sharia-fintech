@@ -328,6 +328,10 @@ config_file = "agents/swe-e2e-dev.toml"
 description = "Develops F# applications following functional programming principles, railway-oriented error handling, and platform coding standards. Use when implementing F# code for OSE Platform."
 config_file = "agents/swe-fsharp-dev.toml"
 
+[agents.swe-java-dev]
+description = "Develops Java applications with Spring Boot following platform coding standards, the Cucumber Unit adapter, and enforced coverage. Use when implementing Java code for the OSE Platform LMS backend."
+config_file = "agents/swe-java-dev.toml"
+
 [agents.swe-rust-dev]
 description = "Develops Rust applications following ownership principles, zero-cost abstraction patterns, and platform coding standards. Use when implementing Rust code for OSE Platform."
 config_file = "agents/swe-rust-dev.toml"

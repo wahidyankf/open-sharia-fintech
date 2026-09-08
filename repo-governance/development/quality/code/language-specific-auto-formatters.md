@@ -11,6 +11,7 @@ The following language-specific formatters run automatically as part of the pre-
 | --------- | --------------- | ------------------------ |
 | Rust      | `rustfmt`       | Pre-commit (lint-staged) |
 | F\# / C\# | `dotnet format` | Pre-commit hook step     |
+| Java      | `spotlessApply` | Pre-commit (lint-staged) |
 
 Each formatter uses its language's standard style conventions. No custom configuration is applied
 unless a project-specific config file exists (e.g., `rustfmt.toml`, `.editorconfig`).
