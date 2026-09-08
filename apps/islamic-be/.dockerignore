@@ -1,0 +1,5 @@
+dist/
+cover.out
+.env
+.env.*
+!.env.example

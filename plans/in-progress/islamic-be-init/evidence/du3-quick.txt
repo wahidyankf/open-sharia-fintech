@@ -1,0 +1,99 @@
+
+ NX   Running target test:quick for project islamic-be and 9 tasks it depends on:
+
+
+
+> nx run islamic-be:"specs:structure-validation"
+
+> dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs structure validate
+
+
+> nx run islamic-be:"test:coverage:unit"
+
+> node scripts/behaviour-coverage.mjs --config apps/islamic-be/behaviour-coverage.json --adapter unit
+
+
+> nx run islamic-be:"test:coverage:behaviour"
+
+> node scripts/behaviour-coverage.mjs --config apps/islamic-be/behaviour-coverage.json --adapter behaviour
+
+islamic-be: 2 features, 8 expanded scenarios, adapters: unit.
+islamic-be: 2 features, 8 expanded scenarios, adapters: unit.
+
+> nx run islamic-be:"test:coverage"
+
+> echo 'islamic-be coverage validators complete'
+
+islamic-be coverage validators complete
+specs structure validate: 0 finding(s) for "ayokoding"
+specs structure validate: 0 finding(s) for "crane"
+specs structure validate: 0 finding(s) for "islamic"
+specs structure validate: 0 finding(s) for "organiclever"
+specs structure validate: 0 finding(s) for "ose"
+specs structure validate: 0 finding(s) for "rhino"
+
+> nx run islamic-contracts:bundle
+
+> mkdir -p specs/apps/islamic/be/contracts/generated && npx @redocly/cli bundle specs/apps/islamic/be/contracts/openapi.yaml -o specs/apps/islamic/be/contracts/generated/openapi-bundled.yaml && npx @redocly/cli bundle specs/apps/islamic/be/contracts/openapi.yaml -o specs/apps/islamic/be/contracts/generated/openapi-bundled.json
+
+
+    [33m╔[33m═══════════════════════════════════════════════════════[33m╗[39m
+    [33m║                                                       ║[39m
+    [33m║[39m  A new version of [36mRedocly CLI[39m ([32m2.51.2[39m) is available.  [33m║[39m
+    [33m║[39m  Update now: `[36mnpm i -g @redocly/cli@latest[39m`.          [33m║[39m
+    [33m║[39m  Changelog: https://redocly.com/docs/cli/changelog/   [33m║[39m
+    [33m║                                                       ║[39m
+    [33m╚[33m═══════════════════════════════════════════════════════[33m╝[39m
+
+[90mbundling specs/apps/islamic/be/contracts/openapi.yaml...
+[39m📦 Created a bundle for [34mspecs/apps/islamic/be/contracts/openapi.yaml[39m at [34mspecs/apps/islamic/be/contracts/generated/openapi-bundled.yaml[39m [32m7ms[39m.
+
+    [33m╔[33m═══════════════════════════════════════════════════════[33m╗[39m
+    [33m║                                                       ║[39m
+    [33m║[39m  A new version of [36mRedocly CLI[39m ([32m2.51.2[39m) is available.  [33m║[39m
+    [33m║[39m  Update now: `[36mnpm i -g @redocly/cli@latest[39m`.          [33m║[39m
+    [33m║[39m  Changelog: https://redocly.com/docs/cli/changelog/   [33m║[39m
+    [33m║                                                       ║[39m
+    [33m╚[33m═══════════════════════════════════════════════════════[33m╝[39m
+
+[90mbundling specs/apps/islamic/be/contracts/openapi.yaml...
+[39m📦 Created a bundle for [34mspecs/apps/islamic/be/contracts/openapi.yaml[39m at [34mspecs/apps/islamic/be/contracts/generated/openapi-bundled.json[39m [32m9ms[39m.
+
+> nx run islamic-be:codegen
+
+> go run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen -config generated-contracts/config.yaml ../../specs/apps/islamic/be/contracts/generated/openapi-bundled.yaml
+
+
+> nx run islamic-be:typecheck
+
+> go build ./...
+
+
+> nx run islamic-be:lint
+
+> golangci-lint run
+
+0 issues.
+
+> nx run islamic-be:"test:unit"
+
+> if grep -rn -E --include='*.go' 't.Skip\(|t.Skipf\(' apps/islamic-be; then echo 'ERROR: skipped Go test found in the files above'; exit 1; fi && COVERAGE_MINIMUM=99 apps/islamic-be/scripts/coverage-gate.sh
+
+ok  	github.com/wahidyankf/ose-public/apps/islamic-be/internal/bdd	(cached)	coverage: [no statements]
+ok  	github.com/wahidyankf/ose-public/apps/islamic-be/internal/config	(cached)	coverage: 100.0% of statements
+ok  	github.com/wahidyankf/ose-public/apps/islamic-be/internal/health	(cached)	coverage: 100.0% of statements
+ok  	github.com/wahidyankf/ose-public/apps/islamic-be/internal/router	(cached)	coverage: 100.0% of statements
+coverage-gate: PASS - 100.0% meets the 99% floor
+
+> nx run islamic-be:"test:quick"
+
+> echo 'islamic-be test:quick complete'
+
+islamic-be test:quick complete
+
+
+
+ NX   Successfully ran target test:quick for project islamic-be and 9 tasks it depends on
+
+
+EXIT=0

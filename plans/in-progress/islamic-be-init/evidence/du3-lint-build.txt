@@ -1,0 +1,11 @@
+=== Gate 94: islamic-be:lint ===
+
+ NX   Successfully ran target lint for project islamic-be and 2 tasks it depends on
+
+
+
+=== Gate 95: islamic-be:build ===
+ NX   Successfully ran target build for project islamic-be and 2 tasks it depends on
+
+
+.rwxr-xr-x@ 20M wkf  9 Sep 00:40 ]8;;file://<WORKTREE_ROOT>/apps/islamic-be/dist/islamic-be\islamic-be]8;;\

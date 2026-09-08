@@ -245,3 +245,106 @@ Doctor tool "golangci-lint"` until the linter was declared there too. So `extra-
   there was simply nothing to be wrong against.
 - **Disposition**: _pending Phase 7_ — the divergence is recorded, not resolved. Reconciling the two
   siblings is outside this plan's authorization.
+
+### DU3: a validator can read a language without being able to gate it
+
+- **Observed**: DU1 extended `behaviour-coverage.mjs` to extract Godog bindings from `.go` files,
+  and every DU1 gate passed. DU3 then failed on `owner test:unit must enforce at least 99% line
+coverage` — with a real, demonstrated 100% floor in place. `unitLineCoverageThreshold` recognises
+  vitest, Coverlet, the XPlat collector, and JaCoCo; it had no Go arm.
+- **Generalizes**: adding a language to a validator has **two** independent halves — _reading_ the
+  language's binding syntax, and _recognising_ the language's gate declarations. They live in
+  different functions, and passing the first tells you nothing about the second. DU1's own tests
+  could not have caught this: there was no Go project yet to declare a floor.
+- **Also**: the four existing arms are all toolchain-specific because each language's coverage gate
+  is expressed in its build tool's own flags. Go has no equivalent, so the floor lives in a repo
+  script — which is exactly the case where the threshold could vanish from the command surface.
+  Requiring both a script marker and a `COVERAGE_MINIMUM` flag keeps the number reviewable.
+- **Disposition**: _pending Phase 7_ — resolved in-flight by TDD. Worth proposing that a language
+  admitted to the binding extractor be required to declare a threshold arm at the same time, or the
+  gap only surfaces when the first project of that language tries to ship.
+
+### DU3: the plan required two things that could not both be true
+
+- **Observed**: the plan's DU3 checkbox required `behaviour-coverage.json` to declare `unit` **and**
+  `e2e` adapters; its Phase 3 Gate required `islamic-be:test:quick` to exit zero; and its Pause
+  Safety note stated `test:coverage:e2e` would report unbound scenarios until Phase 4. The middle
+  requirement is unsatisfiable given the other two, because `islamic-be-e2e` does not exist until
+  DU4. The failure was concrete, not theoretical: `E2E driver does not exist`.
+- **Generalizes**: a plan that sequences a producer after a consumer will encode the contradiction
+  in whichever artefact declares the dependency — the adapter map here, a Markdown link earlier in
+  this same plan. Both were fixed by the same rule: **the declaration belongs to the delivery unit
+  that makes it resolvable.** That rule is worth stating once rather than rediscovering per artefact.
+- **What made it dangerous**: three ways to make the gate green were available and all were wrong —
+  an `@e2e-exempt` tag, an `allowedUnbound` entry, or dropping `test:coverage` from `test:quick`.
+  Each silences a validator that is telling the truth. The scenarios really do need E2E proof; it
+  simply arrives in DU4.
+- **Disposition**: _pending Phase 7_ — resolved by deferring the adapter to DU4, matching the
+  `ose-lms-be` precedent, and recording the DU4 obligation as an explicit task.
+
+### DU3: a gate's invocation shape is part of its contract
+
+- **Observed**: `apps/islamic-be/tools.go` carried the conventional `//go:build tools` pin. Local
+  `nx run islamic-be:lint` — `golangci-lint run` over `./...` — reported zero issues. CI's `lint`
+  group failed with `typechecking error: build constraints exclude all Go files in
+apps/islamic-be`. Same source tree, same linter, same version; the gate passes an explicit
+  per-directory list derived from the changed files, and `./...` silently skips a directory whose
+  files are all build-excluded while a named directory becomes a hard typecheck failure.
+- **Generalizes because**: "it passes locally" is only evidence about the shape you ran. A gate that
+  computes its own argument list from a diff is a _different program_ from the whole-tree
+  invocation a developer runs, and the difference is invisible until a file exists that the two
+  shapes disagree about. Every changed-file-driven gate in this repository has this property.
+- **What the fix had to cover**: the instance (drop `tools.go` for Go 1.24+'s `tool` directive, so
+  the module root holds no `.go` files at all) and the class (`scripts/lint-golangci.sh` now drops
+  directories `go list -e` reports with zero `GoFiles` and zero `TestGoFiles`). Fixing only the
+  instance would have re-armed the trap for the first `//go:build linux` file anyone adds.
+- **Also**: the class fix was proven by planting a `//go:build neverbuilt` probe package and
+  watching the wrapper report `0 issues.` at exit 0, then removing it. A guard asserted but never
+  fired against is not a guard.
+- **Disposition**: _pending Phase 7_ — both halves resolved in-flight. Worth proposing that any new
+  changed-file-driven gate be exercised once against a deliberately awkward input before it lands.
+
+### DU3: a gate that runs on a clean checkout cannot depend on a gitignored artefact
+
+- **Observed**: `internal/router/router.go` imports the module's own generated contract types.
+  `nx run islamic-be:lint` passes, because the target declares `dependsOn: ["codegen"]`. CI's
+  `lint` gate group fails with `could not import .../generated-contracts`, because that job invokes
+  the gate binary directly — no Nx graph, no `dependsOn`, and `generated-contracts/` is gitignored
+  by repository-wide convention.
+- **Generalizes because**: the repository has two ways to run the same predicate — through the Nx
+  target graph, and through the flat gate registry — and only one of them materializes derived
+  inputs. Any gate whose tool typechecks (golangci-lint, `tsc`, a compiler-backed linter) inherits
+  this the moment its language's project generates code. The pre-commit surface hides it
+  permanently: a developer's working tree already holds the generated output, so the gate can be
+  red on every clean checkout and green on every machine that has ever built the project.
+- **What made the fix non-obvious**: three tempting shortcuts were all wrong. Committing the
+  generated file breaks the repository-wide `generated-contracts/` convention. Dropping the gate's
+  `ci` surface deletes coverage of Go files no Nx project owns. Narrowing its glob to skip the
+  module is a silent exemption. The honest fix was to provision the job properly — give the `lint`
+  group the `setup-go` composite and one `nx affected -t codegen` scoped to Go projects — which
+  removes no gate and weakens nothing.
+- **Also**: the hand-rolled `go install golangci-lint` step in that job predated `setup-go`, which
+  already pins the same version. Fixing the provisioning gap also deleted the duplicate.
+- **Disposition**: _pending Phase 7_ — resolved in-flight. Worth proposing that a gate declaring a
+  `ci` surface be required to state whether its inputs are all tracked, since "works at pre-commit"
+  is not evidence for "works on a clean checkout."
+
+### Incidental: the pre-commit surface never lints workflow files
+
+- **Observed**: committing a change to `.github/workflows/pr-quality-gate.yml` printed
+  `Skipping gate actionlint` and `Skipping gate artifact-retention`. Reproduced deliberately with
+  `GATE_CHANGED_BASE=HEAD~1 rhino-bin.sh gate run --surface=pre-commit` against a commit that
+  changes exactly that file: both gates skip. Both declare
+  `glob: ".github/workflows/*.{yml,yaml}"`, and every other pre-commit glob in `repo-config.yml`
+  is basename-only (`*.go`, `*.md`, `*.{ex,exs}`), so the matcher most likely does not handle a
+  path-bearing pattern.
+- **Not caused by this plan**: both gates predate it; DU1 added only `lint-golangci`. Recorded
+  because it was found here, not because it belongs here.
+- **Why it stayed invisible**: both gates also declare `ci: { scope: all-file-type }`, so CI's
+  `shell-docker-actions` group lints every workflow on every PR regardless. The pre-commit half
+  has been dead without any red signal — the CI half covers for it.
+- **Generalizes because**: a gate declared on two surfaces can be silently dead on one of them.
+  Nothing asserts that a declared surface actually resolves any file, so a glob the matcher cannot
+  interpret degrades to "always skip" rather than to an error.
+- **Disposition**: _pending Phase 7_ — reported, not fixed. Correcting the matcher or the glob is a
+  repo-rules change outside this plan's authorization and belongs in its own delivery unit.

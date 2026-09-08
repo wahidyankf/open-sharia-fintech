@@ -1410,3 +1410,59 @@ test("rejects a coverage target that executes the Gradle test task", async () =>
     ),
   );
 });
+
+// Go has no build-tool-integrated coverage gate the way Gradle has JaCoCo, so
+// islamic-be enforces its floor through a repo script. The threshold must still
+// be visible on the command surface: a floor hidden inside a script body is a
+// floor no reviewer or validator can check.
+const goCoverageProject = (unitCommand) =>
+  JSON.stringify({
+    name: "example",
+    targets: {
+      "test:unit": { options: { command: unitCommand } },
+      "test:coverage:unit": {
+        options: { command: "node scripts/behaviour-coverage.mjs --adapter unit" },
+      },
+      "test:coverage:behaviour": {
+        options: { command: "node scripts/behaviour-coverage.mjs --adapter behaviour" },
+      },
+      "test:coverage": {
+        options: {
+          commands: ["npx nx run example:test:coverage:unit", "npx nx run example:test:coverage:behaviour"],
+          parallel: false,
+        },
+      },
+      "test:quick": {
+        options: {
+          commands: ["npx nx run example:test:unit", "npx nx run example:test:coverage"],
+          parallel: false,
+        },
+      },
+    },
+  });
+
+test("accepts a 99% Go Unit line coverage hard gate", async () => {
+  const root = await fixture({
+    "project.json": goCoverageProject("COVERAGE_MINIMUM=99 apps/example/scripts/coverage-gate.sh"),
+  });
+
+  assert.deepEqual(await validateProjectTargetContract(path.join(root, "project.json"), "example", { unit: {} }), []);
+});
+
+test("rejects a Go coverage gate that declares no line minimum", async () => {
+  const root = await fixture({
+    "project.json": goCoverageProject("apps/example/scripts/coverage-gate.sh"),
+  });
+
+  const errors = await validateProjectTargetContract(path.join(root, "project.json"), "example", { unit: {} });
+  assert.ok(errors.some((error) => error.includes("must enforce at least 99% line coverage")));
+});
+
+test("rejects a Go coverage gate whose declared minimum is below 99", async () => {
+  const root = await fixture({
+    "project.json": goCoverageProject("COVERAGE_MINIMUM=80 apps/example/scripts/coverage-gate.sh"),
+  });
+
+  const errors = await validateProjectTargetContract(path.join(root, "project.json"), "example", { unit: {} });
+  assert.ok(errors.some((error) => error.includes("line coverage")));
+});

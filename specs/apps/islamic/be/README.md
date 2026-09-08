@@ -1,6 +1,7 @@
 # Islamic BE — Specification Corpus
 
-Audience: engineers and technical product managers working on `apps/islamic-be` — the
+Audience: engineers and technical product managers working on
+[`apps/islamic-be`](../../../../apps/islamic-be/README.md) — the
 Sharia-compliance API.
 
 This corpus is the single source of truth for what the service answers. A scenario here defines a
@@ -16,10 +17,10 @@ route's status code, its response body, and how the process resolves its own con
 
 ## Related
 
-- `apps/islamic-be` — the implementing project, created in DU3.
+- [`apps/islamic-be`](../../../../apps/islamic-be/README.md) — the implementing project.
 - `apps/islamic-be-e2e` — the E2E project that drives this corpus against the real process,
   created in DU4.
 
-Both are named rather than linked: this corpus lands before either project exists, and the
-`md-links` gate scans the whole tree rather than only the current change. The DU that creates each
-project adds the link in both directions.
+`islamic-be-e2e` is named rather than linked because it does not exist yet: the `md-links` gate
+scans the whole tree rather than only the current change, so a link to a project DU4 has not created
+would fail every push. DU4 adds it, in both directions — exactly as DU3 did for `islamic-be` above.
