@@ -373,3 +373,80 @@ apps/islamic-be`. Same source tree, same linter, same version; the gate passes a
 - **Disposition**: _pending Phase 7_ — fixed here. The sibling suites are not this plan's to change;
   worth proposing that new-process E2E harnesses be required to demonstrate one red run, and that
   the shared reuse predicate be revisited across the existing backend suites.
+
+### DU5: a static env scanner needs the key literal to be reachable, and Go hid it
+
+- **Observed**: `tech-docs.md` specified `scanGoReads` as two regexes matching `os.Getenv("K")` and
+  `os.LookupEnv("K")`. Run against the real `apps/islamic-be`, that pair returns **zero** keys.
+  `main.go` passes `os.LookupEnv` as a _function value_ into a pure resolver, and the key lives in
+  `const PortVariable = "ISLAMIC_BE_PORT"`, consumed as `lookup(PortVariable)`. No literal ever
+  appears at a call site.
+- **Why it nearly became a suppressed gate**: the failure would not have surfaced until DU6
+  registered the surface, and it would have surfaced as `ISLAMIC_BE_PORT` reported
+  declared-but-unread. The obvious remedy at that moment — add it to the surface `allowlist:` — would
+  have silenced a drift detector on a variable that is genuinely read. The allowlist is for keys that
+  are legitimately not read; using it for keys the scanner merely cannot see converts a correctness
+  gate into decoration.
+- **The repo had already solved it, in F#**: `ose-be`'s `Program.fs` has the identical
+  dependency-injection shape, and `Env.fs` handles it with a _second_ regex,
+  `fsharpReaderWrapperRegex`, matching the reader identifier immediately followed by the key literal.
+  The convention is not "call the reader directly" but "make the key visible at the composition
+  root". Go simply had no expression of that convention yet.
+- **Generalizes because**: any static scanner over a language that supports passing functions as
+  values will miss dependency-injected reads. Injecting the reader is _good_ design — it is what
+  lets `ResolvePort` be Unit-tested without touching the OS — so the scanner must meet the codebase
+  where good design puts it, rather than the codebase degrading to direct calls to stay visible.
+- **Disposition**: _pending Phase 7_ — fixed here in both halves. DU5 adds the third regex; DU6
+  adopts the convention in `islamic-be` by giving `ResolvePort` a key parameter, which also stops
+  the pure resolver from knowing the app's own variable name.
+
+### DU5: believe the discovery step over the plan's own layer wording
+
+- **Observed**: the plan said to add `scanGoReads` cases "to the RhinoCli **unit** test project
+  beside the existing `scanFsharpReads` cases", and in the same breath prescribed the grep that
+  locates them. The grep proves every `scanFsharpReads`, `scanRustReads`, and `scanTsReads` case
+  lives in the **integration** project — correctly, since they read the real filesystem and the
+  functions carry `[<ExcludeFromCodeCoverage>]`.
+- **Generalizes because**: when a plan names both a layer and a landmark, the landmark is evidence
+  and the layer is an assumption. Following the layer would have put a filesystem-touching test in
+  the Unit adapter, violating the Test Boundaries rule to satisfy a sentence.
+- **What the contract actually wanted**: both layers. Unit binds the scenario through the pure
+  `validateAppKeys` with injected lists; Integration exercises the real scanner against a temp
+  directory; E2E drives it across the published CLI boundary. Three adapters, one scenario.
+- **Disposition**: _pending Phase 7_ — no repo-rules change proposed; this is a plan-authoring
+  observation, and the existing convention was right.
+
+### DU5: "Nx detected a flaky task" can mean a missing dependency
+
+- **Observed**: `rhino-cli:test:coverage:unit` failed in the `ose-private` worktree with
+  `ERR_MODULE_NOT_FOUND: @cucumber/gherkin`, then passed after `npm install`. Nx saw one task hash
+  produce two outcomes and labelled it flaky.
+- **Why it matters here**: the repo rule is to fix a flaky test at its root cause and never retry
+  around it. Taking the label at face value would have started a hunt for nondeterminism in a
+  validator that has none. The root cause was an unprovisioned worktree; `node_modules` is not a
+  declared Nx input, so the hash could not distinguish the two runs.
+- **Generalizes because**: the flaky label describes the _observation history of a task hash_, not a
+  property of the test. Before treating one as a defect, check whether something outside the declared
+  inputs changed between the two runs — a fresh worktree, a toolchain install, a cache wipe.
+  Confirmed stable here by running the validator three times at exit zero.
+- **Disposition**: _pending Phase 7_ — nothing to fix. Worth a line in the worktree-setup doc that a
+  new worktree needs `npm install` before any Node-backed gate will resolve.
+
+### DU5: a manifest-covered change opens a divergence window until both PRs land
+
+- **Observed**: `Env.fs` and `env-validate-app-drift.feature` are inside
+  `apps/rhino-cli/parity-manifest.sha256`, which the `parity manifest validate` gate enforces in both
+  repositories. Changing them in `ose-public` alone makes `ose-private`'s manifest stale the moment
+  the public PR merges.
+- **The obligation**: the two PRs are one delivery unit with two heads. Both must be opened
+  cross-referencing each other and merged in the same session; neither is independently shippable,
+  and stopping between them leaves `ose-private` red on a gate it did nothing to break.
+- **Mechanical detail worth keeping**: `parity manifest generate` reads the **git index**, not the
+  worktree — it refuses to run while a covered file is unstaged. So the sequence is stage the source
+  edits, generate, stage the manifest, commit as one. Regenerating before staging cannot work.
+- **Also worth keeping**: the four `EnvValidate*` test files were byte-identical across the two
+  repositories at HEAD even though `tests/**` sits _outside_ the manifest, so they were carried
+  byte-for-byte rather than re-formatted per repo. Two `Doctor*` test files do diverge, so
+  "outside the manifest" must be checked per file, not assumed either way.
+- **Disposition**: _pending Phase 7_ — the multi-repo parity workflow already states the paired-PR
+  rule; the index-not-worktree detail and the per-file identity check are candidates to add there.

@@ -1,0 +1,42 @@
+DU5 byte-identity preflight (before any mutation)
+=================================================
+Captured 2026-09-09.
+
+public  worktree: islamic-be-init/du4-e2e @ 26b236814f930af738ab8f7ad4a845d9ddfd4f4b
+private worktree: islamic-be-init/du5-rhino-go-env @ bacbfbc322870dfdddc877c885d167191de21e9d
+
+--- What the parity contract actually covers ---
+apps/rhino-cli/parity-manifest.sha256 lists 108 files:
+  apps/rhino-cli/LICENSE, apps/rhino-cli/project.json, apps/rhino-cli/src/**
+  specs/apps/rhino/cli/behaviours/**
+It does NOT list apps/rhino-cli/tests/**.
+
+--- Git tree hashes over the covered scope (identical = byte-identical) ---
+  apps/rhino-cli/src              public=4ed23b2127005ca75c78d04a4bc21e1cf7e11778
+                                  private=4ed23b2127005ca75c78d04a4bc21e1cf7e11778
+  specs/apps/rhino/cli/behaviours public=1b39e8978b9feef76e5e1346a9e973ff51692fdf
+                                  private=1b39e8978b9feef76e5e1346a9e973ff51692fdf
+  parity-manifest.sha256, project.json, LICENSE: byte-identical (diff reports nothing)
+
+  RESULT: byte-identity is intact across every path the contract enforces.
+
+--- Divergence found outside the contract, recorded but not repaired ---
+apps/rhino-cli/tests/unit/Steps/DoctorCoverageTests.fs and DoctorToolCheckSteps.fs
+differ between the repositories. The difference is entirely Fantomas line wrapping --
+identical code, different break points. Example:
+
+  50c50,51
+  < let private inventoryNames (extra: string list) = builtinDoctorToolInventory @ extra
+  ---
+  > let private inventoryNames (extra: string list) =
+  >     builtinDoctorToolInventory @ extra
+  195c196,197
+  <     member _.``a tool is listed under the doctor extra-tools section of repo-config.yml``() = extraTools <- [ "java" ]
+  ---
+
+This predates the plan, sits outside the manifest, and is not this plan's to repair.
+
+  CONSEQUENCE FOR DU5: the unit-test changes must be carried across as *content*,
+  then formatted by each repository's own Fantomas. Copying the file byte-for-byte
+  would make one repository's format-verify-fsharp gate fail. Only Env.fs and the
+  Gherkin -- both inside the manifest -- are copied byte-for-byte.

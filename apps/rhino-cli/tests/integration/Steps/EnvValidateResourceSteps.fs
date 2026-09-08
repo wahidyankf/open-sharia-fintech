@@ -1,4 +1,4 @@
-/// TickSpec step definitions binding `env-validate-app-drift.feature`'s 3
+/// TickSpec step definitions binding `env-validate-app-drift.feature`'s 4
 /// scenarios to `RhinoCli.Application.Env`'s `validateAppSurface` port
 /// [Repo-grounded —
 /// `specs/apps/rhino/cli/behaviours/env/env-validate-app-drift.feature`,
@@ -120,6 +120,27 @@ type EnvValidateSteps() =
                   Lang = "fsharp"
                   Allowlist = [] }
 
+    // The Go counterpart of the wrapper scenario above. islamic-be hands its pure
+    // resolver both `os.LookupEnv` and the key, so the key is never an argument to
+    // the reader itself; the fixture reproduces that exact shape rather than a
+    // direct `os.Getenv` call, which would not prove the case that matters.
+    [<Given>]
+    member _.``a Go app surface that reads a declared key through an injected lookup``() =
+        let root = ensureRoot ()
+        writeFile root "surface/.env.example" "INJECTED_KEY=8402\n"
+
+        writeFile
+            root
+            "surface/cmd/app/main.go"
+            "port, err := config.ResolvePort(*portFlag, os.LookupEnv, \"INJECTED_KEY\")\n"
+
+        surface <-
+            Some
+                { Root = "surface"
+                  Kind = App
+                  Lang = "go"
+                  Allowlist = [] }
+
     // ---- When ----
 
     [<When>]
@@ -230,3 +251,7 @@ let ``A key read by the app but never declared in .env.example fails validation`
 [<Fact>]
 let ``F# environment wrapper reads remain detectable after convergence`` () =
     FeatureRunner.run "F# environment wrapper reads remain detectable after convergence"
+
+[<Fact>]
+let ``Go environment reads through an injected lookup remain detectable`` () =
+    FeatureRunner.run "Go environment reads through an injected lookup remain detectable"

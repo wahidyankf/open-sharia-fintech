@@ -1,0 +1,22 @@
+DU5 — regenerated parity manifests are byte-identical across repositories
+========================================================================
+
+$ diff -u <ose-public>/apps/rhino-cli/parity-manifest.sha256 \
+          <ose-private>/apps/rhino-cli/parity-manifest.sha256
+(no output — the two manifests are byte-identical)
+
+Entries changed by DU5 (2 of 108):
+-1ad6a9dd2a4044588da8501b8db62e323440d103a541e4b3f6fb30291f15f8e4    apps/rhino-cli/src/RhinoCli.Application/src/Env.fs
++de09b8bfa0d58690f90d6cda88b5fd6607e85f75b6125a7defe8f620fed70bd9    apps/rhino-cli/src/RhinoCli.Application/src/Env.fs
+-cdff5c19b5b7ea3949c4a305daaedba632e4b1b5446c6fa0e1e2b816bbd9b151  specs/apps/rhino/cli/behaviours/env/env-validate-app-drift.feature
++f6840de3d7d308ee5912989f7a66a6c8abc9db1613560de34217e205ae900853  specs/apps/rhino/cli/behaviours/env/env-validate-app-drift.feature
+
+$ parity manifest validate  (each repository, against its staged tree)
+ose-public : apps/rhino-cli/parity-manifest.sha256 is current
+ose-private: apps/rhino-cli/parity-manifest.sha256 is current
+
+$ diff -r apps/rhino-cli/src  (public vs private, excluding build output)
+(no output — identical)
+
+$ diff -r specs/apps/rhino/cli/behaviours  (public vs private)
+(no output — identical)

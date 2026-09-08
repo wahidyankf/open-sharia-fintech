@@ -1,0 +1,16 @@
+DU5 RED — `lang: go` is rejected before scanGoReads exists
+==========================================================
+$ nx run rhino-cli:test:integration -- --filter "FullyQualifiedName~scanGoReads"
+
+[xUnit.net]     RhinoCli.Tests.Integration.Steps.EnvValidateResourceTests.validateAppSurface
+                dispatches to scanGoReads for a go lang surface [FAIL]
+  Error Message:
+   expected Ok, got Error unsupported lang: go
+  Stack Trace:
+     at ...EnvValidateResourceTests.fs:line 461
+
+Failed!  - Failed: 1, Passed: 0, Skipped: 0, Total: 1
+
+This is the meaningful RED: the test compiles against today's API and fails on behaviour,
+not on a missing symbol. The scanGoReads unit cases added next fail to compile until the
+function exists, which is a weaker signal, so this dispatch case is recorded first.
