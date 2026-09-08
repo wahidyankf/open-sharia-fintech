@@ -1,0 +1,137 @@
+{
+  "name": "islamic-be-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/islamic-be-e2e/steps",
+  "namedInputs": {
+    "specs": ["{workspaceRoot}/specs/apps/islamic/be/behaviours/**/*.feature"]
+  },
+  "tags": ["type:e2e", "platform:playwright", "lang:ts", "domain:islamic"],
+  "implicitDependencies": ["islamic-be"],
+  "targets": {
+    "install": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm install",
+        "cwd": "apps/islamic-be-e2e"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx oxlint .",
+        "cwd": "apps/islamic-be-e2e"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx bddgen && npx tsc --noEmit",
+        "cwd": "apps/islamic-be-e2e"
+      },
+      "inputs": ["default", "{workspaceRoot}/specs/apps/islamic/be/behaviours/**/*.feature"]
+    },
+    "test:e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "apps/islamic-be/scripts/run-e2e.sh"
+      }
+    },
+    "test:e2e:ui": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx bddgen && npx playwright test --ui",
+        "cwd": "apps/islamic-be-e2e"
+      }
+    },
+    "test:e2e:report": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx playwright show-report",
+        "cwd": "apps/islamic-be-e2e"
+      }
+    },
+    "test:coverage:e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node scripts/behaviour-coverage.mjs --config apps/islamic-be-e2e/behaviour-coverage.json --adapter e2e"
+      },
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/apps/islamic-be-e2e/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/apps/islamic/be/behaviours/**/*.feature",
+        "{workspaceRoot}/apps/islamic-be/internal/bdd/**/*.go",
+        "{workspaceRoot}/apps/islamic-be/go.mod",
+        "{workspaceRoot}/apps/islamic-be-e2e/steps/**/*.ts",
+        "{workspaceRoot}/apps/islamic-be-e2e/playwright.config.ts"
+      ]
+    },
+    "test:coverage:behaviour": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node scripts/behaviour-coverage.mjs --config apps/islamic-be-e2e/behaviour-coverage.json --adapter behaviour"
+      },
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/apps/islamic-be-e2e/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/apps/islamic/be/behaviours/**/*.feature",
+        "{workspaceRoot}/apps/islamic-be/internal/bdd/**/*.go",
+        "{workspaceRoot}/apps/islamic-be/go.mod",
+        "{workspaceRoot}/apps/islamic-be-e2e/steps/**/*.ts",
+        "{workspaceRoot}/apps/islamic-be-e2e/playwright.config.ts"
+      ]
+    },
+    "test:coverage": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          { "command": "npm exec -- nx run islamic-be-e2e:test:coverage:e2e", "forwardAllArgs": false },
+          { "command": "npm exec -- nx run islamic-be-e2e:test:coverage:behaviour", "forwardAllArgs": false }
+        ],
+        "parallel": false,
+        "forwardAllArgs": false
+      },
+      "cache": true
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          { "command": "npm exec -- nx run islamic-be-e2e:typecheck", "forwardAllArgs": false },
+          { "command": "npm exec -- nx run islamic-be-e2e:lint", "forwardAllArgs": false },
+          { "command": "npm exec -- nx run islamic-be-e2e:specs:structure-validation", "forwardAllArgs": false },
+          { "command": "npm exec -- nx run islamic-be-e2e:test:coverage", "forwardAllArgs": false }
+        ],
+        "parallel": false,
+        "forwardAllArgs": false
+      },
+      "cache": true
+    },
+    "specs:structure-validation": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs structure validate"
+      },
+      "cache": true,
+      "inputs": ["{workspaceRoot}/specs/apps/!(rhino)/**/*"]
+    },
+    "deps:audit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm audit"
+      },
+      "cache": false
+    },
+    "compat:min-version": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo 'compat:min-version: no standard min-version floor for TypeScript'"
+      },
+      "cache": true
+    }
+  }
+}

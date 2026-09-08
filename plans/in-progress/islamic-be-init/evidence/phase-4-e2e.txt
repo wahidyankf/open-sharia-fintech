@@ -1,0 +1,101 @@
+
+> nx run islamic-be-e2e:"test:e2e"
+
+> apps/islamic-be/scripts/run-e2e.sh
+
+
+ NX   Running target build for project islamic-be and 2 tasks it depends on:
+
+
+
+> nx run islamic-contracts:bundle
+
+> mkdir -p specs/apps/islamic/be/contracts/generated && npx @redocly/cli bundle specs/apps/islamic/be/contracts/openapi.yaml -o specs/apps/islamic/be/contracts/generated/openapi-bundled.yaml && npx @redocly/cli bundle specs/apps/islamic/be/contracts/openapi.yaml -o specs/apps/islamic/be/contracts/generated/openapi-bundled.json
+
+
+    ╔═══════════════════════════════════════════════════════╗
+    ║                                                       ║
+    ║  A new version of Redocly CLI (2.51.2) is available.  ║
+    ║  Update now: `npm i -g @redocly/cli@latest`.          ║
+    ║  Changelog: https://redocly.com/docs/cli/changelog/   ║
+    ║                                                       ║
+    ╚═══════════════════════════════════════════════════════╝
+
+bundling specs/apps/islamic/be/contracts/openapi.yaml...
+📦 Created a bundle for specs/apps/islamic/be/contracts/openapi.yaml at specs/apps/islamic/be/contracts/generated/openapi-bundled.yaml 8ms.
+
+    ╔═══════════════════════════════════════════════════════╗
+    ║                                                       ║
+    ║  A new version of Redocly CLI (2.51.2) is available.  ║
+    ║  Update now: `npm i -g @redocly/cli@latest`.          ║
+    ║  Changelog: https://redocly.com/docs/cli/changelog/   ║
+    ║                                                       ║
+    ╚═══════════════════════════════════════════════════════╝
+
+bundling specs/apps/islamic/be/contracts/openapi.yaml...
+📦 Created a bundle for specs/apps/islamic/be/contracts/openapi.yaml at specs/apps/islamic/be/contracts/generated/openapi-bundled.json 8ms.
+
+> nx run islamic-be:codegen
+
+> go tool oapi-codegen -config oapi-codegen.yaml ../../specs/apps/islamic/be/contracts/generated/openapi-bundled.yaml
+
+
+> nx run islamic-be:build
+
+> go build -o dist/islamic-be ./cmd/islamic-be
+
+
+
+
+ NX   Successfully ran target build for project islamic-be and 2 tasks it depends on
+
+
+
+Running 3 tests using 1 worker
+
+  ✓  1 .features-gen/health/health.feature.spec.js:6:7 › Islamic BE health endpoint › Health endpoint returns 200 @integration-exempt (571ms)
+  ✓  2 .features-gen/health/health.feature.spec.js:13:7 › Islamic BE health endpoint › Health endpoint reports the JSON content type @integration-exempt (6ms)
+  ✓  3 .features-gen/health/health.feature.spec.js:19:7 › Islamic BE health endpoint › An unknown route is rejected @integration-exempt (8ms)
+
+  3 passed (984ms)
+
+
+
+ NX   Successfully ran target test:e2e for project islamic-be-e2e
+
+
+
+================================================================
+Mutation proof: the suite fails when the service is wrong
+================================================================
+
+A green suite is not evidence unless it can go red. With
+internal/health/health.go's StatusHealthy changed from "healthy" to "ok":
+
+  ✘  1 .features-gen/health/health.feature.spec.js:6:7 › Islamic BE health endpoint › Health endpoint returns 200 @integration-exempt (573ms)
+  ✓  2 .features-gen/health/health.feature.spec.js:13:7 › Islamic BE health endpoint › Health endpoint reports the JSON content type @integration-exempt (319ms)
+  ✓  3 .features-gen/health/health.feature.spec.js:19:7 › Islamic BE health endpoint › An unknown route is rejected @integration-exempt (6ms)
+    Expected: "healthy"
+    Received: "ok"
+  1 failed
+  2 passed (1.6s)
+ NX   Running target test:e2e for project islamic-be-e2e failed
+
+The mutation was reverted and the run above is the restored source.
+
+----------------------------------------------------------------
+First attempt at this proof, recorded because it nearly passed silently
+----------------------------------------------------------------
+
+The same mutation initially reported 3 passed. A stray islamic-be process
+left over from the DU3 manual health check still held port 8402, and
+ensureBackendStarted() reused whatever answered on the port -- the shape
+apps/ose-be-e2e uses -- so the suite never executed the code under test:
+
+  ✓  1 .features-gen/health/health.feature.spec.js:6:7 › Islamic BE health endpoint › Health endpoint returns 200 @integration-exempt (60ms)
+  ✓  2 .features-gen/health/health.feature.spec.js:13:7 › Islamic BE health endpoint › Health endpoint reports the JSON content type @integration-exempt (7ms)
+  ✓  3 .features-gen/health/health.feature.spec.js:19:7 › Islamic BE health endpoint › An unknown route is rejected @integration-exempt (10ms)
+  3 passed (466ms)
+
+steps/backend-process.ts now reuses only a process this harness started and
+refuses to run against a foreign listener.

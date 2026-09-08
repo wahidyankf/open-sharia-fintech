@@ -75,17 +75,17 @@ authenticated clean current-head `pr-leak-review`, and the applicable surface ga
 
 ### Delivery Branch Inventory
 
-| Branch                                | Repository    | Mode      | Lifecycle state | Proof                                                                                             |
-| ------------------------------------- | ------------- | --------- | --------------- | ------------------------------------------------------------------------------------------------- |
-| `worktree/ose-islamic`                | `ose-public`  | `to-pr`   | `active`        | carries the plan-authoring PR #488 and every Phase 0 record; removed by the terminal cleanup gate |
-| `worktree/islamic-be-init`            | `ose-private` | `pending` | `pending`       | `git worktree add` at Phase 5                                                                     |
-| `islamic-be-init/du1-go-lane`         | `ose-public`  | `to-pr`   | `pending`       | record merged PR number and 40-character head SHA at DU1                                          |
-| `islamic-be-init/du2-specs-contracts` | `ose-public`  | `to-pr`   | `pending`       | record merged PR number and 40-character head SHA at DU2                                          |
-| `islamic-be-init/du3-service`         | `ose-public`  | `to-pr`   | `pending`       | record merged PR number and 40-character head SHA at DU3                                          |
-| `islamic-be-init/du4-e2e`             | `ose-public`  | `to-pr`   | `pending`       | record merged PR number and 40-character head SHA at DU4                                          |
-| `islamic-be-init/du5-rhino-go-env`    | `ose-public`  | `to-pr`   | `pending`       | record merged PR number and 40-character head SHA at DU5                                          |
-| `islamic-be-init/du5-rhino-go-env`    | `ose-private` | `to-pr`   | `pending`       | record merged PR number and 40-character head SHA at DU5                                          |
-| `islamic-be-init/du6-registry`        | `ose-public`  | `to-pr`   | `pending`       | record merged PR number and 40-character head SHA at DU6                                          |
+| Branch                                | Repository    | Mode      | Lifecycle state | Proof                                                                                                                                                      |
+| ------------------------------------- | ------------- | --------- | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `worktree/ose-islamic`                | `ose-public`  | `to-pr`   | `active`        | carries the plan-authoring PR #488 and every Phase 0 record; removed by the terminal cleanup gate                                                          |
+| `worktree/islamic-be-init`            | `ose-private` | `pending` | `pending`       | `git worktree add` at Phase 5                                                                                                                              |
+| `islamic-be-init/du1-go-lane`         | `ose-public`  | `to-pr`   | `delivered`     | PR #496, reviewed head `d534cadf3e6c5a3d93ee980c1f1c3b041ca48612`, squashed to `f9e40bc675824719b13fa8d32e48b297dc7c75c7`; branch deleted local and remote |
+| `islamic-be-init/du2-specs-contracts` | `ose-public`  | `to-pr`   | `delivered`     | PR #497, reviewed head `bbf0d709e964968cd6fb0a226f9c24354a9c2dc8`, squashed to `fbb459cad0a567dcace99ec6f555c493a17f58c9`; branch deleted local and remote |
+| `islamic-be-init/du3-service`         | `ose-public`  | `to-pr`   | `delivered`     | PR #498, reviewed head `5554cd6f7e205ffa7b2b35270af5b2da6c964683`, squashed to `1ee0672909de1acf1f339a1b31c00cf78c5a7387`; branch deleted local and remote |
+| `islamic-be-init/du4-e2e`             | `ose-public`  | `to-pr`   | `active`        | branched from `1ee0672909de1acf1f339a1b31c00cf78c5a7387`; record merged PR number and 40-character head SHA at DU4                                         |
+| `islamic-be-init/du5-rhino-go-env`    | `ose-public`  | `to-pr`   | `pending`       | record merged PR number and 40-character head SHA at DU5                                                                                                   |
+| `islamic-be-init/du5-rhino-go-env`    | `ose-private` | `to-pr`   | `pending`       | record merged PR number and 40-character head SHA at DU5                                                                                                   |
+| `islamic-be-init/du6-registry`        | `ose-public`  | `to-pr`   | `pending`       | record merged PR number and 40-character head SHA at DU6                                                                                                   |
 
 Append every plan-created delivery branch before use. Before removal, classify every entry as
 delivered, unused, or retained/escalated; an active or unrecorded branch blocks cleanup.
@@ -1057,7 +1057,7 @@ must enforce at least 99% line coverage`. DU1 taught the extractor to read Go _b
   > **Implementation note (2026-09-09).** States why `test:integration` is absent, in its own
   > section, and passes the word-budget gate with no finding.
 
-- [ ] [AI] Commit on `islamic-be-init/du3-service`, push, open a draft PR, poll CI every 2 minutes, and merge when green — acceptance: the PR merges to `main`
+- [x] [AI] Commit on `islamic-be-init/du3-service`, push, open a draft PR, poll CI every 2 minutes, and merge when green — acceptance: the PR merges to `main`
 
   > **Implementation note (2026-09-09).** CI's `lint` gate group failed twice on this head, each
   > time for a reason that could not reproduce locally, because `nx run islamic-be:lint` and the
@@ -1120,7 +1120,18 @@ must enforce at least 99% line coverage`. DU1 taught the extractor to read Go _b
   > **Implementation note (2026-09-09).** The binary is produced and runs. Captured to
   > `evidence/du3-lint-build.txt`.
 
-- [ ] [AI] Confirm the merged PR's CI run shows the `go` job green **and** the `typescript`, `dotnet`, `flutter`, and `java` jobs not selecting any Go target — acceptance: the `go` job log lists `islamic-be` and none of the other four does; save to `evidence/du3-ci-routing.txt`
+- [x] [AI] Confirm the merged PR's CI run shows the `go` job green **and** the `typescript`, `dotnet`, `flutter`, and `java` jobs not selecting any Go target — acceptance: the `go` job log lists `islamic-be` and none of the other four does; save to `evidence/du3-ci-routing.txt`
+
+  > **Implementation note (2026-09-09).** Captured from run `34263277920` on head `5554cd6f7`.
+  > The `go` job ran targets for exactly one project — `islamic-be` — and passed. The `typescript`,
+  > `dotnet`, and `java` jobs each mention `islamic-be` on exactly one line, and in all three cases
+  > it is `git fetch` advertising the PR branch, not a target selection; their project lists are
+  > reproduced in the evidence file. `Flutter quality gate` was skipped outright. Every one of the
+  > 17 non-skipped checks passed.
+  >
+  > The file lands in DU4's commit rather than DU3's: the acceptance criterion is about the _merged_
+  > PR's run, which does not exist until after DU3's own head is final.
+
 - [x] [AI] `curl -s localhost:8402/api/v1/health` against a locally running instance — returns 200 with `{"status":"healthy"}`, captured to `evidence/phase-3-health.txt`
 
   > **Implementation note (2026-09-09).** 200 with `{"status":"healthy"}` from a real process on 8402.
@@ -1134,28 +1145,119 @@ must enforce at least 99% line coverage`. DU1 taught the extractor to read Go _b
 
 Delivery boundary. Requires DU3 merged.
 
-- [ ] [AI] Create `apps/islamic-be-e2e/package.json`, `tsconfig.json`, and `playwright.config.ts` mirroring `apps/ose-be-e2e/` with `bddgen` pointed at the islamic corpus — acceptance: `npx bddgen` generates test files from the health feature
-- [ ] [AI] Implement `steps/backend-process.ts` starting and stopping the real `islamic-be` process on a controlled port — acceptance: the suite starts the service itself and shuts it down deterministically
-- [ ] [AI] Implement `steps/health.steps.ts` and `utils/response-store.ts` binding the health scenarios over real HTTP — acceptance: all three US-1 scenarios pass against the running process
-- [ ] [AI] Create `behaviour-coverage.json` with the corpus and an `e2e` adapter — acceptance: the file mirrors the `ose-be-e2e` shape
-- [ ] [AI] Create `project.json` with the E2E target surface, tags `["type:e2e","platform:playwright","lang:ts","domain:islamic"]`, `implicitDependencies: ["islamic-be"]`, and `namedInputs.specs` — acceptance: the project declares no Unit or Integration target
-- [ ] [AI] Decide and record whether the config scenarios need an `e2e-coverage-baseline.json` `allowedUnbound` entry, with a written reason for each — acceptance: every unbound scenario carries a stated reason or is bound
-- [ ] [AI] Write `apps/islamic-be-e2e/README.md` — acceptance: it explains what the suite covers and how to run it
+- [x] [AI] Create `apps/islamic-be-e2e/package.json`, `tsconfig.json`, and `playwright.config.ts` mirroring `apps/ose-be-e2e/` with `bddgen` pointed at the islamic corpus — acceptance: `npx bddgen` generates test files from the health feature
+
+  > **Implementation note (2026-09-09).** Same pins as every other E2E project — `@playwright/test`
+  > 1.60.0, `playwright-bdd` 8.5.1. `bddgen` generates `.features-gen/health/health.feature.spec.js`
+  > and `typecheck` exits zero.
+  >
+  > **Deviation.** `retries: 0`, not `ose-be-e2e`'s `process.env.CI ? 2 : 0`. AGENTS.md requires
+  > fixing a flaky test at its root cause and forbids retrying; copying the sibling's value would
+  > have imported a rule violation into a new project. Recorded in the project README so the
+  > divergence is visible where a reader would otherwise "fix" it back.
+  >
+  > `ose-be-e2e`'s stray `dependencies: { "@vitejs/plugin-react" }` was not copied — a React plugin
+  > has no business in a headless API suite.
+
+- [x] [AI] Implement `steps/backend-process.ts` starting and stopping the real `islamic-be` process on a controlled port — acceptance: the suite starts the service itself and shuts it down deterministically
+
+  > **Implementation note (2026-09-09).** Spawns the compiled binary rather than `go run`: `go run`
+  > forks a child and reports the wrapper's exit status, so a service that dies during startup would
+  > look alive to the harness. `run-e2e.sh` builds through Nx first, so `codegen` runs and the
+  > binary matches the current contract.
+  >
+  > **Deviation, and the reason for it.** `ose-be-e2e`'s `ensureBackendStarted` reuses whatever
+  > answers on the port. Copied verbatim, that made this suite pass against a service it never
+  > started: a stale `islamic-be` left over from the DU3 manual health check still held 8402, and a
+  > deliberately broken health handler reported three green scenarios. This version reuses only a
+  > process this harness started and still owns, and treats any foreign listener as a hard error.
+  > Both runs are in `evidence/phase-4-e2e.txt`.
+
+- [x] [AI] Implement `steps/health.steps.ts` and `utils/response-store.ts` binding the health scenarios over real HTTP — acceptance: all three US-1 scenarios pass against the running process
+
+  > **Implementation note (2026-09-09).** All three pass. The `When` step is one regex covering both
+  > request paths the feature exercises, because playwright-bdd requires exactly one binding per
+  > step and a path-specific pair would leave the unknown-route step with a binding nothing reuses.
+  > A new `Then the response {string} header starts with {string}` binding serves the content-type
+  > scenario; a missing header collapses to `""` so it fails on its own assertion rather than on an
+  > undefined dereference.
+
+- [x] [AI] Create `behaviour-coverage.json` with the corpus and an `e2e` adapter — acceptance: the file mirrors the `ose-be-e2e` shape
+
+  > **Implementation note (2026-09-09).** Mirrors it exactly: `unit` pointing back at
+  > `../islamic-be/internal/bdd` and `e2e` at `steps`. `apps/islamic-be/behaviour-coverage.json`
+  > gains the matching `e2e` adapter and a `test:coverage:e2e` target, which is the deferral DU3
+  > recorded — the adapter belongs to the delivery unit that makes it resolvable, and this is it.
+
+- [x] [AI] Create `project.json` with the E2E target surface, tags `["type:e2e","platform:playwright","lang:ts","domain:islamic"]`, `implicitDependencies: ["islamic-be"]`, and `namedInputs.specs` — acceptance: the project declares no Unit or Integration target
+
+  > **Implementation note (2026-09-09).** No `test:unit`, no `test:integration`, no stub for either
+  > — both belong to `islamic-be`, and the anti-echo convention forbids a naming-symmetry target.
+
+- [x] [AI] Decide and record whether the config scenarios need an `e2e-coverage-baseline.json` `allowedUnbound` entry, with a written reason for each — acceptance: every unbound scenario carries a stated reason or is bound
+
+  > **Decision (2026-09-09): no baseline file.** Two independent reasons.
+  >
+  > First, the mechanism is already in place and is the live one. All five `config/` scenarios carry
+  > `@e2e-exempt` with a written reason and a named alternative proof. `scripts/behaviour-coverage.mjs`
+  > honours that tag (`EXEMPTION_TAGS`), and `playwright.config.ts` filters on the same tag, so the
+  > exemption is declared once and read by both. Adding `allowedUnbound` would restate it in a
+  > second place that could drift.
+  >
+  > Second, `allowedUnbound` is read by nothing. A repository-wide search outside `node_modules`,
+  > `.nx`, and `plans/` finds it only inside the nine existing `e2e-coverage-baseline.json` files
+  > themselves — not in `scripts/`, not in `apps/rhino-cli/src/`, not in `.github/`. They are
+  > residue from `plans/done/2026-07-18__e2e-scenario-coverage-gap-detector/`. Writing a tenth dead
+  > file to satisfy a checkbox would be decoration, not a gate.
+  >
+  > **Proven, not asserted.** Deleting one `@e2e-exempt` tag makes
+  > `nx run islamic-be:test:coverage:e2e` fail with `The default port applies when nothing is set /
+the service resolves its listener port: undefined E2E binding`. The tag restored, it passes. The
+  > exemptions are load-bearing.
+
+- [x] [AI] Write `apps/islamic-be-e2e/README.md` — acceptance: it explains what the suite covers and how to run it
+
+  > **Implementation note (2026-09-09).** 488 words, markdownlint clean. Documents the
+  > start-what-you-observe rule and the `retries: 0` divergence at the point a reader would question
+  > them.
+
 - [ ] [AI] Commit on `islamic-be-init/du4-e2e`, push, open a draft PR, poll CI every 2 minutes, and merge when green — acceptance: the PR merges to `main`
 
-- [ ] [AI] Add the reciprocal links for the E2E project: link `specs/apps/islamic/be/README.md` to `apps/islamic-be-e2e/README.md`, and link back — acceptance: `rhino-bin.sh md links validate --exclude plans/done` reports no broken links
+- [x] [AI] Add the reciprocal links for the E2E project: link `specs/apps/islamic/be/README.md` to `apps/islamic-be-e2e/README.md`, and link back — acceptance: `rhino-bin.sh md links validate --exclude plans/done` reports no broken links
 
   > **Added during execution (2026-09-08).** Same reason as the DU3 step: DU2's corpus could not
   > link a project that DU4 creates.
+  >
+  > **Implementation note (2026-09-09).** `All links valid!` Three placeholders left by DU2 and DU3
+  > became real links, and the paragraphs explaining why they were placeholders were removed rather
+  > than left to read as current fact.
 
 ### Phase 4 Gate
 
 > All checks below must pass before starting Phase 6. Phase 5 (DU5) may proceed in parallel.
 
-- [ ] [AI] `npm exec nx -- run islamic-be-e2e:test:e2e` — all scenarios pass against a real process
-- [ ] [AI] `npm exec nx -- run islamic-be-e2e:test:quick` — exits zero
-- [ ] [AI] `npm exec nx -- run islamic-be:test:coverage` — every adapter reports its scenarios bound or explicitly allowed
-- [ ] [AI] Capture the passing E2E run output to `evidence/phase-4-e2e.txt` — acceptance: the file records the scenario count and result
+- [x] [AI] `npm exec nx -- run islamic-be-e2e:test:e2e` — all scenarios pass against a real process
+
+  > **Implementation note (2026-09-09).** 3 passed. Verified to be capable of failing: with
+  > `StatusHealthy` mutated to `"ok"`, scenario 1 fails with `Expected: "healthy" / Received: "ok"`.
+  > The mutation was reverted and the captured run is the restored source.
+
+- [x] [AI] `npm exec nx -- run islamic-be-e2e:test:quick` — exits zero
+
+  > **Implementation note (2026-09-09).** Exits zero under `--skip-nx-cache`: typecheck, oxlint,
+  > specs structure, and both coverage validators.
+
+- [x] [AI] `npm exec nx -- run islamic-be:test:coverage` — every adapter reports its scenarios bound or explicitly allowed
+
+  > **Implementation note (2026-09-09).** `2 features, 8 expanded scenarios, adapters: unit, e2e.`
+  > across all three validators. `run-many test:quick` over `islamic-be`, `islamic-be-e2e`, and
+  > `islamic-contracts` exits zero with the Go coverage floor still at 100.0%.
+
+- [x] [AI] Capture the passing E2E run output to `evidence/phase-4-e2e.txt` — acceptance: the file records the scenario count and result
+
+  > **Implementation note (2026-09-09).** Records the passing run, the mutation that proves it can
+  > fail, and the earlier run that passed against a stale process — the last one kept deliberately,
+  > because the near-miss is the more useful half of the record.
 
 > **Pause Safety**: the full test pyramid is green — Unit bindings, E2E bindings, and static coverage
 > across both. The service is complete and gated; only registry documentation and env drift-checking

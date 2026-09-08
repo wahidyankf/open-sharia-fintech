@@ -100,7 +100,9 @@
         "{workspaceRoot}/apps/islamic-be/behaviour-coverage.json",
         "{workspaceRoot}/package-lock.json",
         "specs",
-        "{projectRoot}/internal/bdd/**/*.go"
+        "{projectRoot}/internal/bdd/**/*.go",
+        "{workspaceRoot}/apps/islamic-be-e2e/steps/**/*.ts",
+        "{workspaceRoot}/apps/islamic-be-e2e/playwright.config.ts"
       ]
     },
     "test:coverage:behaviour": {
@@ -113,7 +115,26 @@
         "{workspaceRoot}/scripts/behaviour-coverage.mjs",
         "{workspaceRoot}/apps/islamic-be/behaviour-coverage.json",
         "{workspaceRoot}/package-lock.json",
-        "specs"
+        "specs",
+        "{projectRoot}/internal/bdd/**/*.go",
+        "{workspaceRoot}/apps/islamic-be-e2e/steps/**/*.ts",
+        "{workspaceRoot}/apps/islamic-be-e2e/playwright.config.ts"
+      ]
+    },
+    "test:coverage:e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node scripts/behaviour-coverage.mjs --config apps/islamic-be/behaviour-coverage.json --adapter e2e"
+      },
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/apps/islamic-be/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "specs",
+        "{projectRoot}/internal/bdd/**/*.go",
+        "{workspaceRoot}/apps/islamic-be-e2e/steps/**/*.ts",
+        "{workspaceRoot}/apps/islamic-be-e2e/playwright.config.ts"
       ]
     },
     "test:coverage": {
@@ -121,7 +142,7 @@
       "options": {
         "commands": ["echo 'islamic-be coverage validators complete'"]
       },
-      "dependsOn": ["test:coverage:unit", "test:coverage:behaviour"],
+      "dependsOn": ["test:coverage:unit", "test:coverage:e2e", "test:coverage:behaviour"],
       "cache": true
     },
     "test:quick": {

@@ -88,5 +88,5 @@ because the service makes no outbound TLS calls; add them the moment it does.
 ## See also
 
 - [Specification corpus](../../specs/apps/islamic/be/README.md) — behaviours, contract, architecture
-- `apps/islamic-be-e2e` — the E2E suite for this service. Named rather than linked until DU4
-  creates it; `md-links` scans the whole tree, so a forward link would fail every push.
+- [`apps/islamic-be-e2e`](../islamic-be-e2e/README.md) — the E2E suite for this service, driving
+  the three health scenarios through the real HTTP boundary

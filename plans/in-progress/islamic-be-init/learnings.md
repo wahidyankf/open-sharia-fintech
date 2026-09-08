@@ -348,3 +348,28 @@ apps/islamic-be`. Same source tree, same linter, same version; the gate passes a
   interpret degrades to "always skip" rather than to an error.
 - **Disposition**: _pending Phase 7_ — reported, not fixed. Correcting the matcher or the glob is a
   repo-rules change outside this plan's authorization and belongs in its own delivery unit.
+
+### DU4: an E2E suite that reuses a listener proves nothing about the build
+
+- **Observed**: `apps/islamic-be-e2e` initially copied `ose-be-e2e`'s `ensureBackendStarted`, which
+  starts the service only `if (!(await endpointResponds()))`. Three health scenarios passed. Then a
+  deliberate mutation — `StatusHealthy` changed from `"healthy"` to `"ok"` — **also** reported three
+  green scenarios. A stray `islamic-be` from the DU3 manual health check had held port 8402 since
+  the previous day, so the harness never spawned the binary it had just built and every assertion
+  ran against day-old code.
+- **Generalizes because**: "reuse whatever answers on the port" is a convenience that silently
+  converts an E2E suite into a test of _some_ process rather than _the_ process. It fails open, and
+  it fails open in exactly the situation where a developer is most likely to have a stray server
+  running — while iterating on the service. Every project that copies this shape inherits it;
+  `ose-be-e2e`, `organiclever-be-e2e`, and the other backend suites all carry the same predicate.
+- **The fix that generalizes**: reuse only a process the harness itself started and still owns, and
+  treat a foreign listener as a hard error with an actionable message. Targeting a real deployed
+  environment is a different intent and already has a different door — `API_BASE_URL`.
+- **The deeper lesson is about method, not ports**: the passing run was captured as evidence before
+  the mutation was tried. Had the mutation step been skipped — and nothing in the checklist demanded
+  it — this suite would have shipped green, permanently unable to fail, with a captured artefact
+  "proving" it worked. A green test is a claim about the test, not about the code, until it has been
+  shown to go red.
+- **Disposition**: _pending Phase 7_ — fixed here. The sibling suites are not this plan's to change;
+  worth proposing that new-process E2E harnesses be required to demonstrate one red run, and that
+  the shared reuse predicate be revisited across the existing backend suites.
