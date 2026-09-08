@@ -979,15 +979,18 @@ OpenAPI contract, the service declares no locale set, and no `Accept-Language` h
 - [x] [AI] `rtk git switch -c lms-init/du3-contract-and-service` then
       `rtk git push -u origin lms-init/du3-contract-and-service`
 - [x] [AI] Open a draft pull request against `main`; the body states the new-code cost and benefit
-- [ ] [AI] Poll CI every 2 minutes with `rtk gh pr checks <number>`. Never use `gh run watch`
-- [ ] [AI] Confirm the `Java quality gate` job now **runs** and passes — the first proof that
+- [x] [AI] Poll CI every 2 minutes with `rtk gh pr checks <number>`. Never use `gh run watch`
+      <!-- Implementation notes (DU3-PP-168): polled with `gh pr checks 495` on a 120-second interval, never `gh run watch`. Three CI passes were needed. Pass 1 (head `e36f39d2f`) failed `Java quality gate` and `formatting-verify`, both because the root `.gitignore`'s `*.jar` rule had silently swallowed `apps/ose-lms-be/gradle/wrapper/gradle-wrapper.jar`; fixed in `cdb0ef4c0`. Pass 2 (head `b7df3c465`) was cancelled mid-flight by the workflow's `cancel-in-progress` when the next commit landed. Pass 3 (head `841b098d8`) failed only `formatting-verify`, root-caused to a missing JDK and fixed in `841b098d8` itself; see DU3-PP-172. -->
+- [x] [AI] Confirm the `Java quality gate` job now **runs** and passes — the first proof that
       AC-CI-01 detection works on a real Java project
-- [ ] [AI] Confirm the `TypeScript quality gate`, `.NET quality gate`, and `Flutter quality gate`
+- [x] [AI] Confirm the `TypeScript quality gate`, `.NET quality gate`, and `Flutter quality gate`
       jobs do not execute any `ose-lms-be` target; record the job logs proving the exclusion in
       `evidence/du3-ci-routing.txt`
+      <!-- Implementation notes (DU3-PP-170): recorded in `evidence/du3-ci-routing.txt` from run 34240828013's log archive. The Java job executed all seven `ose-lms-be` targets and its Gradle summary names `test jacocoTestCoverageVerification`, so the 99% floor really ran in CI. `grep -c 'nx run ose-lms-be'` is **0** in both the TypeScript and .NET job logs, and the Flutter job produced no log at all because `detect` skipped it. The exclusion is effective, not merely declared. -->
 - [ ] [AI] Verify exact-current-head/base `Quality gate` and one clean current-head
       `pr-leak-review`
-- [ ] [AI] If any check fails, fix at the root cause and push a follow-up commit; never bypass
+- [x] [AI] If any check fails, fix at the root cause and push a follow-up commit; never bypass
+      <!-- Implementation notes (DU3-PP-172): one real failure, fixed at source. `formatting-verify` reported eight `google-java-format(InvocationTargetException)` entries, one per Java file, which reads as a formatting defect but is not one: Spotless hosts google-java-format in the Gradle **daemon** JVM rather than the project's declared toolchain, and that gate group provisioned .NET, Flutter and Ruff but no JDK, so it ran on the runner image's JDK 17. Reproduced locally byte-for-byte by pointing `JAVA_HOME` at a local JDK 17 and changing nothing else, and green again on JDK 25 with the same untouched sources; full transcript in `evidence/du3-ci-jdk-provisioning.txt`. Fixed by adding `./.github/actions/setup-java` to both jobs that can run a Java formatter gate. Separately, `TypeScript quality gate` failed once on `ayokoding-www:test:unit` and passed on re-run; that is an unrelated pre-existing CI flake, not a DU3 defect — see Phase 3 Execution Note 14. No gate was weakened, skipped, or loosened. -->
 - [ ] [AI] Mark ready, merge, and record the pull request number and 40-character head SHA
 
 ### Phase 3 Execution Notes
@@ -1070,6 +1073,28 @@ prose, not a reduction in scope.
     makes the file a prettier fixed point — a second pass changes nothing. Content is identical
     modulo whitespace, `MD013` is disabled repo-wide, and HTML comments never render, so the only
     cost is long raw lines in an editor without soft wrap.
+14. **A CI formatter gate can fail on a toolchain the job never installed.** `formatting-verify`
+    reported eight `google-java-format(java.lang.reflect.InvocationTargetException)` entries, one
+    per Java file, which reads as a formatting defect in the sources. It is not one. Spotless hosts
+    google-java-format in the **Gradle daemon JVM**, not in the toolchain
+    `build.gradle.kts` declares, so `languageVersion = 25` does not govern it; the gate group
+    provisions .NET, Flutter and Ruff but installed no JDK, so the formatter ran on the runner
+    image's JDK 17. Pointing `JAVA_HOME` at a local JDK 17 and changing nothing else reproduced the
+    failure byte for byte, and the pinned JDK 25 passed the same command on the same untouched
+    sources (`evidence/du3-ci-jdk-provisioning.txt`). Fixed by adding
+    `./.github/actions/setup-java` to both jobs that can run a Java formatter gate.
+15. **One unrelated `ayokoding-www` CI flake, recorded rather than papered over.** On head
+    `841b098d8` the `TypeScript quality gate` failed inside `ayokoding-www:test:unit` and passed on
+    a re-run of the same commit, so it is nondeterministic. It is **not** a DU3 defect:
+    `apps/ayokoding-www` has zero commits since the last CI run that took its suite green, and
+    `ose-lms-be` does not appear in that job at all (`evidence/du3-ci-routing.txt`). The node
+    process died mid-write with no vitest summary and no failing test, and GitHub drops the tail of
+    that step's log in passing and failing runs alike, so the mechanism is not visible from CI. The
+    suite already carries contention scar tissue — `vitest.config.ts` documents `--parallel=2` and a
+    raised `testTimeout` added "to bound CI memory". The re-run was diagnosis, establishing
+    nondeterminism; it is not the fix. Root-causing it needs observability work inside
+    `ayokoding-www`, which is outside this plan's boundary, so it is filed in `learnings.md` for
+    Phase 5 routing rather than silently absorbed here.
 
 ### Phase 3 Gate
 

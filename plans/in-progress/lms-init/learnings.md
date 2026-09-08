@@ -229,3 +229,31 @@
   gate registry a way to declare a gate's required toolchain so a job cannot run a gate whose
   toolchain it never installed — the mechanism the `doctor-tools:` field already gestures at but
   which cannot install a JDK today.
+
+## Learning: a CI step whose log tail is dropped cannot be root-caused from CI
+
+- **Date**: 2026-09-08
+- **Context**: the `TypeScript quality gate` failed once inside `ayokoding-www:test:unit` and passed
+  on a re-run of the identical commit. Establishing _what_ failed turned out to be impossible from
+  GitHub: the step's log ends mid-sentence, immediately followed by
+  `##[error]Process completed with exit code 1.` — no vitest summary, no coverage table, no failing
+  test named.
+- **What happened**: three separate log sources were tried — the per-job logs endpoint, `gh run view
+--job … --log`, and the run's full log archive — and all three end at the same content point. The
+  decisive check was reading a **passing** run of the same job: its log ends the same abrupt way,
+  just without the error line. So the truncation is how this step is always captured, not a symptom
+  of the failure. The suite is large (165 files, 3,523 tests, v8 coverage, jsdom) and
+  `apps/ayokoding-www/vitest.config.ts` already documents `--parallel=2` and a raised `testTimeout`
+  added "to bound CI memory", so the process dying mid-write without a diagnostic is consistent with
+  resource exhaustion — but consistent-with is not evidence, and none was obtainable.
+- **Why it might generalize**: the repository's flaky-test rule requires fixing at the root cause and
+  forbids retry, sleep, widening, skipping, and quarantine. That rule silently assumes the root cause
+  is _observable_. When the only failing signal is an exit code and the diagnostic that would name
+  the cause is exactly the output that gets dropped, an executor has no compliant move available: it
+  cannot fix what it cannot see, and every remaining option is one the rule forbids. Candidate
+  durable fixes to weigh at triage: have long test steps write a machine-readable summary
+  (vitest's `json` reporter, or the existing `json-summary` coverage reporter) to a file and upload
+  it as an artifact, so the verdict survives independently of the console log; or split
+  `ayokoding-www:test:unit` so no single step emits a log long enough to be truncated; or state in
+  the flaky-test convention what an executor should do when a failure is real but unobservable —
+  today the honest answer is "record it and escalate", and the rule does not say so.

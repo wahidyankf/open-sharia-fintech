@@ -1,0 +1,62 @@
+# DU3-PP-170 — CI routing proof: the Java job runs ose-lms-be, the others never touch it
+
+Source: GitHub Actions run 34240828013, pr-quality-gate.yml, pull request #495,
+head 841b098d87065bc80e43c472db0547488a543086, base main.
+Logs read from the run's own log archive (repos/.../actions/runs/34240828013/logs),
+one file per job, not from the per-job endpoint (which truncates long steps).
+
+## Java quality gate — RAN, and ran exactly the ose-lms-be targets
+
+  npx nx affected -t typecheck lint test:quick compat:min-version \
+    --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:rust,tag:lang:dart' --parallel=1
+
+7 ose-lms-be task invocations:
+
+  nx run ose-lms-be:typecheck
+  nx run ose-lms-be:lint
+  nx run ose-lms-be:test:unit
+  nx run ose-lms-be:specs:structure-validation
+  nx run ose-lms-be:test:coverage:unit
+  nx run ose-lms-be:test:coverage:behaviour
+  nx run ose-lms-be:test:coverage
+
+Outcome lines:
+
+  ose-lms-be: 4 features, 7 expanded scenarios, adapters: unit.
+   NX   Successfully ran target test:coverage:unit for project ose-lms-be
+  ose-lms-be: 4 features, 7 expanded scenarios, adapters: unit.
+   NX   Successfully ran target test:coverage:behaviour for project ose-lms-be
+   NX   Successfully ran target test:coverage for project ose-lms-be
+   NX   Successfully ran targets typecheck, lint, test:quick, compat:min-version
+        for 4 projects and 2 tasks they depend on
+
+The job's Gradle summary confirms the coverage floor really executed:
+
+  <td>test jacocoTestCoverageVerification</td>
+
+This is the first live proof of AC-CI-01: on the DU2 pull request this same job reported
+`skipped` because no Java project existed; on this pull request it runs and passes.
+
+## TypeScript quality gate — RAN, and executed zero ose-lms-be targets
+
+  npx nx affected -t typecheck lint test:quick compat:min-version \
+    --exclude='tag:lang:fsharp,tag:lang:csharp,tag:lang:rust,tag:lang:dart,tag:lang:java' --parallel=2
+
+  grep -c 'nx run ose-lms-be' → 0
+
+## .NET quality gate — RAN, and executed zero ose-lms-be targets
+
+  npx nx affected -t install --exclude='tag:lang:ts,tag:lang:dart,tag:lang:java' --parallel=1
+
+  grep -c 'nx run ose-lms-be' → 0
+
+## Flutter quality gate — did not run at all
+
+No log file exists for this job in the run archive; the check reported `skipping`,
+which is `detect`'s has-dart gate, not an exclusion.
+
+## Conclusion
+
+`tag:lang:java` appears in the exclude list of all three non-Java language jobs, and the
+logs confirm the exclusion is effective rather than merely declared: exactly one job
+executed an `ose-lms-be` target, and it executed all seven of them.
