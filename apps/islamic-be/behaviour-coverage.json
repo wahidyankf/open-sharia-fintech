@@ -5,6 +5,10 @@
     "unit": {
       "bindings": ["internal/bdd"],
       "driver": "go.mod"
+    },
+    "e2e": {
+      "bindings": ["../islamic-be-e2e/steps"],
+      "driver": "../islamic-be-e2e/playwright.config.ts"
     }
   }
 }

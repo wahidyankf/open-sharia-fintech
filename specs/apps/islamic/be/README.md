@@ -18,9 +18,8 @@ route's status code, its response body, and how the process resolves its own con
 ## Related
 
 - [`apps/islamic-be`](../../../../apps/islamic-be/README.md) — the implementing project.
-- `apps/islamic-be-e2e` — the E2E project that drives this corpus against the real process,
-  created in DU4.
+- [`apps/islamic-be-e2e`](../../../../apps/islamic-be-e2e/README.md) — the E2E project that drives
+  this corpus against the real process.
 
-`islamic-be-e2e` is named rather than linked because it does not exist yet: the `md-links` gate
-scans the whole tree rather than only the current change, so a link to a project DU4 has not created
-would fail every push. DU4 adds it, in both directions — exactly as DU3 did for `islamic-be` above.
+The `config/` scenarios carry `@e2e-exempt`; the `health/` scenarios do not, and all three resolve
+in both adapters.

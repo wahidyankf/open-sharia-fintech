@@ -1,7 +1,9 @@
 # Islamic BE — Gherkin Scenarios
 
-Backend Gherkin scenarios for `islamic-be`. Consumed by Godog at the Unit layer and by
-`playwright-bdd` at the E2E layer.
+Backend Gherkin scenarios for `islamic-be`. Consumed by Godog at the Unit layer, in
+[`apps/islamic-be/internal/bdd`](../../../../../apps/islamic-be/internal/bdd), and by
+`playwright-bdd` at the E2E layer, in
+[`apps/islamic-be-e2e/steps`](../../../../../apps/islamic-be-e2e/README.md).
 
 ## Feature files
 

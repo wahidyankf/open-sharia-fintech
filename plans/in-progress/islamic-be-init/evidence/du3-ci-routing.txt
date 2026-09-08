@@ -1,0 +1,86 @@
+DU3 CI routing evidence
+=======================
+PR:       https://github.com/wahidyankf/ose-public/pull/498
+Run:      https://github.com/wahidyankf/ose-public/actions/runs/34263277920
+Head SHA: 5554cd6f7e205ffa7b2b35270af5b2da6c964683
+Base:     main @ fbb459cad0a567dcace99ec6f555c493a17f58c9
+
+Claim: the go job is green and selects islamic-be; the typescript, dotnet,
+flutter and java jobs select no Go target.
+
+--- check conclusions (gh pr checks 498) ---
+pass	.NET quality gate
+pass	Auto-format affected (lint-staged)
+pass	Build rhino-cli (gate profile)
+pass	Detect affected languages
+pass	Enumerate registry CI gate groups
+pass	formatting-verify
+pass	Go quality gate
+pass	governance
+pass	harness
+pass	Java quality gate
+pass	lint
+pass	markdown
+pass	Quality gate
+pass	shell-docker-actions
+pass	Specs structure validation (all affected)
+pass	TypeScript quality gate
+pass	Validate env-contract surfaces (no drift)
+skipping	Flutter quality gate
+
+--- go job (102187317083): selects islamic-be and passes ---
+##[group]Run npx nx affected -t typecheck lint test:quick compat:min-version --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:rust,tag:lang:dart,tag:lang:java' --parallel=1
+npx nx affected -t typecheck lint test:quick compat:min-version --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:rust,tag:lang:dart,tag:lang:java' --parallel=1
+ NX   Running targets typecheck, lint, test:quick, compat:min-version for project islamic-be and 7 tasks it depends on:
+ NX   Successfully ran targets typecheck, lint, test:quick, compat:min-version for project islamic-be and 7 tasks it depends on
+
+--- go job: every distinct project it ran a target for ---
+for project islamic-be
+
+--- typescript / dotnet / java jobs: projects they ran targets for ---
+[typescript]
+  for project ayokoding-www
+  for project ayokoding-www-be-e2e
+  for project ayokoding-www-fe-e2e
+  for project organiclever-app-web
+  for project organiclever-app-web-e2e
+  for project organiclever-be-e2e
+  for project organiclever-www
+  for project organiclever-www-fe-e2e
+  for project ose-app-web
+  for project ose-app-web-e2e
+  for project ose-be-e2e
+  for project ose-www
+  for project ose-www-be-e2e
+  for project ose-www-fe-e2e
+  for project ts-env-loader
+  for project web-ui
+  for project web-ui-token
+[dotnet]
+  for project crane-cli
+  for project fsharp-crane-core
+  for project fsharp-env-loader
+  for project organiclever-be
+  for project ose-be
+  for project rhino-cli
+[java]
+  for project ose-lms-be
+
+--- typescript / dotnet / java jobs: every line naming islamic-be ---
+(each is the git fetch advertising the PR branch, not a target selection)
+[typescript]
+   * [new branch]          islamic-be-init/du3-service              -> origin/islamic-be-init/du3-service
+[dotnet]
+   * [new branch]          islamic-be-init/du3-service              -> origin/islamic-be-init/du3-service
+[java]
+   * [new branch]          islamic-be-init/du3-service              -> origin/islamic-be-init/du3-service
+
+--- flutter job (102187318990) ---
+  conclusion: skipped  (job did not run; has-dart false)
+
+--- lint gate group (102187653307): the new provisioning steps ---
+##[group]Run npx nx affected -t codegen --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:rust,tag:lang:dart,tag:lang:java' --parallel=1
+npx nx affected -t codegen --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:rust,tag:lang:dart,tag:lang:java' --parallel=1
+Running gate lint-golangci
+0 issues.
+lint-golangci	PASS

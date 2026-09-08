@@ -1,0 +1,14 @@
+{
+  "project": "islamic-be-e2e",
+  "corpus": ["../../specs/apps/islamic/be/behaviours"],
+  "adapters": {
+    "unit": {
+      "bindings": ["../islamic-be/internal/bdd"],
+      "driver": "../islamic-be/go.mod"
+    },
+    "e2e": {
+      "bindings": ["steps"],
+      "driver": "playwright.config.ts"
+    }
+  }
+}
