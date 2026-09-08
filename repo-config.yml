@@ -211,9 +211,16 @@ doctor:
       # turns that into a doctor row rather than an opaque gate failure.
       required-version: "2.11"
       install:
-        # brew only, for the same reason as `go` above: Debian ships 1.x under
-        # this name, which cannot read a `version: "2"` config at all.
         brew: ["install", "golangci-lint"]
+        # NOT `apt-get install golangci-lint`: Debian ships 1.x under that name,
+        # and a 1.x binary cannot read a `version: "2"` config at all, so it
+        # would install a tool that fails required-version immediately. The
+        # `apt` key names the linux slot rather than the command -- built-in
+        # tools already put `npx` and a pinned curl download in it -- so the
+        # module-proxy install goes here. CI installs the same pin itself in
+        # pr-quality-gate.yml's gate job, because that job must also put
+        # GOPATH/bin on PATH before the provisioning probe runs.
+        apt: ["go", "install", "github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.11.3"]
 
 # governance-word-budget: registered here (config-only) at Phase 1 of
 # plans/done/2026-08-15__optimize-governance-md and armed as a `gates:` entry at

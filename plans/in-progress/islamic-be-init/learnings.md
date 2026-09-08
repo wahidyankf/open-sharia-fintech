@@ -179,3 +179,20 @@ Doctor tool "golangci-lint"` until the linter was declared there too. So `extra-
   "excluded everywhere but its own job" into "runs nowhere it should, somewhere it shouldn't". The
   removal checklist is not the addition checklist reversed.
 - **Disposition**: _pending Phase 7_ — out of scope; belongs to whoever revives a Rust lane.
+
+### DU1: `doctor-tools:` provisions unconditionally, but gates run file-scoped
+
+- **Observed**: `lint-golangci` is scoped `affected-file-type, glob: "*.go"`, so on a PR with no Go
+  files the gate never runs. Its `doctor-tools: [golangci-lint]` was still enforced: the `gate`
+  matrix job provisions the union of a group's declared tools **before** any gate runs and without
+  consulting file scope, so CI went red demanding a linter it had no reason to invoke.
+- **Generalizes because**: two different scopes are in play and only one is visible at the
+  declaration site. A gate entry reads as "this tool is needed when this gate runs"; the
+  provisioning step reads it as "this tool is needed whenever this group runs". Adding
+  `doctor-tools:` to a narrowly-scoped gate therefore widens a requirement far past the gate — and
+  the cost lands on every unrelated PR, not on the Go PRs the gate was written for.
+- **Second-order**: the tool must be installable on **every** platform the group's CI runs on, not
+  just the author's. A correct decision to omit `apt` — Debian's package is 1.x, which cannot read a
+  `version: "2"` config — became a total absence of a Linux path.
+- **Disposition**: _pending Phase 7_ — resolved in-flight. Worth proposing that provisioning
+  intersect a gate's file scope, so a dormant gate costs nothing.

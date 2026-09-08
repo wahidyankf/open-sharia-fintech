@@ -650,7 +650,38 @@ canonical schema (key set + enums OK)`. Corrected wherever the plan repeats the 
 
 **Integration**
 
-- [ ] [AI] Commit on `islamic-be-init/du1-go-lane`, push, and open a draft PR stating the new-code cost/benefit — acceptance: the PR body names the CI leak this fixes and links `tech-docs.md` §1.4
+- [x] [AI] Commit on `islamic-be-init/du1-go-lane`, push, and open a draft PR stating the new-code cost/benefit — acceptance: the PR body names the CI leak this fixes and links `tech-docs.md` §1.4
+
+  > **Implementation note (2026-09-08).** Branch cut from `origin/main` **after** the plan-authoring
+  > PR #488 merged as `4ed1238`, so DU1 builds on the merged plan rather than racing it. Draft PR
+  > **#496** at head `0be080d30a8b748c2e73fc1ad8520bc06746da65`. The body carries the four-row new-code cost/benefit table, names the
+  > four-job CI leak, and links `tech-docs.md` §1.4.
+  >
+  > The first push was rejected by the pre-push hook with `ayokoding-www:test:unit` exiting **75**.
+  > That is HIPPO's admission/install-lock timeout (`hippo:220`, `:226`, `:414`), not a test failure —
+  > re-run under free capacity the target passes at 100% line coverage. Nx labelled the task "flaky";
+  > it is not. The failure was resource contention with this session's own 23-project
+  > `test:coverage:behaviour` run, and no test was retried, widened, or skipped to get past it.
+  >
+  > **CI then failed on the first head, and the fix is recorded here rather than amended away.** The
+  > new `lint` gate group went red at `Provision registry-declared tools` with
+  > `golangci-lint not found (not found in PATH)` and `Skip: golangci-lint — no install steps for
+platform linux`. Root cause: the `gate` matrix job provisions the **union** of a group's
+  > `doctor-tools:` unconditionally, before any gate runs and regardless of whether the gate's
+  > file scope matches — so declaring `doctor-tools: [golangci-lint]` made the linter a hard
+  > requirement of every `lint`-group CI run, while its `install:` named `brew` only. The omission
+  > was deliberate and still correct on its own terms (Debian's `golangci-lint` is 1.x and cannot
+  > read a `version: "2"` config), but it left Linux with no path at all.
+  >
+  > Fixed two ways, both needed. `pr-quality-gate.yml`'s `gate` job gains a group-conditional
+  > install — the same shape as the `Install Ruff` step already there — which also appends
+  > `GOPATH/bin` to `$GITHUB_PATH`, because the provisioning probe is a PATH lookup and would
+  > otherwise report a just-installed binary as missing. And `doctor.extra-tools` gains a linux
+  > slot carrying the same pinned `go install`, so `doctor --fix` is not stranded on Linux either.
+  > The `apt` key names the platform slot rather than the command: `installManagerFor` maps
+  > `linux -> "apt"` and then runs `command :: args` verbatim, which is how built-ins already put
+  > `npx` and a pinned curl download in that slot.
+
 - [ ] [AI] Poll CI every 2 minutes until `pr-quality-gate.yml` and `pr-leak-review` complete on the current head — acceptance: both report success; never use `gh run watch`
 - [ ] [AI] Mark ready and merge once the hardened preconditions hold — acceptance: the PR merges to `main`
 
