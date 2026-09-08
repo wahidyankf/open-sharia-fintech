@@ -1298,21 +1298,21 @@ DU1–DU4; gates only DU6.
 
 ### Integration
 
-- [ ] [AI] Commit in each repository on `islamic-be-init/du5-rhino-go-env` with the source edit and the regenerated manifest in **one** commit, message `feat(rhino-cli): scan Go source for environment reads`. Acceptance: `rtk git show --stat` in each lists both `Env.fs` and `parity-manifest.sha256`
-- [ ] [AI] Push both branches and open a draft PR in each repository, each body stating the new-code cost/benefit and naming its counterpart PR. Acceptance: both PRs exist and cross-reference
-- [ ] [AI] Poll CI every 2 minutes in both repositories until `pr-quality-gate.yml` and `pr-leak-review` complete on each current head — acceptance: all report success; never use `gh run watch`
-- [ ] [AI] Merge both pull requests within the same working session, so the nightly parity audit never observes a mismatched pair. Acceptance: both merge; record each PR number and 40-character head SHA in the Delivery Branch Inventory
+- [x] [AI] Commit in each repository on `islamic-be-init/du5-rhino-go-env` with the source edit and the regenerated manifest in **one** commit, message `feat(rhino-cli): scan Go source for environment reads`. Acceptance: `rtk git show --stat` in each lists both `Env.fs` and `parity-manifest.sha256` — public `72c3b6567`, private `a79332f8bf`; each lists `Env.fs` and `parity-manifest.sha256`
+- [x] [AI] Push both branches and open a draft PR in each repository, each body stating the new-code cost/benefit and naming its counterpart PR. Acceptance: both PRs exist and cross-reference — ose-public#500 and ose-private#169, cross-referenced
+- [x] [AI] Poll CI every 2 minutes in both repositories until `pr-quality-gate.yml` and `pr-leak-review` complete on each current head — acceptance: all report success; never use `gh run watch` — all checks pass in both; leak reviews `5146300220` (public) and `5146295091` (private), each pinned to its exact head with `pass` 0/0/0
+- [x] [AI] Merge both pull requests within the same working session, so the nightly parity audit never observes a mismatched pair. Acceptance: both merge; record each PR number and 40-character head SHA in the Delivery Branch Inventory — merged back to back: public squash `4127ff43c5f5d862538fac9202fdc7ae0c90bf7f`, private squash `2ba5397da07403598097eddb1a57d5876a7a0f39`
 - [x] [AI] Record the unconverged counterpart as a sibling obligation in `learnings.md` from the moment the first PR merges until the second does — acceptance: the entry names the outstanding repository and is cleared only when both are in — recorded in `learnings.md` under "a manifest-covered change opens a divergence window until both PRs land"
 
 ### Phase 5 Gate
 
 > All checks below must pass before starting Phase 6.
 
-- [ ] [AI] `rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- run rhino-cli:test:quick` in **both** repositories — exits zero in each
-- [ ] [AI] Recursive diff of `apps/rhino-cli/src`, `project.json`, `LICENSE`, and `parity-manifest.sha256` across repositories — reports zero differences
-- [ ] [AI] `rtk apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate` in both — each reports the manifest is current
-- [ ] [AI] `rtk gh workflow run rhino-cli-parity-audit.yml --repo wahidyankf/ose-private` completes successfully against the merged state — save the run URL to `evidence/du5-parity-audit.txt`
-- [ ] [AI] Confirm both `repo-config.yml` files carry an identical top-level key set — acceptance: the schema-parity comparison reports no difference
+- [x] [AI] `rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- run rhino-cli:test:quick` in **both** repositories — exits zero in each — 757 tests pass in each at merged main
+- [x] [AI] Recursive diff of `apps/rhino-cli/src`, `project.json`, `LICENSE`, and `parity-manifest.sha256` across repositories — reports zero differences — zero differences; behaviours corpus identical too
+- [x] [AI] `rtk apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate` in both — each reports the manifest is current — each reports the manifest is current
+- [x] [AI] `rtk gh workflow run rhino-cli-parity-audit.yml --repo wahidyankf/ose-private` completes successfully against the merged state — save the run URL to `evidence/du5-parity-audit.txt` — run 34272185735 completed/success; saved to `evidence/du5-parity-audit.txt`
+- [x] [AI] Confirm both `repo-config.yml` files carry an identical top-level key set — acceptance: the schema-parity comparison reports no difference — 10 keys each, no difference; DU5 touched the file in neither repository
 
 > **Pause Safety**: both repositories carry the Go env scanner and a matching regenerated parity
 > manifest byte-identically, and every existing env surface still validates. No app is registered

@@ -18,10 +18,15 @@ import (
 )
 
 func main() {
-	portFlag := flag.String("port", "", "listener port; overrides "+config.PortVariable)
+	// ISLAMIC_BE_PORT is spelled out here rather than held in a constant so the
+	// env-contract scanner can see it. `rhino-cli env validate` matches the key
+	// literal beside the reader it is passed with, mirroring how ose-be's
+	// Program.fs passes "OSE_BE_PORT" beside readEnvironment; a constant would
+	// hide a read that genuinely happens and report the key as unread.
+	portFlag := flag.String("port", "", "listener port; overrides ISLAMIC_BE_PORT")
 	flag.Parse()
 
-	port, err := config.ResolvePort(*portFlag, os.LookupEnv)
+	port, err := config.ResolvePort(*portFlag, os.LookupEnv, "ISLAMIC_BE_PORT")
 	if err != nil {
 		// Refuse to start rather than fall back to the default, so a typo'd port
 		// surfaces immediately instead of as traffic arriving on the wrong one.
