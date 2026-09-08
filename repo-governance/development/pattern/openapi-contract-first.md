@@ -13,7 +13,7 @@ spec never follows from the code.
 
 - [Principles and Conventions](./openapi-contract-first/principles-and-conventions.md) — The core principles and conventions this pattern implements - explicitness, reproducibility, automation, simplicity, and the backend hexagonal-architecture layering. Use when you need to trace an OpenAPI contract-first rule back to the principle or convention it implements.
 - [Codegen Tooling and Nx Targets](./openapi-contract-first/codegen-tooling-and-nx-targets.md) — Which codegen tool runs for each app, and the Nx targets that invoke codegen and spec linting. Use when running codegen for an app or looking up which tool generates its client/server types.
-- [Drift Enforcement, Scope, and Related](./openapi-contract-first/drift-enforcement-scope-and-related.md) — How CI fails the build on spec/codegen drift, which BE-client pairs participate in contract-first development, and related pattern documentation. Use when a CI drift check fails, or checking whether a given app participates in contract-first codegen.
+- [Drift Prevention, Scope, and Related](./openapi-contract-first/drift-prevention-scope-and-related.md) — Why uncommitted generated output makes spec/codegen drift unrepresentable, which BE-client pairs participate in contract-first development, and related pattern documentation. Use when generated contract output is missing or stale, or checking whether a given app participates in contract-first codegen.
 
 ## Overview and Spec Location
 

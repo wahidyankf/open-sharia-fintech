@@ -8,7 +8,7 @@
   "gopls": {
     "buildFlags": ["-tags=integration"]
   },
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "js/ts.tsdk.path": "node_modules/typescript/lib",
+  "js/ts.tsdk.promptToUseWorkspaceVersion": true,
   "dart.flutterSdkPath": ".fvm-cache/versions/3.41.5"
 }

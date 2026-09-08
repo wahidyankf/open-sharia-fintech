@@ -63,6 +63,19 @@ only binds a socket and reads the environment — the boundaries Unit proof may 
 `compat:min-version` is a real assertion that `go.mod`'s `go` directive still matches the pinned
 floor, not an echo.
 
+### First run in a fresh worktree
+
+`generated-contracts/` is gitignored, so a fresh clone or worktree does not have it and `gopls`
+reports `could not import .../generated-contracts` against correct source. Nx targets are immune —
+`typecheck` and `build` declare `dependsOn: ["codegen"]` — but a language server reads the working
+tree directly. Materialize it once, then restart the Go language server:
+
+```bash
+rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- run islamic-be:codegen
+```
+
+See [Per-Project Generated Sources](../../repo-governance/development/workflow/worktree-setup/per-project-generated-sources.md).
+
 ## Configuration
 
 | Variable          | Default | Notes                                                |
