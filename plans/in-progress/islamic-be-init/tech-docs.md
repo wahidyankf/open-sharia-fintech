@@ -12,7 +12,7 @@ source of truth for behaviour.
 
 ```mermaid
 graph LR
-    SPEC["specs/apps/islamic/be/<br/>behaviours (Gherkin)"]:::purple
+    SPEC["specs: islamic/be<br/>behaviours (Gherkin)"]:::purple
     CONTRACT["islamic-contracts<br/>OpenAPI 3.1"]:::orange
     APP["islamic-be<br/>Go 1.26 + Gin"]:::blue
     E2E["islamic-be-e2e<br/>Playwright + BDD"]:::teal
@@ -36,12 +36,12 @@ package so the behaviour-coverage extractor scans a single known root.
 
 ```mermaid
 graph LR
-    MAIN["cmd/islamic-be/main.go<br/>entry point"]:::gray
+    MAIN["cmd/islamic-be<br/>main.go entry"]:::gray
     CONFIG["internal/config<br/>port resolution"]:::blue
     HEALTH["internal/health<br/>handler"]:::blue
-    ROUTER["internal/router<br/>Gin engine + ServerInterface"]:::blue
+    ROUTER["internal/router<br/>Gin engine +<br/>ServerInterface"]:::blue
     GEN["generated-contracts<br/>oapi-codegen output"]:::orange
-    BDD["internal/bdd<br/>Godog step registrations"]:::purple
+    BDD["internal/bdd<br/>Godog step<br/>registrations"]:::purple
 
     MAIN --> CONFIG
     MAIN --> ROUTER
@@ -66,11 +66,11 @@ test targets.
 
 ```mermaid
 graph LR
-    BUNDLE["islamic-contracts:bundle<br/>redocly"]:::orange
+    BUNDLE["contracts:bundle<br/>redocly"]:::orange
     CODEGEN["islamic-be:codegen<br/>oapi-codegen"]:::orange
     TYPECHECK["islamic-be:typecheck<br/>go build ./..."]:::blue
     BUILD["islamic-be:build<br/>go build -o dist/"]:::blue
-    UNIT["islamic-be:test:unit<br/>go test -coverprofile"]:::teal
+    UNIT["islamic-be:test:unit<br/>go test -cover"]:::teal
 
     BUNDLE --> CODEGEN
     CODEGEN --> TYPECHECK
@@ -106,7 +106,7 @@ this for Java by adding `tag:lang:java` to all three; this plan does the same fo
 
 ```mermaid
 graph LR
-    AFFECTED["nx show projects --affected"]:::gray
+    AFFECTED["nx show projects<br/>--affected"]:::gray
     DETECT{"lang: tag?"}:::orange
     TSJOB["typescript job<br/>node only"]:::blue
     GOJOB["go job<br/>setup-go + node"]:::teal
