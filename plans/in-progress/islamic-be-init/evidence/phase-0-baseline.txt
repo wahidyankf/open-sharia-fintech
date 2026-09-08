@@ -1,3 +1,7 @@
+# NOTE: every absolute path in this capture has been rewritten to <WORKTREE_ROOT>.
+# The raw tool output carried this machine's real worktree path 126 times; committing it
+# would violate the no-machine-specific-commits rule. Only that prefix changed -- every
+# byte after it is the tool's own output, unedited.
 
  NX   Running target test:quick for 3 projects:
 
@@ -138,17 +142,17 @@ ose-be-e2e: 10 features, 15 expanded scenarios, adapters: unit, e2e.
 [33mDownload 7.20.0 ...[39m
 [32mDownloaded 7.20.0[39m
 WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
-WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.github.benmanes.caffeine.cache.UnsafeAccess (file:/Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/node_modules/@openapitools/openapi-generator-cli/versions/7.20.0.jar)
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.github.benmanes.caffeine.cache.UnsafeAccess (file:<WORKTREE_ROOT>/node_modules/@openapitools/openapi-generator-cli/versions/7.20.0.jar)
 WARNING: Please consider reporting this to the maintainers of class com.github.benmanes.caffeine.cache.UnsafeAccess
 WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
 [main] WARN  o.o.codegen.DefaultCodegen - OpenAPI 3.1 support is still in beta. To report an issue related to 3.1 spec, please kindly open an issue in the Github repo: https://github.com/openAPITools/openapi-generator.
 [main] INFO  o.o.codegen.DefaultGenerator - Generating with dryRun=false
-[main] INFO  o.o.c.ignore.CodegenIgnoreProcessor - Output directory (/Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/generated-contracts) does not exist, or is inaccessible. No file (.openapi-generator-ignore) will be evaluated.
+[main] INFO  o.o.c.ignore.CodegenIgnoreProcessor - Output directory (<WORKTREE_ROOT>/apps/ose-be/generated-contracts) does not exist, or is inaccessible. No file (.openapi-generator-ignore) will be evaluated.
 [main] INFO  o.o.codegen.DefaultGenerator - OpenAPI Generator: fsharp-giraffe-server (server)
 [main] INFO  o.o.codegen.DefaultGenerator - Generator 'fsharp-giraffe-server' is considered beta.
 [main] WARN  o.o.codegen.DefaultCodegen - OpenAPI 3.1 support is still in beta. To report an issue related to 3.1 spec, please kindly open an issue in the Github repo: https://github.com/openAPITools/openapi-generator.
-[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/HealthResponse.fs
-[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/ErrorResponse.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file <WORKTREE_ROOT>/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/HealthResponse.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file <WORKTREE_ROOT>/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/ErrorResponse.fs
 [main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of APIs.
 [main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of Webhooks.
 [main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of supporting files.
@@ -166,10 +170,10 @@ WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
 [2m> [22mdotnet build apps/ose-be/src/OseBe/OseBe.fsproj
 
   Determining projects to restore...
-  Restored /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/libs/fsharp-env-loader/fsharp-env-loader.fsproj (in 1.15 sec).
-  Restored /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/OseBe.fsproj (in 1.15 sec).
-  fsharp-env-loader -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/libs/fsharp-env-loader/bin/Debug/net10.0/fsharp-env-loader.dll
-  OseBe -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/bin/Debug/net10.0/OseBe.dll
+  Restored <WORKTREE_ROOT>/libs/fsharp-env-loader/fsharp-env-loader.fsproj (in 1.15 sec).
+  Restored <WORKTREE_ROOT>/apps/ose-be/src/OseBe/OseBe.fsproj (in 1.15 sec).
+  fsharp-env-loader -> <WORKTREE_ROOT>/libs/fsharp-env-loader/bin/Debug/net10.0/fsharp-env-loader.dll
+  OseBe -> <WORKTREE_ROOT>/apps/ose-be/src/OseBe/bin/Debug/net10.0/OseBe.dll
 
 Build succeeded.
     0 Warning(s)
@@ -199,17 +203,17 @@ Time Elapsed 00:00:06.46
 [33mDownload 7.20.0 ...[39m
 [32mDownloaded 7.20.0[39m
 WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
-WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.github.benmanes.caffeine.cache.UnsafeAccess (file:/Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/node_modules/@openapitools/openapi-generator-cli/versions/7.20.0.jar)
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.github.benmanes.caffeine.cache.UnsafeAccess (file:<WORKTREE_ROOT>/node_modules/@openapitools/openapi-generator-cli/versions/7.20.0.jar)
 WARNING: Please consider reporting this to the maintainers of class com.github.benmanes.caffeine.cache.UnsafeAccess
 WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
 [main] WARN  o.o.codegen.DefaultCodegen - OpenAPI 3.1 support is still in beta. To report an issue related to 3.1 spec, please kindly open an issue in the Github repo: https://github.com/openAPITools/openapi-generator.
 [main] INFO  o.o.codegen.DefaultGenerator - Generating with dryRun=false
-[main] INFO  o.o.c.ignore.CodegenIgnoreProcessor - Output directory (/Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/generated-contracts) does not exist, or is inaccessible. No file (.openapi-generator-ignore) will be evaluated.
+[main] INFO  o.o.c.ignore.CodegenIgnoreProcessor - Output directory (<WORKTREE_ROOT>/apps/ose-be/generated-contracts) does not exist, or is inaccessible. No file (.openapi-generator-ignore) will be evaluated.
 [main] INFO  o.o.codegen.DefaultGenerator - OpenAPI Generator: fsharp-giraffe-server (server)
 [main] INFO  o.o.codegen.DefaultGenerator - Generator 'fsharp-giraffe-server' is considered beta.
 [main] WARN  o.o.codegen.DefaultCodegen - OpenAPI 3.1 support is still in beta. To report an issue related to 3.1 spec, please kindly open an issue in the Github repo: https://github.com/openAPITools/openapi-generator.
-[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/HealthResponse.fs
-[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/ErrorResponse.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file <WORKTREE_ROOT>/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/HealthResponse.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file <WORKTREE_ROOT>/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/ErrorResponse.fs
 [main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of APIs.
 [main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of Webhooks.
 [main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of supporting files.
@@ -227,10 +231,10 @@ WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
 [2m> [22mdotnet build apps/ose-be/src/OseBe/OseBe.fsproj
 
   Determining projects to restore...
-  Restored /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/libs/fsharp-env-loader/fsharp-env-loader.fsproj (in 1.15 sec).
-  Restored /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/OseBe.fsproj (in 1.15 sec).
-  fsharp-env-loader -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/libs/fsharp-env-loader/bin/Debug/net10.0/fsharp-env-loader.dll
-  OseBe -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/bin/Debug/net10.0/OseBe.dll
+  Restored <WORKTREE_ROOT>/libs/fsharp-env-loader/fsharp-env-loader.fsproj (in 1.15 sec).
+  Restored <WORKTREE_ROOT>/apps/ose-be/src/OseBe/OseBe.fsproj (in 1.15 sec).
+  fsharp-env-loader -> <WORKTREE_ROOT>/libs/fsharp-env-loader/bin/Debug/net10.0/fsharp-env-loader.dll
+  OseBe -> <WORKTREE_ROOT>/apps/ose-be/src/OseBe/bin/Debug/net10.0/OseBe.dll
 
 Build succeeded.
     0 Warning(s)
@@ -251,89 +255,89 @@ Restore was successful.
 
 [2m> [22mdotnet fsharplint lint apps/ose-be/src/OseBe/OseBe.fsproj --lint-config apps/ose-be/fsharplint.json
 
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/obj/Debug/net10.0/OseBe.AssemblyInfo.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/obj/Debug/net10.0/OseBe.AssemblyInfo.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/HealthResponse.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/HealthResponse.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Domain/Readiness.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Domain/Readiness.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Infrastructure/AppDbContext.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Infrastructure/AppDbContext.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Infrastructure/Repositories/RepositoryTypes.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Infrastructure/Repositories/RepositoryTypes.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Infrastructure/Repositories/EfRepositories.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Infrastructure/Repositories/EfRepositories.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Infrastructure/OpenRouterClient.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Infrastructure/OpenRouterClient.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Infrastructure/OpenRouterConnect.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Infrastructure/OpenRouterConnect.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Infrastructure/Database.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Infrastructure/Database.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Infrastructure/NatsClient.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Infrastructure/NatsClient.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Infrastructure/NatsConnect.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Infrastructure/NatsConnect.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/Config/Infrastructure/EnvTier.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Contexts/Config/Infrastructure/EnvTier.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/Db/Infrastructure/DbMigrations.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Contexts/Db/Infrastructure/DbMigrations.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/Db/Application/MigrationStatus.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Contexts/Db/Application/MigrationStatus.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/Db/Api/MigrationStatusApi.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Contexts/Db/Api/MigrationStatusApi.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/Health/Domain/HealthDomain.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Contexts/Health/Domain/HealthDomain.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/Health/Application/HealthService.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Contexts/Health/Application/HealthService.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/Health/Infrastructure/HealthInfrastructure.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Contexts/Health/Infrastructure/HealthInfrastructure.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/Health/Api/HealthApi.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Contexts/Health/Api/HealthApi.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/RegulatorySource/Domain/RegulatorySourceDomain.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Contexts/RegulatorySource/Domain/RegulatorySourceDomain.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/RegulatorySource/Application/RegulatorySourceService.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Contexts/RegulatorySource/Application/RegulatorySourceService.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/RegulatorySource/Infrastructure/RegulatorySourceInfrastructure.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Contexts/RegulatorySource/Infrastructure/RegulatorySourceInfrastructure.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/RegulatorySource/Api/RegulatorySourceApi.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Contexts/RegulatorySource/Api/RegulatorySourceApi.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/InternalPolicy/Domain/InternalPolicyDomain.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Contexts/InternalPolicy/Domain/InternalPolicyDomain.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/InternalPolicy/Application/InternalPolicyService.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Contexts/InternalPolicy/Application/InternalPolicyService.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/InternalPolicy/Infrastructure/InternalPolicyInfrastructure.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Contexts/InternalPolicy/Infrastructure/InternalPolicyInfrastructure.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/InternalPolicy/Api/InternalPolicyApi.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Contexts/InternalPolicy/Api/InternalPolicyApi.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/GapAnalysis/Domain/GapAnalysisDomain.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Contexts/GapAnalysis/Domain/GapAnalysisDomain.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/GapAnalysis/Application/GapAnalysisService.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Contexts/GapAnalysis/Application/GapAnalysisService.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/GapAnalysis/Infrastructure/GapAnalysisInfrastructure.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Contexts/GapAnalysis/Infrastructure/GapAnalysisInfrastructure.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/GapAnalysis/Api/GapAnalysisApi.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Contexts/GapAnalysis/Api/GapAnalysisApi.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/AiOrchestration/Domain/AiOrchestrationDomain.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Contexts/AiOrchestration/Domain/AiOrchestrationDomain.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/AiOrchestration/Application/AiOrchestrationService.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Contexts/AiOrchestration/Application/AiOrchestrationService.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/AiOrchestration/Infrastructure/AiOrchestrationInfrastructure.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Contexts/AiOrchestration/Infrastructure/AiOrchestrationInfrastructure.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/AiOrchestration/Api/AiOrchestrationApi.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Contexts/AiOrchestration/Api/AiOrchestrationApi.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/Messaging/Domain/MessagingDomain.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Contexts/Messaging/Domain/MessagingDomain.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/Messaging/Application/MessagingStatus.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Contexts/Messaging/Application/MessagingStatus.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/Messaging/Infrastructure/JetStreamDemo.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Contexts/Messaging/Infrastructure/JetStreamDemo.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Contexts/Messaging/Api/MessagingApi.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Contexts/Messaging/Api/MessagingApi.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/WebApp.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/WebApp.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/Program.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/ose-be/src/OseBe/Program.fs ==========
 ========== Finished: 0 warnings ==========
 ========== Summary: 0 warnings ==========
 [2m> [22mdotnet fsharp-analyzers --project apps/ose-be/src/OseBe/OseBe.fsproj --analyzers-path $(find $(dotnet nuget locals global-packages --list | sed 's/.*: //')g-research.fsharp.analyzers -path '*/analyzers/dotnet/fs' -type d | head -1) --treat-as-error GRA-STRING-001 GRA-STRING-002 GRA-STRING-003 GRA-STRING-004 GRA-UNIONCASE-001 GRA-VIRTUALCALL-001 GRA-JSONOPTS-001 GRA-DISPBEFOREASYNC-001 GRA-IMMUTABLECOLLECTIONEQUALITY-001 GRA-LOGARGFUNCFULLAPP-001 GRA-LOGTEMPLMISSVALS-001 GRA-TYPE-ANNOTATE-001 GRA-INTERPOLATED-001
@@ -362,17 +366,17 @@ Restore was successful.
 [33mDownload 7.20.0 ...[39m
 [32mDownloaded 7.20.0[39m
 WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
-WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.github.benmanes.caffeine.cache.UnsafeAccess (file:/Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/node_modules/@openapitools/openapi-generator-cli/versions/7.20.0.jar)
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.github.benmanes.caffeine.cache.UnsafeAccess (file:<WORKTREE_ROOT>/node_modules/@openapitools/openapi-generator-cli/versions/7.20.0.jar)
 WARNING: Please consider reporting this to the maintainers of class com.github.benmanes.caffeine.cache.UnsafeAccess
 WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
 [main] WARN  o.o.codegen.DefaultCodegen - OpenAPI 3.1 support is still in beta. To report an issue related to 3.1 spec, please kindly open an issue in the Github repo: https://github.com/openAPITools/openapi-generator.
 [main] INFO  o.o.codegen.DefaultGenerator - Generating with dryRun=false
-[main] INFO  o.o.c.ignore.CodegenIgnoreProcessor - Output directory (/Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/generated-contracts) does not exist, or is inaccessible. No file (.openapi-generator-ignore) will be evaluated.
+[main] INFO  o.o.c.ignore.CodegenIgnoreProcessor - Output directory (<WORKTREE_ROOT>/apps/ose-be/generated-contracts) does not exist, or is inaccessible. No file (.openapi-generator-ignore) will be evaluated.
 [main] INFO  o.o.codegen.DefaultGenerator - OpenAPI Generator: fsharp-giraffe-server (server)
 [main] INFO  o.o.codegen.DefaultGenerator - Generator 'fsharp-giraffe-server' is considered beta.
 [main] WARN  o.o.codegen.DefaultCodegen - OpenAPI 3.1 support is still in beta. To report an issue related to 3.1 spec, please kindly open an issue in the Github repo: https://github.com/openAPITools/openapi-generator.
-[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/HealthResponse.fs
-[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/ErrorResponse.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file <WORKTREE_ROOT>/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/HealthResponse.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file <WORKTREE_ROOT>/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/ErrorResponse.fs
 [main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of APIs.
 [main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of Webhooks.
 [main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of supporting files.
@@ -390,10 +394,10 @@ WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
 [2m> [22mdotnet build apps/ose-be/src/OseBe/OseBe.fsproj
 
   Determining projects to restore...
-  Restored /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/libs/fsharp-env-loader/fsharp-env-loader.fsproj (in 1.15 sec).
-  Restored /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/OseBe.fsproj (in 1.15 sec).
-  fsharp-env-loader -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/libs/fsharp-env-loader/bin/Debug/net10.0/fsharp-env-loader.dll
-  OseBe -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/bin/Debug/net10.0/OseBe.dll
+  Restored <WORKTREE_ROOT>/libs/fsharp-env-loader/fsharp-env-loader.fsproj (in 1.15 sec).
+  Restored <WORKTREE_ROOT>/apps/ose-be/src/OseBe/OseBe.fsproj (in 1.15 sec).
+  fsharp-env-loader -> <WORKTREE_ROOT>/libs/fsharp-env-loader/bin/Debug/net10.0/fsharp-env-loader.dll
+  OseBe -> <WORKTREE_ROOT>/apps/ose-be/src/OseBe/bin/Debug/net10.0/OseBe.dll
 
 Build succeeded.
     0 Warning(s)
@@ -406,19 +410,19 @@ Time Elapsed 00:00:06.46
 [2m> [22mif grep -rn -E --include='*.fs' 'Skip\s*=' apps/ose-be/tests/unit; then echo 'ERROR: xunit Skip= attribute found in test files above'; exit 1; fi && dotnet test apps/ose-be/tests/unit/OseBe.UnitTests.fsproj /p:CollectCoverage=true /p:Threshold=99 "/p:Include=[OseBe]*" /p:ThresholdType=line "/p:ExcludeByFile=**/OseBe/Program.fs%2C**/Contexts/Db/Infrastructure/DbMigrations.fs%2C**/Contexts/RegulatorySource/Infrastructure/RegulatorySourceInfrastructure.fs%2C**/Contexts/InternalPolicy/Infrastructure/InternalPolicyInfrastructure.fs%2C**/Infrastructure/Repositories/EfRepositories.fs%2C**/Contexts/Messaging/Infrastructure/JetStreamDemo.fs%2C**/Infrastructure/NatsConnect.fs%2C**/Infrastructure/OpenRouterConnect.fs"
 
   Determining projects to restore...
-  Restored /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/tests/unit/OseBe.UnitTests.fsproj (in 568 ms).
+  Restored <WORKTREE_ROOT>/apps/ose-be/tests/unit/OseBe.UnitTests.fsproj (in 568 ms).
   2 of 3 projects are up-to-date for restore.
-  fsharp-env-loader -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/libs/fsharp-env-loader/bin/Debug/net10.0/fsharp-env-loader.dll
-  OseBe -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/src/OseBe/bin/Debug/net10.0/OseBe.dll
-  OseBe.UnitTests -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/tests/unit/bin/Debug/net10.0/OseBe.UnitTests.dll
+  fsharp-env-loader -> <WORKTREE_ROOT>/libs/fsharp-env-loader/bin/Debug/net10.0/fsharp-env-loader.dll
+  OseBe -> <WORKTREE_ROOT>/apps/ose-be/src/OseBe/bin/Debug/net10.0/OseBe.dll
+  OseBe.UnitTests -> <WORKTREE_ROOT>/apps/ose-be/tests/unit/bin/Debug/net10.0/OseBe.UnitTests.dll
   [coverlet] _mapping file name: 'CoverletSourceRootsMapping_OseBe.UnitTests'
-Test run for /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/tests/unit/bin/Debug/net10.0/OseBe.UnitTests.dll (.NETCoreApp,Version=v10.0)
+Test run for <WORKTREE_ROOT>/apps/ose-be/tests/unit/bin/Debug/net10.0/OseBe.UnitTests.dll (.NETCoreApp,Version=v10.0)
 A total of 1 test files matched the specified pattern.
 
 Passed!  - Failed:     0, Passed:    44, Skipped:     0, Total:    44, Duration: 2 s - OseBe.UnitTests.dll (net10.0)
   [coverlet] 
   Calculating coverage result...
-   Generating report '/Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/ose-be/tests/unit/coverage.json'
+   Generating report '<WORKTREE_ROOT>/apps/ose-be/tests/unit/coverage.json'
 
 +--------+------+--------+--------+
 | Module | Line | Branch | Method |
@@ -539,11 +543,11 @@ ose-be: 10 features, 15 expanded scenarios, adapters: unit, integration, e2e.
 
 [2m> [22mdotnet build apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj --no-restore
 
-  RhinoCli.Infrastructure -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Infrastructure/bin/Debug/net10.0/RhinoCli.Infrastructure.dll
-  RhinoCli.Domain -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Domain/bin/Debug/net10.0/RhinoCli.Domain.dll
-  RhinoCli.Application -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/bin/Debug/net10.0/RhinoCli.Application.dll
-  RhinoCli.Cli -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Cli/bin/Debug/net10.0/RhinoCli.Cli.dll
-  RhinoCli.Program -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Program/bin/Debug/net10.0/rhino-cli-fsharp.dll
+  RhinoCli.Infrastructure -> <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Infrastructure/bin/Debug/net10.0/RhinoCli.Infrastructure.dll
+  RhinoCli.Domain -> <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Domain/bin/Debug/net10.0/RhinoCli.Domain.dll
+  RhinoCli.Application -> <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Application/bin/Debug/net10.0/RhinoCli.Application.dll
+  RhinoCli.Cli -> <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Cli/bin/Debug/net10.0/RhinoCli.Cli.dll
+  RhinoCli.Program -> <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Program/bin/Debug/net10.0/rhino-cli-fsharp.dll
 
 Build succeeded.
     0 Warning(s)
@@ -567,11 +571,11 @@ Time Elapsed 00:00:01.23
 
 [2m> [22mdotnet build apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj --no-restore
 
-  RhinoCli.Infrastructure -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Infrastructure/bin/Debug/net10.0/RhinoCli.Infrastructure.dll
-  RhinoCli.Domain -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Domain/bin/Debug/net10.0/RhinoCli.Domain.dll
-  RhinoCli.Application -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/bin/Debug/net10.0/RhinoCli.Application.dll
-  RhinoCli.Cli -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Cli/bin/Debug/net10.0/RhinoCli.Cli.dll
-  RhinoCli.Program -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Program/bin/Debug/net10.0/rhino-cli-fsharp.dll
+  RhinoCli.Infrastructure -> <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Infrastructure/bin/Debug/net10.0/RhinoCli.Infrastructure.dll
+  RhinoCli.Domain -> <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Domain/bin/Debug/net10.0/RhinoCli.Domain.dll
+  RhinoCli.Application -> <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Application/bin/Debug/net10.0/RhinoCli.Application.dll
+  RhinoCli.Cli -> <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Cli/bin/Debug/net10.0/RhinoCli.Cli.dll
+  RhinoCli.Program -> <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Program/bin/Debug/net10.0/rhino-cli-fsharp.dll
 
 Build succeeded.
     0 Warning(s)
@@ -592,79 +596,79 @@ Restore was successful.
 
 [2m> [22mfor p in RhinoCli.Domain RhinoCli.Infrastructure RhinoCli.Application RhinoCli.Cli RhinoCli.Program; do dotnet fsharplint lint apps/rhino-cli/src/$p/$p.fsproj --lint-config apps/rhino-cli/src/fsharplint.json || exit 1; done
 
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Domain/obj/Debug/net10.0/RhinoCli.Domain.AssemblyInfo.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Domain/obj/Debug/net10.0/RhinoCli.Domain.AssemblyInfo.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Domain/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Domain/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Domain/src/Types.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Domain/src/Types.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Domain/src/Finding.fs ==========
-========== Finished: 0 warnings ==========
-========== Summary: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Infrastructure/obj/Debug/net10.0/RhinoCli.Infrastructure.AssemblyInfo.fs ==========
-========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Infrastructure/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
-========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Infrastructure/src/GitRoot.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Domain/src/Finding.fs ==========
 ========== Finished: 0 warnings ==========
 ========== Summary: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/obj/Debug/net10.0/RhinoCli.Application.AssemblyInfo.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Infrastructure/obj/Debug/net10.0/RhinoCli.Infrastructure.AssemblyInfo.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Infrastructure/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/src/Convention.fs ==========
-========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/src/Parity.fs ==========
-========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/src/RepoConfig.fs ==========
-========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/src/Env.fs ==========
-========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/src/DoctorResource.fs ==========
-========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/src/Doctor.fs ==========
-========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/src/TestCoverage.fs ==========
-========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/src/Md.fs ==========
-========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/src/Governance.fs ==========
-========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/src/Git.fs ==========
-========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/src/HarnessPolicy.fs ==========
-========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/src/HarnessRuntime.fs ==========
-========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/src/Specs.fs ==========
-========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/src/Contracts.fs ==========
-========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/src/TestBoundary.fs ==========
-========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/src/RepoGovernance.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Infrastructure/src/GitRoot.fs ==========
 ========== Finished: 0 warnings ==========
 ========== Summary: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Cli/obj/Debug/net10.0/RhinoCli.Cli.AssemblyInfo.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Application/obj/Debug/net10.0/RhinoCli.Application.AssemblyInfo.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Cli/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Application/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Cli/src/RootArgs.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Application/src/Convention.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Cli/src/HelpText.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Application/src/Parity.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Cli/src/Formatters.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Application/src/RepoConfig.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Cli/src/Gate.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Application/src/Env.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Cli/src/Dispatch.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Application/src/DoctorResource.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Application/src/Doctor.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Application/src/TestCoverage.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Application/src/Md.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Application/src/Governance.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Application/src/Git.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Application/src/HarnessPolicy.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Application/src/HarnessRuntime.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Application/src/Specs.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Application/src/Contracts.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Application/src/TestBoundary.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Application/src/RepoGovernance.fs ==========
 ========== Finished: 0 warnings ==========
 ========== Summary: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Program/obj/Debug/net10.0/RhinoCli.Program.AssemblyInfo.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Cli/obj/Debug/net10.0/RhinoCli.Cli.AssemblyInfo.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Program/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Cli/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Program/src/Program.fs ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Cli/src/RootArgs.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Cli/src/HelpText.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Cli/src/Formatters.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Cli/src/Gate.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Cli/src/Dispatch.fs ==========
+========== Finished: 0 warnings ==========
+========== Summary: 0 warnings ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Program/obj/Debug/net10.0/RhinoCli.Program.AssemblyInfo.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Program/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Program/src/Program.fs ==========
 ========== Finished: 0 warnings ==========
 ========== Summary: 0 warnings ==========
 [2m> [22mANALYZERS_PATH=$(find $(dotnet nuget locals global-packages --list | sed 's/.*: //')g-research.fsharp.analyzers -path '*/analyzers/dotnet/fs' -type d | head -1); for p in RhinoCli.Domain RhinoCli.Infrastructure RhinoCli.Application RhinoCli.Cli RhinoCli.Program; do dotnet fsharp-analyzers --project apps/rhino-cli/src/$p/$p.fsproj --analyzers-path "$ANALYZERS_PATH" --treat-as-error GRA-STRING-001 GRA-STRING-002 GRA-STRING-003 GRA-STRING-004 GRA-UNIONCASE-001 GRA-VIRTUALCALL-001 GRA-JSONOPTS-001 GRA-DISPBEFOREASYNC-001 GRA-IMMUTABLECOLLECTIONEQUALITY-001 GRA-LOGARGFUNCFULLAPP-001 GRA-LOGTEMPLMISSVALS-001 GRA-TYPE-ANNOTATE-001 GRA-INTERPOLATED-001 || exit 1; done
@@ -684,22 +688,22 @@ Restore was successful.
 [2m> [22mif grep -rn -E --include='*.fs' 'Skip\s*=\s*"' apps/rhino-cli/tests/unit; then echo 'ERROR: xunit Skip= attribute found in test files above'; exit 1; fi && node scripts/dotnet-unit-coverage.mjs --project apps/rhino-cli/tests/unit/RhinoCli.UnitTests.fsproj --results apps/rhino-cli/tests/unit/coverage --line-threshold 99 --exclude-by-file '**/GitRoot.fs' --exclude-by-file '**/Parity.fs' --exclude-by-file '**/Dispatch.fs' --exclude-by-file '**/HarnessRuntime.fs' --exclude-by-file '**/DoctorResource.fs'
 
   Determining projects to restore...
-  Restored /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/tests/unit/RhinoCli.UnitTests.fsproj (in 690 ms).
+  Restored <WORKTREE_ROOT>/apps/rhino-cli/tests/unit/RhinoCli.UnitTests.fsproj (in 690 ms).
   4 of 5 projects are up-to-date for restore.
-  RhinoCli.Infrastructure -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Infrastructure/bin/Debug/net10.0/RhinoCli.Infrastructure.dll
-  RhinoCli.Domain -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Domain/bin/Debug/net10.0/RhinoCli.Domain.dll
-  RhinoCli.Application -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Application/bin/Debug/net10.0/RhinoCli.Application.dll
-  RhinoCli.Cli -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/src/RhinoCli.Cli/bin/Debug/net10.0/RhinoCli.Cli.dll
-  RhinoCli.UnitTests -> /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/tests/unit/bin/Debug/net10.0/RhinoCli.UnitTests.dll
-Test run for /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/tests/unit/bin/Debug/net10.0/RhinoCli.UnitTests.dll (.NETCoreApp,Version=v10.0)
+  RhinoCli.Infrastructure -> <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Infrastructure/bin/Debug/net10.0/RhinoCli.Infrastructure.dll
+  RhinoCli.Domain -> <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Domain/bin/Debug/net10.0/RhinoCli.Domain.dll
+  RhinoCli.Application -> <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Application/bin/Debug/net10.0/RhinoCli.Application.dll
+  RhinoCli.Cli -> <WORKTREE_ROOT>/apps/rhino-cli/src/RhinoCli.Cli/bin/Debug/net10.0/RhinoCli.Cli.dll
+  RhinoCli.UnitTests -> <WORKTREE_ROOT>/apps/rhino-cli/tests/unit/bin/Debug/net10.0/RhinoCli.UnitTests.dll
+Test run for <WORKTREE_ROOT>/apps/rhino-cli/tests/unit/bin/Debug/net10.0/RhinoCli.UnitTests.dll (.NETCoreApp,Version=v10.0)
 A total of 1 test files matched the specified pattern.
 
 Passed!  - Failed:     0, Passed:   756, Skipped:     0, Total:   756, Duration: 3 s - RhinoCli.UnitTests.dll (net10.0)
 
 Attachments:
-  /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/tests/unit/coverage/collector/0b4ed801-a968-421f-8ff8-671477b55aac/coverage.cobertura.xml
+  <WORKTREE_ROOT>/apps/rhino-cli/tests/unit/coverage/collector/0b4ed801-a968-421f-8ff8-671477b55aac/coverage.cobertura.xml
 Unit line coverage: 7554/7625 (99.07%; required: 99.00%)
-Coverage report: /Users/wkf/ose-projects/ose-public/worktrees/ose-islamic/apps/rhino-cli/tests/unit/coverage/coverage.cobertura.xml
+Coverage report: <WORKTREE_ROOT>/apps/rhino-cli/tests/unit/coverage/coverage.cobertura.xml
 
 [2m[32m[39m[22m
 

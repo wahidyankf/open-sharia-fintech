@@ -206,8 +206,11 @@ baseline.
   - **Date**: 2026-09-08
   - **Status**: done
   - **Files Changed**: none (verification only)
-  - `pwd` = `/Users/wkf/ose-projects/ose-public/worktrees/ose-islamic`, matching the amended
-    declared route
+  - `rtk git rev-parse --show-toplevel` resolves to a path whose final two segments are
+    `worktrees/ose-islamic`, matching the amended declared route. Recorded as a
+    repository-relative route rather than the absolute path, per the
+    [no-machine-specific-commits](../../../repo-governance/development/quality/no-machine-specific-commits.md)
+    rule.
 - [x] [AI] Record the worktree identity from disk rather than provisioning a second one. Run
       `rtk git worktree list --porcelain` and write the actual route and branch into the Provisioned
       Worktree Identity block above. Acceptance: the block names `worktrees/ose-islamic/` on
@@ -527,8 +530,9 @@ DU1–DU4; gates only DU6.
 - [ ] [AI] Confirm no other plan holds an open parity PR pair: `rtk gh pr list --repo wahidyankf/ose-public --state open --search "rhino-cli in:title"` and the same for `wahidyankf/ose-private`. Acceptance: neither returns an open PR touching `apps/rhino-cli`. Two concurrent pairs race on the same generated manifest — see `tech-docs.md` §1.5.
 - [ ] [AI] Confirm `rhino-cli-parity-audit.yml` is green on `main`: `rtk gh run list --workflow rhino-cli-parity-audit.yml --limit 1 --json conclusion,url`. Acceptance: `conclusion` is `success`; save to `evidence/du5-parity-preflight.txt`.
 - [ ] [AI] Confirm the branch name `islamic-be-init/du5-rhino-go-env` is unused in both repositories: `rtk git ls-remote --heads origin islamic-be-init/du5-rhino-go-env` in each. Acceptance: both return empty.
-- [ ] [AI] Provision the private worktree. From `/Users/wkf/ose-projects/ose-private` run `claude --worktree islamic-be-init`. Acceptance: `rtk git worktree list --porcelain` in that repository lists a route ending in `worktrees/islamic-be-init`. Record it in the Provisioned Worktree Identity block above.
-- [ ] [AI] Verify byte-identity is intact before touching it: `rtk diff -ru /Users/wkf/ose-projects/ose-public/worktrees/islamic-be-init/apps/rhino-cli/src /Users/wkf/ose-projects/ose-private/worktrees/islamic-be-init/apps/rhino-cli/src`. Acceptance: no differences; save to `evidence/du5-preflight-diff.txt`.
+- [ ] [AI] Provision the private worktree. From the `ose-private` repository root run `claude --worktree islamic-be-init`. Acceptance: `rtk git worktree list --porcelain` in that repository lists a route ending in `worktrees/islamic-be-init`. Record it in the Provisioned Worktree Identity block above.
+- [ ] [AI] Bind both worktree routes to shell variables so no later step names a machine path: `PUBLIC_WT="$(rtk git rev-parse --show-toplevel)"` from this worktree, and `PRIVATE_WT="$(rtk git rev-parse --show-toplevel)"` from the private one. Acceptance: both expand to a directory containing `apps/rhino-cli/`; the routes are recorded relative to each repository root, never as absolute paths
+- [ ] [AI] Verify byte-identity is intact before touching it: `rtk diff -ru "$PUBLIC_WT/apps/rhino-cli/src" "$PRIVATE_WT/apps/rhino-cli/src"`. Acceptance: no differences; save to `evidence/du5-preflight-diff.txt`.
 
 ### AC-ENV-GO — `lang: go` resolves to a real scanner
 
@@ -544,9 +548,9 @@ DU1–DU4; gates only DU6.
 
 ### Byte-Identity Convergence
 
-- [ ] [AI] Copy the changed `apps/rhino-cli` sources into the private worktree so both trees are identical. Acceptance: `rtk diff -ru /Users/wkf/ose-projects/ose-public/worktrees/islamic-be-init/apps/rhino-cli/src /Users/wkf/ose-projects/ose-private/worktrees/islamic-be-init/apps/rhino-cli/src` reports no differences
+- [ ] [AI] Copy the changed `apps/rhino-cli` sources into the private worktree so both trees are identical. Acceptance: `rtk diff -ru "$PUBLIC_WT/apps/rhino-cli/src" "$PRIVATE_WT/apps/rhino-cli/src"` reports no differences
 - [ ] [AI] Stage the `Env.fs` and test changes in **both** worktrees, then regenerate the manifest in each with `rtk apps/rhino-cli/scripts/rhino-bin.sh parity manifest generate`. The manifest describes the **staged** tree, so it must be generated after staging and committed in the same commit as the source edit. Acceptance: `apps/rhino-cli/parity-manifest.sha256` changes in both worktrees. Never hand-edit a hash
-- [ ] [AI] Confirm the two regenerated manifests are byte-identical: `rtk diff -u /Users/wkf/ose-projects/ose-public/worktrees/islamic-be-init/apps/rhino-cli/parity-manifest.sha256 /Users/wkf/ose-projects/ose-private/worktrees/islamic-be-init/apps/rhino-cli/parity-manifest.sha256`. Acceptance: no differences; save to `evidence/du5-manifest-diff.txt`
+- [ ] [AI] Confirm the two regenerated manifests are byte-identical: `rtk diff -u "$PUBLIC_WT/apps/rhino-cli/parity-manifest.sha256" "$PRIVATE_WT/apps/rhino-cli/parity-manifest.sha256"`. Acceptance: no differences; save to `evidence/du5-manifest-diff.txt`
 - [ ] [AI] Validate the manifest against the staged tree in each repository: `rtk apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate`. Acceptance: each reports `apps/rhino-cli/parity-manifest.sha256 is current`
 
 ### Integration
