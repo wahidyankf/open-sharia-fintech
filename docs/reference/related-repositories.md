@@ -11,7 +11,13 @@ created: 2026-04-18
 
 # Related Repositories
 
-The OSE ecosystem has one two-repository parity set plus independent public repositories that
+The **OSE Code Repositories** are the five repositories Open Sharia Enterprise is built and
+maintained in: `ose-public`, `ose-private`, RHINO, HIPPO, and BeaverNest. The name labels that set
+so a reader can find every part of the project from any one of them. It is not a GitHub
+organization, not a parent or container repository, and not a shared release train — each of the
+five versions, gates, and releases on its own schedule.
+
+Within the set there is one two-repository parity pair plus independent public repositories that
 supply tools or product learnings. Each has a different job, so choose the repository that matches
 what you are trying to understand rather than treating them as interchangeable copies.
 
@@ -19,12 +25,13 @@ This page is the descriptive catalogue. The canonical relationship, parity, prop
 consumer-boundary rules are governed by the
 [Related Repositories Convention](../../repo-governance/conventions/structure/related-repositories.md).
 
-| Repository                                               | Visibility  | Role                                                     | Start there when…                                                  |
-| -------------------------------------------------------- | ----------- | -------------------------------------------------------- | ------------------------------------------------------------------ |
-| [`ose-public`](https://github.com/wahidyankf/ose-public) | Public, MIT | The OSE product platform and its public research         | You want to understand or run OSE itself.                          |
-| `ose-private`                                            | Private     | Authorized product operations and infrastructure work    | You are an authorized maintainer following its private onboarding. |
-| [HIPPO](https://github.com/wahidyankf/hippo)             | Public, MIT | Upstream resource coordination, specifications, releases | You are changing HIPPO behavior rather than OSE integration.       |
-| [BeaverNest](https://github.com/wahidyankf/beaver-nest)  | Public, MIT | Independent family product and applied learning lab      | You are changing the BeaverNest product.                           |
+| Repository                                               | Visibility  | Role                                                             | Start there when…                                                  |
+| -------------------------------------------------------- | ----------- | ---------------------------------------------------------------- | ------------------------------------------------------------------ |
+| [`ose-public`](https://github.com/wahidyankf/ose-public) | Public, MIT | The OSE product platform and its public research                 | You want to understand or run OSE itself.                          |
+| `ose-private`                                            | Private     | Authorized product operations and infrastructure work            | You are an authorized maintainer following its private onboarding. |
+| [RHINO](https://github.com/wahidyankf/rhino)             | Public, MIT | Upstream repository-hygiene validation, specifications, releases | You are changing RHINO behavior rather than OSE integration.       |
+| [HIPPO](https://github.com/wahidyankf/hippo)             | Public, MIT | Upstream resource coordination, specifications, releases         | You are changing HIPPO behavior rather than OSE integration.       |
+| [BeaverNest](https://github.com/wahidyankf/beaver-nest)  | Public, MIT | Independent family product and applied learning lab              | You are changing the BeaverNest product.                           |
 
 ## The reader path that matters most
 
@@ -41,6 +48,22 @@ Some public repositories support or inform OSE without sharing parity obligation
 sync obligation in either direction**, sit outside the `rhino-cli` byte-identity boundary, and are
 not propagation targets for governance, agent, skill, or workflow changes. No gate, agent, or
 workflow here may treat one as a parity peer.
+
+### RHINO stays upstream
+
+[RHINO](https://github.com/wahidyankf/rhino) is a Rust CLI that checks what a repository's
+documentation must get right: word budgets on governed instructions, directory maps that match the
+tree, internal Markdown links that resolve, Mermaid diagrams that stay legible, and one canonical
+instruction body kept in parity across every declared coding harness. It holds no policy of its
+own — every value it enforces arrives from the inspected repository's own `repo-config.yml` — so it
+is usable far outside OSE and carries no OSE-specific defaults.
+
+**RHINO the repository is not `apps/rhino-cli`.** This repository runs its own in-tree F#
+`apps/rhino-cli`, and that implementation is what the byte-identity boundary covers. The upstream
+RHINO repository sits outside that boundary entirely: naming it here creates navigation, not a
+parity peer, and no manifest, gate, or propagation workflow may widen to include it. RHINO source,
+behavior specifications, release automation, and generic tests stay upstream and are never copied,
+vendored, or forked into an OSE repository.
 
 ### HIPPO stays upstream
 

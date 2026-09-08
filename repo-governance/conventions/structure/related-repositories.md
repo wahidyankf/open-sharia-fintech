@@ -9,6 +9,16 @@ Repository awareness helps contributors route work without turning every named r
 sync target. This convention separates parity, consumption, and knowledge-sharing relationships.
 The descriptive catalogue is [Related Repositories](../../../docs/reference/related-repositories.md).
 
+## The OSE Code Repositories
+
+**OSE Code Repositories** names the five repositories this project is built and maintained in:
+`ose-public`, `ose-private`, [RHINO](https://github.com/wahidyankf/rhino),
+[HIPPO](https://github.com/wahidyankf/hippo), and
+[BeaverNest](https://github.com/wahidyankf/beaver-nest). The name labels that set for routing and
+nothing else. It is not a GitHub organization, not a parent or container repository, and not a
+parity group; the five version, gate, and release independently. Membership obligates each
+repository to name the other four so a contributor can find them, and obligates nothing further.
+
 ## OSE parity pair
 
 The OSE parity set contains exactly `ose-public` and `ose-private`. Public is the canonical source
@@ -22,6 +32,12 @@ requires a direct byte comparison between repositories. A green local manifest n
 equality by itself.
 
 ## Independent repositories
+
+[RHINO](https://github.com/wahidyankf/rhino) is an independent MIT-licensed repository-hygiene
+validator that holds no OSE-specific values: every budget, tree, palette, and harness roster it
+enforces is declared by the repository under inspection. It is not this repository's in-tree
+`apps/rhino-cli`, which is the parity-bound implementation the byte-identity boundary covers.
+Naming the upstream repository never widens that boundary to it.
 
 [HIPPO](https://github.com/wahidyankf/hippo) is an independent MIT-licensed upstream tool. OSE may
 consume a checksum-pinned HIPPO release and maintain consumer-specific configuration, mappings, and
@@ -39,9 +55,10 @@ workflow, or byte-identity manifest may silently widen to include one.
 
 Both OSE repositories maintain these touchpoints:
 
-- `AGENTS.md` names the parity sibling and independent repositories that contributors must know
-  before routing work.
-- `README.md` gives readers a short relationship summary and links to the descriptive catalogue.
+- `AGENTS.md` names the OSE Code Repositories — the parity sibling and each independent
+  repository — that contributors must know before routing work.
+- `README.md` gives readers a short relationship summary, names the set, and links to the
+  descriptive catalogue.
 - `docs/reference/related-repositories.md` records each named repository's visibility, license,
   role, ownership boundary, and correct starting point.
 - This convention owns normative parity, propagation, and consumer-boundary rules. Descriptive
