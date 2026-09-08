@@ -1,0 +1,13 @@
+/api/v1/hello:
+  get:
+    operationId: getHello
+    summary: Greeting
+    tags:
+      - Hello
+    responses:
+      "200":
+        description: The greeting was returned
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/hello.yaml#/HelloResponse"

@@ -1,0 +1,20 @@
+# DU3-142 RED — HTTP step bindings exist, controllers do not
+
+Per-feature results from apps/ose-lms-be/build/test-results/test/ (Gradle JUnit XML):
+
+- LMS BE listener port resolution: tests=3 failures=0 errors=0
+- LMS BE Actuator exposure: tests=2 failures=1 errors=0
+- LMS BE health endpoint: tests=1 failures=1 errors=0
+- LMS BE hello endpoint: tests=1 failures=1 errors=0
+
+Failures, with the asserted and observed status:
+
+- Actuator health endpoint reports the service is up: org.opentest4j.AssertionFailedError: expected: &lt;200&gt; but was: &lt;404&gt;
+- Health endpoint returns a healthy status: org.opentest4j.AssertionFailedError: expected: &lt;200&gt; but was: &lt;404&gt;
+- Hello endpoint returns the greeting: org.opentest4j.AssertionFailedError: expected: &lt;200&gt; but was: &lt;404&gt;
+
+The health and hello scenarios fail with 404 because HealthController and HelloController
+do not exist. The Actuator health scenario also fails with 404 because
+spring-boot-starter-actuator is absent; that is the DU3-145 RED, observed here in the same
+run. 'Actuator exposes no endpoint other than health' already passes, because with no
+Actuator on the classpath /actuator/env is 404 for the trivial reason.

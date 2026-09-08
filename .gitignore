@@ -172,6 +172,7 @@ coverage.xml
 **/generated_contracts/
 # Bundled OpenAPI spec + docs
 specs/apps/a-demo/contracts/generated/
+specs/apps/ose/lms-be/contracts/generated/
 
 # MemSearch vector index (local user-specific data)
 .memsearch/

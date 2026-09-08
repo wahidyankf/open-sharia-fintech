@@ -1,0 +1,73 @@
+# DU3 Manual API Verification (curl) — full transcript
+
+Service started with:
+  rtk ./hippo run --class service --disk-path . -- npm exec nx -- run ose-lms-be:dev
+Startup line, which is also the configuration-level Actuator confirmation:
+  o.s.b.a.e.web.EndpointLinksResolver : Exposing 1 endpoint beneath base path '/actuator'
+  o.s.boot.tomcat.TomcatWebServer     : Tomcat started on port 8303 (http) with context path '/'
+
+$ curl -s -i http://localhost:8303/api/v1/health
+HTTP/1.1 200
+Content-Type: application/json
+Transfer-Encoding: chunked
+
+{"status":"healthy"}
+
+$ curl -s -i http://localhost:8303/api/v1/hello
+HTTP/1.1 200
+Content-Type: application/json
+Transfer-Encoding: chunked
+
+{"message":"Hello, world!"}
+
+$ curl -s -i http://localhost:8303/actuator/health
+HTTP/1.1 200
+Content-Type: application/vnd.spring-boot.actuator.v3+json
+Transfer-Encoding: chunked
+
+{"groups":["liveness","readiness"],"status":"UP"}
+
+$ curl -s -o /dev/null -w '%{http_code}\n' http://localhost:8303/actuator/env
+404
+
+$ curl -s -o /dev/null -w '%{http_code}\n' http://localhost:8303/api/v1/nonexistent
+404
+
+$ curl -s -o /dev/null -X POST -w '%{http_code}\n' http://localhost:8303/api/v1/health
+405
+
+--- Port override ---
+
+Service stopped, restarted with OSE_LMS_BE_PORT=8399:
+  Tomcat started on port 8399 (http) with context path '/'
+
+$ curl -s -i http://localhost:8399/api/v1/health
+HTTP/1.1 200
+Content-Type: application/json
+
+{"status":"healthy"}
+
+$ curl -s --max-time 3 http://localhost:8303/api/v1/health
+(connection refused, curl exit 7)
+
+--- Malformed value ---
+
+Service stopped, restarted with OSE_LMS_BE_PORT=not-a-port; TERMINAL_EXIT=1:
+
+  ***************************
+  APPLICATION FAILED TO START
+  ***************************
+
+  Description:
+
+  Invalid value '${OSE_LMS_BE_PORT:8303}' for configuration property 'server.port'
+  (originating from 'class path resource [application.yaml] - 5:9'). Validation
+  failed for the following reason:
+
+  Failed to convert to type java.lang.Integer
+
+  Action:
+
+  Review the value of the property with the provided reason.
+
+No fallback port was bound: the process exited non-zero instead.

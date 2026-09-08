@@ -1,0 +1,16 @@
+# DU3-145 RED — Actuator scenarios without spring-boot-starter-actuator
+
+Observed in the same unit run that turned AC-HEALTH-01 and AC-HELLO-01 green
+(evidence/du3-green-http.txt), because the two outcomes share one test JVM:
+
+  LMS BE Actuator exposure: tests=2 failures=1
+     FAIL: Actuator health endpoint reports the service is up
+           org.opentest4j.AssertionFailedError: expected: <200> but was: <404>
+
+AC-ACT-01 fails: /actuator/health is 404 because the starter is absent.
+
+Deviation from the plan text: the RED box expects *both* Actuator scenarios to
+fail. Only AC-ACT-01 does. AC-ACT-02 asserts that /actuator/env is unreachable,
+which passes vacuously while no Actuator endpoint exists at all. AC-ACT-02
+becomes a meaningful assertion only once the starter is on the classpath, which
+is exactly what the GREEN step then proves.

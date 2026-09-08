@@ -165,3 +165,34 @@
   untracked is sufficient protection. Note the gate must not match a relative source path that
   merely contains the substring `home/` — `components/home/entry-item.tsx` appears in existing
   committed evidence and is not a leak, so the rule needs a leading-slash anchor.
+
+## Learning: teaching a validator to read a language is not the same as enabling that language
+
+- **Context**: DU3 pre-flight, before a single DU3 file was written. The drafted
+  `apps/ose-lms-be/project.json` was run through `validateProjectTargetContract` directly, and it
+  returned one error: `owner test:unit must enforce at least 99% line coverage.`
+- **Observation**: DU2 taught `scripts/behaviour-coverage.mjs` to extract Cucumber bindings from
+  `.java` sources, and the three AC-COV cases prove it does. But the same file's
+  `unitLineCoverageThreshold` recognizes exactly three ways of declaring a Unit line-coverage hard
+  gate — vitest `--coverage.thresholds.lines`, Coverlet `/p:Threshold` paired with
+  `/p:ThresholdType=line`, and the `dotnet-unit-coverage.mjs` collector's `--line-threshold`. All
+  three are TypeScript or .NET. A Gradle/JaCoCo `test:unit` returns `undefined`, which the closed
+  project-target contract reports as "does not enforce coverage at all" rather than "declares it in
+  a form I cannot read". The Java project would have been rejected by the very gate meant to
+  protect it, and the plan's DU3-135 acceptance (`ose-lms-be:test:coverage:unit` exits 0) could not
+  have held. A related hole sits beside it: `RUNTIME_RUNNER`, which keeps `test:coverage:*` targets
+  static, lists `vitest|playwright|cargo test|dotnet test|mix test|npm test` and no Gradle form, so
+  a Java coverage target could shell out to `./gradlew test` and pass a rule designed to forbid
+  exactly that.
+- **Why it might generalize**: language enablement has two halves that look like one. The visible
+  half is "can the tooling read this language's source", which is what gets tested and what the
+  delivery unit is named after. The invisible half is every _other_ place the existing enforcement
+  encodes a closed list of the languages it already knew about — threshold syntaxes, runner names,
+  formatter hooks, tag vocabularies. The second half fails open in one direction and closed in the
+  other: an unrecognized threshold blocks a compliant project, while an unrecognized runner lets a
+  non-compliant one through. Both were found here only because the project.json was run through the
+  validator before being written, not after. Candidate durable fixes to weigh at triage: a
+  checklist item in whatever governs adding a language to the repository, requiring an audit of
+  every closed language list in the enforcement machinery, not just the parser; or, more durably,
+  restructuring those closed lists into one declared per-language table so that adding a language
+  is a single data edit and a missing entry is visible rather than silent.
