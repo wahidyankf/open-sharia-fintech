@@ -19,8 +19,9 @@ confirmed satisfied.
    - **Filed as a `plans/ideas/<slug>.md` two-pager** — valid only with literal plan-artifact
      authorization after the mandatory overlap scan. Confirm the scan evidence and that the file
      exists: `rtk ls plans/ideas/<quadrant>/<slug>.md`. Knowledge Capture MUST NOT create, move, or
-     write under `plans/backlog/`; a directly created backlog folder is invalid, and only the
-     idea-promotion workflow may promote a ripe idea into a formal backlog plan.
+     write under `plans/backlog/`; a backlog artifact filed this way is invalid even when a maintainer
+     instruction appears to sanction it, and only the idea-promotion workflow may promote a ripe
+     idea into a formal backlog plan.
    - **Reported without plan authorization** — required for a plan-worthy future learning when no
      literal authorization exists. Confirm the report location or conversation handoff evidence.
    - **Discarded with a one-line reason** — confirm a concrete reason is present, not merely the word

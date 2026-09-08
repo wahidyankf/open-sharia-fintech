@@ -22,7 +22,8 @@ does not get to bypass them:
   governs the code change itself.
 
 Because these gates apply, an authorized code-routed learning is filed as its own
-`plans/ideas/<slug>.md` two-pager and reaches backlog only through the promotion ripeness gate. An
+`plans/ideas/<slug>.md` two-pager and reaches backlog only through the promotion ripeness gate — no
+instruction to a plan makes the backlog route available to it. An
 unauthorized one is reported, never silently filed or smuggled into
 the current governance/docs plan's PR.
 

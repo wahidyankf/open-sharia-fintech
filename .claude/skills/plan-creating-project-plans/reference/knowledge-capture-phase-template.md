@@ -26,7 +26,7 @@ Plan Archival — see [plan-archival.md](plan-archival.md)):
       [Integrate Before You Add](../../../../repo-governance/conventions/structure/plans/ideas-folder-overview-rationale-and-file-layout.md#integrate-before-you-add-no-duplicate-two-pagers)).
 - [ ] [AI] **Code-routing rule**: if a learning's home is `apps/`, `libs/`, or tests, NEVER land it
       inline in this plan's commits/PR. File a separate `plans/ideas/` two-pager only with literal
-      plan-artifact authorization; never create a `plans/backlog/` folder directly because the
+      plan-artifact authorization; never create, move, or write under `plans/backlog/` because the
       promotion ripeness gate owns that transition. Otherwise use the reported terminal state. The
       sole carve-out is a
       bug/lint/test failure that blocks THIS plan's own scope — that is fixed inline as ordinary
