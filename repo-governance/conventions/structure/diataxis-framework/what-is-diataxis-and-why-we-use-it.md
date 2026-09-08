@@ -1,15 +1,6 @@
 ---
-title: "What is Diátaxis, and Why We Use It"
 description: The Diátaxis 2x2 model (learning/problem-oriented x practical/understanding) and the concrete benefits it gives writers, users, and the project.
 when_to_use: Use when you need the conceptual definition of Diátaxis or the rationale for adopting it.
-category: explanation
-subcategory: conventions
-tags:
-  - diataxis
-  - documentation-framework
-  - organization
-  - conventions
-created: 2025-11-22
 ---
 
 # What is Diátaxis, and Why We Use It

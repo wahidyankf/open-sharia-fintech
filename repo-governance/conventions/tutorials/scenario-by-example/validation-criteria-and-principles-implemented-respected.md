@@ -1,16 +1,5 @@
 ---
-title: Validation Criteria and Principles Implemented/Respected
 description: The scenario by-example validation checklist and the content/software-engineering principles it implements.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - scenario
-  - governance
-  - decision-making
-created: 2026-05-21
 when_to_use: Use when reviewing a scenario by-example example for compliance or when you need the rationale behind this convention's design.
 ---
 

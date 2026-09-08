@@ -1,10 +1,5 @@
 ---
-title: "Best Practices: File Organization and Progressive Reporting"
 description: Covers best practices for organizing temporary files, naming reports consistently, writing reports progressively during execution, and generating real UUIDs and timestamps instead of placeholders.
-category: explanation
-subcategory: development
-tags: [infrastructure, best-practices, temporary-files, reporting]
-created: 2026-05-12
 when_to_use: Use when setting up temporary file locations, naming a new report file, deciding when to write report content, or generating UUIDs/timestamps for a report.
 ---
 

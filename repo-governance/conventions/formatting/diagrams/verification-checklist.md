@@ -1,18 +1,6 @@
 ---
-title: "Verification Checklist"
 description: "Provides the pre-publish verification checklist for diagrams covering format, syntax, accessibility, and rendering."
 when_to_use: "Use as a final checklist before committing a new or edited diagram."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Verification Checklist

@@ -1,14 +1,5 @@
 ---
-title: "Platform Binding Examples — Color Translation Table"
 description: "Provides the full color-to-role translation table used across platform bindings."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when looking up which color an agent role maps to, or translating a color across harnesses.
 ---
 

@@ -1,15 +1,5 @@
 ---
-title: "Principles and Conventions Implemented"
 description: The principles and companion conventions the Git Push Default Convention implements and respects.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - push
-  - trunk-based-development
-  - ai-agents
-created: 2026-04-25
 when_to_use: Use when tracing why the worktree-to-pr default and its precedence rules exist back to the principles and conventions they respect.
 ---
 

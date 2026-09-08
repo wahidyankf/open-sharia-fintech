@@ -1,5 +1,4 @@
 ---
-title: "Step 4 — Execution Phase"
 description: Runs plan-execution in full for each repo's gated plan, inheriting its Delivery Mode resolution, worktree gate, Task list expansion, Iron Rules, and archival.
 when_to_use: Use when executing the composite's per-repo execution step and needing the exact plan-execution rules that apply.
 ---

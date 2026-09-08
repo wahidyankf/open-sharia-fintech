@@ -1,15 +1,5 @@
 ---
-title: "Task List Discipline — Anti-Patterns"
 description: Five common task-list failure patterns - starting without a list, marking done before verifying, deferred cleanup, recording discovered work without adding it, and monolithic tasks
-category: explanation
-subcategory: development
-tags:
-  - task-management
-  - planning
-  - execution
-  - ai-agents
-  - discipline
-created: 2026-06-23
 when_to_use: Use when reviewing your own task-list behaviour for signs of one of these five failure patterns.
 ---
 

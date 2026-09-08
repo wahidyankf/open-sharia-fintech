@@ -1,15 +1,5 @@
 ---
-title: "Guidelines: Benefits-Focused Language and Navigation Focus"
 description: "Two writing guidelines: framing features as user benefits, and keeping README sections as summaries that link out"
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - readme
-  - engagement
-  - accessibility
-  - writing
-created: 2025-12-07
 when_to_use: Read this when a README section lists features instead of benefits, or duplicates detailed docs instead of linking to them.
 ---
 

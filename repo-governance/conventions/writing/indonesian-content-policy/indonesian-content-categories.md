@@ -1,16 +1,6 @@
 ---
-title: "Indonesian Content Policy — Indonesian Content Categories"
 description: The three content categories — encouraged unique Indonesian content, strategic translations allowed on explicit request, and discouraged mirror translations.
 when_to_use: Use when classifying a piece of proposed Indonesian content into the encouraged, allowed, or discouraged category before creating it.
-category: explanation
-subcategory: conventions
-tags:
-  - ayokoding-www
-  - indonesian
-  - bilingual
-  - content-policy
-  - translation
-created: 2026-02-07
 ---
 
 # Indonesian Content Categories

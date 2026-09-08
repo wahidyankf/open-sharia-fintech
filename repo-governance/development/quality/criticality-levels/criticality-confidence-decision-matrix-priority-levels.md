@@ -1,15 +1,5 @@
 ---
-title: "Decision Matrix: Priority Levels"
 description: "The priority matrix and priority-level explanations."
-category: explanation
-subcategory: development
-tags:
-  - criticality
-  - validation
-  - checker-agents
-  - fixer-agents
-  - quality-assurance
-created: 2025-12-27
 when_to_use: "Use to map a criticality+confidence pair to a priority."
 ---
 

@@ -1,18 +1,6 @@
 ---
-title: "Format Selection Rule and Decision Table"
 description: "Gives the format-selection decision table mapping diagram purpose to the required format."
 when_to_use: "Use when picking which diagram format (Mermaid vs. ASCII) to use for a specific piece of content."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Format Selection Rule and Decision Table

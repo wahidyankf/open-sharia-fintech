@@ -1,5 +1,4 @@
 ---
-title: "PR Review Cycle — Cycle Authority and Restart Recovery"
 description: "Defines live-head equality gates and durable loop-state hydration after interruption."
 when_to_use: "Use before starting or resuming a review cycle, and at every boundary where stale-head output could be posted, fixed, or credited."
 ---

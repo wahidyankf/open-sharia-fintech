@@ -1,15 +1,5 @@
 ---
-title: "Verify Topology First"
 description: The two ways to check whether a repository is bare, and the one command that must never be used to answer that question.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - worktree
-  - bare-repo
-  - safety
-created: 2026-07-21
 when_to_use: Use when you need to determine whether a repository is bare, before running any mutating git command against it.
 ---
 

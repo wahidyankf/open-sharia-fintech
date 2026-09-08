@@ -1,15 +1,5 @@
 ---
-title: "Operating Budgets — Parallelism Budget"
 description: "Defines the parallelism budget for how many concurrent work streams an orchestrating agent may run."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - workflow
-  - orchestration
-created: 2025-11-23
 when_to_use: Use when deciding how many parallel work streams to run at once.
 ---
 

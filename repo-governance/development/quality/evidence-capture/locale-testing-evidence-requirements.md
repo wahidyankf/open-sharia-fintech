@@ -1,17 +1,5 @@
 ---
-title: "Locale Testing Evidence Requirements"
 description: "The evidence bar for locale/i18n testing across supported languages."
-category: explanation
-subcategory: development
-tags:
-  - evidence
-  - testing
-  - screenshots
-  - plans
-  - verification
-  - locale
-  - manual-testing
-created: 2026-06-20
 when_to_use: "Use when verifying a locale-sensitive feature and capturing its evidence."
 ---
 

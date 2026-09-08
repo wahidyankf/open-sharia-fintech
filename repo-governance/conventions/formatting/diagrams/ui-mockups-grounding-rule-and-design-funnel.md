@@ -1,18 +1,6 @@
 ---
-title: "UI Mockups in Plan Docs: Grounding Rule and Design Funnel"
 description: "Defines the grounding rule (R5) tying mockups to real data/components, and the design funnel (R6) process."
 when_to_use: "Use when a mockup needs to be grounded in real data or components, or when running the diverge-narrow-select-justify design funnel."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # UI Mockups in Plan Docs: Grounding Rule and Design Funnel

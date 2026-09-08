@@ -1,15 +1,5 @@
 ---
-title: "Core Rule and Pattern"
 description: The mandatory rule that vercel.json's buildCommand must mirror every dependsOn target in project.json's build target, and the canonical project.json/vercel.json pattern.
-category: explanation
-subcategory: development
-tags:
-  - vercel
-  - deployment
-  - nx
-  - build
-  - monorepo
-created: 2026-03-26
 when_to_use: Use when writing or auditing vercel.json's buildCommand for a Vercel-deployed app with Nx dependsOn prerequisites.
 ---
 

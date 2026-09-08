@@ -1,18 +1,6 @@
 ---
-title: "Render-Fidelity Caveat: Source-Correct Can Still Be Render-Wrong"
 description: "Warns that a syntactically source-correct Mermaid diagram can still render incorrectly, with guidance on catching this."
 when_to_use: "Use when a Mermaid diagram passes syntax validation but still renders wrong, to understand why and how to check."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Render-Fidelity Caveat: Source-Correct Can Still Be Render-Wrong
@@ -30,10 +18,16 @@ Two consequences bind any author or checker working on state diagrams:
    **30** and **33** characters while a **40**-character label rendered fine. Clipping depends on
    glyph widths and diagram layout, not raw length. Any future validator rule MUST therefore derive
    its threshold **empirically** from rendered output, never assume a simple character count.
-3. **Any such rule must WARN, never FAIL.** Measured blast radius across this repo's
-   `stateDiagram` edge labels: **31** labels over 40 chars, **202** in the 31–40 band, **983** in
-   the 26–30 band, and roughly **11,800** at or under 25. A failing gate on a heuristic threshold
-   would block on a defect it cannot actually detect, across a corpus this large.
+3. **A repo-wide rule on state-diagram edge labels must WARN, never FAIL.** Measured blast radius
+   across this repo's `stateDiagram` edge labels: **31** labels over 40 chars, **202** in the
+   31–40 band, **983** in the 26–30 band, and roughly **11,800** at or under 25. A repo-wide
+   failing gate on a heuristic threshold would block on a defect it cannot actually detect, across
+   a corpus this large.
+
+   This does not exempt flowchart labels, where the 20-character limit is
+   [Rule 3](./common-syntax-errors-label-constraints-rule-3-line-length.md), not a heuristic. The
+   `md-mermaid-strict` gate fails at 20 but is scoped to **changed `.md` files**, so it never
+   blocks on the untouched corpus — the same objection, answered by scope instead of severity.
 
 A candidate `rhino-cli` WARN-level rule is tracked as a two-pager idea brief at
 [`plans/ideas/mermaid-state-label-render-clipping-warn.md`](../../../../plans/ideas/q2-not-urgent-important/mermaid-state-label-render-clipping-warn.md).

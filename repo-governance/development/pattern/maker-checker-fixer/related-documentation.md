@@ -1,16 +1,5 @@
 ---
-title: "Related Documentation"
 description: "Links to related conventions and agent files."
-category: explanation
-subcategory: development
-tags:
-  - maker-checker-fixer
-  - workflow
-  - content-quality
-  - agent-patterns
-  - validation
-  - automation
-created: 2025-12-14
 when_to_use: "Use to find the doc backing this pattern."
 ---
 

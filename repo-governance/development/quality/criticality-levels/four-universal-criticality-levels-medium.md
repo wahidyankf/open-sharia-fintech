@@ -1,15 +1,5 @@
 ---
-title: "Four Universal Criticality Levels: MEDIUM"
 description: "The MEDIUM level definition and examples."
-category: explanation
-subcategory: development
-tags:
-  - criticality
-  - validation
-  - checker-agents
-  - fixer-agents
-  - quality-assurance
-created: 2025-12-27
 when_to_use: "Use when classifying a finding as MEDIUM."
 ---
 

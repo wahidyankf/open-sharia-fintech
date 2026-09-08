@@ -1,15 +1,5 @@
 ---
-title: "Three-Path Decision Tree"
 description: The LTS, 60-day stable, and security-override waiver paths used to classify every dependency bump.
-category: explanation
-subcategory: development
-tags:
-  - dependencies
-  - security
-  - versioning
-  - reproducibility
-  - workflow
-created: 2026-05-15
 when_to_use: Use when classifying which of the three paths applies to a specific package or runtime bump.
 ---
 

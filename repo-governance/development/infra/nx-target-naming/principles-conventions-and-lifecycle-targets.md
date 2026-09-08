@@ -1,14 +1,5 @@
 ---
-title: "Principles, Conventions, and Lifecycle Targets"
 description: The engineering principles behind Nx target naming, the related Nx Target Standards convention, and the lifecycle naming scheme for build, test, and runtime targets.
-category: explanation
-subcategory: development
-tags:
-  - nx
-  - targets
-  - naming
-  - conventions
-created: 2026-06-13
 when_to_use: Use when naming a lifecycle target such as a build, test, dev, or start script, or when checking which principles and conventions this naming scheme implements.
 ---
 

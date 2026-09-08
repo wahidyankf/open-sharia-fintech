@@ -1,14 +1,5 @@
 ---
-title: "Tool Access Patterns — Report-Generating Agents: Mandatory Tool Requirements (Continued)"
 description: "Continues the report-generating agent tool requirements: the progressive-writing requirement and its implementation steps."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when implementing or reviewing how a checker agent writes its audit report progressively.
 ---
 

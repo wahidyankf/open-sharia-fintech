@@ -1,14 +1,5 @@
 ---
-title: "ADRs: Full Example and References"
 description: "A complete worked ADR (choosing Nx for monorepo management) and the external references this section is based on"
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - documentation
-  - open-source
-  - repository-standards
-created: 2026-04-04
 when_to_use: "Read this for a full worked example to model a new ADR on."
 ---
 

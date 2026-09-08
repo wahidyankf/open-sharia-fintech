@@ -1,5 +1,4 @@
 ---
-title: "Steps 1-2: Maker and Checker"
 description: Documents the maker step (manual/AI-assisted worked-example creation) and the checker step (mode detection plus the eight quality validation areas) of the Annotated-concept quality gate.
 when_to_use: Use when creating or updating Annotated-concept tutorial content, or when running/interpreting the apps-ayokoding-www-annotated-concept-checker agent.
 ---

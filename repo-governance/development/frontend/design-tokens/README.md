@@ -1,5 +1,4 @@
 ---
-title: "Design Tokens Convention"
 description: "Conventions for CSS design tokens across frontend apps in the open-sharia-enterprise monorepo, covering structural shared tokens, per-app brand overrides, dark mode requirements, and Tailwind v4 integration."
 when_to_use: "Read this index to find the right Design Tokens Convention child document."
 ---

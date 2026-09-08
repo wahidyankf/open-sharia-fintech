@@ -1,15 +1,6 @@
 ---
-title: "Examples from Our Project, Related Documentation, and External Resources"
 description: Worked before/after examples of each Diátaxis category in this project, plus links to related conventions and the official Diátaxis site.
 when_to_use: Use when you want a worked example of a Diátaxis category applied to a real file in this repository, or links to related conventions.
-category: explanation
-subcategory: conventions
-tags:
-  - diataxis
-  - documentation-framework
-  - organization
-  - conventions
-created: 2025-11-22
 ---
 
 # Examples from Our Project, Related Documentation, and External Resources

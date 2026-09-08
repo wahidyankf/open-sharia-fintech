@@ -1,16 +1,6 @@
 ---
-title: "Custody Rule"
 description: The four custody rules governing custodian/consumer relationships over a syllabus corpus — single custodian, read-only consumers, routed change requests, and the two archival hand-off branches.
 when_to_use: Read this when a plan needs to reference or change content in another plan's syllabus corpus, or when a custodian plan is ready to archive while a consumer still links in.
-category: explanation
-subcategory: conventions
-tags:
-  - plans
-  - syllabus
-  - learning-bearing
-  - custody
-  - governance
-created: 2026-07-22
 ---
 
 # Custody Rule

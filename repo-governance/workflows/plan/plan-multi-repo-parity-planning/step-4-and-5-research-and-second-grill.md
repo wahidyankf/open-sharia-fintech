@@ -1,5 +1,4 @@
 ---
-title: "Step 4 and 5 — Web Research and Second Grill"
 description: The conditional web-research delegation and the post-research grill that validates direction before plan authoring.
 when_to_use: Use when the research-needed flag is set, or when validating decisions against research findings before Step 6.
 ---

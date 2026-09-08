@@ -1,12 +1,5 @@
 ---
-title: "Relationship to Other Principles"
 description: Cross-references root cause orientation to deliberate-problem-solving, simplicity-over-complexity, and explicit-over-implicit.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - root-cause
-created: 2026-03-09
 when_to_use: Use when tracing how root cause orientation connects to the repo's other governing principles.
 ---
 

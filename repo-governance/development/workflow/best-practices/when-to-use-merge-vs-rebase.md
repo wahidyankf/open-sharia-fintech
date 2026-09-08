@@ -1,10 +1,5 @@
 ---
-title: "When to Use Merge vs Rebase"
 description: Rebase is the default for daily TBD workflow; five conditions where merge is the safer choice instead.
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use when deciding whether to pull with rebase or merge for a specific situation.
 ---
 

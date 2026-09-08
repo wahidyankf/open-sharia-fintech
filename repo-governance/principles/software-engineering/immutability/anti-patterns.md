@@ -1,15 +1,5 @@
 ---
-title: "Anti-Patterns"
 description: Catalogs common mutability anti-patterns — mutating function arguments, shared mutable state, and hidden mutations in methods — with fixes.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - functional-programming
-  - immutability
-  - data-structures
-  - concurrency
-created: 2025-12-28
 when_to_use: Use when reviewing code for accidental mutation bugs or refactoring a mutable design toward immutability.
 ---
 

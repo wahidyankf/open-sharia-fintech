@@ -1,5 +1,4 @@
 ---
-title: "Documentation First"
 description: "Documentation is not optional - it is mandatory for knowledge transfer, maintainability, and democratization"
 when_to_use: "Read this index to find the right Documentation First child document."
 ---

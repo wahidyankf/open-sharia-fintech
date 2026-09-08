@@ -1,5 +1,4 @@
 ---
-title: "Regression Test Mandate"
 description: "Blocking rule requiring every bug fix to land with a reproducing test in the same commit/PR -- the bug-driven dual of Feature Change Completeness"
 when_to_use: "Read this index to find the right Regression Test Mandate child document."
 ---

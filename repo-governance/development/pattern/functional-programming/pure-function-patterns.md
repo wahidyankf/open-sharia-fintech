@@ -1,15 +1,5 @@
 ---
-title: "Pure Function Patterns"
 description: "Examples of basic pure functions, pure data transformations, and the functional core/imperative shell split."
-category: explanation
-subcategory: development
-tags:
-  - development
-  - functional-programming
-  - immutability
-  - pure-functions
-  - typescript
-created: 2025-12-28
 when_to_use: "Use when writing a function and want a worked example of keeping it pure versus isolating its side effects."
 ---
 

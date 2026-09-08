@@ -1,14 +1,5 @@
 ---
-title: "Future Enhancements"
 description: Not-yet-implemented workflow features under consideration — retry policies, timeouts, rollback, metrics, visualization, and testing.
-category: explanation
-subcategory: workflows
-tags:
-  - workflows
-  - agents
-  - orchestration
-  - patterns
-created: 2025-12-23
 when_to_use: Use when evaluating whether a proposed workflow feature is already planned or genuinely new.
 ---
 

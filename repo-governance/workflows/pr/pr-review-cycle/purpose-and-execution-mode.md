@@ -1,5 +1,4 @@
 ---
-title: "PR-Review Cycle — Purpose and Execution Mode"
 description: "Defines the optional cycle's purpose and strictly sequential pass-to-fixer execution."
 when_to_use: "Use when deciding whether to invoke pr-review-cycle or checking its concurrency rule."
 ---

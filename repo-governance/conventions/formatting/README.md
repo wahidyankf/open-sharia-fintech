@@ -1,11 +1,6 @@
 ---
-title: "Formatting Conventions"
 description: Practical Markdown formatting rules that keep repository documentation clear and accessible
 when_to_use: Use when you need the right formatting convention (diagrams, colors, emoji, math notation, code fences, timestamps) for a specific markdown element you are adding or reviewing.
-category: explanation
-subcategory: conventions
-tags: []
-created: 2026-05-12
 ---
 
 # Formatting Conventions

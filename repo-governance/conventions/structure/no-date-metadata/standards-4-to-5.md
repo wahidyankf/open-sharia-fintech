@@ -1,15 +1,6 @@
 ---
-title: "No Manual Date Metadata: Standards 4-5"
 description: Standard 4 (no inline date annotation lines in the document body) with worked FAIL/PASS examples, and Standard 5 (how to find the authoritative change date via git).
 when_to_use: Read this when checking a document body for inline Created/Last Updated/Version-date annotation lines, or when you need the git command to find a file's real last-changed date.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - frontmatter
-  - maintenance
-  - git
-created: 2026-04-25
 ---
 
 # No Manual Date Metadata: Standards 4-5

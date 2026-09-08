@@ -1,10 +1,5 @@
 ---
-title: "Practice 2: Make Small, Frequent Commits"
 description: Compose the fewest small, atomic commits that keep each authorized purpose build-valid and reviewable.
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use when deciding how to batch changes into commits during a work session.
 ---
 

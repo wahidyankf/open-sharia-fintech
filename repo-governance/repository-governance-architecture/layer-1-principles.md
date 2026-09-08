@@ -1,13 +1,5 @@
 ---
-title: "Layer 1: Principles (WHY - Values)"
-description: The foundational-values layer: location, principle roster, requirements
-category: explanation
-subcategory: architecture
-tags:
-  - architecture
-  - governance
-  - principles
-created: 2026-02-09
+description: "The foundational-values layer: location, principle roster, requirements"
 when_to_use: Use for Layer 1's scope and traceability requirements.
 ---
 

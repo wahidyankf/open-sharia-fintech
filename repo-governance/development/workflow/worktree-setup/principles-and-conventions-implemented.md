@@ -1,18 +1,5 @@
 ---
-title: "Principles and Conventions Implemented"
 description: The principles the worktree toolchain initialization practice respects, and its lack of a direct Layer 2 convention.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - git
-  - worktree
-  - npm
-  - nx
-  - dependencies
-  - toolchain
-  - doctor
-created: 2026-03-28
 when_to_use: Use when tracing why the two-step worktree init exists back to the principles it respects.
 ---
 

@@ -1,13 +1,5 @@
 ---
-title: "Anti-Patterns 4-6"
 description: "Deleting content without preservation, running all tests pre-push, ad-hoc validation logic."
-category: explanation
-subcategory: development
-tags:
-  - anti-patterns
-  - quality
-  - development
-created: 2026-05-12
 when_to_use: "Use when reviewing for these three quality anti-patterns."
 ---
 

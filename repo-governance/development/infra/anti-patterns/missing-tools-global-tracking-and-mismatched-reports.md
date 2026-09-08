@@ -1,10 +1,5 @@
 ---
-title: "Anti-Patterns in Checker Tooling, Execution Tracking, and Report Pairing"
 description: Covers the missing-tools, global-execution-tracking, and mismatched-audit/fix-report anti-patterns for checker and fixer agents.
-category: explanation
-subcategory: development
-tags: [anti-patterns, checker-agents, execution-tracking, audit-trail]
-created: 2026-05-12
 when_to_use: Use when defining a checker agent's tool list, an execution-tracking file, or pairing a fixer report with its source audit.
 ---
 

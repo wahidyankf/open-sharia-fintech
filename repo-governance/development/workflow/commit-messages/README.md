@@ -1,5 +1,4 @@
 ---
-title: "Commit Message Convention"
 description: "Understanding Conventional Commits and why we use them in open-sharia-enterprise"
 when_to_use: "Read this index to find the right Commit Message Convention child document."
 ---

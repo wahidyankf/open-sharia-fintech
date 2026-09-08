@@ -1,15 +1,5 @@
 ---
-title: "Principles and Conventions"
 description: "The core principles and conventions this pattern implements - pure functions, simplicity, immutability, explicitness, and functional programming practices."
-category: explanation
-subcategory: development
-tags:
-  - architecture
-  - functional-core-imperative-shell
-  - nextjs
-  - functional-programming
-  - web
-created: 2026-06-17
 when_to_use: "Use when you need to trace the core/shell split back to the principles and conventions it implements."
 ---
 

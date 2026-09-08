@@ -1,10 +1,5 @@
 ---
-title: "Practice 7: Keep CI Green at All Times"
 description: Never commit code that breaks CI, fix immediately if broken.
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use when CI fails after a push, to confirm the correct response is an immediate fix or revert.
 ---
 

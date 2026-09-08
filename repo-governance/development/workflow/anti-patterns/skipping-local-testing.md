@@ -1,10 +1,5 @@
 ---
-title: "Anti-Pattern: Skipping Local Testing"
 description: Relying on CI alone to discover test failures wastes time that local testing would have saved.
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use when about to push changes without first running tests and lint locally.
 ---
 

@@ -1,18 +1,6 @@
 ---
-title: "Testing Tools and Process"
 description: "Lists the required color-blindness and contrast testing tools and walks through the five-step testing process."
 when_to_use: "Use when running the accessibility testing process on new color-dependent content before publishing."
-category: explanation
-subcategory: conventions
-tags:
-  - accessibility
-  - color-blindness
-  - wcag
-  - design
-  - conventions
-  - mermaid-diagrams
-  - color-palette
-created: 2025-12-04
 ---
 
 # Testing Tools and Process

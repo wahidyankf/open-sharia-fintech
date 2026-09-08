@@ -1,16 +1,6 @@
 ---
-title: "Section Structure: Heavily Annotated Code Examples (Part 4)"
 description: "Specifies the heavily annotated code examples part of the six-part concept-section structure, including annotation density and required annotation types."
 when_to_use: "Read when drafting or reviewing the annotated code example inside a By-Concept tutorial section."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-concept
-  - education
-  - narrative-driven
-created: 2026-01-30
 ---
 
 # Section Structure: Heavily Annotated Code Examples (Part 4)

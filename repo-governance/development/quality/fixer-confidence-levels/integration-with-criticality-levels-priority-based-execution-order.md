@@ -1,15 +1,5 @@
 ---
-title: "Integration with Criticality Levels: Priority-Based Execution Order"
 description: "The priority-based execution order for fixes."
-category: explanation
-subcategory: development
-tags:
-  - fixer-agents
-  - confidence-levels
-  - validation
-  - automation
-  - quality-assurance
-created: 2025-12-14
 when_to_use: "Use when ordering fixes by priority."
 ---
 

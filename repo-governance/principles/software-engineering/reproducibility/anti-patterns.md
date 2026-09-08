@@ -1,15 +1,5 @@
 ---
-title: "Anti-Patterns"
 description: Catalogs common reproducibility anti-patterns — "works on my machine", floating dependencies, undocumented system dependencies, and manual setup — with fixes.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - reproducibility
-  - environment
-  - determinism
-  - version-pinning
-created: 2025-12-28
 when_to_use: Use when diagnosing an environment-specific bug or refactoring an undocumented manual setup process.
 ---
 

@@ -1,14 +1,5 @@
 ---
-title: "Standard 6 — Every Subagent Returns Its Touched-File Ledger"
 description: "Defines the requirement that every subagent report the full list of files it touched."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - subagents
-  - orchestration
-  - development
-created: 2025-11-23
 when_to_use: Use when a subagent finishes a task and reports its results back to the orchestrator.
 ---
 

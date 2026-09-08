@@ -1,5 +1,4 @@
 ---
-title: "Validation Focus"
 description: "Lists what the checker validates: no duplication, prerequisite statements, style guide focus, learning path completeness, and cross-reference links."
 when_to_use: "Use when you need to know exactly what the separation checker looks for."
 ---

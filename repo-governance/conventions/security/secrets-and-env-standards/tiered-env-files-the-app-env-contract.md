@@ -1,17 +1,6 @@
 ---
-title: "Tiered Env Files — the `APP_ENV` Contract"
 description: How an app selects its runtime tier via APP_ENV and loads exactly one .env.<tier> file, the fallback rule for a missing tier file, and the local/test/stag/prod agent-access table.
 when_to_use: Use when you need to know which .env.<tier> file an app loads for a given APP_ENV value, or whether agents may access it.
-category: explanation
-subcategory: conventions
-tags:
-  - security
-  - secrets
-  - env-files
-  - guard-env-file-access
-  - naming
-  - reproducibility
-created: 2026-06-10
 ---
 
 # Tiered Env Files — the `APP_ENV` Contract

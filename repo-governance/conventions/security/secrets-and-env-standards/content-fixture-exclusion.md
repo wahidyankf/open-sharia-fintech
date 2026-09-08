@@ -1,17 +1,6 @@
 ---
-title: "Content-Fixture Exclusion"
 description: The dotfile-shaped rule that lets a non-dotfile <word>.env course fixture under apps/<app>/content/** bypass guard-env-file-access.
 when_to_use: Use when a course or teaching-material app needs to ship a worked-example env file and you need to know whether it is exempt from the agent-access guard.
-category: explanation
-subcategory: conventions
-tags:
-  - security
-  - secrets
-  - env-files
-  - guard-env-file-access
-  - naming
-  - reproducibility
-created: 2026-06-10
 ---
 
 # Content-Fixture Exclusion

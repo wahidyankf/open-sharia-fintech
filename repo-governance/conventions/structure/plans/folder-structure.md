@@ -1,14 +1,5 @@
 ---
-title: "Folder Structure"
 description: Describes the four top-level plans/ subfolders (ideas/, backlog/, in-progress/, done/) and the purpose of each.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when deciding which top-level plans/ subfolder a document belongs in.
 ---
 

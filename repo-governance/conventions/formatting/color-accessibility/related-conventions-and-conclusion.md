@@ -1,18 +1,6 @@
 ---
-title: "Related Conventions and Conclusion"
 description: "Links to related conventions and summarizes why following this color accessibility convention benefits everyone."
 when_to_use: "Use when looking for related conventions to cross-reference or wrapping up review of this convention."
-category: explanation
-subcategory: conventions
-tags:
-  - accessibility
-  - color-blindness
-  - wcag
-  - design
-  - conventions
-  - mermaid-diagrams
-  - color-palette
-created: 2025-12-04
 ---
 
 # Related Conventions and Conclusion

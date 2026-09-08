@@ -1,15 +1,5 @@
 ---
-title: "Weight System Notes and Cookbook Relocation"
 description: "Wraps up the weight-system explanation and documents the cookbook's move from how-to/cookbook.md into the tutorials/cookbook/ folder."
-category: explanation
-subcategory: conventions
-tags:
-  - programming-languages
-  - ayokoding
-  - tutorials
-  - education
-  - content-standards
-created: 2025-12-18
 when_to_use: "Use when you need the closing notes on the weight system, or when migrating a language's cookbook from the deprecated how-to/cookbook.md location."
 ---
 

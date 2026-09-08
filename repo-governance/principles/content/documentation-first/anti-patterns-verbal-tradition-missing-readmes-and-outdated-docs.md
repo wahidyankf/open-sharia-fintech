@@ -1,12 +1,5 @@
 ---
-title: "Anti-Patterns — Verbal Tradition, Missing READMEs, and Outdated Docs"
 description: Why verbal-only knowledge, missing READMEs, and outdated docs fail contributors.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - documentation
-created: 2025-12-28
 when_to_use: Use when auditing a project for missing or stale documentation.
 ---
 

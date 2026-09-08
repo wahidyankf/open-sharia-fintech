@@ -1,15 +1,5 @@
 ---
-title: "Quality Checklist, Related Conventions, and References"
 description: "The full pre-commit quality checklist plus links to related universal and context-specific conventions"
-category: explanation
-subcategory: conventions
-tags:
-  - content-quality
-  - markdown
-  - writing-standards
-  - accessibility
-  - documentation
-created: 2025-12-07
 when_to_use: "Read this before committing markdown content, to run through the quality checklist and find related conventions."
 ---
 

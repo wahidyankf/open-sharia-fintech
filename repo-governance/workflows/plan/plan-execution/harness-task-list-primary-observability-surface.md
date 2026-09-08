@@ -1,5 +1,4 @@
 ---
-title: "Harness Task List as Primary Observability Surface"
 description: Defines the non-negotiable invariants for the harness Task list as the user's real-time execution monitoring surface.
 when_to_use: Use when auditing whether task creation, titling, and completion timing satisfy the primary-observability invariants.
 ---

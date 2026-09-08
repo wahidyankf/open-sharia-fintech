@@ -1,15 +1,5 @@
 ---
-title: "Design Tokens — OKLCH Brand Tokens (OrganicLever)"
 description: OrganicLever's warm OKLCH palette - why OKLCH over HSL, and the hue/ink/wash and warm-neutral token structure including dark mode
-category: explanation
-subcategory: development/frontend
-tags:
-  - design-tokens
-  - css
-  - tailwind
-  - theming
-  - dark-mode
-created: 2026-03-28
 when_to_use: Use when working on organiclever-app-web's token layer and need the OKLCH rationale or token structure.
 ---
 

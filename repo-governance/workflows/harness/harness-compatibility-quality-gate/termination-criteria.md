@@ -1,5 +1,4 @@
 ---
-title: "Termination Criteria"
 description: The pass/partial/fail conditions by mode level, and the consecutive-pass and below-threshold-findings notes.
 when_to_use: Use when checking whether a completed run's status is correctly determined.
 ---

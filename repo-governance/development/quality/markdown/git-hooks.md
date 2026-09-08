@@ -1,16 +1,5 @@
 ---
-title: "Git Hooks"
 description: "What pre-commit and pre-push do for markdown, and where configured."
-category: explanation
-subcategory: development
-tags:
-  - markdown
-  - linting
-  - formatting
-  - prettier
-  - markdownlint
-  - quality
-created: 2026-01-17
 when_to_use: "Use when a markdown git hook misbehaves or you need its config location."
 ---
 

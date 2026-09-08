@@ -1,11 +1,6 @@
 ---
-title: "Web Workflows"
 description: "Orchestrated workflows that test a live running website and turn the findings into a fix plan — combined spec-aware exploratory, spec-blind usability, and design-aware design-fidelity testing."
 when_to_use: Use when routing to a workflow that tests a live running site and turns findings into a fix plan.
-category: explanation
-subcategory: workflows
-tags: []
-created: 2026-06-20
 ---
 
 # Web Workflows

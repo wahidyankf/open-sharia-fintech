@@ -1,5 +1,4 @@
 ---
-title: "Termination Criteria and Example Usage"
 description: Defines the pass/partial/fail termination conditions for the general quality gate and shows four example invocations (full, language-scoped, section-scoped, iteration-bounded).
 when_to_use: Use when determining whether a run has reached a terminal state, or when looking up example invocation syntax.
 ---

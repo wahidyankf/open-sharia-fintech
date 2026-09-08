@@ -1,5 +1,4 @@
 ---
-title: "Execution Mode"
 description: "States that this workflow is developer-guided manual orchestration because it involves system-level installs requiring human confirmation and shell access."
 when_to_use: "Use when deciding how this workflow is executed (there is no agent-delegation mode)."
 ---

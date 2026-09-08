@@ -1,5 +1,4 @@
 ---
-title: "Web UX Test-Fixing Planning — Phases 5 and 6: Plan Quality Gate and Push & Hand-back"
 description: "The nested plan-quality-gate call that hardens the authored plan, and the final push-and-summary step that lands the plan and reports findings counts."
 when_to_use: "Use when checking the plan-quality-gate args/output for this workflow, or exactly what the final push step stages and reports."
 ---

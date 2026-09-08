@@ -1,16 +1,5 @@
 ---
-title: "Absence/Completeness: Concept Sweep (1)"
 description: "Why one regex is never an acceptance criterion."
-category: explanation
-subcategory: development
-tags:
-  - plans
-  - ai-agents
-  - factual-validation
-  - anti-hallucination
-  - web-research
-  - verification
-created: 2026-05-03
 when_to_use: "Use before trusting a single regex sweep as proof."
 ---
 

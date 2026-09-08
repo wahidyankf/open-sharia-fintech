@@ -1,16 +1,5 @@
 ---
-title: "Migration Guide"
 description: Step-by-step migration paths for adding Volta pinning or Docker Compose to an existing project.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - reproducibility
-  - volta
-  - docker
-  - environment
-  - dependencies
-created: 2025-12-28
 when_to_use: Use when retrofitting Volta version pinning or Docker Compose into a project that does not yet have them.
 ---
 

@@ -1,14 +1,5 @@
 ---
-title: "Trustworthy Measurement"
 description: Before a number is allowed to justify a decision, prove the command produced it, prove it measures the path that actually runs, and prove the metric responds to the thing being changed
-category: explanation
-subcategory: development
-tags:
-  - measurement
-  - benchmarking
-  - false-zero
-  - critical-path
-created: 2026-08-09
 when_to_use: Use before any benchmark timing, CI metric, or measured number is used to justify a decision, a plan's remedy, or an acceptance-clause threshold.
 ---
 

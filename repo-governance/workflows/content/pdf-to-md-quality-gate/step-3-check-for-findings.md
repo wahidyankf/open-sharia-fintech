@@ -1,5 +1,4 @@
 ---
-title: "3. Check for Findings (Sequential)"
 description: "Step 3: counts checker findings by mode threshold and decides whether to proceed to fixing or to a confirmation re-check."
 when_to_use: "Use when implementing or debugging the findings-threshold decision step of the quality gate."
 ---

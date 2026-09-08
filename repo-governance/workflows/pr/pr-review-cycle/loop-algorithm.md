@@ -1,5 +1,4 @@
 ---
-title: "PR-Review Cycle — Loop Algorithm"
 description: "Composes single review passes with fixer, exact-head CI, and bounded clean credit."
 when_to_use: "Use when tracing an explicitly requested iterative PR-review cycle."
 ---

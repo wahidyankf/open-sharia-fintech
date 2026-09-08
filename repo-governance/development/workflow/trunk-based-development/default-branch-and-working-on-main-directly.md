@@ -1,15 +1,5 @@
 ---
-title: "Default Branch and Working on Main Directly"
 description: The trunk is main with no develop/release/hotfix branches, and the classic direct-commit-to-trunk shape (not executable in ose-public).
-category: explanation
-subcategory: development
-tags:
-  - trunk-based-development
-  - git
-  - workflow
-  - development
-  - continuous-integration
-created: 2025-11-26
 when_to_use: Use when explaining why there is no develop/release/hotfix branch, or when illustrating the classic direct-commit-to-main TBD shape.
 ---
 

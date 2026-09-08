@@ -1,5 +1,4 @@
 ---
-title: "Notes, Principles, and Conventions Implemented"
 description: Collects operational notes and the principles and conventions this general quality gate workflow implements and respects.
 when_to_use: Use when tracing which principles and conventions this workflow implements, or reviewing its operational characteristics.
 ---

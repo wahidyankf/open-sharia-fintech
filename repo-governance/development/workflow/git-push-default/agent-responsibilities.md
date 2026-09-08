@@ -1,15 +1,5 @@
 ---
-title: "Agent Responsibilities"
 description: The per-agent responsibility table — plan-maker, plan-checker, plan-quality-gate, and the plan-execution workflow — for applying this convention.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - push
-  - trunk-based-development
-  - ai-agents
-created: 2026-04-25
 when_to_use: Use when identifying which agent owns a specific responsibility under the Git Push Default Convention.
 ---
 

@@ -1,53 +1,6 @@
 ---
-name: plan-multi-repo-parity-planning
-title: "plan-multi-repo-parity-planning"
 description: Authors sibling-repo parity plans, deciding every deviation.
 when_to_use: Use when a change spans sibling repos and drift between them must not be silent.
-goal: Author sibling-repository plans for one objective, with every deviation decided and recorded
-termination: "One plan per target repo exists, each receiving a PASS verdict from plan-quality-gate, every deviation-matrix cell carries a recorded decision, research findings are incorporated or skipped with justification, and delivery completed per the selected mode"
-inputs:
-  - name: objective
-    type: string
-    description: "The shared topic to standardize or align across repos (e.g., 'standardize markdown gates', 'align agent catalogs')"
-    required: true
-  - name: repos
-    type: string
-    description: "Comma-separated target repository names or absolute paths in the parity set (e.g., 'ose-public, ose-private')"
-    required: false
-    default: "ose-public, ose-private"
-  - name: mode
-    type: enum
-    values: [main-to-origin-main, worktree-to-origin-main, worktree-to-pr]
-    description: "Where plans are authored and how they are delivered (see Modes section)"
-    required: false
-    default: worktree-to-pr
-  - name: stage
-    type: enum
-    values: [in-progress, backlog]
-    description: "Plan stage folder in each target repo"
-    required: false
-    default: in-progress
-  - name: max-concurrency
-    type: number
-    description: "Background agents run concurrently — the N in the N+1 model (1 main thread + N background agents = N+1 total). Raise only when independent work, machine capacity, and budget headroom all allow; lower under budget, runner, or disk pressure. Never self-promoted beyond the declared value."
-    required: false
-    default: 3
-outputs:
-  - name: plans-created
-    type: file-list
-    description: One plan folder path per target repo
-  - name: deviation-matrix
-    type: file
-    description: "Cross-repo decision matrix (every gap mapped to an align/deviate decision with justification), embedded in each plan's chosen technical form and mirrored in each repo's explanation rationale doc"
-  - name: gate-results
-    type: string
-    description: "plan-quality-gate verdict per plan (PASS/BLOCKED_*)"
-  - name: parity-identity-record
-    type: string
-    description: "Shared objective, worktree basename, and branch mapping"
-  - name: delivery-refs
-    type: string
-    description: "Commits pushed to origin main (main-push modes) or PR URLs (worktree-to-pr)"
 ---
 
 # Plan Multi-Repo Parity Planning Workflow
@@ -59,6 +12,28 @@ Authors one plan per sibling repo, grilling every cross-repo gap first.
 Plan authoring and validation use [plan-maker](../../../.claude/agents/plan/plan-maker.md) and
 [plan-checker](../../../.claude/agents/plan/plan-checker.md). Repair belongs to the
 [plan-quality-gate](./plan-quality-gate.md) itself; there is no `plan-fixer`.
+
+## Goal and Termination
+
+**Goal**: Author sibling-repository plans for one objective, with every deviation decided and recorded
+
+**Termination**: One plan per target repo exists, each receiving a PASS verdict from plan-quality-gate, every deviation-matrix cell carries a recorded decision, research findings are incorporated or skipped with justification, and delivery completed per the selected mode
+
+## Inputs
+
+- **`objective`** (string, required) — The shared topic to standardize or align across repos (e.g., 'standardize markdown gates', 'align agent catalogs')
+- **`repos`** (string, optional, default `ose-public, ose-private`) — Comma-separated target repository names or absolute paths in the parity set (e.g., 'ose-public, ose-private')
+- **`mode`** (enum: main-to-origin-main, worktree-to-origin-main, worktree-to-pr, optional, default `worktree-to-pr`) — Where plans are authored and how they are delivered (see Modes section)
+- **`stage`** (enum: in-progress, backlog, optional, default `in-progress`) — Plan stage folder in each target repo
+- **`max-concurrency`** (number, optional, default `3`) — Background agents run concurrently — the N in the N+1 model (1 main thread + N background agents = N+1 total). Raise only when independent work, machine capacity, and budget headroom all allow; lower under budget, runner, or disk pressure. Never self-promoted beyond the declared value.
+
+## Outputs
+
+- **`plans-created`** (file-list) — One plan folder path per target repo
+- **`deviation-matrix`** (file) — Cross-repo decision matrix (every gap mapped to an align/deviate decision with justification), embedded in each plan's chosen technical form and mirrored in each repo's explanation rationale doc
+- **`gate-results`** (string) — plan-quality-gate verdict per plan (PASS/BLOCKED\_\*)
+- **`parity-identity-record`** (string) — Shared objective, worktree basename, and branch mapping
+- **`delivery-refs`** (string) — Commits pushed to origin main (main-push modes) or PR URLs (worktree-to-pr)
 
 ## Contents
 

@@ -1,15 +1,5 @@
 ---
-title: "Docker Monorepo Build Patterns"
 description: Patterns and pitfalls for building Docker images in an npm workspace monorepo
-category: explanation
-subcategory: development/infra
-tags:
-  - docker
-  - monorepo
-  - npm-workspaces
-  - build
-  - node_modules
-created: 2026-03-28
 when_to_use: Use when building or debugging a Docker image for an app inside this npm workspace monorepo, or when a build fails to resolve a shared `libs/` package.
 ---
 

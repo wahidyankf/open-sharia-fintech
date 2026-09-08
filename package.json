@@ -80,6 +80,7 @@
       "node_modules/.bin/prettier --write",
       "node_modules/.bin/markdownlint-cli2",
       "apps/rhino-cli/scripts/rhino-bin.sh md mermaid validate --exclude \"apps/rhino-cli/tests/fixtures\" --exclude \"plans/done\" --exclude \"apps/ayokoding-www/content\"",
+      "apps/rhino-cli/scripts/rhino-bin.sh md mermaid validate --exclude \"apps/rhino-cli/tests/fixtures\" --exclude \"plans/done\" --exclude \"apps/ayokoding-www/content\" --max-label-len \"20\"",
       "apps/rhino-cli/scripts/rhino-bin.sh md heading-hierarchy validate",
       "apps/rhino-cli/scripts/rhino-bin.sh md naming validate --exempt \"*__linkedin__*.md\" --exempt \"CONTRIBUTING.md\" --exempt \"pull_request_template.md\" --exempt \"RTK.md\"",
       "apps/rhino-cli/scripts/rhino-bin.sh md frontmatter validate"

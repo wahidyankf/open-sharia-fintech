@@ -1,14 +1,5 @@
 ---
-title: "Platform Binding Examples — Color Accessibility for Agent Identification"
 description: "Covers multiple identification methods and accessible color-palette verification for agent colors."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when verifying that an agent's assigned color remains distinguishable for accessibility.
 ---
 

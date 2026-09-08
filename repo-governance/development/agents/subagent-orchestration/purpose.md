@@ -1,14 +1,5 @@
 ---
-title: "Purpose"
 description: "States why this convention defines standards for orchestrating background subagents."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - subagents
-  - orchestration
-  - development
-created: 2025-11-23
 when_to_use: Use when explaining why a background-agent orchestration rule exists.
 ---
 

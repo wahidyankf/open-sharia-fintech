@@ -1,17 +1,6 @@
 ---
-title: "FP-Variant Multi-Language Convention — Validation and Tools and Automation"
 description: The six compliance checks for an FP-variant page, which are checker-automated versus AI-judgement, and the maker/checker/fixer agents that implement this convention.
 when_to_use: Use when auditing an FP-variant page for compliance or looking up which agent creates, checks, or fixes FP-variant content.
-category: explanation
-subcategory: conventions
-tags:
-  - fp
-  - clojure
-  - fsharp
-  - by-example
-  - ayokoding-www
-  - tutorial
-created: 2026-05-17
 ---
 
 # Validation and Tools and Automation

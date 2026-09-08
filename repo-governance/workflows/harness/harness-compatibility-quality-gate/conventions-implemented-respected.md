@@ -1,5 +1,4 @@
 ---
-title: "Conventions Implemented/Respected"
 description: Traces this workflow's design back to the Multi-Harness Binding, Workflow Naming, File Naming, Linking, Content Quality, Governance Vendor-Independence, and Web Research Delegation conventions.
 when_to_use: Use when auditing this workflow for traceability back to other repo-governance conventions.
 ---

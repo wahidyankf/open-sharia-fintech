@@ -1,13 +1,6 @@
 ---
-title: "Dependency Workflows"
 description: Workflows for dependency inventory, security and compatibility clearance, and upgrade planning
 when_to_use: Use when routing to a workflow that surveys or plans dependency changes across the monorepo.
-category: explanation
-subcategory: workflows
-tags:
-  - dependencies
-  - workflows
-created: 2026-08-27
 ---
 
 # Dependency Workflows

@@ -1,10 +1,5 @@
 ---
-title: "Safety Considerations"
 description: Never rebase commits others have pulled; when unsure prefer merge; and how to abort a rebase or merge safely.
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use before rebasing pushed commits, or when a rebase/merge needs to be safely aborted.
 ---
 

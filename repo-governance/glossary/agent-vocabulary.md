@@ -1,15 +1,6 @@
 ---
-title: "Agent Vocabulary"
 description: Definitions for agent, agent skill, gate, quality gate, and workflow, plus the maker/checker/fixer roles and how they differ.
 when_to_use: Use when deciding whether new capability belongs in an agent, an agent skill, a gate, or a workflow.
-category: explanation
-subcategory: governance
-tags:
-  - governance
-  - glossary
-  - agents
-  - workflow
-created: 2026-08-16
 ---
 
 # Agent Vocabulary

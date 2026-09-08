@@ -1,52 +1,6 @@
 ---
-name: docs-software-engineering-separation-quality-gate
-title: "docs-software-engineering-separation-quality-gate"
 description: "Validates separation between OSE Platform style guides and AyoKoding educational content, then fixes violations iteratively."
 when_to_use: "Use after adding/updating prerequisite relationships or style-guide/AyoKoding content, or periodically for compliance."
-goal: Validate software engineering documentation separation between OSE Platform style guides and AyoKoding educational content, apply fixes iteratively until zero findings achieved
-termination: "Zero findings on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)"
-inputs:
-  - name: scope
-    type: string
-    description: Documentation scope to validate (e.g., "all", "programming-languages/java", "platform-web/tools/jvm-spring")
-    required: false
-    default: all
-  - name: mode
-    type: enum
-    values: [lax, normal, strict, ocd]
-    description: "Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ocd: all levels)"
-    required: false
-    default: strict
-  - name: min-iterations
-    type: number
-    description: Minimum check-fix cycles before allowing zero-finding termination (prevents premature success)
-    required: false
-  - name: max-iterations
-    type: number
-    description: Maximum check-fix cycles to prevent infinite loops
-    required: false
-    default: 7
-  - name: max-concurrency
-    type: number
-    description: "Background agents run concurrently — the N in the N+1 model (1 main thread + N background agents = N+1 total). Raise only when independent work, machine capacity, and budget headroom all allow; lower under budget, runner, or disk pressure. Never self-promoted beyond the declared value."
-    required: false
-    default: 3
-outputs:
-  - name: final-status
-    type: enum
-    values: [pass, partial, fail]
-    description: Final validation status
-  - name: lifecycle-status
-    type: enum
-    values: [verified, pending, not-applicable]
-    description: Lifecycle evidence state, separate from final-status
-  - name: iterations-completed
-    type: number
-    description: Number of check-fix cycles executed
-  - name: final-report
-    type: file
-    pattern: local-tmp/docs-swe-sep/docs-swe-sep__*__audit.md
-    description: Final audit report
 ---
 
 # Software Engineering Documentation Separation Quality Gate Workflow
@@ -62,6 +16,27 @@ enabling incremental migration.
 
 **When to use**: after adding prerequisite relationships to the Software Design Reference, after
 updating style guide or AyoKoding content, before major releases, or periodically for compliance.
+
+## Goal and Termination
+
+**Goal**: Validate software engineering documentation separation between OSE Platform style guides and AyoKoding educational content, apply fixes iteratively until zero findings achieved
+
+**Termination**: Zero findings on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)
+
+## Inputs
+
+- **`scope`** (string, optional, default `all`) — Documentation scope to validate (e.g., "all", "programming-languages/java", "platform-web/tools/jvm-spring")
+- **`mode`** (enum: lax, normal, strict, ocd, optional, default `strict`) — Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ocd: all levels)
+- **`min-iterations`** (number, optional) — Minimum check-fix cycles before allowing zero-finding termination (prevents premature success)
+- **`max-iterations`** (number, optional, default `7`) — Maximum check-fix cycles to prevent infinite loops
+- **`max-concurrency`** (number, optional, default `3`) — Background agents run concurrently — the N in the N+1 model (1 main thread + N background agents = N+1 total). Raise only when independent work, machine capacity, and budget headroom all allow; lower under budget, runner, or disk pressure. Never self-promoted beyond the declared value.
+
+## Outputs
+
+- **`final-status`** (enum: pass, partial, fail) — Final validation status
+- **`lifecycle-status`** (enum: verified, pending, not-applicable) — Lifecycle evidence state, separate from final-status
+- **`iterations-completed`** (number) — Number of check-fix cycles executed
+- **`final-report`** (file, pattern `local-tmp/docs-swe-sep/docs-swe-sep__*__audit.md`) — Final audit report
 
 ## Contents
 

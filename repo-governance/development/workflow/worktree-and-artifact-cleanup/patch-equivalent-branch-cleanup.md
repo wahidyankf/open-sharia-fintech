@@ -1,15 +1,5 @@
 ---
-title: "Patch-Equivalent Branch Cleanup"
 description: Delete a branch that carries no change main lacks, when the PR route offers no delivery proof.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - worktree
-  - cleanup
-  - parallelism
-created: 2026-09-04
 when_to_use: Use when a branch has no usable merged-PR proof but every commit it carries already landed.
 ---
 

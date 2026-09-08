@@ -1,15 +1,5 @@
 ---
-title: "Fixer Confidence Levels Convention"
 description: Universal confidence level system for fixer agents to assess and apply validated fixes
-category: explanation
-subcategory: development
-tags:
-  - fixer-agents
-  - confidence-levels
-  - validation
-  - automation
-  - quality-assurance
-created: 2025-12-14
 when_to_use: "Use when a fixer agent needs to assess confidence before applying a fix."
 ---
 

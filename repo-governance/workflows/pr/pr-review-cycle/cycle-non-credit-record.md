@@ -1,5 +1,4 @@
 ---
-title: "PR Review Cycle — Cycle Credit Record"
 description: "Defines durable positive clean credit and stale-cycle non-credit events."
 when_to_use: "Use after a clean cycle's post-CI gate or when live-head drift invalidates a posted cycle."
 ---

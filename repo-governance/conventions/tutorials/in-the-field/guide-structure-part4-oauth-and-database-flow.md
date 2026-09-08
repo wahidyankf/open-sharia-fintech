@@ -1,16 +1,6 @@
 ---
-title: "Guide Structure Part 4: OAuth and Database Flow Diagrams"
 description: Mermaid diagrams for OAuth2/OIDC authentication and the JDBC-to-HikariCP-to-JPA database persistence progression.
 when_to_use: Use when building an OAuth2 authentication or database-persistence-progression diagram.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Guide Structure Part 4: OAuth and Database Flow Diagrams

@@ -1,5 +1,4 @@
 ---
-title: "User-Facing Delivery Hardening Convention"
 description: "Sixteen durable rules for planning, executing, verifying, and archiving user-facing feature work so design-parity and behavioural defects cannot ship past green gates"
 when_to_use: "Read this index to find the right User-Facing Delivery Hardening Convention child document."
 ---
@@ -7,7 +6,6 @@ when_to_use: "Read this index to find the right User-Facing Delivery Hardening C
 # User-Facing Delivery Hardening Convention
 
 - [Principles and Conventions Implemented/Respected](./principles-and-conventions-implemented-respected.md) — Principles/conventions implemented. Use to trace this convention's rationale.
-- [Scope](./scope.md) — What this convention applies to. Use when checking whether this convention applies to a plan.
 - [The Sixteen Rules (1-6)](./the-sixteen-rules-1-6.md) — Rules 1-6: visual-parity gate, primitive naming, responsive parity, filter coverage, value-bearing tests, labeled numbers. Use when authoring a UI plan and checking against rules 1-6.
 - [The Sixteen Rules (7-10)](./the-sixteen-rules-7-10.md) — Rules 7-10: green gates insufficient, theme-token colors, per-breakpoint responsive, done means verified. Use when authoring or verifying a UI plan against rules 7-10.
 - [The Sixteen Rules (11-14)](./the-sixteen-rules-11-14.md) — Rules 11-14: deploy config as code, distinguishing assertions, checkbox lockstep, clean re-entry. Use when executing or verifying a UI plan against rules 11-14.

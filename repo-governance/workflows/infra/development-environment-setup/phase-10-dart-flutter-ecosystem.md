@@ -1,5 +1,4 @@
 ---
-title: "Phase 10: Dart/Flutter Ecosystem (Sequential)"
 description: "Phase 10 (full scope only): install Flutter (bundles Dart) so dart format can format the Dart course corpora."
 when_to_use: "Use when setting up Dart/Flutter under full scope."
 ---

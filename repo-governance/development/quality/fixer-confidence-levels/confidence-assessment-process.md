@@ -1,15 +1,5 @@
 ---
-title: "Confidence Assessment Process"
 description: "The process for assessing confidence in a finding."
-category: explanation
-subcategory: development
-tags:
-  - fixer-agents
-  - confidence-levels
-  - validation
-  - automation
-  - quality-assurance
-created: 2025-12-14
 when_to_use: "Use when implementing a fixer's confidence-assessment step."
 ---
 

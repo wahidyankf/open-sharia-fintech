@@ -1,18 +1,6 @@
 ---
-title: "ASCII Art: When to Use and Why It's Optional"
 description: "Explains when ASCII art is still an appropriate choice and why it is now optional rather than required."
 when_to_use: "Use when deciding whether a diagram should be ASCII art instead of Mermaid."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # ASCII Art: When to Use and Why It's Optional

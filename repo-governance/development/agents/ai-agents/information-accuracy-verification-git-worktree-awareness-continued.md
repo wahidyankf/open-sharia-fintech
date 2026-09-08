@@ -1,14 +1,5 @@
 ---
-title: "Information Accuracy and Verification — Git Worktree Awareness: Default Push Behaviour and Example"
 description: "Continues Git Worktree Awareness with the default-push-behaviour rule, a worked example, and the consequence of violating the rules."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when an agent running inside a worktree needs to know its default push/PR behaviour or wants a worked pass/fail path example.
 ---
 

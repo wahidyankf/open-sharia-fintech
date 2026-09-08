@@ -1,15 +1,5 @@
 ---
-title: "TypeScript-Specific Patterns"
 description: "TypeScript-specific functional patterns - readonly types, branded types, and discriminated unions for state modeling."
-category: explanation
-subcategory: development
-tags:
-  - development
-  - functional-programming
-  - immutability
-  - pure-functions
-  - typescript
-created: 2025-12-28
 when_to_use: "Use when you need a TypeScript-specific technique for enforcing immutability or modeling state explicitly."
 ---
 

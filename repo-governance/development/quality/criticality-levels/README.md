@@ -1,5 +1,4 @@
 ---
-title: "Criticality Levels Convention"
 description: "Universal criticality level system for categorizing validation findings across all checker and fixer agents"
 when_to_use: "Read this index to find the right Criticality Levels Convention child document."
 ---

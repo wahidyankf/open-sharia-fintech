@@ -1,5 +1,4 @@
 ---
-title: "Specs Validation Workflow"
 description: "Validate explicitly listed specs/ folders for structural completeness, content accuracy, internal consistency, and cross-folder coherence, then apply fixes iteratively until zero findings."
 when_to_use: "Read this index to find the right Specs Validation Workflow child document."
 ---

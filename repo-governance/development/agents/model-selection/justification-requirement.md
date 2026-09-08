@@ -1,14 +1,5 @@
 ---
-title: "Justification Requirement"
 description: "States the requirement that every agent include a Model Selection Justification block explaining its grade choice."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - model-selection
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when writing or reviewing an agent's Model Selection Justification block.
 ---
 

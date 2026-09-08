@@ -1,16 +1,6 @@
 ---
-title: "Post-Mortem Convention: Mandatory Sections — Action Items Through References"
 description: The required Action Items, What Went Well, Lessons Learned, and References sections that close out a post-mortem document, in reading order
 when_to_use: Read this when authoring the closing mandatory sections of a post-mortem, from the action-item table through source references.
-category: explanation
-subcategory: conventions
-tags:
-  - post-mortem
-  - incidents
-  - blameless
-  - reliability
-  - structure
-created: 2026-06-05
 ---
 
 # Mandatory Sections: Action Items Through References

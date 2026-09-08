@@ -1,5 +1,4 @@
 ---
-title: "Iteration Examples 1-2: Clean Path and Issue Path"
 description: Two worked examples — a new tutorial that reaches EXCELLENT with deferred items, and an existing tutorial update that surfaces missing imports and annotations.
 when_to_use: Use as a worked reference for how a clean-path or minor-issue-path iteration plays out end to end.
 ---

@@ -1,16 +1,5 @@
 ---
-title: "What Gets Validated"
 description: "What plan-execution-checker validates here."
-category: explanation
-subcategory: development
-tags:
-  - knowledge-capture
-  - learnings
-  - plans
-  - triage
-  - safety-gates
-  - post-mortems
-created: 2026-07-05
 when_to_use: "Use to know what the validation gate checks."
 ---
 

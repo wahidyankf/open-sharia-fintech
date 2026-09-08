@@ -1,14 +1,6 @@
 ---
-title: "The `class: vendored` Exception Has Two Subclasses"
 description: The two structurally different shapes a registry-declared class vendored path can take, and why confusing one for the other misfires in opposite directions.
 when_to_use: Use before hand-editing a path the harness registry declares class vendored, or before writing a sentence that states the class vendored rule.
-category: explanation
-subcategory: governance
-tags:
-  - governance
-  - glossary
-  - platform-bindings
-created: 2026-08-20
 ---
 
 # The `class: vendored` Exception Has Two Subclasses

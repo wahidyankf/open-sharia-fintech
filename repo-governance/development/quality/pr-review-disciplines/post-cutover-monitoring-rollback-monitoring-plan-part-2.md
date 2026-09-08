@@ -1,15 +1,5 @@
 ---
-title: "Post-Cutover Monitoring: Plan (2)"
 description: "Outdated rate, cost/latency per tier, and human-override rate."
-category: explanation
-subcategory: development
-tags:
-  - pr-review
-  - governance
-  - agents
-  - quality-gates
-  - boundary-rules
-created: 2026-07-23
 when_to_use: "Use when tracking the split's post-cutover health metrics."
 ---
 

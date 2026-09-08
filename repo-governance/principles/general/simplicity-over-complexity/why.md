@@ -1,14 +1,5 @@
 ---
-title: "Why"
 description: Benefits of simplicity and problems with complexity, plus KISS, YAGNI, and Rule of Three.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - simplicity
-  - kiss
-  - yagni
-created: 2025-12-15
 when_to_use: Use when justifying a simpler solution over a complex one.
 ---
 

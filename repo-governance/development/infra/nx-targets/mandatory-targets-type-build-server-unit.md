@@ -1,15 +1,5 @@
 ---
-title: "Mandatory Targets — Type, Build, Server, and Unit-Test Requirements"
 description: Requirements for typecheck on statically typed projects, build on compiled/bundled projects, dev/start on server apps, and test:unit.
-category: explanation
-subcategory: development
-tags:
-  - nx
-  - targets
-  - project-json
-  - build
-  - scripts
-created: 2026-02-23
 when_to_use: Use when determining which of these five conditional targets a given project type needs.
 ---
 

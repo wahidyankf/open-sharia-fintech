@@ -1,16 +1,6 @@
 ---
-title: "Section Structure: Key Takeaway and Why It Matters (Parts 5-6)"
 description: "Specifies the closing key-takeaway and why-it-matters parts of the six-part concept-section structure."
 when_to_use: "Read when drafting the key takeaway and why-it-matters parts of a By-Concept tutorial section."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-concept
-  - education
-  - narrative-driven
-created: 2026-01-30
 ---
 
 # Section Structure: Key Takeaway and Why It Matters (Parts 5-6)

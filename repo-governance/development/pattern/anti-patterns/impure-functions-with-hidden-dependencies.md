@@ -1,10 +1,5 @@
 ---
-title: "Anti-Pattern 5: Impure Functions with Hidden Dependencies"
 description: "A function reads or depends on external mutable state, making its output non-deterministic."
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: "Use when a function's output depends on global state."
 ---
 

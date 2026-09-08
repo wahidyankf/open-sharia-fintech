@@ -1,13 +1,5 @@
 ---
-title: "Capability Boundary and Operational Limits"
 description: The exact boundary of what an agent may read or do through Vercel MCP, and the query-window and truncation limits on its tools.
-category: explanation
-subcategory: development
-tags:
-  - vercel
-  - mcp
-  - verification
-created: 2026-08-01
 when_to_use: Use when checking whether a planned step falls inside or outside the capability boundary, or when writing acceptance commands against Vercel MCP tools.
 ---
 

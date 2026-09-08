@@ -1,15 +1,5 @@
 ---
-title: "Anti-Patterns"
 description: "Lists orchestration anti-patterns: pushing through when lost, premature completion, context bloat, and vague lessons."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - workflow
-  - orchestration
-created: 2025-11-23
 when_to_use: Use when reviewing an agent's workflow for common orchestration mistakes.
 ---
 

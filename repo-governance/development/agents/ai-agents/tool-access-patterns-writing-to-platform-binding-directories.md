@@ -1,14 +1,5 @@
 ---
-title: "Tool Access Patterns — Writing to Platform Binding Directories"
 description: "Defines which tools an agent needs when it writes to a platform binding directory such as .claude/agents/."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when an agent's frontmatter tools list needs to support writing to a platform binding directory.
 ---
 

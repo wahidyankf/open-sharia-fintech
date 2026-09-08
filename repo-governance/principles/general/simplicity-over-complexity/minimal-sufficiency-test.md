@@ -1,14 +1,5 @@
 ---
-title: "Minimal Sufficiency Test"
 description: Defines the smallest-responsible-change rule, its stop condition, mandatory safeguards, and pass/fail observations.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - simplicity
-  - minimal-sufficiency
-  - scope
-created: 2026-08-27
 when_to_use: Use before adding a lasting mechanism, expanding scope, or deciding whether work is complete.
 ---
 

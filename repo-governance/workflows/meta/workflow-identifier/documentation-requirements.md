@@ -1,14 +1,5 @@
 ---
-title: "Documentation Requirements"
 description: The seven sections every workflow document must include — Purpose, When to use, Steps, Agent references, Success/failure criteria, Example usage, Related workflows.
-category: explanation
-subcategory: workflows
-tags:
-  - workflows
-  - agents
-  - orchestration
-  - patterns
-created: 2025-12-23
 when_to_use: Use as a checklist before considering a new workflow document complete.
 ---
 

@@ -1,15 +1,6 @@
 ---
-title: "Plan Vocabulary"
 description: Definitions for plan, phase, delivery unit, delivery boundary, delivery mode, and worktree, and how they nest.
 when_to_use: Use when scoping a plan, locating a delivery boundary, or deciding whether two pieces of work are one delivery unit or two.
-category: explanation
-subcategory: governance
-tags:
-  - governance
-  - glossary
-  - plans
-  - workflow
-created: 2026-08-16
 ---
 
 # Plan Vocabulary

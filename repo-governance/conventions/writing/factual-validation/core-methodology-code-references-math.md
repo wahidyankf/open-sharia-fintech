@@ -1,16 +1,6 @@
 ---
-title: "Core Validation Methodology — Code Examples, External References, and Mathematical Notation"
 description: Verification process and worked examples for validating code snippets against real APIs, checking external reference URLs, and confirming LaTeX mathematical notation is correctly formatted.
 when_to_use: Use when verifying a code example's API usage, checking whether a cited URL is accessible and accurate, or validating LaTeX math syntax in a document.
-category: explanation
-subcategory: conventions
-tags:
-  - factual-validation
-  - verification
-  - web-research
-  - accuracy
-  - quality-assurance
-created: 2025-12-16
 ---
 
 # Core Validation Methodology — Code Examples, External References, and Mathematical Notation

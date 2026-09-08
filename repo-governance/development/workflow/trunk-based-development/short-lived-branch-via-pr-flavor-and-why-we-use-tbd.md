@@ -1,15 +1,5 @@
 ---
-title: "TBD and the Short-Lived Branch-via-PR Flavor"
 description: Why routing a short-lived plan branch through a PR does not contradict TBD, and the problems TBD solves versus long-lived feature branches.
-category: explanation
-subcategory: development
-tags:
-  - trunk-based-development
-  - git
-  - workflow
-  - development
-  - continuous-integration
-created: 2025-11-26
 when_to_use: Use when justifying that a short-lived PR branch is a recognized TBD shape, or citing the concrete problems TBD solves.
 ---
 

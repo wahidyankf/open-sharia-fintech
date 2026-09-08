@@ -1,14 +1,5 @@
 ---
-title: "Enforcement"
 description: "Gives the code-review checklist and notes on future automated validation for Skill context architecture."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - agent-skills
-  - architecture
-  - development
-created: 2025-11-23
 when_to_use: Use when reviewing a PR that adds or edits a Skill for context-architecture compliance.
 ---
 

@@ -1,12 +1,5 @@
 ---
-title: "Examples from This Repository"
 description: Real examples from this repository of outcome-focused tutorial naming and structure.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - no-time-estimates
-created: 2025-12-15
 when_to_use: Use when looking for worked examples of no-time-estimates applied in this repository.
 ---
 

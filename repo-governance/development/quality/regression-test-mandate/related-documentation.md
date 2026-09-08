@@ -1,16 +1,5 @@
 ---
-title: "Related Documentation"
 description: "Cross-references to related testing and sync conventions."
-category: explanation
-subcategory: development
-tags:
-  - regression
-  - testing
-  - bug-fix
-  - quality
-  - gherkin
-  - specs
-created: 2026-06-22
 when_to_use: "Use when you need a related convention on testing or specs sync."
 ---
 

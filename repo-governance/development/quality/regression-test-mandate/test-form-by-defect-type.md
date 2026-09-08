@@ -1,16 +1,5 @@
 ---
-title: "Test Form by Defect Type"
 description: "Required test form per defect type: behavioural, visual, content, integration."
-category: explanation
-subcategory: development
-tags:
-  - regression
-  - testing
-  - bug-fix
-  - quality
-  - gherkin
-  - specs
-created: 2026-06-22
 when_to_use: "Use when deciding what kind of test a defect type requires."
 ---
 

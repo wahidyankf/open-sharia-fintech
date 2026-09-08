@@ -1,5 +1,4 @@
 ---
-title: "Principles Implemented/Respected"
 description: "Lists the governance principles this workflow implements (explicit over implicit, automation over manual, simplicity, reproducibility, no time estimates)."
 when_to_use: "Use when auditing this workflow against repository-wide governance principles."
 ---

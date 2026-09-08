@@ -1,16 +1,5 @@
 ---
-title: "Absence/Completeness: Invocation and Capped Query"
 description: "Check a validator's real invocation; capped-query undercounts."
-category: explanation
-subcategory: development
-tags:
-  - plans
-  - ai-agents
-  - factual-validation
-  - anti-hallucination
-  - web-research
-  - verification
-created: 2026-05-03
 when_to_use: "Use before trusting a validator result or count."
 ---
 

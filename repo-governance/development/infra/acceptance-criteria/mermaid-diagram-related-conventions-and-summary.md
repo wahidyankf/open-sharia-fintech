@@ -1,14 +1,5 @@
 ---
-title: "Mermaid Diagram, Related Conventions, and Summary"
 description: The Gherkin-to-automation workflow diagram, links to related conventions, and an overall summary of the acceptance-criteria convention.
-category: explanation
-subcategory: development
-tags:
-  - acceptance-criteria
-  - gherkin
-  - testing
-  - requirements
-created: 2025-12-07
 when_to_use: Use when you need a visual overview of the Gherkin workflow, links to related conventions, or a quick summary of this convention's guidance.
 ---
 

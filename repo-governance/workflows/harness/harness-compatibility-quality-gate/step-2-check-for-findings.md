@@ -1,5 +1,4 @@
 ---
-title: "Step 2: Check for Findings"
 description: Counts findings against the mode threshold and decides whether to fix or move to confirmation re-check.
 when_to_use: Use when determining, from an audit report, whether the workflow proceeds to fixing or to a confirmation re-check.
 ---

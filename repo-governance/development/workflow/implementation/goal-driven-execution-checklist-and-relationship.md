@@ -1,18 +1,5 @@
 ---
-title: "Goal-Driven Execution — Checklist and Relationship"
 description: The before/during-execution checklist for goal-driven execution, and how it relates to core principles and AI agents.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - workflow
-  - implementation
-  - optimization
-  - refactoring
-  - surgical-changes
-  - goal-driven
-  - test-driven
-created: 2025-12-15
 when_to_use: Use before starting a task and during execution to confirm goal-driven execution is actually being followed.
 ---
 

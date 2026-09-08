@@ -1,16 +1,5 @@
 ---
-title: "Standard Validation Checks (1-3)"
 description: "Checks 1-3: frontmatter comments, missing fields, wrong field values."
-category: explanation
-subcategory: development
-tags:
-  - validation
-  - consistency
-  - bash
-  - awk
-  - frontmatter
-  - automation
-created: 2025-12-14
 when_to_use: "Use when implementing or debugging one of the first three standard checks."
 ---
 

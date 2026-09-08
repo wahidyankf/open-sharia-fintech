@@ -1,15 +1,5 @@
 ---
-title: "Execution Model"
 description: Explains the mermaid-diagrammed pre-push/PR quality-gate flow and the scheduled/on-demand testing tiers that Nx targets execute.
-category: explanation
-subcategory: development
-tags:
-  - nx
-  - targets
-  - project-json
-  - build
-  - scripts
-created: 2026-02-23
 when_to_use: Use when tracing how typecheck, lint, and test:quick run at pre-push/PR versus how test:integration and test:e2e run on scheduled CRON.
 ---
 

@@ -1,14 +1,5 @@
 ---
-title: "Special Considerations — Borderline Cases and Tier Assignments"
 description: "Covers borderline tier cases and why link checkers, the social media maker, structured makers, the E2E test developer, and the file manager sit at their assigned tiers."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - model-selection
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when an agent's task profile does not cleanly match one model tier, or when checking why a specific existing agent was assigned its tier.
 ---
 

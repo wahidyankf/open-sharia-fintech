@@ -1,5 +1,4 @@
 ---
-title: "Iron Rules and Termination Criteria"
 description: The eight non-negotiable multi-plan additions to plan-execution.md's Iron Rules, plus the pass/partial/fail terminal states for a run.
 when_to_use: Use as the non-negotiable checklist before or during a multi-plan run, and when reporting a run's final status.
 ---

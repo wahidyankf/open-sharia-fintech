@@ -1,5 +1,4 @@
 ---
-title: "plan-ideas-grooming Workflow"
 description: "Sweeps plans/ideas/ across repos, deduplicating, classifying into Eisenhower quadrants, and correcting cross-repo residency."
 when_to_use: "Read this index to find the right plan-ideas-grooming Workflow child document."
 ---

@@ -1,15 +1,5 @@
 ---
-title: "Delegated Agent Strategy"
 description: "Defines when to use delegated (sub)agents, the rules for delegating, and when not to delegate."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - workflow
-  - orchestration
-created: 2025-11-23
 when_to_use: Use when deciding whether to hand a piece of work off to a delegated agent.
 ---
 

@@ -1,14 +1,5 @@
 ---
-title: "Agent Naming Guidance"
 description: "Scope-prefix guidance for agent definition filenames, and the naming rule that no longer binds them."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when naming or renaming an agent definition file.
 ---
 

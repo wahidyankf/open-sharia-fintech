@@ -1,16 +1,5 @@
 ---
-title: "Proactive Preexisting Error Resolution — Checklist, For AI Agents, and Related Documentation"
 description: The completion checklist for preexisting-error work, the five-point AI agent behaviour rules, the relationship to Autonomous Bug Fixing, and links to related documentation
-category: explanation
-subcategory: development
-tags:
-  - root-cause
-  - quality
-  - preexisting-errors
-  - proactive
-  - bug-fixing
-  - ai-agents
-created: 2026-03-28
 when_to_use: Use as a completion checklist before considering preexisting-error work done, or as a quick-reference for AI agent behaviour.
 ---
 

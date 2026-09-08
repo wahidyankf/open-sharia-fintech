@@ -1,15 +1,6 @@
 ---
-title: "How Diátaxis is Implemented"
 description: The docs/ directory structure, directory-naming rationale, filename integration, and required frontmatter that implement Diátaxis in this repository.
 when_to_use: Use when you need the concrete docs/ directory layout or frontmatter shape that implements Diátaxis.
-category: explanation
-subcategory: conventions
-tags:
-  - diataxis
-  - documentation-framework
-  - organization
-  - conventions
-created: 2025-11-22
 ---
 
 # How Diátaxis is Implemented
@@ -53,7 +44,9 @@ Category is conveyed by directory location (`docs/tutorials/`, `docs/how-to/`, e
 
 ## Frontmatter Standard
 
-All documentation files include the category in frontmatter:
+Documentation files under `docs/` include the category in frontmatter. Files under
+`repo-governance/` do not — that tree's frontmatter admits `description` and `when_to_use` only,
+and its Diátaxis category is carried by where the file sits, not by a key:
 
 ```yaml
 ---

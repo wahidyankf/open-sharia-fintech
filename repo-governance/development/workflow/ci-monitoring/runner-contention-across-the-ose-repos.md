@@ -1,14 +1,5 @@
 ---
-title: "Runner Contention Across the OSE Repos (Read First)"
 description: Runner capacity is shared and finite across the OSE repos; contention is expected, and the correct response is to wait and check, not assume a defect.
-category: explanation
-subcategory: development
-tags:
-  - ci
-  - github-actions
-  - rate-limiting
-  - monitoring
-  - workflow
 when_to_use: Use when a CI run is queued or stalled with no progress, before assuming the pushed code is broken.
 ---
 

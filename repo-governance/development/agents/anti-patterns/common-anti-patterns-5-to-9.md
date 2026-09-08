@@ -1,14 +1,5 @@
 ---
-title: "Common Anti-Patterns — Error Handling, Tool Documentation, Model Choice, Testing, and Naming"
 description: "Covers Anti-Patterns 5-9: missing error-handling guidance, missing tool usage documentation, using the wrong model, skipping testing before deployment, and generic agent names."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - anti-patterns
-  - development
-  - best-practices
-created: 2025-11-23
 when_to_use: Use when reviewing an agent for missing error handling, undocumented tool usage, a mismatched model tier, no test scenarios, or a non-descriptive name.
 ---
 

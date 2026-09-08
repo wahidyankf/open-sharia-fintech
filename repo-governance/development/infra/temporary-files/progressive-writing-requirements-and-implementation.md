@@ -1,10 +1,5 @@
 ---
-title: "Progressive Writing Requirement — Requirements and Implementation Pattern"
 description: The five progressive-writing requirements and the checker-agent list subject to the rule.
-category: explanation
-subcategory: development
-tags: [temporary-files, ai-agents, file-organization, best-practices]
-created: 2025-12-01
 when_to_use: Use when writing a checker agent's progressive-writing instructions.
 ---
 

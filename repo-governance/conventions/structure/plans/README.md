@@ -1,5 +1,4 @@
 ---
-title: "Plans Organization Convention"
 description: "Standards for organizing project planning documents in plans/ folder"
 when_to_use: "Read this index to find the right Plans Organization Convention child document."
 ---

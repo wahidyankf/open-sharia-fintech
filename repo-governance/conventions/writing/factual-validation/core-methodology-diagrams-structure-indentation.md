@@ -1,16 +1,6 @@
 ---
-title: "Core Validation Methodology — Diagrams, Structure, and Indentation Validation"
 description: Verification process for Mermaid diagram color accessibility, markdown H1/heading structure, bullet indentation direction, and language-specific code block indentation.
 when_to_use: Use when validating a Mermaid diagram's color palette, a document's heading structure, or a code block's indentation against the language-specific convention.
-category: explanation
-subcategory: conventions
-tags:
-  - factual-validation
-  - verification
-  - web-research
-  - accuracy
-  - quality-assurance
-created: 2025-12-16
 ---
 
 # Core Validation Methodology — Diagrams, Structure, and Indentation Validation

@@ -1,12 +1,5 @@
 ---
-title: "Governance Relationships"
 description: How governance flows downward, cross-layer relationships, and per-layer traceability requirements
-category: explanation
-subcategory: architecture
-tags:
-  - architecture
-  - governance
-created: 2026-02-09
 when_to_use: Use to check which layer governs which.
 ---
 

@@ -1,16 +1,6 @@
 ---
-title: "Anti-Pattern: Dependency Injection Frameworks Without Manual Wiring"
 description: The production consequences (circular dependencies, lifecycle confusion) of using a DI framework without manual-wiring fundamentals.
 when_to_use: Use when explaining the risk of teaching a DI framework before manual dependency wiring.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Anti-Pattern: Dependency Injection Frameworks Without Manual Wiring

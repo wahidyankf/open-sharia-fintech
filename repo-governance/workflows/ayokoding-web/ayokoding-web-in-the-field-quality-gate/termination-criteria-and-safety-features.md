@@ -1,5 +1,4 @@
 ---
-title: "Termination Criteria and Safety Features"
 description: Defines the success, partial, and failure termination conditions per strictness mode, plus the loop-prevention, convergence, false-positive, and error-recovery safety mechanisms.
 when_to_use: Use when determining whether a run has reached a terminal state, or understanding how the workflow protects against runaway iteration.
 ---

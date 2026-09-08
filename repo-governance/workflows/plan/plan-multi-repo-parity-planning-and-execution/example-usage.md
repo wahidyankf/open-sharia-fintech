@@ -1,5 +1,4 @@
 ---
-title: "Example Usage"
 description: Two worked examples of invoking the composite — both parity repos, and a single-repo subset.
 when_to_use: Use when constructing an invocation of this workflow or explaining its behaviour with a concrete example.
 ---

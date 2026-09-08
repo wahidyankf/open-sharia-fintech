@@ -1,5 +1,4 @@
 ---
-title: "Iron Rules (Non-Negotiable) — Rules 6-11"
 description: "States the remaining six non-negotiable execution rules: CI verification, thematic commits, manual assertions, progress streaming, resume reconciliation, and the file-touch ledger."
 when_to_use: Use when checking execution against rules 6-11 of the hard, non-negotiable rules governing every execution step.
 ---

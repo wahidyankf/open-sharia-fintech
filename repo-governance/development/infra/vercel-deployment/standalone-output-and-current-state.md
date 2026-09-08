@@ -1,15 +1,5 @@
 ---
-title: "Standalone Output and Current State"
 description: How outputFileTracingIncludes must declare build-time generated directories for Next.js standalone output, the current vercel.json status of each Vercel app, and when to recheck vercel.json.
-category: explanation
-subcategory: development
-tags:
-  - vercel
-  - deployment
-  - nx
-  - build
-  - monorepo
-created: 2026-03-26
 when_to_use: 'Use when adding `output: "standalone"` to a Next.js app, or when auditing which Vercel-deployed apps have vercel.json build commands configured.'
 ---
 

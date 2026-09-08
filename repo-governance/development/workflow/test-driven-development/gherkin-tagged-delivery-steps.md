@@ -1,15 +1,5 @@
 ---
-title: "Gherkin-Tagged Delivery Steps"
 description: How detailed outcome sections reference canonical Gherkin without duplicating full scenarios in delivery.md.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - workflow
-  - tdd
-  - testing
-  - red-green-refactor
-created: 2026-05-02
 when_to_use: Use when writing detailed code delivery steps for a plan with companion Gherkin specs.
 ---
 

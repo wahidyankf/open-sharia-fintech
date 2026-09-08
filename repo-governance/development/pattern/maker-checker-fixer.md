@@ -1,16 +1,5 @@
 ---
-title: "Maker-Checker-Fixer Pattern Convention"
 description: Three-stage content quality workflow used across multiple agent families
-category: explanation
-subcategory: development
-tags:
-  - maker-checker-fixer
-  - workflow
-  - content-quality
-  - agent-patterns
-  - validation
-  - automation
-created: 2025-12-14
 when_to_use: "Use when designing or invoking a maker/checker/fixer agent trio."
 ---
 

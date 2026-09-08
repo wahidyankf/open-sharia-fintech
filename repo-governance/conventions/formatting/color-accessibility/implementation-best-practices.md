@@ -1,18 +1,6 @@
 ---
-title: "Implementation Best Practices"
 description: "Gives five implementation rules covering hex codes, borders, multiple visual cues, documentation, and pre-publish testing."
 when_to_use: "Use when implementing color in code or diagrams and you need the concrete do and don't rules to follow."
-category: explanation
-subcategory: conventions
-tags:
-  - accessibility
-  - color-blindness
-  - wcag
-  - design
-  - conventions
-  - mermaid-diagrams
-  - color-palette
-created: 2025-12-04
 ---
 
 # Implementation Best Practices

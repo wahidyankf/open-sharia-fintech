@@ -1,5 +1,4 @@
 ---
-title: "Success Metrics"
 description: "Metrics to track across executions: average iterations, success rate, findings by dimension, fix success rate, and broken-link frequency."
 when_to_use: "Use when instrumenting or reviewing this workflow's operational health over time."
 ---

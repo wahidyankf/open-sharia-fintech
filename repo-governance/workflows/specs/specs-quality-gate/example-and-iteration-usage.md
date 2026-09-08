@@ -1,5 +1,4 @@
 ---
-title: "Specs Quality Gate — Example and Iteration Usage"
 description: "Worked usage examples across all four modes (single folder, cross-folder, strict, ocd), plus a full traced iteration example showing the check-fix loop converging."
 when_to_use: "Use when you need a concrete example of invoking this workflow at a given mode, or want to see how consecutive-zero convergence plays out across iterations."
 ---

@@ -1,16 +1,5 @@
 ---
-title: "The Investigation Process (Steps 1-4)"
 description: "Steps 1-4: read the error, blast radius, reproduce, trace to root cause."
-category: explanation
-subcategory: development
-tags:
-  - ci
-  - quality-gates
-  - root-cause
-  - debugging
-  - anti-pattern
-  - preexisting-issues
-created: 2026-04-04
 when_to_use: "Use when starting to investigate a CI blocker."
 ---
 

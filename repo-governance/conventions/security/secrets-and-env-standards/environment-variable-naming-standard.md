@@ -1,17 +1,6 @@
 ---
-title: "Environment Variable Naming Standard"
 description: The variable-class naming rules (app-defined, framework-reserved, shared-service, tier-forbidden) and the list of framework-reserved exempt names.
 when_to_use: Use when naming a new environment variable and deciding whether it needs an app prefix.
-category: explanation
-subcategory: conventions
-tags:
-  - security
-  - secrets
-  - env-files
-  - guard-env-file-access
-  - naming
-  - reproducibility
-created: 2026-06-10
 ---
 
 # Environment Variable Naming Standard

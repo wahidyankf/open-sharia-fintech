@@ -1,14 +1,5 @@
 ---
-title: "Information Accuracy and Verification — Principles and Requirements"
 description: "States the core verification principle, verification requirements, the verification tools matrix, and agent-specific verification requirements."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when deciding what an agent must verify before reporting a claim as fact.
 ---
 

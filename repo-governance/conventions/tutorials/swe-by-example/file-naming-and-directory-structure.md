@@ -1,15 +1,5 @@
 ---
-title: "File Naming and Organization: Directory Structure and Naming"
 description: "Defines the directory structure, file naming pattern, and the start of the mandatory Examples-by-Level section including per-level subheadings and bullet pattern."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - education
-  - code-first
-created: 2025-12-25
 when_to_use: "Read when scaffolding a new by-example tutorial's directory/files, or when writing the Examples by Level bullet list on overview.md."
 ---
 

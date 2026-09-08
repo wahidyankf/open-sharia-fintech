@@ -1,37 +1,28 @@
 ---
-name: gherkin-implementation-review
-title: "gherkin-implementation-review"
 description: "Semantically reviews every applicable Gherkin scenario adapter instead of trusting static binding counts"
 when_to_use: "Use after adding or materially changing a canonical feature, adapter, exemption, or static behaviour-coverage mechanism."
-goal: "Prove that each reviewed Given–When–Then path invokes production behaviour and observes independent evidence at the declared boundary."
-termination: "PASS when every required row passes or carries a valid exemption and all impacted runtime targets pass; FAIL on any missing, partial, placeholder, unsafe, or invalidly exempt row."
-inputs:
-  - name: scope
-    type: enum
-    values: [changed, full]
-    description: "Review changed scenarios and adapters, or the recursively discovered complete corpus."
-    required: false
-    default: changed
-  - name: owners
-    type: string
-    description: "Comma-separated Nx behaviour-owner projects; empty means derive owners from the changed scope."
-    required: false
-    default: ""
-outputs:
-  - name: review-report
-    type: file
-    pattern: "local-tmp/gherkin-implementation-review/gherkin-implementation-review__*.md"
-    description: "Non-authoritative row ledger, findings, exemption inventory, commands, and results."
-  - name: final-status
-    type: enum
-    values: [pass, fail]
-    description: "Semantic review result."
 ---
 
 # Gherkin Implementation Review
 
 Prove scenario implementation substance that static binding coverage cannot establish. Run after a
 material feature, adapter, exemption, or behaviour-coverage change. Use `full` for a baseline audit.
+
+## Goal and Termination
+
+**Goal**: Prove that each reviewed Given–When–Then path invokes production behaviour and observes independent evidence at the declared boundary.
+
+**Termination**: PASS when every required row passes or carries a valid exemption and all impacted runtime targets pass; FAIL on any missing, partial, placeholder, unsafe, or invalidly exempt row.
+
+## Inputs
+
+- **`scope`** (enum: changed, full, optional, default `changed`) — Review changed scenarios and adapters, or the recursively discovered complete corpus.
+- **`owners`** (string, optional, default ``) — Comma-separated Nx behaviour-owner projects; empty means derive owners from the changed scope.
+
+## Outputs
+
+- **`review-report`** (file, pattern `local-tmp/gherkin-implementation-review/gherkin-implementation-review__*.md`) — Non-authoritative row ledger, findings, exemption inventory, commands, and results.
+- **`final-status`** (enum: pass, fail) — Semantic review result.
 
 ## Steps
 

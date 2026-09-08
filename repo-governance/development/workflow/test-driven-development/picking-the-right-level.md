@@ -1,15 +1,5 @@
 ---
-title: "Applying the required test layers"
 description: How Unit proof and applicable higher-layer adapters participate in TDD.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - workflow
-  - tdd
-  - testing
-  - red-green-refactor
-created: 2026-05-02
 when_to_use: Use when deciding which test adapters an observable behaviour change requires.
 ---
 

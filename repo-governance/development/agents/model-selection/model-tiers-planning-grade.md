@@ -1,14 +1,5 @@
 ---
-title: "Model Tiers — Planning-Grade"
 description: "Defines the planning-grade tier: agents that declare opus for creative reasoning, architecture, and open-ended judgment."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - model-selection
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when deciding whether a new agent should declare the planning-grade (opus) model tier.
 ---
 

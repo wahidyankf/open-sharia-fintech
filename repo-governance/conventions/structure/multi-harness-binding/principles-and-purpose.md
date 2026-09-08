@@ -1,16 +1,6 @@
 ---
-title: "Multi-Harness Binding: Principles and Purpose"
 description: The core principles this binding model implements, and the three failure modes (instruction duplication, silent shadowing, unbounded proliferation) it prevents.
 when_to_use: Read this first to understand why the repository needs a governed multi-harness binding model rather than ad-hoc per-tool files.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - governance
-  - platform-bindings
-  - agents
-  - compatibility
-created: 2026-05-24
 ---
 
 # Multi-Harness Binding: Principles and Purpose

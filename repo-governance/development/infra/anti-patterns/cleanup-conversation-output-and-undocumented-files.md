@@ -1,10 +1,5 @@
 ---
-title: "Anti-Patterns in Temp File Cleanup, Checker Output, and Documentation"
 description: Covers the never-cleaning-temp-files, conversation-only-output, and undocumented-long-lived-temp-file anti-patterns.
-category: explanation
-subcategory: development
-tags: [anti-patterns, temp-files, checker-agents, documentation]
-created: 2026-05-12
 when_to_use: Use when a checker agent is about to report findings only in conversation, or when temporary files are piling up without cleanup or documentation.
 ---
 

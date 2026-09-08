@@ -1,15 +1,5 @@
 ---
-title: "Purpose, Scope, and Principles"
 description: "Why this convention exists, the accessibility and no-time-estimates principles it implements, and which markdown content it covers"
-category: explanation
-subcategory: conventions
-tags:
-  - content-quality
-  - markdown
-  - writing-standards
-  - accessibility
-  - documentation
-created: 2025-12-07
 when_to_use: "Read this to confirm this convention applies to the markdown file you are writing or reviewing."
 ---
 

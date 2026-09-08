@@ -1,5 +1,4 @@
 ---
-title: "Step 3: Apply Fixes"
 description: The fixer's auto-fixable scope (parity sync drift, catalog updates, spec updates) versus what it must flag for human resolution.
 when_to_use: Use when determining what the fixer can safely apply automatically versus what requires human judgment.
 ---

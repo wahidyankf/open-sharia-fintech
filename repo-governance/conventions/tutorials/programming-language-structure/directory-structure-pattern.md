@@ -1,16 +1,6 @@
 ---
-title: "Directory Structure Pattern"
 description: Directory tree layouts for dual-path languages (by-example plus by-concept) versus single-path languages (by-concept only).
 when_to_use: Use when scaffolding or reviewing a language's tutorials/ directory tree.
-category: explanation
-subcategory: conventions
-tags:
-  - programming-languages
-  - tutorials
-  - ayokoding-www
-  - education
-  - structure
-created: 2025-12-27
 ---
 
 # Directory Structure Pattern

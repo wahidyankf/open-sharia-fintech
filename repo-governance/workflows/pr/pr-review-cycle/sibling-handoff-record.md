@@ -1,5 +1,4 @@
 ---
-title: "PR Review Cycle — Sibling-Handoff Record"
 description: "Defines the complete v1 sibling-handoff schema, canonical example, and typed API read-back gate."
 when_to_use: "Use after a source PR merges and a paired successor PR exists, before the successor's first scout pass."
 ---

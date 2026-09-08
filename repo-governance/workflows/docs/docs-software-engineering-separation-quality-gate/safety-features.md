@@ -1,5 +1,4 @@
 ---
-title: "Safety Features"
 description: "Documents infinite-loop prevention, convergence safeguards, false-positive protection, and error recovery."
 when_to_use: "Use when verifying the workflow's safety guarantees or diagnosing a stuck/non-converging run."
 ---

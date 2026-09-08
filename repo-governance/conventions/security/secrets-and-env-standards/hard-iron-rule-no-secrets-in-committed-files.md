@@ -1,17 +1,6 @@
 ---
-title: "Hard Iron Rule — No Secrets in Committed Files"
 description: The absolute rule that no system secret may enter any git-tracked file, why, where real secret values belong instead, and the cross-repo canonical doc name.
 when_to_use: Use when deciding whether a value is safe to commit, or when explaining why a secret must never be committed even temporarily.
-category: explanation
-subcategory: conventions
-tags:
-  - security
-  - secrets
-  - env-files
-  - guard-env-file-access
-  - naming
-  - reproducibility
-created: 2026-06-10
 ---
 
 # Hard Iron Rule — No Secrets in Committed Files

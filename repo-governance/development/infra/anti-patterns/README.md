@@ -1,5 +1,4 @@
 ---
-title: "Anti-Patterns in Infrastructure Development"
 description: "Common anti-patterns in infrastructure development — scattered files, placeholder values, missing tools, vague criteria — with problems, examples, and solutions for each."
 when_to_use: "Read this index to find the right Anti-Patterns in Infrastructure Development child document."
 ---

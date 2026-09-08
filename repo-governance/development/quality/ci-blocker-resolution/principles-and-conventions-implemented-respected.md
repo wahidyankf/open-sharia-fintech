@@ -1,16 +1,5 @@
 ---
-title: "Principles and Conventions Implemented/Respected"
 description: "Principles/conventions implemented."
-category: explanation
-subcategory: development
-tags:
-  - ci
-  - quality-gates
-  - root-cause
-  - debugging
-  - anti-pattern
-  - preexisting-issues
-created: 2026-04-04
 when_to_use: "Use to trace this convention's rationale."
 ---
 

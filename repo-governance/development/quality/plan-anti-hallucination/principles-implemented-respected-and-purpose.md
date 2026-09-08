@@ -1,16 +1,5 @@
 ---
-title: "Principles/Purpose"
 description: "Principles implemented, and why this convention exists."
-category: explanation
-subcategory: development
-tags:
-  - plans
-  - ai-agents
-  - factual-validation
-  - anti-hallucination
-  - web-research
-  - verification
-created: 2026-05-03
 when_to_use: "Use to trace this convention's rationale."
 ---
 

@@ -1,14 +1,5 @@
 ---
-title: "PRs Open at Delivery Boundaries — Natural Seams and Deployable State"
 description: Defines natural cohesive PR boundaries and requires every resulting main state to be immediately safe to deploy to production.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - pr-review
-  - organization
-created: 2026-09-03
 when_to_use: Use when deciding what belongs in one delivery unit and whether that unit is ready to merge.
 ---
 

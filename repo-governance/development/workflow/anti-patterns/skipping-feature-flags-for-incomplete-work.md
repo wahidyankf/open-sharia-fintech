@@ -1,10 +1,5 @@
 ---
-title: "Anti-Pattern: Skipping Feature Flags for Incomplete Work"
 description: Keeping work on long-lived branches instead of integrating complete-and-inert increments behind temporary production-disabled flags.
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use when incomplete behaviour would otherwise stay on a branch instead of integrating as a complete-and-inert, both-path-tested increment behind a temporary production-disabled flag.
 ---
 

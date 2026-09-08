@@ -1,14 +1,5 @@
 ---
-title: "Scope"
 description: "Defines what this convention covers and does not cover regarding subagent orchestration."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - subagents
-  - orchestration
-  - development
-created: 2025-11-23
 when_to_use: Use when checking whether a subagent-orchestration question is in scope for this convention.
 ---
 

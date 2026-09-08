@@ -1,15 +1,6 @@
 ---
-title: "By Example: Scope and Relationships"
 description: What the By Example tutorial type excludes, example titles, when to use it, and how it relates to the other six tutorial types.
 when_to_use: Use when you need to decide whether By Example is the right tutorial type versus Beginner, Quick Start, or Cookbook.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - tutorials
-  - naming
-  - learning-paths
-created: 2025-12-03
 ---
 
 # By Example: Scope and Relationships

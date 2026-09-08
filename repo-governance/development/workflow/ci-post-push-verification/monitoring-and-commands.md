@@ -1,14 +1,5 @@
 ---
-title: "Monitoring and Commands"
 description: How to monitor CI without exhausting the GitHub API rate limit, and the reference command set.
-category: explanation
-subcategory: development
-tags:
-  - ci
-  - github-actions
-  - verification
-  - quality-gates
-  - workflow
 when_to_use: Use when polling a CI run's status, or when you need the exact gh commands for triggering and checking a workflow.
 ---
 

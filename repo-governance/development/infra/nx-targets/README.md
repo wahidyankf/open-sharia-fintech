@@ -1,5 +1,4 @@
 ---
-title: "Nx Target Standards"
 description: "Standardized Nx target definitions for apps and libs in the monorepo"
 when_to_use: "Read this index to find the right Nx Target Standards child document."
 ---

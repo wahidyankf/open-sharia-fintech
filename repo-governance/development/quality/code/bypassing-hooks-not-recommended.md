@@ -1,17 +1,5 @@
 ---
-title: "Bypassing Hooks (Not Recommended)"
 description: "Why bypassing a hook is discouraged."
-category: explanation
-subcategory: development
-tags:
-  - development
-  - code-quality
-  - prettier
-  - husky
-  - lint-staged
-  - git-hooks
-  - automation
-created: 2026-05-12
 when_to_use: "Use before bypassing a git hook."
 ---
 

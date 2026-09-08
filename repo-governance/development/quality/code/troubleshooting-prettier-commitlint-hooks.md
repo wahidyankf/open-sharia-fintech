@@ -1,17 +1,5 @@
 ---
-title: "Troubleshooting: Prettier, Commitlint, and Hooks Not Running"
 description: "Fixes for Prettier, commitlint, and non-running hooks."
-category: explanation
-subcategory: development
-tags:
-  - development
-  - code-quality
-  - prettier
-  - husky
-  - lint-staged
-  - git-hooks
-  - automation
-created: 2026-05-12
 when_to_use: "Use when Prettier, commitlint, or a hook misbehaves."
 ---
 

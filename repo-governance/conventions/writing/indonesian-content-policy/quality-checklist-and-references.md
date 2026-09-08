@@ -1,16 +1,6 @@
 ---
-title: "Indonesian Content Policy — Quality Checklist and References"
 description: The pre-publication checklist for Indonesian content, and links to related conventions, principles, and agents.
 when_to_use: Use immediately before publishing Indonesian content, or when looking up related conventions and enforcing agents.
-category: explanation
-subcategory: conventions
-tags:
-  - ayokoding-www
-  - indonesian
-  - bilingual
-  - content-policy
-  - translation
-created: 2026-02-07
 ---
 
 # Quality Checklist and References

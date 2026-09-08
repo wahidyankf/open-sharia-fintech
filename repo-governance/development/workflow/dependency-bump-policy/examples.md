@@ -1,15 +1,5 @@
 ---
-title: "Examples"
 description: Worked examples of Path A (LTS), Path B (60-day eligible), and Path C (security waiver) decisions.
-category: explanation
-subcategory: development
-tags:
-  - dependencies
-  - security
-  - versioning
-  - reproducibility
-  - workflow
-created: 2026-05-15
 when_to_use: Use as a reference when classifying a real bump into Path A, B, or C.
 ---
 

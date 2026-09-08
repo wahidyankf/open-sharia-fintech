@@ -1,5 +1,4 @@
 ---
-title: "Plan Takeover Execution Workflow"
 description: "Discovers, reconciles, and takes over a plan's in-flight state across repos before handing off to plan-execution.md."
 when_to_use: "Read this index to find the right Plan Takeover Execution Workflow child document."
 ---

@@ -1,16 +1,6 @@
 ---
-title: "Multi-Harness Binding: Tools and Automation"
 description: The rhino-cli subcommands and npm scripts that generate and validate platform bindings, and the file-touch-discipline rule for committing generated mirrors alongside their source.
 when_to_use: Read this when you need the exact command to generate or validate binding artifacts, or when deciding which commit a regenerated mirror file belongs in.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - governance
-  - platform-bindings
-  - agents
-  - compatibility
-created: 2026-05-24
 ---
 
 # Multi-Harness Binding: Tools and Automation

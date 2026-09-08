@@ -1,14 +1,5 @@
 ---
-title: "Relative Link Paths in Plan Files"
 description: Explains the three-level ../../../ relative-path depth for links from a plan file to repo-root directories, with the one-level-shallower exception for two-pagers.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when writing a relative link from inside a plan folder or a two-pager to a repo-root file.
 ---
 

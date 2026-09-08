@@ -1,16 +1,5 @@
 ---
-title: "Anti-Theater Guardrails"
 description: "Guardrails against performative knowledge capture."
-category: explanation
-subcategory: development
-tags:
-  - knowledge-capture
-  - learnings
-  - plans
-  - triage
-  - safety-gates
-  - post-mortems
-created: 2026-07-05
 when_to_use: "Use when a learnings.md entry looks performative."
 ---
 

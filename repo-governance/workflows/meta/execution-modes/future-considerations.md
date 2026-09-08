@@ -1,13 +1,5 @@
 ---
-title: "Future Considerations"
 description: Notes potential future automation via a workflow runner, and the compatibility constraints it would need to respect.
-category: explanation
-subcategory: workflows
-tags:
-  - workflows
-  - execution-mode
-  - orchestration
-created: 2026-01-05
 when_to_use: Use when evaluating or designing a future automated workflow runner.
 ---
 

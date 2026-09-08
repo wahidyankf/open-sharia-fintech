@@ -1,14 +1,5 @@
 ---
-title: Open Sharia Enterprise Vision
 description: The foundational purpose and change we seek in democratizing Shariah-compliant enterprise
-category: explanation
-subcategory: vision
-tags:
-  - vision
-  - purpose
-  - islamic-enterprise
-  - open-source
-created: 2025-12-24
 when_to_use: Use when orienting to why Open Sharia Enterprise exists, who it serves, or what success looks like — the ecosystem's Layer 0 vision.
 ---
 

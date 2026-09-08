@@ -1,15 +1,5 @@
 ---
-title: "Examples: Fabricated Anecdotes"
 description: Worked before/after rewrites of a fabricated corporate case study and a fabricated platform scenario
-category: explanation
-subcategory: conventions
-tags:
-  - ayokoding-www
-  - tutorial-content
-  - factual-accuracy
-  - why-it-matters
-  - hallucination-prevention
-created: 2026-05-09
 when_to_use: Read this when rewriting a Why It Matters section that names a company or cites an unsourced metric.
 ---
 

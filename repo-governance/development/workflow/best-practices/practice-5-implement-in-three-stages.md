@@ -1,10 +1,5 @@
 ---
-title: "Practice 5: Implement in Three Stages"
 description: Make it work, then make it right, then make it fast.
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use when planning implementation order for a new feature, to sequence correctness before optimization.
 ---
 

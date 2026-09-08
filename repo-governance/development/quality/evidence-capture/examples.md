@@ -1,17 +1,5 @@
 ---
-title: "Examples"
 description: "Worked examples of correctly captured evidence."
-category: explanation
-subcategory: development
-tags:
-  - evidence
-  - testing
-  - screenshots
-  - plans
-  - verification
-  - locale
-  - manual-testing
-created: 2026-06-20
 when_to_use: "Use when you need a concrete example of properly captured evidence."
 ---
 

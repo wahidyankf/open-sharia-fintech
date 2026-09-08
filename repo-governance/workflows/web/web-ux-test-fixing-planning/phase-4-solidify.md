@@ -1,5 +1,4 @@
 ---
-title: "Web UX Test-Fixing Planning — Phase 4: Solidify"
 description: "How plan-maker grills the user then authors tech-docs.md, a TDD-shaped delivery.md with Rule-15 retest follow-ups, and (when UI-bearing) the both-tier assets/ mockup folder."
 when_to_use: "Use when checking exactly what Phase 4 authors, the UI-bearing gate's mockup requirements, or how new vs merge plan-mode is handled during solidification."
 ---

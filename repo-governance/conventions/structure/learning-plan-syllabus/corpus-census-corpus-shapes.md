@@ -1,16 +1,6 @@
 ---
-title: "Corpus Census: Corpus Shapes"
 description: The measured file counts (course files, path manifests, README presence) across the three existing syllabus corpora that this convention's tiering rule is derived from.
 when_to_use: Read this when you need the raw per-corpus counts the section-tiering rule was measured against, before consulting the tiering evidence itself.
-category: explanation
-subcategory: conventions
-tags:
-  - plans
-  - syllabus
-  - learning-bearing
-  - custody
-  - governance
-created: 2026-07-22
 ---
 
 # Corpus Census: Corpus Shapes

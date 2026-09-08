@@ -1,18 +1,6 @@
 ---
-title: "Mixing Formats"
 description: "Explains when and how it's acceptable to mix Mermaid and ASCII art formats within the same document."
 when_to_use: "Use when a document seems to need both Mermaid and ASCII art and you're unsure if that's allowed."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Mixing Formats

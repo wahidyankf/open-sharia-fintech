@@ -1,16 +1,5 @@
 ---
-title: "Related Documentation"
 description: "Cross-references to the conventions markdown quality tooling enforces."
-category: explanation
-subcategory: development
-tags:
-  - markdown
-  - linting
-  - formatting
-  - prettier
-  - markdownlint
-  - quality
-created: 2026-01-17
 when_to_use: "Use when you need the rationale behind a specific markdown quality rule."
 ---
 

@@ -1,15 +1,5 @@
 ---
-title: "Quality Gates: Selective Adversarial Verification (D4)"
 description: "Adversarial re-verification for selected findings."
-category: explanation
-subcategory: development
-tags:
-  - pr-review
-  - governance
-  - agents
-  - quality-gates
-  - boundary-rules
-created: 2026-07-23
 when_to_use: "Use when a finding warrants adversarial re-verification."
 ---
 

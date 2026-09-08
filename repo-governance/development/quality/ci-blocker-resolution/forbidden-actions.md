@@ -1,16 +1,5 @@
 ---
-title: "Forbidden Actions"
 description: "Actions forbidden when resolving a CI blocker."
-category: explanation
-subcategory: development
-tags:
-  - ci
-  - quality-gates
-  - root-cause
-  - debugging
-  - anti-pattern
-  - preexisting-issues
-created: 2026-04-04
 when_to_use: "Use before skipping, disabling, or bypassing a CI check."
 ---
 

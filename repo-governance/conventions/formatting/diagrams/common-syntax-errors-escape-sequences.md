@@ -1,18 +1,6 @@
 ---
-title: "Common Mermaid Syntax Errors: Escape Sequences Do Not Create Line Breaks"
 description: "Documents Error 7: the `\n` escape sequence does not create line breaks in Mermaid rendering, and what to use instead."
 when_to_use: "Use when you tried `\n` for a line break in a Mermaid label and it rendered as literal text instead."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Common Mermaid Syntax Errors: Escape Sequences Do Not Create Line Breaks

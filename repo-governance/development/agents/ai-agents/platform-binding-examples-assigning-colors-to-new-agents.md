@@ -1,14 +1,5 @@
 ---
-title: "Platform Binding Examples — Assigning Colors to New Agents"
 description: "Gives the step-by-step procedure for assigning a color to a newly created agent."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when creating a new agent and choosing its color field value.
 ---
 

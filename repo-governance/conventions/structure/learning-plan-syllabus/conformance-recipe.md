@@ -1,16 +1,6 @@
 ---
-title: "Conformance Recipe"
 description: The runnable grep-based bash loop that reports every course file missing a REQUIRED section, until a deterministic rhino-cli validator exists.
 when_to_use: Read this when you need to check an existing corpus for missing REQUIRED sections without a dedicated CLI validator.
-category: explanation
-subcategory: conventions
-tags:
-  - plans
-  - syllabus
-  - learning-bearing
-  - custody
-  - governance
-created: 2026-07-22
 ---
 
 # Conformance Recipe

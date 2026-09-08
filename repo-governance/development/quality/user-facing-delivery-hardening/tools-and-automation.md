@@ -1,16 +1,5 @@
 ---
-title: "Tools and Automation"
 description: "The agents and gates that enforce these sixteen rules."
-category: explanation
-subcategory: development
-tags:
-  - quality
-  - planning
-  - ui
-  - verification
-  - testing
-  - deployment
-created: 2026-06-19
 when_to_use: "Use when locating the automated enforcement for one of the sixteen rules."
 ---
 

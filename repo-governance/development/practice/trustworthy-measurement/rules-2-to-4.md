@@ -1,14 +1,5 @@
 ---
-title: "Trustworthy Measurement — Rules 2-4"
 description: Measure the integrated path not an isolated invocation, establish the critical path before prescribing a wall-clock remedy, and treat a remedy written before anyone saw a timeline as a hypothesis
-category: explanation
-subcategory: development
-tags:
-  - measurement
-  - benchmarking
-  - false-zero
-  - critical-path
-created: 2026-08-09
 when_to_use: Use before hard-gating a plan phase on a benchmark number, or before applying a pre-authored performance remedy.
 ---
 

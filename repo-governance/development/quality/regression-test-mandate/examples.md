@@ -1,16 +1,5 @@
 ---
-title: "Examples"
 description: "Worked PASS/FAIL examples for this mandate."
-category: explanation
-subcategory: development
-tags:
-  - regression
-  - testing
-  - bug-fix
-  - quality
-  - gherkin
-  - specs
-created: 2026-06-22
 when_to_use: "Use when you need a concrete pass/fail example."
 ---
 

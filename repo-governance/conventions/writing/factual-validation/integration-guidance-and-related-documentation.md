@@ -1,16 +1,6 @@
 ---
-title: "Factual Validation Convention — Integration Guidance and Related Documentation"
 description: Validation focus and implementing agent per content type (docs/, ayokoding-www, ose-www, plans/, README files), plus links to related quality standards and development practices.
 when_to_use: Use when determining which validation focus and agent applies to a specific content type, or looking up related quality/validation documentation.
-category: explanation
-subcategory: conventions
-tags:
-  - factual-validation
-  - verification
-  - web-research
-  - accuracy
-  - quality-assurance
-created: 2025-12-16
 ---
 
 # Integration Guidance and Related Documentation

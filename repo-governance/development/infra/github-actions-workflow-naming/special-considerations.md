@@ -1,14 +1,5 @@
 ---
-title: "Special Considerations"
 description: Abbreviation rules for long filenames, language/framework identifier mapping, version alignment policy, and the checklist for adding a new workflow.
-category: explanation
-subcategory: development
-tags:
-  - github-actions
-  - ci-cd
-  - naming
-  - workflow
-created: 2026-03-13
 when_to_use: Use when a derived filename is too long, when aligning a language version across workflows, or when adding a new workflow to the canonical set.
 ---
 

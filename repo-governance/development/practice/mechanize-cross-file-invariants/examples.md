@@ -1,14 +1,5 @@
 ---
-title: "Mechanize Cross-File Invariants — Examples"
 description: A PASS example of mechanizing a newly-recognized duplicated rule, and a FAIL example of leaving the same rule restated as prose across files
-category: explanation
-subcategory: development
-tags:
-  - generate-and-validate
-  - drift
-  - automation
-  - governance
-created: 2026-08-07
 when_to_use: Use when deciding whether to mechanize a duplicated rule or leave it as prose, and you want a concrete PASS/FAIL comparison.
 ---
 

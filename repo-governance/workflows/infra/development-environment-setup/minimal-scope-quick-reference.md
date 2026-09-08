@@ -1,5 +1,4 @@
 ---
-title: "Minimal Scope Quick Reference"
 description: "Table mapping scope=minimal to the specific phases/steps and tools it installs (core TypeScript development only)."
 when_to_use: "Use when you only need a minimal environment for TypeScript work, not the full polyglot toolchain."
 ---

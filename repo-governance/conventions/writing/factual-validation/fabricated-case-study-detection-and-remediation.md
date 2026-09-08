@@ -1,16 +1,6 @@
 ---
-title: "Fabricated Corporate Case Study Rule — Detection and Remediation"
 description: The suspension test authors should apply before citing a company metric, the sentence pattern checkers should flag, and a worked before/after fix.
 when_to_use: Use when a checker needs a detection pattern for fabricated case studies, or when rewriting a flagged fabricated claim.
-category: explanation
-subcategory: conventions
-tags:
-  - factual-validation
-  - verification
-  - web-research
-  - accuracy
-  - quality-assurance
-created: 2025-12-16
 ---
 
 # Fabricated Corporate Case Study Rule — Detection and Remediation

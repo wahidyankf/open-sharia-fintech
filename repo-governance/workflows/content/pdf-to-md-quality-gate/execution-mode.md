@@ -1,5 +1,4 @@
 ---
-title: "Execution Mode"
 description: "Describes the two execution modes for the PDF-to-Markdown quality gate: Agent Delegation (preferred) and Manual Orchestration (fallback), plus how a user invokes each."
 when_to_use: "Use when deciding whether to run this workflow via delegated agents or manual tool orchestration."
 ---

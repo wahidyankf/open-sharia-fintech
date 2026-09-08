@@ -1,10 +1,5 @@
 ---
-title: "Related Documentation, Summary, and Principles"
 description: Lists related documentation, summarizes the ten infrastructure best practices, and states the principles and conventions this guidance implements.
-category: explanation
-subcategory: development
-tags: [infrastructure, best-practices, summary]
-created: 2026-05-12
 when_to_use: Use when looking for related documentation links, a quick recap of all ten best practices, or the principles/conventions this document implements.
 ---
 

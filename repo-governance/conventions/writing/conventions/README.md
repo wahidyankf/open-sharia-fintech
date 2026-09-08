@@ -1,5 +1,4 @@
 ---
-title: "Convention Writing Convention"
 description: "Meta-convention defining how to write and organize convention documents in the conventions/ directory"
 when_to_use: "Read this index to find the right Convention Writing Convention child document."
 ---
@@ -13,4 +12,3 @@ when_to_use: "Read this index to find the right Convention Writing Convention ch
 - [Convention Writing Convention — Creation Criteria and Length Guidelines](./creation-criteria-and-length-guidelines.md) — Decision criteria for creating a new convention vs. updating or merging an existing one, and expected length ranges (short/medium/long) for convention documents. Use when deciding whether a new topic warrants its own convention document or belongs inside an existing one.
 - [Convention Writing Convention — Naming, Maintenance, and Example Conventions](./naming-maintenance-and-example-conventions.md) — The file/title naming pattern for convention documents, the review and deprecation process, and a curated list of exemplary conventions to model. Use when naming a new convention file, reviewing an existing one for staleness, or looking for a structural example to imitate.
 - [Convention Writing Convention — Examples and Common Mistakes](./examples-and-common-mistakes.md) — A worked good-vs-bad example of full convention document structure, plus a table of common authoring mistakes and their fixes. Use when you need a concrete template to copy or want to check a draft against known authoring pitfalls.
-- [Convention Writing Convention — Integration with Agents and References](./integration-with-agents-and-references.md) — Which agents create and consume convention documents, the agent-integration checklist, and cross-references to related meta-documentation. Use when wiring a new convention into agent prompts or looking up related meta-conventions and governance documents.

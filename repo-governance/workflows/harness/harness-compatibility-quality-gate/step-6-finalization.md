@@ -1,5 +1,4 @@
 ---
-title: "Step 6: Finalization"
 description: Reports the final status (pass/partial/fail), iteration count, and final report.
 when_to_use: Use when determining the workflow's terminal status after the iteration loop exits.
 ---

@@ -1,18 +1,6 @@
 ---
-title: "Scope"
 description: "Lists what this convention covers (Mermaid, ASCII art, plan-doc UI mockups) and what it explicitly excludes."
 when_to_use: "Use when checking whether a diagram or mockup question falls inside this convention's scope."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Scope

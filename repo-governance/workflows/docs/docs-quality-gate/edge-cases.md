@@ -1,5 +1,4 @@
 ---
-title: "Edge Cases"
 description: "Five worked edge cases: tutorial-only findings, broken-links blocking success, below-threshold-only findings, non-converging fixes, and tutorial-checker on non-tutorial content."
 when_to_use: "Use when diagnosing an unexpected workflow outcome against a known edge-case pattern."
 ---

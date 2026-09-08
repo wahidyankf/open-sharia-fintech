@@ -1,14 +1,5 @@
 ---
-title: "Per-Repository Delivery Mode Restrictions (HARD RULE)"
 description: States which delivery modes are actually available in ose-public and ose-private given each repo's branch-protection state.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when confirming which delivery modes are actually permitted in the specific repository a plan targets.
 ---
 

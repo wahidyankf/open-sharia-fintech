@@ -1,15 +1,5 @@
 ---
-title: "Immutability Patterns — Immer and Object.freeze"
 description: "How to use Immer for deep nested updates and Object.freeze for runtime immutability enforcement."
-category: explanation
-subcategory: development
-tags:
-  - development
-  - functional-programming
-  - immutability
-  - pure-functions
-  - typescript
-created: 2025-12-28
 when_to_use: "Use when a nested object update is too deep for spread syntax, or you need to enforce immutability at runtime."
 ---
 

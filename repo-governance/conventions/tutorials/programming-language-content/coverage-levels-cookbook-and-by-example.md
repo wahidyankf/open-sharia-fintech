@@ -1,15 +1,5 @@
 ---
-title: "Coverage Levels: Cookbook and By-Example Tracks"
 description: "Defines the two parallel-track coverage levels: the recipe-based Cookbook and the code-first By Example track for experienced developers."
-category: explanation
-subcategory: conventions
-tags:
-  - programming-languages
-  - ayokoding
-  - tutorials
-  - education
-  - content-standards
-created: 2025-12-18
 when_to_use: "Use when writing or reviewing a language's Cookbook or By Example content, or deciding whether new content belongs in one of these parallel tracks."
 ---
 

@@ -1,15 +1,5 @@
 ---
-title: "Subagent Orchestration Convention"
 description: "Standards for concurrency caps and stuck-detection when a main agent spawns subagents via the Agent tool, capping concurrent background subagents at two (three total including the main agent/thread) to control token burn and avoid Claude API rate-limit hits"
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - orchestration
-  - subagents
-  - concurrency
-  - rate-limits
-created: 2026-05-17
 when_to_use: Use when spawning, polling, or capping background subagents, or diagnosing a stuck subagent.
 ---
 
@@ -20,7 +10,6 @@ This document defines how a main agent manages subagents it spawns via the Agent
 ## Foundations
 
 - [Principles Implemented/Respected](./subagent-orchestration/principles-implemented-respected.md) — principle list.
-- [Conventions Implemented/Respected](./subagent-orchestration/conventions-implemented-respected.md) — sibling conventions.
 - [Purpose](./subagent-orchestration/purpose.md) — why this matters.
 - [Scope](./subagent-orchestration/scope.md) — what's covered.
 
@@ -40,5 +29,28 @@ This document defines how a main agent manages subagents it spawns via the Agent
 - [Batching and Stuck-Detection Mistakes](./subagent-orchestration/anti-patterns-batching-and-detection.md) — batching mistakes.
 - [Running Serially and Monolithic Chunks](./subagent-orchestration/anti-patterns-serial-and-monolithic.md) — sizing mistakes.
 - [Open-Ended Poll Loops and Going Silent](./subagent-orchestration/anti-patterns-poll-loops-and-silence.md) — reporting mistakes.
-- [Tooling Reference](./subagent-orchestration/tooling-reference.md) — orchestration tools.
 - [References](./subagent-orchestration/references.md) — further reading.
+
+## Conventions Implemented/Respected
+
+This practice respects the following conventions:
+
+- **[Content Quality Principles](../../conventions/writing/quality.md)**: This document follows active voice, proper heading hierarchy, and accessible examples throughout.
+
+- **[File Naming Convention](../../conventions/structure/file-naming.md)**: This document uses a lowercase kebab-case filename consistent with repository naming rules.
+
+The following Layer 3 development practice also informs this document:
+
+- **[Agent Workflow Orchestration Convention](./agent-workflow-orchestration.md)**: Subagent orchestration is a specialization of delegated agent strategy. The rules here narrow the delegation model for the case where agents run in background.
+
+## Tooling Reference
+
+| Tool             | Purpose in This Convention                                     |
+| ---------------- | -------------------------------------------------------------- |
+| `Agent`          | Spawns subagent; returns `agentId`                             |
+| `TaskStop`       | Terminates stuck agent by `agentId`                            |
+| `SendMessage`    | Sends new instructions to a running agent                      |
+| `TaskList`       | Lists TaskCreate tasks — does NOT show Agent IDs               |
+| `ScheduleWakeup` | Schedules the main agent's next poll (use 180-second interval) |
+
+**Note**: `ScheduleWakeup(delaySeconds=180)` is the preferred mechanism for 3-minute polling cadence. This is consistent with the pattern established by [CI Monitoring Convention](../workflow/ci-monitoring.md) for other scheduled checks.

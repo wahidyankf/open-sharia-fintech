@@ -1,15 +1,5 @@
 ---
-title: "Purpose and Structure Integration with General Tutorial Standards"
 description: "Defines the purpose of by-example tutorials and how their structure adapts and inherits from the general Tutorial Convention."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - education
-  - code-first
-created: 2025-12-25
 when_to_use: "Read first when you need to understand why by-example tutorials exist and how their structure maps onto the general tutorial structure."
 ---
 

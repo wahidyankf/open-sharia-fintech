@@ -1,5 +1,4 @@
 ---
-title: "Purpose, Execution Mode, and When to Use"
 description: What this workflow does, who orchestrates it, and when (not) to promote a two-pager into a backlog plan.
 when_to_use: Use when deciding whether a two-pager is ready for the promotion procedure, and who runs it.
 ---

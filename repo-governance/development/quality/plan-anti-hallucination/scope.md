@@ -1,16 +1,5 @@
 ---
-title: "Scope"
 description: "Which agents and content this convention covers."
-category: explanation
-subcategory: development
-tags:
-  - plans
-  - ai-agents
-  - factual-validation
-  - anti-hallucination
-  - web-research
-  - verification
-created: 2026-05-03
 when_to_use: "Use to check whether this applies to an agent."
 ---
 

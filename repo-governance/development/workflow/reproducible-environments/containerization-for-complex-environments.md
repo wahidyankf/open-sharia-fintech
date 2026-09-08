@@ -1,16 +1,5 @@
 ---
-title: "Containerization for Complex Environments"
 description: docker-compose.yml and a development Dockerfile pattern for local services and consistent build environments.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - reproducibility
-  - volta
-  - docker
-  - environment
-  - dependencies
-created: 2025-12-28
 when_to_use: Use when standing up local Postgres/Redis services via Docker Compose, or writing a development Dockerfile.
 ---
 

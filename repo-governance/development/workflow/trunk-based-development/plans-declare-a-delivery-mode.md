@@ -1,15 +1,5 @@
 ---
-title: "Plans Declare a Delivery Mode"
 description: The default-assumption rule for plans, when to declare a Delivery Mode field explicitly, and a worked example.
-category: explanation
-subcategory: development
-tags:
-  - trunk-based-development
-  - git
-  - workflow
-  - development
-  - continuous-integration
-created: 2025-11-26
 when_to_use: Use when authoring a plan's Overview and deciding whether it needs an explicit Delivery Mode field.
 ---
 

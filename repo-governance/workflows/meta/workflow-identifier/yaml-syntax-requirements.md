@@ -1,14 +1,5 @@
 ---
-title: "YAML Syntax Requirements"
 description: Which characters require quoting in workflow YAML frontmatter, with good/bad examples, to avoid breaking some YAML parsers.
-category: explanation
-subcategory: workflows
-tags:
-  - workflows
-  - agents
-  - orchestration
-  - patterns
-created: 2025-12-23
 when_to_use: Use when writing or reviewing a workflow's YAML frontmatter and unsure whether a value needs quoting.
 ---
 
@@ -45,18 +36,20 @@ when_to_use: Use when writing or reviewing a workflow's YAML frontmatter and uns
 Good:
 
 ```yaml
-description: "Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ocd: all levels)"
-goal: "Validate repository consistency across all layers, apply fixes iteratively until zero findings achieved"
-values: [lax, normal, strict, ocd]
+description: "Validates repository consistency across all layers, applying fixes iteratively until zero findings remain"
+when_to_use: "Use when a quality threshold must be chosen (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ocd: all levels)"
 ```
 
 Bad:
 
 ```yaml
-description: Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ocd: all levels)
-goal: Validate repository consistency across all layers, apply fixes iteratively until zero findings achieved
-values: [lax, normal, strict, ocd]  # This is OK - arrays are fine without quotes
+description: Validates repository consistency across all layers: unquoted colons break some parsers
+when_to_use: Use when a quality threshold must be chosen (lax: CRITICAL only, normal: CRITICAL/HIGH)
 ```
+
+Frontmatter carries only `description` and `when_to_use`, and both are prose that regularly contains
+a colon — which is exactly why this rule still binds. A workflow's enum values, defaults, and goal
+now live in the body, where Markdown quoting rules apply instead of YAML's.
 
 **Why this matters**:
 

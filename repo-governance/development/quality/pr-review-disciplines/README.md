@@ -1,5 +1,4 @@
 ---
-title: "PR Reviewer-Discipline Convention"
 description: "Defines the nine PR-review specialist disciplines, their owned/routed-to scope, and the boundary tie-breaker rule."
 when_to_use: "Read this index to find the right PR Reviewer-Discipline Convention child document."
 ---

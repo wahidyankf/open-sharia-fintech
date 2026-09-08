@@ -1,5 +1,4 @@
 ---
-title: "Phase 1: System Package Manager (Sequential)"
 description: "Phase 1: install and update Homebrew (macOS) or apt (Linux), including the Brewfile shortcut for Homebrew-managed dependencies."
 when_to_use: "Use when bootstrapping the system package manager on a fresh machine."
 ---

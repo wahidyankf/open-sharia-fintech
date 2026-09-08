@@ -1,19 +1,6 @@
 ---
-title: "Deterministic Validation: Exact Bindings, Owner Corpora, and Drift Detection"
 description: Project-local exact-one scenario binding, recursive owner corpora, and explicit drift detection
 when_to_use: Read this when debugging static behaviour coverage or wiring a project-owned corpus and adapter.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - specs
-  - gherkin
-  - directory-structure
-  - organization
-  - c4-diagrams
-  - openapi
-  - c4
-created: 2026-04-02
 ---
 
 # Deterministic Validation: Exact Bindings, Owner Corpora, and Drift Detection

@@ -1,16 +1,5 @@
 ---
-title: "Absence/Completeness: Diff Required"
 description: "A completeness claim needs a diff, not a text search."
-category: explanation
-subcategory: development
-tags:
-  - plans
-  - ai-agents
-  - factual-validation
-  - anti-hallucination
-  - web-research
-  - verification
-created: 2026-05-03
 when_to_use: "Use before citing a search as proof a list is complete."
 ---
 

@@ -1,15 +1,5 @@
 ---
-title: "Principles and Conventions Implemented"
 description: The principles and companion conventions the PR merge protocol implements and respects.
-category: explanation
-subcategory: development
-tags:
-  - pull-request
-  - merge
-  - quality-gates
-  - workflow
-  - merge-preconditions
-created: 2026-04-04
 when_to_use: Use when tracing why the PR merge protocol exists back to the principles and conventions it respects.
 ---
 

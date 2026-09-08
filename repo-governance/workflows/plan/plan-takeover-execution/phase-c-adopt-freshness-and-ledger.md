@@ -1,5 +1,4 @@
 ---
-title: "Phase C — Take Over the Live Work: Adopt, Freshness Gate, Ledger Rebuild"
 description: Covers Phase C steps 1-3 — adopting an existing worktree/branch rather than reprovisioning, applying the freshness gate, and rebuilding the file-touch ledger.
 when_to_use: Use when adopting a repo's already-in-flight worktree or branch instead of reprovisioning over it, or when reconciling it against origin/main.
 ---

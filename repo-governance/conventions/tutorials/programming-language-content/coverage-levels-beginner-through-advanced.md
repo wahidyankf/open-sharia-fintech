@@ -1,15 +1,5 @@
 ---
-title: "Coverage Levels: Beginner Through Advanced"
 description: "Defines the Beginner, Intermediate, and Advanced coverage levels for programming language tutorials, from 0% to 95% knowledge depth."
-category: explanation
-subcategory: conventions
-tags:
-  - programming-languages
-  - ayokoding
-  - tutorials
-  - education
-  - content-standards
-created: 2025-12-18
 when_to_use: "Use when writing or reviewing the Beginner, Intermediate, or Advanced tutorial for a programming language."
 ---
 

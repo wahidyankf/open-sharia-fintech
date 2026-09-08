@@ -1,14 +1,5 @@
 ---
-title: "Real-World Examples, Anti-Patterns, and When to Use"
 description: Full worked Gherkin examples, common anti-patterns to avoid, and the four categories of documentation where acceptance criteria belong.
-category: explanation
-subcategory: development
-tags:
-  - acceptance-criteria
-  - gherkin
-  - testing
-  - requirements
-created: 2025-12-07
 when_to_use: Use when you need a full worked scenario to copy from, want to check a draft scenario against known anti-patterns, or are deciding whether a document needs acceptance criteria at all.
 ---
 

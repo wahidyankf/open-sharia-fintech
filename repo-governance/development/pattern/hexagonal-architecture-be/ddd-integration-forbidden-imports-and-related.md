@@ -1,15 +1,5 @@
 ---
-title: "DDD Integration, Forbidden Imports, and Related"
 description: "Bounded-context isolation rules, shared infrastructure placement, anti-corruption layers, the forbidden-imports table, and related pattern documentation."
-category: explanation
-subcategory: development
-tags:
-  - architecture
-  - hexagonal
-  - ddd
-  - fsharp
-  - backend
-created: 2026-05-26
 when_to_use: "Use when two bounded contexts need to communicate, or checking whether a layer imports something it should not."
 ---
 

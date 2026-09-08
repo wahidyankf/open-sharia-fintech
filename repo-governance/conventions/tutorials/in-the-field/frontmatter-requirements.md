@@ -1,16 +1,6 @@
 ---
-title: "Frontmatter Requirements"
 description: The required frontmatter fields for In-the-Field guide pages.
 when_to_use: Use when writing frontmatter for a new In-the-Field guide page.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Frontmatter Requirements

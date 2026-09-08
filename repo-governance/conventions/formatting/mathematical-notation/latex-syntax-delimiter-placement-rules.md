@@ -1,16 +1,6 @@
 ---
-title: "LaTeX Syntax: Delimiter Placement Rules"
 description: "The critical delimiter placement rules: single `$` must stay inline, display equations and all `aligned` blocks must use `$$`, and why KaTeX requires `aligned` not `align`."
 when_to_use: Use when a multi-line or display LaTeX equation is not rendering and you need to check delimiter placement.
-category: explanation
-subcategory: conventions
-tags:
-  - latex
-  - mathematics
-  - formulas
-  - notation
-  - conventions
-created: 2025-12-02
 ---
 
 # LaTeX Syntax: Delimiter Placement Rules

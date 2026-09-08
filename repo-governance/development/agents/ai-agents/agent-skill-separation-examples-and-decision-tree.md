@@ -1,14 +1,5 @@
 ---
-title: "Agent-Skill Separation — Examples and Decision Tree"
 description: "Walks through worked examples of good agent-skill separation and a decision tree for judging a split."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when you need a worked example or decision tree to judge whether an agent-skill split is done well.
 ---
 

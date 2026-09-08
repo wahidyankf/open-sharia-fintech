@@ -1,14 +1,5 @@
 ---
-title: "Phases as Natural Pauses With Clear Gates (HARD RULE)"
 description: Requires every delivery phase to end in a coherent state with a Phase N Gate and a Pause Safety note.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when writing a delivery.md phase's closing gate and Pause Safety note.
 ---
 

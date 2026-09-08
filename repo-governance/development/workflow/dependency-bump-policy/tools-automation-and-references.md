@@ -1,15 +1,5 @@
 ---
-title: "Tools, Automation, and References"
 description: The tools and feeds that automate this policy, and the full set of related conventions, principles, and external references.
-category: explanation
-subcategory: development
-tags:
-  - dependencies
-  - security
-  - versioning
-  - reproducibility
-  - workflow
-created: 2026-05-15
 when_to_use: Use when looking up which tool enforces a specific part of this policy, or when tracing a related convention, principle, or external database.
 ---
 

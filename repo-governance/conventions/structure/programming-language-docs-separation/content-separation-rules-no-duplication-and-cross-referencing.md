@@ -1,16 +1,6 @@
 ---
-title: "Programming Language Docs Separation: No Duplication and Cross-Referencing"
 description: Rule 4 and Rule 5 of content separation — the decision tree for avoiding duplication between platforms, and the required cross-referencing link patterns
 when_to_use: Read this when checking whether content duplicates ayokoding-www, or when adding the required cross-reference links between docs/explanation/ and ayokoding-www.
-category: explanation
-subcategory: conventions
-tags:
-  - documentation
-  - programming-languages
-  - style-guides
-  - content-separation
-  - dry-principle
-created: 2026-02-04
 ---
 
 # Content Separation Rules: No Duplication and Cross-Referencing

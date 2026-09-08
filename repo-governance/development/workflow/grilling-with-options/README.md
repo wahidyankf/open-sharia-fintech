@@ -1,5 +1,4 @@
 ---
-title: "Grilling-With-Options Convention"
 description: "Agents and workflows MUST resolve open design decisions using structured multiple-choice questions, not open-ended prose prompts."
 when_to_use: "Read this index to find the right Grilling-With-Options Convention child document."
 ---

@@ -1,18 +1,6 @@
 ---
-title: "Why Mermaid First?"
 description: "Explains Mermaid's wide platform support and advantages over ASCII art, and when ASCII is still useful."
 when_to_use: "Use when justifying or challenging the Mermaid-first policy for a specific rendering context."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Why Mermaid First?

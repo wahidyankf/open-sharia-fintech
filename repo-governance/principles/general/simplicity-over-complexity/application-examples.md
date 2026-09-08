@@ -1,13 +1,5 @@
 ---
-title: "Application Examples"
 description: Three worked examples (dark mode, API errors, utilities) contrasting over-engineered and minimal solutions.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - simplicity
-  - over-engineering
-created: 2025-12-15
 when_to_use: Use when you need a worked feature-request example.
 ---
 

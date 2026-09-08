@@ -1,14 +1,5 @@
 ---
-title: "Purpose and Scope"
 description: "The principles behind this convention, its purpose, and what it does and does not cover"
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - documentation
-  - open-source
-  - repository-standards
-created: 2026-04-04
 when_to_use: "Read this before adding or reviewing a repository-level documentation file to confirm this convention applies."
 ---
 

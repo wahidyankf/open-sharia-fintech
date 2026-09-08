@@ -1,16 +1,5 @@
 ---
-title: "Decision Guide: Architecture Change vs. Minor Change"
 description: "Table (part 1 of 2) mapping common change types to whether a spec update is required."
-category: explanation
-subcategory: development
-tags:
-  - specs
-  - architecture
-  - c4-diagrams
-  - gherkin
-  - synchronization
-  - quality
-created: 2026-03-24
 when_to_use: "Use when uncertain whether a REST/tRPC/data-store/app-level change requires a spec update."
 ---
 

@@ -1,15 +1,6 @@
 ---
-title: "No Manual Date Metadata: Examples and Migration"
 description: Before/after examples for agent and convention files, plus the three-step migration checklist for removing existing date-metadata violations.
 when_to_use: Read this when cleaning up an existing file's date metadata or when you need a worked before/after comparison to model a fix on.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - frontmatter
-  - maintenance
-  - git
-created: 2026-04-25
 ---
 
 # No Manual Date Metadata: Examples and Migration
@@ -45,29 +36,29 @@ PASS — agent body without date annotations:
 
 ### Convention File — Before and After
 
-FAIL — convention with `updated:` frontmatter:
+FAIL — governance file carrying date metadata:
 
 ```yaml
 ---
-title: "Example Convention"
 description: An example.
-category: explanation
-subcategory: conventions
+when_to_use: Use when illustrating this convention.
 created: 2025-11-22
+updated: 2026-01-14
 ---
 ```
 
-PASS — convention without `updated:` frontmatter:
+PASS — the same file with the dates removed:
 
 ```yaml
 ---
-title: "Example Convention"
 description: An example.
-category: explanation
-subcategory: conventions
-created: 2025-11-22
+when_to_use: Use when illustrating this convention.
 ---
 ```
+
+Both `created:` and `updated:` are refused under `repo-governance/`: the frontmatter allow-list
+admits `description` and `when_to_use` only, and git already records both dates more accurately
+than a hand-maintained field can.
 
 ## Migration
 

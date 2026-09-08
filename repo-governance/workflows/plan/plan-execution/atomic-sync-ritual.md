@@ -1,5 +1,4 @@
 ---
-title: "Atomic Sync Ritual"
 description: Defines the mandatory three-step tick-notes-TaskUpdate sequence that must land together for every completed checklist item.
 when_to_use: Use when ticking a delivery.md checkbox, to confirm the tick, notes, and TaskUpdate all land correctly and in order.
 ---

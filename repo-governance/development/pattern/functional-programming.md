@@ -1,15 +1,5 @@
 ---
-title: Functional Programming Practices
 description: Guidelines for applying functional programming principles in TypeScript/JavaScript
-category: explanation
-subcategory: development
-tags:
-  - development
-  - functional-programming
-  - immutability
-  - pure-functions
-  - typescript
-created: 2025-12-28
 when_to_use: "Use when writing or reviewing TypeScript/JavaScript business logic."
 ---
 

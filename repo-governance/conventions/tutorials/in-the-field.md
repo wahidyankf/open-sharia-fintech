@@ -1,16 +1,6 @@
 ---
-title: In-the-Field Tutorial Convention
 description: Standards for creating production-ready implementation guides building on by-example/by-concept foundations with frameworks, libraries, and enterprise patterns
 when_to_use: Use when writing, reviewing, or validating an In-the-Field production implementation guide.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # In-the-Field Tutorial Convention

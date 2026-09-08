@@ -1,5 +1,4 @@
 ---
-title: "CI Blocker Resolution Convention"
 description: "Practice mandating that preexisting CI blockers are investigated at the root cause and fixed properly, never bypassed"
 when_to_use: "Read this index to find the right CI Blocker Resolution Convention child document."
 ---
@@ -15,4 +14,3 @@ when_to_use: "Read this index to find the right CI Blocker Resolution Convention
 - [Examples](./examples.md) — Worked examples of resolving a CI blocker correctly. Use for a concrete example of a proper CI-blocker fix.
 - [Scope](./scope.md) — What this convention applies to. Use when checking whether this convention applies to a CI failure.
 - [Operational CI-Availability Exceptions](./operational-ci-availability-exceptions.md) — The narrow exceptions for CI-availability outages, not code defects. Use when CI itself is unavailable, not merely reporting a failure.
-- [Related Documentation](./related-documentation.md) — Related quality-gate and debugging conventions. Use when you need a related convention on quality gates.

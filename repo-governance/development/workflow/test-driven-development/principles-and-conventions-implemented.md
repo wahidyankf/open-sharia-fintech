@@ -1,15 +1,5 @@
 ---
-title: "Principles and Conventions Implemented"
 description: The principles and companion conventions the TDD requirement implements and respects.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - workflow
-  - tdd
-  - testing
-  - red-green-refactor
-created: 2026-05-02
 when_to_use: Use when tracing why TDD is required here back to the principles and conventions it respects.
 ---
 

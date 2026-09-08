@@ -1,14 +1,5 @@
 ---
-title: "Model Tiers — Execution-Grade"
 description: "Defines the execution-grade tier: agents that declare sonnet for structured, execution-heavy work."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - model-selection
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when deciding whether a new agent should declare the execution-grade (sonnet) model tier.
 ---
 

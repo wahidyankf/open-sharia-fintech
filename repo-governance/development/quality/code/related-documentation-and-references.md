@@ -1,17 +1,5 @@
 ---
-title: "Related Documentation and References"
 description: "Related conventions and external references."
-category: explanation
-subcategory: development
-tags:
-  - development
-  - code-quality
-  - prettier
-  - husky
-  - lint-staged
-  - git-hooks
-  - automation
-created: 2026-05-12
 when_to_use: "Use for a related convention or reference."
 ---
 

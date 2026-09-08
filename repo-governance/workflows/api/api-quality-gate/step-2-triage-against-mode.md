@@ -1,5 +1,4 @@
 ---
-title: "Step 2: Triage Against Mode"
 description: How AET findings' ISTQB severity ratings map onto the gate's CRITICAL/HIGH/MEDIUM/LOW mode threshold.
 when_to_use: Use when deciding which discovery findings require the bounded fix and verification path.
 ---

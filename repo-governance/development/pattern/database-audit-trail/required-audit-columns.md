@@ -1,16 +1,5 @@
 ---
-title: "Required Audit Columns"
 description: "The six required audit columns - created_at/by, updated_at/by, deleted_at/by - with their types, nullability, and defaults."
-category: explanation
-subcategory: development
-tags:
-  - database
-  - audit-trail
-  - soft-delete
-  - dbup
-  - ef-core
-  - migrations
-created: 2026-03-09
 when_to_use: "Use when creating a new database table and need the exact column names, types, and defaults to add."
 ---
 

@@ -1,16 +1,5 @@
 ---
-title: "Operational CI-Availability Exceptions"
 description: "The narrow exceptions for CI-availability outages, not code defects."
-category: explanation
-subcategory: development
-tags:
-  - ci
-  - quality-gates
-  - root-cause
-  - debugging
-  - anti-pattern
-  - preexisting-issues
-created: 2026-04-04
 when_to_use: "Use when CI itself is unavailable, not merely reporting a failure."
 ---
 

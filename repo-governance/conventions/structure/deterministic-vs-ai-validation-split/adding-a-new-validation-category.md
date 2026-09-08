@@ -1,16 +1,6 @@
 ---
-title: "Adding a New Validation Category"
 description: The decision tree for choosing a new validation category's owning layer, plus the implementation contracts for deterministic and AI-checker owners.
 when_to_use: Use when introducing a new governance validation rule and deciding which layer should own it.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - governance
-  - validation
-  - quality-gate
-  - automation
-created: 2026-08-13
 ---
 
 # Adding a New Validation Category

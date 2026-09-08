@@ -1,5 +1,4 @@
 ---
-title: "App README vs Specs Convention"
 description: "Defines what content lives in app/infra READMEs vs specs/, the logical-owner-corpus spec tree shape, and the PM-readability contract for specs/."
 when_to_use: "Read this index to find the right App README vs Specs Convention child document."
 ---

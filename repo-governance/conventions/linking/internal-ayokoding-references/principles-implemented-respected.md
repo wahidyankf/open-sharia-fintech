@@ -1,16 +1,6 @@
 ---
-title: "Principles Implemented/Respected"
 description: The three software-engineering principles this AyoKoding-linking convention implements — Explicit Over Implicit, Reproducibility First, Simplicity Over Complexity.
 when_to_use: Use when you need to justify why this convention prefers relative repository paths over public URLs in terms of the repository's core principles.
-category: explanation
-subcategory: conventions
-tags:
-  - linking
-  - cross-reference
-  - relative-paths
-  - portability
-  - ayokoding-www
-created: 2026-02-07
 ---
 
 # Principles Implemented/Respected

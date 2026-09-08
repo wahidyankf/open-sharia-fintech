@@ -1,18 +1,6 @@
 ---
-title: "Standard 5 — PM-Readability Contract for specs/ (Glossary)"
 description: Which terms need glossing on first use in specs/ files (and which mainstream SWE terms do not), for the SWE-background TPM audience.
 when_to_use: Use when writing a specs/apps/ file and checking whether a term needs a parenthetical gloss on first use.
-category: explanation
-subcategory: conventions
-status: "Pilot — initial issue"
-tags:
-  - conventions
-  - readme
-  - specs
-  - spec-tree-shape
-  - pm-readability
-  - c4
-created: 2026-05-09
 ---
 
 # Standard 5 — PM-Readability Contract for specs/ (Glossary)

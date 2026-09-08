@@ -1,15 +1,5 @@
 ---
-title: "Verification Before Done"
 description: "Defines the verification requirements before marking a task done, for different task types, and how to compare diffs and behaviour."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - workflow
-  - orchestration
-created: 2025-11-23
 when_to_use: Use before reporting any task complete, to confirm what still needs verifying.
 ---
 

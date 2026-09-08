@@ -1,16 +1,6 @@
 ---
-title: "Anti-Pattern: REST Framework Without HTTP Fundamentals"
 description: The production consequences (wrong status codes, security holes) of using a REST framework without HTTP fundamentals.
 when_to_use: Use when explaining the risk of teaching a REST framework before HTTP basics.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Anti-Pattern: REST Framework Without HTTP Fundamentals

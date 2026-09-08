@@ -1,14 +1,5 @@
 ---
-title: "Dependency Rule, App-Type Specializations, and Related"
 description: "The inward-only dependency rule diagram, links to per-app-type specializations, and related pattern documentation."
-category: explanation
-subcategory: development
-tags:
-  - architecture
-  - hexagonal
-  - ports-and-adapters
-  - dependency-rule
-created: 2026-05-26
 when_to_use: "Use when verifying the dependency-rule direction, or finding the CLI/backend specialization for a given app type."
 ---
 

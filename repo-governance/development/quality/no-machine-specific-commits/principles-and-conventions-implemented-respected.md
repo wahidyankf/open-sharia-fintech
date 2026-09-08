@@ -1,16 +1,5 @@
 ---
-title: "Principles and Conventions Implemented/Respected"
 description: "The reproducibility, explicit-config, and root-cause principles, and the file-naming and no-secrets conventions this practice implements."
-category: explanation
-subcategory: development
-tags:
-  - git
-  - commits
-  - security
-  - portability
-  - environment
-  - quality
-created: 2026-03-24
 when_to_use: "Use when tracing this practice to the principles/conventions it implements."
 ---
 

@@ -1,16 +1,6 @@
 ---
-title: "Guide Structure Part 2: Standard Library First — HTTP Client Example"
 description: The worked standard-library HTTP client example (java.net.http.HttpClient) and its production limitations.
 when_to_use: Use when writing the standard-library HTTP client example for a Part 2 section.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Guide Structure Part 2: Standard Library First — HTTP Client Example

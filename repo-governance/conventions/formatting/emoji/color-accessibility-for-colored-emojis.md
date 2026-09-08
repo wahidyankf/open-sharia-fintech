@@ -1,16 +1,6 @@
 ---
-title: "Color Accessibility for Colored Emojis"
 description: How to use colored square emojis for agent categorization accessibly, so color is always supplementary to text and shape.
 when_to_use: Use when using colored emojis (like the agent-role squares) for visual categorization and you need to keep them accessible.
-category: explanation
-subcategory: conventions
-tags:
-  - emoji
-  - accessibility
-  - scannability
-  - conventions
-  - markdown
-created: 2025-12-04
 ---
 
 # Color Accessibility for Colored Emojis

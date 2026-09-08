@@ -1,17 +1,6 @@
 ---
-title: "Anti-Patterns: Reference Material Through Assuming Too Much Prior Knowledge (1-4)"
 description: "Documents the first four tutorial anti-patterns: reference material disguised as tutorial, goal-oriented framing, and assuming too much prior knowledge."
 when_to_use: "Read when reviewing a tutorial draft for reference-material framing, missing teaching, or unstated prerequisites."
-category: explanation
-subcategory: conventions
-tags:
-  - tutorials
-  - diataxis
-  - learning
-  - pedagogy
-  - documentation
-  - teaching
-created: 2025-12-03
 ---
 
 # Anti-Patterns: Reference Material Through Assuming Too Much Prior Knowledge (1-4)

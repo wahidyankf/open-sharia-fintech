@@ -1,8 +1,9 @@
 ---
-title: "Finalization and Archival — Direct-Push Worktree Cleanup and PR-Mode Archival"
 description: Defines safe direct-push cleanup and *-to-pr archival.
 when_to_use: Use when cleaning up a plan's worktree after a direct push, or moving a plan folder to done/ inside a delivering PR.
 ---
+
+# Finalization and Archival — Direct-Push Worktree Cleanup and PR-Mode Archival
 
 1. **Direct-push worktree compatibility cleanup — only after terminal audit and `pass`**:
    `worktree-to-origin-main` is unavailable in both OSE repositories; `main-to-origin-main` creates

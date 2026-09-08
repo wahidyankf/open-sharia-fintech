@@ -1,5 +1,4 @@
 ---
-title: "Relationship to Other Gates"
 description: How the API quality gate's surface-conditional applicability and merge-precondition status relate to the UI gates and PR review.
 when_to_use: Use when determining whether a plan must run the API quality gate, the UI gates, both, or neither.
 ---

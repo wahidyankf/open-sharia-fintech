@@ -1,16 +1,5 @@
 ---
-title: "Shared Cargo Target Directories"
 description: How doctor --fix symlinks each crate's target/ into a shared local-dev cache, and how to garbage-collect it safely.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - reproducibility
-  - volta
-  - docker
-  - environment
-  - dependencies
-created: 2025-12-28
 when_to_use: Use when investigating the shared cargo target-directory symlink mechanism, its cache root, or pruning stale entries.
 ---
 

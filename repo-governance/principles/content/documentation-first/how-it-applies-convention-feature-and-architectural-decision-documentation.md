@@ -1,12 +1,5 @@
 ---
-title: "How It Applies — Convention, Feature, and Architectural Decision Documentation"
 description: Requirements for convention, feature, and architectural-decision documentation.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - documentation
-created: 2025-12-28
 when_to_use: Use when writing a convention, feature, or decision document.
 ---
 

@@ -1,16 +1,6 @@
 ---
-title: "Worktree Path: Cleanup, Multiple Worktrees, Tools, and References"
 description: The worktree removal procedure and AI/HUMAN tagging rule, the multiple-concurrent-worktrees layout, the tools that interact with this convention, and related convention/documentation links
 when_to_use: Read this when removing a worktree, tagging worktree-related delivery checklist steps, or looking up a related convention or reference.
-category: explanation
-subcategory: conventions
-tags:
-  - worktree
-  - git
-  - repository-structure
-  - claude
-  - hooks
-created: 2026-05-03
 ---
 
 # Worktree Path: Cleanup, Multiple Worktrees, Tools, and References

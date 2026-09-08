@@ -1,5 +1,4 @@
 ---
-title: "Enter the Designated Worktree — Locate and Provision"
 description: Defines how the orchestrator locates the plan's declared ## Worktree section and navigates to or auto-provisions the worktree.
 when_to_use: Use when a plan's worktree does not yet exist and must be provisioned from the latest origin/main, or when locating its declared path.
 ---

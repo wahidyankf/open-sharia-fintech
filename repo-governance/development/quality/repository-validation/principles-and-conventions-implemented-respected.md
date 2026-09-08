@@ -1,16 +1,5 @@
 ---
-title: "Principles and Conventions Implemented/Respected"
 description: "Principles/conventions implemented."
-category: explanation
-subcategory: development
-tags:
-  - validation
-  - consistency
-  - bash
-  - awk
-  - frontmatter
-  - automation
-created: 2025-12-14
 when_to_use: "Use to trace this convention's rationale."
 ---
 

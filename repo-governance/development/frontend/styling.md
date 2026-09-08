@@ -1,15 +1,5 @@
 ---
-title: Styling Convention
 description: CSS and Tailwind v4 styling patterns for frontend applications in the open-sharia-enterprise monorepo
-category: explanation
-subcategory: development/frontend
-tags:
-  - styling
-  - tailwind
-  - css
-  - responsive
-  - mobile-first
-created: 2026-03-28
 when_to_use: Use when writing or reviewing CSS/Tailwind styling in any frontend app in this monorepo.
 ---
 
@@ -24,7 +14,6 @@ CSS and Tailwind v4 conventions for all frontend applications in the open-sharia
 - [Inline Styles, Class Ordering, and Defensive CSS](./styling/inline-styles-class-ordering-and-defensive-css.md) — no inline `style={}`, automatic class sorting, and overflow/truncation patterns.
 - [Responsive Design and Touch Targets](./styling/responsive-design-and-touch-targets.md) — mobile-first breakpoints, container queries, and the 44×44px minimum tap target.
 - [Content Visibility, Font Loading, and Fluid Typography](./styling/content-visibility-fonts-and-typography.md) — never hide content on mobile, `next/font` usage, and `clamp()` for smooth text scaling.
-- [Applying the Implementation Workflow](./styling/applying-the-implementation-workflow.md) — the three-stage make-it-work/right/fast approach applied to styling.
 
 ## Principles Implemented/Respected
 
@@ -36,3 +25,13 @@ CSS and Tailwind v4 conventions for all frontend applications in the open-sharia
 
 - [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) — Design token values must meet the WCAG AA contrast ratios defined there. The `@theme` block is the authoritative place to enforce this.
 - [Indentation Convention](../../conventions/formatting/indentation.md) — All CSS and TSX code examples in this document use 2-space indentation (language-appropriate for CSS and TypeScript/JSX).
+
+## Applying the Implementation Workflow
+
+Follow the three-stage [Implementation Workflow](../workflow/implementation.md) when building or refactoring styles:
+
+1. **Make it work** — Apply utility classes directly in TSX. Hard-code values if it gets you to a working component faster.
+2. **Make it right** — Extract repeated class combinations into a shared component or a `cva` variant definition. Move one-off overrides out of inline styles and into utilities.
+3. **Make it fast** — Audit and remove unused design tokens; eliminate `!important` overrides; consolidate duplicate `@layer base` blocks.
+
+Do not extract patterns in Stage 1. Copy-pasting class strings across components is acceptable while the design is still evolving.

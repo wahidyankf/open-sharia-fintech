@@ -1,5 +1,4 @@
 ---
-title: "Steps 1-2: Maker and Checker"
 description: Documents the maker step (manual/AI-assisted guide creation) and the checker step (validation against in-the-field standards) of the in-the-field quality gate.
 when_to_use: Use when creating or updating in-the-field production guides, or when running/interpreting the apps-ayokoding-www-in-the-field-checker agent.
 ---

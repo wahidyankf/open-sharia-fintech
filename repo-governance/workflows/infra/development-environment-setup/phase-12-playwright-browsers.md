@@ -1,5 +1,4 @@
 ---
-title: "Phase 12: Playwright Browsers (Sequential)"
 description: "Phase 12: install Playwright's Chromium, Firefox, and WebKit browsers required by all E2E test projects."
 when_to_use: "Use when setting up or repairing Playwright browsers for E2E tests."
 ---

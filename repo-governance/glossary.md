@@ -1,15 +1,6 @@
 ---
-title: "Glossary"
 description: Shared vocabulary for the repository — the terms whose scope is genuinely disputed, defined once so contributors and agents mean the same thing.
 when_to_use: Use when a term's scope is in question, when a rule's reach is being argued, or when writing governance prose that leans on one of these terms.
-category: explanation
-subcategory: governance
-tags:
-  - governance
-  - glossary
-  - conventions
-  - agents
-created: 2026-08-16
 ---
 
 # Glossary

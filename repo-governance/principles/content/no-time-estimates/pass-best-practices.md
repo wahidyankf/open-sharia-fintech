@@ -1,13 +1,5 @@
 ---
-title: "PASS: Best Practices"
 description: Practices for describing outcomes, using coverage percentages, completion criteria, and headings over time blocks.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - no-time-estimates
-  - learning
-created: 2025-12-15
 when_to_use: Use as a checklist when writing outcome-focused educational content.
 ---
 

@@ -1,14 +1,5 @@
 ---
-title: "Workload Classes and Supervision"
 description: Which workload class a command takes, and what HIPPO sheds first when the host is under critical pressure.
-category: explanation
-subcategory: development
-tags:
-  - resource-management
-  - parallelism
-  - development
-  - tooling
-created: 2026-09-05
 when_to_use: Use when choosing between the ephemeral, service, and transactional classes, or when a run was shed.
 ---
 

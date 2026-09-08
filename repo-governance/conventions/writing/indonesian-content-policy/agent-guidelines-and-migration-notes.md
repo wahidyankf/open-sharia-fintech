@@ -1,16 +1,6 @@
 ---
-title: "Indonesian Content Policy — Agent Guidelines and Migration Notes"
 description: How content-creation and validation agents apply the English-first policy, and the 2026-02-07 removal of mirror-translated tutorials that established this policy.
 when_to_use: Use when an ayokoding-www content or validation agent needs its default language behaviour, or to see the history behind this policy's establishment.
-category: explanation
-subcategory: conventions
-tags:
-  - ayokoding-www
-  - indonesian
-  - bilingual
-  - content-policy
-  - translation
-created: 2026-02-07
 ---
 
 # Agent Guidelines and Migration Notes

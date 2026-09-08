@@ -1,5 +1,4 @@
 ---
-title: "Phase A — Discover Every Trace of This Plan: Per-Repo Probes and Persistence"
 description: Covers Phase A steps A2 and A3 — the ordered six-item per-repo probe list, and persisting raw findings to the takeover-report as they're gathered.
 when_to_use: Use when running the ordered per-repo discovery probes, or when deciding what to log to the takeover-report during discovery.
 ---

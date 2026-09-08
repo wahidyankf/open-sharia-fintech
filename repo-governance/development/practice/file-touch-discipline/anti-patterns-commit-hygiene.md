@@ -1,16 +1,5 @@
 ---
-title: "File-Touch Discipline — Anti-Patterns: Commit Hygiene"
 description: Three anti-patterns that break commit hygiene - vague-prose ledgers, orphan sync commits, and hand-editing a generated mirror
-category: explanation
-subcategory: development
-tags:
-  - git
-  - safety
-  - concurrency
-  - ai-agents
-  - compaction
-  - discipline
-created: 2026-08-01
 when_to_use: Use when writing ledger entries or deciding how to commit a primary binding directory edit and its generated mirrors.
 ---
 

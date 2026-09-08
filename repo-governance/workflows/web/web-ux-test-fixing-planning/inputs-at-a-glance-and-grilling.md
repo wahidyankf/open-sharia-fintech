@@ -1,5 +1,4 @@
 ---
-title: "Web UX Test-Fixing Planning — Inputs at a Glance and Grilling"
 description: "Summarizes every workflow input in a quick-reference table, then documents exactly which decision points must be grilled with the user via AskUserQuestion."
 when_to_use: "Use when checking a specific input's default/requirement, or when confirming which decisions this workflow always asks the user about rather than assumes."
 ---

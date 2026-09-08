@@ -1,17 +1,6 @@
 ---
-title: "Diátaxis Principles for Tutorials"
 description: "Defines what makes documentation a tutorial under the Diátaxis framework and contrasts tutorials with how-to guides, reference, and explanation."
 when_to_use: "Read when deciding whether content should be written as a tutorial versus a how-to guide, reference, or explanation."
-category: explanation
-subcategory: conventions
-tags:
-  - tutorials
-  - diataxis
-  - learning
-  - pedagogy
-  - documentation
-  - teaching
-created: 2025-12-03
 ---
 
 # Diátaxis Principles for Tutorials

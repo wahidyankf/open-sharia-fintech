@@ -1,15 +1,5 @@
 ---
-title: "Seven Grey-Zone Rulings"
 description: "The tie-breaker pre-resolved for seven recurring cases."
-category: explanation
-subcategory: development
-tags:
-  - pr-review
-  - governance
-  - agents
-  - quality-gates
-  - boundary-rules
-created: 2026-07-23
 when_to_use: "Use for a recurring grey-zone finding-ownership question."
 ---
 

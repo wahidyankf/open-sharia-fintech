@@ -1,15 +1,5 @@
 ---
-title: "Operating Budgets — Authoring and Propagating Repository Rules"
 description: "Covers the operating-budget rule for authoring and propagating repository-wide rule changes."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - workflow
-  - orchestration
-created: 2025-11-23
 when_to_use: Use when a rule change needs to be authored and propagated across the repository, or to find the workflow that rule work enters through.
 ---
 

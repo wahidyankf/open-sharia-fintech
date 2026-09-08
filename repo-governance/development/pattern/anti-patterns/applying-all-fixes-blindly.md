@@ -1,10 +1,5 @@
 ---
-title: "Anti-Pattern 3: Applying All Fixes Blindly"
 description: "A fixer applies every finding without assessing confidence, risking incorrect automated changes."
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: "Use when reviewing fixer logic that applies findings without a confidence check."
 ---
 

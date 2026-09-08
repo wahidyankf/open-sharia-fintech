@@ -1,29 +1,6 @@
 ---
-name: rules-quality-gate
-title: "rules-quality-gate"
 description: "Read-only governance gate producing one semantic verdict on a proposed or effective repository rule state, handing every finding to rules-propagation."
-when_to_use: "Use only when the user explicitly names this gate or unambiguously directs its semantic rule audit."
-goal: Produce one read-only semantic verdict for one proposed or effective repository rule state
-termination: "PASS_NO_CHANGE or PASS_EFFECTIVE; every finding hands off to rules-propagation and is reported through its terminal result"
-inputs:
-  - name: mode
-    type: enum
-    values: [PROPOSAL, EFFECTIVE]
-    description: Compare a requested outcome against current rules, or evaluate the repository after propagation edits
-    required: true
-  - name: outcome
-    type: string
-    description: The requested rule outcome and its rationale
-    required: true
-outputs:
-  - name: verdict
-    type: enum
-    values: [PASS_NO_CHANGE, PASS_EFFECTIVE]
-    description: The only terminal results this gate can produce
-  - name: ledger
-    type: file
-    pattern: local-tmp/repo-rules/rules-quality-gate__*__ledger.md
-    description: The frozen finding ledger handed to propagation
+when_to_use: "Use when the user explicitly names this gate, unambiguously directs its semantic rule audit, or rules-grooming reaches its Step 8."
 ---
 
 # Rules Quality Gate
@@ -36,10 +13,10 @@ any non-passing finding.
 
 ## Authorization
 
-Run only when the user explicitly names this gate or unambiguously directs its semantic audit.
-Never infer authorization from a rule change, a review request, a propagation run, or another
-workflow. Propagation in particular must not call this gate: that edge was removed so the two
-workflows form an acyclic pair.
+Two triggers only: an explicit user instruction naming this gate, or
+[rules-grooming](./rules-grooming.md) at its Step 8 in `EFFECTIVE` mode. Never infer authorization
+from a rule change, a review request, a propagation run, or any other workflow. Propagation must
+not call this gate; the grooming edge does not restore that removed cycle.
 
 ## Modes, Snapshot, and Ledger
 
@@ -61,7 +38,8 @@ snapshot, mode, ledger, evidence, and result across compaction or handoff.
 ## Procedure
 
 1. Inspect only the affected rule, its points of use, relevant higher authority, and directly
-   overlapping guidance. Never audit unrelated governance.
+   overlapping guidance. Never audit unrelated governance. Under a grooming invocation the affected
+   set is that run's manifest — wider than one rule, still bounded.
 2. Complete the semantic audit below without editing.
 3. In `PROPOSAL`, return `PASS_NO_CHANGE` when current effective meaning already satisfies the
    request. In `EFFECTIVE`, run the shared
@@ -79,8 +57,25 @@ therefore end only in `PASS_NO_CHANGE` or `PASS_EFFECTIVE`. It never repairs a r
 or authorizes commit and push. Propagation owns any input, conflict, input-change, or tooling
 blocker it cannot resolve.
 
+## Goal and Termination
+
+**Goal**: Produce one read-only semantic verdict for one proposed or effective repository rule state
+
+**Termination**: PASS_NO_CHANGE or PASS_EFFECTIVE; every finding hands off to rules-propagation and is reported through its terminal result
+
+## Inputs
+
+- **`mode`** (enum: PROPOSAL, EFFECTIVE, required) — Compare a requested outcome against current rules, or evaluate the repository after propagation edits
+- **`outcome`** (string, required) — The requested rule outcome and its rationale
+
+## Outputs
+
+- **`verdict`** (enum: PASS_NO_CHANGE, PASS_EFFECTIVE) — The only terminal results this gate can produce
+- **`ledger`** (file, pattern `local-tmp/repo-rules/rules-quality-gate__*__ledger.md`) — The frozen finding ledger handed to propagation
+
 ## Contents
 
+- [Authorization and Sanctioned Callers](./rules-quality-gate/authorization-and-callers.md) — who may start it, and how wide a grooming invocation reaches.
 - [Sufficiency and Ownership](./rules-quality-gate/sufficiency-and-ownership.md) — what a passing rule asserts, and what this gate must not re-check.
 - [Semantic Audit](./rules-quality-gate/semantic-audit.md) — the nine decisions of step 2.
 - [Execution and Delegation](./rules-quality-gate/execution-and-delegation.md) — the read-only `rules-checker` sweep.

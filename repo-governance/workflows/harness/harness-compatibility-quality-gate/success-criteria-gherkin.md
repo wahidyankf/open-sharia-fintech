@@ -1,5 +1,4 @@
 ---
-title: "Success Criteria (Gherkin) — Part 1"
 description: Gherkin scenarios for lifecycle delegation, external research, evidence invalidation, and catalog updates.
 when_to_use: Use when verifying or testing this workflow's Phase 0/Phase 1 and fixer-update behaviour against its acceptance criteria.
 ---

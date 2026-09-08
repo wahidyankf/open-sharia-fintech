@@ -1,5 +1,4 @@
 ---
-title: "Vercel MCP Capability Convention"
 description: "The Vercel MCP server is an assumed capability for plans touching a Vercel-deployed surface, probed at planning time and again at execution Phase 0"
 when_to_use: "Read this index to find the right Vercel MCP Capability Convention child document."
 ---

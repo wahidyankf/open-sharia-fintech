@@ -1,13 +1,5 @@
 ---
-title: "Vision Supported"
 description: Explains how documentation-first advances the project's democratization vision.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - documentation
-  - knowledge-transfer
-created: 2025-12-28
 when_to_use: Use when justifying documentation work against the project's mission.
 ---
 

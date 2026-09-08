@@ -1,15 +1,5 @@
 ---
-title: "Principles and Conventions Implemented"
 description: The principles and companion conventions the worktree and artifact cleanup gate implements and respects.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - worktree
-  - cleanup
-  - parallelism
-created: 2026-07-20
 when_to_use: Use when tracing why the worktree and artifact cleanup gate exists back to the principles and conventions it respects.
 ---
 

@@ -1,14 +1,5 @@
 ---
-title: "Purpose and Scope"
 description: Why this convention exists, its target audience, and exactly what it covers versus what it defers to companion conventions.
-category: explanation
-subcategory: development
-tags:
-  - ci
-  - github-actions
-  - rate-limiting
-  - monitoring
-  - workflow
 when_to_use: Use when checking whether a CI-monitoring question is in scope for this convention or belongs to a companion convention instead.
 ---
 

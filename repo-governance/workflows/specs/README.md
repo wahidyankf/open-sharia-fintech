@@ -1,11 +1,6 @@
 ---
-title: "Specs Workflows"
 description: Workflows for checking that specifications remain coherent, complete, and actionable
 when_to_use: Use when routing to a workflow that validates specs/ structural completeness, accuracy, or cross-spec coherence.
-category: explanation
-subcategory: workflows
-tags: []
-created: 2026-05-12
 ---
 
 # Specs Workflows

@@ -1,5 +1,4 @@
 ---
-title: "Step 4 — Automatic Rule-Impact Handoff"
 description: Defines how plan authoring detects rule impact and requires a complete repository-local rules-propagation outcome in delivery.md.
 when_to_use: Use while assembling the plan-maker handoff whenever planned behaviour or file impacts may change repo rules or enforcement.
 ---

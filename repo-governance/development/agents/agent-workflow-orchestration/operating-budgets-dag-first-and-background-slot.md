@@ -1,15 +1,5 @@
 ---
-title: "Operating Budgets — DAG-First Orchestration and Background-Slot Preference"
 description: "Covers DAG-first orchestration and the preference for background slots over serial execution."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - workflow
-  - orchestration
-created: 2025-11-23
 when_to_use: Use when sequencing dependent work or deciding whether to run a task in the background.
 ---
 

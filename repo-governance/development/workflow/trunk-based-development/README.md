@@ -1,5 +1,4 @@
 ---
-title: "Trunk Based Development Convention"
 description: "Git workflow using Trunk Based Development (TBD) for continuous integration and rapid delivery"
 when_to_use: "Read this index to find the right Trunk Based Development Convention child document."
 ---

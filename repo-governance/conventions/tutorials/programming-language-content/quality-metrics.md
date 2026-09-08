@@ -1,15 +1,5 @@
 ---
-title: "Quality Metrics"
 description: "Quantitative line-count and diagram benchmarks plus qualitative requirements that all programming language content must meet."
-category: explanation
-subcategory: conventions
-tags:
-  - programming-languages
-  - ayokoding
-  - tutorials
-  - education
-  - content-standards
-created: 2025-12-18
 when_to_use: "Use when measuring a piece of programming language content against its minimum/target/exceptional length benchmarks or checking qualitative compliance."
 ---
 

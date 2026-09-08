@@ -1,15 +1,5 @@
 ---
-title: By-Example Tutorial Convention
 description: Standards for creating code-first by-example tutorials with 95% coverage, self-contained examples, and educational annotations
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - education
-  - code-first
-created: 2025-12-25
 when_to_use: "Read before creating or reviewing SWE by-example tutorial content (code-first, 75-85 annotated examples) for any programming language or framework."
 ---
 

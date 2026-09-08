@@ -1,5 +1,4 @@
 ---
-title: "Component Patterns Convention"
 description: "Standards for building UI components with CVA variants, Radix primitives, and React patterns"
 when_to_use: "Read this index to find the right Component Patterns Convention child document."
 ---

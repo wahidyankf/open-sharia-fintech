@@ -1,5 +1,4 @@
 ---
-title: "Specs Quality Gate — Execution Mode and Scope"
 description: "Explains how to invoke the specs quality-gate workflow (agent delegation vs manual orchestration), and clarifies exactly which folders and content types it validates."
 when_to_use: "Use when deciding whether to run this workflow via agent delegation or manual orchestration, or to confirm what falls inside or outside its validation scope."
 ---

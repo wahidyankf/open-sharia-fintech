@@ -1,5 +1,4 @@
 ---
-title: "Execution Mode"
 description: Explains that the calling context, not a dedicated plan-executor agent, directly orchestrates plan execution.
 when_to_use: Use when orienting to who runs plan execution and why there is no dedicated plan-executor agent.
 ---

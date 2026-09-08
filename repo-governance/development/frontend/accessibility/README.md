@@ -1,5 +1,4 @@
 ---
-title: "Accessibility Convention"
 description: "WCAG AA requirements for UI components — focus management, ARIA attributes, reduced motion, form controls, and keyboard navigation for frontend applications"
 when_to_use: "Read this index to find the right Accessibility Convention child document."
 ---

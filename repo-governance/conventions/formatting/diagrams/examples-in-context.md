@@ -1,18 +1,6 @@
 ---
-title: "Examples in Context"
 description: "Shows four worked examples of diagrams used in real documentation contexts (API docs, README, tutorial, AGENTS.md)."
 when_to_use: "Use when you want to see a diagram format applied in a realistic documentation context before writing your own."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Examples in Context

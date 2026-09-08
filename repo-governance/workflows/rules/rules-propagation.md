@@ -1,46 +1,6 @@
 ---
-name: rules-propagation
-title: "rules-propagation"
 description: "Places newly-stated rules on the correct surface — instruction surface first, governance layers below — de-conflicting, deduplicating, arming enforcement."
 when_to_use: "Use when a decided rule must be written into the repository, or an existing rule superseded."
-goal: Land every stated rule correctly, contradicting nothing, retaining no unjustified duplicate, carrying an enforcement disposition
-termination: "No-op verified, or PR green with every rule placed and dispositioned; halts on an unfalsifiable rule or a higher-layer conflict"
-inputs:
-  - name: rules
-    type: string
-    description: "Rules as free prose, normalized at Step 0"
-    required: true
-  - name: max-concurrency
-    type: number
-    description: "Concurrent background agents — the N in the N+1 model"
-    required: false
-    default: 3
-  - name: isolation
-    type: enum
-    values: [current, dedicated]
-    description: "Use the caller's tree, or create a worktree for the run"
-    required: false
-    default: current
-  - name: dry-run
-    type: boolean
-    description: "Emit the manifest and conflict report, write nothing"
-    required: false
-    default: false
-outputs:
-  - name: placement-manifest
-    type: file
-    pattern: local-tmp/rules-propagation/rules-propagation__*__manifest.md
-    description: "Subject inventory with per-surface verdict, canonical home or replacement, keep rationale; plus placement, layer, enforcement, supersessions"
-  - name: final-status
-    type: enum
-    values: [no-op, landed, halted, partial]
-    description: Terminal state of the run
-  - name: pr-url
-    type: string
-    description: PR opened by the run
-  - name: sibling-obligation
-    type: string
-    description: "Obligation naming the sibling repository, or an explicit none"
 ---
 
 # Repository Rules Propagation Workflow
@@ -65,6 +25,26 @@ experience” cannot become merely “new engineer” for brevity.
 Agents composed: `.claude/agents/repo/rules-maker.md` and `rules-checker`. There is no
 `rules-fixer`: propagation is the sole writer of every rule edit. It never invokes
 `rules-quality-gate`, which hands work to propagation and is never called back.
+
+## Goal and Termination
+
+**Goal**: Land every stated rule correctly, contradicting nothing, retaining no unjustified duplicate, carrying an enforcement disposition
+
+**Termination**: No-op verified, or PR green with every rule placed and dispositioned; halts on an unfalsifiable rule or a higher-layer conflict
+
+## Inputs
+
+- **`rules`** (string, required) — Rules as free prose, normalized at Step 0
+- **`max-concurrency`** (number, optional, default `3`) — Concurrent background agents — the N in the N+1 model
+- **`isolation`** (enum: current, dedicated, optional, default `current`) — Use the caller's tree, or create a worktree for the run
+- **`dry-run`** (boolean, optional, default `false`) — Emit the manifest and conflict report, write nothing
+
+## Outputs
+
+- **`placement-manifest`** (file, pattern `local-tmp/rules-propagation/rules-propagation__*__manifest.md`) — Subject inventory with per-surface verdict, canonical home or replacement, keep rationale; plus placement, layer, enforcement, supersessions
+- **`final-status`** (enum: no-op, landed, halted, partial) — Terminal state of the run
+- **`pr-url`** (string) — PR opened by the run
+- **`sibling-obligation`** (string) — Obligation naming the sibling repository, or an explicit none
 
 ## Contents
 

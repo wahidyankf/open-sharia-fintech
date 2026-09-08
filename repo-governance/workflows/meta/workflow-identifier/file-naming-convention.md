@@ -1,14 +1,5 @@
 ---
-title: "File Naming Convention"
 description: Workflow files use plain kebab-case names (no prefix) in the subdirectory that encodes their category.
-category: explanation
-subcategory: workflows
-tags:
-  - workflows
-  - agents
-  - orchestration
-  - patterns
-created: 2025-12-23
 when_to_use: Use when naming a new workflow file or its subdirectory location.
 ---
 

@@ -1,15 +1,5 @@
 ---
-title: "Standard 2: Direct Push Modes Are Explicit Selections, Not Inferred — and Are Repo-Restricted"
 description: Per-repository availability of direct-push modes and the explicit selection signals required for the sole private main-to-origin-main IaC or CI-IaC exceptions.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - push
-  - trunk-based-development
-  - ai-agents
-created: 2026-04-25
 when_to_use: Use when a plan or invocation might call for pushing directly to origin main, to confirm the repository allows it and a valid selection signal is present.
 ---
 

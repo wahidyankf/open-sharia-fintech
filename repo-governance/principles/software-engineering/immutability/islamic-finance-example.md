@@ -1,15 +1,5 @@
 ---
-title: "Islamic Finance Example"
 description: Walks through a Murabaha profit-distribution contract implemented with mutable versus immutable state to show the audit-trail difference.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - functional-programming
-  - immutability
-  - data-structures
-  - concurrency
-created: 2025-12-28
 when_to_use: Use when implementing or reviewing Islamic finance calculation logic that must produce an auditable, Shariah-compliant history of state changes.
 ---
 

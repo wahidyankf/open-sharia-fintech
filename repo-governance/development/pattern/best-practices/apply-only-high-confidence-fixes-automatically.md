@@ -1,10 +1,5 @@
 ---
-title: "Practice 4: Apply Only HIGH Confidence Fixes Automatically"
 description: "Fixers should skip MEDIUM confidence and FALSE_POSITIVE findings."
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: "Use when reviewing fixer logic that decides which findings to auto-apply."
 ---
 

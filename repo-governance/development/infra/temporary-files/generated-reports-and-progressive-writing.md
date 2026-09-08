@@ -1,10 +1,5 @@
 ---
-title: "Directory Purposes — generated-reports/ and Progressive Writing Requirement"
 description: What generated-reports/ is for under the intent test, and why checker agents must write progressively.
-category: explanation
-subcategory: development
-tags: [temporary-files, ai-agents, file-organization, best-practices]
-created: 2025-12-01
 when_to_use: Use when deciding whether an artifact belongs in generated-reports/ or local-tmp/.
 ---
 

@@ -1,12 +1,5 @@
 ---
-title: "Future Evolution"
 description: Potential future layers, skill-growth patterns, and growth expectations
-category: explanation
-subcategory: architecture
-tags:
-  - architecture
-  - governance
-created: 2026-02-09
 when_to_use: Use when considering a structural change against the anticipated growth path.
 ---
 

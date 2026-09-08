@@ -1,15 +1,5 @@
 ---
-title: "Example from This Repository"
 description: Demonstrates this repository's own Volta pinning, committed lockfile, documented setup, and automated git hooks as evidence of reproducibility.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - reproducibility
-  - environment
-  - determinism
-  - version-pinning
-created: 2025-12-28
 when_to_use: Use when pointing to a concrete, working example of reproducibility already applied in this repository.
 ---
 

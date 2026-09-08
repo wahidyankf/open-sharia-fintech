@@ -1,15 +1,5 @@
 ---
-title: "Weight System Explanation"
 description: "How to compute Hugo navigation weights for programming language content, based on directory depth and per-parent weight ranges."
-category: explanation
-subcategory: conventions
-tags:
-  - programming-languages
-  - ayokoding
-  - tutorials
-  - education
-  - content-standards
-created: 2025-12-18
 when_to_use: "Use when assigning or auditing the `weight` frontmatter value for a folder's `_index.md` or a content file in the programming-language content tree."
 ---
 

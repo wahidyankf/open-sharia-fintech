@@ -1,5 +1,4 @@
 ---
-title: "Learning-Plan `syllabus/` Folder Convention"
 description: "Defines the learning-bearing plan trigger, the required syllabus/courses + syllabus/paths folder layout, measured section tiering, the copy-paste course template, corpus disposition, and the custody rule for learning-path plans in plans/"
 when_to_use: "Read this index to find the right Learning-Plan `syllabus/` Folder Convention child document."
 ---

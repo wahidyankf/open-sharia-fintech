@@ -1,5 +1,4 @@
 ---
-title: "PR Review Cycle — Pipeline Diagrams"
 description: "The two Mermaid diagrams for this workflow: the Participants flowchart (scout to fan-out to coordinator to fixer to CI) and the Loop Algorithm sequence diagram for one cycle."
 when_to_use: "Use when you need the visual pipeline shape rather than the prose description — e.g. onboarding someone to the review pipeline's actor flow."
 ---

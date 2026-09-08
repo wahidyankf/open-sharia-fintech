@@ -1,15 +1,5 @@
 ---
-title: "Target Naming Standards — Canonical Target Reference (E2E and Utility Targets)"
 description: The canonical target-name reference table for the remaining targets — E2E UI/report variants, dev/start/run, and codegen/docs/install/clean — with purpose and when-required columns.
-category: explanation
-subcategory: development
-tags:
-  - nx
-  - targets
-  - project-json
-  - build
-  - scripts
-created: 2026-02-23
 when_to_use: Use when checking whether an E2E, server, or utility target name already exists in the canonical vocabulary before adding a new one to project.json.
 ---
 

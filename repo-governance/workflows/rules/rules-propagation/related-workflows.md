@@ -1,5 +1,4 @@
 ---
-title: "Related Workflows"
 description: What runs before this workflow, what it composes, and what it hands off to.
 when_to_use: Use when deciding whether propagation is the right workflow, or what should follow it.
 ---

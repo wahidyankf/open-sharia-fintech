@@ -1,16 +1,6 @@
 ---
-title: "Vocabulary Map"
 description: The table of vendor-specific terms and their vendor-neutral equivalents to use when rewriting governance prose.
 when_to_use: Use when rewriting governance prose and you need the vendor-neutral replacement for a specific vendor term.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - governance
-  - vendor-independence
-  - agents
-  - platform-bindings
-created: 2026-05-02
 ---
 
 # Vocabulary Map

@@ -1,5 +1,4 @@
 ---
-title: "Stage Resolution"
 description: Explains how the plan-establishment workflow resolves the target-stage input into the resolved <plan-dir> path, and when to use each stage.
 when_to_use: Use when determining whether a new plan should land in plans/in-progress/ or plans/backlog/, or when checking that both stages stop at plan creation.
 ---

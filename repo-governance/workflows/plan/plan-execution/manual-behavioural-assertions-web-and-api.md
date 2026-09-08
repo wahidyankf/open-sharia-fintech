@@ -1,5 +1,4 @@
 ---
-title: "Manual Behavioural Assertions — Web UI and API Verification"
 description: Defines the mandatory post-CI manual verification of web UI changes via Playwright MCP and API changes via curl.
 when_to_use: Use when a phase touches web UI or API code and its behaviour must be manually verified before proceeding.
 ---

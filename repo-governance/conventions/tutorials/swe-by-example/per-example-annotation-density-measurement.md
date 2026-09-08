@@ -1,15 +1,5 @@
 ---
-title: "Self-Containment Rules: Per-Example Annotation Density Measurement"
 description: "Clarifies that annotation density is measured per individual example rather than as a file average, and gives the validation and content-creation approach."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - education
-  - code-first
-created: 2025-12-25
 when_to_use: "Read when validating or creating example content, to confirm density must be checked per example and not averaged across a file."
 ---
 

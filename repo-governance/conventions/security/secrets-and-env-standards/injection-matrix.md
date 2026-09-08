@@ -1,17 +1,6 @@
 ---
-title: "Injection Matrix"
 description: The full table mapping each app type and deploy stage to its injection platform, injection home, and value owner, plus the two load-bearing boundaries it implies.
 when_to_use: Use when you need to know exactly which platform and environment owns a given app's env values at a specific deploy stage.
-category: explanation
-subcategory: conventions
-tags:
-  - security
-  - secrets
-  - env-files
-  - guard-env-file-access
-  - naming
-  - reproducibility
-created: 2026-06-10
 ---
 
 # Injection Matrix

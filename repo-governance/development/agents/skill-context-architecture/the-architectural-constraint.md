@@ -1,14 +1,5 @@
 ---
-title: "The Architectural Constraint"
 description: "Explains the core limitation on Skill context and its impact on agent skills."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - agent-skills
-  - architecture
-  - development
-created: 2025-11-23
 when_to_use: Use when a Skill needs to spawn or delegate work and you must check whether its context mode allows it.
 ---
 

@@ -1,16 +1,5 @@
 ---
-title: "Tools and Automation"
 description: "The agents and checks that enforce feature-change completeness."
-category: explanation
-subcategory: development
-tags:
-  - feature-completeness
-  - specs
-  - contracts
-  - testing
-  - documentation
-  - quality
-created: 2026-04-04
 when_to_use: "Use when locating the automated check for a feature-completeness violation."
 ---
 

@@ -1,17 +1,9 @@
 ---
-title: "Applicability and Finding Disposition"
 description: When the PR-review specialist disciplines run at all, and how code-related vs LOW findings are disposed.
-category: explanation
-subcategory: development
-tags:
-  - pr-review
-  - governance
-  - agents
-  - quality-gates
-  - boundary-rules
-created: 2026-07-23
 when_to_use: Use when deciding whether a PR is eligible for specialist review, or how a LOW-severity finding should be recorded.
 ---
+
+# Applicability and Finding Disposition
 
 - [Cost/Noise Control: Shared-Context Extract-Once (D13)](.././pr-review-disciplines/cost-control-noise-control-mechanics-shared-context-extract-once.md) — Extracting shared PR context once, and large-diff handling. Use when a large diff needs shared-context handling.
 - [Cost/Noise Control: SUPPRESS Blocks and D14](.././pr-review-disciplines/cost-control-noise-control-mechanics-suppress-blocks-and-instruction-decay-specialist.md) — Per-specialist SUPPRESS blocks, and the instruction-decay specialist. Use when scoping a specialist's SUPPRESS block.

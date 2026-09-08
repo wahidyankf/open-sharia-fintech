@@ -1,15 +1,6 @@
 ---
-title: "Nested Directory Linking"
 description: How to calculate the correct number of ../ segments for a relative link based on file nesting depth, with a depth reference table and worked patterns.
 when_to_use: Use when writing a relative link between files at different nesting depths and you need to count the correct number of ../ segments.
-category: explanation
-subcategory: conventions
-tags:
-  - linking
-  - markdown
-  - conventions
-  - github-compatibility
-created: 2025-11-22
 ---
 
 # Nested Directory Linking

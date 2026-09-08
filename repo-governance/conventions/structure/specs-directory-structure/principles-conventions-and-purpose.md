@@ -1,19 +1,6 @@
 ---
-title: "Specs Directory Structure: Principles, Conventions, and Purpose"
 description: The core principles and sibling conventions this directory-structure convention implements, and why the canonical corpus layout exists
 when_to_use: Read this when you need the rationale behind the specs/ directory layout or which sibling conventions it implements.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - specs
-  - gherkin
-  - directory-structure
-  - organization
-  - c4-diagrams
-  - openapi
-  - c4
-created: 2026-04-02
 ---
 
 # Principles, Conventions, and Purpose

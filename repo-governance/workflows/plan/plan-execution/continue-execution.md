@@ -1,5 +1,4 @@
 ---
-title: "Continue Execution"
 description: Defines the finding-remediation execution loop that delegates each validation finding to the correct specialized agent.
 when_to_use: Use when a validation report returns findings that must be fixed before re-validation.
 ---

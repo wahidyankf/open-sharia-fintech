@@ -1,13 +1,5 @@
 ---
-title: "Agent Delegation Mode (Preferred)"
 description: Defines Agent Delegation mode — invoking specialized agents via the Agent tool with subagent_type so file changes persist to the filesystem.
-category: explanation
-subcategory: workflows
-tags:
-  - workflows
-  - execution-mode
-  - orchestration
-created: 2026-01-05
 when_to_use: Use when a workflow step references a named agent that exists as a defined delegated agent type and the step requires persistent file changes.
 ---
 

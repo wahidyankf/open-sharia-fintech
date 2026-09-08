@@ -1,15 +1,5 @@
 ---
-title: "Whole-Tree Staging Is Forbidden"
 description: Why staging the entire working tree is forbidden on a shared machine, every forbidden spelling of it, and the explicit-paths procedure to use instead.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - safety
-  - worktree
-  - parallelism
-created: 2026-07-20
 when_to_use: Use before running git add or git commit -a, to confirm you are staging only paths you can account for.
 ---
 

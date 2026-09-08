@@ -1,5 +1,4 @@
 ---
-title: "4. Apply Pedagogical Fixes (Sequential, Conditional)"
 description: "Step 4: invokes docs-tutorial-fixer, sequenced after docs-fixer, to fix pedagogical/tutorial-structure issues."
 when_to_use: "Use when implementing or debugging the pedagogical-fix application step."
 ---

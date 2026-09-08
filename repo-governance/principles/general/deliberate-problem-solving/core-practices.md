@@ -1,13 +1,5 @@
 ---
-title: "Core Practices"
 description: Lists the four core practices of deliberate problem-solving - stating assumptions, presenting interpretations, suggesting simpler approaches, and stopping when unclear.
-category: explanation
-subcategory: principles
-tags:
-  - problem-solving
-  - communication
-  - clarity
-created: 2026-01-29
 when_to_use: Use when looking for the concrete Do/Don't practices that operationalize deliberate problem-solving.
 ---
 

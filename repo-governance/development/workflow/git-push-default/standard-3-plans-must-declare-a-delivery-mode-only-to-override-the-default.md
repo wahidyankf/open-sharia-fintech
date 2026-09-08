@@ -1,15 +1,5 @@
 ---
-title: "Standard 3: Plans Must Declare a Delivery Mode Only to Override the Default"
 description: When plan-maker adds a Delivery Mode field, what plan-checker flags, and how plan-quality-gate and plan-execution resolve the mode.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - push
-  - trunk-based-development
-  - ai-agents
-created: 2026-04-25
 when_to_use: Use when authoring, checking, or fixing a plan's `## Delivery Mode` field.
 ---
 

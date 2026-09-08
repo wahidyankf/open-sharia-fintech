@@ -1,15 +1,5 @@
 ---
-title: "Implementation Guidelines for Checker Agents"
 description: "Decision tree and writing pattern for checkers."
-category: explanation
-subcategory: development
-tags:
-  - criticality
-  - validation
-  - checker-agents
-  - fixer-agents
-  - quality-assurance
-created: 2025-12-27
 when_to_use: "Use when implementing a checker agent's logic."
 ---
 

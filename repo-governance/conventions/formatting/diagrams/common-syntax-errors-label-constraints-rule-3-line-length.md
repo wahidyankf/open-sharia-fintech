@@ -1,18 +1,6 @@
 ---
-title: "Common Mermaid Syntax Errors: Label Constraints — Rule 3, Maximum Line Length"
 description: "Documents Rule 3: the 20-character maximum line length constraint for Mermaid labels, with examples."
 when_to_use: "Use when a Mermaid label is too long and you need the exact line-length limit and how to shorten it."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Common Mermaid Syntax Errors: Label Constraints — Rule 3, Maximum Line Length
@@ -21,7 +9,7 @@ Both node label lines (each segment between `<br/>` tags) and edge label strings
 
 Count every character including spaces, colons, slashes, and Unicode.
 
-**Note**: `rhino-cli md mermaid validate` enforces ≤ **30** raw characters per `<br/>`-split line (Mermaid's `wrappingWidth` baseline). Use `--max-label-len 20` for stricter validation to guard against rendering clipping in some environments.
+**Enforcement**: two registry gates cover this rule. `md-mermaid` runs repo-wide at the validator's `--max-label-len` default of **30** — Mermaid's `wrappingWidth` baseline, a backstop rather than this rule. `md-mermaid-strict` runs at **20** over changed `.md` files only, so every new or edited diagram meets Rule 3 while the legacy corpus ratchets in as it is touched. A green `md-mermaid` run alone does not prove Rule 3 compliance.
 
 **Safe examples (≤20 chars):**
 

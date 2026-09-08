@@ -1,15 +1,5 @@
 ---
-title: "Domain-Specific vs Universal Criteria"
 description: "Universal vs domain-specific confidence criteria."
-category: explanation
-subcategory: development
-tags:
-  - fixer-agents
-  - confidence-levels
-  - validation
-  - automation
-  - quality-assurance
-created: 2025-12-14
 when_to_use: "Use when writing confidence criteria for a new fixer."
 ---
 

@@ -1,16 +1,6 @@
 ---
-title: "Complete Section Example: Goroutines and Concurrency"
 description: "Shows a full production-reference example section (title, diagram, narrative, code) demonstrating the recommended By-Concept structure."
 when_to_use: "Read when you need a worked reference example of a complete By-Concept section's opening parts before writing your own."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-concept
-  - education
-  - narrative-driven
-created: 2026-01-30
 ---
 
 # Complete Section Example: Goroutines and Concurrency

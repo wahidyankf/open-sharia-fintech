@@ -1,16 +1,6 @@
 ---
-title: "Programming Language Docs Separation: Scope for All Languages and Alignment with SE Principles"
 description: Confirms this convention applies to every current and future repository language, and how docs/explanation/ style guides must align with the five software engineering principles
 when_to_use: Read this when adding a new programming language's style guide, or verifying a style guide aligns with the repository's software engineering principles.
-category: explanation
-subcategory: conventions
-tags:
-  - documentation
-  - programming-languages
-  - style-guides
-  - content-separation
-  - dry-principle
-created: 2026-02-04
 ---
 
 # Scope for All Programming Languages, and Alignment with Software Engineering Principles

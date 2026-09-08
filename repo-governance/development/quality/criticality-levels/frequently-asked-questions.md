@@ -1,15 +1,5 @@
 ---
-title: "Frequently Asked Questions"
 description: "FAQ about the criticality-level system."
-category: explanation
-subcategory: development
-tags:
-  - criticality
-  - validation
-  - checker-agents
-  - fixer-agents
-  - quality-assurance
-created: 2025-12-27
 when_to_use: "Use for a quick answer about this system."
 ---
 

@@ -1,16 +1,5 @@
 ---
-title: "Soft-Delete Query Discipline"
 description: "All queries against audited tables must filter out soft-deleted rows unless the endpoint is an explicit admin/audit endpoint."
-category: explanation
-subcategory: development
-tags:
-  - database
-  - audit-trail
-  - soft-delete
-  - dbup
-  - ef-core
-  - migrations
-created: 2026-03-09
 when_to_use: "Use when writing a query against an audited table and deciding whether to filter deleted_at."
 ---
 

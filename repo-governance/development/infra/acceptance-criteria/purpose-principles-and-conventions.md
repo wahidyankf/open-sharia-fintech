@@ -1,14 +1,5 @@
 ---
-title: "Purpose, Principles, and Conventions"
 description: Why acceptance criteria matter and which core principles and documentation conventions they implement.
-category: explanation
-subcategory: development
-tags:
-  - acceptance-criteria
-  - gherkin
-  - testing
-  - requirements
-created: 2025-12-07
 when_to_use: Use when orienting to why this convention exists or checking which principles and conventions acceptance criteria are expected to implement.
 ---
 

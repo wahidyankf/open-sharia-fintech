@@ -1,5 +1,4 @@
 ---
-title: "Gherkin Success Criteria"
 description: Three Gherkin scenarios covering the no-manifest-touch guarantee, functional-hold surfacing, and checkpoint decline.
 when_to_use: Use when verifying or testing this workflow's observable behaviour against its acceptance criteria.
 ---

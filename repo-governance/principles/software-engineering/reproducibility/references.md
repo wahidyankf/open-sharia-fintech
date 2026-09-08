@@ -1,15 +1,5 @@
 ---
-title: "References"
 description: Lists external references on version management tools, dependency locking, containerization, and build reproducibility.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - reproducibility
-  - environment
-  - determinism
-  - version-pinning
-created: 2025-12-28
 when_to_use: Use when seeking further reading on version manager tooling or reproducible build practices.
 ---
 

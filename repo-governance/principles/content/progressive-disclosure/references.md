@@ -1,13 +1,5 @@
 ---
-title: "References"
 description: External references on UX progressive disclosure, cognitive load, and documentation structure.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - progressive-disclosure
-  - user-experience
-created: 2025-12-15
 when_to_use: Use when seeking authoritative external sources on progressive disclosure as a UX principle.
 ---
 

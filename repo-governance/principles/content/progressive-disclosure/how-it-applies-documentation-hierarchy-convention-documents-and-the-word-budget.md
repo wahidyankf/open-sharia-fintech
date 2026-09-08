@@ -1,13 +1,5 @@
 ---
-title: "How It Applies — Documentation Hierarchy, Convention Documents, and the Word Budget"
 description: Progressive structure in document sections, convention documents, and the governance word budget.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - progressive-disclosure
-  - complexity-management
-created: 2025-12-15
 when_to_use: Use when structuring a document's sections or trimming a governance file to fit its word budget.
 ---
 

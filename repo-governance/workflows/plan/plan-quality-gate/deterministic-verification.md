@@ -1,5 +1,4 @@
 ---
-title: "Deterministic Verification"
 description: The canonical tooling a governance gate runs once per cycle and consumes without reproducing.
 when_to_use: Use at step 4 of the plan quality gate, or the effective-mode verification of the rules quality gate.
 ---

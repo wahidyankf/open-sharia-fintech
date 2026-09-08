@@ -1,17 +1,6 @@
 ---
-title: "GitHub Environment Key Registry"
 description: The table of which vars./secrets. keys each named GitHub environment ({group}-app-local, {group}-app-staging) holds, and the rule for omitting an empty environment.
 when_to_use: Use when adding a new GitHub Environment secret or var, or checking which environment a CI job should read a key from.
-category: explanation
-subcategory: conventions
-tags:
-  - security
-  - secrets
-  - env-files
-  - guard-env-file-access
-  - naming
-  - reproducibility
-created: 2026-06-10
 ---
 
 # GitHub Environment Key Registry

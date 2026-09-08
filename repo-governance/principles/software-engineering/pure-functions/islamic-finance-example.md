@@ -1,15 +1,5 @@
 ---
-title: "Islamic Finance Example"
 description: Walks through a Mudharabah profit-distribution calculation implemented with impure versus pure functions to show the verifiability difference.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - functional-programming
-  - pure-functions
-  - testability
-  - determinism
-created: 2025-12-28
 when_to_use: Use when implementing Islamic finance profit-sharing logic that must be independently verifiable.
 ---
 

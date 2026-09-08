@@ -1,15 +1,5 @@
 ---
-title: "Operating Budgets — CI and GitHub Actions Monitoring Cadence"
 description: "Defines the cadence for monitoring CI and GitHub Actions while an orchestrated task runs."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - workflow
-  - orchestration
-created: 2025-11-23
 when_to_use: Use when deciding how often to poll CI status during an orchestrated multi-step task.
 ---
 

@@ -1,5 +1,4 @@
 ---
-title: "Step 3: Fix (Agent Delegation)"
 description: How in-threshold findings are routed to the matching swe-*-dev agent and what every fix must ship with.
 when_to_use: Use when applying fixes for findings surfaced by the API quality gate tester.
 ---

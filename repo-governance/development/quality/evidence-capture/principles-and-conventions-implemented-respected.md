@@ -1,17 +1,5 @@
 ---
-title: "Principles and Conventions Implemented/Respected"
 description: "Principles and conventions this convention implements."
-category: explanation
-subcategory: development
-tags:
-  - evidence
-  - testing
-  - screenshots
-  - plans
-  - verification
-  - locale
-  - manual-testing
-created: 2026-06-20
 when_to_use: "Use when tracing this convention to the principles/conventions behind it."
 ---
 

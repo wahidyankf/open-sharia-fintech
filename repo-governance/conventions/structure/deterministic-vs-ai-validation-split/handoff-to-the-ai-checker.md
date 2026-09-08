@@ -1,16 +1,6 @@
 ---
-title: "Handoff to the AI Checker"
 description: How the AI checker consumes the deterministic preflight's JSON envelope, skips redundant work, and degrades gracefully when the preflight is unavailable.
 when_to_use: Use when wiring or debugging how the AI checker consumes the deterministic preflight's output.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - governance
-  - validation
-  - quality-gate
-  - automation
-created: 2026-08-13
 ---
 
 # Handoff to the AI Checker

@@ -1,17 +1,5 @@
 ---
-title: "What plan-execution-checker Validates"
 description: "What the plan-execution-checker agent inspects in captured evidence."
-category: explanation
-subcategory: development
-tags:
-  - evidence
-  - testing
-  - screenshots
-  - plans
-  - verification
-  - locale
-  - manual-testing
-created: 2026-06-20
 when_to_use: "Use when you need to know what evidence the plan-execution-checker gate inspects."
 ---
 

@@ -1,5 +1,4 @@
 ---
-title: "Execution"
 description: "Defines the pinned-head inspection and sanitized review phases."
 when_to_use: "Use when running or implementing the focused review."
 ---

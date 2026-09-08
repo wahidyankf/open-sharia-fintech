@@ -1,14 +1,6 @@
 ---
-title: "Tutorial Conventions"
 description: Standards for creating learning-oriented tutorial content
 when_to_use: Use when authoring, reviewing, or scoping any tutorial content and need to find the convention for its type (by-concept, by-example, cookbook, in-the-field, etc.).
-category: explanation
-tags:
-  - index
-  - conventions
-  - tutorials
-  - education
-created: 2026-01-30
 ---
 
 # Tutorial Conventions

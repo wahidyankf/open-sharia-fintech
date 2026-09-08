@@ -1,14 +1,5 @@
 ---
-title: "Relationship to AGENTS.md — Division, Maintenance, and Isolation"
 description: "Defines the division of responsibilities between AGENTS.md and individual agents, AGENTS.md maintenance standards, and the agent isolation and delivery pattern."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when deciding whether new guidance belongs in AGENTS.md or in an individual agent definition.
 ---
 

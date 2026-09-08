@@ -1,15 +1,5 @@
 ---
-title: "Immutability Over Mutability"
 description: Prefer immutable data structures over mutable state for safer, more predictable code
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - functional-programming
-  - immutability
-  - data-structures
-  - concurrency
-created: 2025-12-28
 when_to_use: Use when deciding whether to model data as mutable or immutable, or when reviewing code for accidental mutation.
 ---
 

@@ -1,16 +1,6 @@
 ---
-title: "Structure Integration with General Tutorial Standards"
 description: "Explains how By-Concept tutorials adapt the general tutorial structure into introduction, concept sections, hands-on elements, and summary/next-steps."
 when_to_use: "Read when mapping general tutorial structure requirements onto a By-Concept tutorial's four-part layout."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-concept
-  - education
-  - narrative-driven
-created: 2026-01-30
 ---
 
 # Structure Integration with General Tutorial Standards

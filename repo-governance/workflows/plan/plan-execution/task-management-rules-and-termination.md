@@ -1,5 +1,4 @@
 ---
-title: "Task Management Rules"
 description: Restates the task-creation, status-update, checkbox-ticking, and never-skip rules, plus the plan's termination criteria.
 when_to_use: Use as a compact reference for task-list discipline rules and the pass/partial/fail termination criteria.
 ---

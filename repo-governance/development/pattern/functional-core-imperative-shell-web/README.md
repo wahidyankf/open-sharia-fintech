@@ -1,5 +1,4 @@
 ---
-title: "Functional Core / Imperative Shell — Web Apps"
 description: "The architecture pattern for Next.js web apps — every feature module splits into a pure functional core and an effectful imperative shell under src/features/<name>/{core,shell}/"
 when_to_use: "Read this index to find the right Functional Core / Imperative Shell — Web Apps child document."
 ---

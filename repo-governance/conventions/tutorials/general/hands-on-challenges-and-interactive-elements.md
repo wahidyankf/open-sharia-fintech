@@ -1,17 +1,6 @@
 ---
-title: "Hands-On Elements Requirements: Challenges and Interactive Elements"
 description: "Defines the end-of-tutorial Challenges structure and the interactive elements (checkpoints, reflection, prediction questions) used throughout."
 when_to_use: "Read when writing the Challenges section or adding checkpoints, reflection prompts, or prediction questions to a tutorial."
-category: explanation
-subcategory: conventions
-tags:
-  - tutorials
-  - diataxis
-  - learning
-  - pedagogy
-  - documentation
-  - teaching
-created: 2025-12-03
 ---
 
 # Hands-On Elements Requirements: Challenges and Interactive Elements

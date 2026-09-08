@@ -1,5 +1,4 @@
 ---
-title: "Step 4: Verification"
 description: Rebuilds and redeploys once, then verifies original findings and smoke-tests affected API behaviour.
 when_to_use: Use when verifying a fix after Step 3 has been applied.
 ---

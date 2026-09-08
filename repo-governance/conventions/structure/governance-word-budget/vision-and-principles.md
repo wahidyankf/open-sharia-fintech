@@ -1,16 +1,6 @@
 ---
-title: "Governance Word-Budget Convention — Vision and Principles"
 description: Vision alignment, principles implemented, and related conventions for the governance word-budget gate.
 when_to_use: Use when you need the rationale (vision/principles) behind the word-budget convention, or its list of related conventions.
-category: explanation
-subcategory: conventions
-tags:
-  - instruction-files
-  - agents-md
-  - word-budget
-  - governance
-  - rhino-cli
-created: 2026-06-27
 ---
 
 # Governance Word-Budget Convention — Vision and Principles

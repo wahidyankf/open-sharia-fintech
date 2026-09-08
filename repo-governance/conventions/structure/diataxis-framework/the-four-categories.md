@@ -1,15 +1,6 @@
 ---
-title: "The Four Categories"
 description: Purpose, characteristics, example use cases, and in-project location for each of the four Diátaxis categories (Tutorials, How-To, Reference, Explanation).
 when_to_use: Use when deciding which of the four Diátaxis categories a piece of documentation belongs in.
-category: explanation
-subcategory: conventions
-tags:
-  - diataxis
-  - documentation-framework
-  - organization
-  - conventions
-created: 2025-11-22
 ---
 
 # The Four Categories

@@ -1,5 +1,4 @@
 ---
-title: "Trustworthy Measurement"
 description: "Before a number is allowed to justify a decision, prove the command produced it, prove it measures the path that actually runs, and prove the metric responds to the thing being changed"
 when_to_use: "Read this index to find the right Trustworthy Measurement child document."
 ---

@@ -1,17 +1,6 @@
 ---
-title: "FP-Variant Multi-Language Convention — Examples: PASS Idiomatic F# and Clojure Side-by-Side"
 description: A full compliant worked example — discriminated union with pattern matching in F# versus a multimethod in Clojure — with cross-paradigm annotations.
 when_to_use: Use as a template when writing a new compliant FP-variant example, or to see what a passing S1-S6 example looks like end to end.
-category: explanation
-subcategory: conventions
-tags:
-  - fp
-  - clojure
-  - fsharp
-  - by-example
-  - ayokoding-www
-  - tutorial
-created: 2026-05-17
 ---
 
 # Examples: PASS Idiomatic F# and Clojure Side-by-Side

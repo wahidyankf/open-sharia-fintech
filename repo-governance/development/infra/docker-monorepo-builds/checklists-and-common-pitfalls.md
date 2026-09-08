@@ -1,15 +1,5 @@
 ---
-title: "Checklists and Common Pitfalls"
 description: Checklists for adding a new libs/* dependency or shared library, plus the four most common Docker monorepo build pitfalls and their fixes.
-category: explanation
-subcategory: development/infra
-tags:
-  - docker
-  - monorepo
-  - npm-workspaces
-  - build
-  - node_modules
-created: 2026-03-28
 when_to_use: Use when adding a new shared library dependency to an app's Dockerfile, creating a new shared library, or diagnosing a recurring Docker build failure.
 ---
 

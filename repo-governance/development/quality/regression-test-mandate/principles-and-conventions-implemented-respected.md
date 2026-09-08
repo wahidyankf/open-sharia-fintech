@@ -1,16 +1,5 @@
 ---
-title: "Principles and Conventions Implemented/Respected"
 description: "Principles and conventions this mandate implements."
-category: explanation
-subcategory: development
-tags:
-  - regression
-  - testing
-  - bug-fix
-  - quality
-  - gherkin
-  - specs
-created: 2026-06-22
 when_to_use: "Use when tracing this mandate to the principles/conventions behind it."
 ---
 

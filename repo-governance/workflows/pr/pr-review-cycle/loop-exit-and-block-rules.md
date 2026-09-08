@@ -1,5 +1,4 @@
 ---
-title: "PR-Review Cycle — Loop-Exit and Block Rules"
 description: "The seven rules governing clean exit, paired delivery, non-convergence learning, and ceiling blocking — including correction-record freeze, disposition carry-forward, and CI-wait discipline."
 when_to_use: "Use when determining whether the loop should exit, keep iterating, or block, or when writing a non-convergence learning entry."
 ---

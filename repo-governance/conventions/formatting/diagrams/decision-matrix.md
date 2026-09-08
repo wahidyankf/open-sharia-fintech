@@ -1,18 +1,6 @@
 ---
-title: "Decision Matrix"
 description: "Provides a quick-reference decision matrix for choosing the right diagram format."
 when_to_use: "Use when you need a fast lookup table to pick a diagram format instead of reading the full rationale."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Decision Matrix

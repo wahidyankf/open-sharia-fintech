@@ -1,5 +1,4 @@
 ---
-title: "Phase D — Per-Plan Full Lifecycle and Failure Isolation"
 description: Covers D1-D4 of Phase D — the full per-plan lifecycle arc, byte-identity propagation as a unit, quarantine on failure, and inherited per-plan Knowledge Capture.
 when_to_use: Use when driving one plan through its full lifecycle inside a multi-plan run, or handling a node failure without cascading it to independent plans.
 ---

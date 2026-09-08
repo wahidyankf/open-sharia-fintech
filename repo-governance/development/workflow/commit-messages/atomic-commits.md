@@ -1,14 +1,5 @@
 ---
-title: "Atomic Commits"
 description: What makes a commit atomic — self-contained, functional, single-purpose, and reversible — with a worked example.
-category: explanation
-subcategory: development
-tags:
-  - conventional-commits
-  - git
-  - development
-  - code-quality
-created: 2025-11-24
 when_to_use: Use when checking whether a commit is atomic before finalizing it.
 ---
 

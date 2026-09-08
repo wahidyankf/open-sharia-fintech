@@ -1,14 +1,5 @@
 ---
-title: "Trustworthy Measurement — Rule 1: Prove the Command Ran"
 description: A timing harness reports elapsed time whether or not the measured command executed - assert exit code and output, not just duration, and watch for shell builtin-transform traps
-category: explanation
-subcategory: development
-tags:
-  - measurement
-  - benchmarking
-  - false-zero
-  - critical-path
-created: 2026-08-09
 when_to_use: Use before trusting any timing number from a benchmark harness or shell loop.
 ---
 

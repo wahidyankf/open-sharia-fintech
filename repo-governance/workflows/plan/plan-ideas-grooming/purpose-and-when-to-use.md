@@ -1,5 +1,4 @@
 ---
-title: "Purpose and When to Use"
 description: What this backlog-grooming workflow does to plans/ideas/, and the two-condition recurrence trigger that governs when to run it.
 when_to_use: Use when deciding whether a repo's plans/ideas/ is due for a grooming sweep.
 ---

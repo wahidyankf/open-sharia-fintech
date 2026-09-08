@@ -1,12 +1,5 @@
 ---
-title: "Overview"
 description: What each governance layer answers and how traceability flows
-category: explanation
-subcategory: architecture
-tags:
-  - architecture
-  - governance
-created: 2026-02-09
 when_to_use: Use when orienting to what each layer is for.
 ---
 

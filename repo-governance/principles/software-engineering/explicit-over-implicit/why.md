@@ -1,14 +1,5 @@
 ---
-title: "Why"
 description: Benefits of explicit configuration and problems with implicit configuration.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - explicit-configuration
-  - transparency
-  - clarity
-created: 2025-12-15
 when_to_use: Use when justifying why code or config should be made explicit.
 ---
 

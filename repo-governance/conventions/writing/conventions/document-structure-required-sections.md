@@ -1,15 +1,6 @@
 ---
-title: "Convention Document Structure — Required Sections"
 description: The required frontmatter, introduction, Principles Implemented/Respected, Purpose, Scope, and Standards sections every convention document must include.
 when_to_use: Use when drafting a new convention document and assembling its mandatory sections.
-category: explanation
-subcategory: conventions
-tags:
-  - meta
-  - conventions
-  - standards
-  - documentation
-created: 2025-12-07
 ---
 
 # Convention Document Structure — Required Sections
@@ -20,26 +11,21 @@ All convention documents SHOULD follow this structure. This page defines the req
 
 ```yaml
 ---
-title: "Convention Name"
 description: Brief description of what this convention covers
-category: explanation
-subcategory: conventions
-tags:
-  - relevant
-  - tags
-created: YYYY-MM-DD
+when_to_use: Use when <the specific situation this convention governs>.
 ---
 ```
 
 **Requirements:**
 
-- Title uses Title Case and includes "Convention" for clarity
+- Exactly these two keys. Every file under `repo-governance/` carries `description` and
+  `when_to_use` and nothing else; a third key is a validation failure
 - Description is 1-2 sentences explaining the convention's purpose
-- Category is always `explanation`
-- Subcategory is always `conventions`
-- Tags help with discoverability (3-5 tags)
-- `created` uses `YYYY-MM-DD` (date-only)
-- No `updated:` field — git history is the authoritative change record, per [No Manual Date Metadata Convention](../../structure/no-date-metadata.md)
+- `when_to_use` states the situation that should send a reader here, starting with "Use when"
+- The document's title is its H1, and its identifier is its filename stem — neither is restated
+  in frontmatter
+- No `created:` or `updated:` field — git history is the authoritative change record, per
+  [No Manual Date Metadata Convention](../../structure/no-date-metadata.md)
 
 ## 2. Introduction (H1 + opening paragraph)
 

@@ -1,16 +1,5 @@
 ---
-title: "Anti-Patterns: AP-12 - AP-14"
 description: "Completeness, concept-sweep, validator-invocation fabrication."
-category: explanation
-subcategory: development
-tags:
-  - plans
-  - ai-agents
-  - factual-validation
-  - anti-hallucination
-  - web-research
-  - verification
-created: 2026-05-03
 when_to_use: "Use as a checklist for AP-12 - AP-14."
 ---
 

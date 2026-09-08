@@ -1,15 +1,5 @@
 ---
-title: "False Positive Feedback Loop: Example (part 1)"
 description: "A worked feedback-loop example: initial state through fixer report."
-category: explanation
-subcategory: development
-tags:
-  - fixer-agents
-  - confidence-levels
-  - validation
-  - automation
-  - quality-assurance
-created: 2025-12-14
 when_to_use: "Use for the first half of a worked feedback-loop example."
 ---
 

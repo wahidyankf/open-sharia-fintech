@@ -1,15 +1,5 @@
 ---
-title: "Validation, References, and Principles"
 description: How to validate a Docker monorepo build locally and in CI, related references, and the principles and conventions this pattern implements.
-category: explanation
-subcategory: development/infra
-tags:
-  - docker
-  - monorepo
-  - npm-workspaces
-  - build
-  - node_modules
-created: 2026-03-28
 when_to_use: Use when verifying a Docker build before pushing, or when tracing this convention back to the principles and conventions it implements.
 ---
 

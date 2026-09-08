@@ -1,14 +1,5 @@
 ---
-title: "Agent-Skill Separation — When to Use agent skills vs. Agent Content"
 description: "Defines when to use agent skills versus inline agent content, and what belongs in each."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when deciding whether new knowledge should live in an agent skill or directly in an agent's body.
 ---
 

@@ -1,13 +1,5 @@
 ---
-title: "Principle"
 description: States the three inseparable ideas of root cause orientation - root causes not symptoms, minimal impact, and the senior engineer standard.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - root-cause
-  - senior-engineer
-created: 2026-03-09
 when_to_use: Use when you need the one-sentence statement of this principle to cite or apply.
 ---
 

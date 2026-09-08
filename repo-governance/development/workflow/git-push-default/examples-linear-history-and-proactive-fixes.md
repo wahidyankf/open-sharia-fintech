@@ -1,15 +1,5 @@
 ---
-title: "Examples — Linear History and Proactive Fixes"
 description: PASS and FAIL examples of maintaining linear history before a push, and a PASS example of proactively fixing a preexisting delivery-mode mismatch.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - push
-  - trunk-based-development
-  - ai-agents
-created: 2026-04-25
 when_to_use: Use when checking whether a push sequence kept linear history, or whether a preexisting checklist mismatch was fixed rather than deferred.
 ---
 

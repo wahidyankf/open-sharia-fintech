@@ -1,13 +1,5 @@
 ---
-title: "Governance Test and Delivery Mechanisms Comparison"
 description: Checklist for whether a mechanism governs agents, plus a delivery-mechanism comparison
-category: explanation
-subcategory: architecture
-tags:
-  - architecture
-  - governance
-  - agent-skills
-created: 2026-02-09
 when_to_use: Use when deciding if a new mechanism counts as governance.
 ---
 

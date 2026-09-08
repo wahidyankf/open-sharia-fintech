@@ -1,5 +1,4 @@
 ---
-title: "Phase A — Frozen Scope Recovery"
 description: "Persists a multi-plan run's enumerated scope and promotion states so resume cannot silently redefine the run."
 when_to_use: "Use after resolving multi-plan scope and before promoting any backlog member, or when resuming that run."
 ---

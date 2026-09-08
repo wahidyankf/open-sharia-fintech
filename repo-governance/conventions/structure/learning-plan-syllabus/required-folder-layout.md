@@ -1,16 +1,6 @@
 ---
-title: "Required Folder Layout"
 description: The syllabus/README.md, syllabus/courses/, and syllabus/paths/ structure every learning-bearing plan must carry, and which per-subfolder READMEs are grandfathered versus required.
 when_to_use: Read this when scaffolding a new corpus's syllabus folder or checking an existing one for a missing required file.
-category: explanation
-subcategory: conventions
-tags:
-  - plans
-  - syllabus
-  - learning-bearing
-  - custody
-  - governance
-created: 2026-07-22
 ---
 
 # Required Folder Layout

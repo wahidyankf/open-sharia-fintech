@@ -1,5 +1,4 @@
 ---
-title: "Surface-Conditional Tester Gates"
 description: Routes a plan's surface (UI, API/backend, CLI/library, or no reachable behaviour) to the quality gates its delivery checklist must run, and explains why the three UI gates are complementary.
 when_to_use: Use when deciding at plan-authoring time which quality gates a plan's delivery checklist must carry for the surfaces it changes.
 ---

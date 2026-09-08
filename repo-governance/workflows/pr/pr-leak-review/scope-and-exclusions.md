@@ -1,5 +1,4 @@
 ---
-title: "Scope and Exclusions"
 description: "Defines the three leak categories, exclusions, and canonical rule sources."
 when_to_use: "Use when deciding whether a candidate is a real leak."
 ---

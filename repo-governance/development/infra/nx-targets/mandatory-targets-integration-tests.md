@@ -1,10 +1,5 @@
 ---
-title: "Projects with Integration Tests"
 description: "Applicability and runtime contract for local-resource Integration targets"
-category: explanation
-subcategory: development
-tags: [nx, targets, integration-testing]
-created: 2026-02-23
 when_to_use: "Use when implementing or reviewing test:integration."
 ---
 

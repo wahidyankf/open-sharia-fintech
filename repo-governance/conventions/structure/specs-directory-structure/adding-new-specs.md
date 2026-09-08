@@ -1,19 +1,6 @@
 ---
-title: "Adding New Specs"
 description: Step-by-step procedures for adding a feature file to an existing project, scaffolding specs for a brand-new project, or scaffolding specs for a new library
 when_to_use: Read this when adding a Gherkin feature file, onboarding a new app's specs, or onboarding a new library's specs.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - specs
-  - gherkin
-  - directory-structure
-  - organization
-  - c4-diagrams
-  - openapi
-  - c4
-created: 2026-04-02
 ---
 
 # Adding New Specs

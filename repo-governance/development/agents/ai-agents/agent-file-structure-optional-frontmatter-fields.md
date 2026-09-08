@@ -1,14 +1,5 @@
 ---
-title: "Agent File Structure — Optional Frontmatter Fields"
 description: "Defines optional frontmatter fields an agent definition may include beyond the required set."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - conventions
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when deciding whether to add an optional frontmatter field to an agent.
 ---
 

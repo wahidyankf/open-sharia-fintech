@@ -1,14 +1,5 @@
 ---
-title: "Anti-Patterns — Running Serially and Monolithic Chunks"
 description: "Covers running background work serially and assigning monolithic chunks to a single agent."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - subagents
-  - orchestration
-  - development
-created: 2025-11-23
 when_to_use: Use when reviewing whether work was needlessly serialized or a chunk was too large for one agent.
 ---
 

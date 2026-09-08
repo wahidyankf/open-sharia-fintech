@@ -1,15 +1,5 @@
 ---
-title: "Tag Convention — Tags, Examples, and Anti-Patterns"
 description: The current per-project tag table, two worked tag-declaration examples, and the tag anti-patterns to avoid.
-category: explanation
-subcategory: development
-tags:
-  - nx
-  - targets
-  - project-json
-  - build
-  - scripts
-created: 2026-02-23
 when_to_use: Use when copying an existing project's tag set as a template or checking a new tag set against known anti-patterns.
 ---
 

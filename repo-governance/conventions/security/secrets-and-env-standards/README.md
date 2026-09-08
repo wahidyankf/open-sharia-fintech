@@ -1,5 +1,4 @@
 ---
-title: "Secrets and Environment-Variable Standards"
 description: "The authoritative hub for how this repository handles secrets and environment variables — naming convention, layout, annotation format, startup validation, tooling (rhino-cli env family), tiered injection standard (env-injection: section in repo-config.yml), storage tiers, and the env-contract drift guard."
 when_to_use: "Read this index to find the right Secrets and Environment-Variable Standards child document."
 ---
@@ -26,4 +25,3 @@ when_to_use: "Read this index to find the right Secrets and Environment-Variable
 - [Tiered Env Files — the `APP_ENV` Contract](./tiered-env-files-the-app-env-contract.md) — How an app selects its runtime tier via APP_ENV and loads exactly one .env.<tier> file, the fallback rule for a missing tier file, and the local/test/stag/prod agent-access table.
 - [Content-Fixture Exclusion](./content-fixture-exclusion.md) — The dotfile-shaped rule that lets a non-dotfile <word>.env course fixture under apps/<app>/content/\*\* bypass guard-env-file-access.
 - [Content-Fixture Exclusion — Enforcement Surfaces](./content-fixture-exclusion-enforcement-surfaces.md) — Which surface (hook, settings.json, opencode.json, Codex config, staged-guard) carries the content-fixture exclusion, the Codex glob gotcha, and the accepted residual gap for non-dotfile real env files.
-- [IaC Forward Scaffold](./iac-forward-scaffold.md) — Why Terraform and Ansible surfaces are documented as commented-out forward scaffolds in the env-contract section until IaC is added.

@@ -1,16 +1,5 @@
 ---
-title: "Delegation and Validation Rituals"
 description: "Delegating to specialized agents; per-agent validation rituals."
-category: explanation
-subcategory: development
-tags:
-  - plans
-  - ai-agents
-  - factual-validation
-  - anti-hallucination
-  - web-research
-  - verification
-created: 2026-05-03
 when_to_use: "Use when deciding whether to delegate research."
 ---
 

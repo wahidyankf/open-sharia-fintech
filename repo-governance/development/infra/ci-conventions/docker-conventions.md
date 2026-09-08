@@ -1,10 +1,5 @@
 ---
-title: "Docker Conventions"
 description: The Dockerfile template, compose file roles, and .dockerignore pattern.
-category: explanation
-subcategory: development
-tags: [ci-cd, docker]
-created: 2026-03-31
 when_to_use: Use when writing a Dockerfile, compose file, or .dockerignore.
 ---
 

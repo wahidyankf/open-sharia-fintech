@@ -1,16 +1,6 @@
 ---
-title: "Post-Mortem Convention: No Secrets Rule, Diagrams, and Examples"
 description: The hard no-secrets requirement for post-mortems, guidance for using accessible Mermaid diagrams, and worked filename and action-item table examples
 when_to_use: Read this when redacting sensitive values from a post-mortem, adding a diagram, or checking a filename or action-item table against PASS/FAIL examples.
-category: explanation
-subcategory: conventions
-tags:
-  - post-mortem
-  - incidents
-  - blameless
-  - reliability
-  - structure
-created: 2026-06-05
 ---
 
 # No Secrets Rule, Diagrams, and Examples

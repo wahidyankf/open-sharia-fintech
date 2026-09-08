@@ -1,17 +1,6 @@
 ---
-title: "Scope"
 description: "Defines what the general Tutorial Convention covers and does not cover, and where it applies across the repository."
 when_to_use: "Read when determining whether a question about tutorials is answered by this convention or a type-specific one."
-category: explanation
-subcategory: conventions
-tags:
-  - tutorials
-  - diataxis
-  - learning
-  - pedagogy
-  - documentation
-  - teaching
-created: 2025-12-03
 ---
 
 # Scope

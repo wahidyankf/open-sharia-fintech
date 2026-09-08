@@ -1,15 +1,5 @@
 ---
-title: "Verification Checklist"
 description: "The checklist to verify an offload preserved all content."
-category: explanation
-subcategory: development
-tags:
-  - content-preservation
-  - condensation
-  - offload
-  - zero-loss
-  - documentation
-created: 2025-12-14
 when_to_use: "Use after performing an offload, to verify nothing was lost."
 ---
 

@@ -1,5 +1,4 @@
 ---
-title: "Simplicity Over Complexity"
 description: "Choose the smallest responsible change that satisfies the outcome and all applicable rules without unnecessary lasting mechanisms"
 when_to_use: "Read this index to find the right Simplicity Over Complexity child document."
 ---

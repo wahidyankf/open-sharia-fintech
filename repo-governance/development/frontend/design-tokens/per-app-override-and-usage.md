@@ -1,15 +1,5 @@
 ---
-title: "Design Tokens — Per-App Override and Usage"
 description: How an app imports shared tokens and declares brand overrides in its own globals.css, and referencing tokens through Tailwind utility classes rather than raw CSS property access
-category: explanation
-subcategory: development/frontend
-tags:
-  - design-tokens
-  - css
-  - tailwind
-  - theming
-  - dark-mode
-created: 2026-03-28
 when_to_use: Use when a new app needs to declare its brand token overrides, or when writing component markup that consumes tokens.
 ---
 

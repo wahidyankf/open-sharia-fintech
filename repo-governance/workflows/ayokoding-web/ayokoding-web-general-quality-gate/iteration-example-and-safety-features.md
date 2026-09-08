@@ -1,5 +1,4 @@
 ---
-title: "Iteration Example and Safety Features"
 description: Walks through a typical two-iteration execution flow, then documents loop-prevention, convergence, false-positive, and error-recovery safety mechanisms.
 when_to_use: Use as a worked reference for a typical run, or when you need to understand how the workflow protects against runaway iteration.
 ---

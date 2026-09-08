@@ -1,17 +1,6 @@
 ---
-title: ".env.example Annotation Format"
 description: The required comment-block format preceding every env var line in a .env.example template — REQUIRED/OPTIONAL, type, description, and placeholder rules.
 when_to_use: Use when adding or editing a line in any apps/<app>/.env.example file.
-category: explanation
-subcategory: conventions
-tags:
-  - security
-  - secrets
-  - env-files
-  - guard-env-file-access
-  - naming
-  - reproducibility
-created: 2026-06-10
 ---
 
 # .env.example Annotation Format

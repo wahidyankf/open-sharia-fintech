@@ -1,16 +1,6 @@
 ---
-title: "Programming Language Docs Separation: Principles, Purpose, and Scope"
 description: Why this convention exists, the principles it implements, and what it covers versus what it explicitly does not cover
 when_to_use: Read this when you need the rationale for splitting programming-language documentation between docs/explanation/ and ayokoding-www, or to confirm whether a topic is in scope.
-category: explanation
-subcategory: conventions
-tags:
-  - documentation
-  - programming-languages
-  - style-guides
-  - content-separation
-  - dry-principle
-created: 2026-02-04
 ---
 
 # Principles, Purpose, and Scope

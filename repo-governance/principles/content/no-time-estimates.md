@@ -1,15 +1,5 @@
 ---
-title: "No Time Estimates"
 description: People work and learn at vastly different speeds - focus on outcomes and deliverables, not arbitrary time constraints
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - no-time-estimates
-  - learning
-  - productivity
-  - outcomes
-created: 2025-12-15
 when_to_use: Use when deciding whether content should describe outcomes instead of a time-to-complete estimate.
 ---
 
@@ -32,6 +22,33 @@ People work and learn at **vastly different speeds**. Focus on **outcomes and de
 
 ## Reference
 
-- [Relationship to Other Principles](./no-time-estimates/relationship-to-other-principles.md) — How No Time Estimates relates to Progressive Disclosure, Accessibility First, and Simplicity Over Complexity. Use when tracing how this principle interacts with other governance principles.
-- [Related Conventions](./no-time-estimates/related-conventions.md) — Links to the tutorial and content-quality conventions that enforce this principle. Use when looking for the specific conventions that enforce this principle's rules.
-- [References](./no-time-estimates/references.md) — External references on learning science, educational psychology, and outcome-focused documentation. Use when seeking authoritative external sources on self-paced learning.
+## Related Conventions
+
+- [Tutorial Naming Convention](../../conventions/tutorials/naming.md) - Coverage percentages, not time estimates
+- [Tutorial Convention](../../conventions/tutorials/general.md) - Outcome-focused tutorial structure
+- [Content Quality Principles](../../conventions/writing/quality.md) - Explicit no-time-estimates rule
+
+## Relationship to Other Principles
+
+- [Progressive Disclosure](./progressive-disclosure.md) - Learn at your own pace through progressive levels
+- [Accessibility First](./accessibility-first.md) - Inclusive of different learning speeds
+- [Simplicity Over Complexity](../general/simplicity-over-complexity.md) - Simple outcomes, not complex schedules
+
+## References
+
+**Learning Science**:
+
+- [Spaced Repetition](https://en.wikipedia.org/wiki/Spaced_repetition) - Learning over time
+- [Deliberate Practice](<https://en.wikipedia.org/wiki/Practice_(learning_method)#Deliberate_practice>) - Anders Ericsson
+- [Growth Mindset](https://en.wikipedia.org/wiki/Mindset#Fixed_and_growth_mindset) - Carol Dweck
+
+**Educational Psychology**:
+
+- [Self-Paced Learning](https://www.edutopia.org/article/self-paced-learning) - Benefits of individual pacing
+- [Mastery Learning](https://en.wikipedia.org/wiki/Mastery_learning) - Benjamin Bloom
+- [Zone of Proximal Development](https://en.wikipedia.org/wiki/Zone_of_proximal_development) - Lev Vygotsky
+
+**Documentation Best Practices**:
+
+- [Write the Docs: Learning-Oriented Documentation](https://www.writethedocs.org/guide/writing/beginners-guide-to-docs/) - Focus on outcomes
+- [Diátaxis Framework](https://diataxis.fr/) - Tutorial structure without time constraints

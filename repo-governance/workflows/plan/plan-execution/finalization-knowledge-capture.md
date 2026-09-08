@@ -1,5 +1,4 @@
 ---
-title: "Finalization and Archival — Knowledge Capture Gate"
 description: Defines the mandatory Knowledge Capture pre-archival gate requiring every learnings.md entry to reach a terminal state.
 when_to_use: Use when confirming every learnings.md entry reached a terminal state before archival.
 ---

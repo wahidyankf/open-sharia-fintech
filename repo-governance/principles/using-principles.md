@@ -1,12 +1,5 @@
 ---
-title: "Using These Principles"
 description: Process guidance for applying core principles when creating conventions, making decisions, or reviewing changes
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - process
-created: 2025-12-15
 when_to_use: Use when creating a new convention or practice, resolving a conflict between principles, or reviewing a change for principle alignment.
 ---
 

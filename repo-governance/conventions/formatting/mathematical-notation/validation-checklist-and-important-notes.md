@@ -1,16 +1,6 @@
 ---
-title: "Validation Checklist and Important Notes"
 description: The pre-commit LaTeX validation checklist, plus notes on browser compatibility, rendering performance, accessibility, and version history.
 when_to_use: Use when doing a final review pass on mathematical notation before committing.
-category: explanation
-subcategory: conventions
-tags:
-  - latex
-  - mathematics
-  - formulas
-  - notation
-  - conventions
-created: 2025-12-02
 ---
 
 # Validation Checklist and Important Notes

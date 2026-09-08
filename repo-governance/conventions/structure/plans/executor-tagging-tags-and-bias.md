@@ -1,14 +1,5 @@
 ---
-title: "Executor Tagging — [AI] vs [HUMAN] (HARD RULE)"
 description: Defines the [AI]/[HUMAN]/[AI+HUMAN] executor tags and the hard-rule bias toward [AI] whenever a step can be engineered as agent-executable.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when deciding whether a delivery.md checkbox should be tagged [AI], [HUMAN], or [AI+HUMAN].
 ---
 

@@ -1,15 +1,6 @@
 ---
-title: "Applicability, Format Specification, and Validation"
 description: Where UTC+7 timestamps must and must not be used, worked implementation examples, the format's component breakdown, UTC conversion, and valid/invalid examples.
 when_to_use: Use when checking whether a timestamp belongs in UTC+7 format, formatting one correctly, or validating an existing timestamp.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - timestamps
-  - timezone
-  - formatting
-created: 2025-11-30
 ---
 
 # Applicability, Format Specification, and Validation
@@ -21,7 +12,8 @@ created: 2025-11-30
 - Cache files (e.g., `docs/metadata/external-links-status.yaml`)
 - Metadata files (any operational data files)
 - Log files (application logs, build logs)
-- Documentation timestamps (frontmatter `created` field)
+- Documentation timestamps (frontmatter `created` field) — `docs/` and site content only; a
+  `created` key is refused under `repo-governance/`
 - Manual timestamps in code comments (when needed)
 - Configuration files requiring timestamps
 

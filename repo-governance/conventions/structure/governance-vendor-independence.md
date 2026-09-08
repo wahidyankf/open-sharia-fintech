@@ -1,16 +1,6 @@
 ---
-title: "Governance Vendor-Independence Convention"
 description: Governance prose must be vendor-neutral. Vendor-specific bindings belong in platform-binding directories, not in repo-governance/.
 when_to_use: Use when writing or reviewing repo-governance/, AGENTS.md, or CLAUDE.md prose and checking it stays vendor-neutral.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - governance
-  - vendor-independence
-  - agents
-  - platform-bindings
-created: 2026-05-02
 ---
 
 # Governance Vendor-Independence Convention

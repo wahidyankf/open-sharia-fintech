@@ -1,17 +1,5 @@
 ---
-title: "Purpose and Scope"
 description: Why structured grilling replaces open-ended prose questions, and what this convention covers versus what it explicitly leaves to other conventions.
-category: explanation
-subcategory: development
-tags:
-  - planning
-  - grill-me
-  - user-interaction
-  - plan-maker
-  - design-decisions
-  - interaction
-  - agents
-created: 2026-05-26
 when_to_use: Use when deciding whether a given design-decision interaction falls under this convention or one of its companions.
 ---
 

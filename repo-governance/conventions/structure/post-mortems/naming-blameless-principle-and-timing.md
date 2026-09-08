@@ -1,16 +1,6 @@
 ---
-title: "Post-Mortem Convention: Location, Naming, Blameless Principle, and Timing"
 description: Filename and location rules for post-mortem documents, the blameless-culture standard for writing them, and the timing expectation for authoring one
 when_to_use: Read this when naming a new post-mortem file, applying the blameless-culture standard while writing one, or deciding how quickly to write it after an incident.
-category: explanation
-subcategory: conventions
-tags:
-  - post-mortem
-  - incidents
-  - blameless
-  - reliability
-  - structure
-created: 2026-06-05
 ---
 
 # Location, Naming, Blameless Principle, and Timing

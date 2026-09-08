@@ -1,15 +1,5 @@
 ---
-title: "Worked Example — the 2026-07-21 Sibling Drift"
 description: A real transcript of a sibling repository found with local main silently behind origin/main, and how the reconcile closed the gap.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - worktree
-  - bare-repo
-  - safety
-created: 2026-07-21
 when_to_use: Use as a concrete reference example when explaining why the terminal reconcile step is mandatory rather than conditional.
 ---
 

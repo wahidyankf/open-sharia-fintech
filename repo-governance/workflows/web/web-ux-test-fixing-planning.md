@@ -1,21 +1,6 @@
 ---
-name: web-ux-test-fixing-planning
-title: "web-ux-test-fixing-planning"
 description: "Run the three live-site UX-quality testers (exploratory, usability, design) sequentially against the same URL(s), then solidify one source-attributed fix plan with tech-docs.md and a TDD-shaped delivery.md."
 when_to_use: "Use before hardening a user-facing feature, to get a combined correctness/usability/design-fidelity read on a running site, or to refresh an existing findings plan via plan-mode=merge."
-goal: >
-  Run the three live-site UX-quality testers — spec-aware exploratory (correctness), spec-blind
-  heuristic-usability, and design-aware design-fidelity — against the same live URL(s) and goal,
-  sequentially, integrating each result set into the plan before the next runs, then solidify one
-  fix-ready plan whose findings section keeps the three sources clearly separated (exploratory EWT-###
-  vs usability UWT-### vs design DWT-###) and which carries a tech-docs.md (root-cause + fix approach),
-  a TDD-shaped delivery.md describing how to fix every finding, and — when the plan is UI-bearing — an
-  assets/ folder of both-tier (lo-fi + hi-fi) UI mockups. The deliverable is the plan, never the fixes.
-termination: >
-  A grill-validated plan exists under plans/in-progress/<identifier>/ containing README.md, brd.md,
-  prd.md, findings.md (with separate Exploratory, Usability, and Design sections), tech-docs.md, and
-  delivery.md, receives a PASS verdict from plan-quality-gate, and is pushed to the requested git target.
-  No application or library source under apps/ or libs/ is modified by this workflow.
 ---
 
 # Web UX Test-Fixing Planning Workflow
@@ -28,6 +13,12 @@ source or lands a behaviour change.
 
 > The full `inputs:`/`outputs:` contract, and its readable Inputs-at-a-Glance summary, now live in
 > the Contents children below.
+
+## Goal and Termination
+
+**Goal**: Run the three live-site UX-quality testers — spec-aware exploratory (correctness), spec-blind heuristic-usability, and design-aware design-fidelity — against the same live URL(s) and goal, sequentially, integrating each result set into the plan before the next runs, then solidify one fix-ready plan whose findings section keeps the three sources clearly separated (exploratory EWT-### vs usability UWT-### vs design DWT-###) and which carries a tech-docs.md (root-cause + fix approach), a TDD-shaped delivery.md describing how to fix every finding, and — when the plan is UI-bearing — an assets/ folder of both-tier (lo-fi + hi-fi) UI mockups. The deliverable is the plan, never the fixes.
+
+**Termination**: A grill-validated plan exists under plans/in-progress/<identifier>/ containing README.md, brd.md, prd.md, findings.md (with separate Exploratory, Usability, and Design sections), tech-docs.md, and delivery.md, receives a PASS verdict from plan-quality-gate, and is pushed to the requested git target. No application or library source under apps/ or libs/ is modified by this workflow.
 
 ## Contents
 

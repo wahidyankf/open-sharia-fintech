@@ -1,15 +1,5 @@
 ---
-title: Artifact Type, Self-Containment, and Annotation Semantics
 description: How security by-example tutorials differ from SWE by-example in artifact type, self-containment requirements, and annotation semantics.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - security
-  - tool-output
-created: 2026-05-21
 when_to_use: Use when determining what counts as a self-contained security example or how to annotate tool output with `# =>` comments.
 ---
 

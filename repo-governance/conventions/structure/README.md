@@ -1,14 +1,6 @@
 ---
-title: "Structure Conventions"
 description: Documentation organization frameworks, file naming, and project planning structure
 when_to_use: Use when deciding where a document belongs, how to name it, or how a plan record moves through its lifecycle.
-category: explanation
-tags:
-  - index
-  - conventions
-  - structure
-  - organization
-created: 2026-01-30
 ---
 
 # Structure Conventions
@@ -21,6 +13,7 @@ Use these conventions to decide where a document belongs, how to name it, and ho
 - [Deterministic vs AI Validation Split Convention](./deterministic-vs-ai-validation-split.md) — Defines which governance validation layer (deterministic preflight vs AI checker) owns which category, and the contract between them. Use when deciding whether a governance validation rule belongs in the deterministic preflight or the AI checker.
 - [Diátaxis Framework](./diataxis-framework.md) — Understanding the Diátaxis documentation framework used in open-sharia-enterprise. Use when deciding where new documentation belongs or organizing content by Diátaxis category.
 - [File Naming Convention](./file-naming.md) — Standard markdown + GitHub-compatible kebab-case naming for all files. Use when naming a new file under docs/, repo-governance/, or a similar repository location.
+- [Governance Frontmatter Convention](./governance-frontmatter.md) — The two-key frontmatter allow-list every file under repo-governance/ obeys — description and when_to_use, and nothing else. Use when authoring or reviewing a governance file's frontmatter, or when tempted to add a metadata key to that tree.
 - [Governance README Completeness Convention](./governance-readme-completeness.md) — Two-gate README index enforcement — orphan/ghost link detection plus missing/unannotated completeness checks. Use when a directory's README.md fails an orphan, ghost, missing, or unannotated finding.
 - [Governance Vendor-Independence Convention](./governance-vendor-independence.md) — Governance prose must be vendor-neutral; vendor-specific bindings belong in platform-binding directories, not in repo-governance/. Use when writing or reviewing repo-governance/, AGENTS.md, or CLAUDE.md prose and checking it stays vendor-neutral.
 - [Governance Word-Budget Convention](./governance-word-budget.md) — Per-surface word thresholds for auto-loaded instruction files, enforced by rhino-cli and git hooks. Use when a governance or instruction file may be approaching or over its word-count threshold.

@@ -1,18 +1,6 @@
 ---
-title: "WCAG Compliance Standards"
 description: "Specifies WCAG 2.2 AA contrast ratio requirements and lists the verified contrast ratios for each palette color."
 when_to_use: "Use when verifying a color choice meets WCAG AA contrast requirements for text, UI, or graphical elements."
-category: explanation
-subcategory: conventions
-tags:
-  - accessibility
-  - color-blindness
-  - wcag
-  - design
-  - conventions
-  - mermaid-diagrams
-  - color-palette
-created: 2025-12-04
 ---
 
 # WCAG Compliance Standards

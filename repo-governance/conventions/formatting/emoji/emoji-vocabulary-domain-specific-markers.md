@@ -1,16 +1,6 @@
 ---
-title: "Emoji Vocabulary: Domain-Specific Markers"
 description: The emoji vocabulary for general technical domains, enterprise/financial-services domains, and AI agent role categorization.
 when_to_use: Use when picking an emoji for a heading in a technical, financial-services, or AI-agent-related section.
-category: explanation
-subcategory: conventions
-tags:
-  - emoji
-  - accessibility
-  - scannability
-  - conventions
-  - markdown
-created: 2025-12-04
 ---
 
 # Emoji Vocabulary: Domain-Specific Markers

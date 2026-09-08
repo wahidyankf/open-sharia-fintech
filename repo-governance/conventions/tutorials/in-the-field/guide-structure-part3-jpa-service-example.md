@@ -1,16 +1,6 @@
 ---
-title: "Guide Structure Part 3: JPA Service Example"
 description: The worked JPA/Hibernate @Service class example showing EntityManager-based find, save, and update operations.
 when_to_use: Use when writing a JPA/Hibernate service-layer example.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Guide Structure Part 3: JPA Service Example

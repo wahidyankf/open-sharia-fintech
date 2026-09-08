@@ -1,15 +1,5 @@
 ---
-title: "Standard 5: Proactively Fix Delivery-Mode Mismatches"
 description: Fix a mis-tagged or missing Delivery Mode field the moment you find one while reading delivery checklists, unless the plan is already archived.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - push
-  - trunk-based-development
-  - ai-agents
-created: 2026-04-25
 when_to_use: Use when reading a plan's delivery checklist and it mis-tags the merge step or assumes a stale push default.
 ---
 

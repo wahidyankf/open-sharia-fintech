@@ -1,16 +1,5 @@
 ---
-title: "Examples"
 description: "Worked examples of manual behavioural verification."
-category: explanation
-subcategory: development
-tags:
-  - verification
-  - testing
-  - playwright
-  - api
-  - quality
-  - manual-testing
-created: 2026-04-04
 when_to_use: "Use for a concrete example of this convention applied."
 ---
 

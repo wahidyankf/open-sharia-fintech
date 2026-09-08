@@ -1,14 +1,5 @@
 ---
-title: Development
 description: Internal development guidance for authorized open-sharia-enterprise delivery work
-category: explanation
-subcategory: development
-tags:
-  - index
-  - development
-  - conventions
-  - ai-agents
-created: 2025-11-23
 when_to_use: Use when you are authorized to plan, build, verify, or land repository work and need the practice governing a specific step.
 ---
 

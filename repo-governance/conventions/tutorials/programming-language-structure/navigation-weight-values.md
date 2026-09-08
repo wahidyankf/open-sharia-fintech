@@ -1,16 +1,6 @@
 ---
-title: "Navigation Pattern: Weight Values"
 description: The level-based weight-value system for tutorials/, by-example/, by-concept/, and cookbook/ folders and their content files.
 when_to_use: Use when assigning or auditing weight values for a language's tutorial folders and files.
-category: explanation
-subcategory: conventions
-tags:
-  - programming-languages
-  - tutorials
-  - ayokoding-www
-  - education
-  - structure
-created: 2025-12-27
 ---
 
 # Navigation Pattern: Weight Values

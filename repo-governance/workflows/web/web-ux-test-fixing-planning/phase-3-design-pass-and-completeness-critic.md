@@ -1,5 +1,4 @@
 ---
-title: "Web UX Test-Fixing Planning — Phase 3: Design Pass + Integrate"
 description: "Runs web-design-tester after Phase 2 integrates, then folds its DWT-### findings and SG-### design-spec proposals into the same plan, keeping all three sources in labelled sections."
 when_to_use: "Use when checking what the design-aware tester is dispatched with, or how its findings stay attributed distinctly from the exploratory and usability sources."
 ---

@@ -1,5 +1,4 @@
 ---
-title: "Related Documents"
 description: Links to the dependency bump policy, plan-planning, plan-execution, the web-researcher agent, the security-waivers register, and the CISA KEV/EPSS feeds.
 when_to_use: Use when navigating from this workflow to the policy it operationalizes or the workflows/agents it invokes.
 ---

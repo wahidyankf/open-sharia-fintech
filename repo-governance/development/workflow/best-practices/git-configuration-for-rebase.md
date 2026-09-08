@@ -1,10 +1,5 @@
 ---
-title: "Git Configuration for Rebase"
 description: Three ways to configure git to pull with rebase by default — branch-specific, global, or explicit flag.
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: Use when setting up a repository or global git config so pulls rebase by default instead of merging.
 ---
 

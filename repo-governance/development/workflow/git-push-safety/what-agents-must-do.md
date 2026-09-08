@@ -1,15 +1,5 @@
 ---
-title: "What Agents Must Do"
 description: The three-step agent procedure — investigate a safe alternative first, present a complete approval prompt, then execute exactly what was approved.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - safety
-  - automation
-  - human-approval
-created: 2026-03-30
 when_to_use: Use when an agent is about to propose or execute a force-push or hook-bypass operation.
 ---
 

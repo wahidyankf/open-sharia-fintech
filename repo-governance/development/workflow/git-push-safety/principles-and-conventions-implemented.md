@@ -1,15 +1,5 @@
 ---
-title: "Principles and Conventions Implemented"
 description: The principles and companion conventions the Git Push Safety Convention implements and respects.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - safety
-  - automation
-  - human-approval
-created: 2026-03-30
 when_to_use: Use when tracing why force-push and hook-bypass approval requirements exist back to the principles and conventions they respect.
 ---
 

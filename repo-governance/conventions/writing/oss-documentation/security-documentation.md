@@ -1,14 +1,5 @@
 ---
-title: "Security Documentation"
 description: "Required SECURITY.md sections and security best practices for enterprise/financial-services platforms"
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - documentation
-  - open-source
-  - repository-standards
-created: 2026-04-04
 when_to_use: "Read this when creating or reviewing a repository's SECURITY.md file."
 ---
 

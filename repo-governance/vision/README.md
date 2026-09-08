@@ -1,13 +1,5 @@
 ---
-title: Vision
 description: The foundational purpose and change we seek through Open Sharia Enterprise
-category: explanation
-subcategory: vision
-tags:
-  - vision
-  - purpose
-  - index
-created: 2025-12-24
 when_to_use: Use when orienting to why the project exists, or deciding whether a document belongs under vision/.
 ---
 

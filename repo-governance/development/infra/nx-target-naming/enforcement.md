@@ -1,14 +1,5 @@
 ---
-title: "Enforcement"
 description: How the retired `validate:*` naming scheme is caught by the plan delivery gate via a grep across project.json, hook, workflow, and package.json files.
-category: explanation
-subcategory: development
-tags:
-  - nx
-  - targets
-  - naming
-  - conventions
-created: 2026-06-13
 when_to_use: Use when checking how the old `validate:*` naming scheme is enforced, or writing a similar grep-based delivery gate.
 ---
 

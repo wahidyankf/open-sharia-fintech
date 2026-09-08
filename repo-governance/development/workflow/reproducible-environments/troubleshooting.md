@@ -1,16 +1,5 @@
 ---
-title: "Troubleshooting"
 description: Common reproducibility failure modes — CI/local drift, cross-machine install differences, and a workspace-hoisting gotcha.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - reproducibility
-  - volta
-  - docker
-  - environment
-  - dependencies
-created: 2025-12-28
 when_to_use: Use when diagnosing a "works on my machine but not CI/others" reproducibility failure.
 ---
 

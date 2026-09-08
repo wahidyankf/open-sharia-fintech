@@ -1,5 +1,4 @@
 ---
-title: "Integration Diff Review Convention"
 description: "Read the full incoming diff and assess its impact whenever commits not previously on the branch land."
 when_to_use: "Read this index to find the right Integration Diff Review Convention child document."
 ---

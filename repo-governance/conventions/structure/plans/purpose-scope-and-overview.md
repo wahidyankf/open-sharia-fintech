@@ -1,14 +1,5 @@
 ---
-title: "Purpose, Scope, and Overview"
 description: Explains why the plans/ convention exists, what it covers and excludes, and the high-level lifecycle and no-secrets rule for plan documents.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when orienting to why plans/ is organized the way it is, or checking whether a topic is in scope for this convention.
 ---
 

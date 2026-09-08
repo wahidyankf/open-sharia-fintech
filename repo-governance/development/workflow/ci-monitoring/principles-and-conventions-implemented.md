@@ -1,14 +1,5 @@
 ---
-title: "Principles and Conventions Implemented"
 description: The principles and companion conventions that safe CI monitoring respects.
-category: explanation
-subcategory: development
-tags:
-  - ci
-  - github-actions
-  - rate-limiting
-  - monitoring
-  - workflow
 when_to_use: Use when tracing why this convention's monitoring rules exist back to the principles and conventions they respect.
 ---
 

@@ -1,5 +1,4 @@
 ---
-title: "PR Review Cycle — Restatement by Value"
 description: "The single largest defect class measured in this loop — one fact written in more than one place and edited in one of them — and why deleting the duplicate is the fix and syncing it is not."
 when_to_use: "Use when a finding reports two documents disagreeing, or when a fix would update the same fact in more than one file."
 ---

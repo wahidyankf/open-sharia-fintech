@@ -1,16 +1,5 @@
 ---
-title: "Motivating Example"
 description: "The bug batch that motivated this mandate."
-category: explanation
-subcategory: development
-tags:
-  - regression
-  - testing
-  - bug-fix
-  - quality
-  - gherkin
-  - specs
-created: 2026-06-22
 when_to_use: "Use when you need the rationale behind this mandate."
 ---
 

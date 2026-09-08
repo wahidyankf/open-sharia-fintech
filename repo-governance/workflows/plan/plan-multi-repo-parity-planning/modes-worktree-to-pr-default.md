@@ -1,5 +1,4 @@
 ---
-title: "`worktree-to-pr` (Default)"
 description: The repo-wide default delivery mode for the plan documents this workflow authors, plus the bare-repo parity-target exception.
 when_to_use: Use when delivering the authored plan documents under the repo-wide default review-before-merge mode.
 ---

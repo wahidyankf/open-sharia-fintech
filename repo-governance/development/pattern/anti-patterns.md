@@ -1,10 +1,5 @@
 ---
-title: "Anti-Patterns in Development Patterns"
 description: "Common mistakes when applying the development patterns in this directory."
-category: explanation
-subcategory: development
-tags: []
-created: 2026-05-12
 when_to_use: "Use when reviewing a change for a known anti-pattern."
 ---
 

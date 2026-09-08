@@ -1,15 +1,5 @@
 ---
-title: "Accessibility — Screen Readers and Keyboard Navigation"
 description: DOM-order/reading-order matching, descriptive link text, skip navigation, aria-live regions, and the full keyboard interaction table including focus traps for dialogs
-category: explanation
-subcategory: development/frontend
-tags:
-  - accessibility
-  - wcag
-  - a11y
-  - aria
-  - focus
-created: 2026-03-28
 when_to_use: Use when reviewing a component's screen-reader behaviour, or implementing keyboard interaction for menus, tabs, dialogs, or lists.
 ---
 

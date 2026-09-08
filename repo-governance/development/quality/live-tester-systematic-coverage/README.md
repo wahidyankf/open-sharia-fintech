@@ -1,5 +1,4 @@
 ---
-title: "Live-Tester Systematic Coverage"
 description: "The SSOT practice that mandates enumerate-not-sample forcing-functions for the three live-site testers and the web-ux-test-fixing-planning workflow"
 when_to_use: "Read this index to find the right Live-Tester Systematic Coverage child document."
 ---
@@ -13,5 +12,3 @@ when_to_use: "Read this index to find the right Live-Tester Systematic Coverage 
 - [The Six Forcing-Functions (5-6)](./forcing-functions-5-6.md) — Forcing-functions 5-6: usability probes, recurrence/diff/completeness critic. Use when applying the usability-probe or recurrence-critic forcing-function.
 - [Motivating Example](./motivating-example.md) — The incident that motivated the six forcing-functions. Use when you need the rationale behind these forcing-functions.
 - [Relationship to the Three Live-Site Testers](./relationship-to-the-three-live-site-testers.md) — How the forcing-functions apply across the three live-site tester agents. Use when deciding how a live-site tester agent should apply these forcing-functions.
-- [Scope](./scope.md) — What this practice applies to. Use when checking whether this practice applies to a testing pass.
-- [Related Documentation](./related-documentation.md) — Related live-testing and quality conventions. Use when you need a related convention on live testing.

@@ -1,14 +1,5 @@
 ---
-title: "Example Workflow Structure"
 description: A worked, simplified example of a full multi-step content-validation workflow document, frontmatter through Termination Criteria.
-category: explanation
-subcategory: workflows
-tags:
-  - workflows
-  - agents
-  - orchestration
-  - patterns
-created: 2025-12-23
 when_to_use: Use when you want a complete worked example to model a new workflow document on, rather than the bare template.
 ---
 
@@ -18,34 +9,29 @@ Here's a simplified example of a multi-step validation workflow:
 
 ```markdown
 ---
-name: content-validation
-goal: Validate content quality and apply fixes
-termination: Content passes all quality checks
-inputs:
-  - name: content-type
-    type: enum
-    values: [docs, ayokoding, ose, readme]
-    required: true
-  - name: scope
-    type: string
-    required: true
-  - name: mode
-    type: enum
-    values: [lax, normal, strict, ocd]
-    description: "Quality threshold"
-    required: false
-    default: strict
-outputs:
-  - name: validation-status
-    type: enum
-    values: [pass, partial, fail]
+description: Validates content quality and applies fixes iteratively until zero findings remain.
+when_to_use: Use after creating or updating content that must pass its quality gate.
 ---
 
 # Content Validation Workflow
 
 **Purpose**: Validate and fix content quality iteratively until zero findings achieved.
 
-**When to use**: After creating or updating content.
+## Goal and Termination
+
+**Goal**: Validate content quality and apply fixes.
+
+**Termination**: Content passes all quality checks.
+
+## Inputs
+
+- **`content-type`** (enum: docs, ayokoding, ose, readme, required) — Which content corpus to run against.
+- **`scope`** (string, required) — The paths this run covers.
+- **`mode`** (enum: lax, normal, strict, ocd, optional, default `strict`) — Quality threshold.
+
+## Outputs
+
+- **`validation-status`** (enum: pass, partial, fail)
 
 ## Execution Mode
 
@@ -55,11 +41,8 @@ agents exist as defined delegated agent types.
 
 **Fallback Mode**: Manual Orchestration — execute workflow logic directly using
 Read/Write/Edit tools when Agent Delegation is unavailable.
-```
 
 User: "Run content validation workflow for [scope] in [mode] mode"
-
-```
 
 The AI invokes specialized agents via the Agent tool. If agents are unavailable as
 delegated agent types, it falls back to executing workflow logic directly.

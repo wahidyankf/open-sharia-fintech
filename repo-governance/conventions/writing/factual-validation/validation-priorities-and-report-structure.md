@@ -1,16 +1,6 @@
 ---
-title: "Factual Validation Convention — Validation Priorities and Report Structure Standards"
 description: The high/medium/low priority tiers for what to verify, and the five required sections of a factual validation report.
 when_to_use: Use when triaging which claims to verify first, or when assembling a factual validation report's structure.
-category: explanation
-subcategory: conventions
-tags:
-  - factual-validation
-  - verification
-  - web-research
-  - accuracy
-  - quality-assurance
-created: 2025-12-16
 ---
 
 # Validation Priorities and Report Structure Standards

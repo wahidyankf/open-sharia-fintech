@@ -1,15 +1,5 @@
 ---
-title: "Resolving Merge Conflicts in Generated Files"
 description: Why a CONFLICTING state after green CI is not necessarily a PR defect, and why a generated-file conflict is resolved at its source.
-category: explanation
-subcategory: development
-tags:
-  - pull-request
-  - merge
-  - quality-gates
-  - workflow
-  - merge-preconditions
-created: 2026-04-04
 when_to_use: Use when a PR shows a merge conflict against the target branch, especially inside a generated or marker-owned file.
 ---
 

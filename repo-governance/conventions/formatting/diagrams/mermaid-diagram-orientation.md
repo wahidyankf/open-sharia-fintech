@@ -1,18 +1,6 @@
 ---
-title: "Diagram Orientation"
 description: "Specifies orientation rules (top-down vs. left-right) for Mermaid diagrams across viewing contexts."
 when_to_use: "Use when deciding or reviewing which orientation a Mermaid diagram should use."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Diagram Orientation

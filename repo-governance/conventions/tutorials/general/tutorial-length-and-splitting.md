@@ -1,17 +1,6 @@
 ---
-title: "Tutorial Length and Splitting"
 description: "Defines the recommended tutorial length range and how to split an overlong tutorial into a progressive series."
 when_to_use: "Read when a tutorial is growing too long and you need to decide whether and how to split it into a series."
-category: explanation
-subcategory: conventions
-tags:
-  - tutorials
-  - diataxis
-  - learning
-  - pedagogy
-  - documentation
-  - teaching
-created: 2025-12-03
 ---
 
 # Tutorial Length and Splitting

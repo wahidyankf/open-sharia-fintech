@@ -1,15 +1,5 @@
 ---
-title: Design Tokens Convention
 description: Conventions for CSS design tokens across frontend apps in the open-sharia-enterprise monorepo, covering structural shared tokens, per-app brand overrides, dark mode requirements, and Tailwind v4 integration.
-category: explanation
-subcategory: development/frontend
-tags:
-  - design-tokens
-  - css
-  - tailwind
-  - theming
-  - dark-mode
-created: 2026-03-28
 when_to_use: Use when adding, naming, or overriding a CSS design token, or deciding whether a color/spacing value should be tokenized.
 ---
 

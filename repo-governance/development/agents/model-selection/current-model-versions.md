@@ -1,14 +1,5 @@
 ---
-title: "Current Model Versions (September 2026)"
 description: "States the current model versions in use as of September 2026."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - model-selection
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when you need the current concrete model version string for a tier.
 ---
 

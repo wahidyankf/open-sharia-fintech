@@ -1,15 +1,5 @@
 ---
-title: "Vision Supported"
 description: Explains how reproducibility serves the Open Sharia Enterprise Vision by letting global contributors work from identical, frictionless environments.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - reproducibility
-  - environment
-  - determinism
-  - version-pinning
-created: 2025-12-28
 when_to_use: Use when explaining why reproducible environments matter for lowering contribution barriers to Islamic enterprise development.
 ---
 

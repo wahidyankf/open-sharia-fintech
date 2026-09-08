@@ -1,14 +1,5 @@
 ---
-title: "When to Create a Workflow"
 description: Seven positive signals for creating a workflow and three negative signals for not creating one.
-category: explanation
-subcategory: workflows
-tags:
-  - workflows
-  - agents
-  - orchestration
-  - patterns
-created: 2025-12-23
 when_to_use: Use when deciding whether a new multi-step process warrants a formal workflow document.
 ---
 

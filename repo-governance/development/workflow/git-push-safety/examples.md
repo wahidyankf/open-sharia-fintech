@@ -1,15 +1,5 @@
 ---
-title: "Examples"
 description: One PASS and three FAIL examples of agent behaviour around force-push and --no-verify approval.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - safety
-  - automation
-  - human-approval
-created: 2026-03-30
 when_to_use: Use when checking whether a specific agent transcript around a force-push or --no-verify complies with this convention.
 ---
 

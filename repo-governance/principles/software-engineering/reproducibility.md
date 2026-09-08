@@ -1,15 +1,5 @@
 ---
-title: "Reproducibility First"
 description: Development environments and builds should be reproducible from the start
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - reproducibility
-  - environment
-  - determinism
-  - version-pinning
-created: 2025-12-28
 when_to_use: Use when setting up or auditing a project's development environment, build, or dependency-version reproducibility.
 ---
 

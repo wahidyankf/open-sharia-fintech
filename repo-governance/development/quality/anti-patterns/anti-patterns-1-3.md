@@ -1,13 +1,5 @@
 ---
-title: "Anti-Patterns 1-3"
 description: "Manual quality checks, no issue prioritization, fixes without confidence assessment."
-category: explanation
-subcategory: development
-tags:
-  - anti-patterns
-  - quality
-  - development
-created: 2026-05-12
 when_to_use: "Use when reviewing for these three quality anti-patterns."
 ---
 

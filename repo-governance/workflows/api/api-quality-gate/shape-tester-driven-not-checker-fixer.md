@@ -1,5 +1,4 @@
 ---
-title: "Shape: Tester-Driven, Not Checker/Fixer"
 description: Explains why the API quality gate has no checker/fixer pair and instead uses a tester-driven bounded run.
 when_to_use: Use when orchestrating the API quality gate, to confirm which agents to invoke and in what order.
 ---

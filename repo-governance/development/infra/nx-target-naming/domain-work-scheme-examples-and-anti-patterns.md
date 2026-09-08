@@ -1,14 +1,5 @@
 ---
-title: "Derivation Examples and Anti-Patterns for the `{domain}:{work}` Scheme"
 description: Worked derivation examples and forbidden-vs-correct anti-pattern pairs for the `{domain}:{work}` governance and validation Nx target naming scheme.
-category: explanation
-subcategory: development
-tags:
-  - nx
-  - targets
-  - naming
-  - conventions
-created: 2026-06-13
 when_to_use: Use when deriving a new `{domain}:{work}` target name from a subject and operation, or checking a proposed name against known anti-patterns.
 ---
 

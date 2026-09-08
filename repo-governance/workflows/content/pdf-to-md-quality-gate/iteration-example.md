@@ -1,5 +1,4 @@
 ---
-title: "Iteration Example"
 description: "A full worked trace of a four-iteration run, showing findings counts and consecutive-zero tracking across iterations."
 when_to_use: "Use when you need to see how consecutive_zero_count evolves across a realistic multi-iteration run."
 ---

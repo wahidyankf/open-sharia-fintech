@@ -1,5 +1,4 @@
 ---
-title: "Step 3 — First Grill"
 description: The hard-gated grilling protocol that resolves every deviation-matrix row to a recorded decision and establishes the research-needed flag.
 when_to_use: Use when resolving cross-repo deviations before any plan authoring — this grill is a hard gate on Step 6.
 ---

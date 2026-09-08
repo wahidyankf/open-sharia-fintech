@@ -1,5 +1,4 @@
 ---
-title: "PR Review Cycle — Notes"
 description: "Operating notes for ceilings, attribution, pipeline actors, findings, and sibling-PR staleness."
 when_to_use: "Use when clarifying an operating nuance not covered elsewhere — e.g. why sibling-repo PR loops shouldn't run concurrently with the source PR's."
 ---

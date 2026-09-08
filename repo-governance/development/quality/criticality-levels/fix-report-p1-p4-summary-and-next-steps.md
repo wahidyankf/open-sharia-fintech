@@ -1,15 +1,5 @@
 ---
-title: "Fix Report: P1-P4 Summary and Next Steps"
 description: "P1-P4 fix summary, false positives, next steps."
-category: explanation
-subcategory: development
-tags:
-  - criticality
-  - validation
-  - checker-agents
-  - fixer-agents
-  - quality-assurance
-created: 2025-12-27
 when_to_use: "Use for the P1-P4 fix-report summary."
 ---
 

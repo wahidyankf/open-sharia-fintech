@@ -1,17 +1,5 @@
 ---
-title: "Scope"
 description: "Which tests and fixtures this convention covers."
-category: explanation
-subcategory: development
-tags:
-  - testing
-  - git
-  - test-fixtures
-  - isolation
-  - regression
-  - safety
-  - defense-in-depth
-created: 2026-07-19
 when_to_use: "Use when checking whether a test or fixture is in scope."
 ---
 

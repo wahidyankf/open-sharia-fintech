@@ -1,15 +1,5 @@
 ---
-title: "Standard 4: Maintain Linear History Before Pushing"
 description: Rebase rather than merge before every push, and never let a merge commit reach main or a PR branch.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - push
-  - trunk-based-development
-  - ai-agents
-created: 2026-04-25
 when_to_use: Use before pushing when the remote may have moved forward since the last pull or push.
 ---
 

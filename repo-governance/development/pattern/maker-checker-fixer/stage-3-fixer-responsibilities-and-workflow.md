@@ -1,16 +1,5 @@
 ---
-title: "Stage 3: Fixer — Responsibilities and Workflow"
 description: "The fixer's responsibilities and priority-based execution."
-category: explanation
-subcategory: development
-tags:
-  - maker-checker-fixer
-  - workflow
-  - content-quality
-  - agent-patterns
-  - validation
-  - automation
-created: 2025-12-14
 when_to_use: "Use when determining fix priority."
 ---
 

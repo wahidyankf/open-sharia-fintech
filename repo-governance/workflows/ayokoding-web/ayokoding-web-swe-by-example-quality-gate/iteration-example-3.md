@@ -1,5 +1,4 @@
 ---
-title: "Iteration Example 3: Major Rework (Failing Path)"
 description: Walks through a FAILING audit that returns to the maker for major rework, then reaches EXCELLENT after a multi-week rewrite and a second checker-fixer cycle.
 when_to_use: Use as a worked reference for how a major-rework FAILING-status iteration plays out end to end.
 ---

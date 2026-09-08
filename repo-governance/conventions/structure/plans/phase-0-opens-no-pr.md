@@ -1,14 +1,5 @@
 ---
-title: "Phase 0 Opens No PR — the Earliest PR Is Phase 1 (HARD RULE)"
 description: States that Phase 0 never opens a PR, pushes a branch, runs PR CI, or merges under any delivery mode.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when scoping a plan's Phase 0 to confirm it contains no PR-creation or merge step.
 ---
 

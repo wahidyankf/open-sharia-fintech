@@ -1,16 +1,6 @@
 ---
-title: "Multi-Harness Binding: npm Script Naming and Catalog Requirement (Rules 6-7)"
 description: "Rules 6 and 7 — the harness-neutral generate:/validate: npm script naming constraints, and the requirement that every committed binding directory have a catalog entry."
 when_to_use: Read this when naming a new npm script that produces or validates binding artifacts, or when adding a new binding directory and its catalog row.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - governance
-  - platform-bindings
-  - agents
-  - compatibility
-created: 2026-05-24
 ---
 
 # Multi-Harness Binding: npm Script Naming and Catalog Requirement (Rules 6-7)

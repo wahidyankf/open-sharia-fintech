@@ -1,16 +1,6 @@
 ---
-title: "Topic Weight Progression, Customization, and Java Example"
 description: The pedagogical rationale behind the ten-layer progression, how to customize it per domain, and a full worked Java weight assignment.
 when_to_use: Use when adapting the topic-weight scheme to a new language or reviewing a complete worked example.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Topic Weight Progression, Customization, and Java Example

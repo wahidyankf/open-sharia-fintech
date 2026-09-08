@@ -1,16 +1,5 @@
 ---
-title: "Integration Diff Review Convention"
 description: Read every newly integrated commit's full diff and reconcile its impact before the next task action.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - safety
-  - rebase
-  - merge
-  - review
-created: 2026-08-06
 when_to_use: Use immediately after a rebase, pull, merge, cherry-pick, or fast-forward introduces commits not previously on the current branch.
 ---
 

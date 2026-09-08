@@ -1,16 +1,6 @@
 ---
-title: "Enforcement, and Exceptions and Escape Hatches"
 description: How the vendor-audit scanner is run and what it respects, plus the explicit list of situations that never constitute a violation.
 when_to_use: Use when running the vendor-independence audit manually, or checking whether a specific case is an explicitly permitted exception.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - governance
-  - vendor-independence
-  - agents
-  - platform-bindings
-created: 2026-05-02
 ---
 
 # Enforcement, and Exceptions and Escape Hatches

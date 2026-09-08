@@ -1,15 +1,5 @@
 ---
-title: "Report Format: Dual-Label Pattern"
 description: "The criticality + confidence dual-label pattern."
-category: explanation
-subcategory: development
-tags:
-  - criticality
-  - validation
-  - checker-agents
-  - fixer-agents
-  - quality-assurance
-created: 2025-12-27
 when_to_use: "Use when labeling a finding with both dimensions."
 ---
 

@@ -1,15 +1,6 @@
 ---
-title: "Link Syntax, Examples, and Correct Usage"
 description: The required markdown link syntax and key rules, worked examples by file location, correct-vs-incorrect link examples, and external link formatting.
 when_to_use: Use when writing a link in documentation and you need the exact syntax or a worked example for your file's location.
-category: explanation
-subcategory: conventions
-tags:
-  - linking
-  - markdown
-  - conventions
-  - github-compatibility
-created: 2025-11-22
 ---
 
 # Link Syntax, Examples, and Correct Usage

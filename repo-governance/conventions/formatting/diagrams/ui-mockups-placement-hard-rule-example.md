@@ -1,18 +1,6 @@
 ---
-title: "Placement — the UI Lives in prd.md (HARD RULE): Copy-Paste Example"
 description: "Provides a complete copy-paste example of a UI design funnel record formatted for prd.md."
 when_to_use: "Use when you need a ready-to-copy template for recording a plan's UI design funnel in prd.md."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Placement — the UI Lives in prd.md (HARD RULE): Copy-Paste Example

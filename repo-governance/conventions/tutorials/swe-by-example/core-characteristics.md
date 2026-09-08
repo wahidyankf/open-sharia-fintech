@@ -1,15 +1,5 @@
 ---
-title: "Core Characteristics"
 description: "Defines the three core characteristics of by-example tutorials: code-first approach, 95% coverage target, and 75-85 total example count."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - education
-  - code-first
-created: 2025-12-25
 when_to_use: "Read when you need the baseline definition of what makes a by-example tutorial code-first, its coverage target, and its example-count range."
 ---
 

@@ -1,16 +1,5 @@
 ---
-title: "Troubleshooting"
 description: "Fixes for a blocked push, a silent hook, and a violation backlog."
-category: explanation
-subcategory: development
-tags:
-  - markdown
-  - linting
-  - formatting
-  - prettier
-  - markdownlint
-  - quality
-created: 2026-01-17
 when_to_use: "Use when a markdown quality gate blocks you and you need a diagnostic path."
 ---
 

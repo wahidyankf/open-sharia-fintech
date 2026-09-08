@@ -1,15 +1,5 @@
 ---
-title: "Why Re-Validation Is Mandatory"
 description: "Why fixers must re-validate before applying a fix."
-category: explanation
-subcategory: development
-tags:
-  - fixer-agents
-  - confidence-levels
-  - validation
-  - automation
-  - quality-assurance
-created: 2025-12-14
 when_to_use: "Use when tempted to apply a checker finding without re-validating."
 ---
 

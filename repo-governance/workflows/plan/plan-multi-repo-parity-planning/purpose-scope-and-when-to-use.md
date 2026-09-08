@@ -1,5 +1,4 @@
 ---
-title: "Purpose, Scope, and When to Use"
 description: Explains why plan-multi-repo-parity-planning exists, the precedent that motivated it, and when to use it.
 when_to_use: Use when deciding whether a cross-repo objective needs this workflow's grilling discipline.
 ---

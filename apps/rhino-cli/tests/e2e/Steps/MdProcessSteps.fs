@@ -243,17 +243,41 @@ type MdProcessSteps() =
             "---\ntitle: T\ndescription: D\ncategory: random\nsubcategory: S\ntags: [a]\n---\nbody\n"
 
     [<Given>]
-    member _.``a governance doc carrying only a title frontmatter field``() =
+    member _.``a governance doc carrying only a description frontmatter field``() =
         rootDir <- Some(newTempDir ())
-        writeDoc "repo-governance/conventions/foo.md" "---\ntitle: T\n---\nbody\n"
+        writeDoc "repo-governance/conventions/foo.md" "---\ndescription: D\n---\nbody\n"
 
     [<Given>]
-    member _.``a governance doc with title, description, and when_to_use frontmatter``() =
+    member _.``a governance doc carrying only a when_to_use frontmatter field``() =
+        rootDir <- Some(newTempDir ())
+        writeDoc "repo-governance/conventions/foo.md" "---\nwhen_to_use: Use when W.\n---\nbody\n"
+
+    [<Given>]
+    member _.``a governance doc with description and when_to_use frontmatter``() =
+        rootDir <- Some(newTempDir ())
+
+        writeDoc "repo-governance/conventions/foo.md" "---\ndescription: D\nwhen_to_use: Use when W.\n---\nbody\n"
+
+    [<Given>]
+    member _.``a governance doc with description, when_to_use, and a title field``() =
         rootDir <- Some(newTempDir ())
 
         writeDoc
             "repo-governance/conventions/foo.md"
             "---\ntitle: T\ndescription: D\nwhen_to_use: Use when W.\n---\nbody\n"
+
+    [<Given>]
+    member _.``a governance doc with description, when_to_use, and a category field``() =
+        rootDir <- Some(newTempDir ())
+
+        writeDoc
+            "repo-governance/conventions/foo.md"
+            "---\ncategory: explanation\ndescription: D\nwhen_to_use: Use when W.\n---\nbody\n"
+
+    [<Given>]
+    member _.``a governance doc under repo-governance/glossary carrying only a title field``() =
+        rootDir <- Some(newTempDir ())
+        writeDoc "repo-governance/glossary/foo.md" "---\ntitle: T\n---\nbody\n"
 
     [<Given>]
     member _.``a software-engineering doc with title, description, category tutorial, subcategory, and tags frontmatter``
@@ -703,6 +727,10 @@ type MdProcessSteps() =
         writeDoc "repo-governance/dated.md" "---\ntitle: T\nupdated: 2026-01-01\n---\n\nbody\n"
 
     [<Given>]
+    member _.``a governance markdown file whose frontmatter contains a forbidden created field``() =
+        writeDoc "repo-governance/created-frontmatter.md" "---\ntitle: T\ncreated: 2026-01-01\n---\n\nbody\n"
+
+    [<Given>]
     member _.``a governance markdown file whose body contains a Last Updated footer block``() =
         writeDoc "repo-governance/footer.md" "# Title\n\nBody.\n\n**Last Updated**: 2026-01-01\n"
 
@@ -813,6 +841,10 @@ type MdProcessSteps() =
             Assert.Contains("\"when_to_use\" is missing", output)
         | "the frontmatter output identifies the missing description field" ->
             Assert.Contains("\"description\" is missing", output)
+        | "the frontmatter output identifies title as a key outside the allow-list" ->
+            Assert.Contains("field \"title\" is not permitted", output)
+        | "the frontmatter output identifies category as a key outside the allow-list" ->
+            Assert.Contains("field \"category\" is not permitted", output)
         | "the output identifies the offending file and the duplicate H1 violation"
         | "the output identifies the duplicate H1 violation in the docs file"
         | "the output identifies the duplicate H1 violation in the specs file"
@@ -870,6 +902,7 @@ type MdProcessSteps() =
         | "the output reports all md validators passed" -> Assert.Contains("MD AUDIT PASSED", output)
         | "the output identifies the forbidden frontmatter field and its location" ->
             Assert.Contains("updated:", output)
+        | "the output identifies the forbidden created field and its location" -> Assert.Contains("created:", output)
         | "the output identifies the forbidden footer block and its location" -> Assert.Contains("Last Updated", output)
         | "the output identifies the forbidden inline annotation and its location" ->
             Assert.Contains("inline date annotation", output)

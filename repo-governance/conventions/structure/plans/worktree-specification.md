@@ -1,14 +1,5 @@
 ---
-title: "Work Location and Worktree Specification"
 description: Defines how every plan declares its mode-resolved work location and the worktree lifecycle where applicable.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when writing a plan's Worktree section or resolving mode-specific entry and cleanup.
 ---
 

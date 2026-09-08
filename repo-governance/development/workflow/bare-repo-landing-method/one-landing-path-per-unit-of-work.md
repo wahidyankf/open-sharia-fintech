@@ -1,15 +1,5 @@
 ---
-title: "One Landing Path Per Unit Of Work"
 description: The rule that a unit of work must land through exactly one path, and the duplicate-commit failure that results from mixing paths.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - worktree
-  - bare-repo
-  - safety
-created: 2026-07-21
 when_to_use: Use when a unit of work might be landed through more than one path, to confirm only one is actually used.
 ---
 

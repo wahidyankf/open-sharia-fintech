@@ -1,40 +1,6 @@
 ---
-name: pr-review-cycle
-title: "pr-review-cycle"
 description: "Run an explicitly requested, bounded maker-to-fixer PR-review cycle."
 when_to_use: "Use only when a user explicitly requests iterative semantic PR review."
-goal: "Compose single PR-review passes with fixer and exact-head CI steps until the configured clean-streak exit or ceiling"
-termination: "Return done after two authenticated consecutive clean pass credits under different probes; return blocked at the configured ceiling or on unrecoverable evidence failure"
-inputs:
-  - name: pr
-    type: string
-    description: PR number or URL identifying the pull request under review
-    required: true
-  - name: cycles
-    type: number
-    description: "Maximum passes; default five; higher requires the PR's durable extension record"
-    required: false
-    default: 5
-  - name: leak-review-evidence
-    type: string
-    description: Authenticated current-head focused leak evidence consumed by every composed pass
-    required: false
-    default: pending
-outputs:
-  - name: final-status
-    type: enum
-    values: [done, blocked]
-    description: Cycle result; never a universal merge precondition
-  - name: lifecycle-status
-    type: enum
-    values: [verified, pending, not-applicable]
-    description: Lifecycle evidence state, separate from final-status
-  - name: passes-completed
-    type: number
-    description: Number of single passes invoked
-  - name: unresolved-threads
-    type: number
-    description: Unresolved review threads when the cycle stopped
 ---
 
 # PR-Review Maker→Fixer Cycle Workflow
@@ -47,6 +13,25 @@ risk, content type, and delivery mode never invoke it. It delegates focused leak
 
 Cycle status is not merge readiness. Default integration remains exact-head/base
 `pr-quality-gate.yml`, focused leak evidence, and applicable surface gates.
+
+## Goal and Termination
+
+**Goal**: Compose single PR-review passes with fixer and exact-head CI steps until the configured clean-streak exit or ceiling
+
+**Termination**: Return done after two authenticated consecutive clean pass credits under different probes; return blocked at the configured ceiling or on unrecoverable evidence failure
+
+## Inputs
+
+- **`pr`** (string, required) — PR number or URL identifying the pull request under review
+- **`cycles`** (number, optional, default `5`) — Maximum passes; default five; higher requires the PR's durable extension record
+- **`leak-review-evidence`** (string, optional, default `pending`) — Authenticated current-head focused leak evidence consumed by every composed pass
+
+## Outputs
+
+- **`final-status`** (enum: done, blocked) — Cycle result; never a universal merge precondition
+- **`lifecycle-status`** (enum: verified, pending, not-applicable) — Lifecycle evidence state, separate from final-status
+- **`passes-completed`** (number) — Number of single passes invoked
+- **`unresolved-threads`** (number) — Unresolved review threads when the cycle stopped
 
 ## Contents
 

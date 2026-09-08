@@ -1,5 +1,4 @@
 ---
-title: "Validation Dimensions"
 description: "Details what each of the three validators checks: factual accuracy, pedagogical quality, and link validity (including the no-auto-fix link limitation)."
 when_to_use: "Use when you need to know exactly what a given validator dimension checks for."
 ---

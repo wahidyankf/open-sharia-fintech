@@ -1,5 +1,4 @@
 ---
-title: "Specs Quality Gate — Safety, Related Workflows, and Conventions"
 description: "Covers the loop's infinite-loop and false-positive safeguards, related workflows, operating notes, and the principles/conventions/agents this workflow implements."
 when_to_use: "Use when checking the convergence safeguards behind this workflow, how it relates to other quality gates, or which agents and conventions back it."
 ---

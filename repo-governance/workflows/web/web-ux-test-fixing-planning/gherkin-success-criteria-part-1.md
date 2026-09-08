@@ -1,5 +1,4 @@
 ---
-title: "Web UX Test-Fixing Planning — Gherkin Success Criteria (Part 1)"
 description: "The first four Gherkin scenarios (of eight) proving one-combined-plan output, sequential tester integration, and UI-bearing vs non-UI assets/ handling."
 when_to_use: "Use when verifying the workflow's success criteria for a single combined plan, sequential integration, or the assets/ folder rule."
 ---

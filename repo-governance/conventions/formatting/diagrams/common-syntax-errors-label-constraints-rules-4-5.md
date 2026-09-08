@@ -1,18 +1,6 @@
 ---
-title: "Common Mermaid Syntax Errors: Label Constraints — Rules 4 and 5"
 description: "Documents Rule 4 (no URL paths in edge labels) and Rule 5 (proportional separator lines) for Mermaid label constraints."
 when_to_use: "Use when a Mermaid edge label contains a URL/path, or a separator line looks disproportionate."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Common Mermaid Syntax Errors: Label Constraints — Rules 4 and 5

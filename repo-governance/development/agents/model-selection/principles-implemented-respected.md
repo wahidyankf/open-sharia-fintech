@@ -1,14 +1,5 @@
 ---
-title: "Principles Implemented/Respected"
 description: "Lists the core repository principles this convention implements and respects."
-category: explanation
-subcategory: development
-tags:
-  - ai-agents
-  - model-selection
-  - development
-  - standards
-created: 2025-11-23
 when_to_use: Use when checking which principles justify a model-tier choice.
 ---
 

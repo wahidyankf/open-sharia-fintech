@@ -1,10 +1,5 @@
 ---
-title: "Unit, Integration, and E2E Testing Standard"
 description: "Compatibility entry point for the canonical OSE test-layer boundaries and applicability rules"
-category: explanation
-subcategory: development
-tags: [testing, unit-tests, integration-tests, e2e-tests, bdd, gherkin]
-created: 2026-03-13
 when_to_use: "Use when scoping, writing, or reviewing a Unit, Integration, or E2E test."
 ---
 

@@ -1,15 +1,5 @@
 ---
-title: "Draft PR Lifecycle"
 description: Why every PR opens as a GitHub draft, and the four-step lifecycle from draft open through the merge that follows the precondition gate.
-category: explanation
-subcategory: development
-tags:
-  - pull-request
-  - merge
-  - quality-gates
-  - workflow
-  - merge-preconditions
-created: 2026-04-04
 when_to_use: Use when opening a PR under worktree-to-pr or main-to-pr, or when deciding whether flipping a PR to ready authorizes merging it.
 ---
 

@@ -1,17 +1,6 @@
 ---
-title: "Technical Standards"
 description: "Defines mathematical-notation (LaTeX), code-example, file-organization, and accessibility technical standards for tutorials."
 when_to_use: "Read when checking a tutorial's LaTeX formulas, code examples, file naming, or accessibility against technical standards."
-category: explanation
-subcategory: conventions
-tags:
-  - tutorials
-  - diataxis
-  - learning
-  - pedagogy
-  - documentation
-  - teaching
-created: 2025-12-03
 ---
 
 # Technical Standards

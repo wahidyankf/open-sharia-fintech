@@ -1,16 +1,5 @@
 ---
-title: "Existing Patterns to Follow"
 description: "Worked spec-organization patterns for organiclever, ayokoding-www, and CLI apps."
-category: explanation
-subcategory: development
-tags:
-  - specs
-  - architecture
-  - c4-diagrams
-  - gherkin
-  - synchronization
-  - quality
-created: 2026-03-24
 when_to_use: "Use when structuring specs/ for a new app and want an existing pattern to follow."
 ---
 

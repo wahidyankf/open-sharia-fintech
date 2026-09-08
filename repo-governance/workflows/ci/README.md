@@ -1,11 +1,6 @@
 ---
-title: "CI Workflows"
 description: Workflows for checking that repository CI setup follows its documented standards
 when_to_use: Use when routing to a workflow that validates or fixes CI/CD standards compliance.
-category: explanation
-subcategory: workflows
-tags: []
-created: 2026-05-12
 ---
 
 # CI Workflows

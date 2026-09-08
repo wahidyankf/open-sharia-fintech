@@ -1,18 +1,5 @@
 ---
-title: "Independent Drift Layers and the `postinstall` Hook"
 description: The two independent worktree drift layers and why guarded dependency synchronization plus transactional Doctor convergence are both required.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - git
-  - worktree
-  - npm
-  - nx
-  - dependencies
-  - toolchain
-  - doctor
-created: 2026-03-28
 when_to_use: Use when explaining why the guarded install and transactional Doctor convergence are independently required, not either alone.
 ---
 

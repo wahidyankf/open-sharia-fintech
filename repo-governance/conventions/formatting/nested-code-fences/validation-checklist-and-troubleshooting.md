@@ -1,16 +1,6 @@
 ---
-title: "Validation Checklist and Troubleshooting"
 description: The pre-commit checklist for nested fences, plus symptom-diagnosis-solution troubleshooting for three common rendering failures.
 when_to_use: Use when a nested code fence example renders incorrectly and you need to diagnose and fix the symptom.
-category: explanation
-subcategory: conventions
-tags:
-  - markdown
-  - code-fences
-  - nesting
-  - syntax
-  - documentation
-created: 2025-12-23
 ---
 
 # Validation Checklist and Troubleshooting

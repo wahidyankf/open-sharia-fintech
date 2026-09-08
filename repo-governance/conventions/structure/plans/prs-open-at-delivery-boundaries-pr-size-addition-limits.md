@@ -1,13 +1,5 @@
 ---
-title: "Addition-Limit Redirect"
 description: Legacy redirect.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - pr-review
-created: 2026-08-25
 when_to_use: Follow old links.
 ---
 

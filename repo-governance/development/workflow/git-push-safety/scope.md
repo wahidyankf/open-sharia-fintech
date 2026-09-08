@@ -1,15 +1,5 @@
 ---
-title: "Scope"
 description: What this convention covers — every AI agent and automation push path — and what it excludes, namely normal non-destructive pushes and git commit --no-verify.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - safety
-  - automation
-  - human-approval
-created: 2026-03-30
 when_to_use: Use when determining whether a specific push mechanism or actor falls under this convention.
 ---
 

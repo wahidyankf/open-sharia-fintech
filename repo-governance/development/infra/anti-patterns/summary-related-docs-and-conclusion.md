@@ -1,10 +1,5 @@
 ---
-title: "Anti-Patterns Summary, Related Documentation, and Conclusion"
 description: Summary table of all anti-patterns, related documentation links, the closing anti-pattern checklist, and the principles/conventions this document implements.
-category: explanation
-subcategory: development
-tags: [anti-patterns, summary, related-documentation]
-created: 2026-05-12
 when_to_use: Use for a quick-reference table of every anti-pattern and solution, or to find related conventions and principles documents.
 ---
 

@@ -1,15 +1,5 @@
 ---
-title: "Task List Discipline — Purpose and Scope"
 description: The two failure modes (lost context, invisible drift) a live task list prevents, and why the practice carries no step-count threshold
-category: explanation
-subcategory: development
-tags:
-  - task-management
-  - planning
-  - execution
-  - ai-agents
-  - discipline
-created: 2026-06-23
 when_to_use: Use when deciding how this practice reaches a specific piece of work.
 ---
 

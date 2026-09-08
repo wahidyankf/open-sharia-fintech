@@ -1,15 +1,5 @@
 ---
-title: "No Time Estimates"
 description: "The rule prohibiting time-based framing in educational content, with its rationale and where it does and does not apply"
-category: explanation
-subcategory: conventions
-tags:
-  - content-quality
-  - markdown
-  - writing-standards
-  - accessibility
-  - documentation
-created: 2025-12-07
 when_to_use: "Read this before writing tutorial or how-to content that might mention a duration, or when reviewing content for time-estimate language."
 ---
 

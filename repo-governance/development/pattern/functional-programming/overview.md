@@ -1,15 +1,5 @@
 ---
-title: "Overview"
 description: "A summary of the four functional-programming emphases this practice covers: immutable data, pure functions, composition, and functional core/imperative shell."
-category: explanation
-subcategory: development
-tags:
-  - development
-  - functional-programming
-  - immutability
-  - pure-functions
-  - typescript
-created: 2025-12-28
 when_to_use: "Use when orienting to what this functional-programming practice covers before reading a specific section."
 ---
 

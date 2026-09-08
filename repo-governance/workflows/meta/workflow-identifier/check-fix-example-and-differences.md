@@ -1,14 +1,5 @@
 ---
-title: "*-check-fix Workflow Pattern — Example Implementation and Key Differences"
 description: Points to the canonical *-check-fix implementation and tabulates how it differs from a basic single-pass validation workflow.
-category: explanation
-subcategory: workflows
-tags:
-  - workflows
-  - agents
-  - orchestration
-  - patterns
-created: 2025-12-23
 when_to_use: Use when comparing a proposed workflow against the *-check-fix pattern, or when looking for a canonical example to copy.
 ---
 

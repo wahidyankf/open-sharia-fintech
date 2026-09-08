@@ -1,15 +1,6 @@
 ---
-title: "Convention Writing Convention — Naming, Maintenance, and Example Conventions"
 description: The file/title naming pattern for convention documents, the review and deprecation process, and a curated list of exemplary conventions to model.
 when_to_use: Use when naming a new convention file, reviewing an existing one for staleness, or looking for a structural example to imitate.
-category: explanation
-subcategory: conventions
-tags:
-  - meta
-  - conventions
-  - standards
-  - documentation
-created: 2025-12-07
 ---
 
 # Naming, Maintenance, and Example Conventions

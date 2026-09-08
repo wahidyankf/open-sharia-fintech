@@ -1,16 +1,5 @@
 ---
-title: "Repo-Grounding Rule (HARD)"
 description: "The mandatory repo-grounding rule for presence claims."
-category: explanation
-subcategory: development
-tags:
-  - plans
-  - ai-agents
-  - factual-validation
-  - anti-hallucination
-  - web-research
-  - verification
-created: 2026-05-03
 when_to_use: "Use when a plan asserts something exists."
 ---
 

@@ -1,14 +1,5 @@
 ---
-title: "Best Practices"
 description: Practical habits for clear descriptions, consistent scopes, single-purpose commits, useful bodies, issue references, and documenting breaking changes.
-category: explanation
-subcategory: development
-tags:
-  - conventional-commits
-  - git
-  - development
-  - code-quality
-created: 2025-11-24
 when_to_use: Use when writing a commit message and want a habit-level checklist beyond the mechanical format rules.
 ---
 

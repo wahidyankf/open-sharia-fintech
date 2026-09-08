@@ -1,18 +1,6 @@
 ---
-title: "App README vs Specs — Validation and Refinement Log"
 description: The deterministic and LLM-semantic checks that enforce this convention, the forbidden-heading audit, and the history of refinements to the convention itself.
 when_to_use: Use when checking how this convention is enforced, or reviewing the history of changes to its rules.
-category: explanation
-subcategory: conventions
-status: "Pilot — initial issue"
-tags:
-  - conventions
-  - readme
-  - specs
-  - spec-tree-shape
-  - pm-readability
-  - c4
-created: 2026-05-09
 ---
 
 # Validation and Refinement Log

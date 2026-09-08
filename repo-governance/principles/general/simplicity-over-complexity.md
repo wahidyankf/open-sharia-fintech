@@ -1,15 +1,5 @@
 ---
-title: "Simplicity Over Complexity"
 description: Choose the smallest responsible change that satisfies the outcome and all applicable rules without unnecessary lasting mechanisms
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - simplicity
-  - kiss
-  - yagni
-  - over-engineering
-created: 2025-12-15
 when_to_use: Use when deciding whether a lasting mechanism is needed, choosing its shape, or deciding when work is complete.
 ---
 

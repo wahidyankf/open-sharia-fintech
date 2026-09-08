@@ -1,15 +1,5 @@
 ---
-title: "Principles and Conventions Implemented"
 description: The principles and companion conventions the Dependency Bump Stability & Safety Policy implements and respects.
-category: explanation
-subcategory: development
-tags:
-  - dependencies
-  - security
-  - versioning
-  - reproducibility
-  - workflow
-created: 2026-05-15
 when_to_use: Use when tracing why the three-path decision tree and exact-pinning rules exist back to the principles and conventions they respect.
 ---
 

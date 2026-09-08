@@ -1,18 +1,6 @@
 ---
-title: "Migration Strategy"
 description: "Covers how to upgrade existing ASCII art to Mermaid, and clarifies that Mermaid never needs converting back."
 when_to_use: "Use when migrating a legacy ASCII diagram to Mermaid, or deciding whether a Mermaid diagram needs downgrading."
-category: explanation
-subcategory: conventions
-tags:
-  - diagrams
-  - mermaid
-  - ascii-art
-  - visualization
-  - conventions
-  - accessibility
-  - color-blindness
-created: 2025-11-24
 ---
 
 # Migration Strategy

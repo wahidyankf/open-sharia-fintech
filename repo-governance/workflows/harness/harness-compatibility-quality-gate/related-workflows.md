@@ -1,5 +1,4 @@
 ---
-title: "Related Workflows"
 description: Links to the Repository Rules Validation workflow, its internal-governance complement.
 when_to_use: Use when looking for the complementary governance workflow to this one.
 ---

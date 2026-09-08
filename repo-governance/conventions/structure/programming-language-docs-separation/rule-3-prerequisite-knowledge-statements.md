@@ -1,16 +1,6 @@
 ---
-title: "Rule 3: Explicit Prerequisite Knowledge Statements"
 description: The required template and worked PASS/FAIL examples for the prerequisite-knowledge statement every language style guide README must include
 when_to_use: Read this when writing or reviewing the Prerequisite Knowledge section of a docs/explanation/ programming-language README.
-category: explanation
-subcategory: conventions
-tags:
-  - documentation
-  - programming-languages
-  - style-guides
-  - content-separation
-  - dry-principle
-created: 2026-02-04
 ---
 
 # Rule 3: Explicit Prerequisite Knowledge Statements

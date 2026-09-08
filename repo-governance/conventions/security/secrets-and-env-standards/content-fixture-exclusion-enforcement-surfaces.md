@@ -1,17 +1,6 @@
 ---
-title: "Content-Fixture Exclusion — Enforcement Surfaces"
 description: Which surface (hook, settings.json, opencode.json, Codex config, staged-guard) carries the content-fixture exclusion, the Codex glob gotcha, and the accepted residual gap for non-dotfile real env files.
 when_to_use: Use when adding or auditing a new agent-harness surface to confirm it correctly exempts content-tree env fixtures without reopening real .env files.
-category: explanation
-subcategory: conventions
-tags:
-  - security
-  - secrets
-  - env-files
-  - guard-env-file-access
-  - naming
-  - reproducibility
-created: 2026-06-10
 ---
 
 # Content-Fixture Exclusion — Enforcement Surfaces

@@ -1,5 +1,4 @@
 ---
-title: "Workflow Overview"
 description: "Mermaid flow diagram summarizing the maker-checker-fixer loop from start to pass/partial/fail."
 when_to_use: "Use when you need a visual summary of the workflow's control flow before reading the detailed steps."
 ---

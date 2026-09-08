@@ -1,5 +1,4 @@
 ---
-title: "Programming Language Tutorial Structure Convention"
 description: "Dual-path tutorial organization pattern for programming language education with by-concept and by-example learning tracks"
 when_to_use: "Read this index to find the right Programming Language Tutorial Structure Convention child document."
 ---

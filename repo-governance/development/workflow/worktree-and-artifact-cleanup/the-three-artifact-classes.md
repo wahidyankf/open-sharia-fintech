@@ -1,15 +1,5 @@
 ---
-title: "The Three Artifact Classes"
 description: The three eligible artifact classes cleanup covers while retaining diagnostics and shared state.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - worktree
-  - cleanup
-  - parallelism
-created: 2026-07-20
 when_to_use: Use when checking that a cleanup covers all three artifact classes, not just the first.
 ---
 

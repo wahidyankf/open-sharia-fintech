@@ -1,18 +1,6 @@
 ---
-title: "Color Accessibility Convention"
 description: "Comprehensive standards for using color-blind friendly colors across all repository contexts (Mermaid diagrams, emoji categorization, CSS/styling) with verified accessible palette and WCAG compliance requirements"
 when_to_use: "Use when choosing, reviewing, or implementing any color in this repository — diagrams, emoji indicators, agent categorization, or future CSS/styling."
-category: explanation
-subcategory: conventions
-tags:
-  - accessibility
-  - color-blindness
-  - wcag
-  - design
-  - conventions
-  - mermaid-diagrams
-  - color-palette
-created: 2025-12-04
 ---
 
 # Color Accessibility Convention

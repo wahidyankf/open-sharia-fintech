@@ -1,16 +1,5 @@
 ---
-title: "File-Touch Discipline"
 description: Every actor keeps a deliberate, append-only record of the files it touched, carries that record intact across context compaction, and treats every file not on the record as another actor's in-flight work
-category: explanation
-subcategory: development
-tags:
-  - git
-  - safety
-  - concurrency
-  - ai-agents
-  - compaction
-  - discipline
-created: 2026-08-01
 when_to_use: Use whenever you are about to mutate any file in a repository shared with other actors, and always before staging or committing changes.
 ---
 

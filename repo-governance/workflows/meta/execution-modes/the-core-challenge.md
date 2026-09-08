@@ -1,13 +1,5 @@
 ---
-title: "The Core Challenge"
 description: States the core problem execution modes solve — workflow file changes must persist to the actual filesystem — and the two solutions.
-category: explanation
-subcategory: workflows
-tags:
-  - workflows
-  - execution-mode
-  - orchestration
-created: 2026-01-05
 when_to_use: Use when explaining why workflows need a defined execution mode at all.
 ---
 

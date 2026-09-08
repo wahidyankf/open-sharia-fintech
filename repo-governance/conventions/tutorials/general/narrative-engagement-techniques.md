@@ -1,17 +1,6 @@
 ---
-title: "Engagement Techniques"
 description: "Defines storytelling, motivational-element, humor, and relatable-example techniques for keeping learners engaged."
 when_to_use: "Read when a tutorial section feels dry and you need techniques to make it more engaging."
-category: explanation
-subcategory: conventions
-tags:
-  - tutorials
-  - diataxis
-  - learning
-  - pedagogy
-  - documentation
-  - teaching
-created: 2025-12-03
 ---
 
 # Engagement Techniques

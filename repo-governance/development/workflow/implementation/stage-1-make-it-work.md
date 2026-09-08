@@ -1,18 +1,5 @@
 ---
-title: "Stage 1: Make It Work"
 description: The first workflow stage - get functionality working with the simplest possible solution.
-category: explanation
-subcategory: development
-tags:
-  - development
-  - workflow
-  - implementation
-  - optimization
-  - refactoring
-  - surgical-changes
-  - goal-driven
-  - test-driven
-created: 2025-12-15
 when_to_use: Use when starting a new feature or bug fix and deciding how much design work is appropriate before anything runs.
 ---
 

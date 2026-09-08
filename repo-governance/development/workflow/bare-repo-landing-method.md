@@ -1,15 +1,5 @@
 ---
-title: "Bare-Repo Base-Worktree Landing Method"
 description: The base-worktree procedure for landing changes into a repository with no primary checkout — topology verification, the seven-step landing sequence, and the terminal reconcile.
-category: explanation
-subcategory: development
-tags:
-  - git
-  - workflow
-  - worktree
-  - bare-repo
-  - safety
-created: 2026-07-21
 when_to_use: Use when landing a change into a bare repository, or when a landing is performed from a side worktree rather than the branch's own checkout.
 ---
 

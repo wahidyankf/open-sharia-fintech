@@ -1,10 +1,5 @@
 ---
-title: "GitHub Actions Conventions — File Organisation and Composite Actions"
 description: The path pattern for workflow and action files.
-category: explanation
-subcategory: development
-tags: [ci-cd, github-actions]
-created: 2026-03-31
 when_to_use: Use when creating or locating a workflow file or action.
 ---
 

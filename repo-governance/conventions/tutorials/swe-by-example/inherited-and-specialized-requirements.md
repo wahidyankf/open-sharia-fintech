@@ -1,15 +1,5 @@
 ---
-title: "Purpose and Structure Integration: Inherited and Specialized Requirements"
 description: "Lists the general tutorial standards by-example tutorials inherit, and the specialized requirements by-example adds on top of them."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - education
-  - code-first
-created: 2025-12-25
 when_to_use: "Read when you need the checklist of general tutorial standards a by-example tutorial must inherit, plus the extra requirements specific to by-example."
 ---
 

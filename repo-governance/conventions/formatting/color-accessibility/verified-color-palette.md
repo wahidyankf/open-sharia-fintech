@@ -1,18 +1,6 @@
 ---
-title: "Verified Accessible Color Palette"
 description: "Documents the eight-color verified accessible palette with hex, RGB, and HSL values and per-context usage recommendations."
 when_to_use: "Use when picking specific hex codes for a diagram, indicator, or UI element that needs to be color-blind safe."
-category: explanation
-subcategory: conventions
-tags:
-  - accessibility
-  - color-blindness
-  - wcag
-  - design
-  - conventions
-  - mermaid-diagrams
-  - color-palette
-created: 2025-12-04
 ---
 
 # Verified Accessible Color Palette

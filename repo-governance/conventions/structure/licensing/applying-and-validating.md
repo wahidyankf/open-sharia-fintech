@@ -1,15 +1,6 @@
 ---
-title: "Applying and Validating Licensing"
 description: Step-by-step rules for licensing new applications and libraries, good/bad placement examples, and the validation checklist plus grep recipe for auditing compliance.
 when_to_use: Read this when adding a new app or library directory, or when auditing the repository for licensing compliance.
-category: explanation
-subcategory: conventions
-tags:
-  - licensing
-  - structure
-  - mit
-  - per-directory
-created: 2026-04-04
 ---
 
 # Applying and Validating Licensing

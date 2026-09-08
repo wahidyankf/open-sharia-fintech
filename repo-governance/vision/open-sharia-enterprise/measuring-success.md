@@ -1,13 +1,5 @@
 ---
-title: "Measuring Success"
 description: The adoption, impact, movement, and cultural indicators that show the vision is succeeding
-category: explanation
-subcategory: vision
-tags:
-  - vision
-  - purpose
-  - islamic-enterprise
-created: 2025-12-24
 when_to_use: Use when you need concrete, checkable indicators of whether this vision is actually succeeding.
 ---
 

@@ -1,13 +1,5 @@
 ---
-title: "How It Applies"
 description: Concrete pass/fail examples of color accessibility, alt text, heading hierarchy, contrast, and semantic HTML.
-category: explanation
-subcategory: principles
-tags:
-  - principles
-  - accessibility
-  - wcag
-created: 2025-12-15
 when_to_use: Use when implementing or reviewing content for compliance with color, alt-text, heading, contrast, or semantic-HTML accessibility rules.
 ---
 

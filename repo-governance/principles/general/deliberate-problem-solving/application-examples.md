@@ -1,13 +1,5 @@
 ---
-title: "Application Examples"
 description: Walks through three worked examples (API integration, database choice, feature implementation) contrasting hidden-assumption failures with deliberate approaches.
-category: explanation
-subcategory: principles
-tags:
-  - problem-solving
-  - decision-making
-  - clarity
-created: 2026-01-29
 when_to_use: Use when you need a worked example of applying deliberate problem-solving to a realistic task.
 ---
 

@@ -1,14 +1,5 @@
 ---
-title: "Diagrams in Plans"
 description: Requires Mermaid as the primary diagram format in plans/ and lists the architectural concerns that must each get their own diagram.
-category: explanation
-subcategory: conventions
-tags:
-  - conventions
-  - plans
-  - project-planning
-  - organization
-created: 2025-12-05
 when_to_use: Use when deciding whether a plan section needs its own Mermaid diagram.
 ---
 

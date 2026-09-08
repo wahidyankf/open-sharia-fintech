@@ -1,5 +1,4 @@
 ---
-title: "Termination Criteria and Grilling Contract"
 description: Defines pass/partial/fail outcomes and summarizes why the workflow's grilling is intentionally exhaustive.
 when_to_use: Use when determining the workflow's final status, or understanding why every cross-repo difference must be grilled.
 ---

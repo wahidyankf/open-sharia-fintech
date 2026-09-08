@@ -1,16 +1,6 @@
 ---
-title: "Guide Structure Part 2: Standard Library First — Testing Example"
 description: Part 2 requirements plus the worked standard-library testing example (Java assert keyword) and its limitations.
 when_to_use: Use when writing the standard-library testing example for a Part 2 section.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Guide Structure Part 2: Standard Library First — Testing Example

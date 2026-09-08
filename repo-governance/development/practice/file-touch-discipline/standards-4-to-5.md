@@ -1,16 +1,5 @@
 ---
-title: "File-Touch Discipline — Standards 4-5: Carrying and Losing the Ledger"
 description: How the ledger survives context compaction and handoffs, and the degraded-mode default-deny behaviour required when it does not survive
-category: explanation
-subcategory: development
-tags:
-  - git
-  - safety
-  - concurrency
-  - ai-agents
-  - compaction
-  - discipline
-created: 2026-08-01
 when_to_use: Use when writing a compaction summary or handoff, or when resuming a session and the ledger appears to be missing.
 ---
 

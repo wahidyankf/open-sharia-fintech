@@ -1,16 +1,6 @@
 ---
-title: "Guide Structure Part 2: Standard Library First — Database Example Setup"
 description: The worked standard-library JDBC database persistence example.
 when_to_use: Use when writing the standard-library database example for a Part 2 section.
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - in-the-field
-  - education
-  - production-ready
-created: 2026-02-04
 ---
 
 # Guide Structure Part 2: Standard Library First — Database Example Setup

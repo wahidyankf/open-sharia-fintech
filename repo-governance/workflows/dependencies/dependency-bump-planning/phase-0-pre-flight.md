@@ -1,5 +1,4 @@
 ---
-title: "Phase 0: Pre-flight"
 description: Confirms a clean working tree, resolves as-of-date, and computes the Path B 60-day cutoff before inventory begins.
 when_to_use: Use when starting a dependency-bump planning run and needing the preconditions checked first.
 ---

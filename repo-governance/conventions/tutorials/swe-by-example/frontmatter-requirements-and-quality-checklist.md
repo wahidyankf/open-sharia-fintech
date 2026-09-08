@@ -1,15 +1,5 @@
 ---
-title: "Frontmatter Requirements and Quality Checklist"
 description: "Specifies the required frontmatter fields for overview and level pages, plus the start of the pre-publish quality checklist covering coverage, self-containment, and code quality."
-category: explanation
-subcategory: conventions
-tags:
-  - convention
-  - tutorial
-  - by-example
-  - education
-  - code-first
-created: 2025-12-25
 when_to_use: "Read before publishing by-example content, to confirm frontmatter is complete and every quality checklist item is satisfied."
 ---
 

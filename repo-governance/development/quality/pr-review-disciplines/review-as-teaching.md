@@ -1,14 +1,5 @@
 ---
-title: "Review as Teaching — Every Finding Is Legible to a Junior Engineer"
 description: "Binds review findings and replies to be understandable by someone still learning the codebase, and separates critique of code from judgement of people."
-category: explanation
-subcategory: development
-tags:
-  - pr-review
-  - governance
-  - agents
-  - quality-gates
-created: 2026-08-22
 when_to_use: "Use when writing a review finding or a fixer reply."
 ---
 

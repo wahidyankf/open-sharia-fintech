@@ -1,5 +1,4 @@
 ---
-title: "Phase 1: Inventory"
 description: Enumerates every in-scope dependency manifest across npm, Cargo, .NET, Go, Docker, and GitHub Actions, and records current pinned versions.
 when_to_use: Use when building the full dependency inventory table before classification.
 ---

@@ -1,13 +1,5 @@
 ---
-title: "The Obligation"
 description: The three things a pull request adding code must state in its body — what the code buys, what it costs to maintain, and which simpler alternative was rejected.
-category: explanation
-subcategory: development
-tags:
-  - code-quality
-  - review
-  - discipline
-created: 2026-08-21
 when_to_use: Use when writing or reviewing the cost/benefit section of a pull request that adds code.
 ---
 

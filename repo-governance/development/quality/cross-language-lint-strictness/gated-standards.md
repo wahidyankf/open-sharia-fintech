@@ -1,13 +1,5 @@
 ---
-title: "Gated standards"
 description: "The table of every currently-gated artifact type, its linter, threshold/config, and CI job."
-category: development
-subcategory: quality
-tags:
-  - lint
-  - quality
-  - ci
-created: 2026-06-10
 when_to_use: "Use when checking which linter and CI job gates a given artifact type (shell, Dockerfile, GitHub Actions YAML, F#, Markdown, formatting)."
 ---
 
