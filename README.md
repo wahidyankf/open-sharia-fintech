@@ -11,9 +11,12 @@ change as product, research, assurance, and platform work develops.
 This is the active OSE product monorepo, not a generic project starter. It holds OSE product work,
 its supporting research, and the governance and automation that carry them.
 
-Adjacent repositories have distinct roles: `ose-private` holds authorized operations,
+This repository is one of the **OSE Code Repositories**, the five repositories OSE is built and
+maintained in. The other four have distinct roles: `ose-private` holds authorized operations,
+[RHINO](https://github.com/wahidyankf/rhino) supplies repository hygiene,
 [HIPPO](https://github.com/wahidyankf/hippo) supplies resource coordination, and
-[BeaverNest](https://github.com/wahidyankf/beaver-nest) is an independent family product.
+[BeaverNest](https://github.com/wahidyankf/beaver-nest) is an independent family product. Each of
+the five versions and releases on its own schedule; the name is navigation, not a shared release.
 
 The [repository comparison](./docs/reference/related-repositories.md) says which repository answers
 which question.

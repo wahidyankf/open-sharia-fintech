@@ -51,5 +51,6 @@ platform, the Nx workspace, and the engineering systems that support an early pr
 
 ## Understand the wider OSE ecosystem
 
-- [Related Repositories](./related-repositories.md) — distinguish OSE Public from its sibling
-  repositories and find the right home for a question or pattern.
+- [Related Repositories](./related-repositories.md) — the OSE Code Repositories catalogue:
+  distinguish OSE Public from its parity sibling and from the independent RHINO, HIPPO, and
+  BeaverNest repositories, and find the right home for a question or pattern.
