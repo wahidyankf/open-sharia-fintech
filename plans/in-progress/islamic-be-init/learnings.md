@@ -196,3 +196,20 @@ Doctor tool "golangci-lint"` until the linter was declared there too. So `extra-
   `version: "2"` config — became a total absence of a Linux path.
 - **Disposition**: _pending Phase 7_ — resolved in-flight. Worth proposing that provisioning
   intersect a gate's file scope, so a dormant gate costs nothing.
+
+### DU1/DU2: an `all-file-type` gate makes the working tree part of the delivery unit
+
+- **Observed**: DU1's push was rejected by `md-links` for four broken links **in DU2's files**.
+  DU2's specs corpus was prepared in the same worktree while DU1's PR was in flight, and it links to
+  `apps/islamic-be`, which DU3 creates. The links were correct-in-intent and unresolvable-in-fact.
+  Nothing in DU1's own diff was wrong.
+- **Generalizes twice over**:
+  1. A gate declared `scope: all-file-type` reads the whole tree, not the change. Preparing a later
+     delivery unit's files in the same worktree therefore puts them on the current unit's critical
+     path — a cost that is invisible until the push is rejected. One worktree per plan is a cap on
+     concurrency, not just on disk.
+  2. A specs corpus written to the house shape always cross-links to its implementing project. When
+     the corpus lands in an earlier delivery unit than the project, that link cannot be written yet.
+     **The link belongs to the DU that makes it resolvable**, not to the DU that wants it.
+- **Disposition**: _pending Phase 7_ — resolved in-flight by naming the projects in prose and moving
+  the link into DU3 and DU4 as explicit steps.

@@ -762,6 +762,12 @@ Delivery boundary. Requires DU1 and DU2 merged.
 - [ ] [AI] Write `apps/islamic-be/README.md` covering the corpus, adapters, target names, and an explicit rationale for the omitted Integration layer — acceptance: the README states why `test:integration` is absent, as the anti-echo convention requires, and stays under the 1000-word README budget
 - [ ] [AI] Commit on `islamic-be-init/du3-service`, push, open a draft PR, poll CI every 2 minutes, and merge when green — acceptance: the PR merges to `main`
 
+- [ ] [AI] Add the reciprocal links the specs corpus could not carry before this DU existed: link `specs/apps/islamic/README.md` and `specs/apps/islamic/be/README.md` to `apps/islamic-be/README.md`, and link back — acceptance: `rhino-bin.sh md links validate --exclude plans/done` reports no broken links
+
+  > **Added during execution (2026-09-08).** DU2's corpus names `apps/islamic-be` in prose instead
+  > of linking it, because `md-links` is `scope: all-file-type` and would have failed on a link to a
+  > project that does not exist until this DU. The link belongs to the DU that makes it resolvable.
+
 ### Phase 3 Gate
 
 > All checks below must pass before starting Phase 4.
@@ -789,6 +795,11 @@ Delivery boundary. Requires DU3 merged.
 - [ ] [AI] Decide and record whether the config scenarios need an `e2e-coverage-baseline.json` `allowedUnbound` entry, with a written reason for each — acceptance: every unbound scenario carries a stated reason or is bound
 - [ ] [AI] Write `apps/islamic-be-e2e/README.md` — acceptance: it explains what the suite covers and how to run it
 - [ ] [AI] Commit on `islamic-be-init/du4-e2e`, push, open a draft PR, poll CI every 2 minutes, and merge when green — acceptance: the PR merges to `main`
+
+- [ ] [AI] Add the reciprocal links for the E2E project: link `specs/apps/islamic/be/README.md` to `apps/islamic-be-e2e/README.md`, and link back — acceptance: `rhino-bin.sh md links validate --exclude plans/done` reports no broken links
+
+  > **Added during execution (2026-09-08).** Same reason as the DU3 step: DU2's corpus could not
+  > link a project that DU4 creates.
 
 ### Phase 4 Gate
 
