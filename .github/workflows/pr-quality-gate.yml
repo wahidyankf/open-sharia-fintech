@@ -146,6 +146,10 @@ jobs:
         with:
           channel: stable
           flutter-version-file: .fvmrc
+      # lint-staged runs scripts/format-java.sh for changed Java files, and that wrapper
+      # drives the same Spotless formatter as the verify half. It is installed unconditionally
+      # for the same reason Rust and Flutter are: this job has no per-language routing.
+      - uses: ./.github/actions/setup-java
       # The downloaded gate-profile apphost is framework-dependent, so every
       # consumer provisions its pinned .NET runtime before executing it. This
       # action also installs Fantomas for the formatting surface.
@@ -270,6 +274,12 @@ jobs:
       - name: Install Ruff
         if: matrix.group.group == 'formatting-verify'
         run: pipx install ruff==0.15.9
+      # format-verify-java drives Spotless through the ose-lms-be Gradle wrapper, and
+      # google-java-format reaches into javac internals that the runner image's default JDK 17
+      # does not expose, so it fails reflectively there. This group provisions the same pinned
+      # JDK the Java quality gate uses, exactly as it already does for Dart and Ruff.
+      - uses: ./.github/actions/setup-java
+        if: matrix.group.group == 'formatting-verify'
       - uses: actions/download-artifact@v4
         with:
           name: rhino-cli-gate-binary

@@ -196,3 +196,36 @@
   every closed language list in the enforcement machinery, not just the parser; or, more durably,
   restructuring those closed lists into one declared per-language table so that adding a language
   is a single data edit and a missing entry is visible rather than silent.
+
+## Learning: a formatter's own JDK is not the project's declared Java toolchain
+
+- **Date**: 2026-09-08
+- **Context**: DU3's first full CI run was green everywhere except `formatting-verify`, which
+  failed with eight identical `google-java-format(java.lang.reflect.InvocationTargetException)`
+  entries — one per Java file. The message names the source files, so it reads as a formatting
+  defect in the code. Every one of those files had passed `spotlessCheck` locally minutes before.
+- **What happened**: Spotless runs google-java-format inside the **Gradle daemon JVM**, not inside
+  the toolchain the build declares. `apps/ose-lms-be/build.gradle.kts` pins
+  `java { toolchain { languageVersion = JavaLanguageVersion.of(25) } }`, and that governs
+  compilation and tests — but not the formatter. The `formatting-verify` gate-group job provisions
+  a toolchain for every other language whose formatter it runs (.NET/Fantomas, Flutter/Dart, Ruff)
+  and none for Java, so Spotless ran on the runner image's default JDK 17. google-java-format
+  1.36.1 reaches into javac internals JDK 17 does not expose, and the reflective failure is
+  reported once per file rather than once per JVM. Setting `JAVA_HOME` to a local JDK 17 and
+  changing nothing else reproduced the CI failure byte for byte; the pinned JDK 25 passed the same
+  command on the same untouched sources. Fixed by adding `./.github/actions/setup-java` to both
+  jobs that can run a Java formatter gate.
+- **Why it might generalize**: two separate traps compose here. First, a declared language
+  toolchain is easy to read as "the JDK this project uses", when in Gradle it governs only
+  compilation and test execution — plugins that host a formatter or analyser in the daemon are
+  outside it. Second, the failure is reported in the vocabulary of the _files_ rather than of the
+  _runtime_, so the natural first response is to reformat sources that were already correct, which
+  would have made the build pass for the wrong reason and permanently mis-formatted the code.
+  A green local run proves nothing here, because the developer machine has the pinned JDK on PATH
+  while the runner does not. Candidate durable fixes to weigh at triage: state in the Java style
+  guides that Spotless binds to the daemon JVM and that CI must provision it explicitly; or add a
+  build-script precondition to `ose-lms-be` that fails Spotless tasks with the actual reason
+  ("daemon JVM is Java N, formatter needs ≥25") instead of a per-file reflective error; or give the
+  gate registry a way to declare a gate's required toolchain so a job cannot run a gate whose
+  toolchain it never installed — the mechanism the `doctor-tools:` field already gestures at but
+  which cannot install a JDK today.
