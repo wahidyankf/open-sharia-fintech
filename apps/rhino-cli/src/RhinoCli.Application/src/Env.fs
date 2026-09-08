@@ -1134,8 +1134,9 @@ type SurfaceConfig =
     {
         Root: string
         Kind: SurfaceKind
-        /// Source language for the app validator: `"rust"`, `"typescript"`, or
-        /// `"fsharp"`. Unused for `Terraform`/`Ansible` surfaces. Defaults to
+        /// Source language for the app validator: `"rust"`, `"typescript"`,
+        /// `"fsharp"`, or `"go"`. Unused for `Terraform`/`Ansible` surfaces.
+        /// Defaults to
         /// `""` when the YAML key is absent.
         Lang: string
         /// Keys intentionally exempt from drift detection (framework-injected,
@@ -1540,6 +1541,73 @@ let scanFsharpReads (root: string) : Result<string list, string> =
     with ex ->
         Error(sprintf "cannot read source under %s: %s" srcDir ex.Message)
 
+let private goGetenvRegex =
+    Regex(@"\bos\.Getenv\s*\(\s*""([A-Z][A-Z0-9_]*)""\s*\)", RegexOptions.Compiled)
+
+let private goLookupEnvRegex =
+    Regex(@"\bos\.LookupEnv\s*\(\s*""([A-Z][A-Z0-9_]*)""\s*\)", RegexOptions.Compiled)
+
+let private goInjectedReaderRegex =
+    Regex(@"\bos\.LookupEnv\s*,\s*""([A-Z][A-Z0-9_]*)""", RegexOptions.Compiled)
+
+/// Scans Go source under `root` for environment variable keys consumed by the
+/// code [Repo-grounded — mirrors `scanFsharpReads`].
+///
+/// Scans the module root rather than `root/src`: a Go module has no `src`
+/// directory, its packages sit directly beneath `go.mod`. Skips
+/// `generated-contracts/` — generated transport types are not an authored
+/// environment contract — and `_test.go` files, which name keys to build
+/// fixtures rather than to read application configuration (the rationale
+/// [`scanTsReads`] applies to `.test.`/`.spec.`).
+///
+/// Detects the direct `os.Getenv("VAR_NAME")` and `os.LookupEnv("VAR_NAME")`
+/// calls, plus the injected-reader form `os.LookupEnv, "VAR_NAME"`, where a
+/// pure resolver is handed the reader and the key together at the composition
+/// root. That third form is the Go analogue of F#'s `readEnvironment
+/// "VAR_NAME"` wrapper pattern: in both, the key never appears as an argument
+/// to the reader itself, so matching only direct calls would report a
+/// genuinely read key as declared-but-unread. All three exclude
+/// [`frameworkOwnedEnvironmentKeys`].
+///
+/// # Errors
+///
+/// Returns an error when a source file cannot be read.
+// Coverage boundary: real Go source scanning is exercised by Env-contract Integration and E2E proof.
+[<ExcludeFromCodeCoverage>]
+let scanGoReads (root: string) : Result<string list, string> =
+    try
+        let keys = HashSet<string>()
+
+        let addUnlessFrameworkOwned (key: string) =
+            if not (List.contains key frameworkOwnedEnvironmentKeys) then
+                keys.Add key |> ignore
+
+        let generatedSegment =
+            sprintf "%cgenerated-contracts%c" Path.DirectorySeparatorChar Path.DirectorySeparatorChar
+
+        let goFiles =
+            allFilesUnder root
+            |> List.filter (fun p ->
+                p.EndsWith(".go", StringComparison.Ordinal)
+                && not (p.EndsWith("_test.go", StringComparison.Ordinal))
+                && not (p.Contains generatedSegment))
+
+        for path in goFiles do
+            let content = File.ReadAllText path
+
+            for m in goGetenvRegex.Matches content do
+                addUnlessFrameworkOwned m.Groups[1].Value
+
+            for m in goLookupEnvRegex.Matches content do
+                addUnlessFrameworkOwned m.Groups[1].Value
+
+            for m in goInjectedReaderRegex.Matches content do
+                addUnlessFrameworkOwned m.Groups[1].Value
+
+        Ok(keys |> List.ofSeq)
+    with ex ->
+        Error(sprintf "cannot read source under %s: %s" root ex.Message)
+
 /// Validates a single `App`-kind surface against its `.env.example`
 /// [Repo-grounded — `validate.rs::validate_app_surface`].
 ///
@@ -1589,6 +1657,7 @@ let validateAppSurface (repoRoot: string) (surface: SurfaceConfig) : Result<Find
             | "rust" -> scanRustReads root
             | "typescript" -> scanTsReads root
             | "fsharp" -> scanFsharpReads root
+            | "go" -> scanGoReads root
             | other -> Error(sprintf "unsupported lang: %s" other)
 
         match readResult with

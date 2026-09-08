@@ -251,6 +251,86 @@ let ``scanFsharpReads excludes the framework-owned DOTNET_RUNNING_IN_CONTAINER k
     | Ok keys -> Assert.DoesNotContain("DOTNET_RUNNING_IN_CONTAINER", keys)
     | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
 
+// ---- scanGoReads ----
+
+[<Fact>]
+let ``scanGoReads detects a direct os.Getenv read`` () =
+    let root = newTempDir ()
+    writeFile root "internal/config/config.go" "v := os.Getenv(\"MY_GO_KEY\")\n"
+
+    match scanGoReads root with
+    | Ok keys -> Assert.Contains("MY_GO_KEY", keys)
+    | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
+
+[<Fact>]
+let ``scanGoReads detects a direct os.LookupEnv read`` () =
+    let root = newTempDir ()
+    writeFile root "internal/config/config.go" "v, ok := os.LookupEnv(\"LOOKUP_KEY\")\n"
+
+    match scanGoReads root with
+    | Ok keys -> Assert.Contains("LOOKUP_KEY", keys)
+    | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
+
+// The injected-reader form: the app hands a pure resolver both the reader and the
+// key, so the key never appears as an argument to os.LookupEnv itself. This is the
+// Go analogue of F#'s `readEnvironment "KEY"` wrapper, and is the shape
+// apps/islamic-be actually uses.
+[<Fact>]
+let ``scanGoReads detects the injected-reader form where the key sits beside the reader`` () =
+    let root = newTempDir ()
+
+    writeFile root "cmd/app/main.go" "port, err := config.ResolvePort(*portFlag, os.LookupEnv, \"INJECTED_KEY\")\n"
+
+    match scanGoReads root with
+    | Ok keys -> Assert.Contains("INJECTED_KEY", keys)
+    | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
+
+// The documented divergence from every sibling scanner: a Go module has no src/,
+// its packages sit directly beneath go.mod.
+[<Fact>]
+let ``scanGoReads scans the module root rather than a src subdirectory`` () =
+    let root = newTempDir ()
+    writeFile root "main.go" "v := os.Getenv(\"ROOT_LEVEL_KEY\")\n"
+
+    match scanGoReads root with
+    | Ok keys -> Assert.Contains("ROOT_LEVEL_KEY", keys)
+    | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
+
+[<Fact>]
+let ``scanGoReads skips generated-contracts output`` () =
+    let root = newTempDir ()
+    writeFile root "internal/generated-contracts/api.gen.go" "v := os.Getenv(\"GENERATED_KEY\")\n"
+
+    match scanGoReads root with
+    | Ok keys -> Assert.DoesNotContain("GENERATED_KEY", keys)
+    | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
+
+[<Fact>]
+let ``scanGoReads skips a _test.go file`` () =
+    let root = newTempDir ()
+    writeFile root "internal/config/config_test.go" "v := os.Getenv(\"TEST_ONLY_KEY\")\n"
+
+    match scanGoReads root with
+    | Ok keys -> Assert.DoesNotContain("TEST_ONLY_KEY", keys)
+    | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
+
+[<Fact>]
+let ``scanGoReads excludes the framework-owned DOTNET_RUNNING_IN_CONTAINER key`` () =
+    let root = newTempDir ()
+    writeFile root "main.go" "v := os.Getenv(\"DOTNET_RUNNING_IN_CONTAINER\")\n"
+
+    match scanGoReads root with
+    | Ok keys -> Assert.DoesNotContain("DOTNET_RUNNING_IN_CONTAINER", keys)
+    | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
+
+[<Fact>]
+let ``scanGoReads returns no keys for a module root that does not exist`` () =
+    let root = Path.Combine(newTempDir (), "absent")
+
+    match scanGoReads root with
+    | Ok keys -> Assert.Empty(keys)
+    | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
+
 // ---- validateAppSurface ----
 
 let private defaultSurface (root: string) (lang: string) (allowlist: string list) : SurfaceConfig =
@@ -446,6 +526,18 @@ let ``validateAppSurface dispatches to scanTsReads for a typescript lang surface
 
     match validateAppSurface repoRoot surface with
     | Ok findings -> Assert.Contains(findings, fun (f: Finding) -> f.Key = "TS_DISPATCH_KEY")
+    | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
+
+[<Fact>]
+let ``validateAppSurface dispatches to scanGoReads for a go lang surface`` () =
+    let repoRoot = newTempDir ()
+    writeFile repoRoot "surface5/.env.example" ""
+    writeFile repoRoot "surface5/main.go" "v := os.Getenv(\"GO_DISPATCH_KEY\")\n"
+
+    let surface = defaultSurface "surface5" "go" []
+
+    match validateAppSurface repoRoot surface with
+    | Ok findings -> Assert.Contains(findings, fun (f: Finding) -> f.Key = "GO_DISPATCH_KEY")
     | Error message -> Assert.Fail(sprintf "expected Ok, got Error %s" message)
 
 [<Fact>]

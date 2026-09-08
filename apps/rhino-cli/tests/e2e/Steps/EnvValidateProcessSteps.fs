@@ -93,6 +93,25 @@ type EnvValidateProcessSteps() =
             "repo-config.yml"
             "env-contract:\n  surfaces:\n    - root: surface\n      kind: app\n      lang: fsharp\n"
 
+    // The Go counterpart of the wrapper scenario above. The fixture uses the
+    // injected-reader form — the key handed to a pure resolver alongside
+    // `os.LookupEnv` rather than passed to it — because that is the shape
+    // apps/islamic-be actually uses, and a direct `os.Getenv` fixture would not
+    // prove it crosses the published CLI boundary.
+    [<Given>]
+    member _.``a Go app surface that reads a declared key through an injected lookup``() =
+        write root "surface/.env.example" "INJECTED_KEY=8402\n"
+
+        write
+            root
+            "surface/cmd/app/main.go"
+            "port, err := config.ResolvePort(*portFlag, os.LookupEnv, \"INJECTED_KEY\")\n"
+
+        write
+            root
+            "repo-config.yml"
+            "env-contract:\n  surfaces:\n    - root: surface\n      kind: app\n      lang: go\n"
+
     [<Given>]
     member _.``ose-private declares terraform and ansible surfaces in repo-config.yml``() =
         write root "infra/terraform/main.tf" "variable \"REQUIRED_KEY\" {\n  description = \"required\"\n}\n"
@@ -177,6 +196,7 @@ module private FeatureRunner =
 [<InlineData("A key declared in .env.example but never read by the app fails validation")>]
 [<InlineData("A key read by the app but never declared in .env.example fails validation")>]
 [<InlineData("F# environment wrapper reads remain detectable after convergence")>]
+[<InlineData("Go environment reads through an injected lookup remain detectable")>]
 let ``app env drift crosses the published CLI boundary`` title =
     FeatureRunner.run "env" "env-validate-app-drift.feature" title
 

@@ -23,3 +23,8 @@ Feature: `env validate` detects declared-but-unread and read-but-undeclared env-
     Given an F# app surface whose .env.example declares keys read through a pure environment-reader wrapper and whose source reads the framework-owned container signal
     When the developer runs env validate
     Then the command exits successfully
+
+  Scenario: Go environment reads through an injected lookup remain detectable
+    Given a Go app surface that reads a declared key through an injected lookup
+    When the developer runs env validate
+    Then the command exits successfully

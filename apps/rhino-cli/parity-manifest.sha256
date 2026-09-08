@@ -6,7 +6,7 @@ fe3b0fa079bad46272ecd289e2b04e227f07441285dc7c4a2cc001f32de88360  apps/rhino-cli
 2f42753fcea9776f70b8755fda4a1b9bdf2285a6f10dcaa40b102f9e57e75178  apps/rhino-cli/src/RhinoCli.Application/src/Convention.fs
 5947ae9608d0d9b3547ce5f4c65c8b62821b3ba10fcd3f1bf72bb36f7a295fa5  apps/rhino-cli/src/RhinoCli.Application/src/Doctor.fs
 4ee5b80be0bb7721c1a676d059aaba8dafffee5e1e29d7f68c241559177337d8  apps/rhino-cli/src/RhinoCli.Application/src/DoctorResource.fs
-1ad6a9dd2a4044588da8501b8db62e323440d103a541e4b3f6fb30291f15f8e4  apps/rhino-cli/src/RhinoCli.Application/src/Env.fs
+de09b8bfa0d58690f90d6cda88b5fd6607e85f75b6125a7defe8f620fed70bd9  apps/rhino-cli/src/RhinoCli.Application/src/Env.fs
 b52a8b26f31676f54e2bfed81d4635c01ce51685db53231c32853acf96a1dab9  apps/rhino-cli/src/RhinoCli.Application/src/Git.fs
 e6863773fd58d3e4536bcf0adb8a9436846be20d1369aea5e1b9ebbdfe388e68  apps/rhino-cli/src/RhinoCli.Application/src/Governance.fs
 258eed854c668e3bc23bf7fd51c43d9bac649110e30ba5e90c208fa4e5b4c942  apps/rhino-cli/src/RhinoCli.Application/src/HarnessPolicy.fs
@@ -45,7 +45,7 @@ efa5d7b25d6dfe62856e377b4d8205a209c1f25652252d33d0638e9ab3b3015f  specs/apps/rhi
 fb76727589bef3c5a054cc471b4483de474bb7e8f8da74d7cc71faf0fac2c304  specs/apps/rhino/cli/behaviours/env/env-backup.feature
 5f2e7d37c18611c3200e14aeb788d153322c8e7048ac4725464274d40bd8c046  specs/apps/rhino/cli/behaviours/env/env-init.feature
 f3e483d3c02e7ff91a5d7eeaaf0414b5749f698de5b09f3fe28f43b100f3c227  specs/apps/rhino/cli/behaviours/env/env-restore.feature
-cdff5c19b5b7ea3949c4a305daaedba632e4b1b5446c6fa0e1e2b816bbd9b151  specs/apps/rhino/cli/behaviours/env/env-validate-app-drift.feature
+f6840de3d7d308ee5912989f7a66a6c8abc9db1613560de34217e205ae900853  specs/apps/rhino/cli/behaviours/env/env-validate-app-drift.feature
 4224a3a6d734315f94622468a60cf2f9c1540ea9ddcabe80f6b1a95030b2aa25  specs/apps/rhino/cli/behaviours/gate/README.md
 cca4fd85839b8ace3b1c19eb74f4b568fec71e8192fd75241923a6525cc2725a  specs/apps/rhino/cli/behaviours/gate/gate-declaration.feature
 e837c0ffea4b247d84af1b6811619213c86e093c2bd706ed99c2a191d1ff1209  specs/apps/rhino/cli/behaviours/gate/gate-emission.feature

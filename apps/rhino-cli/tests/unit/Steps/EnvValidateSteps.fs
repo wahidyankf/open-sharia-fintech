@@ -34,6 +34,17 @@ type EnvValidateSteps() =
         declared <- [ "WRAPPED_KEY" ]
         read <- [ "WRAPPED_KEY" ]
 
+    // Named in full rather than wildcarded: the sibling above is abbreviated only
+    // because TickSpec's line lexer truncates its step at the literal `#` in "F#"
+    // (see EnvValidateResourceSteps.fs for the full explanation). No `#` appears
+    // in this step, so TickSpec sees the whole sentence and the literal name both
+    // matches at runtime and satisfies the coverage tool's anchored check.
+    [<Given>]
+    member _.``a Go app surface that reads a declared key through an injected lookup``() =
+        surface <- { surface with Lang = "go" }
+        declared <- [ "INJECTED_KEY" ]
+        read <- [ "INJECTED_KEY" ]
+
     [<When>]
     member _.``the developer runs env validate``() =
         findings <- validateAppKeys surface declared read
@@ -72,5 +83,12 @@ let ``read but undeclared key is rejected by pure drift policy`` () =
 let ``matching wrapped F sharp key is accepted by pure drift policy`` () =
     let steps = EnvValidateSteps()
     steps.``an F.*`` ()
+    steps.``the developer runs env validate`` ()
+    steps.``the command exits successfully`` ()
+
+[<Fact>]
+let ``matching injected Go key is accepted by pure drift policy`` () =
+    let steps = EnvValidateSteps()
+    steps.``a Go app surface that reads a declared key through an injected lookup`` ()
     steps.``the developer runs env validate`` ()
     steps.``the command exits successfully`` ()
