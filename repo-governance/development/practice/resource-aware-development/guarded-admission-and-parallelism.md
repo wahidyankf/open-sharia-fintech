@@ -21,3 +21,10 @@ FIFO; pressure may defer a request even when its vector fits.
 OSE maps fixed CPU allocation only to `NX_PARALLEL` and `DOTNET_PROCESSOR_COUNT`: missing values
 receive it, lower positive values survive, and higher values are clamped. Inner commands inherit
 the session; never add another outer guard or an unowned ecosystem mapping.
+
+Every compute-bearing `package.json` script here already carries its own guard, either invoking
+`./hippo run` directly or delegating to one that does. `npm run <script>` is therefore already
+admitted, and wrapping one in an outer `./hippo run` makes each inner call wait on a lease its own
+ancestor holds. The run then stalls near zero CPU while `./hippo status` still reports `normal`, so
+it reads as a slow build rather than as self-contention. `npm install` and `npm exec` are not
+scripts and do take the outer boundary — that is what the `AGENTS.md` and `README.md` examples show.

@@ -1,0 +1,340 @@
+### DU1 Step 8 verification — ose-public — 2026-09-08
+
+$ npm run validate:config
+
+> open-sharia-enterprise@1.0.0 validate:config
+> npm run validate:claude && npm run generate:bindings && npm run validate:opencode
+
+
+> open-sharia-enterprise@1.0.0 validate:claude
+> ./hippo run --class ephemeral --disk-path . -- dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- harness claude validate
+
+Validation Complete
+==================================================
+
+Total Checks: 1648
+Passed: 1645
+Warnings: 3
+Failed: 0
+Duration: 200.3079ms
+
+Warnings:
+
+  ⚠ Skill: docs-validating-links - Unknown Field: created
+     Expected: Field listed in ValidClaudeSkillFields
+     Actual: Unknown field: created
+     Message: Field "created" is not in the documented Claude Code skill field set; verify it is intentional
+
+  ⚠ Skill: docs-validating-software-engineering-separation - Unknown Field: created
+     Expected: Field listed in ValidClaudeSkillFields
+     Actual: Unknown field: created
+     Message: Field "created" is not in the documented Claude Code skill field set; verify it is intentional
+
+  ⚠ Skill: swe-developing-applications-common - Unknown Field: created
+     Expected: Field listed in ValidClaudeSkillFields
+     Actual: Unknown field: created
+     Message: Field "created" is not in the documented Claude Code skill field set; verify it is intentional
+
+Status: ⚠ VALIDATION PASSED WITH WARNINGS
+
+> open-sharia-enterprise@1.0.0 generate:bindings
+> ./hippo run --class transactional --disk-path . -- dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- harness bindings generate
+
+Sync Complete
+==================================================
+
+Agents: 88 converted
+Skills: 0 copied
+Duration: 355.7551ms
+
+Status: ✓ SUCCESS
+codex: 88 agent(s) emitted
+codex: 0 skill file(s) mirrored, 0 stale removed
+
+> open-sharia-enterprise@1.0.0 validate:opencode
+> npm run validate:sync
+
+
+> open-sharia-enterprise@1.0.0 validate:sync
+> ./hippo run --class ephemeral --disk-path . -- dotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- harness sync validate
+
+Validation Complete
+==================================================
+
+Total Checks: 92
+Passed: 92
+Failed: 0
+Duration: 3.041149s
+
+Status: ✓ VALIDATION PASSED
+EXIT=0
+
+$ ./hippo run --class transactional --disk-path . -- npm exec nx -- run rhino-cli:test:quick
+
+> nx run rhino-cli:"test:quick"
+
+> npm exec -- nx run rhino-cli:typecheck
+
+
+[2m> [22m[2mnx run[22m rhino-cli:typecheck
+
+[2m> [22mdotnet build apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj --no-restore
+
+  RhinoCli.Domain -> <public-worktree>/apps/rhino-cli/src/RhinoCli.Domain/bin/Debug/net10.0/RhinoCli.Domain.dll
+  RhinoCli.Infrastructure -> <public-worktree>/apps/rhino-cli/src/RhinoCli.Infrastructure/bin/Debug/net10.0/RhinoCli.Infrastructure.dll
+  RhinoCli.Application -> <public-worktree>/apps/rhino-cli/src/RhinoCli.Application/bin/Debug/net10.0/RhinoCli.Application.dll
+  RhinoCli.Cli -> <public-worktree>/apps/rhino-cli/src/RhinoCli.Cli/bin/Debug/net10.0/RhinoCli.Cli.dll
+  RhinoCli.Program -> <public-worktree>/apps/rhino-cli/src/RhinoCli.Program/bin/Debug/net10.0/rhino-cli-fsharp.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.44
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mtypecheck[22m for project rhino-cli[39m
+
+
+> npm exec -- nx run rhino-cli:lint
+
+
+[7m[1m[36m NX [39m[22m[27m  [36mRunning target [1mlint[22m for project rhino-cli and [1m1[22m task it depends on:[39m
+
+[2m[36m[39m[22m
+
+[2m> [22m[2mnx run[22m rhino-cli:typecheck  [2m[existing outputs match the cache, left as is][22m
+
+[2m> [22mdotnet build apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj --no-restore
+
+  RhinoCli.Domain -> <public-worktree>/apps/rhino-cli/src/RhinoCli.Domain/bin/Debug/net10.0/RhinoCli.Domain.dll
+  RhinoCli.Infrastructure -> <public-worktree>/apps/rhino-cli/src/RhinoCli.Infrastructure/bin/Debug/net10.0/RhinoCli.Infrastructure.dll
+  RhinoCli.Application -> <public-worktree>/apps/rhino-cli/src/RhinoCli.Application/bin/Debug/net10.0/RhinoCli.Application.dll
+  RhinoCli.Cli -> <public-worktree>/apps/rhino-cli/src/RhinoCli.Cli/bin/Debug/net10.0/RhinoCli.Cli.dll
+  RhinoCli.Program -> <public-worktree>/apps/rhino-cli/src/RhinoCli.Program/bin/Debug/net10.0/rhino-cli-fsharp.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.44
+
+[2m> [22m[2mnx run[22m rhino-cli:lint
+
+[2m> [22mdotnet tool restore
+
+Tool 'fantomas' (version '7.0.5') was restored. Available commands: fantomas
+Tool 'dotnet-fsharplint' (version '0.26.10') was restored. Available commands: dotnet-fsharplint
+Tool 'fsharp-analyzers' (version '0.36.0') was restored. Available commands: fsharp-analyzers
+
+Restore was successful.
+[2m> [22mdotnet tool run fantomas --check apps/rhino-cli/src
+
+[2m> [22mfor p in RhinoCli.Domain RhinoCli.Infrastructure RhinoCli.Application RhinoCli.Cli RhinoCli.Program; do dotnet fsharplint lint apps/rhino-cli/src/$p/$p.fsproj --lint-config apps/rhino-cli/src/fsharplint.json || exit 1; done
+
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Domain/obj/Debug/net10.0/RhinoCli.Domain.AssemblyInfo.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Domain/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Domain/src/Types.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Domain/src/Finding.fs ==========
+========== Finished: 0 warnings ==========
+========== Summary: 0 warnings ==========
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Infrastructure/obj/Debug/net10.0/RhinoCli.Infrastructure.AssemblyInfo.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Infrastructure/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Infrastructure/src/GitRoot.fs ==========
+========== Finished: 0 warnings ==========
+========== Summary: 0 warnings ==========
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Application/obj/Debug/net10.0/RhinoCli.Application.AssemblyInfo.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Application/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Application/src/Convention.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Application/src/Parity.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Application/src/RepoConfig.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Application/src/Env.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Application/src/DoctorResource.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Application/src/Doctor.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Application/src/TestCoverage.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Application/src/Md.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Application/src/Governance.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Application/src/Git.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Application/src/HarnessPolicy.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Application/src/HarnessRuntime.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Application/src/Specs.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Application/src/Contracts.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Application/src/TestBoundary.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Application/src/RepoGovernance.fs ==========
+========== Finished: 0 warnings ==========
+========== Summary: 0 warnings ==========
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Cli/obj/Debug/net10.0/RhinoCli.Cli.AssemblyInfo.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Cli/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Cli/src/RootArgs.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Cli/src/HelpText.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Cli/src/Formatters.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Cli/src/Gate.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Cli/src/Dispatch.fs ==========
+========== Finished: 0 warnings ==========
+========== Summary: 0 warnings ==========
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Program/obj/Debug/net10.0/RhinoCli.Program.AssemblyInfo.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Program/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
+========== Finished: 0 warnings ==========
+========== Linting <public-worktree>/apps/rhino-cli/src/RhinoCli.Program/src/Program.fs ==========
+========== Finished: 0 warnings ==========
+========== Summary: 0 warnings ==========
+[2m> [22mANALYZERS_PATH=$(find $(dotnet nuget locals global-packages --list | sed 's/.*: //')g-research.fsharp.analyzers -path '*/analyzers/dotnet/fs' -type d | head -1); for p in RhinoCli.Domain RhinoCli.Infrastructure RhinoCli.Application RhinoCli.Cli RhinoCli.Program; do dotnet fsharp-analyzers --project apps/rhino-cli/src/$p/$p.fsproj --analyzers-path "$ANALYZERS_PATH" --treat-as-error GRA-STRING-001 GRA-STRING-002 GRA-STRING-003 GRA-STRING-004 GRA-UNIONCASE-001 GRA-VIRTUALCALL-001 GRA-JSONOPTS-001 GRA-DISPBEFOREASYNC-001 GRA-IMMUTABLECOLLECTIONEQUALITY-001 GRA-LOGARGFUNCFULLAPP-001 GRA-LOGTEMPLMISSVALS-001 GRA-TYPE-ANNOTATE-001 GRA-INTERPOLATED-001 || exit 1; done
+
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mlint[22m for project rhino-cli and [1m1[22m task it depends on[39m
+
+[2mNx read the output from the cache instead of running the command for 1 out of 2 tasks.[22m
+
+> npm exec -- nx run rhino-cli:test:unit
+
+
+[2m> [22m[2mnx run[22m rhino-cli:"test:unit"
+
+[2m> [22mif grep -rn -E --include='*.fs' 'Skip\s*=\s*"' apps/rhino-cli/tests/unit; then echo 'ERROR: xunit Skip= attribute found in test files above'; exit 1; fi && node scripts/dotnet-unit-coverage.mjs --project apps/rhino-cli/tests/unit/RhinoCli.UnitTests.fsproj --results apps/rhino-cli/tests/unit/coverage --line-threshold 99 --exclude-by-file '**/GitRoot.fs' --exclude-by-file '**/Parity.fs' --exclude-by-file '**/Dispatch.fs' --exclude-by-file '**/HarnessRuntime.fs' --exclude-by-file '**/DoctorResource.fs'
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  RhinoCli.Infrastructure -> <public-worktree>/apps/rhino-cli/src/RhinoCli.Infrastructure/bin/Debug/net10.0/RhinoCli.Infrastructure.dll
+  RhinoCli.Domain -> <public-worktree>/apps/rhino-cli/src/RhinoCli.Domain/bin/Debug/net10.0/RhinoCli.Domain.dll
+  RhinoCli.Application -> <public-worktree>/apps/rhino-cli/src/RhinoCli.Application/bin/Debug/net10.0/RhinoCli.Application.dll
+  RhinoCli.Cli -> <public-worktree>/apps/rhino-cli/src/RhinoCli.Cli/bin/Debug/net10.0/RhinoCli.Cli.dll
+  RhinoCli.UnitTests -> <public-worktree>/apps/rhino-cli/tests/unit/bin/Debug/net10.0/RhinoCli.UnitTests.dll
+Test run for <public-worktree>/apps/rhino-cli/tests/unit/bin/Debug/net10.0/RhinoCli.UnitTests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:   756, Skipped:     0, Total:   756, Duration: 416 ms - RhinoCli.UnitTests.dll (net10.0)
+
+Attachments:
+  <public-worktree>/apps/rhino-cli/tests/unit/coverage/collector/aebabe77-64ee-412a-8c54-be41e7b5c27d/coverage.cobertura.xml
+Unit line coverage: 7554/7625 (99.07%; required: 99.00%)
+Coverage report: <public-worktree>/apps/rhino-cli/tests/unit/coverage/coverage.cobertura.xml
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mtest:unit[22m for project rhino-cli[39m
+
+
+> npm exec -- nx run rhino-cli:specs:structure-validation
+
+
+[2m> [22m[2mnx run[22m rhino-cli:"specs:structure-validation"
+
+[2m> [22mdotnet run --project apps/rhino-cli/src/RhinoCli.Program/RhinoCli.Program.fsproj -- specs structure validate
+
+specs structure validate: 0 finding(s) for "ayokoding"
+specs structure validate: 0 finding(s) for "crane"
+specs structure validate: 0 finding(s) for "organiclever"
+specs structure validate: 0 finding(s) for "ose"
+specs structure validate: 0 finding(s) for "rhino"
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mspecs:structure-validation[22m for project rhino-cli[39m
+
+
+> npm exec -- nx run rhino-cli:test:coverage
+
+
+[2m> [22m[2mnx run[22m rhino-cli:"test:coverage"
+
+[2m> [22mnpm exec -- nx run rhino-cli:test:coverage:unit
+
+
+[2m> [22m[2mnx run[22m rhino-cli:"test:coverage:unit"
+
+[2m> [22mnode scripts/behaviour-coverage.mjs --config apps/rhino-cli/behaviour-coverage.json --adapter unit
+
+rhino-cli: 57 features, 497 expanded scenarios, adapters: unit.
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mtest:coverage:unit[22m for project rhino-cli[39m
+
+
+[2m> [22mnpm exec -- nx run rhino-cli:test:coverage:integration
+
+
+[2m> [22m[2mnx run[22m rhino-cli:"test:coverage:integration"
+
+[2m> [22mnode scripts/behaviour-coverage.mjs --config apps/rhino-cli/behaviour-coverage.json --adapter integration
+
+rhino-cli: 57 features, 497 expanded scenarios, adapters: integration.
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mtest:coverage:integration[22m for project rhino-cli[39m
+
+
+[2m> [22mnpm exec -- nx run rhino-cli:test:coverage:e2e
+
+
+[2m> [22m[2mnx run[22m rhino-cli:"test:coverage:e2e"
+
+[2m> [22mnode scripts/behaviour-coverage.mjs --config apps/rhino-cli/behaviour-coverage.json --adapter e2e
+
+rhino-cli: 57 features, 497 expanded scenarios, adapters: e2e.
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mtest:coverage:e2e[22m for project rhino-cli[39m
+
+
+[2m> [22mnpm exec -- nx run rhino-cli:test:coverage:behaviour
+
+
+[2m> [22m[2mnx run[22m rhino-cli:"test:coverage:behaviour"
+
+[2m> [22mnode scripts/behaviour-coverage.mjs --config apps/rhino-cli/behaviour-coverage.json --adapter behaviour
+
+rhino-cli: 57 features, 497 expanded scenarios, adapters: unit, integration, e2e.
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mtest:coverage:behaviour[22m for project rhino-cli[39m
+
+
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mtest:coverage[22m for project rhino-cli[39m
+
+
+
+
+
+ NX   Successfully ran target test:quick for project rhino-cli
+
+
+EXIT=0

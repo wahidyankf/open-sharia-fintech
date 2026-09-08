@@ -25,10 +25,14 @@ any other file's content.
 | `*.clj`                                           | `cljfmt fix` (native binary)                                    |
 | `*.cs`                                            | `dotnet csharpier format`                                       |
 | `*.{ex,exs}`                                      | `scripts/format-elixir.sh` (CWD-aware wrapper for `mix format`) |
+| `*.java`                                          | `scripts/format-java.sh` (Gradle-root wrapper for Spotless)     |
 
 The per-project `format` and `format:check` Nx targets are **not standard lifecycle targets** and
-**must not be added**. Only Elixir uses a wrapper script because `mix format` requires the project
-root to resolve `.formatter.exs`; every other formatter accepts bare file-path arguments.
+**must not be added**. Two languages use a wrapper script, both for the same reason — their
+formatter is invoked from a project root rather than on bare file paths. `mix format` needs the
+root that resolves `.formatter.exs`; Spotless is a whole-project Gradle task, so the wrapper maps
+each staged file back to its owning Gradle root and runs the task once per root. Every other
+formatter accepts bare file-path arguments and is invoked directly.
 
 **Tool linting** — also lint-staged file-type entries, **not** Nx targets:
 

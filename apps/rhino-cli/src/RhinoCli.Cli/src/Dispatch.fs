@@ -575,7 +575,10 @@ let private parseDoctorArgs (args: string list) : DoctorArgsParsed =
 /// `--tools` (only bare/`--help`/`-o` forms do) and the Gherkin scenario this
 /// underpins already asserts against `Doctor.parseDoctorToolName` directly at
 /// the application layer.
-let private validateSelectedTools (tools: string list option) : Result<string list option, string> =
+let private validateSelectedTools
+    (inventory: string list)
+    (tools: string list option)
+    : Result<string list option, string> =
     match tools with
     | None -> Ok None
     | Some names ->
@@ -585,7 +588,7 @@ let private validateSelectedTools (tools: string list option) : Result<string li
                 match acc with
                 | Error _ -> acc
                 | Ok _ ->
-                    match Doctor.parseDoctorToolName name with
+                    match Doctor.parseDoctorToolName inventory name with
                     | Error message -> Error message
                     | Ok _ -> acc)
             (Ok())
@@ -632,7 +635,10 @@ let private runDoctorTargetShareStep (repoRoot: string) (parsed: DoctorArgsParse
 let private runDoctorLeaf (repoRoot: string) (format: OutputFormat) (rawArgs: string list) : int =
     let parsed = parseDoctorArgs rawArgs
 
-    match validateSelectedTools parsed.Tools with
+    let inventory =
+        Doctor.doctorToolInventoryFor (RhinoCli.Application.RepoConfig.loadOrDefault repoRoot)
+
+    match validateSelectedTools inventory parsed.Tools with
     | Error message ->
         eprintfn "Error: %s" message
         1

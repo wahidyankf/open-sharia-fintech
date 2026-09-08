@@ -74,6 +74,7 @@ below.
 - [Swe Developing Frontend Ui](./swe-developing-frontend-ui/README.md) — UI tokens, shadcn/Radix composition, accessibility
 - [Swe Programming Csharp](./swe-programming-csharp/README.md) — C# coding standards
 - [Swe Programming Fsharp](./swe-programming-fsharp/README.md) — F# coding standards
+- [Swe Programming Java](./swe-programming-java/README.md) — Java coding standards
 - [Swe Programming Rust](./swe-programming-rust/README.md) — Rust coding standards
 - [Swe Programming Typescript](./swe-programming-typescript/README.md) — TypeScript coding standards
 

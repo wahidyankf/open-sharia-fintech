@@ -47,18 +47,18 @@ let ``isMinimalTool recognizes exactly the six core tools`` () =
 
 [<Fact>]
 let ``parseDoctorToolName accepts every inventory entry`` () =
-    for name in doctorToolInventory do
-        Assert.Equal(Ok name, parseDoctorToolName name)
+    for name in builtinDoctorToolInventory do
+        Assert.Equal(Ok name, parseDoctorToolName builtinDoctorToolInventory name)
 
 [<Fact>]
 let ``parseDoctorToolName rejects a blank value`` () =
-    match parseDoctorToolName "   " with
+    match parseDoctorToolName builtinDoctorToolInventory "   " with
     | Error message -> Assert.Contains("must not be blank", message)
     | Ok _ -> failwith "blank name must be rejected"
 
 [<Fact>]
 let ``parseDoctorToolName rejects an unknown tool`` () =
-    match parseDoctorToolName "not-a-doctor-tool" with
+    match parseDoctorToolName builtinDoctorToolInventory "not-a-doctor-tool" with
     | Error message -> Assert.Contains("unknown Doctor tool \"not-a-doctor-tool\"", message)
     | Ok _ -> failwith "unknown name must be rejected"
 

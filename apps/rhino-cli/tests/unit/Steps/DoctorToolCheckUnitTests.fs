@@ -127,6 +127,24 @@ let ``A repo-config-declared tool is skipped from the check`` () =
             w.``the output does not include the skipped tool`` ())
 
 [<Fact>]
+let ``A repo-config-declared extra tool is probed like a built-in tool`` () =
+    run
+        (fun w -> w.``a tool is listed under the doctor extra-tools section of repo-config.yml`` ())
+        (fun w -> w.``the developer runs the doctor command`` ())
+        (fun w ->
+            w.``the command exits successfully`` ()
+            w.``the output includes the configured extra tool`` ())
+
+[<Fact>]
+let ``A tool absent from both the built-in and configured inventories is rejected`` () =
+    run
+        (fun w -> w.``an unknown Doctor tool is selected`` ())
+        (fun w -> w.``the developer runs the doctor command`` ())
+        (fun w ->
+            w.``the command exits with a failure code`` ()
+            w.``the invalid selection is rejected before any tool is probed`` ())
+
+[<Fact>]
 let ``A pinned Rust toolchain without lint components is reported as a warning`` () =
     run
         (fun w -> w.``a rust-toolchain.toml pins a channel and declares no lint components`` ())

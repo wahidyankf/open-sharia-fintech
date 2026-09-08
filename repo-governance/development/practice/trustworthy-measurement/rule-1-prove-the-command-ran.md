@@ -25,6 +25,12 @@ exiting 0 on files-without-match, `ls` being `eza`-aliased and emitting OSC-8 hy
 `xargs`, RTK rewriting `git diff` output. In each, a shell builtin quietly transforms the thing
 being measured and a false zero reads as a pass.
 
+`${PIPESTATUS[0]}` is the same trap in the tool that reads the result. It is a `bash` array; under
+`zsh` the equivalent is `$pipestatus`, and the `bash` form expands to the **empty string** rather
+than erroring. A line like `echo "EXIT=${PIPESTATUS[0]}"` after a piped command therefore prints
+`EXIT=` under `zsh` — no exit code, no warning, and a reader who skims sees a label where a number
+should be. Capture the status without a pipe, or set `pipefail` and read `$?`.
+
 The same trap exists in tool syntax, not only shell syntax. A git pathspec glob does not cross `/`,
 so `git diff --name-only origin/main -- 'apps/*/content'` matches nothing and reads as "no content
 file changed" — the true answer on the branch that produced this example was one file. Prefer a

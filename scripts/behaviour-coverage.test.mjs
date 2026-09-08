@@ -42,6 +42,27 @@ Then("independent evidence is observed", () => {});
 ${extra}`;
 }
 
+function javaBindings({ omitThen = false, extra = "" } = {}) {
+  const then = omitThen
+    ? ""
+    : '  @Then("independent evidence is observed")\n  public void independentEvidenceIsObserved() {}\n';
+  return `package example;
+
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+
+public class Steps {
+  @Given("a configured subject")
+  public void aConfiguredSubject() {}
+
+  @When("the subject is exercised")
+  public void theSubjectIsExercised() {}
+
+${then}${extra}}
+`;
+}
+
 test("accepts independently documented Integration and E2E exemptions", () => {
   const source = validFeature.replace(
     "  Scenario: A covered behaviour",
@@ -242,6 +263,75 @@ let \`\`an active F sharp step\`\` () = ()
     extractBindings("Steps.fs", fsharp).map(({ pattern }) => pattern),
     ["an active F sharp step"],
   );
+});
+
+test("extracts one binding per Java Cucumber annotation", () => {
+  const java = javaBindings();
+
+  const bindings = extractBindings("Steps.java", java);
+
+  assert.equal(bindings.length, 3);
+  assert.deepEqual(
+    bindings.map(({ keyword }) => keyword),
+    ["Given", "When", "Then"],
+  );
+  assert.deepEqual(
+    bindings.map(({ pattern }) => pattern),
+    ["a configured subject", "the subject is exercised", "independent evidence is observed"],
+  );
+  // Cucumber-JVM resolves a step only against its own keyword and treats the annotation
+  // argument as a Cucumber expression. The TypeScript extractor sets keywordSensitive:false,
+  // so this assertion is what distinguishes a real Java extractor from the fallback happening
+  // to match `Given("...")` inside the `@Given("...")` annotation.
+  assert.ok(bindings.every(({ keywordSensitive }) => keywordSensitive === true));
+  assert.ok(bindings.every(({ expression }) => expression === true));
+});
+
+test("reports an undefined Unit binding when a Java step definition is missing", async () => {
+  const run = async (java) => {
+    const root = await fixture({
+      "behaviours/example.feature": validFeature,
+      "unit/Steps.java": java,
+      "unit/driver.ts": "export const driver = {};",
+    });
+    return validateCoverage({
+      project: "example",
+      corpusRoots: [path.join(root, "behaviours")],
+      adapter: "unit",
+      bindingRoots: [path.join(root, "unit")],
+      driver: path.join(root, "unit/driver.ts"),
+    });
+  };
+
+  // A complete Java step file must leave no scenario undefined. Without .java in BINDING_FILE no
+  // binding loads at all, so every step reads as undefined and this half fails — that is what
+  // makes the pair discriminating rather than trivially satisfied.
+  const complete = await run(javaBindings());
+  assert.deepEqual(
+    complete.errors.filter((error) => error.includes("undefined Unit binding")),
+    [],
+  );
+
+  const missingThen = await run(javaBindings({ omitThen: true }));
+  assert.ok(missingThen.errors.some((error) => error.includes("undefined Unit binding")));
+});
+
+test("reports an unused Unit binding when a Java step definition matches no step", async () => {
+  const root = await fixture({
+    "behaviours/example.feature": validFeature,
+    "unit/Steps.java": javaBindings({ extra: '  @Given("an unused boundary")\n  public void anUnusedBoundary() {}\n' }),
+    "unit/driver.ts": "export const driver = {};",
+  });
+
+  const result = await validateCoverage({
+    project: "example",
+    corpusRoots: [path.join(root, "behaviours")],
+    adapter: "unit",
+    bindingRoots: [path.join(root, "unit")],
+    driver: path.join(root, "unit/driver.ts"),
+  });
+
+  assert.ok(result.errors.some((error) => error.includes("unused Unit binding")));
 });
 
 test("scopes duplicate F# TickSpec bindings to explicit feature literals", async () => {

@@ -157,6 +157,33 @@ doctor:
   # this data rather than naming an application-specific backend path.
   dotnet-global-json: apps/ose-be/global.json
 
+  # Doctor tools declared here rather than compiled into the F# inventory.
+  # A name absent from BOTH the built-in inventory and this list is rejected
+  # by `--tools` before any tool is probed, so this list is authoritative
+  # alongside the built-ins, not advisory.
+  #
+  # Each entry carries: `name` (the `--tools` identifier), `binary` (what is
+  # executed), `version-args`, `version-stream` (`stdout` or `stderr` —
+  # `java -version` writes to stderr, and a stdout-only probe would report an
+  # installed JDK as missing), `required-version` (compared with >=), and an
+  # `install` map keyed by package manager, whose value is the full argv with
+  # the command first. Doctor maps `darwin` to `brew` and `linux` to `apt`.
+  #
+  # `java` is the first and only entry: the LMS backend (`ose-lms-be`) needs a
+  # JDK, and it is the tool that motivated `version-stream` in the first place.
+  extra-tools:
+    - name: java
+      binary: java
+      version-args: ["-version"]
+      # `java -version` writes its banner to stderr, not stdout. Reading stdout
+      # here would see an empty string and report an installed JDK as missing.
+      version-stream: stderr
+      # The Phase 0 resolved LTS. Compared with >=, so a newer LTS still passes.
+      required-version: "25"
+      install:
+        brew: ["install", "--cask", "temurin@25"]
+        apt: ["apt-get", "install", "-y", "temurin-25-jdk"]
+
 # governance-word-budget: registered here (config-only) at Phase 1 of
 # plans/done/2026-08-15__optimize-governance-md and armed as a `gates:` entry at
 # Phase 9 — it now runs at pre-push and in CI (see the entry below). Word count
@@ -619,6 +646,26 @@ gates:
     verifies: format-dart
     surfaces:
       ci: { scope: affected-file-type, glob: "*.dart" }
+
+  - id: format-java
+    type: mutation
+    category: formatter
+    command: scripts/format-java.sh
+    kind: external
+    restages: true
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.java" }
+
+  - id: format-verify-java
+    type: check
+    # The wrapper discovers each Gradle root and runs spotlessCheck; do not swap in spotlessApply,
+    # which would mutate files before the verifier could fail on them.
+    command: scripts/format-java.sh --check
+    kind: external
+    ci-group: formatting-verify
+    verifies: format-java
+    surfaces:
+      ci: { scope: affected-file-type, glob: "*.java" }
 
   - id: format-shfmt
     type: mutation

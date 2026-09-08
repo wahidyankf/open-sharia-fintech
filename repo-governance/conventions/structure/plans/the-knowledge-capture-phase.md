@@ -11,7 +11,7 @@ before the Plan Archival phase. This phase triages every entry in `learnings.md`
 principle-based routing matrix: each surviving learning is routed to exactly one durable home (a
 convention, a doc, an agent, a skill, code, a test, or a post-mortem) — small non-code routings land
 inline in the current plan's commits. Large non-code routings and ALL code routings become a
-user-authorized `plans/ideas/` two-pager; never create a `plans/backlog/` folder directly because
+user-authorized `plans/ideas/` two-pager; never create, move, or write under `plans/backlog/` because
 the promotion ripeness gate owns that transition. Without literal plan-artifact authorization they
 are reported to the user and recorded as `Reported without plan authorization`. Non-generalizable
 entries are discarded with a one-line reason.

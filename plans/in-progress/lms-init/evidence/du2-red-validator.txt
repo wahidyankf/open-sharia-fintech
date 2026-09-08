@@ -1,0 +1,127 @@
+
+> open-sharia-enterprise@1.0.0 test:validators
+> ./hippo run --class ephemeral --disk-path . -- node --test scripts/behaviour-coverage.test.mjs scripts/dotnet-unit-coverage.test.mjs
+
+✔ accepts independently documented Integration and E2E exemptions (3.911292ms)
+✔ requires each exemption on its own tag line with its own adjacent comment (0.547ms)
+✔ rejects difficulty, runtime, flakiness, cost, and unfinished-work reasons (0.675125ms)
+✔ requires boundary language and a canonical alternative proof (0.176709ms)
+✔ rejects forbidden exemption, WIP, no-layer, and positive selection tags (0.302792ms)
+✔ does not interpret doc-string content as tags (0.266625ms)
+✔ rejects malformed and empty features and scenarios without explicit When and Then (0.294542ms)
+✔ expands every Scenario Outline example row (0.677583ms)
+✔ extracts TypeScript, TSX, and F# TickSpec bindings (0.737833ms)
+✔ ignores commented-out TypeScript and F# bindings (0.194709ms)
+✖ extracts one binding per Java Cucumber annotation (2.91775ms)
+✖ reports an undefined Unit binding when a Java step definition is missing (6.444875ms)
+✖ reports an unused Unit binding when a Java step definition matches no step (2.254709ms)
+✔ scopes duplicate F# TickSpec bindings to explicit feature literals (2.126791ms)
+✔ keeps duplicate F# TickSpec bindings ambiguous without explicit feature ownership (1.812584ms)
+✔ matches standard and custom Cucumber expression parameters (1.844ms)
+✔ matches vitest-cucumber Scenario Outline placeholders after pickle expansion (1.759958ms)
+✔ matches escaped literal Cucumber metacharacters in Playwright-BDD strings (1.970584ms)
+✔ treats TypeScript Cucumber registration keywords as matching synonyms (2.551917ms)
+✔ requires Unit coverage even when both higher layers are exempt (1.544792ms)
+✔ exempts only the named adapter (1.929875ms)
+✔ reports ambiguous and unused bindings (1.700584ms)
+✔ validates scoped vitest-cucumber scenarios without cross-scenario ambiguity (1.8725ms)
+✔ scopes duplicate TypeScript Background bindings to their loaded feature (1.881417ms)
+✔ does not report feature-scoped bindings outside a manifest corpus as unused (1.284333ms)
+✔ requires a non-empty recursive corpus and an existing driver (1.116625ms)
+✔ aggregate behaviour mode checks every configured adapter without executing tests (1.514458ms)
+✔ loads a project-local aggregate config with paths relative to that config (1.292167ms)
+✔ CLI is deterministic and never invokes a configured runtime (2.149083ms)
+✔ accepts the closed project target contract (2.051958ms)
+✔ rejects runtime coverage, incomplete quick composition, and missing adapter pairs (1.89775ms)
+✔ rejects a Unit line coverage threshold below the 99% hard minimum (0.764125ms)
+✔ accepts a 99% Coverlet Unit line coverage hard gate (1.038541ms)
+✔ accepts a 99% XPlat collector Unit line coverage hard gate (1.029375ms)
+✔ rejects a bare line-threshold argument without the XPlat hard-gate helper (0.594208ms)
+✔ dedicated E2E projects do not need to own the Unit runtime (0.725084ms)
+✔ accepts exact 99 percent line coverage (0.962208ms)
+✔ rejects a rounded line rate whose exact coverage is below 99 percent (0.547417ms)
+✔ rejects coverage without exact line counts (0.214208ms)
+✔ rejects a zero line denominator (0.078917ms)
+✔ rejects an impossible covered line count (0.060334ms)
+✔ accepts only a results directory nested inside the workspace (0.086666ms)
+✔ passes explicit whole-boundary source exclusions to the XPlat collector (0.071166ms)
+ℹ tests 43
+ℹ suites 0
+ℹ pass 40
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 163.609417
+
+✖ failing tests:
+
+test at scripts/behaviour-coverage.test.mjs:268:1
+✖ extracts one binding per Java Cucumber annotation (2.91775ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(bindings.every(({ keywordSensitive }) => keywordSensitive === true))
+  
+      at TestContext.<anonymous> (file://<public-worktree>/scripts/behaviour-coverage.test.mjs:286:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at scripts/behaviour-coverage.test.mjs:290:1
+✖ reports an undefined Unit binding when a Java step definition is missing (6.444875ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + [
+  +   '<tmpdir>/ose-behaviour-coverage-Xw20ae/behaviours/example.feature: A covered behaviour / a configured subject: undefined Unit binding.',
+  +   '<tmpdir>/ose-behaviour-coverage-Xw20ae/behaviours/example.feature: A covered behaviour / independent evidence is observed: undefined Unit binding.',
+  +   '<tmpdir>/ose-behaviour-coverage-Xw20ae/behaviours/example.feature: A covered behaviour / the subject is exercised: undefined Unit binding.'
+  + ]
+  - []
+  
+      at TestContext.<anonymous> (file://<public-worktree>/scripts/behaviour-coverage.test.mjs:310:10)
+      at async Test.run (node:internal/test_runner/test:1313:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ '<tmpdir>/ose-behaviour-coverage-Xw20ae/behaviours/example.feature: A covered behaviour / a configured subject: undefined Unit binding.', '<tmpdir>/ose-behaviour-coverage-Xw20ae/behaviours/example.feature: A covered behaviour / independent evidence is observed: undefined Unit binding.', '<tmpdir>/ose-behaviour-coverage-Xw20ae/behaviours/example.feature: A covered behaviour / the subject is exercised: undefined Unit binding.' ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/behaviour-coverage.test.mjs:319:1
+✖ reports an unused Unit binding when a Java step definition matches no step (2.254709ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(result.errors.some((error) => error.includes("unused Unit binding")))
+  
+      at TestContext.<anonymous> (file://<public-worktree>/scripts/behaviour-coverage.test.mjs:334:10)
+      at async Test.run (node:internal/test_runner/test:1313:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+TERMINAL_EXIT=1
+
+Host-path sanitization applied at DU2-PP-116, after the current-head pr-leak-review on PR #493
+reported seven category-3 findings in this file. Two substitutions, using the placeholder tokens
+the other evidence files in this directory already use: the absolute worktree root became
+<public-worktree>, and the macOS per-user temp root (the two-hash form under var-folders) became
+<tmpdir>. Nothing else was altered; the run's content, ordering, and TERMINAL_EXIT=1 are exactly
+as captured. Re-scanned after substitution against the four host-path families the sanitizer
+covers (user-home, linux-home, var-folders, private-tmp): zero matches.
