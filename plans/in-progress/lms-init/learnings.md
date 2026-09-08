@@ -28,3 +28,27 @@
   covers the neighbouring `stateDiagram` case and may be the right place to fold this in rather
   than opening a new brief — check it first, and note that its own analysis warns any such rule
   must WARN rather than FAIL given the corpus size.
+
+## Learning: absolute worktree paths in a delivery document are a leak, not a convenience
+
+- **Date**: 2026-09-08
+- **Context**: the plan-authoring PR's required `pr-leak-review` flagged four occurrences of a
+  resolved home-directory path inside `delivery.md` — the cross-repository `diff` commands and the
+  private-worktree provisioning step. They had been written as fully-resolved absolute paths so the
+  commands would be copyable verbatim.
+- **What happened**: the paths violate
+  [what-counts-as-machine-specific-information.md](../../../repo-governance/development/quality/no-machine-specific-commits/what-counts-as-machine-specific-information.md)
+  §Formal Plan Delivery Documents, which names `plans/**/delivery.md` explicitly and requires a
+  worktree be identified only by its repository-relative route. The same section states that the
+  required PR leak review inspects the changed delivery document for exactly this. The fix resolves
+  the private worktree once, at the step that provisions it, into a `PRIVATE_WT` shell variable
+  derived from `git worktree list --porcelain`, and expresses every later cross-repository command
+  relative to the public worktree root.
+- **Why it might generalize**: "make the command copyable verbatim" is a real authoring pressure in
+  execution-grade plans, and it pulls directly against the portability rule. Nothing catches it at
+  authoring time — the violation surfaces only at the leak review, after the PR is open and its CI
+  has already run. Candidate durable fixes to weigh at triage: have `plan-checker` reject a
+  home-directory or resolved host path anywhere in a delivery document, not only in the worktree
+  identity section it already checks; or state the portable two-repository idiom (resolve once into
+  a variable at the provisioning step) directly in the plans convention so authors reach for it
+  before inventing an absolute path.

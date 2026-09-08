@@ -112,10 +112,17 @@ Phase 0 opens no pull request. Its outcome is a recorded clean baseline in both 
 - [ ] [AI] Sync the public worktree: `rtk git fetch origin` then
       `rtk git merge --ff-only origin/main`. Acceptance: the command reports either "Already up to
       date" or a fast-forward; a merge conflict here means stop and report, never force.
-- [ ] [AI] Provision the private worktree. From `/Users/wkf/ose-projects/ose-private` run
+- [ ] [AI] Provision the private worktree. From the `ose-private` repository root run
       `claude --worktree lms-init`. Acceptance: `rtk git worktree list --porcelain` in that
       repository lists a worktree whose route ends in `worktrees/lms-init`. Record its route,
-      branch, and creation timestamp in the Provisioned Worktree Identity section above.
+      branch, and creation timestamp in the Provisioned Worktree Identity section above. Then
+      resolve that route to a runtime path for every cross-repository step below, and export it —
+      never commit the resolved value:
+      `PRIVATE_WT=$(git -C <ose-private repository root> worktree list --porcelain | awk '/^worktree /{p=$2} /^branch .*worktree\/lms-init$/{print p}')`.
+      Acceptance: `test -d "$PRIVATE_WT/apps/rhino-cli"` succeeds. Committing a resolved host path
+      into this document violates
+      [what-counts-as-machine-specific-information.md](../../../repo-governance/development/quality/no-machine-specific-commits/what-counts-as-machine-specific-information.md)
+      §Formal Plan Delivery Documents and the required PR leak review rejects it.
 - [ ] [AI] Install dependencies in the public worktree:
       `rtk ./hippo run --class ephemeral --disk-path . -- npm install`. Acceptance: exit code 0 and
       `node_modules/` exists at the worktree root.
@@ -165,8 +172,8 @@ document. Record every resolved value in `evidence/phase-0-versions.md` as a two
       `evidence/phase-0-baseline-private.txt`. Acceptance: exit code 0.
 - [ ] [AI] Verify cross-repository parity is green before touching it: run
       `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- run rhino-cli:test:quick`
-      in **both** worktrees, and diff the two manifests:
-      `rtk diff -u /Users/wkf/ose-projects/ose-public/worktrees/lms-init/apps/rhino-cli/parity-manifest.sha256 /Users/wkf/ose-projects/ose-private/worktrees/lms-init/apps/rhino-cli/parity-manifest.sha256`.
+      in **both** worktrees, then diff the two manifests from the public worktree root:
+      `rtk diff -u apps/rhino-cli/parity-manifest.sha256 "$PRIVATE_WT/apps/rhino-cli/parity-manifest.sha256"`.
       Acceptance: the diff is empty. A non-empty diff is preexisting drift that must be fixed before
       DU1 begins, not carried into it.
 
@@ -265,15 +272,15 @@ Delivers one pull request per repository, byte-identical in `apps/rhino-cli`.
 ### Byte-Identity Reconciliation
 
 - [ ] [AI] Copy the changed `apps/rhino-cli` sources into the private worktree so both trees are
-      byte-identical. Verify per file, not by eye:
-      `rtk diff -ru /Users/wkf/ose-projects/ose-public/worktrees/lms-init/apps/rhino-cli/src /Users/wkf/ose-projects/ose-private/worktrees/lms-init/apps/rhino-cli/src`.
+      byte-identical. Verify per file, not by eye, from the public worktree root:
+      `rtk diff -ru apps/rhino-cli/src "$PRIVATE_WT/apps/rhino-cli/src"`.
       Acceptance: the diff is empty.
 - [ ] [AI] Regenerate the parity manifest in both worktrees using the repository's own command —
       discover it first with
       `rtk grep -n "parity" apps/rhino-cli/project.json` and use the target it declares rather than
       hand-editing hashes. Acceptance: `apps/rhino-cli/parity-manifest.sha256` changes in both.
-- [ ] [AI] Diff the two regenerated manifests:
-      `rtk diff -u /Users/wkf/ose-projects/ose-public/worktrees/lms-init/apps/rhino-cli/parity-manifest.sha256 /Users/wkf/ose-projects/ose-private/worktrees/lms-init/apps/rhino-cli/parity-manifest.sha256`.
+- [ ] [AI] Diff the two regenerated manifests from the public worktree root:
+      `rtk diff -u apps/rhino-cli/parity-manifest.sha256 "$PRIVATE_WT/apps/rhino-cli/parity-manifest.sha256"`.
       Acceptance: empty diff. A non-empty diff means the source copy was incomplete — fix it, never
       hand-edit the manifest to agree.
 
