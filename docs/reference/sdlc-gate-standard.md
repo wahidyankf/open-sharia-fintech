@@ -247,6 +247,15 @@ gap — but still diff the file in full on every byte-identity check, since a ne
 hide alongside the known one. Tracked as a follow-up idea brief:
 [`rhino-cli-tools-superset-carveout`](../../plans/ideas/q2-not-urgent-important/rhino-cli-tools-superset-carveout.md).
 
+**Third resolution now available (2026-09-08, `lms-init` DU1).** The two fixes named above — a
+narrower `BOUNDARY_PATHS` carve-out, or an accepted-superset comparison mode — both work by
+loosening the byte-identity check. A third does not: `repo-config.yml` now carries
+`doctor.extra-tools`, so a repository declares the tools it alone needs in a file that was never
+byte-identical, and `apps/rhino-cli` stays literally identical with no carve-out and no superset
+mode. A per-repo tool no longer requires a per-repo source difference. This records the mechanism;
+it does not by itself close the linked brief, which also covers the test-entry surplus and is a
+separate decision.
+
 ### Allowed Divergence
 
 The following variations are not flagged as drift:

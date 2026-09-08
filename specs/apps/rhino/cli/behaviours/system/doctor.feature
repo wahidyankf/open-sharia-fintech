@@ -94,6 +94,18 @@ Feature: Development Environment Health Check
     Then the command exits successfully
     And the output does not include the skipped tool
 
+  Scenario: A repo-config-declared extra tool is probed like a built-in tool
+    Given a tool is listed under the doctor extra-tools section of repo-config.yml
+    When the developer runs the doctor command
+    Then the command exits successfully
+    And the output includes the configured extra tool
+
+  Scenario: A tool absent from both the built-in and configured inventories is rejected
+    Given an unknown Doctor tool is selected
+    When the developer runs the doctor command
+    Then the command exits with a failure code
+    And the invalid selection is rejected before any tool is probed
+
   Scenario: A pinned Rust toolchain without lint components is reported as a warning
     Given a rust-toolchain.toml pins a channel and declares no lint components
     When "npm run doctor" runs

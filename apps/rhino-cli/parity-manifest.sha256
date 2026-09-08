@@ -4,7 +4,7 @@
 8f17a72880124a0c7fad5f2d173e415b4819e0913cd3a398b75ee40c1f91d469  apps/rhino-cli/src/RhinoCli.Application/RhinoCli.Application.fsproj
 fe3b0fa079bad46272ecd289e2b04e227f07441285dc7c4a2cc001f32de88360  apps/rhino-cli/src/RhinoCli.Application/src/Contracts.fs
 2f42753fcea9776f70b8755fda4a1b9bdf2285a6f10dcaa40b102f9e57e75178  apps/rhino-cli/src/RhinoCli.Application/src/Convention.fs
-05052e2ed0eca944452774a28b751d460a26806b6495e3cbc93583e46102ae3e  apps/rhino-cli/src/RhinoCli.Application/src/Doctor.fs
+5947ae9608d0d9b3547ce5f4c65c8b62821b3ba10fcd3f1bf72bb36f7a295fa5  apps/rhino-cli/src/RhinoCli.Application/src/Doctor.fs
 4ee5b80be0bb7721c1a676d059aaba8dafffee5e1e29d7f68c241559177337d8  apps/rhino-cli/src/RhinoCli.Application/src/DoctorResource.fs
 1ad6a9dd2a4044588da8501b8db62e323440d103a541e4b3f6fb30291f15f8e4  apps/rhino-cli/src/RhinoCli.Application/src/Env.fs
 b52a8b26f31676f54e2bfed81d4635c01ce51685db53231c32853acf96a1dab9  apps/rhino-cli/src/RhinoCli.Application/src/Git.fs
@@ -13,13 +13,13 @@ e6863773fd58d3e4536bcf0adb8a9436846be20d1369aea5e1b9ebbdfe388e68  apps/rhino-cli
 5cba6afe38b1e2019fd9310be610f51509f82e41420b2d292860124dcbd84c1a  apps/rhino-cli/src/RhinoCli.Application/src/HarnessRuntime.fs
 fa11a6db0105cb8c9f27e3f23f5c451df34330300b7c963590b329f09f0a55a4  apps/rhino-cli/src/RhinoCli.Application/src/Md.fs
 e33cfdd05369f5b9f22540a066f866548adf9287380a270d345e58ebcd49a605  apps/rhino-cli/src/RhinoCli.Application/src/Parity.fs
-f5f20cd002f449f4a7a49af3be2d8626795e6d3a44d4b98435ecc1897b25f540  apps/rhino-cli/src/RhinoCli.Application/src/RepoConfig.fs
+a4f21e4c2f468a496863d2535e7186ba66f0be8ffc63fad6b4cc287377cf0543  apps/rhino-cli/src/RhinoCli.Application/src/RepoConfig.fs
 1025598d62d37e13ec8d8c788987ead49ad94618c15050e9cd217b8bd14be7f3  apps/rhino-cli/src/RhinoCli.Application/src/RepoGovernance.fs
 c0f90898d01eeec3a251c1a942f70cdd65fb0e6e08556f5b6bfe2563ebf118f9  apps/rhino-cli/src/RhinoCli.Application/src/Specs.fs
 1b7208649993aa7e0e1efb257e95b1ca1e18219616f975c8b87862b24d35fa38  apps/rhino-cli/src/RhinoCli.Application/src/TestBoundary.fs
 ff952cefdb43ae992704f845a322a9cff246f288df1484e5005c4b75f1579785  apps/rhino-cli/src/RhinoCli.Application/src/TestCoverage.fs
 bf6df2031e43d7352bd145de54960b18c4934b7a8ea160fd358d345fc5b3b58c  apps/rhino-cli/src/RhinoCli.Cli/RhinoCli.Cli.fsproj
-04f39ba782f0d97b9ec0fa8fe1296e3a2eaff8fa782089815bec9e998ba0e942  apps/rhino-cli/src/RhinoCli.Cli/src/Dispatch.fs
+972a9575b93a4ff40ad29c49b6271ba3e6a099084671cac97c66a196093d274d  apps/rhino-cli/src/RhinoCli.Cli/src/Dispatch.fs
 fdbb660f91c97207efb46081d01165ca9d694018e7d9fc893b7bf1b05466a671  apps/rhino-cli/src/RhinoCli.Cli/src/Formatters.fs
 51e1cfb590793736aca57c9d3944f38b676226ba521ebdc9258d4f5bf5a3ffc5  apps/rhino-cli/src/RhinoCli.Cli/src/Gate.fs
 ff741ba86d69a0d44bc4b0a4165c039f5e4d53c9b05cfbce5c5223f223c0fb99  apps/rhino-cli/src/RhinoCli.Cli/src/HelpText.fs
@@ -102,7 +102,7 @@ bc19e29eabe1aee41176546a1527099e982ba088882a9c43c552d68f928dfa62  specs/apps/rhi
 091c2bbe9b6da7dee4b3aa8458b2dad9ed45bfb5ff8dbc44394b6ddda9b1c5d3  specs/apps/rhino/cli/behaviours/specs/validate-tree.feature
 f2bc423d8ca8fdd0116227022ac4c48e71024afb2f2081653ab30d3f3a318f84  specs/apps/rhino/cli/behaviours/system/README.md
 1c24418080579b564d74a34380c5b9cdd72466af6bdf0585c06a6ccb1fc627de  specs/apps/rhino/cli/behaviours/system/cargo-target-share.feature
-6c14ef96e142631924ca319a2fcdd9e6f50f5fee5de1f268b48a94ceb8611473  specs/apps/rhino/cli/behaviours/system/doctor.feature
+6ed615b77dd02372696232a66f2c1965b060ced889c771a5425051a62663b06d  specs/apps/rhino/cli/behaviours/system/doctor.feature
 43829f0276798b2c92d868b6638ae34ddd070a0c7bf95887e779dbbbdc257914  specs/apps/rhino/cli/behaviours/system/fsharp-tool-invocation.feature
 02b11272181f31daba6f1b7f26d8e692386126d0c16e3b03f4b93250877b951c  specs/apps/rhino/cli/behaviours/test-coverage/README.md
 aa02d29ef3fedc2c8310c4041346fd2cb30bdfa80289dee8c1e947e1f50e66bf  specs/apps/rhino/cli/behaviours/test-coverage/test-coverage-validate.feature

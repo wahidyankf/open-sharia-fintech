@@ -166,10 +166,12 @@ type GateEntry =
       Category: string option
       CiGroup: string option }
 
-/// Every tool identifier Doctor can select from the registry. This is the
-/// authoritative validation source for per-gate `doctor-tools` metadata
+/// Every tool identifier Doctor compiles in. Configuration may extend it —
+/// `doctorToolInventoryFor` resolves the full set, and that resolved set, not
+/// this list, is the authoritative validation source for per-gate
+/// `doctor-tools` metadata
 /// [Repo-grounded — `repo_config/mod.rs::DOCTOR_TOOL_INVENTORY`].
-let doctorToolInventory: string list =
+let builtinDoctorToolInventory: string list =
     [ "git"
       "volta"
       "node"
@@ -198,14 +200,40 @@ let fixedArguments (gate: GateEntry) : string list =
     |> Map.toList
     |> List.collect (fun (key, values) -> values |> List.collect (fun value -> [ sprintf "--%s" key; value ]))
 
+/// Which stream a configured tool writes its version banner to. `java
+/// -version` writes to stderr, so a stdout-only probe would report an
+/// installed JDK as missing; every built-in tool writes to stdout.
+type DoctorVersionStream =
+    | StdoutStream
+    | StderrStream
+
+/// A Doctor tool declared in `repo-config.yml` rather than compiled in.
+/// Carries everything a built-in tool definition carries: what to run, which
+/// stream to read, what version is required, and how to install it per
+/// package manager.
+type DoctorExtraTool =
+    {
+        Name: string
+        Binary: string
+        VersionArgs: string list
+        VersionStream: DoctorVersionStream
+        RequiredVersion: string
+        /// Package manager (`brew`, `apt`) -> the full argv to run, command
+        /// first. Doctor maps `darwin` to `brew` and `linux` to `apt`.
+        Install: Map<string, string list>
+    }
+
 /// The `doctor:` section, trimmed to the .NET SDK path scenario's field plus
 /// `skip-tools` (needed by
 /// `specs/apps/rhino/cli/behaviours/system/doctor.feature`'s "A
-/// repo-config-declared tool is skipped from the check" scenario)
+/// repo-config-declared tool is skipped from the check" scenario) and
+/// `extra-tools` (needed by its "A repo-config-declared extra tool is probed
+/// like a built-in tool" scenario)
 /// [Repo-grounded — `repo_config/mod.rs::DoctorConfig`].
 type DoctorConfig =
     { DotnetGlobalJson: string option
-      SkipTools: string list }
+      SkipTools: string list
+      ExtraTools: DoctorExtraTool list }
 
 /// One project permitted to bind a loopback socket in its Integration tests.
 /// The allowlist is an opt-in for a socket the test itself owns; it is never a
@@ -243,10 +271,19 @@ let empty: RepoConfig =
       GateSurfaceGuards = Map.empty
       Doctor =
         { DotnetGlobalJson = None
-          SkipTools = [] }
+          SkipTools = []
+          ExtraTools = [] }
       ModelGrades = Map.empty
       HarnessCatalog = None
       IntegrationLoopback = [] }
+
+/// The Doctor tool inventory `config` actually exposes: the compiled-in tools
+/// plus every tool declared under `doctor.extra-tools`. A configuration that
+/// declares none resolves to exactly `builtinDoctorToolInventory`, which is
+/// what makes this split a no-op until a tool is declared.
+let doctorToolInventoryFor (config: RepoConfig) : string list =
+    builtinDoctorToolInventory
+    @ (config.Doctor.ExtraTools |> List.map (fun tool -> tool.Name))
 
 /// Raw YAML-shaped intermediate records. `[<CLIMutable>]` gives each record a
 /// parameterless constructor and settable properties, which is what lets
@@ -326,9 +363,19 @@ type GateSurfaceGuardDto =
       ActiveEnv: string | null }
 
 [<CLIMutable>]
+type DoctorExtraToolDto =
+    { Name: string | null
+      Binary: string | null
+      VersionArgs: ResizeArray<string>
+      VersionStream: string | null
+      RequiredVersion: string | null
+      Install: Dictionary<string, ResizeArray<string>> }
+
+[<CLIMutable>]
 type DoctorConfigDto =
     { DotnetGlobalJson: string | null
-      SkipTools: ResizeArray<string> }
+      SkipTools: ResizeArray<string>
+      ExtraTools: ResizeArray<DoctorExtraToolDto> }
 
 [<CLIMutable>]
 type HarnessCatalogDto = { Document: string; Verified: string }
@@ -580,14 +627,33 @@ let private toGateEntry (dto: GateEntryDto) : GateEntry =
       Category = Option.ofObj dto.Category
       CiGroup = Option.ofObj dto.CiGroup }
 
+let private doctorVersionStreamNames =
+    [ "stdout", StdoutStream; "stderr", StderrStream ]
+
+let private toDoctorExtraTool (dto: DoctorExtraToolDto) : DoctorExtraTool =
+    { Name = Option.ofObj dto.Name |> Option.defaultValue ""
+      Binary = Option.ofObj dto.Binary |> Option.defaultValue ""
+      VersionArgs = toOptionList dto.VersionArgs
+      VersionStream =
+        Option.ofObj dto.VersionStream
+        |> Option.bind (lookupVariant doctorVersionStreamNames)
+        |> Option.defaultValue StdoutStream
+      RequiredVersion = Option.ofObj dto.RequiredVersion |> Option.defaultValue ""
+      Install =
+        match dto.Install with
+        | null -> Map.empty
+        | dict -> dict |> Seq.map (fun kv -> kv.Key, toOptionList kv.Value) |> Map.ofSeq }
+
 let private toDoctorConfig (dto: DoctorConfigDto) : DoctorConfig =
     match box dto with
     | null ->
         { DotnetGlobalJson = None
-          SkipTools = [] }
+          SkipTools = []
+          ExtraTools = [] }
     | _ ->
         { DotnetGlobalJson = Option.ofObj dto.DotnetGlobalJson
-          SkipTools = toOptionList dto.SkipTools }
+          SkipTools = toOptionList dto.SkipTools
+          ExtraTools = toOptionList dto.ExtraTools |> List.map toDoctorExtraTool }
 
 /// `harness[]` entries' allowed key set, matching `HarnessEntryDto`'s fields
 /// in the kebab-case spelling `repo-config.yml` uses for them.
@@ -791,21 +857,56 @@ let private gateEnumFindings (path: string) (data: string) : Result<unit, string
                             scopeKindNames
                             gateId)))
 
+    /// `doctor.extra-tools[].version-stream` is the seventh enum-shaped key in
+    /// this document, and it needs the same treatment for the same reason: an
+    /// unmatched string would silently become `stdout`, and a tool whose banner
+    /// goes to stderr would then be reported missing while installed. Checked
+    /// here rather than left to default, so the failure is a loud parse error
+    /// instead of a quiet misdiagnosis.
+    let extraToolFindings (index: int) (tool: YamlMappingNode) : string option =
+        match child tool "version-stream" |> Option.bind asScalar with
+        | Some sc when (lookupVariant doctorVersionStreamNames sc.Value).IsNone ->
+            Some(
+                sprintf
+                    "failed to parse repo-config.yml at %s: doctor.extra-tools[%d].version-stream: unknown variant `%s`, expected one of %s at line %d column %d"
+                    path
+                    index
+                    sc.Value
+                    (expected doctorVersionStreamNames)
+                    sc.Start.Line
+                    sc.Start.Column
+            )
+        | _ -> None
+
     if stream.Documents.Count = 0 then
         Ok()
     else
         match asMapping stream.Documents[0].RootNode with
         | None -> Ok()
         | Some root ->
-            match child root "gates" with
-            | Some(:? YamlSequenceNode as gates) ->
-                gates.Children
-                |> Seq.indexed
-                |> Seq.tryPick (fun (i, node) -> asMapping node |> Option.bind (gateFindings i))
-                |> function
-                    | Some finding -> Error finding
-                    | None -> Ok()
-            | _ -> Ok()
+            let gateFault =
+                match child root "gates" with
+                | Some(:? YamlSequenceNode as gates) ->
+                    gates.Children
+                    |> Seq.indexed
+                    |> Seq.tryPick (fun (i, node) -> asMapping node |> Option.bind (gateFindings i))
+                | _ -> None
+
+            let extraToolFault =
+                child root "doctor"
+                |> Option.bind asMapping
+                |> Option.bind (fun doctor -> child doctor "extra-tools")
+                |> Option.bind (fun node ->
+                    match node with
+                    | :? YamlSequenceNode as tools ->
+                        tools.Children
+                        |> Seq.indexed
+                        |> Seq.tryPick (fun (i, item) -> asMapping item |> Option.bind (extraToolFindings i))
+                    | _ -> None)
+
+            match gateFault |> Option.orElse extraToolFault with
+            | Some finding -> Error finding
+            | None -> Ok()
 
 let private checkNoUnknownHarnessKeys (data: string) : Result<unit, string> =
     try
@@ -1235,11 +1336,11 @@ let globPatternError (pattern: string) : string option =
 
 /// Collects semantic findings for a gate's optional ordered Doctor-tool list
 /// [Repo-grounded — `repo_config_validate.rs::doctor_tools_semantic_findings`].
-let private doctorToolsSemanticFindings (index: int) (gate: GateEntry) : string list =
+let private doctorToolsSemanticFindings (inventory: string list) (index: int) (gate: GateEntry) : string list =
     gate.DoctorTools
     |> List.mapi (fun position tool ->
         let unknown =
-            if List.contains tool doctorToolInventory then
+            if List.contains tool inventory then
                 []
             else
                 [ sprintf "gates[%d] (gate id \"%s\").doctor-tools: unknown Doctor tool \"%s\"" index gate.Id tool ]
@@ -1455,18 +1556,60 @@ let gateSemanticFindings (config: RepoConfig) : string list =
         @ wiring
         @ restages
         @ carveOut
-        @ doctorToolsSemanticFindings index gate
+        @ doctorToolsSemanticFindings (doctorToolInventoryFor config) index gate
         @ surfaceFindings)
+    |> List.collect id
+
+/// Collects semantic findings for `doctor.extra-tools`. A declaration is only
+/// useful if Doctor can actually run it, so the three fields that make it
+/// runnable are required rather than defaulted, and a name that shadows a
+/// built-in or another declaration is rejected because which definition wins
+/// would otherwise depend on list order.
+let private doctorExtraToolsFindings (tools: DoctorExtraTool list) : string list =
+    tools
+    |> List.mapi (fun index tool ->
+        let required =
+            [ "name", tool.Name; "binary", tool.Binary ]
+            |> List.filter (fun (_, value) -> String.IsNullOrWhiteSpace value)
+            |> List.map (fun (field, _) ->
+                sprintf "doctor.extra-tools[%d].%s: required field is missing or blank" index field)
+
+        let versionArgs =
+            if List.isEmpty tool.VersionArgs then
+                [ sprintf
+                      "doctor.extra-tools[%d].version-args: required field is missing or empty — a probe with no arguments cannot read a version"
+                      index ]
+            else
+                []
+
+        let shadowsBuiltin =
+            if List.contains tool.Name builtinDoctorToolInventory then
+                [ sprintf "doctor.extra-tools[%d].name: \"%s\" is already a built-in Doctor tool" index tool.Name ]
+            else
+                []
+
+        let duplicate =
+            if
+                tools
+                |> List.take index
+                |> List.exists (fun earlier -> earlier.Name = tool.Name)
+            then
+                [ sprintf "doctor.extra-tools[%d].name: duplicate Doctor tool \"%s\"" index tool.Name ]
+            else
+                []
+
+        required @ versionArgs @ shadowsBuiltin @ duplicate)
     |> List.collect id
 
 let semanticFindings (config: RepoConfig) : string list =
     let doctorFindings =
-        match config.Doctor.DotnetGlobalJson with
-        | None -> []
-        | Some path ->
-            match validateRepoRelativePath path with
-            | Ok() -> []
-            | Error message -> [ sprintf "doctor.dotnet-global-json: invalid value \"%s\" (%s)" path message ]
+        (match config.Doctor.DotnetGlobalJson with
+         | None -> []
+         | Some path ->
+             match validateRepoRelativePath path with
+             | Ok() -> []
+             | Error message -> [ sprintf "doctor.dotnet-global-json: invalid value \"%s\" (%s)" path message ])
+        @ doctorExtraToolsFindings config.Doctor.ExtraTools
 
     let harnessFindings =
         config.Harness |> List.mapi harnessEntrySemanticFindings |> List.collect id

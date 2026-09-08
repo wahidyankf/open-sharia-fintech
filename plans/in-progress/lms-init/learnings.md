@@ -52,3 +52,47 @@
   identity section it already checks; or state the portable two-repository idiom (resolve once into
   a variable at the provisioning step) directly in the plans convention so authors reach for it
   before inventing an absolute path.
+
+## Learning: implementation notes are part of the delivery document the leak review inspects
+
+- **Date**: 2026-09-08
+- **Context**: minutes after fixing four machine-specific absolute paths in `delivery.md`, the very
+  first Atomic Sync Ritual note written back into that same file recorded the literal output of
+  `rtk pwd` — reintroducing the exact path class that had just been rejected.
+- **What happened**: caught on re-read before commit and rewritten to state only that the path ends
+  in `worktrees/lms-init`. The pull is structural, not careless: the ritual asks for notes that are
+  repo-grounded and quote what was actually run, and the most direct way to evidence "I confirmed
+  the location" is to paste the resolved path. But the portability rule in
+  [what-counts-as-machine-specific-information.md](../../../repo-governance/development/quality/no-machine-specific-commits/what-counts-as-machine-specific-information.md)
+  §Formal Plan Delivery Documents scopes to the whole committed document, notes included — and the
+  leak review inspects the complete changed file, not only the prose an author considers "content".
+- **Why it might generalize**: the two obligations pull in opposite directions at exactly the
+  moment an executor is moving fastest, and the evidence for a location check is precisely the
+  thing that must not be committed. The safe form is to record the _property_ that was verified
+  ("the path ends in `worktrees/lms-init`"), not the value that satisfied it. Candidate durable
+  fixes to weigh at triage: state this explicitly in the Atomic Sync Ritual's notes guidance, so
+  the rule is visible where notes are written rather than only where worktree identity is declared;
+  and extend whatever check enforces the portability rule to cover HTML-comment note blocks, since
+  an author who has just read the rule can still violate it one edit later.
+
+## Learning: the parity-sibling repositories have drifted apart on their pinned npm version
+
+- **Date**: 2026-09-08
+- **Context**: Phase 0's `rtk npm run doctor -- --fix` exits 0 in both worktrees, but `ose-public`
+  reports 15/16 tools OK with one warning — npm v11.16.0 installed against a required 11.11.0 —
+  while `ose-private` reports 16/16 with no warning on the very same host and the same installed
+  npm.
+- **What happened**: the requirement, not the installation, is what differs. `ose-public`'s
+  `package.json` pins `volta.npm` to `11.11.0`; `ose-private` pins `11.16.0`. One host, one npm,
+  two verdicts. Left unbumped: this plan is authorized to initialize an LMS backend, and changing a
+  pinned toolchain version is a governance change with workspace-wide CI blast radius and its own
+  propagation obligation.
+- **Why it might generalize**: the two repositories are documented parity siblings, but the parity
+  that is actually _enforced_ is narrow — `apps/rhino-cli` byte-identity via
+  `parity-manifest.sha256`. Nothing checks that their toolchain pins agree, so this divergence can
+  persist indefinitely while every gate stays green, and the only symptom is a warning line one
+  repository prints and the other does not. Candidate durable fixes to weigh at triage: extend the
+  nightly parity audit to compare `volta` pins across the sibling pair; or state explicitly in the
+  related-repositories reference which surfaces are parity-bound and which are deliberately
+  independent, so a divergence like this is legible as intentional or accidental rather than
+  ambiguous.

@@ -1,0 +1,164 @@
+DU1 Step 7 — enforcement probe for doctor.extra-tools
+Captured 2026-09-08. Scratch git repo; each block writes repo-config.yml then runs the gate.
+Gate under test: rhino-cli repo-config validate (repo-config.yml gate id: repo-config-schema).
+
+================ ose-public ================
+
+--- VIOLATING: extra-tools entry missing required 'name' ---
+input:
+    doctor:
+      extra-tools:
+        - binary: java
+          version-args: ["-version"]
+exit: 1
+output:
+    doctor.extra-tools[0].name: required field is missing or blank
+    Error: repo-config validate: 1 schema finding(s); fix the key(s) listed above
+
+--- VIOLATING: extra-tools entry missing required 'version-args' ---
+input:
+    doctor:
+      extra-tools:
+        - name: java
+          binary: java
+exit: 1
+output:
+    doctor.extra-tools[0].version-args: required field is missing or empty — a probe with no arguments cannot read a version
+    Error: repo-config validate: 1 schema finding(s); fix the key(s) listed above
+
+--- VIOLATING: extra-tools entry shadows a built-in tool name ---
+input:
+    doctor:
+      extra-tools:
+        - name: jq
+          binary: jq
+          version-args: ["--version"]
+exit: 1
+output:
+    doctor.extra-tools[0].name: "jq" is already a built-in Doctor tool
+    Error: repo-config validate: 1 schema finding(s); fix the key(s) listed above
+
+--- VIOLATING: unrecognized version-stream variant ---
+input:
+    doctor:
+      extra-tools:
+        - name: java
+          binary: java
+          version-args: ["-version"]
+          version-stream: sideways
+exit: 1
+output:
+    Error: repo-config validate: repo-config.yml failed strict schema deserialization: failed to parse repo-config.yml at repo-config.yml: doctor.extra-tools[0].version-stream: unknown variant `sideways`, expected one of `stdout`, `stderr` at line 6 column 23
+
+--- VIOLATING: duplicate extra-tool names ---
+input:
+    doctor:
+      extra-tools:
+        - name: java
+          binary: java
+          version-args: ["-version"]
+        - name: java
+          binary: java
+          version-args: ["-version"]
+exit: 1
+output:
+    doctor.extra-tools[1].name: duplicate Doctor tool "java"
+    Error: repo-config validate: 1 schema finding(s); fix the key(s) listed above
+
+--- CONFORMING: complete extra-tool declaration ---
+input:
+    doctor:
+      extra-tools:
+        - name: java
+          binary: java
+          version-args: ["-version"]
+          version-stream: stderr
+          required-version: "25"
+exit: 0
+output:
+    repo-config validate: repo-config.yml matches the canonical schema (key set + enums OK)
+
+--- doctor --tools selection, resolved against built-in + extra-tools ---
+name in NEITHER inventory        -> exit 1  (expected 1: rejected)
+name in the BUILT-IN inventory   -> exit 0  (expected 0: accepted)
+
+================ ose-private ================
+
+--- VIOLATING: extra-tools entry missing required 'name' ---
+input:
+    doctor:
+      extra-tools:
+        - binary: java
+          version-args: ["-version"]
+exit: 1
+output:
+    doctor.extra-tools[0].name: required field is missing or blank
+    Error: repo-config validate: 1 schema finding(s); fix the key(s) listed above
+
+--- VIOLATING: extra-tools entry missing required 'version-args' ---
+input:
+    doctor:
+      extra-tools:
+        - name: java
+          binary: java
+exit: 1
+output:
+    doctor.extra-tools[0].version-args: required field is missing or empty — a probe with no arguments cannot read a version
+    Error: repo-config validate: 1 schema finding(s); fix the key(s) listed above
+
+--- VIOLATING: extra-tools entry shadows a built-in tool name ---
+input:
+    doctor:
+      extra-tools:
+        - name: jq
+          binary: jq
+          version-args: ["--version"]
+exit: 1
+output:
+    doctor.extra-tools[0].name: "jq" is already a built-in Doctor tool
+    Error: repo-config validate: 1 schema finding(s); fix the key(s) listed above
+
+--- VIOLATING: unrecognized version-stream variant ---
+input:
+    doctor:
+      extra-tools:
+        - name: java
+          binary: java
+          version-args: ["-version"]
+          version-stream: sideways
+exit: 1
+output:
+    Error: repo-config validate: repo-config.yml failed strict schema deserialization: failed to parse repo-config.yml at repo-config.yml: doctor.extra-tools[0].version-stream: unknown variant `sideways`, expected one of `stdout`, `stderr` at line 6 column 23
+
+--- VIOLATING: duplicate extra-tool names ---
+input:
+    doctor:
+      extra-tools:
+        - name: java
+          binary: java
+          version-args: ["-version"]
+        - name: java
+          binary: java
+          version-args: ["-version"]
+exit: 1
+output:
+    doctor.extra-tools[1].name: duplicate Doctor tool "java"
+    Error: repo-config validate: 1 schema finding(s); fix the key(s) listed above
+
+--- CONFORMING: complete extra-tool declaration ---
+input:
+    doctor:
+      extra-tools:
+        - name: java
+          binary: java
+          version-args: ["-version"]
+          version-stream: stderr
+          required-version: "25"
+exit: 0
+output:
+    repo-config validate: repo-config.yml matches the canonical schema (key set + enums OK)
+
+--- doctor --tools selection, resolved against built-in + extra-tools ---
+name in NEITHER inventory        -> exit 1  (expected 1: rejected)
+name in the BUILT-IN inventory   -> exit 0  (expected 0: accepted)
+

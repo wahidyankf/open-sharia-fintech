@@ -43,23 +43,14 @@ let private def name required =
       ReadReq = fun () -> required
       InstallCmd = Some(if name = "tofu" then installTofu else syntheticInstall name) }
 
-let private inventory () =
-    [ "git"
-      "volta"
-      "node"
-      "npm"
-      "rust"
-      "cargo-llvm-cov"
-      "dotnet"
-      "docker"
-      "jq"
-      "shellcheck"
-      "hadolint"
-      "actionlint"
-      "playwright"
-      "shfmt"
-      "tofu"
-      "clang-format" ]
+/// The in-memory stand-in for the resolved Doctor inventory: the built-ins
+/// plus whatever a scenario declared, exactly as `doctor.extra-tools` extends
+/// the compiled-in list. `extra` is threaded per call rather than held in
+/// module state so one scenario's declaration cannot leak into the next.
+let private inventoryNames (extra: string list) = builtinDoctorToolInventory @ extra
+
+let private inventory (extra: string list) =
+    inventoryNames extra
     |> List.map (fun name ->
         let required =
             match name with
@@ -75,6 +66,7 @@ type DoctorUnitWorld() =
     let mutable scope = FullScope
     let mutable selected: string list option = None
     let mutable skipped: string list = []
+    let mutable extraTools: string list = []
     let mutable missing: Set<string> = Set.empty
     let mutable mismatchedNode = false
     let mutable rustBody: string option = None
@@ -100,7 +92,7 @@ type DoctorUnitWorld() =
             selected
             |> Option.defaultValue []
             |> List.tryPick (
-                parseDoctorToolName
+                parseDoctorToolName (inventoryNames extraTools)
                 >> function
                     | Error e -> Some e
                     | Ok _ -> None
@@ -111,7 +103,7 @@ type DoctorUnitWorld() =
             succeeded <- false
         | None ->
             let defs =
-                inventory ()
+                inventory extraTools
                 |> List.map (fun d ->
                     if mismatchedNode && d.Name = "node" then
                         { d with ReadReq = fun () -> "1.0.0" }
@@ -198,6 +190,9 @@ type DoctorUnitWorld() =
     member _.``a tool is listed under the doctor skip-tools section of repo-config.yml``() =
         skipped <- [ "shfmt" ]
         missing <- Set.add "shfmt" missing
+
+    [<Given>]
+    member _.``a tool is listed under the doctor extra-tools section of repo-config.yml``() = extraTools <- [ "java" ]
 
     [<Given>]
     member _.``a rust-toolchain.toml pins a channel and declares no lint components``() =
@@ -302,6 +297,11 @@ type DoctorUnitWorld() =
     member _.``the output does not include the skipped tool``() =
         Assert.DoesNotContain("shfmt", output)
         Assert.DoesNotContain("shfmt", String.concat " " probed)
+
+    [<Then>]
+    member this.``the output includes the configured extra tool``() =
+        Assert.Contains("java", output)
+        Assert.Contains("java", String.concat " " this.Probed)
 
     [<Then>]
     member _.``it reports the toolchain component check as a warning naming rustfmt and clippy``() =
