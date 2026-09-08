@@ -27,6 +27,7 @@ dependencies and Git hooks; never invent or infer an equivalent command.
 - [Dependency Isolation, Language Breadth, and Idempotency](./worktree-setup/dependency-isolation-language-breadth-and-idempotency.md) — Why every new worktree needs the init.
 - [What Goes Wrong Without Both Steps](./worktree-setup/what-goes-wrong-and-nx-node-modules-dependency.md) — Build/test/lint/cache failure modes.
 - [Per-Project Dependency Restoration](./worktree-setup/per-project-dependency-restoration.md) — The F#/.NET `dotnet restore` gap.
+- [Per-Project Generated Sources](./worktree-setup/per-project-generated-sources.md) — The gitignored-codegen gap that surfaces as a broken import.
 - [Sibling-Repo Relative Paths From Inside a Worktree](./worktree-setup/sibling-repo-relative-paths.md) — Correct path nesting in multi-repo plans.
 - [Absolute Source Paths in Delivery-Checklist Commands](./worktree-setup/absolute-source-paths-in-delivery-checklist-commands.md) — Worktree copy vs. stale primary-checkout path.
 - [When This Applies](./worktree-setup/when-this-applies.md) — The five triggering conditions.
