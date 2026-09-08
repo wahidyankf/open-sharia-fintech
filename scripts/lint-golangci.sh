@@ -56,6 +56,20 @@ while IFS= read -r module; do
 	packages="$(awk -F'\t' -v m="$module" '$1 == m { print $2 }' "$pairs" | sort -u)"
 	prefix="${module#"$repo_root"/}"
 
+	# Drop directories whose Go files are all excluded by build constraints (a
+	# `//go:build tools` pin, a platform-specific file). golangci-lint treats
+	# such a directory as a typechecking error -- "build constraints exclude all
+	# Go files" -- and fails the whole gate, even though nothing is wrong with
+	# the code. `go list -e` reports them with zero GoFiles instead of erroring.
+	buildable=""
+	for pkg in $packages; do
+		count="$(cd "$module" && go list -e -f '{{len .GoFiles}}{{len .TestGoFiles}}' "./$pkg" 2>/dev/null || echo "00")"
+		[ "$count" = "00" ] && continue
+		buildable="${buildable}${pkg}"$'\n'
+	done
+	packages="$(printf '%s' "$buildable")"
+	[ -n "$packages" ] || continue
+
 	# shellcheck disable=SC2086
 	# $packages is a newline-separated list of module-relative directories that
 	# must reach golangci-lint as separate arguments; none can contain a space,
