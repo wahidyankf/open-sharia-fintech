@@ -257,3 +257,60 @@
   `ayokoding-www:test:unit` so no single step emits a log long enough to be truncated; or state in
   the flaky-test convention what an executor should do when a failure is real but unobservable —
   today the honest answer is "record it and escalate", and the rule does not say so.
+
+## A deliberate wrong-toolchain reproduction can poison the next honest run
+
+- **What happened**: the Phase 3 gate `ose-lms-be:test:quick` failed on merged `main` with the same
+  eight `google-java-format(InvocationTargetException)` entries as the CI bug DU3-PP-172 had already
+  fixed — on a machine whose `java` is Temurin 25, with no Java source change, and after CI had gone
+  green. The cause was not a regression and not the original bug. It was residue from that bug's own
+  RED reproduction: proving the JDK diagnosis required running Spotless under JDK 17 with
+  `--rerun-tasks` against the real project directory, and that run leaves `spotlessJava` recorded as
+  `UP-TO-DATE`, so every later run on the correct JDK keeps failing without ever recomputing it.
+  Reproduced deliberately from a known-green state to prove causation rather than assert it: the
+  JDK-17 rerun fails, and the very next plain JDK-25 run fails identically. `--rerun-tasks` clears
+  it. A wrong-JDK run _without_ `--rerun-tasks` poisons nothing, because the task is simply skipped.
+- **Why it might generalize**: RED-first is mandatory here, and for toolchain defects the only
+  faithful RED is to run the real tool, in the real project directory, under the wrong toolchain.
+  That makes the reproduction itself a mutation of local build state, and incremental build systems
+  are designed to trust that state. The failure mode is nasty because it is _indistinguishable from
+  the original defect_ — same task, same count, same exception, same file list — so the natural
+  reading is "the fix did not work" or "it regressed", and the natural next move is to reopen a
+  correctly-closed investigation. Nothing warns the executor, and CI cannot corroborate either way
+  because runners start clean, which makes local and CI disagree for a reason unrelated to the code.
+  Candidate durable fixes to weigh at triage: state in the TDD/flaky-test guidance that a RED run
+  which deliberately mis-configures a toolchain must be followed by an explicit state-clearing step
+  before the next local gate is trusted; or have the Java `lint` target run Spotless in a way that
+  does not silently inherit a stale snapshot; or, most cheaply, record the recovery command next to
+  the formatter gate so the next person spends minutes rather than an hour. The generalization is
+  not Java-specific — any cached-by-default tool (Gradle, Nx, Bazel, `cargo`, `pytest` caches) can
+  carry a deliberately-broken run forward into an honest one.
+
+## A file ledger that omits a lockfile hides a build-breaking edit
+
+- **What happened**: the DU4 ledger reconciliation compared `git status --short` against the plan's
+  `tech-docs.md` §5 file tree and found two changed paths the tree never listed. One is cosmetic:
+  `apps/README.md` was edited, and the plan's own DU4-185 checkbox names that file explicitly, so
+  the checklist and the ledger disagreed with each other. The other is not cosmetic. The root
+  `package.json` declares `workspaces: ["apps/*", "libs/*"]`, so creating
+  `apps/ose-lms-be-e2e/package.json` makes a new workspace package, and `package-lock.json` must
+  gain entries for it — the `ose-be-e2e` sibling has exactly two. Immediately after the E2E project
+  was written, `grep -c '"apps/ose-lms-be-e2e"' package-lock.json` returned **0**. Nothing local
+  complained: `test:e2e`, `test:quick`, `typecheck`, and `lint` all passed, because they resolve
+  binaries from the already-populated root `node_modules`. CI does not work that way — it runs
+  `npm ci`, which reinstalls strictly from the lockfile and fails when the lockfile and the declared
+  workspaces disagree. `npm install` fixed it with 10 insertions and 0 deletions, all confined to
+  the new workspace, with no version drift anywhere else.
+- **Why it might generalize**: the ledger is written before execution, by reasoning about which
+  files a change _touches_. A lockfile is not touched by the author at all — it is touched by the
+  package manager, as a consequence of a file the author did write. That whole category is
+  systematically easy to omit: lockfiles, generated harness mirrors, coverage baselines, parity
+  manifests. The failure is quiet in the worst way, because every local gate passes and only the
+  clean-install path in CI disagrees, which means the feedback arrives one push later than it
+  should. Candidate durable fixes to weigh at triage: have the plans convention require that a
+  ledger entry for any new `apps/*` or `libs/*` `package.json` carry a paired `package-lock.json`
+  entry; or add a cheap pre-push check that fails when a workspace `package.json` exists with no
+  matching lockfile entry, which is a two-line `grep` and would have caught this before the branch
+  ever left the machine. The narrower lesson stands on its own: after adding a workspace package,
+  run the installer and diff the lockfile, rather than trusting that local gates going green means
+  the dependency graph is actually consistent.

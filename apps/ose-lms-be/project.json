@@ -166,6 +166,22 @@
         "{workspaceRoot}/apps/ose-lms-be/src/test/java/**/*.java"
       ]
     },
+    "test:coverage:e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node scripts/behaviour-coverage.mjs --config apps/ose-lms-be/behaviour-coverage.json --adapter e2e"
+      },
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/scripts/behaviour-coverage.mjs",
+        "{workspaceRoot}/apps/ose-lms-be/behaviour-coverage.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/apps/ose/lms-be/behaviours/**/*.feature",
+        "{workspaceRoot}/apps/ose-lms-be/src/test/java/**/*.java",
+        "{workspaceRoot}/apps/ose-lms-be-e2e/steps/**/*.ts",
+        "{workspaceRoot}/apps/ose-lms-be-e2e/playwright.config.ts"
+      ]
+    },
     "test:coverage:behaviour": {
       "executor": "nx:run-commands",
       "options": {
@@ -189,6 +205,10 @@
             "forwardAllArgs": false
           },
           {
+            "command": "npm exec -- nx run ose-lms-be:test:coverage:e2e",
+            "forwardAllArgs": false
+          },
+          {
             "command": "npm exec -- nx run ose-lms-be:test:coverage:behaviour",
             "forwardAllArgs": false
           }
@@ -202,7 +222,9 @@
         "{workspaceRoot}/apps/ose-lms-be/behaviour-coverage.json",
         "{workspaceRoot}/package-lock.json",
         "{workspaceRoot}/specs/apps/ose/lms-be/behaviours/**/*.feature",
-        "{workspaceRoot}/apps/ose-lms-be/src/test/java/**/*.java"
+        "{workspaceRoot}/apps/ose-lms-be/src/test/java/**/*.java",
+        "{workspaceRoot}/apps/ose-lms-be-e2e/steps/**/*.ts",
+        "{workspaceRoot}/apps/ose-lms-be-e2e/playwright.config.ts"
       ]
     }
   },

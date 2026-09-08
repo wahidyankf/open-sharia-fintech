@@ -86,7 +86,7 @@ immediately once the plan is done using that repository, not deferred to archiva
 | `lms-init/du1-doctor-config`          | `ose-public`  | `to-pr`   | `delivered`     | PR #491 merged, reviewed head `acdd9393f1d3628738ea38f6c616b3cddf9c99cd`            |
 | `lms-init/du1-doctor-config`          | `ose-private` | `to-pr`   | `delivered`     | PR #167 merged, reviewed head `b5a414181fb4da4973aef9009a7e98e383c9277e`            |
 | `lms-init/du2-java-enablement`        | `ose-public`  | `to-pr`   | `delivered`     | PR #493 merged, reviewed head `74a091c4f3f8b48e53cb34150ef75bfec71d79e0`            |
-| `lms-init/du3-contract-and-service`   | `ose-public`  | `to-pr`   | `pending`       | record merged PR number and 40-character head SHA at DU3                            |
+| `lms-init/du3-contract-and-service`   | `ose-public`  | `to-pr`   | `delivered`     | PR #495 merged, reviewed head `1977661574f445648eb5e0bca2b4de1048ca3f1c`            |
 | `lms-init/du4-e2e-and-reconciliation` | `ose-public`  | `to-pr`   | `pending`       | record merged PR number and 40-character head SHA at DU4                            |
 
 Append every plan-created delivery branch before use. Before removal, classify every entry as
@@ -987,11 +987,13 @@ OpenAPI contract, the service declares no locale set, and no `Accept-Language` h
       jobs do not execute any `ose-lms-be` target; record the job logs proving the exclusion in
       `evidence/du3-ci-routing.txt`
       <!-- Implementation notes (DU3-PP-170): recorded in `evidence/du3-ci-routing.txt` from run 34240828013's log archive. The Java job executed all seven `ose-lms-be` targets and its Gradle summary names `test jacocoTestCoverageVerification`, so the 99% floor really ran in CI. `grep -c 'nx run ose-lms-be'` is **0** in both the TypeScript and .NET job logs, and the Flutter job produced no log at all because `detect` skipped it. The exclusion is effective, not merely declared. -->
-- [ ] [AI] Verify exact-current-head/base `Quality gate` and one clean current-head
+- [x] [AI] Verify exact-current-head/base `Quality gate` and one clean current-head
       `pr-leak-review`
+      <!-- Implementation notes (DU3-PP-171): both halves verified against the API rather than the PR page, at head `1977661574f445648eb5e0bca2b4de1048ca3f1c` over base `4ed12389a6c7279e9c25c36e50bdf15ffdc20090`. The base half is not merely declared: `git rev-parse origin/main` reported that same SHA, so the gate ran against the tree that would actually merge. Quality gate: the `pr-quality-gate` and `validate-env` runs both conclude `success` and both carry `head_sha` byte-equal to the PR head — established by filtering the workflow-runs API on the head SHA, not by trusting a check name, because `gh pr checks` reports the newest result per name and would happily show a green gate that ran on a superseded head. All 15 executing checks pass; `Flutter` skips. Reaching this state took three CI passes and one rebase, and the earlier green runs at `e36f39d2f` and `b7df3c465` were explicitly not accepted, since a gate that passed on a superseded head or base is not evidence about the current one. Leak review: `pass` at that same pinned head with zero findings in every category, run through the agent-driven `pr-review-security-maker` in leak-only mode — this gate is agent-driven, not a GitHub workflow, so there is no check run to point at. The reviewer independently re-resolved the head SHA from GitHub before inspecting, so it did not review a stale tree. Clean on the first pass here, unlike DU1 and DU2, which is the expected result of the sanitizer fix DU2-PP-116 landed plus the placeholder discipline applied to all four new DU3 evidence files as they were written rather than after the fact. -->
 - [x] [AI] If any check fails, fix at the root cause and push a follow-up commit; never bypass
       <!-- Implementation notes (DU3-PP-172): one real failure, fixed at source. `formatting-verify` reported eight `google-java-format(InvocationTargetException)` entries, one per Java file, which reads as a formatting defect but is not one: Spotless hosts google-java-format in the Gradle **daemon** JVM rather than the project's declared toolchain, and that gate group provisioned .NET, Flutter and Ruff but no JDK, so it ran on the runner image's JDK 17. Reproduced locally byte-for-byte by pointing `JAVA_HOME` at a local JDK 17 and changing nothing else, and green again on JDK 25 with the same untouched sources; full transcript in `evidence/du3-ci-jdk-provisioning.txt`. Fixed by adding `./.github/actions/setup-java` to both jobs that can run a Java formatter gate. Separately, `TypeScript quality gate` failed once on `ayokoding-www:test:unit` and passed on re-run; that is an unrelated pre-existing CI flake, not a DU3 defect — see Phase 3 Execution Note 14. No gate was weakened, skipped, or loosened. -->
-- [ ] [AI] Mark ready, merge, and record the pull request number and 40-character head SHA
+- [x] [AI] Mark ready, merge, and record the pull request number and 40-character head SHA
+      <!-- Implementation notes (DU3-PP-173): **PR #495**, reviewed and merged head `1977661574f445648eb5e0bca2b4de1048ca3f1c`, base `4ed12389a6c7279e9c25c36e50bdf15ffdc20090`. Taken out of draft only after DU3-PP-171 verified the gate at that exact head; `gh pr view` then reported `isDraft=false`, `mergeable=MERGEABLE`, `mergeStateStatus=CLEAN`. Squash-merged at 16:07:06Z, matching every other merge on this trunk, producing `63ce3eea62c2a2120e05a4b4786310d4b3f4fdb3` on `main`. `gh pr merge` exited non-zero with `fatal: 'main' is already checked out at <public-repo>` — that is its **local** post-merge convenience step failing, not the merge itself: the tool tries to check out the base branch, which is checked out in the primary repository rather than in this worktree. The remote outcome was therefore verified independently rather than inferred from the exit code — `state=MERGED` with a real `mergeCommit` oid, and `git ls-remote --heads origin lms-init/du3-contract-and-service` returns nothing, so `--delete-branch` did remove the remote branch. Re-running the merge on that exit code, or switching to the primary repository to satisfy it, would both have been wrong. The inventory row moves from `pending` to `delivered` carrying the reviewed head, which ARCH-229 will classify against. The local branch is retained until ARCH-231 so cleanup happens in one place. As with DU1 and DU2, this delivery record is written after the merge and carried into the DU4 commit set: committing it onto the DU3 branch would have moved the head and voided the exact-head Quality gate and leak review that authorised the merge, forcing a fourth full CI cycle for markdown alone. -->
 
 ### Phase 3 Execution Notes
 
@@ -1100,14 +1102,21 @@ prose, not a reduction in scope.
 
 > All checks below must pass before starting Phase 4.
 
-- [ ] [AI] `rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- run ose-lms-be:test:quick`
+- [x] [AI] `rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- run ose-lms-be:test:quick`
       exits 0, including the 99% JaCoCo line floor
-- [ ] [AI] `ose-lms-be:test:coverage:behaviour` reports every scenario resolved exactly once in the
+      <!-- Implementation notes (P3-GATE-174): `TERMINAL_EXIT=0`, run against merged `main` rather than the pre-merge branch — the squash commit `63ce3eea6`'s tree is byte-identical to the reviewed head `1977661574`, so what merged is exactly what CI inspected. Run with `--skip-nx-cache`, deliberately: the first attempt reported success purely from the Nx cache, which proves nothing about the floor, and the uncached run shows `./gradlew -Pcoverage.line.minimum=99 test jacocoTestCoverageVerification` with `> Task :jacocoTestCoverageVerification` actually executing. The first uncached run **failed**, and the reason is recorded in full in `evidence/du3-spotless-stale-state.txt` rather than retried away: `spotlessJavaCheck` produced the same eight `google-java-format(InvocationTargetException)` entries as the original CI failure, on a machine whose `java` is Temurin 25 and with no Java source change. It is not a defect in the delivered code and not a recurrence of the DU3-PP-172 bug — it is local state left behind by that bug's own JDK-17 RED reproduction, which ran Spotless with `--rerun-tasks` against this project directory. Proven by re-creating it deliberately from a known-green state: the JDK-17 rerun fails, and the very next plain JDK-25 daemon run fails identically with `spotlessJava UP-TO-DATE`, `spotlessJavaCheck FAILED`. Ruled out one at a time first, each against a fresh daemon — daemon JVM (both daemons are Temurin 25), stale daemon (`--gradlew --stop` then re-run), and missing `--add-exports` (all five added to `org.gradle.jvmargs`, verified present on the daemon command line, still failing). `--rerun-tasks` clears it and plain runs pass afterwards. CI never saw it because runners start with no Gradle state. No gate was weakened, no Java source reformatted, and `gradle.properties` was restored byte-for-byte after the experiment. Routed to `learnings.md` for Phase 5 rather than fixed here, since a durable fix would be new machinery outside this delivery unit. -->
+      <!-- Executor note: a wrong-JDK Spotless run with `--rerun-tasks` poisons local incremental state, so later correct-JDK runs keep failing with the identical error. Recover with `./gradlew --rerun-tasks spotlessCheck` before concluding a formatter regression exists. -->
+- [x] [AI] `ose-lms-be:test:coverage:behaviour` reports every scenario resolved exactly once in the
       Unit adapter, with the three `@e2e-exempt` scenarios recognized
-- [ ] [AI] Every curl assertion above is recorded with a real status and body
-- [ ] [AI] `evidence/du3-ci-routing.txt` proves the Java job ran and the other three did not touch
+      <!-- Implementation notes (P3-GATE-175): `TERMINAL_EXIT=0` uncached, reporting `ose-lms-be: 4 features, 7 expanded scenarios, adapters: unit.` Both halves were checked against the corpus rather than read off that summary line. The scenario total is the sum of the four feature files — `port-resolution` 3, `actuator` 2, `health` 1, `hello` 1 — which is 7 with no `Scenario Outline` anywhere, so "expanded" equals "written" and nothing is being double-counted or collapsed. The `@e2e-exempt` half is exactly 3, all of them the port-resolution scenarios; a fourth `grep` hit exists but is prose in `behaviours/config/README.md` describing the tag, not a tag, and it was inspected rather than counted. `behaviour-coverage.json` declares only the `unit` adapter, which is what makes the Unit adapter exemption-free and therefore the strongest of the two — every one of the 7 scenarios must resolve there, including the 3 that DU4's E2E adapter will exempt. -->
+
+- [x] [AI] Every curl assertion above is recorded with a real status and body
+      <!-- Implementation notes (P3-GATE-176): all of DU3-CURL-149..155 are in `evidence/du3-curl.txt` as real captured output, not paraphrase — each entry shows the exact command and the response beneath it. Successes: `/api/v1/health` `HTTP/1.1 200` with `{"status":"healthy"}`, `/api/v1/hello` `200` with its body, `/actuator/health` `200` with `{"groups":["liveness","readiness"],"status":"UP"}`. Negative and error cases carry real codes rather than being asserted in prose: `/actuator/env` `404` proving health-only Actuator exposure, `/api/v1/nonexistent` `404`, and `POST /api/v1/health` `405` proving method restriction. The `OSE_LMS_BE_PORT=8399` override is recorded end to end — Tomcat's own `started on port 8399` line, a `200` on the new port, and the old port no longer answering — so the override is proven by observation rather than by configuration reading. The malformed-port case is the startup failure itself, `Invalid value '${OSE_LMS_BE_PORT:8303}' for configuration property 'server.port'`, which is DU3-CURL-154's deliberate negative case and not a defect. -->
+- [x] [AI] `evidence/du3-ci-routing.txt` proves the Java job ran and the other three did not touch
       `ose-lms-be`
-- [ ] [AI] `rtk git status --short` shows no generated contract or build output tracked
+      <!-- Implementation notes (P3-GATE-177): the file is built from run 34240828013's log archive, so it is observed CI behaviour rather than a reading of the workflow YAML. Positive half: the Java job executed all seven `ose-lms-be` targets — `typecheck`, `lint`, `test:unit`, `specs:structure-validation`, `test:coverage:unit`, `test:coverage:behaviour`, `test:coverage` — and its Gradle summary row `<td>test jacocoTestCoverageVerification</td>` shows the 99% floor really ran on a runner, not only locally. Negative half stated as a falsifiable count rather than an absence claim: `grep -c 'nx run ose-lms-be'` is **0** in both the TypeScript and .NET job logs, and the Flutter job produced no log at all because `detect` skipped it. Exclusion is therefore effective, not merely declared — and this is the first run where that could be checked, since before DU3 the Java job was `skipped` for want of any Java project. -->
+- [x] [AI] `rtk git status --short` shows no generated contract or build output tracked
+      <!-- Implementation notes (P3-GATE-178): `git status --short` lists only this plan's own artifacts — modified `delivery.md` and `learnings.md`, plus the new untracked `evidence/du3-spotless-stale-state.txt` — and nothing under `apps/`. Checked positively as well as by absence: `git ls-files` matches no path under `apps/ose-lms-be/build/`, no generated contracts directory, and no `.class` file. Exactly one `.jar` is tracked, `apps/ose-lms-be/gradle/wrapper/gradle-wrapper.jar`, which is required for the wrapper to bootstrap and is the file the root `*.jar` ignore rule had wrongly swallowed until commit `8548788cb`; its presence is the fix, not a leak of build output. Note that the full `test:quick` run including a Gradle build had already executed against this tree before the check, so the absence of build artefacts reflects correct ignore rules rather than an unbuilt project. -->
 
 > **Pause Safety**: `ose-lms-be` builds, serves both endpoints, and proves every scenario in the
 > Unit adapter — the one adapter with no exemption, so every scenario is genuinely proven. The E2E
@@ -1127,7 +1136,7 @@ One pull request in `ose-public`.
 - **Outcome:** each of the four scenarios resolves in the E2E adapter against a really-started
   service over real HTTP.
 
-- [ ] [AI] **RED:** create `apps/ose-lms-be-e2e/` with `project.json` (tags
+- [x] [AI] **RED:** create `apps/ose-lms-be-e2e/` with `project.json` (tags
       `["type:e2e", "platform:playwright", "lang:ts", "domain:ose"]`, targets `test:e2e`, `lint`,
       `typecheck`, `test:quick`, `test:coverage:e2e`, `test:coverage:behaviour`, `test:coverage`,
       and `namedInputs.specs`; **no** `test:unit`), `package.json`, `tsconfig.json`,
@@ -1137,71 +1146,92 @@ One pull request in `ose-public`.
       `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- run ose-lms-be-e2e:test:coverage:behaviour`;
       acceptance: it fails on the missing `steps/backend-process.ts` starter.
   - _Suggested executor: `swe-e2e-dev`_
-- [ ] [AI] **GREEN:** create `steps/backend-process.ts` starting the Gradle-built jar on a test port
+      <!-- Implementation notes (DU4-179): all ten files created, modelled on the `ose-be-e2e` sibling the plan names — tags `["type:e2e","platform:playwright","lang:ts","domain:ose"]`, `implicitDependencies: ["ose-lms-be"]`, `namedInputs.specs`, and deliberately **no** `test:unit` target, since an E2E project has no unit layer to run. `steps/http.steps.ts` binds the same four expressions the Unit adapter binds, including `I send GET {word}` as one parameterized expression covering all four paths rather than four literal ones, matching `HttpSteps.java` exactly. **The plan's predicted acceptance did not hold, and was not made to hold.** `test:coverage:behaviour` exited **0**, not 1: it is a static scan of step-definition *text* and never resolves TypeScript imports, so a missing module is invisible to it. Manufacturing a failure there would have meant breaking the corpus rather than the code. The honest RED for "the starter does not exist yet" is the gate that does resolve imports — `ose-lms-be-e2e:typecheck` — which failed with `TERMINAL_EXIT=1` and `Error: Cannot find module './backend-process'`. That is the RED this outcome records; see Phase 4 Execution Note 1. -->
+- [x] [AI] **GREEN:** create `steps/backend-process.ts` starting the Gradle-built jar on a test port
       and stopping it on teardown, modelled on `apps/ose-be-e2e/steps/backend-process.ts`. Run
       `rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- run ose-lms-be-e2e:test:e2e`;
       acceptance: all four scenarios pass against real HTTP.
   - _Suggested executor: `swe-e2e-dev`_
-- [ ] [AI] **REFACTOR:** confirm the three `@e2e-exempt` port-resolution scenarios are skipped by the
+      <!-- Implementation notes (DU4-180): `TERMINAL_EXIT=0`, all four scenarios passing against a really-started process over real HTTP — `Actuator health endpoint reports the service is up`, `Actuator exposes no endpoint other than health`, `Health endpoint returns a healthy status`, `Hello endpoint returns the greeting`. Nx built the jar first through `dependsOn: ["ose-lms-be:build"]`, so the suite cannot run against a stale artifact. Two deliberate departures from the `ose-be-e2e` sibling, both recorded rather than silent. First, the jar path is **discovered** from `build/libs` rather than hard-coded, excluding Gradle's non-executable `-plain.jar` companion and failing loudly unless exactly one bootable jar is present — a hard-coded name would break silently on the first version bump. Second, the suite binds port **8403**, not the service's default 8303 that the sibling convention would reuse: 8303 is held both by a developer's `nx run ose-lms-be:dev` session and by this same delivery unit's exploratory-testing step, so reusing it would make the suite fight work the plan itself schedules. `LMS_E2E_PORT` and `LMS_API_BASE_URL` override both ends. The run also confirms the exemption boundary from the other side: 4 tests ran, not 7. -->
+- [x] [AI] **REFACTOR:** confirm the three `@e2e-exempt` port-resolution scenarios are skipped by the
       E2E adapter and that no E2E binding is left unused. Run
       `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- run ose-lms-be-e2e:test:quick`;
       acceptance: exit code 0 with no unused-binding error.
   - _Suggested executor: `swe-e2e-dev`_
-- [ ] [AI] Add the `e2e` adapter to `apps/ose-lms-be/behaviour-coverage.json` (bindings
+      <!-- Implementation notes (DU4-181): `TERMINAL_EXIT=0` uncached, with `typecheck`, `lint`, `specs:structure-validation`, `test:coverage:e2e`, and `test:coverage:behaviour` all green and no unused-binding error. The exemption is proven from both directions rather than asserted: the E2E run executes exactly **4** tests against the corpus's **7** scenarios, and `test:coverage:e2e` passes with `e2e-coverage-baseline.json` declaring an **empty** `allowedUnbound` — so the three port-resolution scenarios are recognized as exempt by tag, not waived by a baseline entry. A real defect surfaced here and was fixed at source rather than silenced: `typecheck` failed with `TS2345` because `candidates[0]` is `string | undefined` under `noUncheckedIndexedAccess`. It was resolved by destructuring and narrowing on `jarName === undefined || extra.length > 0`, which also tightens the "exactly one jar" check, rather than by a non-null assertion — the null-forgiving operator would have restored the type error's underlying unsoundness while hiding it from the compiler. The E2E suite was re-run after the change and still passes 4/4, so the fix is behaviour-preserving and not merely type-clean. -->
+- [x] [AI] Add the `e2e` adapter to `apps/ose-lms-be/behaviour-coverage.json` (bindings
       `["../ose-lms-be-e2e/steps"]`, driver `../ose-lms-be-e2e/playwright.config.ts`), add the
       `test:coverage:e2e` target to `apps/ose-lms-be/project.json`, and wire it into that project's
       aggregate `test:coverage` — all three deliberately deferred from Phase 3. Run
       `rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- run ose-lms-be:test:quick`;
       acceptance: exit code 0 with the E2E static validator now reached through the aggregate.
+      <!-- Implementation notes (DU4-182): all three deferrals from Phase 3 closed together, and `TERMINAL_EXIT=0` uncached. The aggregate now reaches every static validator in order — `test:coverage:unit` reports `adapters: unit`, the new `test:coverage:e2e` reports `adapters: e2e`, and `test:coverage:behaviour` reports `adapters: unit, e2e` — which is the observable proof the E2E adapter is genuinely wired in rather than merely declared; before this change the third line read `adapters: unit`. The new target was derived from the existing `test:coverage:unit` leaf rather than hand-written, so its executor, caching, and input shape stay identical to its sibling. Its `inputs` gained `apps/ose-lms-be-e2e/steps/**/*.ts` and `playwright.config.ts`: the e2e adapter's bindings and driver live in the *other* project, so without those entries Nx would serve a cached pass after an edit that had actually broken the binding — a stale-cache false green of exactly the kind Phase 3 was bitten by. The same two inputs were added to the aggregate. `jacocoTestCoverageVerification` still runs in the same command, so wiring the E2E adapter in did not displace the 99% Unit floor. -->
 - **Proof:** passing `ose-lms-be-e2e:test:e2e` and `ose-lms-be:test:quick` with all four static
   validators reached.
 
 ### Registry and Index Reconciliation
 
-- [ ] [AI] Add `ose-lms-be` and `ose-lms-be-e2e` to the Current Apps list in
+- [x] [AI] Add `ose-lms-be` and `ose-lms-be-e2e` to the Current Apps list in
       `docs/reference/monorepo-structure.md`, each with a one-line description and the port.
       Acceptance: `rtk npm run lint:md` exits 0.
   - _Suggested executor: `docs-maker`_
-- [ ] [AI] Verify `docs/reference/web-sites.md` still carries the DU2 rows and that port 8303 is
+      <!-- Implementation notes (DU4-183): both entries added to the Current Apps list, placed directly after `ose-be-e2e` so the OSE backends stay grouped the way the surrounding list already pairs each product with its own e2e projects. `ose-lms-be` carries its stack and port (8303); `ose-lms-be-e2e` is described by what it exercises, matching the wording of every other e2e line. `rtk npm run lint:md` exits 0 across 7,638 files. -->
+- [x] [AI] Verify `docs/reference/web-sites.md` still carries the DU2 rows and that port 8303 is
       claimed by exactly one app: `rtk grep -n "8303" docs/reference/web-sites.md`.
-- [ ] [AI] Reconcile every README index the plan touched — `specs/apps/ose/README.md`,
+      <!-- Implementation notes (DU4-184): both DU2 rows survive — the port-table row `| ose-lms-be | (Java 25 / Spring Boot 4) | 8303 | — |` and the override row mapping `ose-lms-be` to `OSE_LMS_BE_PORT`. `grep -c "8303"` returns **1**, so exactly one app claims the port. The E2E suite deliberately does not claim 8303: it binds 8403 (DU4-180), which this same document's "Supporting Service Ports" rationale supports — that section hands every backend test stack distinct host ports precisely "so two stacks can run at the same time (Nx runs affected projects in parallel)". No row was added there for 8403, because that table's columns are PostgreSQL and NATS and `ose-lms-be-e2e` uses neither; 8403 is documented in the E2E project's README instead. -->
+- [x] [AI] Reconcile every README index the plan touched — `specs/apps/ose/README.md`,
       `specs/apps/ose/lms-be/README.md`, each `behaviours/*/README.md` scenario count, and
       `apps/README.md`. Acceptance: the structure validator reports no `count` or `links` finding,
       and `governance-readme-completeness` reports no `missing` or `unannotated` finding.
-- [ ] [AI] Reconcile the file ledger with reality: run `rtk git status --short` and confirm every
+      <!-- Implementation notes (DU4-185): `specs:structure-validation` exits 0 with **0 findings** for every corpus, `ose` included, so no `count` or `links` finding exists. `governance readme-index validate` reports `README INDEX AUDIT PASSED: no orphan or ghost references found`. The per-domain scenario counts were checked against the feature files rather than assumed: `config` claims 3, `health` claims 1 + 2, `hello` claims 1 — totalling the 7 the coverage tool independently reports. `apps/README.md` needed real edits and got two rows: an `OSE learning management` line in the product map, and an end-to-end row pairing `ose-lms-be-e2e` as the API tests with an explicit "Not applicable; the service has no browser surface" in the browser column, matching how the OrganicLever public-website row states its own absence rather than leaving a blank cell. One caution worth recording: `rhino-cli gate run --only=governance-readme-completeness` exits 0 with **no output at all**, because that gate is `path-gated` — a silent exit 0 there is not evidence the audit ran, so the underlying `governance readme-index validate` was invoked directly to get a real verdict. -->
+- [x] [AI] Reconcile the file ledger with reality: run `rtk git status --short` and confirm every
       changed path appears in `tech-docs.md` §5, and every `[N]` entry in that tree that was
       intended for this plan now exists. Record any divergence in `learnings.md` rather than
       silently editing the tree.
+      <!-- Implementation notes (DU4-186): all eleven `apps/ose-lms-be-e2e/` files exist and match the §5 tree entry for entry, and every `[N]` path intended for this plan is present. Two changed paths are **not** in §5, and per this checkbox's own instruction both are recorded here rather than silently added to the tree. The first is cosmetic: `apps/README.md` was edited, and DU4-185's checkbox names that file explicitly, so the plan's checklist and its ledger disagree with each other. The second was a real, CI-breaking gap. The root `package.json` declares `workspaces: ["apps/*", "libs/*"]`, so adding `apps/ose-lms-be-e2e/package.json` creates a workspace package that `package-lock.json` must know about — the `ose-be-e2e` sibling carries exactly two entries. Immediately after the E2E project was written, `grep -c '"apps/ose-lms-be-e2e"' package-lock.json` returned **0**, and nothing local objected: `test:e2e`, `test:quick`, `typecheck`, and `lint` all passed, because they resolve binaries from the already-populated root `node_modules`. CI runs `npm ci`, which installs strictly from the lockfile and fails when it disagrees with the declared workspaces, so this would have failed on the first push rather than locally. Fixed by running the installer: the diff is **10 insertions, 0 deletions**, entirely the new workspace's two stanzas, with no version drift in any unrelated dependency — verified rather than assumed. Both divergences are written up in `learnings.md` for Phase 5 routing. -->
 
 ### Rule-16 API Exploratory Retest
 
 Applicable: this plan changes an API surface. Rule 15 (the three-tester web triad) is **not
 applicable** — no web UI, no browser surface, no locales.
 
-- [ ] [AI] Start the service:
+- [x] [AI] Start the service:
       `rtk ./hippo run --class service --disk-path . -- npm exec nx -- run ose-lms-be:dev`
-- [ ] [AI] Run `api-exploratory-tester` with `output-mode: delivery` and
+- [x] [AI] Run `api-exploratory-tester` with `output-mode: delivery` and
       `plan-path: plans/in-progress/lms-init/`, against `http://localhost:8303`, with
       `specs/apps/ose/lms-be/contracts/openapi.yaml` as the contract ground truth
-- [ ] [AI] Append every finding to this checklist as a new unchecked checkbox, source-attributed
+- [x] [AI] Append every finding to this checklist as a new unchecked checkbox, source-attributed
       `AET-###`
-- [ ] [AI] Fix every `AET-###` defect finding during this phase. Deferral requires explicit user
+      <!-- Implementation notes (DU4-AET-187/188/189): service started on 8303 via the `service` HIPPO class and confirmed answering `200 {"status":"healthy"}` before testing began. The tester ran in `delivery` output mode against `contracts/openapi.yaml`, and every finding it returned was **re-verified independently with curl** before being recorded here — the agent's report was treated as a lead, not as evidence. Full transcript in `evidence/du4-aet-retest.txt`. The contract-documented surface conforms exactly on all three endpoints, and the Actuator exposure invariant was checked positively rather than assumed: 24 further endpoint ids were enumerated and every one returned 404, so `exposure.include: health` holds with no leakage. Two AET findings and two SG proposals came back; each is recorded as its own checkbox below. -->
+
+- [x] [AI] **AET-001** — three different error-envelope shapes depending on which layer rejects the
+      request (Minor / Low). Source: `api-exploratory-tester`, re-verified by hand.
+      <!-- Implementation notes (AET-001): reproduced exactly. An unmapped path and a wrong-verb request both return the application's own JSON envelope and agree with each other; an encoded-slash path returns Tomcat's HTML 400, and a nonexistent Actuator health sub-group returns a bodyless 404 with no `Content-Type`. **Dispositioned as not a defect in this delivery unit's code, and left unfixed.** No contract clause is violated — the tester derived "expected" from the app's own behaviour, not from `openapi.yaml`. The two divergent shapes are emitted by the Tomcat connector before `DispatcherServlet` and by Actuator's own 404 path, on routes no documented client flow reaches. Matching them would need a custom `ErrorReportValve` plus an Actuator response wrapper — real machinery, itself subject to the 99% coverage floor, in a delivery unit whose whole service is health and hello. Worse, the only cheap way to make the encoded-slash case return JSON is to permit encoded slashes, relaxing a security-positive Tomcat default; that would trade a cosmetic inconsistency for a real path-traversal surface. Recorded openly for the maintainer to overrule rather than closed silently. -->
+- [x] [AI] **AET-002** — `OPTIONS` `Allow` header contradicts the actually-supported methods when
+      the request is CORS-preflight-shaped (Trivial / Low). Source: `api-exploratory-tester`,
+      re-verified by hand.
+      <!-- Implementation notes (AET-002): reproduced exactly — a plain `OPTIONS` answers `Allow: GET,HEAD,OPTIONS`, which is accurate, while the same request carrying `Origin` and `Access-Control-Request-Method` answers `Allow: GET, HEAD, POST, PUT, DELETE, OPTIONS, PATCH`, and `PUT` really does return 405. **Dispositioned as not a defect in this delivery unit's code, and left unfixed.** This is stock Spring MVC preflight fallback, present in any Spring Boot application with no explicit CORS configuration; nothing in `ose-lms-be`'s own source produces it. It is also unobservable to a real client: `grep -ic access-control` on a request carrying `Origin` returns **0**, so no `Access-Control-Allow-Origin` is ever granted and a spec-compliant browser rejects the preflight regardless of what the `Allow` list claims. Adding CORS configuration to a backend with no declared browser consumer would be speculative machinery. Recorded openly for the maintainer to overrule. -->
+- [x] [AI] Fix every `AET-###` defect finding during this phase. Deferral requires explicit user
       permission and only when genuinely impossible
-- [ ] [AI] Triage each `SG-###` spec-gap proposal: either fix it in the contract or record the
+      <!-- Implementation notes (DU4-AET-190): **zero AET findings were fixed, and zero were deferred, because on inspection neither is an implementation defect** — so this box is satisfied by the reclassification, not by silently invoking the deferral escape. Stating that plainly matters, because the checkbox's own rule is that deferring a real defect needs explicit user permission, and no such permission was sought or granted. Both findings were reproduced by hand first; the disposition rests on evidence, not on dismissing the tester. AET-001's "expected" was derived from the service's own behaviour rather than from any clause in `openapi.yaml`, and both findings are stock framework behaviour on surfaces the contract never promises — one from the Tomcat connector and Actuator, the other from Spring MVC's default preflight fallback. Fixing either would add machinery disproportionate to a health-and-hello slice, and in AET-001's encoded-slash case the cheap fix would relax a security-positive default. Both remain visible as ticked findings with their full reasoning and reproduction commands, so a maintainer who disagrees can overrule without re-running the retest. This is flagged to the user in the session summary rather than buried here. -->
+- [x] [AI] Triage each `SG-###` spec-gap proposal: either fix it in the contract or record the
       explicit reason it is out of scope
+      <!-- Implementation notes (DU4-AET-191): both triaged, with opposite outcomes. **SG-002 was fixed in the contract**, because it is a genuine gap in an artifact this plan owns: both operations already return `405` with the application's JSON envelope, verified by curl, but `openapi.yaml` documented only `200`. Closed by adding `schemas/error.yaml#ErrorResponse` and a `"405"` response to `paths/health.yaml` and `paths/hello.yaml`. Verified end to end rather than assumed — the bundle regenerates, the generator emits `ErrorResponse.java`, and `ose-lms-be:test:quick` exits 0 with the 99% JaCoCo floor intact. **SG-001 is recorded as out of scope**, with the reason rather than a bare refusal: `/actuator/health/liveness` and `/actuator/health/readiness` do answer `{"status":"UP"}` and are intended, but adding scenarios for them would grow the owner corpus and force a new step expression for array equality (`groups` equal to `["liveness","readiness"]`) in **both** adapters, since the Unit adapter carries no exemption. `actuator.feature` already pins the invariant that actually matters — health is exposed and nothing else is — and this plan's scope is a health-and-hello slice, so the corpus is left as delivered. -->
 
 ### Local Quality Gates, Commits, and Post-Push — DU4
 
-- [ ] [AI] Run affected typecheck:
+- [x] [AI] Run affected typecheck:
       `rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- affected -t typecheck`
-- [ ] [AI] Run affected linting: `rtk npm run affected:lint`
-- [ ] [AI] Run affected quick tests: `rtk npm run affected:test`
-- [ ] [AI] Run affected spec coverage:
+- [x] [AI] Run affected linting: `rtk npm run affected:lint`
+- [x] [AI] Run affected quick tests: `rtk npm run affected:test`
+- [x] [AI] Run affected spec coverage:
       `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- affected -t test:coverage:behaviour`
-- [ ] [AI] Run the E2E suite once explicitly:
+- [x] [AI] Run the E2E suite once explicitly:
       `rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- run ose-lms-be-e2e:test:e2e`
-- [ ] [AI] Fix ALL failures found — including preexisting issues not caused by these changes
-- [ ] [AI] Do not stage or commit until the user explicitly authorizes the named change set
+      <!-- Implementation notes (DU4-QG-192..197): every gate `TERMINAL_EXIT=0`. Typecheck across 28 projects; lint across 28 with `No results with a severity of 'error' found!`; `affected:test` across 28 projects with only 2 served from cache, so 26 genuinely ran. Spec coverage was run with `--skipNxCache` deliberately, for the reason Phase 3 made concrete — a cached pass proves nothing about a validator — and reports **zero** `undefined`, `ambiguous`, or `unused` findings across 25 projects, with `ose-lms-be` and `ose-lms-be-e2e` both in the affected set. The explicit E2E run passes 4/4 against a really-started jar. Nothing failed at any gate, so DU4-QG-197 records no fixes: the two real defects this phase surfaced (the missing `package-lock.json` workspace entry and the `TS2345` unsoundness in the jar resolver) were both found and fixed earlier, at DU4-186 and DU4-181, before these gates ran. -->
+- [x] [AI] Fix ALL failures found — including preexisting issues not caused by these changes
+- [x] [AI] Do not stage or commit until the user explicitly authorizes the named change set
+      <!-- Implementation notes (DU4-C-198): authorized under the same standing `/goal` directive that carried DU1, DU2, and DU3 — it names this plan, instructs execution of every phase without stopping, and names the merge and branch-deletion steps that only committing can reach. Nothing was staged before this point. -->
 - [ ] [AI] Expected commit shape: `test(ose-lms-be-e2e): prove the LMS backend over real HTTP`
 - [ ] [AI] `rtk git switch -c lms-init/du4-e2e-and-reconciliation` then
       `rtk git push -u origin lms-init/du4-e2e-and-reconciliation`
@@ -1211,6 +1241,23 @@ applicable** — no web UI, no browser surface, no locales.
       `pr-leak-review`
 - [ ] [AI] If any check fails, fix at the root cause and push a follow-up commit; never bypass
 - [ ] [AI] Mark ready, merge, and record the pull request number and 40-character head SHA
+
+### Phase 4 Execution Notes
+
+Deviations from the plan text, recorded as they were found. Each is a correction to the plan's
+prose, not a reduction in scope.
+
+1. **The DU4-179 RED acceptance names a gate that cannot observe the failure.** The plan says
+   running `ose-lms-be-e2e:test:coverage:behaviour` should fail "on the missing
+   `steps/backend-process.ts` starter". It exits **0**. That target runs
+   `scripts/behaviour-coverage.mjs`, which statically scans step-definition _text_ to match
+   scenarios against bindings; it never resolves a TypeScript import, so a module that does not
+   exist is invisible to it. The RED was therefore taken from `ose-lms-be-e2e:typecheck`, which does
+   resolve imports and fails with `Cannot find module './backend-process'`. The alternative —
+   editing the corpus or the coverage config to manufacture a failure — would have made the RED an
+   artefact of the test rather than of the missing code. The general shape is worth carrying
+   forward: a static coverage validator and a compiler answer different questions, and only the
+   compiler can witness a missing module.
 
 ### Phase 4 Gate
 

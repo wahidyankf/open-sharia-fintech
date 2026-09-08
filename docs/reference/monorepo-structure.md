@@ -84,6 +84,8 @@ Flat structure - all apps at the same level, no subdirectories.
 - `ose-www-fe-e2e` - Playwright FE E2E tests for ose-www UI
 - `ose-be` - OSE Application F#/Giraffe/ASP.NET REST API backend (port 8302)
 - `ose-be-e2e` - Playwright BE E2E tests for ose-be
+- `ose-lms-be` - OSE LMS Java 25/Spring Boot 4 REST API backend (port 8303)
+- `ose-lms-be-e2e` - Playwright BE E2E tests for ose-lms-be
 - `ayokoding-www` - AyoKoding educational platform (Next.js 16 fullstack content platform, port 3101)
 - `ayokoding-www-be-e2e` - Playwright BE E2E tests for ayokoding-www tRPC API
 - `ayokoding-www-fe-e2e` - Playwright FE E2E tests for ayokoding-www UI

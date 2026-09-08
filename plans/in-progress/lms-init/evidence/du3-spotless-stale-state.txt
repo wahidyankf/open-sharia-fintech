@@ -1,0 +1,100 @@
+P3-GATE-174 — a stale Spotless task state survives a wrong-JDK run and fails correct-JDK runs
+
+Found while running the Phase 3 gate against merged main. Recorded because the first gate run
+failed and the reason is NOT a defect in the delivered code.
+
+## Symptom
+
+  $ npm exec nx -- run ose-lms-be:test:quick --skip-nx-cache
+  TERMINAL_EXIT=1
+
+  > Task :spotlessJava UP-TO-DATE
+  > Task :spotlessJavaCheck FAILED
+  > There were 8 lint error(s), they must be fixed or suppressed.
+    src/main/java/com/oseplatform/lms/OseLmsBeApplication.java:LINE_UNDEFINED
+      google-java-format(java.lang.reflect.InvocationTargetException) ...
+    ... the same eight paths as the original CI failure ...
+
+Identical signature to the CI failure DU3-PP-172 fixed, but on a machine whose PATH java is
+Temurin 25 and with no Java source change.
+
+## What it is not
+
+Ruled out one at a time, each against a fresh daemon:
+
+  * not the daemon JVM       — both live daemons run <home>/.sdkman/candidates/java/25-tem
+  * not a stale daemon       — `./gradlew --stop` then re-run: still 8 errors
+  * not missing --add-exports— adding all five jdk.compiler exports to org.gradle.jvmargs and
+                               forcing a new daemon (verified: 7 add-exports on the daemon
+                               command line) still produced 8 errors
+  * not a source change      — `git status` clean for apps/ose-lms-be throughout
+
+google-java-format does need those exports when invoked bare, which is a red herring here:
+
+  $ java -cp <gjf>:<guava> com.google.googlejavaformat.java.Main --dry-run HealthController.java
+  error: class com.google.googlejavaformat.java.JavaInput ... cannot access class
+    com.sun.tools.javac.util.Log$DeferredDiagnosticHandler (in module jdk.compiler) because
+    module jdk.compiler does not export com.sun.tools.javac.util to unnamed module
+  java.lang.IllegalAccessError: ...
+
+  $ java --add-exports=jdk.compiler/com.sun.tools.javac.{api,file,parser,tree,util}=ALL-UNNAMED \
+      -cp <gjf>:<guava> com.google.googlejavaformat.java.Main --dry-run HealthController.java
+  (IllegalAccessError gone)
+
+Spotless supplies those exports itself, so this says nothing about the Gradle path.
+
+## Actual cause, reproduced deliberately
+
+The DU3-PP-172 RED reproduction ran Spotless under JDK 17 with --rerun-tasks against this same
+project directory. That run leaves local incremental state which makes later correct-JDK runs
+fail identically. Proven by re-creating it from a known-green state:
+
+  step 1 — RED: JDK 17 + --rerun-tasks, formatter genuinely executes
+  $ JAVA_HOME=<home>/.sdkman/candidates/java/17.0.14-ms ./gradlew --no-daemon --rerun-tasks \
+      -Dorg.gradle.java.installations.auto-detect=false spotlessCheck
+  RED_EXIT=1        InvocationTargetException count: 8
+
+  step 2 — plain JDK 25 daemon run immediately after, nothing else changed
+  $ ./gradlew --console=plain spotlessCheck
+  AFTER_EXIT=1      InvocationTargetException count: 8
+  > Task :spotlessJava UP-TO-DATE
+  > Task :spotlessJavaCheck FAILED
+
+`spotlessJava` stays UP-TO-DATE from the JDK-17 run, so the state that run recorded is never
+recomputed, and `spotlessJavaCheck` keeps failing on a JDK that formats these files correctly.
+
+A wrong-JDK run without --rerun-tasks cannot poison anything, because the task is skipped:
+
+  $ JAVA_HOME=<...>/17.0.14-ms ./gradlew --no-daemon spotlessCheck
+  POISON_EXIT=0     > Task :spotlessJavaCheck UP-TO-DATE
+
+## Recovery
+
+  $ ./gradlew --console=plain --rerun-tasks spotlessCheck
+  RECOVER_EXIT=0    InvocationTargetException count: 0
+
+  $ ./gradlew --console=plain spotlessCheck        # plain run, state now correct
+  PLAIN_EXIT=0      InvocationTargetException count: 0
+
+No Java source was reformatted at any point; `git status` shows only this plan's own files.
+
+## Gate result after recovery
+
+  $ rtk ./hippo run --class transactional --disk-path . -- \
+      npm exec nx -- run ose-lms-be:test:quick --skip-nx-cache
+  TERMINAL_EXIT=0
+
+  > ... && (cd apps/ose-lms-be && ./gradlew --console=plain \
+      -Pcoverage.line.minimum=99 test jacocoTestCoverageVerification)
+  > Task :jacocoTestCoverageVerification
+  NX   Successfully ran target test:quick for project ose-lms-be
+
+Cache explicitly disabled, so the 99% JaCoCo line floor really executed rather than replaying a
+cached success.
+
+## Why CI was unaffected
+
+CI runners start with no Gradle state, so they never inherit a poisoned snapshot. This is a
+local-workstation effect of running a formatter under a deliberately wrong JDK, which is exactly
+what a RED reproduction does. Routed to learnings.md for Phase 5 rather than fixed here: a fix
+would be new machinery outside this delivery unit's authorized change set.

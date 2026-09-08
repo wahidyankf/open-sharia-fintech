@@ -11,3 +11,9 @@
           application/json:
             schema:
               $ref: "../schemas/health.yaml#/HealthResponse"
+      "405":
+        description: The endpoint exists but does not support the requested method
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
