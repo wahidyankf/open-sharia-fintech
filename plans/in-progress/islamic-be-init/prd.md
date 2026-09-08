@@ -7,18 +7,18 @@ API. This delivery ships its skeleton: a Gin server, a contract-first OpenAPI 3.
 Godog-bound Gherkin corpus, a Playwright E2E companion, and exactly one route —
 `GET /api/v1/health`.
 
-Everything that makes the service *interesting* is deliberately absent. What ships is the shape:
+Everything that makes the service _interesting_ is deliberately absent. What ships is the shape:
 the contract chain, the test pyramid, the quality gates, and the Go language lane that makes all
 three enforceable.
 
 ## Personas
 
-| Persona                | Needs from this delivery                                                                                       |
-| ---------------------- | -------------------------------------------------------------------------------------------------------------- |
-| **Platform engineer**  | A Go project that passes every repository gate the same way an F# or TypeScript project does — no carve-outs.   |
-| **Product engineer**   | A running service with a contract, a spec corpus, and a test harness, so the first real endpoint is an addition rather than a bootstrap. |
+| Persona                | Needs from this delivery                                                                                                                  |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| **Platform engineer**  | A Go project that passes every repository gate the same way an F# or TypeScript project does — no carve-outs.                             |
+| **Product engineer**   | A running service with a contract, a spec corpus, and a test harness, so the first real endpoint is an addition rather than a bootstrap.  |
 | **Container operator** | A liveness endpoint that answers without touching any dependency, so an orchestrator can distinguish "process up" from "process healthy". |
-| **Reviewer**           | Go diffs that arrive with formatting, linting, coverage, and behaviour-binding already enforced in CI.          |
+| **Reviewer**           | Go diffs that arrive with formatting, linting, coverage, and behaviour-binding already enforced in CI.                                    |
 
 ## User Stories
 
@@ -141,7 +141,18 @@ Feature: Go language lane
     Examples:
       | job        |
       | typescript |
+      | dotnet     |
       | flutter    |
+
+  Scenario: The aggregate gate cannot pass while the Go job fails
+    Given the "go" job has failed
+    When the "quality-gate" aggregation job evaluates its dependencies
+    Then the aggregate reports failure
+
+  Scenario: A Go toolchain gap is reported by the doctor
+    Given a machine with no Go toolchain installed
+    When the developer runs the doctor command
+    Then a "go" row reports the tool as missing
 
   Scenario: Godog step registrations count as Gherkin bindings
     Given a Go source file registering a Godog step for an active scenario
@@ -163,7 +174,8 @@ Feature: Go language lane
 - `islamic-be-e2e`: Playwright + `playwright-bdd` suite driving the real process over HTTP.
 - `islamic-contracts`: OpenAPI 3.1 specification with `lint`, `bundle`, and `docs` targets.
 - `specs/apps/islamic/be/`: README, `architecture.md`, and the Gherkin corpus.
-- The Go platform lane: CI job, `setup-go` action, tag vocabulary, `golangci-lint` gate,
+- The Go platform lane: CI detect arm, `go` job, three exclude-list entries, aggregate-gate wiring,
+  `setup-go` action, tag vocabulary, `golangci-lint` gate, `go` under `doctor.extra-tools`,
   behaviour-coverage Go extractor, `rhino-cli` Go env scanner.
 
 ### Out of Scope (Non-Goals)
@@ -181,15 +193,19 @@ and no executor treats them as implied work:
 - Persistence, caching layers, message bus, authentication, rate limiting, quotas.
 - Container publication, staging branch, Kubernetes manifest, public domain.
 - Client SDK generation for any consumer.
+- **The config-driven doctor refactor** — delivered by `lms-init` ([PR #487](https://github.com/wahidyankf/ose-public/pull/487)) DU1, which
+  this plan depends on and does not duplicate.
+- **Generalizing `extractBindings` to a multi-language dispatch** — delivered by `lms-init` DU2. This
+  plan adds a `.go` arm to the dispatch that unit leaves behind.
 
 ## Product Risks
 
-| Risk                                                                                       | Mitigation                                                                                                              |
-| ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| A health-only service reads as scaffolding and reviewers question the whole delivery.        | `brd.md` carries the product rationale; this document's Non-Goals name the intended endpoints without committing to them.  |
-| The generated `ServerInterface` is regenerated into a shape the handler no longer satisfies. | `codegen` gates `build` and `typecheck`; a drifted handler fails compilation rather than failing at runtime.               |
-| The 99% unit coverage floor is met by testing trivia rather than behaviour.                  | Every active scenario needs a Godog binding; coverage and binding are separate gates and both must pass.                   |
-| Port 8402 collides with something undocumented on a developer machine.                       | Port resolution is explicit and fails loudly on a malformed value; `docs/reference/web-sites.md` records the allocation.   |
+| Risk                                                                                         | Mitigation                                                                                                                |
+| -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| A health-only service reads as scaffolding and reviewers question the whole delivery.        | `brd.md` carries the product rationale; this document's Non-Goals name the intended endpoints without committing to them. |
+| The generated `ServerInterface` is regenerated into a shape the handler no longer satisfies. | `codegen` gates `build` and `typecheck`; a drifted handler fails compilation rather than failing at runtime.              |
+| The 99% unit coverage floor is met by testing trivia rather than behaviour.                  | Every active scenario needs a Godog binding; coverage and binding are separate gates and both must pass.                  |
+| Port 8402 collides with something undocumented on a developer machine.                       | Port resolution is explicit and fails loudly on a malformed value; `docs/reference/web-sites.md` records the allocation.  |
 
 ## See Also
 

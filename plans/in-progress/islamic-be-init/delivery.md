@@ -4,73 +4,183 @@
 > `[HUMAN]`: only a human can do it (physical action, out-of-band approval, real-secret or
 > privileged-credential handling). `[AI+HUMAN]`: agent prepares, human approves or finishes.
 
-**Delivery Mode**: `worktree-to-pr`. Every phase from 1 onward ends in a PR; Phase 0 opens none.
+This checklist is prospective. It does not authorize implementation, staging, committing, pushing,
+opening pull requests, or changing either repository. Execute it only after the user explicitly
+names this plan for execution.
+
+Every command below is copyable verbatim. Where a value cannot be known at authoring time (a
+resolved version, a generated checksum, a merged PR number), the step says how to resolve it rather
+than guessing it.
+
+## Upstream Dependency
+
+This plan does not begin until `lms-init` ([PR #487](https://github.com/wahidyankf/ose-public/pull/487)) has **merged** both:
+
+- **DU1** — config-driven doctor tool inventory, landed byte-identically in `ose-public` and
+  `ose-private`, with `doctor.extra-tools` present in both `repo-config.yml` files.
+- **DU2** — Java language enablement, which generalizes `scripts/behaviour-coverage.mjs`, adds the
+  `has-<lang>` detect/job/exclude/aggregate pattern and the `setup-java` composite action, and adds
+  `tag:lang:java` to the `typescript`, `dotnet`, and `flutter` exclude lists.
+
+Phase 0 verifies both and **stops and reports** if either is missing. It never substitutes the
+upstream work. The rationale and the accepted cost are recorded in [`tech-docs.md`](./tech-docs.md)
+§2 D-0.
+
+## Delivery Mode
+
+`worktree-to-pr`. DU1–DU4 and DU6 are `ose-public`-only. DU5 is applied independently to
+`ose-public` and `ose-private`: each repository has its own branch, commits, pull request,
+current-head/base CI, and merge.
+
+`worktree-to-pr` is mandatory in `ose-public`: `main` is branch-protected including for admins, so
+neither direct-push mode has an executable path there.
+
+`[AI]` merges each pull request once exact-current-head/base `pr-quality-gate.yml`, one
+authenticated clean current-head `pr-leak-review`, and the applicable surface gates all hold. No
+`[HUMAN]` merge gate is declared.
 
 ## Worktree
 
+- Public: `R-PUB:worktrees/islamic-be-init/`
+- Private: `R-PRI:worktrees/islamic-be-init/` — provisioned lazily at Phase 5, the only unit that
+  touches `ose-private`
+
 ### Provisioned Worktree Identity
 
-- Declared repository-relative route: `worktrees/islamic-be-init/`
-- Initial branch: `islamic-be-init-base`
-- Created by: _recorded at Phase 0_
-- Created at: _recorded at Phase 0 (ISO-8601 UTC)_
+- Public declared repository-relative route: `worktrees/islamic-be-init/`
+- Public initial branch: `worktree/islamic-be-init`
+- Private declared repository-relative route: `worktrees/islamic-be-init/`
+- Private initial branch: `worktree/islamic-be-init`
+- Created by: resolve at Phase 0 from `git worktree list --porcelain` and record here
+- Created at: resolve at Phase 0 (ISO-8601 UTC); do not hardcode a timestamp while authoring
 
-> The pre-existing `worktrees/ose-islamic/` checkout was an ad-hoc authoring workspace created before
-> this plan existed. It is not this plan's worktree and is removed at Phase 0.
-
-### Cross-Repository Parity Identity
-
-- Objective slug: `rhino-go-env-scanner`
-- Worktree basename: `islamic-be-init`
-
-| Repository    | Corresponding short-lived branch |
-| ------------- | -------------------------------- |
-| `ose-public`  | `islamic-be-init-rhino-go-env`   |
-| `ose-private` | `islamic-be-init-rhino-go-env`   |
-
-> Applies to Phase 5 only. Phases 1–4 and 6 are `ose-public`-only delivery units and record
-> `not applicable` for the parity branch mapping.
+> **Branch-name note, recorded rather than hidden:** the canonical template suggests
+> `<plan-identifier>-base`. This plan uses `worktree/<plan-identifier>`, which is the shape
+> `claude --worktree` actually produces and the shape `lms-init` and the archived
+> `2026-09-04__adopt-beavernest-test-automation` plan both record. The deviation is from the
+> template, not from repository practice.
+>
+> The pre-existing `worktrees/ose-islamic/` checkout was an ad-hoc authoring workspace created
+> before this plan existed. It is not this plan's worktree and is removed at Phase 0.
 
 ### Delivery Branch Inventory
 
-| Branch                         | Mode             | Lifecycle state | Proof                                   |
-| ------------------------------ | ---------------- | --------------- | --------------------------------------- |
-| `islamic-be-init-base`         | `provisioned`    | `pending`       | recorded at Phase 0                     |
-| `islamic-be-init-go-lane`      | `worktree-to-pr` | `pending`       | Phase 1 PR                              |
-| `islamic-be-init-specs`        | `worktree-to-pr` | `pending`       | Phase 2 PR                              |
-| `islamic-be-init-service`      | `worktree-to-pr` | `pending`       | Phase 3 PR                              |
-| `islamic-be-init-e2e`          | `worktree-to-pr` | `pending`       | Phase 4 PR                              |
-| `islamic-be-init-rhino-go-env` | `worktree-to-pr` | `pending`       | Phase 5 PR pair (both repositories)     |
-| `islamic-be-init-registry`     | `worktree-to-pr` | `pending`       | Phase 6 PR                              |
+| Branch                                | Repository    | Mode      | Lifecycle state | Proof                                                                         |
+| ------------------------------------- | ------------- | --------- | --------------- | ----------------------------------------------------------------------------- |
+| `worktree/ose-islamic`                | `ose-public`  | `to-pr`   | `active`        | carries the plan-authoring PR #488; record its 40-character head SHA on merge |
+| `worktree/islamic-be-init`            | `ose-public`  | `pending` | `pending`       | `git worktree add` at Phase 0                                                 |
+| `worktree/islamic-be-init`            | `ose-private` | `pending` | `pending`       | `git worktree add` at Phase 5                                                 |
+| `islamic-be-init/du1-go-lane`         | `ose-public`  | `to-pr`   | `pending`       | record merged PR number and 40-character head SHA at DU1                      |
+| `islamic-be-init/du2-specs-contracts` | `ose-public`  | `to-pr`   | `pending`       | record merged PR number and 40-character head SHA at DU2                      |
+| `islamic-be-init/du3-service`         | `ose-public`  | `to-pr`   | `pending`       | record merged PR number and 40-character head SHA at DU3                      |
+| `islamic-be-init/du4-e2e`             | `ose-public`  | `to-pr`   | `pending`       | record merged PR number and 40-character head SHA at DU4                      |
+| `islamic-be-init/du5-rhino-go-env`    | `ose-public`  | `to-pr`   | `pending`       | record merged PR number and 40-character head SHA at DU5                      |
+| `islamic-be-init/du5-rhino-go-env`    | `ose-private` | `to-pr`   | `pending`       | record merged PR number and 40-character head SHA at DU5                      |
+| `islamic-be-init/du6-registry`        | `ose-public`  | `to-pr`   | `pending`       | record merged PR number and 40-character head SHA at DU6                      |
+
+Append every plan-created delivery branch before use. Before removal, classify every entry as
+delivered, unused, or retained/escalated; an active or unrecorded branch blocks cleanup.
+
+### Cross-Repository Parity Identity
+
+- Objective slug: `islamic-be-init`
+- Common worktree basename: `islamic-be-init`
+
+| Repository    | Corresponding short-lived branch   |
+| ------------- | ---------------------------------- |
+| `ose-public`  | `islamic-be-init/du5-rhino-go-env` |
+| `ose-private` | `islamic-be-init/du5-rhino-go-env` |
+
+DU1, DU2, DU3, DU4, and DU6 are `ose-public`-only and declare no parity branch.
+
+---
 
 ## Phase 0: Environment Setup and Baseline
 
-Opens no PR. Establishes a green starting point and a correctly named worktree.
+Phase 0 opens no pull request. Its outcome is a verified upstream state and a recorded clean
+baseline.
 
-- [ ] [AI] Confirm the current checkout is clean and note the `main` SHA it is based on — acceptance: `git status` reports a clean tree and the base SHA is recorded in this file
-- [ ] [AI] Provision `worktrees/islamic-be-init/` from current `main` with initial branch `islamic-be-init-base` — acceptance: `git worktree list --porcelain` shows the route and branch
-- [ ] [AI] Record the creator and ISO-8601 UTC creation time in the Provisioned Worktree Identity block above — acceptance: no placeholder text remains in that block
-- [ ] [AI] Remove the superseded `worktrees/ose-islamic/` checkout and its branch once this plan's files are committed — acceptance: `git worktree list` no longer lists it and the worktree cap of one per repo per plan holds
-- [ ] [AI] Verify `go version` reports 1.26.x, `oapi-codegen --version` reports v2.x, and `golangci-lint --version` reports 2.x — acceptance: all three print versions matching `tech-docs.md` §5
-- [ ] [AI] Confirm `apps/rhino-cli/src` is currently byte-identical with `ose-private` — acceptance: a recursive diff of `src/`, `project.json`, and `LICENSE` reports no differences
-- [ ] [AI] Run the scoped baseline `npm exec nx -- run-many -t test:quick --projects=ose-be,ose-be-e2e,rhino-cli` — acceptance: all three pass, or every pre-existing failure is resolved before Phase 1 begins
-- [ ] [AI] Run `npm exec nx -- run rhino-cli:env:validation` — acceptance: exits zero, establishing the pre-change env-contract baseline
+### Upstream Verification — stop-and-report, never substitute
+
+- [ ] [AI] Confirm `lms-init` DU1 is merged in **both** repositories:
+      `rtk gh pr list --repo wahidyankf/ose-public --state merged --search "du1-doctor-config"` and
+      the same for `wahidyankf/ose-private`. Acceptance: each returns a merged PR; record both
+      numbers and 40-character head SHAs in this file. If either is missing, **stop and report** —
+      do not build the doctor refactor here.
+- [ ] [AI] Confirm `doctor.extra-tools` exists in both `repo-config.yml` files:
+      `rtk grep -n "extra-tools" repo-config.yml` in each repository. Acceptance: present in both,
+      satisfying the identical-key-set parity rule. Save both outputs to
+      `evidence/phase-0-extra-tools.txt`.
+- [ ] [AI] Confirm `lms-init` DU2 is merged and read the shape it left behind:
+      `rtk sed -n '15,30p;370,400p' scripts/behaviour-coverage.mjs`. Acceptance: `BINDING_FILE`
+      includes `java` and `extractBindings` dispatches more than two languages. Record the actual
+      dispatch shape in `evidence/phase-0-extractor-shape.txt` — DU1 edits this exact code, and a
+      shape different from `tech-docs.md` §4.2's assumption is a stop-and-report, not a
+      work-around.
+- [ ] [AI] Confirm the CI pattern DU1 copies exists: `rtk ls .github/actions/setup-java/action.yml`
+      and `rtk grep -c "tag:lang:java" .github/workflows/pr-quality-gate.yml`. Acceptance: the
+      action exists and the grep reports at least 3 — one per exclude list.
+- [ ] [AI] Confirm `rhino-cli-parity-audit.yml` is currently green on `main`:
+      `rtk gh run list --workflow rhino-cli-parity-audit.yml --limit 1 --json conclusion,url`.
+      Acceptance: `conclusion` is `success`; save the URL to `evidence/phase-0-parity-audit.txt`. A
+      red audit before this plan starts is somebody else's in-flight parity work — stop and report.
+
+### Environment Setup
+
+- [ ] [AI] Confirm the work location: run `rtk pwd` and confirm the path ends in
+      `worktrees/islamic-be-init`. If it does not, run `rtk git worktree list --porcelain` from the
+      `ose-public` repository root and enter the worktree whose route is `worktrees/islamic-be-init`.
+- [ ] [AI] Provision `worktrees/islamic-be-init/` from current `origin/main` if absent. Acceptance:
+      `rtk git worktree list --porcelain` shows the route and its branch. Record the route, branch,
+      and ISO-8601 UTC creation time in the Provisioned Worktree Identity block above; no
+      placeholder text remains.
+- [ ] [AI] Sync the worktree: `rtk git fetch origin` then `rtk git merge --ff-only origin/main`.
+      Acceptance: "Already up to date" or a fast-forward; a conflict here means stop and report,
+      never force.
+- [ ] [AI] Remove the superseded `worktrees/ose-islamic/` checkout once PR #488 has merged.
+      Acceptance: `rtk git worktree list` no longer lists it, and the cap of one worktree per
+      repository per plan holds.
+- [ ] [AI] Install dependencies:
+      `rtk ./hippo run --class ephemeral --disk-path . -- npm install`. Acceptance: exit code 0.
+- [ ] [AI] Converge tooling: `rtk npm run doctor -- --fix`. Acceptance: exit code 0. If it cannot
+      converge, capture the output in `evidence/phase-0-doctor.txt` and report before continuing —
+      do not proceed on a divergent toolchain.
+- [ ] [AI] Resolve every version `tech-docs.md` §5 marks "resolve at DU0" and record the resolved
+      value there: Gin, Godog, and `govulncheck`. Acceptance: each row carries a concrete version
+      and its resolution date, replacing the placeholder.
+- [ ] [AI] Verify the Go toolchain: `rtk go version`, `rtk golangci-lint --version`, and
+      `rtk oapi-codegen --version`. Acceptance: all three print versions matching `tech-docs.md` §5;
+      save to `evidence/phase-0-toolchain.txt`.
+
+### Baseline
+
+- [ ] [AI] Run the scoped baseline
+      `rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- run-many -t test:quick --projects=ose-be,ose-be-e2e,rhino-cli`.
+      Acceptance: all three pass, or every pre-existing failure is resolved before Phase 1 begins.
+      Save to `evidence/phase-0-baseline.txt`.
+- [ ] [AI] Run `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- run rhino-cli:env:validation`.
+      Acceptance: exits zero, establishing the pre-change env-contract baseline.
 
 ### Phase 0 Gate
 
 > All checks below must pass before starting Phase 1. If any check fails, fix it in Phase 0 before
 > proceeding.
 
-- [ ] [AI] `git worktree list --porcelain` — shows `worktrees/islamic-be-init/` on `islamic-be-init-base` and no `ose-islamic` entry
-- [ ] [AI] `npm exec nx -- run-many -t test:quick --projects=ose-be,ose-be-e2e,rhino-cli` — exits zero
-- [ ] [AI] `npm exec nx -- run rhino-cli:env:validation` — exits zero
-- [ ] [AI] `go version && golangci-lint --version && oapi-codegen --version` — all three resolve
+- [ ] [AI] `rtk git worktree list --porcelain` — shows `worktrees/islamic-be-init/` and no
+      `ose-islamic` entry
+- [ ] [AI] `lms-init` DU1 and DU2 are both recorded as merged, with PR numbers and head SHAs written
+      into this file
+- [ ] [AI] `rtk npm run doctor` — exits 0
+- [ ] [AI] `rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- run-many -t test:quick --projects=ose-be,ose-be-e2e,rhino-cli` — exits zero
+- [ ] [AI] `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- run rhino-cli:env:validation` — exits zero
+- [ ] [AI] `rtk go version && rtk golangci-lint --version && rtk oapi-codegen --version` — all three resolve
 
-> **Pause Safety**: the repository is unchanged apart from this plan's own files; a correctly named
-> worktree exists and the toolchain is confirmed. Safe to stop. To resume:
-> `npm exec nx -- run-many -t test:quick --projects=ose-be,ose-be-e2e,rhino-cli`.
+> **Pause Safety**: the repository is unchanged apart from this plan's own files; the upstream
+> `lms-init` state is verified and recorded, a correctly named worktree exists, and the toolchain is
+> confirmed. Safe to stop. To resume:
+> `rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- run-many -t test:quick --projects=ose-be,ose-be-e2e,rhino-cli`.
 
-## Phase 1: Go Platform Lane
+## Phase 1 (DU1): Go Platform Lane
 
 Delivery boundary. Lands every gate a Go project needs, before any Go project exists.
 
@@ -87,44 +197,56 @@ Delivery boundary. Lands every gate a Go project needs, before any Go project ex
 - [ ] [AI] Confirm the pre-existing `format-gofmt` and `format-verify-gofmt` entries still resolve and that `scripts/verify-gofmt.sh` is executable — acceptance: `ls -l scripts/verify-gofmt.sh` shows mode 755 and both gate ids appear in the registry
 - [ ] [AI] Confirm no top-level key was added to `repo-config.yml` — acceptance: `diff <(git show HEAD:repo-config.yml | grep -E '^[a-z-]+:') <(grep -E '^[a-z-]+:' repo-config.yml)` reports no difference
 
+**Doctor registration**
+
+- [ ] [AI] Declare `go` under `repo-config.yml`'s `doctor.extra-tools` using the shape in `tech-docs.md` §2 D-9 and the Phase 0 resolved Go version — acceptance: `rtk npm run doctor` output now includes a `go` row reporting the installed version, proving the probe works on a real machine; save to `evidence/du1-doctor-go.txt`
+- [ ] [AI] Confirm this added a **list item**, not a key — acceptance: `doctor.extra-tools` already existed from `lms-init` DU1 in both repositories, so the top-level key set is unchanged and `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- run rhino-cli:repo-config:validation` exits zero
+- [ ] [AI] Confirm no `rhino-cli` source file was touched by this registration — acceptance: `rtk git status --porcelain apps/rhino-cli/` reports nothing, proving D-9's zero-parity-cost claim held
+
 **CI job**
 
 - [ ] [AI] Create `.github/actions/setup-go/action.yml` reading `go-version-file: apps/islamic-be/go.mod`, with module and build caching and a pinned `golangci-lint` install — acceptance: the action file parses and pins the versions named in `tech-docs.md` §5
 - [ ] [AI] Edit `.github/workflows/pr-quality-gate.yml`: add `has-go` to the `detect` job outputs and a `lang:go)` case to its tag switch — acceptance: the `detect` job initialises and sets `has-go` alongside `has-ts`, `has-dotnet-projects`, and `has-dart`
 - [ ] [AI] Add a `go` job gated on `has-go == 'true'` running `npx nx affected -t typecheck lint test:quick compat:min-version --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:rust,tag:lang:dart' --parallel=1` — acceptance: the job exists and provisions `setup-node` plus `setup-go`
-- [ ] [AI] Add `tag:lang:go` to the `typescript` job's `--exclude` list — acceptance: the exclude list names `lang:go` and the `typescript` job can no longer select a Go project
-- [ ] [AI] Add `tag:lang:go` to the `flutter` job's `--exclude` list — acceptance: the exclude list names `lang:go`
-- [ ] [AI] Add the `go` job to the `quality-gate` aggregation job's `needs` and its skipped-job tolerance logic — acceptance: a PR touching no Go project still reports the aggregate gate green
+- [ ] [AI] Add `tag:lang:go` to the `--exclude` list of **all three** language jobs — `typescript`, `dotnet`, and `flutter`. Each selects by excluding known tags, so omitting any one leaves Go running on a toolchain-less runner. Acceptance: `rtk grep -c "tag:lang:go" .github/workflows/pr-quality-gate.yml` reports at least 4 — three exclusions plus the new job's own exclude list
+- [ ] [AI] Add the `go` job to the `quality-gate` aggregation job's `needs` list — acceptance: `needs:` names `go`, so the aggregate cannot report success while the Go job failed
+- [ ] [AI] Run `rtk actionlint` — acceptance: exit code 0
 
 **Behaviour-coverage Go extractor**
 
+- [ ] [AI] **Read before editing**: re-read the merged `BINDING_FILE` and `extractBindings` and compare against `evidence/phase-0-extractor-shape.txt` — acceptance: the shape matches what `lms-init` DU2 left; a mismatch is a stop-and-report, not a local refactor
+- [ ] [AI] **RED**: add fixtures to `scripts/behaviour-coverage.test.mjs` covering each Godog registration form plus negative cases (a regex literal in non-registration code, a commented-out registration, a backtick string that is not a step) — acceptance: `rtk npm run test:validators` fails because `.go` is not scanned; save to `evidence/du1-red-validator.txt`
+- [ ] [AI] Extend `BINDING_FILE` to include `go` — acceptance: the regex admits `.go` alongside `.ts`, `.tsx`, `.fs`, and `.java`
 - [ ] [AI] Add `extractGoBindings(resourceName, source)` to `scripts/behaviour-coverage.mjs` handling interpreted strings, backtick raw strings, `regexp.MustCompile` wrappers, and the `Given`/`When`/`Then` keyword-sensitive forms — acceptance: the function is exported alongside the F# and TypeScript extractors
 - [ ] [AI] Extend `extractBindings` to dispatch `.go` to the new extractor — acceptance: a `.go` resource no longer falls through to `extractTypescriptBindings`
-- [ ] [AI] Add fixtures to `scripts/behaviour-coverage.test.mjs` covering each registration form plus negative cases (a regex literal in non-registration code, a commented-out registration, a backtick string that is not a step) — acceptance: `npm run test:validators` exits zero and the new cases fail if the extractor is reverted
-- [ ] [AI] Confirm Go comment and raw-string handling does not corrupt the existing F#/TypeScript paths — acceptance: the pre-existing validator tests still pass unchanged
+- [ ] [AI] Reuse the shared quoted-literal feature-reference helper `lms-init` DU2 factored out rather than adding a fourth near-copy — acceptance: `extractGoBindings` calls the helper; no duplicated scan is introduced
+- [ ] [AI] **GREEN**: rerun `rtk npm run test:validators` — acceptance: exits zero with the new Go cases passing
+- [ ] [AI] Confirm Go comment and raw-string handling does not corrupt the existing F#/TypeScript/Java paths — acceptance: the pre-existing validator tests still pass unchanged, and `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- affected -t test:coverage:behaviour` leaves every existing project's coverage result unchanged
 
 **Integration**
 
-- [ ] [AI] Commit on `islamic-be-init-go-lane`, push, and open a draft PR stating the new-code cost/benefit — acceptance: the PR body names the CI leak this fixes and links `tech-docs.md` §1.4
+- [ ] [AI] Commit on `islamic-be-init/du1-go-lane`, push, and open a draft PR stating the new-code cost/benefit — acceptance: the PR body names the CI leak this fixes and links `tech-docs.md` §1.4
 - [ ] [AI] Poll CI every 2 minutes until `pr-quality-gate.yml` and `pr-leak-review` complete on the current head — acceptance: both report success; never use `gh run watch`
 - [ ] [AI] Mark ready and merge once the hardened preconditions hold — acceptance: the PR merges to `main`
 
 ### Phase 1 Gate
 
-> All checks below must pass before starting Phase 3. Phase 2 may proceed in parallel.
+> All checks below must pass before starting Phase 3. Phase 2 (DU2) may proceed in parallel.
 
 - [ ] [AI] `npm run test:validators` — exits zero with the new Go extractor cases present
 - [ ] [AI] `npm exec nx -- run rhino-cli:repo-config:validation` — exits zero
 - [ ] [AI] `npm exec nx -- run-many -t test:quick --projects=ose-be,ose-be-e2e` — exits zero, proving no regression to existing lanes
-- [ ] [AI] Confirm the merged `pr-quality-gate.yml` excludes `tag:lang:go` in both the `typescript` and `flutter` jobs — acceptance: `grep -c 'tag:lang:go' .github/workflows/pr-quality-gate.yml` reports at least 2
+- [ ] [AI] Confirm the merged `pr-quality-gate.yml` excludes `tag:lang:go` in the `typescript`, `dotnet`, **and** `flutter` jobs — acceptance: `rtk grep -c 'tag:lang:go' .github/workflows/pr-quality-gate.yml` reports at least 4
+- [ ] [AI] `rtk npm run doctor` — reports a `go` row with a real version
+- [ ] [AI] `rtk git log -1 --stat -- apps/rhino-cli/` — shows this delivery unit touched no `rhino-cli` file
 
 > **Pause Safety**: the Go lane exists and every gate is registered, but no Go project does — the
 > `go` job is correct and dormant. Nothing else changed behaviour. Safe to stop. To resume:
 > `npm run test:validators`.
 
-## Phase 2: Specs Corpus and Contracts
+## Phase 2 (DU2): Specs Corpus and Contracts
 
-Delivery boundary. Independent of Phase 1; may run before, after, or concurrently.
+Delivery boundary. Independent of DU1; may run before, after, or concurrently.
 
 - [ ] [AI] Create `specs/apps/islamic/README.md` and `specs/apps/islamic/overview.md` following the shape of `specs/apps/ose/` — acceptance: `rhino-cli specs structure validate` accepts the new product folder
 - [ ] [AI] Create `specs/apps/islamic/be/README.md` describing the corpus, and `architecture.md` with C4 context, container, and component diagrams using the accessible palette — acceptance: both files exist and every Mermaid `classDef` uses palette hex codes
@@ -134,7 +256,7 @@ Delivery boundary. Independent of Phase 1; may run before, after, or concurrentl
 - [ ] [AI] Copy `.spectral.yaml` from `specs/apps/ose/be/contracts/` unchanged — acceptance: the two ruleset files are byte-identical
 - [ ] [AI] Create `specs/apps/islamic/be/contracts/project.json` registering `islamic-contracts` with `lint`, `bundle`, `docs`, `typecheck`, `test:quick`, `deps:audit`, `compat:min-version`, and `specs:structure-validation` targets, plus `namedInputs.specs` — acceptance: `npx nx show project islamic-contracts` resolves
 - [ ] [AI] Create `specs/apps/islamic/be/contracts/generated/README.md` explaining that bundles are generated — acceptance: the file exists and the folder is otherwise gitignored
-- [ ] [AI] Commit on `islamic-be-init-specs`, push, open a draft PR, poll CI every 2 minutes, and merge when green — acceptance: the PR merges to `main`
+- [ ] [AI] Commit on `islamic-be-init/du2-specs-contracts`, push, open a draft PR, poll CI every 2 minutes, and merge when green — acceptance: the PR merges to `main`
 
 ### Phase 2 Gate
 
@@ -149,9 +271,9 @@ Delivery boundary. Independent of Phase 1; may run before, after, or concurrentl
 > yet, which is the intended contract-first state. Safe to stop. To resume:
 > `npm exec nx -- run islamic-contracts:test:quick`.
 
-## Phase 3: The islamic-be Service
+## Phase 3 (DU3): The islamic-be Service
 
-Delivery boundary. Requires Phases 1 and 2 merged.
+Delivery boundary. Requires DU1 and DU2 merged.
 
 **Module scaffold**
 
@@ -182,7 +304,7 @@ Delivery boundary. Requires Phases 1 and 2 merged.
 - [ ] [AI] Write a multi-stage `Dockerfile` on the pinned Go version — acceptance: `docker build -f apps/islamic-be/Dockerfile .` produces a runnable image
 - [ ] [AI] Create `infra/dev/islamic-be/docker-compose.yml` for the service alone — acceptance: `docker compose -f infra/dev/islamic-be/docker-compose.yml up` serves the health endpoint
 - [ ] [AI] Write `apps/islamic-be/README.md` covering the corpus, adapters, target names, and an explicit rationale for the omitted Integration layer — acceptance: the README states why `test:integration` is absent, as the anti-echo convention requires, and stays under the 1000-word README budget
-- [ ] [AI] Commit on `islamic-be-init-service`, push, open a draft PR, poll CI every 2 minutes, and merge when green — acceptance: the PR merges to `main`
+- [ ] [AI] Commit on `islamic-be-init/du3-service`, push, open a draft PR, poll CI every 2 minutes, and merge when green — acceptance: the PR merges to `main`
 
 ### Phase 3 Gate
 
@@ -191,7 +313,7 @@ Delivery boundary. Requires Phases 1 and 2 merged.
 - [ ] [AI] `npm exec nx -- run islamic-be:test:quick` — exits zero, including the 99% coverage floor and both static coverage validators
 - [ ] [AI] `npm exec nx -- run islamic-be:lint` — `golangci-lint` reports no findings
 - [ ] [AI] `npm exec nx -- run islamic-be:build` — produces `apps/islamic-be/dist/islamic-be`
-- [ ] [AI] Confirm the merged PR's CI run shows the `go` job green **and** the `typescript` job not selecting any Go target — acceptance: the `go` job log lists `islamic-be` and the `typescript` job log does not
+- [ ] [AI] Confirm the merged PR's CI run shows the `go` job green **and** the `typescript`, `dotnet`, and `flutter` jobs not selecting any Go target — acceptance: the `go` job log lists `islamic-be` and none of the other three does; save to `evidence/du3-ci-routing.txt`
 - [ ] [AI] `curl -s localhost:8402/api/v1/health` against a locally running instance — returns 200 with `{"status":"healthy"}`, captured to `evidence/phase-3-health.txt`
 
 > **Pause Safety**: `islamic-be` builds, tests, lints, and serves its health endpoint; its Gherkin is
@@ -199,9 +321,9 @@ Delivery boundary. Requires Phases 1 and 2 merged.
 > scenarios as unbound until Phase 4. Safe to stop. To resume:
 > `npm exec nx -- run islamic-be:test:quick`.
 
-## Phase 4: The islamic-be-e2e Suite
+## Phase 4 (DU4): The islamic-be-e2e Suite
 
-Delivery boundary. Requires Phase 3 merged.
+Delivery boundary. Requires DU3 merged.
 
 - [ ] [AI] Create `apps/islamic-be-e2e/package.json`, `tsconfig.json`, and `playwright.config.ts` mirroring `apps/ose-be-e2e/` with `bddgen` pointed at the islamic corpus — acceptance: `npx bddgen` generates test files from the health feature
 - [ ] [AI] Implement `steps/backend-process.ts` starting and stopping the real `islamic-be` process on a controlled port — acceptance: the suite starts the service itself and shuts it down deterministically
@@ -210,11 +332,11 @@ Delivery boundary. Requires Phase 3 merged.
 - [ ] [AI] Create `project.json` with the E2E target surface, tags `["type:e2e","platform:playwright","lang:ts","domain:islamic"]`, `implicitDependencies: ["islamic-be"]`, and `namedInputs.specs` — acceptance: the project declares no Unit or Integration target
 - [ ] [AI] Decide and record whether the config scenarios need an `e2e-coverage-baseline.json` `allowedUnbound` entry, with a written reason for each — acceptance: every unbound scenario carries a stated reason or is bound
 - [ ] [AI] Write `apps/islamic-be-e2e/README.md` — acceptance: it explains what the suite covers and how to run it
-- [ ] [AI] Commit on `islamic-be-init-e2e`, push, open a draft PR, poll CI every 2 minutes, and merge when green — acceptance: the PR merges to `main`
+- [ ] [AI] Commit on `islamic-be-init/du4-e2e`, push, open a draft PR, poll CI every 2 minutes, and merge when green — acceptance: the PR merges to `main`
 
 ### Phase 4 Gate
 
-> All checks below must pass before starting Phase 6. Phase 5 may proceed in parallel.
+> All checks below must pass before starting Phase 6. Phase 5 (DU5) may proceed in parallel.
 
 - [ ] [AI] `npm exec nx -- run islamic-be-e2e:test:e2e` — all scenarios pass against a real process
 - [ ] [AI] `npm exec nx -- run islamic-be-e2e:test:quick` — exits zero
@@ -225,39 +347,64 @@ Delivery boundary. Requires Phase 3 merged.
 > across both. The service is complete and gated; only registry documentation and env drift-checking
 > remain. Safe to stop. To resume: `npm exec nx -- run islamic-be-e2e:test:e2e`.
 
-## Phase 5: rhino-cli Go Env Scanner (Cross-Repository Parity)
+## Phase 5 (DU5): rhino-cli Go Env Scanner (Cross-Repository Parity)
 
-Delivery boundary spanning two repositories. Independent of Phases 1–4; gates only Phase 6.
+Delivery boundary spanning two repositories, byte-identical in `apps/rhino-cli`. Independent of
+DU1–DU4; gates only DU6.
 
-> **Parity preflight**: before the first mutation in either repository, confirm the branch name
-> `islamic-be-init-rhino-go-env` is available in both and that no existing branch of that name belongs
-> to a different delivery. Record the probe result in `learnings.md`.
+### Parity Preflight — before the first mutation in either repository
 
-- [ ] [AI] Enumerate `specs/apps/rhino/cli/behaviours/env/` and record the exact feature files in the execution ledger before editing — acceptance: the bounded family from `tech-docs.md` §3 is resolved to named paths
-- [ ] [AI] Add Gherkin scenarios covering the Go scanner: a `os.Getenv` read is detected, a `os.LookupEnv` read is detected, a framework-owned key is filtered, and an unsupported language still errors — acceptance: the scenarios parse and are unbound at first, per the Iron Rule
-- [ ] [AI] Add `scanGoReads` to `apps/rhino-cli/src/RhinoCli.Application/src/Env.fs` mirroring `scanFsharpReads`, scanning the module root (not `root/src`) and skipping `generated-contracts/` — acceptance: the function carries the same `[<ExcludeFromCodeCoverage>]` marker and documented coverage boundary as its siblings
-- [ ] [AI] Add a `"go" -> scanGoReads root` case to the `validateAppSurface` dispatch at `Env.fs` — acceptance: `lang: go` no longer returns `unsupported lang: go`
-- [ ] [AI] Bind the new scenarios and confirm they now pass — acceptance: `npm exec nx -- run rhino-cli:test:quick` exits zero with the new scenarios bound
-- [ ] [AI] Apply the identical change in `ose-private` on the same branch name — acceptance: a recursive diff of `apps/rhino-cli/src`, `project.json`, and `LICENSE` between the two repositories reports zero differences
-- [ ] [AI] Open a draft PR in each repository, poll CI every 2 minutes in both, and merge each as soon as its own preconditions hold — acceptance: both merge; neither is held back to align merge times
-- [ ] [AI] Record the unconverged counterpart as a sibling obligation until the second PR merges — acceptance: `learnings.md` names the outstanding repository until both are in
+- [ ] [AI] Confirm no other plan holds an open parity PR pair: `rtk gh pr list --repo wahidyankf/ose-public --state open --search "rhino-cli in:title"` and the same for `wahidyankf/ose-private`. Acceptance: neither returns an open PR touching `apps/rhino-cli`. Two concurrent pairs race on the same generated manifest — see `tech-docs.md` §1.5.
+- [ ] [AI] Confirm `rhino-cli-parity-audit.yml` is green on `main`: `rtk gh run list --workflow rhino-cli-parity-audit.yml --limit 1 --json conclusion,url`. Acceptance: `conclusion` is `success`; save to `evidence/du5-parity-preflight.txt`.
+- [ ] [AI] Confirm the branch name `islamic-be-init/du5-rhino-go-env` is unused in both repositories: `rtk git ls-remote --heads origin islamic-be-init/du5-rhino-go-env` in each. Acceptance: both return empty.
+- [ ] [AI] Provision the private worktree. From `/Users/wkf/ose-projects/ose-private` run `claude --worktree islamic-be-init`. Acceptance: `rtk git worktree list --porcelain` in that repository lists a route ending in `worktrees/islamic-be-init`. Record it in the Provisioned Worktree Identity block above.
+- [ ] [AI] Verify byte-identity is intact before touching it: `rtk diff -ru /Users/wkf/ose-projects/ose-public/worktrees/islamic-be-init/apps/rhino-cli/src /Users/wkf/ose-projects/ose-private/worktrees/islamic-be-init/apps/rhino-cli/src`. Acceptance: no differences; save to `evidence/du5-preflight-diff.txt`.
+
+### AC-ENV-GO — `lang: go` resolves to a real scanner
+
+- **Input:** the existing dispatch at `Env.fs:1590`–`:1592`, and `scanFsharpReads` at `Env.fs:1516` as the structural model.
+- **Outcome:** an `env-contract` surface declaring `lang: go` is scanned rather than rejected.
+
+- [ ] [AI] Enumerate `specs/apps/rhino/cli/behaviours/env/` with `rtk ls specs/apps/rhino/cli/behaviours/env/` and record the exact feature files in the execution ledger before editing — acceptance: the bounded family from `tech-docs.md` §3 is resolved to named paths
+- [ ] [AI] **RED (gherkin):** add scenarios covering the Go scanner — an `os.Getenv` read is detected, an `os.LookupEnv` read is detected, a framework-owned key is filtered, and an unsupported language still errors. Run `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- run rhino-cli:test:coverage:behaviour`; acceptance: the new scenarios report as unbound, per the Iron Rule
+- [ ] [AI] **RED (unit):** add failing unit cases to the RhinoCli unit test project beside the existing `scanFsharpReads` cases. Discover the owning file with `rtk grep -rn "scanFsharpReads" apps/rhino-cli/tests/`. Run `rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- run rhino-cli:test:unit`; acceptance: the new cases fail
+- [ ] [AI] **GREEN (scanner):** add `scanGoReads` to `apps/rhino-cli/src/RhinoCli.Application/src/Env.fs` mirroring `scanFsharpReads`, scanning the module root (not `root/src`, which a Go module does not have) and skipping `generated-contracts/` — acceptance: the function carries the same `[<ExcludeFromCodeCoverage>]` marker and documented coverage boundary as its siblings
+- [ ] [AI] **GREEN (dispatch):** add a `| "go" -> scanGoReads root` case at `Env.fs:1591` — acceptance: `lang: go` no longer returns `unsupported lang: go`
+- [ ] [AI] **GREEN (bind):** bind the new scenarios and rerun both targets — acceptance: `rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- run rhino-cli:test:quick` exits zero with every new scenario bound
+
+### Byte-Identity Convergence
+
+- [ ] [AI] Copy the changed `apps/rhino-cli` sources into the private worktree so both trees are identical. Acceptance: `rtk diff -ru /Users/wkf/ose-projects/ose-public/worktrees/islamic-be-init/apps/rhino-cli/src /Users/wkf/ose-projects/ose-private/worktrees/islamic-be-init/apps/rhino-cli/src` reports no differences
+- [ ] [AI] Stage the `Env.fs` and test changes in **both** worktrees, then regenerate the manifest in each with `rtk apps/rhino-cli/scripts/rhino-bin.sh parity manifest generate`. The manifest describes the **staged** tree, so it must be generated after staging and committed in the same commit as the source edit. Acceptance: `apps/rhino-cli/parity-manifest.sha256` changes in both worktrees. Never hand-edit a hash
+- [ ] [AI] Confirm the two regenerated manifests are byte-identical: `rtk diff -u /Users/wkf/ose-projects/ose-public/worktrees/islamic-be-init/apps/rhino-cli/parity-manifest.sha256 /Users/wkf/ose-projects/ose-private/worktrees/islamic-be-init/apps/rhino-cli/parity-manifest.sha256`. Acceptance: no differences; save to `evidence/du5-manifest-diff.txt`
+- [ ] [AI] Validate the manifest against the staged tree in each repository: `rtk apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate`. Acceptance: each reports `apps/rhino-cli/parity-manifest.sha256 is current`
+
+### Integration
+
+- [ ] [AI] Commit in each repository on `islamic-be-init/du5-rhino-go-env` with the source edit and the regenerated manifest in **one** commit, message `feat(rhino-cli): scan Go source for environment reads`. Acceptance: `rtk git show --stat` in each lists both `Env.fs` and `parity-manifest.sha256`
+- [ ] [AI] Push both branches and open a draft PR in each repository, each body stating the new-code cost/benefit and naming its counterpart PR. Acceptance: both PRs exist and cross-reference
+- [ ] [AI] Poll CI every 2 minutes in both repositories until `pr-quality-gate.yml` and `pr-leak-review` complete on each current head — acceptance: all report success; never use `gh run watch`
+- [ ] [AI] Merge both pull requests within the same working session, so the nightly parity audit never observes a mismatched pair. Acceptance: both merge; record each PR number and 40-character head SHA in the Delivery Branch Inventory
+- [ ] [AI] Record the unconverged counterpart as a sibling obligation in `learnings.md` from the moment the first PR merges until the second does — acceptance: the entry names the outstanding repository and is cleared only when both are in
 
 ### Phase 5 Gate
 
 > All checks below must pass before starting Phase 6.
 
-- [ ] [AI] `npm exec nx -- run rhino-cli:test:quick` in **both** repositories — exits zero in each
-- [ ] [AI] Recursive diff of `apps/rhino-cli/src`, `Cargo.toml` equivalents, `project.json`, and `LICENSE` across repositories — reports zero differences
-- [ ] [AI] Confirm the `rhino-cli-parity-audit.yml` workflow passes on `main` in `ose-public` — acceptance: the most recent run is green
+- [ ] [AI] `rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- run rhino-cli:test:quick` in **both** repositories — exits zero in each
+- [ ] [AI] Recursive diff of `apps/rhino-cli/src`, `project.json`, `LICENSE`, and `parity-manifest.sha256` across repositories — reports zero differences
+- [ ] [AI] `rtk apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate` in both — each reports the manifest is current
+- [ ] [AI] `rtk gh workflow run rhino-cli-parity-audit.yml --repo wahidyankf/ose-private` completes successfully against the merged state — save the run URL to `evidence/du5-parity-audit.txt`
 - [ ] [AI] Confirm both `repo-config.yml` files carry an identical top-level key set — acceptance: the schema-parity comparison reports no difference
 
-> **Pause Safety**: both repositories carry the Go env scanner byte-identically and every existing
-> env surface still validates. No app is registered with `lang: go` yet, so behaviour is unchanged.
-> Safe to stop. To resume: `npm exec nx -- run rhino-cli:test:quick`.
+> **Pause Safety**: both repositories carry the Go env scanner and a matching regenerated parity
+> manifest byte-identically, and every existing env surface still validates. No app is registered
+> with `lang: go` yet, so behaviour is unchanged. Safe to stop. To resume:
+> `rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- run rhino-cli:test:quick`.
 
-## Phase 6: Registry and Documentation
+## Phase 6 (DU6): Registry and Documentation
 
-Delivery boundary. Requires Phases 3, 4, and 5 merged.
+Delivery boundary. Requires DU3, DU4, and DU5 merged.
 
 - [ ] [AI] Add the `apps/islamic-be` surface to `repo-config.yml`'s `env-contract:` with `kind: app`, `lang: go`, and an allowlist entry for `APP_ENV` if the tier-selection variable is used — acceptance: `npm exec nx -- run rhino-cli:env:validation` exits zero with the new surface included
 - [ ] [AI] Add `islamic-be` (port 8402) to `docs/reference/web-sites.md`'s app table and `ISLAMIC_BE_PORT` to its override table — acceptance: both tables list the service
@@ -267,7 +414,7 @@ Delivery boundary. Requires Phases 3, 4, and 5 merged.
 - [ ] [AI] Add `islamic-be` to `apps/README.md`'s product map and `islamic-be-e2e` to its end-to-end tests table — acceptance: both tables link the new READMEs
 - [ ] [AI] Update `plans/in-progress/README.md`'s Active Plans list to name this plan — acceptance: the placeholder "No plans are in progress" is replaced
 - [ ] [AI] Run the documentation link check across the changed files — acceptance: no broken internal links
-- [ ] [AI] Commit on `islamic-be-init-registry`, push, open a draft PR, poll CI every 2 minutes, and merge when green — acceptance: the PR merges to `main`
+- [ ] [AI] Commit on `islamic-be-init/du6-registry`, push, open a draft PR, poll CI every 2 minutes, and merge when green — acceptance: the PR merges to `main`
 
 ### Phase 6 Gate
 

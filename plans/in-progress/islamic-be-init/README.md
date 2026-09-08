@@ -1,74 +1,97 @@
 # Plan: islamic-be-init (In Progress)
 
 Stand up `islamic-be` — a Go/Gin REST API serving generic Islamic tools — and its Playwright
-companion `islamic-be-e2e`, together with the first-class Go language lane this monorepo needs
-before either project can be gated.
+companion `islamic-be-e2e`, on top of the Go language lane this monorepo still lacks.
 
-**Status**: In Progress
+**Status**: In Progress — planning complete; implementation has not started
 **Delivery Mode**: `worktree-to-pr`
+**Depends on**: `lms-init` ([PR #487](https://github.com/wahidyankf/ose-public/pull/487)) DU1 and DU2, both merged
 
 ## Context
 
-The repository serves three product domains (`ose`, `organiclever`, `ayokoding`) across two F#
-backends. Generic Islamic tooling — prayer times, qibla direction, hijri conversion — is a distinct
-product with a different audience and a different runtime profile from `ose-be`'s compliance
-gap-analysis API: it is stateless, cacheable, and computation-bound rather than database- and
-model-bound. It earns its own deployable.
+The repository serves three product domains (`ose`, `organiclever`, `ayokoding`) across two
+F#/Giraffe backends [Repo-grounded — `apps/ose-be/project.json`]. Generic Islamic tooling — prayer
+times, qibla direction, hijri conversion — is a distinct product with a different audience and a
+different runtime profile from `ose-be`'s compliance gap-analysis API: it is stateless, cacheable,
+and computation-bound rather than database- and model-bound. It earns its own deployable.
 
-Go is **half-provisioned** here. `Brewfile` installs it, `repo-config.yml` runs `gofmt`, and
-`rhino-cli test-coverage` already parses Go `cover.out` — residue from the deleted
-`a-demo-be-golang-gin` demo. What is missing is load-bearing:
+Go is **half-provisioned** here. `Brewfile` installs it, `repo-config.yml` registers the
+`format-gofmt` and `format-verify-gofmt` gate pair [Repo-grounded — `repo-config.yml:547`, `:556`],
+and `rhino-cli` already parses Go `cover.out`. All of it is residue from the deleted
+`a-demo-be-golang-gin` demo, and none of it is load-bearing. Four surfaces still mis-handle Go:
 
-- `pr-quality-gate.yml` has no Go job, and `lang:go` is absent from the `typescript` and `flutter`
-  jobs' exclude lists — Go targets would execute on runners with no Go toolchain.
-- `scripts/behaviour-coverage.mjs` dispatches `.fs` to an F# extractor and everything else to a
-  TypeScript one; Godog step registrations parse as nothing. Unit-layer Gherkin proof has no
-  exemption, so this blocks the BDD contract outright.
-- `lang:go`, `platform:gin`, and `domain:islamic` are outside the controlled tag vocabulary.
-- `rhino-cli`'s env-contract scanner rejects `lang: go` with a hard error.
+| Surface                                 | Verified failure mode                                                                                                                                                                                                                                                |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.github/workflows/pr-quality-gate.yml` | No `has-go` output and no `lang:go` detect arm; the `typescript` (`:302`), `dotnet` (`:334`), and `flutter` (`:358`) jobs each select by _excluding_ known `lang:` tags, and none excludes `go` — so a Go project runs in all three, on runners with no Go toolchain |
+| `scripts/behaviour-coverage.mjs`        | `BINDING_FILE` matches only `.ts`, `.tsx`, `.fs` (`:20`), and `extractBindings` dispatches `.fs` to F# and everything else to TypeScript (`:374`) — Godog registrations parse as nothing, so every scenario reports `undefined Unit binding`                         |
+| `rhino-cli` `Env.fs:1592`               | The env-contract scanner returns `Error "unsupported lang: %s"` for anything but `typescript` and `fsharp`                                                                                                                                                           |
+| Tag vocabulary                          | `lang:go`, `platform:gin`, and `domain:islamic` are outside the controlled vocabulary, and inventing values is a named anti-pattern                                                                                                                                  |
 
-This plan closes all four before shipping either app.
+`Env.fs` sits at line 9 of `apps/rhino-cli/parity-manifest.sha256`, which makes the scanner change a
+**two-repository delivery**.
+
+## Why this plan depends on `lms-init`
+
+`lms-init` [Repo-grounded — `plans/in-progress/lms-init/`] solves the same class of problem for
+Java, and its first two delivery units generalize the exact seams Go needs:
+
+- **DU1** makes the `rhino-cli` doctor tool inventory config-driven via `doctor.extra-tools`.
+  `go` is absent from the hardcoded inventory today [Repo-grounded — `RepoConfig.fs:172`], and the
+  `gofmt` gates declare no `doctor-tools:`, so `npm run doctor` is silent about a missing Go
+  toolchain. After DU1, registering `go` is a `repo-config.yml` entry with **no `rhino-cli` change
+  and no parity cost** — the saving D-4 of `lms-init` was designed to produce.
+- **DU2** teaches `behaviour-coverage.mjs` a fourth language and factors the shared feature-reference
+  scan into one helper, adds the `has-java` CI detect/job pattern with a `setup-java` composite
+  action, and adds `tag:lang:java` to all three exclude lists. Go then follows an established
+  pattern instead of inventing one, and the two plans stop colliding in the same four files.
+
+Landing Go first would force `lms-init` to rebase every one of those seams. Landing it second makes
+the Go lane roughly 40% smaller. See [`tech-docs.md`](./tech-docs.md) §2 D-0 for the full record.
 
 ## Scope
 
 **Repositories**: `ose-public` (primary) and `ose-private` (one paired parity PR for the
-byte-identical `apps/rhino-cli` change).
+byte-identical `Env.fs` change and its regenerated manifest).
 
 **New projects**: `islamic-be` (Go 1.26 / Gin, port 8402), `islamic-be-e2e` (Playwright + BDD),
 `islamic-contracts` (OpenAPI 3.1 at `specs/apps/islamic/be/contracts/`).
 
-**Platform changes**: Go CI lane, Go binding extractor, Go env-contract scanner, three tag-vocabulary
-amendments, `golangci-lint` gate registration.
+**Platform changes**: Go CI detect arm, job, and three exclude-list entries; `setup-go` composite
+action; Go binding extractor; `golangci-lint` gate; `go` under `doctor.extra-tools`; Go
+env-contract scanner; three tag-vocabulary amendments.
 
 **Out of scope**: every Islamic-tool endpoint. v1 serves `GET /api/v1/health` and nothing else. No
 CD — no GHCR publish, no `stag-islamic-be` branch, no k3s manifest.
 
 ## Approach Summary
 
-Six delivery PRs in `ose-public` plus one parity PR in `ose-private`, lane-first so no PR ever lands
-a Go target that CI cannot run:
+Six delivery units in `ose-public`; DU5 additionally lands a paired PR in `ose-private`:
 
-1. **Go platform lane** — conventions, `setup-go` action, `go` CI job, exclude-list fixes,
-   behaviour-coverage Go extractor.
-2. **Specs corpus** — `specs/apps/islamic/be/` behaviours, architecture, and OpenAPI contract.
-3. **The service** — Gin server, `oapi-codegen`-generated types and `ServerInterface`, Godog unit
+1. **DU1 — Go platform lane** — tag vocabulary, `setup-go`, `go` CI job, three exclude-list fixes,
+   `lint-golangci` gate, `go` doctor declaration, behaviour-coverage Go extractor.
+2. **DU2 — Specs corpus** — `specs/apps/islamic/be/` behaviours, architecture, OpenAPI contract.
+3. **DU3 — The service** — Gin server, `oapi-codegen` types and `ServerInterface`, Godog unit
    bindings, Dockerfile, dev compose.
-4. **The E2E suite** — Playwright BDD against the running process.
-5. **rhino-cli Go env scanner** — paired byte-identical change across both repositories.
-6. **Registry and docs** — env-contract registration, port table, app map, architecture reference.
+4. **DU4 — The E2E suite** — Playwright BDD against the running process.
+5. **DU5 — rhino-cli Go env scanner** — paired byte-identical change plus regenerated
+   `parity-manifest.sha256` in both repositories.
+6. **DU6 — Registry and docs** — env-contract registration, port table, app map, architecture
+   reference.
 
-Phases 7 and 8 capture knowledge and archive the plan.
+Phase 7 captures knowledge; Phase 8 archives the plan.
 
-## Core Files
+## Navigation
 
-- [brd.md](./brd.md) — why this product line exists and what success looks like.
-- [prd.md](./prd.md) — personas, user stories, Gherkin acceptance criteria, and explicit Non-Goals.
-- [tech-docs.md](./tech-docs.md) — architecture, decision records, and the file-impact analysis.
-- [delivery.md](./delivery.md) — the phased execution checklist and its gates.
-- [learnings.md](./learnings.md) — running log drained by the Knowledge Capture phase.
+- [`brd.md`](./brd.md) — why this exists, who it serves, business risks and non-goals
+- [`prd.md`](./prd.md) — personas, user stories, and Gherkin acceptance criteria
+- [`tech-docs.md`](./tech-docs.md) — architecture, pinned versions, decisions with rejected
+  alternatives, the file-impact tree, and rollback
+- [`delivery.md`](./delivery.md) — the ordered, execution-grade checklist and its phase gates
+- [`learnings.md`](./learnings.md) — the transient Knowledge Capture log
 
-## See Also
+## Related
 
-- [Plans Organization Convention](../../../repo-governance/conventions/structure/plans.md)
-- [Behaviour-Driven Development](../../../repo-governance/development/behaviour-driven-development.md)
+- `lms-init` ([PR #487](https://github.com/wahidyankf/ose-public/pull/487)) — the Java lane plan this one builds on
+- [BDD standard](../../../repo-governance/development/behaviour-driven-development.md)
 - [Nx Target Standards](../../../repo-governance/development/infra/nx-targets.md)
+- [Cross-Repo rhino-cli Byte-Identity Standard](../../../repo-governance/development/infra/nx-targets/cache-cross-repo-byte-identity.md)

@@ -29,13 +29,20 @@ A secondary, deliberate benefit: this delivery makes Go a first-class language i
 capability was partially built for a demo backend and then orphaned when the demo was deleted. This
 plan finishes it against a real product rather than a throwaway one.
 
+It also **collects a dividend already paid for**. The parallel `lms-init` ([PR #487](https://github.com/wahidyankf/ose-public/pull/487))
+plan refactors the `rhino-cli` doctor tool inventory to be config-driven, arguing that the cost is
+justified because it removes the two-repository parity charge from every _future_ language. This
+plan is that future language, and it is the first to test the claim: registering Go with the doctor
+should cost one `repo-config.yml` list item and zero `rhino-cli` edits. Phase 1 verifies exactly
+that and records the result.
+
 ## Business Impact
 
-| Area                   | Impact                                                                                                       |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------ |
-| Product surface        | A fourth product domain (`islamic`) alongside `ose`, `organiclever`, and `ayokoding`.                        |
-| Engineering capability | Go joins TypeScript, F#, and Dart as a gated language with CI, linting, coverage, and BDD binding support.    |
-| Platform risk          | One more deployable to operate; offset by the service owning no persistent state and no external credentials. |
+| Area                   | Impact                                                                                                         |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Product surface        | A fourth product domain (`islamic`) alongside `ose`, `organiclever`, and `ayokoding`.                          |
+| Engineering capability | Go joins TypeScript, F#, and Dart as a gated language with CI, linting, coverage, and BDD binding support.     |
+| Platform risk          | One more deployable to operate; offset by the service owning no persistent state and no external credentials.  |
 | Reversibility          | High. No data is persisted, no client depends on it yet, and deletion is a folder removal plus registry edits. |
 
 ## Affected Roles
@@ -44,18 +51,21 @@ plan finishes it against a real product rather than a throwaway one.
   in CI and in `rhino-cli`.
 - **Product engineers** — gain a place to build Islamic tooling without negotiating space in the
   compliance backend.
-- **Reviewers** — see Go diffs for the first time; the plan's Phase 1 lands the linting and coverage
-  gates that make those diffs reviewable.
+- **Reviewers** — see Go diffs for the first time; DU1 lands the linting and coverage gates that make
+  those diffs reviewable.
+- **Whoever executes `lms-init`** — inherits a downstream consumer. Their DU1 and DU2 now gate a
+  second plan, which raises the cost of abandoning or reshaping either unit.
 
 ## Success Metrics
 
-| Metric                    | Target                                                                          |
-| ------------------------- | ------------------------------------------------------------------------------- |
-| Health endpoint liveness  | `GET /api/v1/health` returns 200 with `{"status":"healthy"}` in the E2E suite.   |
-| Unit line coverage        | At least 99% over the production denominator, enforced by `islamic-be:test:unit`. |
-| Gherkin binding coverage  | Every active scenario bound at Unit and E2E; zero unexplained `allowedUnbound`.   |
-| CI correctness            | Go targets execute only in the Go job; the TypeScript and Flutter jobs skip them. |
-| Cross-repo parity         | `apps/rhino-cli/src` byte-identical between `ose-public` and `ose-private`.       |
+| Metric                   | Target                                                                                                                                     |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Health endpoint liveness | `GET /api/v1/health` returns 200 with `{"status":"healthy"}` in the E2E suite.                                                             |
+| Unit line coverage       | At least 99% over the production denominator, enforced by `islamic-be:test:unit`.                                                          |
+| Gherkin binding coverage | Every active scenario bound at Unit and E2E; zero unexplained `allowedUnbound`.                                                            |
+| CI correctness           | Go targets execute only in the `go` job; the `typescript`, `dotnet`, and `flutter` jobs all skip them.                                     |
+| Cross-repo parity        | `apps/rhino-cli/src` **and** `parity-manifest.sha256` byte-identical between `ose-public` and `ose-private`, with the nightly audit green. |
+| Doctor dividend          | Registering Go costs one `repo-config.yml` list item and zero `rhino-cli` edits, validating `lms-init` D-4's rationale.                    |
 
 ## Business-Scope Non-Goals
 
@@ -69,12 +79,14 @@ plan finishes it against a real product rather than a throwaway one.
 
 ## Business Risks and Mitigations
 
-| Risk                                                                                  | Likelihood | Mitigation                                                                                                           |
-| ------------------------------------------------------------------------------------- | ---------- | -------------------------------------------------------------------------------------------------------------------- |
-| The Go lane is built and then a second Go service never follows, leaving it orphaned.  | Medium     | The lane is justified by this service alone; every component is exercised by `islamic-be` in the same plan.            |
-| Islamic-tool endpoints never get built, leaving a service that only reports its health. | Medium     | Deletion is cheap and explicitly documented as the rollback. No client, no data, no deploy target to unwind.           |
-| Religious-calculation correctness becomes a reputational risk once endpoints land.      | Low (here) | Out of scope by construction; `prd.md` records it as a Non-Goal so no endpoint ships without its own correctness plan. |
-| `rhino-cli` parity drifts between repositories during the paired change.                | Medium     | Cross-Repository Parity Identity is recorded before the first mutation; the parity audit workflow gates convergence.   |
+| Risk                                                                                                                      | Likelihood | Mitigation                                                                                                                                                                                                      |
+| ------------------------------------------------------------------------------------------------------------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The Go lane is built and then a second Go service never follows, leaving it orphaned.                                     | Medium     | The lane is justified by this service alone; every component is exercised by `islamic-be` in the same plan.                                                                                                     |
+| Islamic-tool endpoints never get built, leaving a service that only reports its health.                                   | Medium     | Deletion is cheap and explicitly documented as the rollback. No client, no data, no deploy target to unwind.                                                                                                    |
+| Religious-calculation correctness becomes a reputational risk once endpoints land.                                        | Low (here) | Out of scope by construction; `prd.md` records it as a Non-Goal so no endpoint ships without its own correctness plan.                                                                                          |
+| `rhino-cli` parity drifts between repositories during the paired change.                                                  | Medium     | Cross-Repository Parity Identity is recorded before the first mutation; the parity audit workflow gates convergence.                                                                                            |
+| This plan is blocked while `lms-init` ([PR #487](https://github.com/wahidyankf/ose-public/pull/487)) DU1 and DU2 execute. | High       | Accepted deliberately: the alternative duplicates six shared surfaces and races two parity PR pairs on one generated manifest. Phase 0 verifies the upstream state and stops rather than substituting the work. |
+| Two language lanes land close together and a reviewer cannot tell which plan owns a shared-surface line.                  | Low        | Each plan names the other in its README and decision records; `islamic-be-init` D-0 tabulates every overlapping file and states who lands it first.                                                             |
 
 ## See Also
 
