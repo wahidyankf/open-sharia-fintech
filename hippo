@@ -535,6 +535,16 @@ export HIPPO_DEFAULT_CONFIG
 case "${1:-}" in
 run)
 	shift
+	# HIPPO supervises a process group, so a daemon that outlives the command keeps
+	# the run alive after the command has already finished and printed its result.
+	# .NET's MSBuild node-reuse workers and MSBuild server are exactly that: they
+	# detach, reparent to init, stay in the group, and `hippo run` then never
+	# returns. It reads as contention rather than as a hang because the daemons are
+	# reused between builds, so only a cold first invocation reproduces it.
+	# Explicit caller configuration still wins, as it does above.
+	MSBUILDDISABLENODEREUSE=${MSBUILDDISABLENODEREUSE:-1}
+	DOTNET_CLI_USE_MSBUILD_SERVER=${DOTNET_CLI_USE_MSBUILD_SERVER:-0}
+	export MSBUILDDISABLENODEREUSE DOTNET_CLI_USE_MSBUILD_SERVER
 	exec "$binary" run \
 		--concurrency-env NX_PARALLEL \
 		--concurrency-env DOTNET_PROCESSOR_COUNT \
