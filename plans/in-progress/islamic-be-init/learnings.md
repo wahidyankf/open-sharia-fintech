@@ -96,3 +96,120 @@ its terminal disposition.
   against files and line numbers, which is why this plan's Upstream Verification lists
   `RepoConfig.fs:284` and `behaviour-coverage.mjs:302` rather than PR numbers alone.
 - **Disposition**: _pending Phase 7_
+
+### DU1: a controlled vocabulary with no gate is not controlled
+
+- **Observed**: the rules-propagation preflight for admitting `go`/`gin`/`islamic` found no rule
+  contradicting the amendment, but did find the vocabulary itself out of sync with the tags projects
+  declare. `lang:` omits `fsharp` (five projects, the second most-used value) while listing `dotnet`
+  (unused in `ose-public`); `platform:` omits `giraffe` (`ose-be`, `organiclever-be`) while listing
+  `axum` (unused); `domain:` omits `config` (`ts-env-loader`, `fsharp-env-loader`). Meanwhile
+  `pr-quality-gate.yml` excludes `tag:lang:fsharp`, `tag:lang:csharp`, and `tag:lang:dart` — three
+  values the convention never admits.
+- **Enforcement disposition**: **unenforced by decision.** No `repo-config.yml` gate, `rhino-cli`
+  subcommand, or script validates `project.json` tags against the scheme. The drift is the direct
+  consequence.
+- **Generalizes because**: a document that calls its list "controlled" states an invariant. With no
+  gate, the claim decays silently in the one direction nobody reads — new tags get added to
+  `project.json`, never back to the table. Either arm a check or drop the word.
+- **Disposition**: _pending Phase 7_ — arming a tag validator is out of scope here; it would fail
+  immediately on the three pre-existing gaps and couple a repo-wide fix to a Go lane delivery.
+
+### DU1: untagged projects fail open in exactly the way this plan is fixing
+
+- **Observed**: `specs/apps/ose/be/contracts/project.json` and its `organiclever` counterpart declare
+  no `tags` at all, though the convention requires `type:` and `domain:` always. Because every
+  language job in `pr-quality-gate.yml` selects by _excluding_ known `tag:lang:` values, a project
+  with no tags is excluded by nothing and runs its targets in **every** language job — the same
+  fail-open shape this plan's DU1 fixes for `lang:go`, reached by a different route.
+- **Generalizes because**: an exclusion-based selector treats "tag absent" and "tag unknown"
+  identically. Both fail open. Auditing for unknown tags is not enough; the audit has to cover
+  untagged projects too.
+- **Disposition**: _pending Phase 7_ — out of scope for this plan, which owns `islamic-*` only.
+  `islamic-contracts` is specified with `["type:lib", "domain:islamic"]` so it does not join them.
+
+### DU1: a gate's command shape is a claim about the tool, and it was wrong
+
+- **Observed**: the plan specified `command: golangci-lint run` behind `scope: affected-file-type,
+glob: "*.go"`, by analogy with `shellcheck` and `format-verify-gofmt`. The analogy does not hold.
+  Probing 2.11.3 showed `golangci-lint run pkg/a/a.go pkg/b/b.go` exits **7** with `named files must
+all be in one directory`, and invoking it where there is no `go.mod` exits **5** with `no go files
+to analyze`. Both were certain to fire — the first on any commit touching two Go packages, the
+  second on every run, since the gate invokes from the repository root.
+- **Generalizes because**: `scope: affected-file-type` is a promise that the tool accepts an
+  arbitrary flat file list from the repository root. `shellcheck` and `gofmt` honour it because they
+  work file-at-a-time; a package-oriented tool cannot. Adding a gate for an unfamiliar linter should
+  begin by running it against a two-directory input, not by copying the nearest entry.
+- **Disposition**: _pending Phase 7_ — resolved in-flight by `scripts/lint-golangci.sh`, the same
+  wrapper precedent `scripts/verify-gofmt.sh` set for `gofmt -l`'s always-zero exit.
+
+### DU1: the config-driven doctor inventory reaches further than D-9 claimed
+
+- **Observed**: D-9 justified `doctor.extra-tools` as a way to get a `go` row without a `rhino-cli`
+  edit. It turned out to do more: `repo-config validate` rejected `lint-golangci` with `unknown
+Doctor tool "golangci-lint"` until the linter was declared there too. So `extra-tools` also
+  satisfies a gate's `doctor-tools:` dependency — meaning a new gate can declare an unknown external
+  tool without touching F# at all. Two tools registered, still zero `rhino-cli` diff.
+- **Generalizes because**: a decision record predicts a benefit from a mechanism's stated purpose.
+  Executing it measures the mechanism's actual reach, which can be larger. Worth re-reading D-9's
+  cost/benefit line against what shipped rather than leaving the smaller claim standing.
+- **Disposition**: _pending Phase 7_
+
+### DU1: the leak gate caught what every deterministic gate had passed
+
+- **Observed**: PR #488 was green across `pr-quality-gate` on three successive heads. The focused
+  leak review then found this machine's absolute worktree path in 126 lines of committed evidence
+  and in five `delivery.md` steps. No Prettier, markdownlint, or word-budget check looks for it.
+- **Generalizes because**: captured tool output is the natural carrier for machine-specific paths,
+  and evidence files are exactly where a plan is encouraged to paste raw captures. Sanitizing the
+  prefix at capture time — rather than at review time — costs nothing and removes a whole finding
+  class. Worth a Phase 7 proposal: have the evidence-capture step pipe through a prefix rewrite.
+- **Disposition**: _pending Phase 7_
+
+### DU1: deleting a language job leaves its exclusion hole behind
+
+- **Observed**: measuring the exclusion matrix across all six `--exclude` lists in
+  `pr-quality-gate.yml` showed every language appearing in every list but its own job's — except
+  `tag:lang:rust`, which appears in four of six. Its job was deleted in Phase 9d and
+  `tag:lang:rust` was never added to `dotnet`'s two lists, so a `lang:rust` project would run in the
+  `dotnet` job on a runner with no Rust toolchain. Latent, not live: no project carries `lang:rust`
+  today, `rhino-cli` having moved to `lang:fsharp`.
+- **Generalizes because**: adding a language means touching N places; **removing** one means the
+  opposite — every other job's exclude list still names it, and the deleted job's absence turns
+  "excluded everywhere but its own job" into "runs nowhere it should, somewhere it shouldn't". The
+  removal checklist is not the addition checklist reversed.
+- **Disposition**: _pending Phase 7_ — out of scope; belongs to whoever revives a Rust lane.
+
+### DU1: `doctor-tools:` provisions unconditionally, but gates run file-scoped
+
+- **Observed**: `lint-golangci` is scoped `affected-file-type, glob: "*.go"`, so on a PR with no Go
+  files the gate never runs. Its `doctor-tools: [golangci-lint]` was still enforced: the `gate`
+  matrix job provisions the union of a group's declared tools **before** any gate runs and without
+  consulting file scope, so CI went red demanding a linter it had no reason to invoke.
+- **Generalizes because**: two different scopes are in play and only one is visible at the
+  declaration site. A gate entry reads as "this tool is needed when this gate runs"; the
+  provisioning step reads it as "this tool is needed whenever this group runs". Adding
+  `doctor-tools:` to a narrowly-scoped gate therefore widens a requirement far past the gate — and
+  the cost lands on every unrelated PR, not on the Go PRs the gate was written for.
+- **Second-order**: the tool must be installable on **every** platform the group's CI runs on, not
+  just the author's. A correct decision to omit `apt` — Debian's package is 1.x, which cannot read a
+  `version: "2"` config — became a total absence of a Linux path.
+- **Disposition**: _pending Phase 7_ — resolved in-flight. Worth proposing that provisioning
+  intersect a gate's file scope, so a dormant gate costs nothing.
+
+### DU1/DU2: an `all-file-type` gate makes the working tree part of the delivery unit
+
+- **Observed**: DU1's push was rejected by `md-links` for four broken links **in DU2's files**.
+  DU2's specs corpus was prepared in the same worktree while DU1's PR was in flight, and it links to
+  `apps/islamic-be`, which DU3 creates. The links were correct-in-intent and unresolvable-in-fact.
+  Nothing in DU1's own diff was wrong.
+- **Generalizes twice over**:
+  1. A gate declared `scope: all-file-type` reads the whole tree, not the change. Preparing a later
+     delivery unit's files in the same worktree therefore puts them on the current unit's critical
+     path — a cost that is invisible until the push is rejected. One worktree per plan is a cap on
+     concurrency, not just on disk.
+  2. A specs corpus written to the house shape always cross-links to its implementing project. When
+     the corpus lands in an earlier delivery unit than the project, that link cannot be written yet.
+     **The link belongs to the DU that makes it resolvable**, not to the DU that wants it.
+- **Disposition**: _pending Phase 7_ — resolved in-flight by naming the projects in prose and moving
+  the link into DU3 and DU4 as explicit steps.

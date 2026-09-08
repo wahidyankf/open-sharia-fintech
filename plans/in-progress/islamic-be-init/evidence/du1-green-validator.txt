@@ -1,0 +1,22 @@
+# DU1 GREEN evidence — npm run test:validators after the Go extractor arm
+# Date: 2026-09-08 · exit 0
+
+ℹ tests 53
+ℹ suites 0
+ℹ pass 53
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+
+# Go cases now passing:
+✔ extracts one binding per Godog registration (0.350542ms)
+✔ treats a Godog ctx.Step registration as keyword-agnostic (0.059792ms)
+✔ accepts an interpreted Go string literal as a Godog pattern (0.046375ms)
+✔ ignores a Godog registration inside a Go comment (0.079792ms)
+✔ does not mask a comment marker that is inside a Go raw-string pattern (0.069917ms)
+✔ extracts a Godog registration wrapped in regexp.MustCompile (0.0745ms)
+✔ ignores Go regex and backtick literals that are not Godog registrations (0.067375ms)
+✔ reports an undefined Unit binding when a Godog step definition is missing (3.24225ms)
+✔ reports an unused Unit binding when a Godog step definition matches no step (1.187ms)
+✔ scopes duplicate Godog bindings to explicit feature literals (2.697667ms)

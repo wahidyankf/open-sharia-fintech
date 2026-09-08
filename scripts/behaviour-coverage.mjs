@@ -17,7 +17,7 @@ const BOUNDARY_REASON =
 const ALTERNATIVE_PROOF = /^[a-z0-9][a-z0-9-]*:test(?::[a-z0-9][a-z0-9-]*)+\s+\/\s+\S(?:.*\S)?$/iu;
 const GHERKIN_DECLARATION = /^(?:Feature|Rule|Background|Scenario(?: Outline| Template)?|Examples?):/iu;
 const SCENARIO_DECLARATION = /^(?:Scenario(?: Outline| Template)?):/iu;
-const BINDING_FILE = /\.(?:ts|tsx|fs|java)$/iu;
+const BINDING_FILE = /\.(?:ts|tsx|fs|java|go)$/iu;
 
 function normaliseSource(source) {
   return source.replaceAll("\r\n", "\n").replaceAll("\r", "\n");
@@ -219,6 +219,16 @@ function decodeQuotedLiteral(literal) {
   return body.replaceAll(`\\${quote}`, quote).replaceAll("\\n", "\n").replaceAll("\\\\", "\\");
 }
 
+// Go has two string literal forms and only one of them processes escapes. A raw literal is
+// delimited by backticks and is verbatim to the closing delimiter -- `\d` is a backslash and a
+// `d`, and `\n` is a backslash and an `n`, not a newline. Godog patterns are Go regexps and are
+// almost always written raw for exactly that reason, so decoding one as though it were escaped
+// would silently rewrite the pattern.
+function decodeGoLiteral(literal) {
+  if (literal.startsWith("`")) return literal.slice(1, -1);
+  return decodeQuotedLiteral(literal);
+}
+
 function maskJavascriptComments(source) {
   const characters = [...source];
   let state = "code";
@@ -297,12 +307,13 @@ function scenarioAt(scopes, offset) {
   return scenario;
 }
 
-// The three language extractors differ only in which string literals their syntax admits, so the
-// specs/*.feature scan itself lives here once rather than as a near-copy per language.
-function featureReferences(source, literalPattern) {
+// The four language extractors differ only in which string literals their syntax admits and how
+// those literals decode, so the specs/*.feature scan itself lives here once rather than as a
+// near-copy per language. Only Go needs a decoder other than the default.
+function featureReferences(source, literalPattern, decode = decodeQuotedLiteral) {
   const references = [];
   for (const match of source.matchAll(literalPattern)) {
-    const value = decodeQuotedLiteral(match[0]).replaceAll("\\", "/");
+    const value = decode(match[0]).replaceAll("\\", "/");
     const specsOffset = value.lastIndexOf("specs/");
     if (specsOffset >= 0 && value.toLowerCase().endsWith(".feature")) {
       references.push(value.slice(specsOffset));
@@ -312,8 +323,12 @@ function featureReferences(source, literalPattern) {
 }
 
 // TypeScript admits double, single, and template literals; F# and Java admit double quotes only.
+// Go admits double-quoted (escape-processing) and backtick-delimited raw literals. A raw literal
+// has no escape rule at all, so its body runs to the first backtick -- unlike the TypeScript
+// template literal above, whose body honours a backslash escape.
 const TYPESCRIPT_LITERAL = /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`/gu;
 const DOUBLE_QUOTED_LITERAL = /"(?:\\.|[^"\\])*"/gu;
+const GO_LITERAL = /"(?:\\.|[^"\\])*"|`[^`]*`/gu;
 
 function typescriptFeatureReferences(source) {
   return featureReferences(source, TYPESCRIPT_LITERAL);
@@ -402,10 +417,53 @@ function extractJavaBindings(resourceName, source) {
   return bindings;
 }
 
+function goFeatureReferences(source) {
+  return featureReferences(source, GO_LITERAL, decodeGoLiteral);
+}
+
+function extractGoBindings(resourceName, source) {
+  const bindings = [];
+  // Go shares JavaScript's comment syntax, so the JavaScript masker applies unchanged. Its one
+  // divergence -- treating a backslash inside a backtick literal as an escape -- can only mislead
+  // it when a raw literal ends in an odd number of backslashes, which is not a valid regexp and
+  // so cannot appear in a Godog pattern.
+  const code = maskJavascriptComments(source);
+  const featureReferences = goFeatureReferences(code);
+  // Godog registers on a ScenarioContext receiver whose name is a local choice (`ctx`, `s`, `sc`),
+  // so the receiver is matched as any identifier rather than pinned to one spelling. Requiring the
+  // dot is what keeps a bare `Given(` -- the TypeScript form -- from registering here, and what
+  // keeps a locally declared `func Then(...)` from registering as a step.
+  //
+  // The expr argument accepts a *regexp.Regexp as well as a string, so an optional
+  // `regexp.MustCompile(` wrapper is consumed before the literal. The wrapper is only recognised
+  // in this position: a bare `regexp.MustCompile` elsewhere in the file is not a registration.
+  const pattern =
+    /\b[A-Za-z_][A-Za-z0-9_]*\s*\.\s*(Given|When|Then|Step)\s*\(\s*(?:regexp\s*\.\s*MustCompile\s*\(\s*)?("(?:\\.|[^"\\])*"|`[^`]*`)/gu;
+  for (const match of code.matchAll(pattern)) {
+    const keyword = match[1];
+    bindings.push({
+      keyword,
+      pattern: decodeGoLiteral(match[2]),
+      flags: "",
+      // Godog compiles the argument as a Go regexp, never as a Cucumber expression.
+      expression: false,
+      resourceName,
+      line: lineAt(source, match.index ?? 0),
+      scenario: undefined,
+      featureReferences,
+      // ctx.Given/When/Then resolve only against their own keyword; ctx.Step applies to a step of
+      // any keyword, so recording it as sensitive would report a bound step as undefined.
+      keywordSensitive: keyword !== "Step",
+    });
+  }
+  return bindings;
+}
+
 export function extractBindings(resourceName, source) {
   const name = resourceName.toLowerCase();
   if (name.endsWith(".fs")) return extractFsharpBindings(resourceName, source);
   if (name.endsWith(".java")) return extractJavaBindings(resourceName, source);
+  if (name.endsWith(".go")) return extractGoBindings(resourceName, source);
   return extractTypescriptBindings(resourceName, source);
 }
 

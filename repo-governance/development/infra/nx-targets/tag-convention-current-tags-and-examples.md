@@ -10,13 +10,33 @@ when_to_use: Use when copying an existing project's tag set as a template or che
 | Project                    | Tags                                                                     |
 | -------------------------- | ------------------------------------------------------------------------ |
 | `ayokoding-www`            | `["type:app", "platform:nextjs", "lang:ts", "domain:ayokoding"]`         |
-| `rhino-cli`                | `["type:app", "platform:cli", "lang:rust", "domain:tooling"]`            |
+| `ayokoding-www-be-e2e`     | `["type:e2e", "platform:playwright", "lang:ts", "domain:ayokoding"]`     |
+| `ayokoding-www-fe-e2e`     | `["type:e2e", "platform:playwright", "lang:ts", "domain:ayokoding"]`     |
+| `crane-cli`                | `["type:app", "platform:cli", "lang:fsharp", "domain:crane"]`            |
+| `islamic-be` †             | `["type:app", "platform:gin", "lang:go", "domain:islamic"]`              |
+| `islamic-be-e2e` †         | `["type:e2e", "platform:playwright", "lang:ts", "domain:islamic"]`       |
+| `islamic-contracts` †      | `["type:lib", "domain:islamic"]`                                         |
 | `organiclever-app-web`     | `["type:app", "platform:nextjs", "lang:ts", "domain:organiclever"]`      |
-| `organiclever-be`          | `["type:app", "platform:giraffe", "lang:dotnet", "domain:organiclever"]` |
 | `organiclever-app-web-e2e` | `["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever"]`  |
+| `organiclever-be`          | `["type:app", "platform:giraffe", "lang:fsharp", "domain:organiclever"]` |
 | `organiclever-be-e2e`      | `["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever"]`  |
+| `organiclever-www`         | `["type:app", "platform:nextjs", "lang:ts", "domain:organiclever"]`      |
+| `organiclever-www-fe-e2e`  | `["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever"]`  |
+| `ose-app-web`              | `["type:app", "platform:nextjs", "lang:ts", "domain:ose"]`               |
+| `ose-app-web-e2e`          | `["type:e2e", "platform:playwright", "lang:ts", "domain:ose"]`           |
+| `ose-be`                   | `["type:app", "platform:giraffe", "lang:fsharp", "domain:ose"]`          |
+| `ose-be-e2e`               | `["type:e2e", "platform:playwright", "lang:ts", "domain:ose"]`           |
 | `ose-www`                  | `["type:app", "platform:nextjs", "lang:ts", "domain:ose"]`               |
+| `ose-www-be-e2e`           | `["type:e2e", "platform:playwright", "lang:ts", "domain:ose"]`           |
+| `ose-www-fe-e2e`           | `["type:e2e", "platform:playwright", "lang:ts", "domain:ose"]`           |
+| `rhino-cli`                | `["type:app", "platform:cli", "lang:fsharp", "domain:tooling"]`          |
+| `fsharp-crane-core`        | `["type:lib", "lang:fsharp", "domain:crane"]`                            |
+| `fsharp-env-loader`        | `["type:lib", "lang:fsharp", "domain:config"]`                           |
 | `ts-env-loader`            | `["type:lib", "lang:ts", "domain:config"]`                               |
+| `web-ui`                   | `["type:lib", "lang:ts", "domain:ui"]`                                   |
+| `web-ui-token`             | `["type:lib", "lang:ts", "domain:ui"]`                                   |
+
+† Declared by `plans/in-progress/islamic-be-init` and landing with the project in DU2–DU4.
 
 ## Example: Complete Tag Declaration
 
@@ -25,7 +45,7 @@ An F#/Giraffe backend app declares all four dimensions:
 ```json
 {
   "name": "organiclever-be",
-  "tags": ["type:app", "platform:giraffe", "lang:dotnet", "domain:organiclever"]
+  "tags": ["type:app", "platform:giraffe", "lang:fsharp", "domain:organiclever"]
 }
 ```
 

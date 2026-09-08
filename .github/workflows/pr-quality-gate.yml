@@ -27,6 +27,7 @@ jobs:
       has-dotnet-projects: ${{ steps.detect.outputs.has-dotnet-projects }}
       has-dart: ${{ steps.detect.outputs.has-dart }}
       has-java: ${{ steps.detect.outputs.has-java }}
+      has-go: ${{ steps.detect.outputs.has-go }}
       has-markdown: ${{ steps.detect.outputs.has-markdown }}
     steps:
       - uses: actions/checkout@v6
@@ -70,7 +71,7 @@ jobs:
             # itself errors, run every language's quality gate rather than
             # silently skip a merge-blocking check. Deliberately does NOT
             # fail this job outright — a hard `detect` failure would make
-            # `typescript`/`dotnet`/`rust` report "skipped" (failed
+            # `typescript`/`dotnet`/`go` report "skipped" (failed
             # dependency), not "failure", which `quality-gate`'s
             # `contains(needs.*.result, 'failure')` check would not catch.
             {
@@ -78,6 +79,7 @@ jobs:
               echo "has-dotnet-projects=true"
               echo "has-dart=true"
               echo "has-java=true"
+              echo "has-go=true"
               echo "has-markdown=true"
             } >> "$GITHUB_OUTPUT"
             exit 0
@@ -89,6 +91,7 @@ jobs:
             echo "has-dotnet-projects=false"
             echo "has-dart=false"
             echo "has-java=false"
+            echo "has-go=false"
             echo "has-markdown=false"
           } >> "$GITHUB_OUTPUT"
 
@@ -100,6 +103,7 @@ jobs:
                 lang:fsharp | lang:csharp) echo "has-dotnet-projects=true" >> "$GITHUB_OUTPUT" ;;
                 lang:dart) echo "has-dart=true" >> "$GITHUB_OUTPUT" ;;
                 lang:java) echo "has-java=true" >> "$GITHUB_OUTPUT" ;;
+                lang:go) echo "has-go=true" >> "$GITHUB_OUTPUT" ;;
               esac
             done
           done
@@ -280,6 +284,17 @@ jobs:
       # JDK the Java quality gate uses, exactly as it already does for Dart and Ruff.
       - uses: ./.github/actions/setup-java
         if: matrix.group.group == 'formatting-verify'
+      # lint-golangci invokes golangci-lint, which has no usable apt package: Debian ships 1.x,
+      # and a 1.x binary cannot read the `version: "2"` config the 2.x schema requires. Installed
+      # through the Go module proxy instead, which is checksum-verified against GOSUMDB, scoped to
+      # the one group whose gate needs it -- the same shape as the Ruff install above. GOPATH/bin is
+      # appended explicitly rather than assumed to be on the image's PATH, because the provisioning
+      # step below probes by PATH lookup and would report a just-installed binary as missing.
+      - name: Install golangci-lint
+        if: matrix.group.group == 'lint'
+        run: |
+          go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.11.3
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
       - uses: actions/download-artifact@v4
         with:
           name: rhino-cli-gate-binary
@@ -313,7 +328,7 @@ jobs:
       # shared-lib change).
       # test:quick owns Unit runtime plus every applicable static test:coverage:*
       # validator. Integration and E2E remain manual/scheduled-only.
-      - run: npx nx affected -t typecheck lint test:quick compat:min-version --exclude='tag:lang:fsharp,tag:lang:csharp,tag:lang:rust,tag:lang:dart,tag:lang:java' --parallel=2
+      - run: npx nx affected -t typecheck lint test:quick compat:min-version --exclude='tag:lang:fsharp,tag:lang:csharp,tag:lang:rust,tag:lang:dart,tag:lang:java,tag:lang:go' --parallel=2
 
   dotnet:
     name: .NET quality gate
@@ -342,10 +357,10 @@ jobs:
       # the NuGet package cache above only warms `~/.nuget/packages`, it does not generate
       # each project's `obj/project.assets.json`. Every dotnet-tagged project's `install`
       # target runs `dotnet restore`, so run it explicitly before typecheck.
-      - run: npx nx affected -t install --exclude='tag:lang:ts,tag:lang:dart,tag:lang:java' --parallel=1
+      - run: npx nx affected -t install --exclude='tag:lang:ts,tag:lang:dart,tag:lang:java,tag:lang:go' --parallel=1
       # Both affected F# backends invoke OpenAPI Generator during codegen. It initializes a shared
       # downloaded JAR, so serial execution prevents a first-run download race.
-      - run: npx nx affected -t typecheck lint test:quick compat:min-version --exclude='tag:lang:ts,tag:lang:dart,tag:lang:java' --parallel=1
+      - run: npx nx affected -t typecheck lint test:quick compat:min-version --exclude='tag:lang:ts,tag:lang:dart,tag:lang:java,tag:lang:go' --parallel=1
 
   flutter:
     name: Flutter quality gate
@@ -369,7 +384,7 @@ jobs:
           echo "$HOME/.pub-cache/bin" >> "$GITHUB_PATH"
       - name: Install the repository Flutter SDK
         run: fvm install
-      - run: npx nx affected -t typecheck lint test:quick --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:rust,tag:lang:java' --parallel=1
+      - run: npx nx affected -t typecheck lint test:quick --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:rust,tag:lang:java,tag:lang:go' --parallel=1
 
   java:
     name: Java quality gate
@@ -384,7 +399,22 @@ jobs:
       - uses: ./.github/actions/setup-java
       # Java projects invoke OpenAPI Generator during codegen, which initializes a shared
       # downloaded JAR; serial execution prevents a first-run download race, matching `dotnet`.
-      - run: npx nx affected -t typecheck lint test:quick compat:min-version --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:rust,tag:lang:dart' --parallel=1
+      - run: npx nx affected -t typecheck lint test:quick compat:min-version --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:rust,tag:lang:dart,tag:lang:go' --parallel=1
+
+  go:
+    name: Go quality gate
+    needs: detect
+    if: needs.detect.outputs.has-go == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/setup-go
+      # Go projects invoke oapi-codegen during codegen against a shared module cache; serial
+      # execution prevents a first-run download race, matching `java` and `dotnet`.
+      - run: npx nx affected -t typecheck lint test:quick compat:min-version --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:rust,tag:lang:dart,tag:lang:java' --parallel=1
 
   specs-structure:
     name: Specs structure validation (all affected)
@@ -399,7 +429,7 @@ jobs:
 
   quality-gate:
     name: Quality gate
-    needs: [build-rhino, format, enumerate, gate, typescript, dotnet, flutter, java, specs-structure]
+    needs: [build-rhino, format, enumerate, gate, typescript, dotnet, flutter, java, go, specs-structure]
     if: always()
     runs-on: ubuntu-latest
     steps:

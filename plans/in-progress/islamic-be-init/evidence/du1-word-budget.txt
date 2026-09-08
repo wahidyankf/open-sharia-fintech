@@ -1,0 +1,12 @@
+# DU1 evidence — governance word budget after tag-convention amendment
+# Date: 2026-09-08
+# Command: npm exec nx -- run rhino-cli:governance-word-budget:validation
+
+## Raw counts for the two edited files
+     338 repo-governance/development/infra/nx-targets/tag-convention-four-dimension-scheme.md
+     488 repo-governance/development/infra/nx-targets/tag-convention-current-tags-and-examples.md
+     826 total
+
+## Gate result: target succeeded. 18 WARN findings, all pre-existing;
+## neither tag-convention file appears in the finding list.
+## Surface budget for repo-governance/**/*.md: target 650, warn 750, fail 750.

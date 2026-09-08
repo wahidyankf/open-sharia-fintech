@@ -1,0 +1,26 @@
+# DU1 RED evidence — the Godog cases against the pre-change extractor
+# Date: 2026-09-08
+#
+# Method: scripts/behaviour-coverage.mjs as it stands on origin/main (before this DU's
+# edit) placed beside the NEW test file, and node --test run over the pair. This isolates
+# the extractor change: identical tests, only the implementation differs.
+# Command: node --test local-tmp/du1-red/behaviour-coverage.test.mjs
+
+✖ extracts one binding per Godog registration (2.215125ms)
+✖ treats a Godog ctx.Step registration as keyword-agnostic (0.245125ms)
+✖ extracts a Godog registration wrapped in regexp.MustCompile (0.306791ms)
+✖ reports an undefined Unit binding when a Godog step definition is missing (8.104042ms)
+✖ reports an unused Unit binding when a Godog step definition matches no step (1.579917ms)
+✖ scopes duplicate Godog bindings to explicit feature literals (2.289291ms)
+ℹ tests 46
+ℹ pass 40
+ℹ fail 6
+✖ failing tests:
+✖ extracts one binding per Godog registration (2.215125ms)
+✖ treats a Godog ctx.Step registration as keyword-agnostic (0.245125ms)
+✖ extracts a Godog registration wrapped in regexp.MustCompile (0.306791ms)
+✖ reports an undefined Unit binding when a Godog step definition is missing (8.104042ms)
+✖ reports an unused Unit binding when a Godog step definition matches no step (1.579917ms)
+✖ scopes duplicate Godog bindings to explicit feature literals (2.289291ms)
+
+# Every failure is a Go case; no pre-existing test regressed.

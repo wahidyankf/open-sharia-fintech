@@ -63,6 +63,19 @@ ${then}${extra}}
 `;
 }
 
+function goBindings({ omitThen = false, extra = "" } = {}) {
+  const then = omitThen ? "" : "\tctx.Then(`^independent evidence is observed$`, independentEvidenceIsObserved)\n";
+  return `package steps
+
+import "github.com/cucumber/godog"
+
+func InitializeScenario(ctx *godog.ScenarioContext) {
+\tctx.Given(\`^a configured subject$\`, aConfiguredSubject)
+\tctx.When(\`^the subject is exercised$\`, theSubjectIsExercised)
+${then}${extra}}
+`;
+}
+
 test("accepts independently documented Integration and E2E exemptions", () => {
   const source = validFeature.replace(
     "  Scenario: A covered behaviour",
@@ -332,6 +345,244 @@ test("reports an unused Unit binding when a Java step definition matches no step
   });
 
   assert.ok(result.errors.some((error) => error.includes("unused Unit binding")));
+});
+
+test("extracts one binding per Godog registration", () => {
+  const bindings = extractBindings("steps.go", goBindings());
+
+  assert.equal(bindings.length, 3);
+  assert.deepEqual(
+    bindings.map(({ keyword }) => keyword),
+    ["Given", "When", "Then"],
+  );
+  // Godog registers a Go regexp, not a Cucumber expression, so the anchors survive verbatim.
+  assert.deepEqual(
+    bindings.map(({ pattern }) => pattern),
+    ["^a configured subject$", "^the subject is exercised$", "^independent evidence is observed$"],
+  );
+  assert.ok(bindings.every(({ expression }) => expression === false));
+  // ctx.Given/When/Then match only their own keyword; "And"/"But" inherit the previous step's.
+  assert.ok(bindings.every(({ keywordSensitive }) => keywordSensitive === true));
+});
+
+test("treats a Godog ctx.Step registration as keyword-agnostic", () => {
+  const source = `package steps
+
+import "github.com/cucumber/godog"
+
+func InitializeScenario(ctx *godog.ScenarioContext) {
+\tctx.Step(\`^a configured subject$\`, aConfiguredSubject)
+}
+`;
+
+  const bindings = extractBindings("steps.go", source);
+
+  assert.equal(bindings.length, 1);
+  assert.equal(bindings[0].keyword, "Step");
+  // ctx.Step applies to a step of ANY keyword, unlike ctx.Given. Recording it as
+  // keywordSensitive:true would report a correctly-bound Then step as undefined.
+  assert.equal(bindings[0].keywordSensitive, false);
+});
+
+test("accepts an interpreted Go string literal as a Godog pattern", () => {
+  const source = `package steps
+
+func InitializeScenario(ctx *godog.ScenarioContext) {
+\tctx.When("^the subject is \\"exercised\\"$", theSubjectIsExercised)
+}
+`;
+
+  const bindings = extractBindings("steps.go", source);
+
+  assert.equal(bindings.length, 1);
+  // A double-quoted Go literal processes escapes; a raw backtick literal does not.
+  assert.equal(bindings[0].pattern, '^the subject is "exercised"$');
+});
+
+test("ignores a Godog registration inside a Go comment", () => {
+  const source = `package steps
+
+func InitializeScenario(ctx *godog.ScenarioContext) {
+\t// ctx.Given(\`^a commented-out subject$\`, aCommentedOutSubject)
+\t/* ctx.When(\`^a block-commented subject$\`, aBlockCommentedSubject) */
+\tctx.Given(\`^a configured subject$\`, aConfiguredSubject)
+}
+`;
+
+  const bindings = extractBindings("steps.go", source);
+
+  assert.deepEqual(
+    bindings.map(({ pattern }) => pattern),
+    ["^a configured subject$"],
+  );
+});
+
+test("does not mask a comment marker that is inside a Go raw-string pattern", () => {
+  const source = `package steps
+
+func InitializeScenario(ctx *godog.ScenarioContext) {
+\tctx.Given(\`^GET /api/v1//health$\`, getHealth)
+\tctx.When(\`^a path ending in a backslash \\\\$\`, trailingBackslash)
+\tctx.Then(\`^independent evidence is observed$\`, independentEvidence)
+}
+`;
+
+  const bindings = extractBindings("steps.go", source);
+
+  // A raw Go string does not process escapes, so `\\` is two literal backslashes and the
+  // closing backtick still terminates the literal. Masking it as a JavaScript template
+  // literal would swallow the rest of the file and lose the third registration.
+  assert.equal(bindings.length, 3);
+  assert.equal(bindings[0].pattern, "^GET /api/v1//health$");
+  assert.equal(bindings[2].pattern, "^independent evidence is observed$");
+});
+
+test("extracts a Godog registration wrapped in regexp.MustCompile", () => {
+  const source = `package steps
+
+import (
+\t"regexp"
+
+\t"github.com/cucumber/godog"
+)
+
+func InitializeScenario(ctx *godog.ScenarioContext) {
+\tctx.Step(regexp.MustCompile(\`^a configured subject$\`), aConfiguredSubject)
+\tctx.Then(regexp.MustCompile("^independent evidence is observed$"), independentEvidence)
+}
+`;
+
+  const bindings = extractBindings("steps.go", source);
+
+  // godog's expr argument accepts *regexp.Regexp as well as a string, and the wrapper is the
+  // idiomatic way to pre-compile it. Missing this form reads as an unbound step, not an error.
+  assert.deepEqual(
+    bindings.map(({ keyword, pattern }) => `${keyword} ${pattern}`),
+    ["Step ^a configured subject$", "Then ^independent evidence is observed$"],
+  );
+});
+
+test("ignores Go regex and backtick literals that are not Godog registrations", () => {
+  const source = `package steps
+
+import "regexp"
+
+var pathPattern = regexp.MustCompile(\`^/api/v1/health$\`)
+
+const usage = \`Given a subject
+When it runs
+Then it is observed\`
+
+func Then(value string) string { return value }
+
+func InitializeScenario(ctx *godog.ScenarioContext) {
+\tctx.Given(\`^a configured subject$\`, aConfiguredSubject)
+}
+`;
+
+  const bindings = extractBindings("steps.go", source);
+
+  // A bare MustCompile, a multi-line raw string that merely quotes Gherkin, and a locally
+  // declared function named Then must not register. Only the receiver-dot form does.
+  assert.deepEqual(
+    bindings.map(({ pattern }) => pattern),
+    ["^a configured subject$"],
+  );
+});
+
+test("reports an undefined Unit binding when a Godog step definition is missing", async () => {
+  const run = async (go) => {
+    const root = await fixture({
+      "behaviours/example.feature": validFeature,
+      "unit/steps.go": go,
+      "unit/driver.ts": "export const driver = {};",
+    });
+    return validateCoverage({
+      project: "example",
+      corpusRoots: [path.join(root, "behaviours")],
+      adapter: "unit",
+      bindingRoots: [path.join(root, "unit")],
+      driver: path.join(root, "unit/driver.ts"),
+    });
+  };
+
+  // Without .go in BINDING_FILE no binding loads at all, so every step reads as undefined and
+  // this half fails — that is what makes the pair discriminating rather than trivially satisfied.
+  const complete = await run(goBindings());
+  assert.deepEqual(
+    complete.errors.filter((error) => error.includes("undefined Unit binding")),
+    [],
+  );
+
+  const missingThen = await run(goBindings({ omitThen: true }));
+  assert.ok(missingThen.errors.some((error) => error.includes("undefined Unit binding")));
+});
+
+test("reports an unused Unit binding when a Godog step definition matches no step", async () => {
+  const root = await fixture({
+    "behaviours/example.feature": validFeature,
+    "unit/steps.go": goBindings({
+      extra: "\tctx.Given(`^an unused boundary$`, anUnusedBoundary)\n",
+    }),
+    "unit/driver.ts": "export const driver = {};",
+  });
+
+  const result = await validateCoverage({
+    project: "example",
+    corpusRoots: [path.join(root, "behaviours")],
+    adapter: "unit",
+    bindingRoots: [path.join(root, "unit")],
+    driver: path.join(root, "unit/driver.ts"),
+  });
+
+  assert.ok(result.errors.some((error) => error.includes("unused Unit binding")));
+});
+
+test("scopes duplicate Godog bindings to explicit feature literals", async () => {
+  const feature = (name, action) => `Feature: ${name}
+
+  Scenario: ${name} works
+    Given shared setup
+    When ${action}
+    Then ${name.toLowerCase()} is observed
+`;
+  const root = await fixture({
+    "specs/alpha.feature": feature("Alpha", "alpha runs"),
+    "specs/beta.feature": feature("Beta", "beta runs"),
+    "unit/alpha_steps.go": `package steps
+
+const featurePath = "specs/alpha.feature"
+
+func InitializeAlpha(ctx *godog.ScenarioContext) {
+\tctx.Given(\`^shared setup$\`, sharedSetup)
+\tctx.When(\`^alpha runs$\`, alphaRuns)
+\tctx.Then(\`^alpha is observed$\`, alphaIsObserved)
+}
+`,
+    "unit/beta_steps.go": `package steps
+
+const featurePath = "specs/beta.feature"
+
+func InitializeBeta(ctx *godog.ScenarioContext) {
+\tctx.Given(\`^shared setup$\`, sharedSetup)
+\tctx.When(\`^beta runs$\`, betaRuns)
+\tctx.Then(\`^beta is observed$\`, betaIsObserved)
+}
+`,
+    "unit/driver.ts": "export const driver = {};",
+  });
+
+  const result = await validateCoverage({
+    project: "example",
+    corpusRoots: [path.join(root, "specs")],
+    adapter: "unit",
+    bindingRoots: [path.join(root, "unit")],
+    driver: path.join(root, "unit/driver.ts"),
+  });
+
+  // `shared setup` is registered twice. Without the feature-literal scan each registration would
+  // match both features and report an ambiguous binding; the scan confines each file to its own.
+  assert.deepEqual(result.errors, []);
 });
 
 test("scopes duplicate F# TickSpec bindings to explicit feature literals", async () => {
