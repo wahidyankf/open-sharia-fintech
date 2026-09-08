@@ -18,7 +18,7 @@ func envOf(pairs map[string]string) config.Lookup {
 
 // Scenario: The default port applies when nothing is set
 func TestDefaultPortAppliesWhenNothingIsSet(t *testing.T) {
-	got, err := config.ResolvePort("", envOf(map[string]string{}))
+	got, err := config.ResolvePort("", envOf(map[string]string{}), "ISLAMIC_BE_PORT")
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
@@ -29,7 +29,7 @@ func TestDefaultPortAppliesWhenNothingIsSet(t *testing.T) {
 
 // Scenario: The prefixed variable overrides the default
 func TestPrefixedVariableOverridesTheDefault(t *testing.T) {
-	got, err := config.ResolvePort("", envOf(map[string]string{"ISLAMIC_BE_PORT": "9402"}))
+	got, err := config.ResolvePort("", envOf(map[string]string{"ISLAMIC_BE_PORT": "9402"}), "ISLAMIC_BE_PORT")
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
@@ -40,7 +40,7 @@ func TestPrefixedVariableOverridesTheDefault(t *testing.T) {
 
 // Scenario: The flag overrides the prefixed variable
 func TestFlagOverridesThePrefixedVariable(t *testing.T) {
-	got, err := config.ResolvePort("9500", envOf(map[string]string{"ISLAMIC_BE_PORT": "9402"}))
+	got, err := config.ResolvePort("9500", envOf(map[string]string{"ISLAMIC_BE_PORT": "9402"}), "ISLAMIC_BE_PORT")
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
@@ -51,7 +51,7 @@ func TestFlagOverridesThePrefixedVariable(t *testing.T) {
 
 // Scenario: A malformed port fails at startup
 func TestMalformedPortFailsAtStartup(t *testing.T) {
-	got, err := config.ResolvePort("", envOf(map[string]string{"ISLAMIC_BE_PORT": "not-a-port"}))
+	got, err := config.ResolvePort("", envOf(map[string]string{"ISLAMIC_BE_PORT": "not-a-port"}), "ISLAMIC_BE_PORT")
 	if err == nil {
 		t.Fatalf("expected an error, got port %d", got)
 	}
@@ -67,7 +67,7 @@ func TestMalformedPortFailsAtStartup(t *testing.T) {
 
 // Scenario: A bare PORT variable is ignored
 func TestBarePortVariableIsIgnored(t *testing.T) {
-	got, err := config.ResolvePort("", envOf(map[string]string{"PORT": "9999"}))
+	got, err := config.ResolvePort("", envOf(map[string]string{"PORT": "9999"}), "ISLAMIC_BE_PORT")
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
@@ -80,7 +80,7 @@ func TestBarePortVariableIsIgnored(t *testing.T) {
 // developer-facing surface, not a user journey -- but silently defaulting on a
 // typo'd --port would be the same defect the env case forbids.
 func TestMalformedFlagFailsAtStartup(t *testing.T) {
-	_, err := config.ResolvePort("not-a-port", envOf(map[string]string{}))
+	_, err := config.ResolvePort("not-a-port", envOf(map[string]string{}), "ISLAMIC_BE_PORT")
 	if err == nil {
 		t.Fatal("expected an error for a malformed --port flag")
 	}
@@ -92,7 +92,7 @@ func TestMalformedFlagFailsAtStartup(t *testing.T) {
 // Out-of-range values are not ports. 0 is reserved and >65535 is unrepresentable.
 func TestOutOfRangePortsAreRejected(t *testing.T) {
 	for _, raw := range []string{"0", "65536", "-1"} {
-		if _, err := config.ResolvePort("", envOf(map[string]string{"ISLAMIC_BE_PORT": raw})); err == nil {
+		if _, err := config.ResolvePort("", envOf(map[string]string{"ISLAMIC_BE_PORT": raw}), "ISLAMIC_BE_PORT"); err == nil {
 			t.Errorf("expected %q to be rejected", raw)
 		}
 	}

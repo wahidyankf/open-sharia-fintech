@@ -450,3 +450,28 @@ apps/islamic-be`. Same source tree, same linter, same version; the gate passes a
   "outside the manifest" must be checked per file, not assumed either way.
 - **Disposition**: _pending Phase 7_ — the multi-repo parity workflow already states the paired-PR
   rule; the index-not-worktree detail and the per-file identity check are candidates to add there.
+
+### DU5/DU6: parallel agents sharing one scratchpad corrupted a posted review
+
+- **Observed**: the two DU5 leak reviews were launched concurrently, one per repository. Both wrote
+  their review body to the same generic filename in the shared session scratchpad. One overwrote the
+  other between write and read, and `ose-public#500` was briefly posted with `ose-private#169`'s
+  marker — wrong repository, wrong PR number, wrong head SHA.
+- **How it was caught**: the agent read back what it had posted instead of trusting the API call's
+  exit status, spotted the mismatch, rewrote the body to a uniquely-named file, verified the content
+  in the same step, and `PATCH`ed the review. An independent check afterwards confirmed each PR holds
+  exactly one review with its own correct coordinates and `pass` 0/0/0.
+- **Generalizes because**: the scratchpad is documented as session-isolated, which is true — but
+  "session" includes every concurrently running subagent. Isolation from _other sessions_ is not
+  isolation from _your own fan-out_. Any generic filename (`review-body.md`, `out.json`, `tmp.txt`)
+  is a shared mutable global the moment two agents run at once.
+- **Why it mattered here specifically**: the corrupted artefact was a _merge precondition_. A leak
+  review carrying the wrong `head_sha` is not merely untidy — it is evidence for a commit nobody
+  reviewed, and the merge protocol would have accepted it if the marker had happened to name the
+  right head. Read-back verification is what separated "posted" from "posted correctly".
+- **This was an orchestration error, not an agent defect**: the two agents were told to work
+  concurrently and given no distinct working paths. Either sequence them, or hand each a
+  task-unique directory.
+- **Disposition**: _pending Phase 7_ — worth proposing that agent prompts which write intermediate
+  files require a task-unique filename, and that any agent posting to an external system verify by
+  reading back rather than by exit status.

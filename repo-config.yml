@@ -299,7 +299,7 @@ env-contract:
   # Each surface entry carries:
   #   root      — path relative to repo root
   #   kind      — "app" (active); "terraform"/"ansible" are forward-scaffold
-  #   lang      — "rust" or "typescript" (app kind only)
+  #   lang      — "rust", "typescript", "fsharp", or "go" (app kind only)
   #   allowlist — keys exempt from drift detection (framework-injected, test-only, etc.)
   surfaces:
     - root: apps/organiclever-be
@@ -330,6 +330,15 @@ env-contract:
         # Tier-selection control var (which .env.<tier> file to load), not an
         # app config value — same treatment as PORT/HOSTNAME for the TS apps.
         - APP_ENV
+
+    - root: apps/islamic-be
+      kind: app
+      lang: go
+      allowlist: []
+      # No allowlist entries. ISLAMIC_BE_PORT is genuinely read -- cmd/islamic-be
+      # passes it beside os.LookupEnv at the composition root -- so the scanner
+      # sees it and no exemption is needed. APP_ENV is not listed because this
+      # service does not consult a tier-selection variable.
 
     - root: apps/ose-www
       kind: app

@@ -95,6 +95,8 @@ Flat structure - all apps at the same level, no subdirectories.
 - `organiclever-app-web-e2e` - Playwright FE E2E tests for organiclever-app-web
 - `organiclever-be` - OrganicLever F#/Giraffe/ASP.NET REST API backend (port 8202)
 - `organiclever-be-e2e` - Playwright BE E2E tests for organiclever-be
+- `islamic-be` - Islamic tools Go/Gin REST API backend (port 8402)
+- `islamic-be-e2e` - Playwright BE E2E tests for islamic-be
 
 ### App Structure (Next.js Application — ose-www)
 

@@ -1,0 +1,50 @@
+DU6 — `lang: go` env-contract validation, proven on the real repository
+========================================================================
+Registered in repo-config.yml with NO allowlist entries:
+
+    - root: apps/islamic-be
+      kind: app
+      lang: go
+      allowlist: []
+
+1. The gate passes
+------------------
+$ nx run rhino-cli:env:validation
+env validate: no drift detected across all surfaces; env-injection manifest consistent
+NX   Successfully ran target env:validation for project rhino-cli
+
+2. The gate is not vacuous — mutation on the real tree
+------------------------------------------------------
+Moving ISLAMIC_BE_PORT back out of the composition root and into a const, i.e. reverting
+cmd/islamic-be/main.go to
+
+    const portVar = "ISLAMIC_BE_PORT"
+    port, err := config.ResolvePort(*portFlag, os.LookupEnv, portVar)
+
+$ rhino-cli env validate
+DRIFT  apps/islamic-be  declared-but-unread  ISLAMIC_BE_PORT
+Error: env validate: 1 finding(s); fix the divergent keys/manifest entries listed above
+
+Restoring the literal at the call site:
+$ rhino-cli env validate
+env validate: no drift detected across all surfaces; env-injection manifest consistent
+
+=> The scanner really is reading this app's source, and the third regex added in DU5 is what
+   makes ISLAMIC_BE_PORT visible. No allowlist entry was needed or used.
+
+3. Coverage held across the signature change
+--------------------------------------------
+ResolvePort gained a `variable string` parameter; the pure resolver no longer hardcodes the app's
+env var name (mirroring ose-be's PortResolver, which is passed "OSE_BE_PORT" at its composition
+root).
+
+ok  .../internal/bdd     coverage: [no statements]
+ok  .../internal/config  coverage: 100.0% of statements
+ok  .../internal/health  coverage: 100.0% of statements
+ok  .../internal/router  coverage: 100.0% of statements
+
+4. Phase 6 gate
+---------------
+nx run-many -t test:quick -p islamic-be islamic-be-e2e islamic-contracts  -> Successfully ran
+markdownlint-cli2 (9 changed/plan markdown files)                         -> 0 error(s)
+stray .env files                                                          -> none; only .env.example

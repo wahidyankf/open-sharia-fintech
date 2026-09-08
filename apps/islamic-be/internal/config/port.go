@@ -13,28 +13,30 @@ import (
 // variable supplies one.
 const DefaultPort = 8402
 
-// PortVariable is the only environment variable consulted for the port. A bare
-// PORT is deliberately ignored: one exported variable must not be able to
-// retarget every app in the monorepo at once.
-const PortVariable = "ISLAMIC_BE_PORT"
-
 // Lookup reports the value of an environment variable and whether it was set.
 // It has the same shape as os.LookupEnv so main can pass that directly.
 type Lookup func(key string) (string, bool)
 
-// ResolvePort applies the resolution order flag -> ISLAMIC_BE_PORT -> default.
+// ResolvePort applies the resolution order flag -> variable -> default.
+//
+// The caller names the variable rather than this package hardcoding it: the
+// composition root already decides which environment the service reads, and
+// keeping the name there is what lets the repo's env-contract scanner see the
+// key beside the reader it is passed with. A bare PORT is never consulted --
+// callers pass a prefixed name -- so one exported variable cannot retarget
+// every app in the monorepo at once.
 //
 // A malformed value from either source is an error, never a fall back to the
 // default: a typo'd port that silently starts the service on 8402 is harder to
 // diagnose than a refusal to start. On error the returned port is 0, which is
 // not a usable port, so a caller that ignores the error still cannot listen.
-func ResolvePort(flagValue string, lookup Lookup) (int, error) {
+func ResolvePort(flagValue string, lookup Lookup, variable string) (int, error) {
 	if flagValue != "" {
 		return parsePort(flagValue, "--port")
 	}
 
-	if raw, ok := lookup(PortVariable); ok && raw != "" {
-		return parsePort(raw, PortVariable)
+	if raw, ok := lookup(variable); ok && raw != "" {
+		return parsePort(raw, variable)
 	}
 
 	return DefaultPort, nil

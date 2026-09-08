@@ -115,7 +115,7 @@ func (s *state) thePortFlagIsSuppliedWith(value string) error {
 }
 
 func (s *state) theServiceResolvesItsListenerPort() error {
-	s.resolved, s.resolveErr = config.ResolvePort(s.portArg, s.lookup)
+	s.resolved, s.resolveErr = config.ResolvePort(s.portArg, s.lookup, "ISLAMIC_BE_PORT")
 	s.resolveDone = true
 	return nil
 }
