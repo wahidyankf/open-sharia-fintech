@@ -1,0 +1,36 @@
+DU2-PP-115 — the Java quality gate job must report skipped on PR #493
+Captured: 2026-09-08T09:36:26Z
+
+PR:   https://github.com/wahidyankf/ose-public/pull/493
+Head: 8e4210b71f7a19aff876649bcf90d4fa62b0f023
+Base: 4586e277e2597bfbe8f9ce2027a8adf1af54ca89 (main)
+Run:  https://github.com/wahidyankf/ose-public/actions/runs/34209169469
+
+===== gh api .../jobs  (name / status / conclusion) =====
+Specs structure validation (all affected)	completed	success
+Detect affected languages	completed	success
+Build rhino-cli (gate profile)	completed	success
+.NET quality gate	in_progress	null
+TypeScript quality gate	in_progress	null
+Flutter quality gate	completed	skipped
+Java quality gate	completed	skipped
+Auto-format affected (lint-staged)	in_progress	null
+Enumerate registry CI gate groups	completed	success
+formatting-verify	in_progress	null
+governance	in_progress	null
+markdown	in_progress	null
+harness	completed	success
+shell-docker-actions	in_progress	null
+JOBS_TERMINAL_EXIT=0
+
+Reading. 'Java quality gate  completed  skipped' is the assertion this checkbox exists to
+make. It is taken from the API's own conclusion field rather than from the checks list,
+because 'skipping' in the checks list and 'skipped' as a job conclusion are different
+strings and only the latter is the job's terminal state.
+
+Why skipped is the correct outcome. The detect job defaults has-java=false and sets it true
+only when an affected nx project carries the lang:java tag. No project does yet — DU3 adds
+the first one. A job that RAN here would mean the detection is wrong, so this is a negative
+assertion with a real failure mode, not a formality. Detect itself concluded 'success',
+which rules out the fail-safe fallback path (that path sets every has-* to true and would
+have made this job run).

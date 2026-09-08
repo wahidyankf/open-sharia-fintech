@@ -62,7 +62,7 @@ test at scripts/behaviour-coverage.test.mjs:268:1
   
     assert.ok(bindings.every(({ keywordSensitive }) => keywordSensitive === true))
   
-      at TestContext.<anonymous> (file:///Users/wkf/ose-projects/ose-public/worktrees/lms-init/scripts/behaviour-coverage.test.mjs:286:10)
+      at TestContext.<anonymous> (file://<public-worktree>/scripts/behaviour-coverage.test.mjs:286:10)
       at Test.runInAsyncScope (node:async_hooks:227:14)
       at Test.run (node:internal/test_runner/test:1306:25)
       at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
@@ -83,18 +83,18 @@ test at scripts/behaviour-coverage.test.mjs:290:1
   + actual - expected
   
   + [
-  +   '/var/folders/fr/jg3jv_4d39b48cyqlqz18mgr0000gn/T/ose-behaviour-coverage-Xw20ae/behaviours/example.feature: A covered behaviour / a configured subject: undefined Unit binding.',
-  +   '/var/folders/fr/jg3jv_4d39b48cyqlqz18mgr0000gn/T/ose-behaviour-coverage-Xw20ae/behaviours/example.feature: A covered behaviour / independent evidence is observed: undefined Unit binding.',
-  +   '/var/folders/fr/jg3jv_4d39b48cyqlqz18mgr0000gn/T/ose-behaviour-coverage-Xw20ae/behaviours/example.feature: A covered behaviour / the subject is exercised: undefined Unit binding.'
+  +   '<tmpdir>/ose-behaviour-coverage-Xw20ae/behaviours/example.feature: A covered behaviour / a configured subject: undefined Unit binding.',
+  +   '<tmpdir>/ose-behaviour-coverage-Xw20ae/behaviours/example.feature: A covered behaviour / independent evidence is observed: undefined Unit binding.',
+  +   '<tmpdir>/ose-behaviour-coverage-Xw20ae/behaviours/example.feature: A covered behaviour / the subject is exercised: undefined Unit binding.'
   + ]
   - []
   
-      at TestContext.<anonymous> (file:///Users/wkf/ose-projects/ose-public/worktrees/lms-init/scripts/behaviour-coverage.test.mjs:310:10)
+      at TestContext.<anonymous> (file://<public-worktree>/scripts/behaviour-coverage.test.mjs:310:10)
       at async Test.run (node:internal/test_runner/test:1313:7)
       at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
     generatedMessage: true,
     code: 'ERR_ASSERTION',
-    actual: [ '/var/folders/fr/jg3jv_4d39b48cyqlqz18mgr0000gn/T/ose-behaviour-coverage-Xw20ae/behaviours/example.feature: A covered behaviour / a configured subject: undefined Unit binding.', '/var/folders/fr/jg3jv_4d39b48cyqlqz18mgr0000gn/T/ose-behaviour-coverage-Xw20ae/behaviours/example.feature: A covered behaviour / independent evidence is observed: undefined Unit binding.', '/var/folders/fr/jg3jv_4d39b48cyqlqz18mgr0000gn/T/ose-behaviour-coverage-Xw20ae/behaviours/example.feature: A covered behaviour / the subject is exercised: undefined Unit binding.' ],
+    actual: [ '<tmpdir>/ose-behaviour-coverage-Xw20ae/behaviours/example.feature: A covered behaviour / a configured subject: undefined Unit binding.', '<tmpdir>/ose-behaviour-coverage-Xw20ae/behaviours/example.feature: A covered behaviour / independent evidence is observed: undefined Unit binding.', '<tmpdir>/ose-behaviour-coverage-Xw20ae/behaviours/example.feature: A covered behaviour / the subject is exercised: undefined Unit binding.' ],
     expected: [],
     operator: 'deepStrictEqual',
     diff: 'simple'
@@ -106,7 +106,7 @@ test at scripts/behaviour-coverage.test.mjs:319:1
   
     assert.ok(result.errors.some((error) => error.includes("unused Unit binding")))
   
-      at TestContext.<anonymous> (file:///Users/wkf/ose-projects/ose-public/worktrees/lms-init/scripts/behaviour-coverage.test.mjs:334:10)
+      at TestContext.<anonymous> (file://<public-worktree>/scripts/behaviour-coverage.test.mjs:334:10)
       at async Test.run (node:internal/test_runner/test:1313:7)
       at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
     generatedMessage: true,
@@ -117,3 +117,11 @@ test at scripts/behaviour-coverage.test.mjs:319:1
     diff: 'simple'
   }
 TERMINAL_EXIT=1
+
+Host-path sanitization applied at DU2-PP-116, after the current-head pr-leak-review on PR #493
+reported seven category-3 findings in this file. Two substitutions, using the placeholder tokens
+the other evidence files in this directory already use: the absolute worktree root became
+<public-worktree>, and the macOS per-user temp root (the two-hash form under var-folders) became
+<tmpdir>. Nothing else was altered; the run's content, ordering, and TERMINAL_EXIT=1 are exactly
+as captured. Re-scanned after substitution against the four host-path families the sanitizer
+covers (user-home, linux-home, var-folders, private-tmp): zero matches.

@@ -303,40 +303,40 @@ locate the private manifest, exercising it a second time before DU1 depends on i
       deviation note. PASS. -->
 - [x] [AI] `rtk npm run doctor` exits 0 in both worktrees.
       <!-- Implementation notes (P0-GATE-018): satisfied by P0-004 and P0-005. Public run reported
-                                                                                  `Summary: 15/16 tools OK, 1 warning, 0 missing` and `Nothing to fix`, exit 0; the single
-                                                                                  warning is the `volta.npm` pin divergence root-caused in `learnings.md` entry 4, not a missing
-                                                                                  tool. Private run reported `Summary: 16/16 tools OK, 0 warning, 0 missing`, exit 0. Both
-                                                                                  transcripts are saved sanitized at `evidence/phase-0-doctor-public.txt` and
-                                                                                  `evidence/phase-0-doctor-private.txt`. PASS. -->
+                                                                                          `Summary: 15/16 tools OK, 1 warning, 0 missing` and `Nothing to fix`, exit 0; the single
+                                                                                          warning is the `volta.npm` pin divergence root-caused in `learnings.md` entry 4, not a missing
+                                                                                          tool. Private run reported `Summary: 16/16 tools OK, 0 warning, 0 missing`, exit 0. Both
+                                                                                          transcripts are saved sanitized at `evidence/phase-0-doctor-public.txt` and
+                                                                                          `evidence/phase-0-doctor-private.txt`. PASS. -->
 - [x] [AI] Both baseline captures exit 0 and are saved under `evidence/`.
       <!-- Implementation notes (P0-GATE-019): satisfied by P0-006 and P0-007. Public baseline
-                                                                                  ended `Successfully ran targets lint, test:quick for 25 projects and 10 tasks they depend on`,
-                                                                                  exit 0, saved at `evidence/phase-0-baseline-public.txt`. Private baseline ended
-                                                                                  `Successfully ran targets lint, test:quick for 3 projects and 1 task they depend on`, exit 0,
-                                                                                  saved at `evidence/phase-0-baseline-private.txt`. Both captures were passed through the
-                                                                                  host-path sanitizer before landing, so neither contains a machine-specific absolute path.
-                                                                                  No preexisting failure had to be resolved: both baselines were green on first successful run.
-                                                                                  PASS. -->
+                                                                                          ended `Successfully ran targets lint, test:quick for 25 projects and 10 tasks they depend on`,
+                                                                                          exit 0, saved at `evidence/phase-0-baseline-public.txt`. Private baseline ended
+                                                                                          `Successfully ran targets lint, test:quick for 3 projects and 1 task they depend on`, exit 0,
+                                                                                          saved at `evidence/phase-0-baseline-private.txt`. Both captures were passed through the
+                                                                                          host-path sanitizer before landing, so neither contains a machine-specific absolute path.
+                                                                                          No preexisting failure had to be resolved: both baselines were green on first successful run.
+                                                                                          PASS. -->
 - [x] [AI] The two `parity-manifest.sha256` files are byte-identical.
       <!-- Implementation notes (P0-GATE-020): re-verified at gate time rather than trusted from
-                                                                                  P0-016. `rtk diff -u` between the public and private manifests produced no output, both files
-                                                                                  carry 108 entries, and both hash to
-                                                                                  `86ba21bfa9189164fdd1323d99663c49d5b0d9c5344e1112f24282397167959b`. Byte-identity confirmed
-                                                                                  on the exact heads both worktrees sit on. PASS. -->
+                                                                                          P0-016. `rtk diff -u` between the public and private manifests produced no output, both files
+                                                                                          carry 108 entries, and both hash to
+                                                                                          `86ba21bfa9189164fdd1323d99663c49d5b0d9c5344e1112f24282397167959b`. Byte-identity confirmed
+                                                                                          on the exact heads both worktrees sit on. PASS. -->
 - [x] [AI] `evidence/phase-0-versions.md` records a resolved value for every row of
       `tech-docs.md` §3, and any divergence from the authored values has been reported.
       <!-- Implementation notes (P0-GATE-021): `tech-docs.md` §3 carries nine rows — Java LTS,
-                                                                                  Spring Boot, Gradle, Spotless Gradle plugin, google-java-format, Cucumber-JVM, JaCoCo, OpenAPI
-                                                                                  Generator, and `@openapitools/openapi-generator-cli`. All nine appear in
-                                                                                  `evidence/phase-0-versions.md` with an independently re-resolved value and the exact source
-                                                                                  used, and every one carries Divergence `none`: the authored pins all still hold on 2026-09-08.
-                                                                                  Two rows beyond §3 were added because the plan needs them and they were never authored — the
-                                                                                  exact Temurin patch `jdk-25.0.4.1+1` and the Gradle 9.7.1 distribution SHA-256 — both marked
-                                                                                  `new value` rather than silently folded in. Nothing diverged, so nothing had to be escalated;
-                                                                                  the one divergence found anywhere in Phase 0 was the cross-repo `volta.npm` pin, which is not
-                                                                                  a §3 row and is recorded as `learnings.md` entry 4 for Phase 5 triage. The evidence table was
-                                                                                  also repaired at gate time: it had been split into two fragments by a stray blank line, so the
-                                                                                  last six rows rendered as a headerless table. PASS. -->
+                                                                                          Spring Boot, Gradle, Spotless Gradle plugin, google-java-format, Cucumber-JVM, JaCoCo, OpenAPI
+                                                                                          Generator, and `@openapitools/openapi-generator-cli`. All nine appear in
+                                                                                          `evidence/phase-0-versions.md` with an independently re-resolved value and the exact source
+                                                                                          used, and every one carries Divergence `none`: the authored pins all still hold on 2026-09-08.
+                                                                                          Two rows beyond §3 were added because the plan needs them and they were never authored — the
+                                                                                          exact Temurin patch `jdk-25.0.4.1+1` and the Gradle 9.7.1 distribution SHA-256 — both marked
+                                                                                          `new value` rather than silently folded in. Nothing diverged, so nothing had to be escalated;
+                                                                                          the one divergence found anywhere in Phase 0 was the cross-repo `volta.npm` pin, which is not
+                                                                                          a §3 row and is recorded as `learnings.md` entry 4 for Phase 5 triage. The evidence table was
+                                                                                          also repaired at gate time: it had been split into two fragments by a stray blank line, so the
+                                                                                          last six rows rendered as a headerless table. PASS. -->
 
 > **Pause Safety**: nothing has been modified in either repository beyond untracked plan evidence.
 > Safe to stop. To resume: re-run the two baseline commands and confirm both still exit 0.
@@ -362,17 +362,17 @@ Delivers one pull request per repository, byte-identical in `apps/rhino-cli`.
       acceptance: it fails reporting `undefined Unit binding` for the new steps. Save the output to
       `evidence/du1-red-coverage.txt`.
       <!-- Implementation notes (DU1-022): both scenarios added to
-                                                                                  `specs/apps/rhino/cli/behaviours/system/doctor.feature` verbatim from `prd.md`, placed
-                                                                                  immediately after "A repo-config-declared tool is skipped from the check" as specified.
-                                                                                  `rhino-cli:test:coverage:behaviour` exited 1 as required, reporting `undefined Unit binding`
-                                                                                  for both steps of the first scenario. Two observations recorded rather than glossed: (1) the
-                                                                                  validator also reports `undefined E2E binding` and `undefined Integration binding` for the
-                                                                                  same two steps, because `apps/rhino-cli/behaviour-coverage.json` declares all three adapters
-                                                                                  and neither new scenario is tagged exempt — so DU1-027 must bind in unit, integration, and
-                                                                                  e2e, not unit alone; (2) the second scenario produced no findings at all, confirming the
-                                                                                  `prd.md` note that its three steps already resolve against the existing "An unknown selected
-                                                                                  tool is rejected before environment checks" bindings and must be reused, never re-declared.
-                                                                                  Output saved to `evidence/du1-red-coverage.txt`, host-path sanitized before landing. -->
+                                                                                          `specs/apps/rhino/cli/behaviours/system/doctor.feature` verbatim from `prd.md`, placed
+                                                                                          immediately after "A repo-config-declared tool is skipped from the check" as specified.
+                                                                                          `rhino-cli:test:coverage:behaviour` exited 1 as required, reporting `undefined Unit binding`
+                                                                                          for both steps of the first scenario. Two observations recorded rather than glossed: (1) the
+                                                                                          validator also reports `undefined E2E binding` and `undefined Integration binding` for the
+                                                                                          same two steps, because `apps/rhino-cli/behaviour-coverage.json` declares all three adapters
+                                                                                          and neither new scenario is tagged exempt — so DU1-027 must bind in unit, integration, and
+                                                                                          e2e, not unit alone; (2) the second scenario produced no findings at all, confirming the
+                                                                                          `prd.md` note that its three steps already resolve against the existing "An unknown selected
+                                                                                          tool is rejected before environment checks" bindings and must be reused, never re-declared.
+                                                                                          Output saved to `evidence/du1-red-coverage.txt`, host-path sanitized before landing. -->
   - _Suggested executor: `specs-maker`_
 - [x] [AI] **RED (unit):** add failing unit cases to the RhinoCli unit test project. Discover the
       exact file list first with
@@ -383,26 +383,26 @@ Delivers one pull request per repository, byte-identical in `apps/rhino-cli`.
       `rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- run rhino-cli:test:unit`;
       acceptance: the new cases fail because `ExtraTools` does not exist yet.
       <!-- Implementation notes (DU1-023): discovery first, per the checkbox —
-                                                                                  `rtk grep -n "Doctor" apps/rhino-cli/tests/unit/*.fsproj` lists five Doctor compile units, and
-                                                                                  `rtk grep -rln doctorToolInventory` narrows the one that actually covers the inventory to
-                                                                                  `tests/unit/Steps/DoctorCoverageTests.fs`. One `[<Fact>]` was appended there covering all
-                                                                                  three required cases plus the no-op guarantee: a configured `extra-tools` entry joins the
-                                                                                  resolved inventory and is accepted by `parseDoctorToolName`; a name in neither inventory is
-                                                                                  still rejected, and a configured name is still rejected against an inventory that does not
-                                                                                  declare it; a probe whose version lands on stderr parses from stderr while the same probe
-                                                                                  reading stdout degrades to `Warning`; and `doctorToolInventoryFor RepoConfig.empty` equals the
-                                                                                  built-in list unchanged. The run failed with 19 `error FS` diagnostics, led by
-                                                                                  `The type 'DoctorExtraTool' is not defined in 'RhinoCli.Application.RepoConfig'` and
-                                                                                  `The record type ... DoctorConfig does not contain a label 'ExtraTools'` — the exact
-                                                                                  acceptance the checkbox demands. In F# a missing type is a compile error, so RED here is a
-                                                                                  build failure rather than a red assertion; that is the only shape this language can produce
-                                                                                  for a not-yet-existing record. Diagnostics saved to `evidence/du1-red-unit.txt`, host-path
-                                                                                  sanitized. Design pinned by this test for the GREEN steps: `DoctorExtraTool` carries
-                                                                                  `Name`/`Binary`/`VersionArgs`/`VersionStream`/`RequiredVersion`/`Install`, `VersionStream` is
-                                                                                  the two-case union `StdoutStream | StderrStream` rather than a raw string, and the new
-                                                                                  functions are `builtinDoctorToolInventory`, `doctorToolInventoryFor`, `extraToolDef`, and
-                                                                                  `buildToolDefsFor`, with `parseDoctorToolName` taking the resolved inventory as its first
-                                                                                  argument. -->
+                                                                                          `rtk grep -n "Doctor" apps/rhino-cli/tests/unit/*.fsproj` lists five Doctor compile units, and
+                                                                                          `rtk grep -rln doctorToolInventory` narrows the one that actually covers the inventory to
+                                                                                          `tests/unit/Steps/DoctorCoverageTests.fs`. One `[<Fact>]` was appended there covering all
+                                                                                          three required cases plus the no-op guarantee: a configured `extra-tools` entry joins the
+                                                                                          resolved inventory and is accepted by `parseDoctorToolName`; a name in neither inventory is
+                                                                                          still rejected, and a configured name is still rejected against an inventory that does not
+                                                                                          declare it; a probe whose version lands on stderr parses from stderr while the same probe
+                                                                                          reading stdout degrades to `Warning`; and `doctorToolInventoryFor RepoConfig.empty` equals the
+                                                                                          built-in list unchanged. The run failed with 19 `error FS` diagnostics, led by
+                                                                                          `The type 'DoctorExtraTool' is not defined in 'RhinoCli.Application.RepoConfig'` and
+                                                                                          `The record type ... DoctorConfig does not contain a label 'ExtraTools'` — the exact
+                                                                                          acceptance the checkbox demands. In F# a missing type is a compile error, so RED here is a
+                                                                                          build failure rather than a red assertion; that is the only shape this language can produce
+                                                                                          for a not-yet-existing record. Diagnostics saved to `evidence/du1-red-unit.txt`, host-path
+                                                                                          sanitized. Design pinned by this test for the GREEN steps: `DoctorExtraTool` carries
+                                                                                          `Name`/`Binary`/`VersionArgs`/`VersionStream`/`RequiredVersion`/`Install`, `VersionStream` is
+                                                                                          the two-case union `StdoutStream | StderrStream` rather than a raw string, and the new
+                                                                                          functions are `builtinDoctorToolInventory`, `doctorToolInventoryFor`, `extraToolDef`, and
+                                                                                          `buildToolDefsFor`, with `parseDoctorToolName` taking the resolved inventory as its first
+                                                                                          argument. -->
   - _Suggested executor: `swe-fsharp-dev`_
 - [x] [AI] **GREEN (config schema):** in
       `apps/rhino-cli/src/RhinoCli.Application/src/RepoConfig.fs`, add an `ExtraTools` field to the
@@ -412,23 +412,23 @@ Delivers one pull request per repository, byte-identical in `apps/rhino-cli`.
       Run `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- run rhino-cli:typecheck`;
       acceptance: exit code 0.
       <!-- Implementation notes (DU1-024): `RepoConfig.fs` gained two types ahead of
-                                                                                  `DoctorConfig` — `DoctorVersionStream` (`StdoutStream | StderrStream`) and `DoctorExtraTool`
-                                                                                  (`Name`, `Binary`, `VersionArgs`, `VersionStream`, `RequiredVersion`, `Install`) — plus an
-                                                                                  `ExtraTools: DoctorExtraTool list` field on `DoctorConfig`, defaulted to `[]` in both
-                                                                                  constructors: the `empty` literal and `toDoctorConfig`'s null branch. The YAML side gained
-                                                                                  `DoctorExtraToolDto` and an `ExtraTools: ResizeArray<DoctorExtraToolDto>` field on
-                                                                                  `DoctorConfigDto`; the hyphenated naming convention already in force maps `version-args`,
-                                                                                  `version-stream`, and `required-version` onto the PascalCase properties with no per-property
-                                                                                  attribute. Two deliberate design choices, recorded rather than left implicit: (1)
-                                                                                  `version-stream` is modelled as a two-case union parsed through the existing `lookupVariant`
-                                                                                  table rather than a raw string, so an unrecognized value degrades to `stdout` the same way
-                                                                                  every other enum-shaped key in this file degrades, instead of silently becoming a third
-                                                                                  stream; (2) `install` is a `Map<packageManager, argv>` where the argv's head is the command,
-                                                                                  which normalizes `tech-docs.md` §D-5's own example — that example writes the apt entry as a
-                                                                                  full argv (`["apt-get", "install", ...]`) but the brew entry without its leading `brew`, and
-                                                                                  only one of the two can be right. `rhino-cli:typecheck` reported `Build succeeded. 0
-                                                                                  Warning(s) 0 Error(s)` and NX reported `Successfully ran target typecheck`. The target
-                                                                                  compiles `src/**` only, so the still-unsatisfied unit test does not mask this result. -->
+                                                                                          `DoctorConfig` — `DoctorVersionStream` (`StdoutStream | StderrStream`) and `DoctorExtraTool`
+                                                                                          (`Name`, `Binary`, `VersionArgs`, `VersionStream`, `RequiredVersion`, `Install`) — plus an
+                                                                                          `ExtraTools: DoctorExtraTool list` field on `DoctorConfig`, defaulted to `[]` in both
+                                                                                          constructors: the `empty` literal and `toDoctorConfig`'s null branch. The YAML side gained
+                                                                                          `DoctorExtraToolDto` and an `ExtraTools: ResizeArray<DoctorExtraToolDto>` field on
+                                                                                          `DoctorConfigDto`; the hyphenated naming convention already in force maps `version-args`,
+                                                                                          `version-stream`, and `required-version` onto the PascalCase properties with no per-property
+                                                                                          attribute. Two deliberate design choices, recorded rather than left implicit: (1)
+                                                                                          `version-stream` is modelled as a two-case union parsed through the existing `lookupVariant`
+                                                                                          table rather than a raw string, so an unrecognized value degrades to `stdout` the same way
+                                                                                          every other enum-shaped key in this file degrades, instead of silently becoming a third
+                                                                                          stream; (2) `install` is a `Map<packageManager, argv>` where the argv's head is the command,
+                                                                                          which normalizes `tech-docs.md` §D-5's own example — that example writes the apt entry as a
+                                                                                          full argv (`["apt-get", "install", ...]`) but the brew entry without its leading `brew`, and
+                                                                                          only one of the two can be right. `rhino-cli:typecheck` reported `Build succeeded. 0
+                                                                                          Warning(s) 0 Error(s)` and NX reported `Successfully ran target typecheck`. The target
+                                                                                          compiles `src/**` only, so the still-unsatisfied unit test does not mask this result. -->
   - _Suggested executor: `swe-fsharp-dev`_
 - [x] [AI] **GREEN (inventory):** replace the module-level `doctorToolInventory` list in
       `RepoConfig.fs` with a `builtinDoctorToolInventory` list plus a
@@ -461,28 +461,28 @@ Delivers one pull request per repository, byte-identical in `apps/rhino-cli`.
       them after the built-ins so `selectToolDefs` (line 1767) filters and selects them unchanged.
       Rerun the unit target; acceptance: the stderr-parsing case passes.
       <!-- Implementation notes (DU1-026): one part of this checkbox was already true and is
-                                                                                  recorded rather than re-implemented. `ToolDef` already carried `UseStderr`, and `runOneDef`
-                                                                                  already selected `stderr` over `stdout` from it — the merged-stderr probe path did not need
-                                                                                  extending, and claiming to have added it would have been false. What was missing was the
-                                                                                  bridge from configuration to that existing capability, so this step added: `installManagerFor`
-                                                                                  (platform to package manager: `darwin`→`brew`, `linux`→`apt`, anything else none);
-                                                                                  `extraToolDef`, which turns one declaration into a `ToolDef` with `UseStderr` set from
-                                                                                  `version-stream`, `compareGte` as the comparator (so `required-version: "25"` accepts
-                                                                                  `25.0.4`), and an `InstallCmd` that resolves the platform's manager and returns no steps rather
-                                                                                  than throwing when that manager is undeclared; `parseFirstVersionToken`, one generic parser
-                                                                                  shared by all configured tools because `repo-config.yml` declares no parser — it extracts
-                                                                                  `25.0.4` from `openjdk version "25.0.4" 2026-07-15`; and `buildToolDefsFor config repoRoot`,
-                                                                                  which appends the configured defs after the built-ins so `selectToolDefs` filters them with no
-                                                                                  special case. `buildToolDefs repoRoot` is now a thin wrapper that loads its own config, so
-                                                                                  every existing caller is unchanged. `selectedToolDefs` was tightened to load `repo-config.yml`
-                                                                                  once instead of twice. Joint acceptance for DU1-025 and DU1-026: `rhino-cli:test:unit` exits 0
-                                                                                  with `Passed! - Failed: 0, Passed: 755` and `Unit line coverage: 7494/7565 (99.06%; required:
-                                                                                  99.00%)`. The first green run of that target had all 754 tests passing but coverage at 98.88%,
-                                                                                  because the YAML-to-record converter and two install branches were unreached; rather than
-                                                                                  lower the floor, three more assertions were added — a full `parse` round-trip over a
-                                                                                  three-entry `extra-tools` block (complete, sparse, and unrecognized-stream), both package
-                                                                                  managers plus the platform that has neither, and a declaration with no `install` map. That is
-                                                                                  the honest reading of a coverage floor: it found real untested code. -->
+                                                                                          recorded rather than re-implemented. `ToolDef` already carried `UseStderr`, and `runOneDef`
+                                                                                          already selected `stderr` over `stdout` from it — the merged-stderr probe path did not need
+                                                                                          extending, and claiming to have added it would have been false. What was missing was the
+                                                                                          bridge from configuration to that existing capability, so this step added: `installManagerFor`
+                                                                                          (platform to package manager: `darwin`→`brew`, `linux`→`apt`, anything else none);
+                                                                                          `extraToolDef`, which turns one declaration into a `ToolDef` with `UseStderr` set from
+                                                                                          `version-stream`, `compareGte` as the comparator (so `required-version: "25"` accepts
+                                                                                          `25.0.4`), and an `InstallCmd` that resolves the platform's manager and returns no steps rather
+                                                                                          than throwing when that manager is undeclared; `parseFirstVersionToken`, one generic parser
+                                                                                          shared by all configured tools because `repo-config.yml` declares no parser — it extracts
+                                                                                          `25.0.4` from `openjdk version "25.0.4" 2026-07-15`; and `buildToolDefsFor config repoRoot`,
+                                                                                          which appends the configured defs after the built-ins so `selectToolDefs` filters them with no
+                                                                                          special case. `buildToolDefs repoRoot` is now a thin wrapper that loads its own config, so
+                                                                                          every existing caller is unchanged. `selectedToolDefs` was tightened to load `repo-config.yml`
+                                                                                          once instead of twice. Joint acceptance for DU1-025 and DU1-026: `rhino-cli:test:unit` exits 0
+                                                                                          with `Passed! - Failed: 0, Passed: 755` and `Unit line coverage: 7494/7565 (99.06%; required:
+                                                                                          99.00%)`. The first green run of that target had all 754 tests passing but coverage at 98.88%,
+                                                                                          because the YAML-to-record converter and two install branches were unreached; rather than
+                                                                                          lower the floor, three more assertions were added — a full `parse` round-trip over a
+                                                                                          three-entry `extra-tools` block (complete, sparse, and unrecognized-stream), both package
+                                                                                          managers plus the platform that has neither, and a declaration with no `install` map. That is
+                                                                                          the honest reading of a coverage floor: it found real untested code. -->
   - _Suggested executor: `swe-fsharp-dev`_
 - [x] [AI] **GREEN (bindings):** bind the two new Gherkin scenarios. Reuse the existing bindings for
       steps already defined by the "unknown selected tool" scenario — declaring a second binding for
@@ -491,22 +491,22 @@ Delivers one pull request per repository, byte-identical in `apps/rhino-cli`.
       `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- run rhino-cli:test:coverage:behaviour`;
       acceptance: exit code 0 with no undefined, ambiguous, or unused bindings.
       <!-- Implementation notes (DU1-027): the checkbox says "bind the two new Gherkin scenarios",
-                                                                                  and DU1-022's RED run established that means all three adapters, not just Unit —
-                                                                                  `apps/rhino-cli/behaviour-coverage.json` declares unit, integration, and e2e, and neither new
-                                                                                  scenario is exemption-tagged. Two steps needed bindings; the second scenario's three steps were
-                                                                                  reused, never re-declared, exactly as `prd.md` warns. Unit: `DoctorToolCheckSteps.fs` gained a
-                                                                                  per-world `extraTools` field (threaded through `inventoryNames`/`inventory` as a parameter
-                                                                                  rather than held in module state, so one scenario's declaration cannot leak into the next), a
-                                                                                  Given that declares `java`, and a Then asserting the tool appears in both the report and the
-                                                                                  probe list; `DoctorToolCheckUnitTests.fs` gained a `[<Fact>]` per new scenario. Integration:
-                                                                                  the Given writes a real `repo-config.yml` with the full `extra-tools` block into the temp repo
-                                                                                  root, `exec()` now resolves the inventory from that file instead of using the built-in list,
-                                                                                  and `fakeRunner` gained a stderr table so `java` returns its banner on stderr with stdout
-                                                                                  empty — the shape that makes `version-stream` load-bearing rather than decorative. E2E: a
-                                                                                  `stubStderr` helper writes a `java` stub that prints to `>&2`, and the Given writes the same
-                                                                                  YAML into the fixture repo, so the published binary is what reads the config and probes the
-                                                                                  stub. `rhino-cli:test:coverage:behaviour` exits 0 — `57 features, 497 expanded scenarios,
-                                                                                  adapters: unit, integration, e2e` with no undefined, ambiguous, or unused binding. -->
+                                                                                          and DU1-022's RED run established that means all three adapters, not just Unit —
+                                                                                          `apps/rhino-cli/behaviour-coverage.json` declares unit, integration, and e2e, and neither new
+                                                                                          scenario is exemption-tagged. Two steps needed bindings; the second scenario's three steps were
+                                                                                          reused, never re-declared, exactly as `prd.md` warns. Unit: `DoctorToolCheckSteps.fs` gained a
+                                                                                          per-world `extraTools` field (threaded through `inventoryNames`/`inventory` as a parameter
+                                                                                          rather than held in module state, so one scenario's declaration cannot leak into the next), a
+                                                                                          Given that declares `java`, and a Then asserting the tool appears in both the report and the
+                                                                                          probe list; `DoctorToolCheckUnitTests.fs` gained a `[<Fact>]` per new scenario. Integration:
+                                                                                          the Given writes a real `repo-config.yml` with the full `extra-tools` block into the temp repo
+                                                                                          root, `exec()` now resolves the inventory from that file instead of using the built-in list,
+                                                                                          and `fakeRunner` gained a stderr table so `java` returns its banner on stderr with stdout
+                                                                                          empty — the shape that makes `version-stream` load-bearing rather than decorative. E2E: a
+                                                                                          `stubStderr` helper writes a `java` stub that prints to `>&2`, and the Given writes the same
+                                                                                          YAML into the fixture repo, so the published binary is what reads the config and probes the
+                                                                                          stub. `rhino-cli:test:coverage:behaviour` exits 0 — `57 features, 497 expanded scenarios,
+                                                                                          adapters: unit, integration, e2e` with no undefined, ambiguous, or unused binding. -->
   - _Suggested executor: `swe-fsharp-dev`_
 - [x] [AI] **GREEN (config key, both repos):** add the `doctor.extra-tools` key to `repo-config.yml`
       in **both** worktrees. In `ose-public` set it to an empty list for now — DU2 populates it. In
@@ -514,42 +514,42 @@ Delivers one pull request per repository, byte-identical in `apps/rhino-cli`.
       `rtk npm run validate:config` in both; acceptance: exit code 0 in both, and
       `rhino-cli repo-config validate` reports the canonical key set matches.
       <!-- Implementation notes (DU1-028): `ose-public`'s `doctor:` block gained
-                                                                                  `extra-tools: []` under a comment documenting every field and, explicitly, the two-sided
-                                                                                  rejection rule — a name in neither the built-in list nor this one is still rejected.
-                                                                                  `ose-private`'s `doctor:` was `{}` and is now a real block with the same key and comment, plus
-                                                                                  a sentence recording that the list is permanently empty there because that repository hosts no
-                                                                                  toolchain outside the built-ins. `apps/rhino-cli/scripts/rhino-bin.sh repo-config validate`
-                                                                                  exits 0 in both, each printing `repo-config.yml matches the canonical schema (key set + enums
-                                                                                  OK)`. Two observations recorded rather than glossed. First, the private validate passed while
-                                                                                  that worktree's F# still predates the `ExtraTools` field — the deserializer runs with
-                                                                                  `IgnoreUnmatchedProperties()`, so an unmodelled `doctor:` key is tolerated rather than
-                                                                                  rejected. That is pre-existing behaviour, not something this change introduced, but it means
-                                                                                  the "strict schema deserialization" wording is stricter than the doctor section actually is;
-                                                                                  it is re-validated after DU1-030 lands the sources and is dispositioned at DU1-RP-041.
-                                                                                  Second, `rtk npm run validate:config` is a different command from the one the acceptance
-                                                                                  sentence's second clause names: it runs `validate:claude && generate:bindings &&
-                                                                                  validate:opencode`, and touches no repo-config schema. It was run and its mutating
-                                                                                  `generate:bindings` step produced no mirror diff, so bindings are in sync — recorded here
-                                                                                  because the checkbox reads as though the two commands were the same check. -->
+                                                                                          `extra-tools: []` under a comment documenting every field and, explicitly, the two-sided
+                                                                                          rejection rule — a name in neither the built-in list nor this one is still rejected.
+                                                                                          `ose-private`'s `doctor:` was `{}` and is now a real block with the same key and comment, plus
+                                                                                          a sentence recording that the list is permanently empty there because that repository hosts no
+                                                                                          toolchain outside the built-ins. `apps/rhino-cli/scripts/rhino-bin.sh repo-config validate`
+                                                                                          exits 0 in both, each printing `repo-config.yml matches the canonical schema (key set + enums
+                                                                                          OK)`. Two observations recorded rather than glossed. First, the private validate passed while
+                                                                                          that worktree's F# still predates the `ExtraTools` field — the deserializer runs with
+                                                                                          `IgnoreUnmatchedProperties()`, so an unmodelled `doctor:` key is tolerated rather than
+                                                                                          rejected. That is pre-existing behaviour, not something this change introduced, but it means
+                                                                                          the "strict schema deserialization" wording is stricter than the doctor section actually is;
+                                                                                          it is re-validated after DU1-030 lands the sources and is dispositioned at DU1-RP-041.
+                                                                                          Second, `rtk npm run validate:config` is a different command from the one the acceptance
+                                                                                          sentence's second clause names: it runs `validate:claude && generate:bindings &&
+                                                                                          validate:opencode`, and touches no repo-config schema. It was run and its mutating
+                                                                                          `generate:bindings` step produced no mirror diff, so bindings are in sync — recorded here
+                                                                                          because the checkbox reads as though the two commands were the same check. -->
 - [x] [AI] **REFACTOR:** remove any now-duplicated inventory literal so exactly one built-in list
       exists per file, and confirm the two files still express the same list. Run
       `rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- run rhino-cli:test:quick`;
       acceptance: exit code 0, including the 99% line-coverage floor, with behaviour and diagnostics
       unchanged.
       <!-- Implementation notes (DU1-029): after DU1-025 `src/` holds exactly one 16-name inventory
-                                                                                  literal, at `RepoConfig.fs`, with `Doctor.fs` re-exporting it — so "exactly one built-in list
-                                                                                  per file" is satisfied with one to spare. `rtk grep -rn '"cargo-llvm-cov"' src/ tests/` now
-                                                                                  returns two hits: that one literal, and the unrelated `ToolDef` record whose `Name` field
-                                                                                  happens to carry the same string. The unit adapter's fixture list was a third copy and was the
-                                                                                  real duplication risk, since it could silently drift from the shipped inventory; it now reads
-                                                                                  `builtinDoctorToolInventory @ extra`, so it cannot. "Confirm the two files still express the
-                                                                                  same list" is met structurally rather than by assertion: there is a single binding, so
-                                                                                  divergence is not expressible, and a test asserting `Doctor.builtinDoctorToolInventory =
-                                                                                  RepoConfig.builtinDoctorToolInventory` would be a tautology — the kind of always-green
-                                                                                  assertion that reads like coverage and proves nothing. The genuine drift guard that does exist
-                                                                                  is the pre-existing `Assert.Equal(builtinDoctorToolInventory.Length, inventory.Length)`, which
-                                                                                  fails if a name is added without a matching `ToolDef`; it still passes. `rhino-cli:test:unit`
-                                                                                  exits 0 at 99.06% line coverage with behaviour and diagnostics unchanged. -->
+                                                                                          literal, at `RepoConfig.fs`, with `Doctor.fs` re-exporting it — so "exactly one built-in list
+                                                                                          per file" is satisfied with one to spare. `rtk grep -rn '"cargo-llvm-cov"' src/ tests/` now
+                                                                                          returns two hits: that one literal, and the unrelated `ToolDef` record whose `Name` field
+                                                                                          happens to carry the same string. The unit adapter's fixture list was a third copy and was the
+                                                                                          real duplication risk, since it could silently drift from the shipped inventory; it now reads
+                                                                                          `builtinDoctorToolInventory @ extra`, so it cannot. "Confirm the two files still express the
+                                                                                          same list" is met structurally rather than by assertion: there is a single binding, so
+                                                                                          divergence is not expressible, and a test asserting `Doctor.builtinDoctorToolInventory =
+                                                                                          RepoConfig.builtinDoctorToolInventory` would be a tautology — the kind of always-green
+                                                                                          assertion that reads like coverage and proves nothing. The genuine drift guard that does exist
+                                                                                          is the pre-existing `Assert.Equal(builtinDoctorToolInventory.Length, inventory.Length)`, which
+                                                                                          fails if a name is added without a matching `ToolDef`; it still passes. `rhino-cli:test:unit`
+                                                                                          exits 0 at 99.06% line coverage with behaviour and diagnostics unchanged. -->
   - _Suggested executor: `swe-fsharp-dev`_
 - **Proof:** `evidence/du1-red-coverage.txt` showing the initial failure, plus a passing
   `rhino-cli:test:quick` in both repositories.
@@ -561,55 +561,55 @@ Delivers one pull request per repository, byte-identical in `apps/rhino-cli`.
       `rtk diff -ru apps/rhino-cli/src "$PRIVATE_WT/apps/rhino-cli/src"`.
       Acceptance: the diff is empty.
       <!-- Implementation notes (DU1-030): ten tracked files carried the change and all ten were
-                                                                                  copied: `src/RhinoCli.Application/src/Doctor.fs`, `src/RhinoCli.Application/src/RepoConfig.fs`,
-                                                                                  `src/RhinoCli.Cli/src/Dispatch.fs`, and the seven adapter files under `tests/`. The
-                                                                                  acceptance command as written cannot pass and was replaced rather than worked around: both
-                                                                                  worktrees have been built, so `apps/rhino-cli/src/**` holds gitignored `bin/` and `obj/`
-                                                                                  output — assemblies, `.pdb`s, NuGet caches, and absolute-path `FileListAbsolute.txt` files
-                                                                                  that differ by construction and can never be byte-identical across two checkouts. A recursive
-                                                                                  `diff` over `src/` reports roughly a hundred such files and would report them forever. The
-                                                                                  check that actually expresses byte-identity is over the *tracked* set, so verification enumerates
-                                                                                  `git ls-files apps/rhino-cli` (171 files) and `cmp -s` each one against its private
-                                                                                  counterpart. Result: 0 differences across all 171, and the two tracked-file *sets* are
-                                                                                  identical too (`diff` of the two `git ls-files` outputs is empty), which the recursive-diff
-                                                                                  form would not have established. Note that the checkbox also scopes only `src/`, while seven
-                                                                                  of the ten changed files live under `tests/`; the tracked-set comparison covers both. One
-                                                                                  intentional non-parity file is worth naming: `repo-config.yml` differs between the repos by
-                                                                                  design and is outside `apps/rhino-cli`, so it is neither copied nor compared here. -->
+                                                                                          copied: `src/RhinoCli.Application/src/Doctor.fs`, `src/RhinoCli.Application/src/RepoConfig.fs`,
+                                                                                          `src/RhinoCli.Cli/src/Dispatch.fs`, and the seven adapter files under `tests/`. The
+                                                                                          acceptance command as written cannot pass and was replaced rather than worked around: both
+                                                                                          worktrees have been built, so `apps/rhino-cli/src/**` holds gitignored `bin/` and `obj/`
+                                                                                          output — assemblies, `.pdb`s, NuGet caches, and absolute-path `FileListAbsolute.txt` files
+                                                                                          that differ by construction and can never be byte-identical across two checkouts. A recursive
+                                                                                          `diff` over `src/` reports roughly a hundred such files and would report them forever. The
+                                                                                          check that actually expresses byte-identity is over the *tracked* set, so verification enumerates
+                                                                                          `git ls-files apps/rhino-cli` (171 files) and `cmp -s` each one against its private
+                                                                                          counterpart. Result: 0 differences across all 171, and the two tracked-file *sets* are
+                                                                                          identical too (`diff` of the two `git ls-files` outputs is empty), which the recursive-diff
+                                                                                          form would not have established. Note that the checkbox also scopes only `src/`, while seven
+                                                                                          of the ten changed files live under `tests/`; the tracked-set comparison covers both. One
+                                                                                          intentional non-parity file is worth naming: `repo-config.yml` differs between the repos by
+                                                                                          design and is outside `apps/rhino-cli`, so it is neither copied nor compared here. -->
 - [x] [AI] Regenerate the parity manifest in both worktrees using the repository's own command —
       discover it first with
       `rtk grep -n "parity" apps/rhino-cli/project.json` and use the target it declares rather than
       hand-editing hashes. Acceptance: `apps/rhino-cli/parity-manifest.sha256` changes in both.
       <!-- Implementation notes (DU1-031): the prescribed discovery command is a false zero —
-                                                                                  `rtk grep -n "parity" apps/rhino-cli/project.json` returns nothing, because `project.json`
-                                                                                  declares no parity target. The command was found instead in two places that do state it:
-                                                                                  `repo-config.yml` registers gate `id: parity-manifest` with `command: parity manifest
-                                                                                  validate` (pre-push and CI, `ci-group: governance`), and `Dispatch.fs:2298-2299` routes
-                                                                                  `parity manifest generate` / `parity manifest validate`. The generator is therefore
-                                                                                  `apps/rhino-cli/scripts/rhino-bin.sh parity manifest generate`, run under HIPPO in each
-                                                                                  worktree. Two preconditions were discovered by hitting them rather than by reading ahead.
-                                                                                  First, the generator refuses to run while a parity file differs from the Git index — "stage or
-                                                                                  revert the worktree change before generating" — so the changed parity sources had to be
-                                                                                  staged first. Second, the parity set is broader than this section's wording: it is 108
-                                                                                  entries spanning `apps/rhino-cli/src/**` **and** `specs/apps/rhino/cli/behaviours/**`, and it
-                                                                                  excludes `apps/rhino-cli/tests/**` entirely. DU1-030 had copied only the `apps/rhino-cli`
-                                                                                  files, so the generator failed a second time on
-                                                                                  `specs/apps/rhino/cli/behaviours/system/doctor.feature`; that file was then copied across and
-                                                                                  all 108 entries verified byte-identical before regenerating. Both manifests regenerated
-                                                                                  cleanly (exit 0) and both changed: md5 `32f85a296ed541127f59d3acb0028059` →
-                                                                                  `1ecf47534616b76b0a7cf3fdcc30505f` in each. Exactly four hash lines moved, the four modified
-                                                                                  parity sources: `Doctor.fs`, `RepoConfig.fs`, `Dispatch.fs`, `doctor.feature`. -->
+                                                                                          `rtk grep -n "parity" apps/rhino-cli/project.json` returns nothing, because `project.json`
+                                                                                          declares no parity target. The command was found instead in two places that do state it:
+                                                                                          `repo-config.yml` registers gate `id: parity-manifest` with `command: parity manifest
+                                                                                          validate` (pre-push and CI, `ci-group: governance`), and `Dispatch.fs:2298-2299` routes
+                                                                                          `parity manifest generate` / `parity manifest validate`. The generator is therefore
+                                                                                          `apps/rhino-cli/scripts/rhino-bin.sh parity manifest generate`, run under HIPPO in each
+                                                                                          worktree. Two preconditions were discovered by hitting them rather than by reading ahead.
+                                                                                          First, the generator refuses to run while a parity file differs from the Git index — "stage or
+                                                                                          revert the worktree change before generating" — so the changed parity sources had to be
+                                                                                          staged first. Second, the parity set is broader than this section's wording: it is 108
+                                                                                          entries spanning `apps/rhino-cli/src/**` **and** `specs/apps/rhino/cli/behaviours/**`, and it
+                                                                                          excludes `apps/rhino-cli/tests/**` entirely. DU1-030 had copied only the `apps/rhino-cli`
+                                                                                          files, so the generator failed a second time on
+                                                                                          `specs/apps/rhino/cli/behaviours/system/doctor.feature`; that file was then copied across and
+                                                                                          all 108 entries verified byte-identical before regenerating. Both manifests regenerated
+                                                                                          cleanly (exit 0) and both changed: md5 `32f85a296ed541127f59d3acb0028059` →
+                                                                                          `1ecf47534616b76b0a7cf3fdcc30505f` in each. Exactly four hash lines moved, the four modified
+                                                                                          parity sources: `Doctor.fs`, `RepoConfig.fs`, `Dispatch.fs`, `doctor.feature`. -->
 - [x] [AI] Diff the two regenerated manifests from the public worktree root:
       `rtk diff -u apps/rhino-cli/parity-manifest.sha256 "$PRIVATE_WT/apps/rhino-cli/parity-manifest.sha256"`.
       Acceptance: empty diff. A non-empty diff means the source copy was incomplete — fix it, never
       hand-edit the manifest to agree.
       <!-- Implementation notes (DU1-032): the diff is empty (exit 0), 108 entries on each side.
-                                                                                  This is a real check rather than a restatement of DU1-031, because the manifest hashes the
-                                                                                  file *contents*: two independently generated manifests can only agree if every one of the 108
-                                                                                  parity files is byte-identical across the repositories. The incomplete-copy failure this
-                                                                                  checkbox warns about actually occurred and was caught upstream at DU1-031, when the generator
-                                                                                  refused on the un-copied `doctor.feature`; it was fixed by copying the source, never by
-                                                                                  editing a hash. No hash in either manifest was hand-edited at any point. -->
+                                                                                          This is a real check rather than a restatement of DU1-031, because the manifest hashes the
+                                                                                          file *contents*: two independently generated manifests can only agree if every one of the 108
+                                                                                          parity files is byte-identical across the repositories. The incomplete-copy failure this
+                                                                                          checkbox warns about actually occurred and was caught upstream at DU1-031, when the generator
+                                                                                          refused on the un-copied `doctor.feature`; it was fixed by copying the source, never by
+                                                                                          editing a hash. No hash in either manifest was hand-edited at any point. -->
 
 ### Rules Propagation — DU1, per repository
 
@@ -623,55 +623,55 @@ repository, and each run produces its own manifest.
       from both the built-in inventory and that list is rejected." Record it in the manifest at
       `local-tmp/rules-propagation/rules-propagation__lms-init-du1-public__manifest.md`.
       <!-- Implementation notes (DU1-RP-033): manifest created and rule DU1-R1 recorded with
-                                                                                  statement, subject, rationale, passing and violating observations, falsifiability verdict,
-                                                                                  bundling check, and halt state. The sentence was kept as one rule rather than split: it
-                                                                                  carries one obligation with a two-sided condition (declared names accepted, undeclared
-                                                                                  rejected), so it gets one placement and one enforcement disposition. `version-stream` was
-                                                                                  explicitly judged a schema detail of how a declaration is written, not a separate normative
-                                                                                  obligation, so it travels with the rule instead of being propagated on its own.
-                                                                                  False-zero check passed in both directions: the violating observation is a non-empty
-                                                                                  rejection message or a non-empty probe row, never an empty result, so the rule cannot be
-                                                                                  "confirmed" by a search that simply found nothing. -->
+                                                                                          statement, subject, rationale, passing and violating observations, falsifiability verdict,
+                                                                                          bundling check, and halt state. The sentence was kept as one rule rather than split: it
+                                                                                          carries one obligation with a two-sided condition (declared names accepted, undeclared
+                                                                                          rejected), so it gets one placement and one enforcement disposition. `version-stream` was
+                                                                                          explicitly judged a schema detail of how a declaration is written, not a separate normative
+                                                                                          obligation, so it travels with the rule instead of being propagated on its own.
+                                                                                          False-zero check passed in both directions: the violating observation is a non-empty
+                                                                                          rejection message or a non-empty probe row, never an empty result, so the rule cannot be
+                                                                                          "confirmed" by a search that simply found nothing. -->
 - [x] [AI] **Step 0 — intake (private):** same, writing
       `...__lms-init-du1-private__manifest.md`.
       <!-- Implementation notes (DU1-RP-034): a separate manifest was written in the private
-                                                                                  worktree at `local-tmp/rules-propagation/rules-propagation__lms-init-du1-private__manifest.md`
-                                                                                  — a genuinely independent run, not a copy with the repository name swapped. The rule statement
-                                                                                  is identical because the subject is identical, but the intake records a different situation:
-                                                                                  `ose-private` hosts no toolchain outside the built-in inventory, so its `doctor.extra-tools`
-                                                                                  is permanently empty, and the rule reaches it through the rejection half rather than the
-                                                                                  declaration half. That distinction is what makes the two Step 7 dispositions different
-                                                                                  documents rather than one duplicated. -->
+                                                                                          worktree at `local-tmp/rules-propagation/rules-propagation__lms-init-du1-private__manifest.md`
+                                                                                          — a genuinely independent run, not a copy with the repository name swapped. The rule statement
+                                                                                          is identical because the subject is identical, but the intake records a different situation:
+                                                                                          `ose-private` hosts no toolchain outside the built-in inventory, so its `doctor.extra-tools`
+                                                                                          is permanently empty, and the rule reaches it through the rejection half rather than the
+                                                                                          declaration half. That distinction is what makes the two Step 7 dispositions different
+                                                                                          documents rather than one duplicated. -->
 - [x] [AI] **Steps 2–3 — classification and conflict scan (public):** inventory every surface that
       currently states the doctor tool inventory as closed. Search with
       `rtk grep -rln "doctorToolInventory\|doctor-tools\|skip-tools" repo-governance/ docs/ AGENTS.md CLAUDE.md .claude/`.
       Acceptance: a per-surface verdict recorded in the manifest; any higher-layer contradiction
       halts the run rather than being overridden.
       <!-- Implementation notes (DU1-RP-035): the prescribed search produced a FALSE ZERO and was
-                                                                                  caught before it was recorded. Its three terms — `doctorToolInventory`, `doctor-tools`,
-                                                                                  `skip-tools` — are the F# identifier and the YAML keys, i.e. the *code* vocabulary. The prose
-                                                                                  surfaces that state this subject use none of them; they say "All tools checked by
-                                                                                  `rhino-cli doctor`". A control search (`rtk grep -rli "doctor"` over the same trees, 20+ hits)
-                                                                                  proved the search reached live content, so the zero was a mis-aimed vocabulary rather than a
-                                                                                  mis-aimed path — the same false zero in a different disguise. Re-scanning with prose terms
-                                                                                  added (`tool.inventory|all tools checked|doctor checks|tools doctor|extra-tools`) surfaced
-                                                                                  four surfaces needing tidy. Classification: subject = the Doctor tool inventory; audience =
-                                                                                  "everyone, when they reach a particular activity" (not the instruction surface); vendor-
-                                                                                  neutral, so `CLAUDE.md`'s binding-examples section is disqualified; layer = machine-read
-                                                                                  declaration plus develop/operate prose. Conflict verdict: no halt — every finding is
-                                                                                  incompleteness, not opposition. No surface asserts something DU1 makes false; four assert
-                                                                                  something DU1 makes incomplete. Supersession: none; four statements widened, none replaced. -->
+                                                                                          caught before it was recorded. Its three terms — `doctorToolInventory`, `doctor-tools`,
+                                                                                          `skip-tools` — are the F# identifier and the YAML keys, i.e. the *code* vocabulary. The prose
+                                                                                          surfaces that state this subject use none of them; they say "All tools checked by
+                                                                                          `rhino-cli doctor`". A control search (`rtk grep -rli "doctor"` over the same trees, 20+ hits)
+                                                                                          proved the search reached live content, so the zero was a mis-aimed vocabulary rather than a
+                                                                                          mis-aimed path — the same false zero in a different disguise. Re-scanning with prose terms
+                                                                                          added (`tool.inventory|all tools checked|doctor checks|tools doctor|extra-tools`) surfaced
+                                                                                          four surfaces needing tidy. Classification: subject = the Doctor tool inventory; audience =
+                                                                                          "everyone, when they reach a particular activity" (not the instruction surface); vendor-
+                                                                                          neutral, so `CLAUDE.md`'s binding-examples section is disqualified; layer = machine-read
+                                                                                          declaration plus develop/operate prose. Conflict verdict: no halt — every finding is
+                                                                                          incompleteness, not opposition. No surface asserts something DU1 makes false; four assert
+                                                                                          something DU1 makes incomplete. Supersession: none; four statements widened, none replaced. -->
 - [x] [AI] **Steps 2–3 — classification and conflict scan (private):** same search, same recording.
       <!-- Implementation notes (DU1-RP-036): re-run against the private tree with the corrected
-                                                                                  prose vocabulary from DU1-RP-035 rather than the checkbox's original three code terms, since
-                                                                                  the same false zero would otherwise have repeated here. Two surfaces state the subject and
-                                                                                  needed tidy: `docs/reference/sdlc-gate-standard.md` and
-                                                                                  `repo-governance/workflows/infra/infra-development-environment-setup/execution-mode.md`. No
-                                                                                  higher-layer contradiction, so no halt. Independent pre-existing drift was found in the
-                                                                                  private inventory table and recorded rather than repaired: a missing row 5, a mid-table
-                                                                                  headerless split, stale node/npm pins, and a quick-start that clones `ose-public` then `cd`s
-                                                                                  into `open-sharia-enterprise`. None of it concerns the closed-set claim, so it is outside this
-                                                                                  run's boundary — reported in the manifest, not silently fixed and not silently ignored. -->
+                                                                                          prose vocabulary from DU1-RP-035 rather than the checkbox's original three code terms, since
+                                                                                          the same false zero would otherwise have repeated here. Two surfaces state the subject and
+                                                                                          needed tidy: `docs/reference/sdlc-gate-standard.md` and
+                                                                                          `repo-governance/workflows/infra/infra-development-environment-setup/execution-mode.md`. No
+                                                                                          higher-layer contradiction, so no halt. Independent pre-existing drift was found in the
+                                                                                          private inventory table and recorded rather than repaired: a missing row 5, a mid-table
+                                                                                          headerless split, stale node/npm pins, and a quick-start that clones `ose-public` then `cd`s
+                                                                                          into `open-sharia-enterprise`. None of it concerns the closed-set claim, so it is outside this
+                                                                                          run's boundary — reported in the manifest, not silently fixed and not silently ignored. -->
 - [x] [AI] **Step 4 — placement (public):** place the rule on the narrowest surface that binds. The
       expected home is the `repo-config.yml` schema documentation plus its inline comment, not
       `AGENTS.md` — the instruction surface is a fixed-size cache and this rule does not need to be
@@ -692,74 +692,74 @@ repository, and each run produces its own manifest.
       config key produces a rule nobody finds. -->
 - [x] [AI] **Step 4 — placement (private):** same.
       <!-- Implementation notes (DU1-RP-038): same admission test, same outcome — necessity fails
-                                                                                  first, so not admitted and no eviction. The private placement differs in one respect worth
-                                                                                  recording: `ose-private`'s canonical home carries the key with a permanently-empty list plus a
-                                                                                  comment stating why it stays empty, so the placement is a *rationale* surface there rather
-                                                                                  than a declaration surface. The two tidy targets are `docs/reference/sdlc-gate-standard.md`
-                                                                                  and the private `execution-mode.md`. -->
+                                                                                          first, so not admitted and no eviction. The private placement differs in one respect worth
+                                                                                          recording: `ose-private`'s canonical home carries the key with a permanently-empty list plus a
+                                                                                          comment stating why it stays empty, so the placement is a *rationale* surface there rather
+                                                                                          than a declaration surface. The two tidy targets are `docs/reference/sdlc-gate-standard.md`
+                                                                                          and the private `execution-mode.md`. -->
 - [x] [AI] **Step 6 — write and tidy (public):** land the canonical edit, then update every other
       surface that states the subject so none contradicts it. Acceptance: no surface still describes
       the inventory as closed.
       <!-- Implementation notes (DU1-RP-039): four prose surfaces tidied.
-                                                                                  `tool-inventory.md` — lead sentence widened, a new "Configured extra tools" section added, the
-                                                                                  "Not checked by doctor" paragraph promoted to a heading, and the front-matter description
-                                                                                  updated so the index entry that copies it inherits the correct framing.
-                                                                                  `development-environment-setup.md` — "all 9 tools table" corrected to "the 16 built-in tools,
-                                                                                  plus how `doctor.extra-tools` adds more"; the stale count was pre-existing drift but is a
-                                                                                  count assertion about exactly this subject, so it was inside the sweep's boundary.
-                                                                                  Its `README.md` — index entry reconciled with the child's new description.
-                                                                                  `docs/reference/sdlc-gate-standard.md` — a new paragraph recording that DU1 supplies a third
-                                                                                  resolution to the open `doctor/tools.rs` byte-identity tension, one that does not loosen
-                                                                                  byte-identity. Deliberately NOT done: the linked idea brief
-                                                                                  `plans/ideas/q2-not-urgent-important/rhino-cli-tools-superset-carveout.md` was left untouched
-                                                                                  and is not claimed closed — closing an idea brief is a backlog decision outside DU1's
-                                                                                  authorization. Semantic-preservation gate: every edit WIDENS an incomplete statement; none
-                                                                                  removes an obligation, qualifier, exception, or violation condition. The closed-set guarantee
-                                                                                  is restated verbatim in both new prose blocks rather than compressed to "the inventory is
-                                                                                  validated". Sweep verified: `rtk grep -rn "All tools checked" repo-governance/ docs/` now
-                                                                                  returns exactly one hit, the setup-path label recorded at Step 3 as intentionally unchanged
-                                                                                  because it bounds an installation extent, not the inventory. -->
+                                                                                          `tool-inventory.md` — lead sentence widened, a new "Configured extra tools" section added, the
+                                                                                          "Not checked by doctor" paragraph promoted to a heading, and the front-matter description
+                                                                                          updated so the index entry that copies it inherits the correct framing.
+                                                                                          `development-environment-setup.md` — "all 9 tools table" corrected to "the 16 built-in tools,
+                                                                                          plus how `doctor.extra-tools` adds more"; the stale count was pre-existing drift but is a
+                                                                                          count assertion about exactly this subject, so it was inside the sweep's boundary.
+                                                                                          Its `README.md` — index entry reconciled with the child's new description.
+                                                                                          `docs/reference/sdlc-gate-standard.md` — a new paragraph recording that DU1 supplies a third
+                                                                                          resolution to the open `doctor/tools.rs` byte-identity tension, one that does not loosen
+                                                                                          byte-identity. Deliberately NOT done: the linked idea brief
+                                                                                          `plans/ideas/q2-not-urgent-important/rhino-cli-tools-superset-carveout.md` was left untouched
+                                                                                          and is not claimed closed — closing an idea brief is a backlog decision outside DU1's
+                                                                                          authorization. Semantic-preservation gate: every edit WIDENS an incomplete statement; none
+                                                                                          removes an obligation, qualifier, exception, or violation condition. The closed-set guarantee
+                                                                                          is restated verbatim in both new prose blocks rather than compressed to "the inventory is
+                                                                                          validated". Sweep verified: `rtk grep -rn "All tools checked" repo-governance/ docs/` now
+                                                                                          returns exactly one hit, the setup-path label recorded at Step 3 as intentionally unchanged
+                                                                                          because it bounds an installation extent, not the inventory. -->
 - [x] [AI] **Step 6 — write and tidy (private):** same.
       <!-- Implementation notes (DU1-RP-040): two prose surfaces tidied —
-                                                                                  `docs/reference/sdlc-gate-standard.md` (the same third-resolution paragraph, so the two repos'
-                                                                                  copies of that file stay consistent) and
-                                                                                  `repo-governance/workflows/infra/infra-development-environment-setup/execution-mode.md`.
-                                                                                  Same semantic-preservation gate applied and passed: every edit widens, none narrows. The
-                                                                                  pre-existing private inventory-table drift catalogued at DU1-RP-036 was left unrepaired on
-                                                                                  purpose and remains recorded in the manifest. -->
+                                                                                          `docs/reference/sdlc-gate-standard.md` (the same third-resolution paragraph, so the two repos'
+                                                                                          copies of that file stay consistent) and
+                                                                                          `repo-governance/workflows/infra/infra-development-environment-setup/execution-mode.md`.
+                                                                                          Same semantic-preservation gate applied and passed: every edit widens, none narrows. The
+                                                                                          pre-existing private inventory-table drift catalogued at DU1-RP-036 was left unrepaired on
+                                                                                          purpose and remains recorded in the manifest. -->
 - [x] [AI] **Step 7 — enforcement disposition (public):** record the mandatory three-way outcome.
       The expected disposition is **enforced**: `rhino-cli repo-config validate` rejects an
       `extra-tools` entry missing a required field, and rejects a `doctor-tools` name outside the
       resolved inventory.
       <!-- Implementation notes (DU1-RP-041): disposition recorded as **Covered / Gated**, but the
-                                                                                  checkbox's expected disposition was FALSE as written and was corrected rather than copied.
-                                                                                  Step 7 requires verifying the claim, not asserting it, so the gate was probed in a scratch git
-                                                                                  repository, one `repo-config.yml` per direction. Of the three predicted behaviours, two held
-                                                                                  and one did not: a `doctor-tools` name outside the resolved inventory was rejected (exit 1), a
-                                                                                  declared name was accepted (exit 0), but an `extra-tools` entry MISSING A REQUIRED FIELD
-                                                                                  validated clean (exit 0). That was not a documentation gap — an entry with no `version-args`
-                                                                                  yields a probe that runs the binary with zero arguments and reads no version, and an
-                                                                                  unrecognized `version-stream` silently fell back to stdout, which is exactly the "installed
-                                                                                  JDK reported as missing" failure the field exists to prevent. Writing "enforced" here on the
-                                                                                  strength of the prediction would have recorded a guarantee the repository did not have.
-                                                                                  The gap was closed, not dispositioned away, in `RepoConfig.fs`: `doctorExtraToolsFindings`
-                                                                                  (wired into `semanticFindings` via `doctorFindings`) covering required non-blank `name` and
-                                                                                  `binary`, non-empty `version-args`, built-in shadowing, and duplicate names; plus
-                                                                                  `extraToolFindings` in the raw-YAML pre-pass `gateEnumFindings`, making an unrecognized
-                                                                                  `version-stream` a hard parse error with line and column rather than a silent default.
-                                                                                  Re-probed after the fix, five violating directions all exit 1 with specific messages and the
-                                                                                  conforming direction exits 0 — the conforming rows matter as much as the violating ones,
-                                                                                  since a gate that failed everything would have produced five identical exit-1s and proved
-                                                                                  nothing. Named gate: `repo-config.yml` gate id `repo-config-schema`, `command: repo-config
-                                                                                  validate`, wired at pre-commit through `package.json` lint-staged on glob `repo-config.yml`
-                                                                                  and in CI under `ci-group: governance`. Unit suite after the change: 756 passed, 0 failed,
-                                                                                  coverage 7557/7628 (99.07%) against a 99.00% floor, with the new branches covered by real
-                                                                                  assertions rather than a lowered floor. One residual looseness recorded rather than smoothed
-                                                                                  over: the deserializer runs with `IgnoreUnmatchedProperties()`, so an unmodelled key under
-                                                                                  `doctor:` is tolerated — the repository's "strict schema deserialization" wording is stricter
-                                                                                  than the doctor section behaves. Pre-existing, outside DU1's boundary, named so no reader
-                                                                                  infers a stronger guarantee than exists. Evidence:
-                                                                                  `evidence/du1-enforcement-probe.txt`. -->
+                                                                                          checkbox's expected disposition was FALSE as written and was corrected rather than copied.
+                                                                                          Step 7 requires verifying the claim, not asserting it, so the gate was probed in a scratch git
+                                                                                          repository, one `repo-config.yml` per direction. Of the three predicted behaviours, two held
+                                                                                          and one did not: a `doctor-tools` name outside the resolved inventory was rejected (exit 1), a
+                                                                                          declared name was accepted (exit 0), but an `extra-tools` entry MISSING A REQUIRED FIELD
+                                                                                          validated clean (exit 0). That was not a documentation gap — an entry with no `version-args`
+                                                                                          yields a probe that runs the binary with zero arguments and reads no version, and an
+                                                                                          unrecognized `version-stream` silently fell back to stdout, which is exactly the "installed
+                                                                                          JDK reported as missing" failure the field exists to prevent. Writing "enforced" here on the
+                                                                                          strength of the prediction would have recorded a guarantee the repository did not have.
+                                                                                          The gap was closed, not dispositioned away, in `RepoConfig.fs`: `doctorExtraToolsFindings`
+                                                                                          (wired into `semanticFindings` via `doctorFindings`) covering required non-blank `name` and
+                                                                                          `binary`, non-empty `version-args`, built-in shadowing, and duplicate names; plus
+                                                                                          `extraToolFindings` in the raw-YAML pre-pass `gateEnumFindings`, making an unrecognized
+                                                                                          `version-stream` a hard parse error with line and column rather than a silent default.
+                                                                                          Re-probed after the fix, five violating directions all exit 1 with specific messages and the
+                                                                                          conforming direction exits 0 — the conforming rows matter as much as the violating ones,
+                                                                                          since a gate that failed everything would have produced five identical exit-1s and proved
+                                                                                          nothing. Named gate: `repo-config.yml` gate id `repo-config-schema`, `command: repo-config
+                                                                                          validate`, wired at pre-commit through `package.json` lint-staged on glob `repo-config.yml`
+                                                                                          and in CI under `ci-group: governance`. Unit suite after the change: 756 passed, 0 failed,
+                                                                                          coverage 7557/7628 (99.07%) against a 99.00% floor, with the new branches covered by real
+                                                                                          assertions rather than a lowered floor. One residual looseness recorded rather than smoothed
+                                                                                          over: the deserializer runs with `IgnoreUnmatchedProperties()`, so an unmodelled key under
+                                                                                          `doctor:` is tolerated — the repository's "strict schema deserialization" wording is stricter
+                                                                                          than the doctor section behaves. Pre-existing, outside DU1's boundary, named so no reader
+                                                                                          infers a stronger guarantee than exists. Evidence:
+                                                                                          `evidence/du1-enforcement-probe.txt`. -->
 - [x] [AI] **Step 7 — enforcement disposition (private):** same.
       <!-- Implementation notes (DU1-RP-042): disposition **Covered / Gated**, verified
       independently in `ose-private` rather than inherited from the public run. The private binary
@@ -804,30 +804,30 @@ fantomas` on the two files, the mutation half of the registered `format-fantomas
       `evidence/du1-rp-step8-public.txt`, host paths sanitized. -->
 - [x] [AI] **Step 8 — verification (private):** same.
       <!-- Implementation notes (DU1-RP-044): both commands exit 0 in the private worktree,
-                                                                                  against its own build. 756 tests passed, 0 failed, 7554/7625 = 99.07% — identical counts to
-                                                                                  the public run, which is the expected consequence of a byte-identical `apps/rhino-cli` and is
-                                                                                  recorded as a cross-check rather than left to look like coincidence. `test:quick` passed here
-                                                                                  on the first attempt because the Fantomas failure was caught and fixed on the public side
-                                                                                  before the sources were synced across, so this repository never carried the unformatted
-                                                                                  state — noted so the clean first run is not mistaken for a weaker check. One rule, gated, no
-                                                                                  unenforced disposition. Evidence: `evidence/du1-rp-step8-private.txt`, host paths
-                                                                                  sanitized. -->
+                                                                                          against its own build. 756 tests passed, 0 failed, 7554/7625 = 99.07% — identical counts to
+                                                                                          the public run, which is the expected consequence of a byte-identical `apps/rhino-cli` and is
+                                                                                          recorded as a cross-check rather than left to look like coincidence. `test:quick` passed here
+                                                                                          on the first attempt because the Fantomas failure was caught and fixed on the public side
+                                                                                          before the sources were synced across, so this repository never carried the unformatted
+                                                                                          state — noted so the clean first run is not mistaken for a weaker check. One rule, gated, no
+                                                                                          unenforced disposition. Evidence: `evidence/du1-rp-step8-private.txt`, host paths
+                                                                                          sanitized. -->
 - [x] [AI] **Step 9 — manifest and final status (public):** record the terminal state as `landed`,
       `halted`, or `partial`, with the pull request URL.
       <!-- Implementation notes (DU1-RP-045): `landed`, PR
-                                                                  https://github.com/wahidyankf/ose-public/pull/491. The manifest records the seven termination
-                                                                  conditions as a table with the evidence for each, checked one at a time rather than declared
-                                                                  satisfied as a block. The status was deliberately withheld until after the rebase: the first
-                                                                  green run passed against a base `fd4bb7303` had already superseded, and "PR open with its
-                                                                  checks green" is not met by a gate that ran against a base that no longer exists. -->
+                                                                          https://github.com/wahidyankf/ose-public/pull/491. The manifest records the seven termination
+                                                                          conditions as a table with the evidence for each, checked one at a time rather than declared
+                                                                          satisfied as a block. The status was deliberately withheld until after the rebase: the first
+                                                                          green run passed against a base `fd4bb7303` had already superseded, and "PR open with its
+                                                                          checks green" is not met by a gate that ran against a base that no longer exists. -->
 - [x] [AI] **Step 9 — manifest and final status (private):** same.
       <!-- Implementation notes (DU1-RP-046): `landed`, PR
-                                                                  https://github.com/wahidyankf/ose-private/pull/167. Head/base freshness was re-derived in this
-                                                                  repository rather than inferred from the public outcome — private was `CLEAN` and 0 commits
-                                                                  behind, so it needed no rebase, which is a different fact from public's and had to be checked
-                                                                  to be known. The manifest also records why the enforcement gate's registration was re-verified
-                                                                  locally: `apps/rhino-cli` is byte-identical, but `repo-config.yml` is deliberately not a parity
-                                                                  file and could have drifted. -->
+                                                                          https://github.com/wahidyankf/ose-private/pull/167. Head/base freshness was re-derived in this
+                                                                          repository rather than inferred from the public outcome — private was `CLEAN` and 0 commits
+                                                                          behind, so it needed no rebase, which is a different fact from public's and had to be checked
+                                                                          to be known. The manifest also records why the enforcement gate's registration was re-verified
+                                                                          locally: `apps/rhino-cli` is byte-identical, but `repo-config.yml` is deliberately not a parity
+                                                                          file and could have drifted. -->
 - [x] [AI] **Step 9 — sibling obligation:** record in each manifest that the sibling repository
       carries the matching obligation, naming the other repository and its PR. Neither manifest may
       record `none` — this rule is inherently paired.
@@ -847,60 +847,60 @@ Run in **both** worktrees.
 - [x] [AI] Run affected typecheck:
       `rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- affected -t typecheck`
       <!-- Implementation notes (DU1-QG-048): exit 0 in both worktrees. Nx resolved exactly one
-                                                                                  affected project, `rhino-cli`, in each — expected, since DU1's only source changes are its
-                                                                                  three F# files. Evidence: `evidence/du1-qg-public.txt`, `evidence/du1-qg-private.txt`. -->
+                                                                                          affected project, `rhino-cli`, in each — expected, since DU1's only source changes are its
+                                                                                          three F# files. Evidence: `evidence/du1-qg-public.txt`, `evidence/du1-qg-private.txt`. -->
 - [x] [AI] Run affected linting: `rtk npm run affected:lint`
       <!-- Implementation notes (DU1-QG-049): exit 0 in both worktrees, `rhino-cli:lint` plus its
-                                                                                  one dependent task. This gate had already failed once and been fixed at DU1-RP-043 (Fantomas
-                                                                                  formatting on `Doctor.fs` and `RepoConfig.fs`); the pass here is the confirmation on a clean
-                                                                                  tree, not a first look. -->
+                                                                                          one dependent task. This gate had already failed once and been fixed at DU1-RP-043 (Fantomas
+                                                                                          formatting on `Doctor.fs` and `RepoConfig.fs`); the pass here is the confirmation on a clean
+                                                                                          tree, not a first look. -->
 - [x] [AI] Run affected quick tests: `rtk npm run affected:test`
       <!-- Implementation notes (DU1-QG-050): exit 0 in both worktrees. Identical results on each
-                                                                                  side — `Passed! - Failed: 0, Passed: 756, Skipped: 0, Total: 756` and
-                                                                                  `Unit line coverage: 7554/7625 (99.07%; required: 99.00%)`. The two runs agreeing to the exact
-                                                                                  test and line counts is the practical consequence of a byte-identical `apps/rhino-cli`, and is
-                                                                                  recorded as a cross-check on the parity work rather than left as a coincidence. Zero skipped
-                                                                                  tests, so no scenario was quarantined to reach green. -->
+                                                                                          side — `Passed! - Failed: 0, Passed: 756, Skipped: 0, Total: 756` and
+                                                                                          `Unit line coverage: 7554/7625 (99.07%; required: 99.00%)`. The two runs agreeing to the exact
+                                                                                          test and line counts is the practical consequence of a byte-identical `apps/rhino-cli`, and is
+                                                                                          recorded as a cross-check on the parity work rather than left as a coincidence. Zero skipped
+                                                                                          tests, so no scenario was quarantined to reach green. -->
 - [x] [AI] Run affected spec coverage:
       `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- affected -t test:coverage:behaviour`
       <!-- Implementation notes (DU1-QG-051): exit 0 in both worktrees. Behaviour coverage resolves
-                                                                                  every scenario in `doctor.feature` — including the two AC-DOCTOR scenarios added at DU1-022 —
-                                                                                  across the unit, integration, and e2e adapters, with no undefined, ambiguous, or unused
-                                                                                  binding reported. -->
+                                                                                          every scenario in `doctor.feature` — including the two AC-DOCTOR scenarios added at DU1-022 —
+                                                                                          across the unit, integration, and e2e adapters, with no undefined, ambiguous, or unused
+                                                                                          binding reported. -->
 - [x] [AI] Fix ALL failures found — including preexisting issues not caused by these changes
       <!-- Implementation notes (DU1-QG-052): one failure surfaced across the whole gate sequence
-                                                                                  and it was caused by these changes, not preexisting: Fantomas formatting on `Doctor.fs` and
-                                                                                  `RepoConfig.fs`, fixed at its root by running the repository's own formatter (see
-                                                                                  DU1-RP-043). No preexisting failure appeared — consistent with the Phase 0 baselines at
-                                                                                  `evidence/phase-0-baseline-public.txt` and `evidence/phase-0-baseline-private.txt`, which were
-                                                                                  already clean, so there was no inherited breakage for this checkbox to absorb. Two
-                                                                                  pre-existing DEFECTS were found during DU1 and deliberately left unrepaired because they are
-                                                                                  outside this delivery unit's authorized boundary, both recorded in the rules-propagation
-                                                                                  manifests rather than silently dropped: the private repository's inventory-table drift
-                                                                                  (missing row, headerless mid-table split, stale node/npm pins, a quick-start that clones the
-                                                                                  wrong directory name), and the `IgnoreUnmatchedProperties()` looseness that makes the doctor
-                                                                                  section less strict than the "strict schema deserialization" wording claims. Neither is a
-                                                                                  failing check, so neither blocks this gate. -->
+                                                                                          and it was caused by these changes, not preexisting: Fantomas formatting on `Doctor.fs` and
+                                                                                          `RepoConfig.fs`, fixed at its root by running the repository's own formatter (see
+                                                                                          DU1-RP-043). No preexisting failure appeared — consistent with the Phase 0 baselines at
+                                                                                          `evidence/phase-0-baseline-public.txt` and `evidence/phase-0-baseline-private.txt`, which were
+                                                                                          already clean, so there was no inherited breakage for this checkbox to absorb. Two
+                                                                                          pre-existing DEFECTS were found during DU1 and deliberately left unrepaired because they are
+                                                                                          outside this delivery unit's authorized boundary, both recorded in the rules-propagation
+                                                                                          manifests rather than silently dropped: the private repository's inventory-table drift
+                                                                                          (missing row, headerless mid-table split, stale node/npm pins, a quick-start that clones the
+                                                                                          wrong directory name), and the `IgnoreUnmatchedProperties()` looseness that makes the doctor
+                                                                                          section less strict than the "strict schema deserialization" wording claims. Neither is a
+                                                                                          failing check, so neither blocks this gate. -->
 - [x] [AI] Verify all checks pass before pushing
       <!-- Implementation notes (DU1-QG-053): eight gate runs, four per worktree, all exit 0 —
-                                                                                  typecheck, lint, quick tests, and behaviour coverage in each of `ose-public` and
-                                                                                  `ose-private`. Verified by reading the recorded exit codes in the two captures rather than by
-                                                                                  trusting the absence of visible errors. Both evidence files are host-path sanitized.
-                                                                                  **The sanitization check first used here was too narrow and let a real leak through.**
-                                                                                  The pattern was `/Users/[a-z]` only, which by construction cannot match a macOS
-                                                                                  per-user temp path. `pr-leak-review` on PR #491 caught two surviving
-                                                                                  `/var/folders/<user-hash>/<session-hash>/T/...` lines in
-                                                                                  `evidence/phase-0-baseline-public.txt` — Redocly bundle-output lines whose surrounding
-                                                                                  context had sanitized correctly, which is exactly what made the gap invisible on a
-                                                                                  visual pass. Fixed at the root by broadening the sanitizer itself (adding
-                                                                                  `/var/folders/...` and `/private/tmp/...` rules) and re-running it over every evidence
-                                                                                  file, rather than hand-editing the two offending lines. The verification pattern is now
-                                                                                  `/var/folders|/private/tmp|/Users/|C:\\Users|/opt/homebrew|/usr/local/Cellar` and
-                                                                                  returns nothing across `evidence/`. Recorded rather than quietly corrected, because the
-                                                                                  original note asserted a guarantee its own check could not deliver. Nothing
-                                                                                  machine-specific goes into the commit. Parity is intact at this point: all 108 manifest entries byte-identical
-                                                                                  and both `parity-manifest.sha256` files at md5 `1ef1a2bfe9d0a89eef26787ea6cda64e`. Ready to
-                                                                                  push. -->
+                                                                                          typecheck, lint, quick tests, and behaviour coverage in each of `ose-public` and
+                                                                                          `ose-private`. Verified by reading the recorded exit codes in the two captures rather than by
+                                                                                          trusting the absence of visible errors. Both evidence files are host-path sanitized.
+                                                                                          **The sanitization check first used here was too narrow and let a real leak through.**
+                                                                                          The pattern was `/Users/[a-z]` only, which by construction cannot match a macOS
+                                                                                          per-user temp path. `pr-leak-review` on PR #491 caught two surviving
+                                                                                          `/var/folders/<user-hash>/<session-hash>/T/...` lines in
+                                                                                          `evidence/phase-0-baseline-public.txt` — Redocly bundle-output lines whose surrounding
+                                                                                          context had sanitized correctly, which is exactly what made the gap invisible on a
+                                                                                          visual pass. Fixed at the root by broadening the sanitizer itself (adding
+                                                                                          `/var/folders/...` and `/private/tmp/...` rules) and re-running it over every evidence
+                                                                                          file, rather than hand-editing the two offending lines. The verification pattern is now
+                                                                                          `/var/folders|/private/tmp|/Users/|C:\\Users|/opt/homebrew|/usr/local/Cellar` and
+                                                                                          returns nothing across `evidence/`. Recorded rather than quietly corrected, because the
+                                                                                          original note asserted a guarantee its own check could not deliver. Nothing
+                                                                                          machine-specific goes into the commit. Parity is intact at this point: all 108 manifest entries byte-identical
+                                                                                          and both `parity-manifest.sha256` files at md5 `1ef1a2bfe9d0a89eef26787ea6cda64e`. Ready to
+                                                                                          push. -->
 
 ### Commit Guidelines — DU1
 
@@ -917,42 +917,42 @@ Run in **both** worktrees.
 - [x] [AI] Once authorized, use the fewest build-valid, independently reviewable and revertible
       commits, one coherent purpose each; no extra boundary prompt unless the user prescribed one
       <!-- Implementation notes (DU1-C-055): one commit per repository, which is the fewest that can
-                                                                              work — the two repositories cannot share a commit. Public `842719022`, 32 files, +9171/-205.
-                                                                              Private `b5a414181f`, 15 files, +673/-101. Each is build-valid on its own: both were taken
-                                                                              from a tree where typecheck, lint, quick tests, and behaviour coverage had already exited 0,
-                                                                              and both passed the full pre-commit gate chain including `harness-bindings-generate` (which
-                                                                              produced no mirror drift) and `commitlint`. Each is revertible on its own, with the caveat
-                                                                              that reverting one alone would break byte-identity — which is a property of the parity
-                                                                              constraint, not of the commit boundary. No extra boundary prompt was raised because none was
-                                                                              prescribed. -->
+                                                                                      work — the two repositories cannot share a commit. Public `842719022`, 32 files, +9171/-205.
+                                                                                      Private `b5a414181f`, 15 files, +673/-101. Each is build-valid on its own: both were taken
+                                                                                      from a tree where typecheck, lint, quick tests, and behaviour coverage had already exited 0,
+                                                                                      and both passed the full pre-commit gate chain including `harness-bindings-generate` (which
+                                                                                      produced no mirror drift) and `commitlint`. Each is revertible on its own, with the caveat
+                                                                                      that reverting one alone would break byte-identity — which is a property of the parity
+                                                                                      constraint, not of the commit boundary. No extra boundary prompt was raised because none was
+                                                                                      prescribed. -->
 - [x] [AI] Follow Conventional Commits: expected shape
       `refactor(rhino-cli): resolve the doctor tool inventory from repo-config`
       <!-- Implementation notes (DU1-C-056): both subjects are exactly the prescribed line,
-                                                                              imperative and without a trailing period, and `commitlint` ran as a pre-commit gate in each
-                                                                              repository and passed. `refactor` is the right type even though the change adds a
-                                                                              configuration key: the observable default behaviour is unchanged — with an empty
-                                                                              `extra-tools` list the doctor probes the same 16 tools and rejects the same names as before.
-                                                                              Both bodies state the new-code cost and benefit as the PR-body rule requires, with tests
-                                                                              exempt. -->
+                                                                                      imperative and without a trailing period, and `commitlint` ran as a pre-commit gate in each
+                                                                                      repository and passed. `refactor` is the right type even though the change adds a
+                                                                                      configuration key: the observable default behaviour is unchanged — with an empty
+                                                                                      `extra-tools` list the doctor probes the same 16 tools and rejects the same names as before.
+                                                                                      Both bodies state the new-code cost and benefit as the PR-body rule requires, with tests
+                                                                                      exempt. -->
 - [x] [AI] Keep the Gherkin, unit tests, `repo-config.yml` key, and regenerated
       `parity-manifest.sha256` in the same commit as the source change they complete
       <!-- Implementation notes (DU1-C-057): all four named artifacts are in the same commit as the
-                                                                              source change in each repository — `specs/apps/rhino/cli/behaviours/system/doctor.feature`,
-                                                                              the seven adapter files under `apps/rhino-cli/tests/`, the `doctor.extra-tools` key in
-                                                                              `repo-config.yml`, and the regenerated `apps/rhino-cli/parity-manifest.sha256`, alongside
-                                                                              `Doctor.fs`, `RepoConfig.fs`, and `Dispatch.fs`. This matters beyond tidiness: the parity
-                                                                              manifest hashes the source files, so a commit carrying one without the other would fail the
-                                                                              `parity-manifest` gate at pre-push and in CI. Splitting them is not merely undesirable here,
-                                                                              it is not build-valid. -->
+                                                                                      source change in each repository — `specs/apps/rhino/cli/behaviours/system/doctor.feature`,
+                                                                                      the seven adapter files under `apps/rhino-cli/tests/`, the `doctor.extra-tools` key in
+                                                                                      `repo-config.yml`, and the regenerated `apps/rhino-cli/parity-manifest.sha256`, alongside
+                                                                                      `Doctor.fs`, `RepoConfig.fs`, and `Dispatch.fs`. This matters beyond tidiness: the parity
+                                                                                      manifest hashes the source files, so a commit carrying one without the other would fail the
+                                                                                      `parity-manifest` gate at pre-push and in CI. Splitting them is not merely undesirable here,
+                                                                                      it is not build-valid. -->
 - [x] [AI] Do not extend a commit beyond the user-authorized change set
       <!-- Implementation notes (DU1-C-058): every file in both commits traces to a DU1 checkbox.
-                                                                              Public: 11 `apps/rhino-cli` sources and adapters (DU1-024..029), the parity manifest
-                                                                              (DU1-031), `doctor.feature` (DU1-022), `repo-config.yml` (DU1-028), four prose surfaces
-                                                                              tidied by the rules-propagation sweep (DU1-RP-039), and the plan's own record —
-                                                                              `delivery.md`, `learnings.md`, and 13 `evidence/` captures. Private: the same sources and
-                                                                              specs plus its own `repo-config.yml` and two prose surfaces (DU1-RP-040). Nothing unrelated
-                                                                              was swept in. The rules-propagation manifests themselves are NOT committed: they live under
-                                                                              `local-tmp/rules-propagation/`, which is agent working state and gitignored by convention. -->
+                                                                                      Public: 11 `apps/rhino-cli` sources and adapters (DU1-024..029), the parity manifest
+                                                                                      (DU1-031), `doctor.feature` (DU1-022), `repo-config.yml` (DU1-028), four prose surfaces
+                                                                                      tidied by the rules-propagation sweep (DU1-RP-039), and the plan's own record —
+                                                                                      `delivery.md`, `learnings.md`, and 13 `evidence/` captures. Private: the same sources and
+                                                                                      specs plus its own `repo-config.yml` and two prose surfaces (DU1-RP-040). Nothing unrelated
+                                                                                      was swept in. The rules-propagation manifests themselves are NOT committed: they live under
+                                                                                      `local-tmp/rules-propagation/`, which is agent working state and gitignored by convention. -->
 
 ### Post-Push Verification — DU1
 
@@ -960,115 +960,115 @@ Run in **both** worktrees.
       `rtk git switch -c lms-init/du1-doctor-config` then
       `rtk git push -u origin lms-init/du1-doctor-config`
       <!-- Implementation notes (DU1-PP-059): branch created off `worktree/lms-init` and pushed;
-                                                                          head `b636177a8a26f7aba4f45234821411bbbb563637`. The first push attempt was REJECTED by the
-                                                                          pre-push hook — `rhino-cli:test:coverage` reported failed and husky exited `code 75`. That was
-                                                                          not a test defect: 75 is HIPPO's admission-deferral code (`EX_TEMPFAIL`), so the gate never
-                                                                          actually ran and Nx reported the non-zero as a task failure. Diagnosed rather than retried
-                                                                          blindly: `rhino-cli:test:coverage` was re-run standalone and exited 0
-                                                                          (`57 features, 497 expanded scenarios`), and `./hippo status` had returned to
-                                                                          `state=normal reason=normal ... availableGiB=11.84`. The push then succeeded with the full
-                                                                          pre-push chain green. Nx labelled the target "flaky" as a result; that label is an artifact of
-                                                                          the deferral, not evidence of a nondeterministic test, and no retry, sleep, or quarantine was
-                                                                          added anywhere. -->
+                                                                                  head `b636177a8a26f7aba4f45234821411bbbb563637`. The first push attempt was REJECTED by the
+                                                                                  pre-push hook — `rhino-cli:test:coverage` reported failed and husky exited `code 75`. That was
+                                                                                  not a test defect: 75 is HIPPO's admission-deferral code (`EX_TEMPFAIL`), so the gate never
+                                                                                  actually ran and Nx reported the non-zero as a task failure. Diagnosed rather than retried
+                                                                                  blindly: `rhino-cli:test:coverage` was re-run standalone and exited 0
+                                                                                  (`57 features, 497 expanded scenarios`), and `./hippo status` had returned to
+                                                                                  `state=normal reason=normal ... availableGiB=11.84`. The push then succeeded with the full
+                                                                                  pre-push chain green. Nx labelled the target "flaky" as a result; that label is an artifact of
+                                                                                  the deferral, not evidence of a nondeterministic test, and no retry, sleep, or quarantine was
+                                                                                  added anywhere. -->
 - [x] [AI] Create the branch and push in the private worktree with the identical branch name
       <!-- Implementation notes (DU1-PP-060): same branch name `lms-init/du1-doctor-config`, head
-                                                                          `b5a414181fb4da4973aef9009a7e98e383c9277e`. Pre-push passed on the first attempt here — HIPPO
-                                                                          had already returned to `normal` by then. -->
+                                                                                  `b5a414181fb4da4973aef9009a7e98e383c9277e`. Pre-push passed on the first attempt here — HIPPO
+                                                                                  had already returned to `normal` by then. -->
 - [x] [AI] Open a draft pull request against `main` in each repository, cross-linking the two in
       both bodies. Each body states the new-code cost and benefit; tests are exempt from that
       statement
       <!-- Implementation notes (DU1-PP-061): public
-                                                                          https://github.com/wahidyankf/ose-public/pull/491 and private
-                                                                          https://github.com/wahidyankf/ose-private/pull/167, both draft against `main`. Cross-linking
-                                                                          is genuinely two-way: the private body was written with the public URL already known, and the
-                                                                          public body was edited after the private PR existed to replace its placeholder with the real
-                                                                          link — a one-way link plus "see the other repo" would not have satisfied this checkbox. Both
-                                                                          bodies state merge order (public first, then private) since the private change is the parity
-                                                                          carry. Cost/benefit stated in both, tests marked exempt: the public body weighs one config
-                                                                          key, one DTO, and two validation functions against removing a cross-repository F# edit from
-                                                                          every future toolchain addition; the private body states plainly that no new capability is
-                                                                          exercised there and the change exists to hold byte-identity. -->
+                                                                                  https://github.com/wahidyankf/ose-public/pull/491 and private
+                                                                                  https://github.com/wahidyankf/ose-private/pull/167, both draft against `main`. Cross-linking
+                                                                                  is genuinely two-way: the private body was written with the public URL already known, and the
+                                                                                  public body was edited after the private PR existed to replace its placeholder with the real
+                                                                                  link — a one-way link plus "see the other repo" would not have satisfied this checkbox. Both
+                                                                                  bodies state merge order (public first, then private) since the private change is the parity
+                                                                                  carry. Cost/benefit stated in both, tests marked exempt: the public body weighs one config
+                                                                                  key, one DTO, and two validation functions against removing a cross-repository F# edit from
+                                                                                  every future toolchain addition; the private body states plainly that no new capability is
+                                                                                  exercised there and the change exists to hold byte-identity. -->
 - [x] [AI] Poll CI every 2 minutes with
       `rtk gh pr checks <number> --repo wahidyankf/<repo>`. Never use `gh run watch`
       <!-- Implementation notes (DU1-PP-062): polled on a 120-second interval throughout;
-                                                                      `gh run watch` was never invoked. `gh pr checks` exit code 8 means "checks still pending", not
-                                                                      failure, so the poll loop treats only a non-8 exit as terminal — reading 8 as a red gate would
-                                                                      have produced a false failure on every tick. Private reached exit 0 first (13 passing, 2
-                                                                      correctly skipping: Rust minimum-version compatibility and TypeScript quality gate, neither
-                                                                      affected by an F#-only change). Public took 45 minutes wall-clock. I initially judged that slow
-                                                                      by comparing it against private's 22s-1m18s jobs; that comparison was wrong-scoped, and I
-                                                                      checked the right baseline instead — recent `pr-quality-gate.yml` runs on public `main` take
-                                                                      ~37 minutes (02:37→03:14, 01:53→02:30), so this run was on pace, not stalled. The
-                                                                      slowest legs were `.NET quality gate` 26m50s and `Auto-format affected (lint-staged)` 18m19s;
-                                                                      Flutter and TypeScript correctly reported `skipping`. -->
+                                                                              `gh run watch` was never invoked. `gh pr checks` exit code 8 means "checks still pending", not
+                                                                              failure, so the poll loop treats only a non-8 exit as terminal — reading 8 as a red gate would
+                                                                              have produced a false failure on every tick. Private reached exit 0 first (13 passing, 2
+                                                                              correctly skipping: Rust minimum-version compatibility and TypeScript quality gate, neither
+                                                                              affected by an F#-only change). Public took 45 minutes wall-clock. I initially judged that slow
+                                                                              by comparing it against private's 22s-1m18s jobs; that comparison was wrong-scoped, and I
+                                                                              checked the right baseline instead — recent `pr-quality-gate.yml` runs on public `main` take
+                                                                              ~37 minutes (02:37→03:14, 01:53→02:30), so this run was on pace, not stalled. The
+                                                                              slowest legs were `.NET quality gate` 26m50s and `Auto-format affected (lint-staged)` 18m19s;
+                                                                              Flutter and TypeScript correctly reported `skipping`. -->
 - [x] [AI] Verify the `Quality gate` check from `.github/workflows/pr-quality-gate.yml` passes for
       each pull request's exact current head and base
       <!-- Implementation notes (DU1-PP-063): verified per repository by resolving the PR head from
-                                                                      the API and then querying that exact SHA's check runs, rather than trusting the summary line —
-                                                                      `gh pr checks` reports the newest result for a check name and would happily show a green
-                                                                      `Quality gate` that ran on a superseded head.
-                                                                      **The head half passed on the first attempt; the base half did not, and the checkbox says
-                                                                      "head AND base".** Public PR #491 showed `Quality gate` `conclusion=success` with
-                                                                      `head_sha=bf07e05e24ac601a6570073ed2fae0dbcacd6934`, byte-equal to the PR head — but
-                                                                      `mergeStateStatus=BEHIND`, because `fd4bb7303 fix(governance): bar knowledge capture from
-                                                                      plans/backlog and undo its three filings (#490)` landed on `main` while the run was in flight.
-                                                                      A gate that passed against a superseded base is not evidence about the current base, so the
-                                                                      green result was NOT accepted; the branch was rebased onto `origin/main` and CI re-run, and
-                                                                      this checkbox records the post-rebase result. Private PR #167 was `mergeStateStatus=CLEAN`
-                                                                      with `Quality gate` success on `head_sha=b5a414181fb4da4973aef9009a7e98e383c9277e`, so its
-                                                                      base was already current and it needed no rebase — the two repositories were checked
-                                                                      separately rather than one conclusion being carried across.
-                                                                      Per AGENTS.md the newly landed commit's full diff was read before acting. It strengthens the
-                                                                      Knowledge Capture routing boundary from "never create a `plans/backlog/` folder directly" to
-                                                                      barring create/move/write of any file or folder under `plans/backlog/`, with no exception.
-                                                                      This plan's own Phase 5 code-routing checkbox restated the old weaker form, so it was a
-                                                                      stating surface that now contradicted canonical governance; it was reconciled to the
-                                                                      strengthened wording in the same commit rather than left to drift. No other part of the plan
-                                                                      routes anything to `plans/backlog/`. -->
+                                                                              the API and then querying that exact SHA's check runs, rather than trusting the summary line —
+                                                                              `gh pr checks` reports the newest result for a check name and would happily show a green
+                                                                              `Quality gate` that ran on a superseded head.
+                                                                              **The head half passed on the first attempt; the base half did not, and the checkbox says
+                                                                              "head AND base".** Public PR #491 showed `Quality gate` `conclusion=success` with
+                                                                              `head_sha=bf07e05e24ac601a6570073ed2fae0dbcacd6934`, byte-equal to the PR head — but
+                                                                              `mergeStateStatus=BEHIND`, because `fd4bb7303 fix(governance): bar knowledge capture from
+                                                                              plans/backlog and undo its three filings (#490)` landed on `main` while the run was in flight.
+                                                                              A gate that passed against a superseded base is not evidence about the current base, so the
+                                                                              green result was NOT accepted; the branch was rebased onto `origin/main` and CI re-run, and
+                                                                              this checkbox records the post-rebase result. Private PR #167 was `mergeStateStatus=CLEAN`
+                                                                              with `Quality gate` success on `head_sha=b5a414181fb4da4973aef9009a7e98e383c9277e`, so its
+                                                                              base was already current and it needed no rebase — the two repositories were checked
+                                                                              separately rather than one conclusion being carried across.
+                                                                              Per AGENTS.md the newly landed commit's full diff was read before acting. It strengthens the
+                                                                              Knowledge Capture routing boundary from "never create a `plans/backlog/` folder directly" to
+                                                                              barring create/move/write of any file or folder under `plans/backlog/`, with no exception.
+                                                                              This plan's own Phase 5 code-routing checkbox restated the old weaker form, so it was a
+                                                                              stating surface that now contradicted canonical governance; it was reconciled to the
+                                                                              strengthened wording in the same commit rather than left to drift. No other part of the plan
+                                                                              routes anything to `plans/backlog/`. -->
 - [x] [AI] Verify one authenticated clean current-head `pr-leak-review` on each pull request
       <!-- Implementation notes (DU1-PP-064): both reviews run against the pinned current heads via
-                                                                          the agent-driven `pr-review-security-maker` in leak-only mode — this gate is agent-driven, not
-                                                                          a GitHub workflow, so there is no check run to point at. Each reviewer independently
-                                                                          re-resolved the head SHA from GitHub and confirmed it matched the pin before inspecting, so
-                                                                          neither reviewed a stale tree.
-                                                                          **The public review was NOT clean on its first pass, and that is the point of the gate.** It
-                                                                          found a real category-3 leak my own sanitization had missed:
-                                                                          `evidence/phase-0-baseline-public.txt` lines 863 and 904 still carried
-                                                                          `/var/folders/<user-hash>/<session-hash>/T/tmp.<random>.yaml`, a macOS per-user temp path
-                                                                          emitted by Redocly's "bundle created at" output. My verification pattern was `/Users/[a-z]`,
-                                                                          which cannot match that prefix — a false-negative by vocabulary, structurally the same failure
-                                                                          mode as the Step 3 false zero at DU1-RP-035, and the second time in this delivery unit that a
-                                                                          too-narrow search pattern produced a confident wrong answer. Fixed at the root: the sanitizer
-                                                                          gained `/var/folders/...` and `/private/tmp/...` rules and was re-run over all 13 evidence
-                                                                          files, and the check pattern was widened to
-                                                                          `/var/folders|/private/tmp|/Users/|C:\\Users|/opt/homebrew|/usr/local/Cellar`, which now
-                                                                          returns nothing. The commit was amended and force-pushed, so the reviewed head advanced and
-                                                                          the leak never exists on a head that gets merged. Because the force-push moved the head,
-                                                                          the review was RE-RUN against the new head `bf07e05e2` rather than the stale clean result
-                                                                          being carried forward — the checkbox says current-head and the head had changed. That
-                                                                          re-run is clean: both former lines now read `<tmpdir>/tmp.<random>.yaml`, all 13 evidence
-                                                                          files re-swept under every prefix, and the reviewer separately confirmed the real captured
-                                                                          filename does not appear anywhere in `delivery.md`'s prose about the incident, which uses
-                                                                          only `<user-hash>`/`<session-hash>` placeholders — so documenting the leak did not
-                                                                          re-introduce it.
-                                                                          The private review was clean on its first pass across all three leak categories, checked in
-                                                                          both directions (nothing leaked out, and no private infrastructure name newly introduced). Two
-                                                                          items were examined and correctly dismissed as non-leaks rather than ignored: the parity-manifest
-                                                                          md5 in the PR body (a public content hash) and the per-test-run coverlet GUIDs in the F#
-                                                                          coverage output (per-run, not machine identifiers).
-                                                                          The public head then moved a THIRD time, when the branch was rebased onto `main` at
-                                                                          DU1-PP-063 to pick up `fd4bb7303`. Rather than reason that the evidence files had not
-                                                                          changed and carry the `bf07e05e2` result forward, the review was run again against
-                                                                          `acdd9393f1d3628738ea38f6c616b3cddf9c99cd` — the same standard applied at the previous
-                                                                          force-push. Clean again, and this pass is falsifiable rather than a bare assertion: the
-                                                                          reviewer pulled each file's blob at that exact SHA with `git show <sha>:<path>` instead of
-                                                                          reading the working tree, swept the full machine-path family plus credential and
-                                                                          hostname patterns, and re-derived from scratch that the real captured tmp filename never
-                                                                          appears in `delivery.md`'s prose about the incident — it independently re-checked the
-                                                                          claim the earlier note makes rather than trusting it. Every residual hit was triaged and
-                                                                          named: repo-relative paths inside compiler output, a synthetic `/tmp/repo/.git` literal in
-                                                                          a pure string-parsing unit test, openapi-generator-cli's third-party donation banner, and
-                                                                          `/home/`-prefixed false positives that are really `components/home/...` source paths. -->
+                                                                                  the agent-driven `pr-review-security-maker` in leak-only mode — this gate is agent-driven, not
+                                                                                  a GitHub workflow, so there is no check run to point at. Each reviewer independently
+                                                                                  re-resolved the head SHA from GitHub and confirmed it matched the pin before inspecting, so
+                                                                                  neither reviewed a stale tree.
+                                                                                  **The public review was NOT clean on its first pass, and that is the point of the gate.** It
+                                                                                  found a real category-3 leak my own sanitization had missed:
+                                                                                  `evidence/phase-0-baseline-public.txt` lines 863 and 904 still carried
+                                                                                  `/var/folders/<user-hash>/<session-hash>/T/tmp.<random>.yaml`, a macOS per-user temp path
+                                                                                  emitted by Redocly's "bundle created at" output. My verification pattern was `/Users/[a-z]`,
+                                                                                  which cannot match that prefix — a false-negative by vocabulary, structurally the same failure
+                                                                                  mode as the Step 3 false zero at DU1-RP-035, and the second time in this delivery unit that a
+                                                                                  too-narrow search pattern produced a confident wrong answer. Fixed at the root: the sanitizer
+                                                                                  gained `/var/folders/...` and `/private/tmp/...` rules and was re-run over all 13 evidence
+                                                                                  files, and the check pattern was widened to
+                                                                                  `/var/folders|/private/tmp|/Users/|C:\\Users|/opt/homebrew|/usr/local/Cellar`, which now
+                                                                                  returns nothing. The commit was amended and force-pushed, so the reviewed head advanced and
+                                                                                  the leak never exists on a head that gets merged. Because the force-push moved the head,
+                                                                                  the review was RE-RUN against the new head `bf07e05e2` rather than the stale clean result
+                                                                                  being carried forward — the checkbox says current-head and the head had changed. That
+                                                                                  re-run is clean: both former lines now read `<tmpdir>/tmp.<random>.yaml`, all 13 evidence
+                                                                                  files re-swept under every prefix, and the reviewer separately confirmed the real captured
+                                                                                  filename does not appear anywhere in `delivery.md`'s prose about the incident, which uses
+                                                                                  only `<user-hash>`/`<session-hash>` placeholders — so documenting the leak did not
+                                                                                  re-introduce it.
+                                                                                  The private review was clean on its first pass across all three leak categories, checked in
+                                                                                  both directions (nothing leaked out, and no private infrastructure name newly introduced). Two
+                                                                                  items were examined and correctly dismissed as non-leaks rather than ignored: the parity-manifest
+                                                                                  md5 in the PR body (a public content hash) and the per-test-run coverlet GUIDs in the F#
+                                                                                  coverage output (per-run, not machine identifiers).
+                                                                                  The public head then moved a THIRD time, when the branch was rebased onto `main` at
+                                                                                  DU1-PP-063 to pick up `fd4bb7303`. Rather than reason that the evidence files had not
+                                                                                  changed and carry the `bf07e05e2` result forward, the review was run again against
+                                                                                  `acdd9393f1d3628738ea38f6c616b3cddf9c99cd` — the same standard applied at the previous
+                                                                                  force-push. Clean again, and this pass is falsifiable rather than a bare assertion: the
+                                                                                  reviewer pulled each file's blob at that exact SHA with `git show <sha>:<path>` instead of
+                                                                                  reading the working tree, swept the full machine-path family plus credential and
+                                                                                  hostname patterns, and re-derived from scratch that the real captured tmp filename never
+                                                                                  appears in `delivery.md`'s prose about the incident — it independently re-checked the
+                                                                                  claim the earlier note makes rather than trusting it. Every residual hit was triaged and
+                                                                                  named: repo-relative paths inside compiler output, a synthetic `/tmp/repo/.git` literal in
+                                                                                  a pure string-parsing unit test, openapi-generator-cli's third-party donation banner, and
+                                                                                  `/home/`-prefixed false positives that are really `components/home/...` source paths. -->
 - [x] [AI] If any CI check fails, fix at the root cause and push a follow-up commit; never bypass
       <!-- Implementation notes (DU1-PP-065): no CI check ever reported `fail` on either pull
       request, so this box records what was actually done rather than claiming a fix that never
@@ -1087,33 +1087,33 @@ Run in **both** worktrees.
       hook chain instead of working around it. -->
 - [x] [AI] Do NOT proceed to Phase 2 until CI is green on both pull requests
       <!-- Implementation notes (DU1-PP-066): honoured. No Phase 2 checkbox was started before both
-                                                                  pull requests were simultaneously green on their exact current head and base — public #491 at
-                                                                  `acdd9393f` (13 passing, 2 correctly skipping, `mergeStateStatus=CLEAN`) and private #167 at
-                                                                  `b5a414181` (13 passing, 2 skipping, `CLEAN`). Green on one repository was never treated as
-                                                                  permission to start the other's work, and the public PR's first green run was explicitly not
-                                                                  accepted as satisfying this gate because its base had been superseded. -->
+                                                                          pull requests were simultaneously green on their exact current head and base — public #491 at
+                                                                          `acdd9393f` (13 passing, 2 correctly skipping, `mergeStateStatus=CLEAN`) and private #167 at
+                                                                          `b5a414181` (13 passing, 2 skipping, `CLEAN`). Green on one repository was never treated as
+                                                                          permission to start the other's work, and the public PR's first green run was explicitly not
+                                                                          accepted as satisfying this gate because its base had been superseded. -->
 - [x] [AI] Mark both pull requests ready and merge them, public first, then private within the same
       working session so the nightly parity audit never observes a mismatched pair
       <!-- Implementation notes (DU1-PP-067): both taken out of draft with `gh pr ready`, then
-                                                                  squash-merged in the required order — public #491 merged at 05:15:14Z, private #167 at
-                                                                  05:15:24Z. The ten-second gap is the point of the ordering constraint: the parity audit
-                                                                  compares the two repositories' `apps/rhino-cli` trees, so any window in which one side carries
-                                                                  the change and the other does not is a window in which the audit would report a false
-                                                                  mismatch. Merging in the same session keeps that window to seconds instead of hours. Squash
-                                                                  was used to match the repository's existing history shape (recent `main` commits carry a
-                                                                  trailing `(#NNN)`). Public was verified `CLEAN`/non-draft immediately before merging rather
-                                                                  than assumed still-mergeable from the earlier check. -->
+                                                                          squash-merged in the required order — public #491 merged at 05:15:14Z, private #167 at
+                                                                          05:15:24Z. The ten-second gap is the point of the ordering constraint: the parity audit
+                                                                          compares the two repositories' `apps/rhino-cli` trees, so any window in which one side carries
+                                                                          the change and the other does not is a window in which the audit would report a false
+                                                                          mismatch. Merging in the same session keeps that window to seconds instead of hours. Squash
+                                                                          was used to match the repository's existing history shape (recent `main` commits carry a
+                                                                          trailing `(#NNN)`). Public was verified `CLEAN`/non-draft immediately before merging rather
+                                                                          than assumed still-mergeable from the earlier check. -->
 - [x] [AI] Record each merged pull request number and its 40-character reviewed-head SHA in the
       Delivery Branch Inventory
       <!-- Implementation notes (DU1-PP-068): both DU1 rows moved from `pending` to `delivered`.
-                                                                  Public #491 reviewed head `acdd9393f1d3628738ea38f6c616b3cddf9c99cd`; private #167 reviewed
-                                                                  head `b5a414181fb4da4973aef9009a7e98e383c9277e`. Both are the full 40 characters, and both are
-                                                                  the *reviewed* heads — the SHA that CI and the leak review actually inspected — not the squash
-                                                                  commits GitHub produced on `main` (`c6fffc3844d9e5d912d6467967ab6ba433967314` and
-                                                                  `fc0a273fdc8aa9b4eb6d75520b23e83adeede0d5`). The inventory asks for the reviewed head because
-                                                                  that is what the evidence attaches to; recording the squash SHA would point at a commit no
-                                                                  gate ever ran against. Public's reviewed head is the post-rebase SHA, not the earlier
-                                                                  `bf07e05e2` whose gate ran on a superseded base. -->
+                                                                          Public #491 reviewed head `acdd9393f1d3628738ea38f6c616b3cddf9c99cd`; private #167 reviewed
+                                                                          head `b5a414181fb4da4973aef9009a7e98e383c9277e`. Both are the full 40 characters, and both are
+                                                                          the *reviewed* heads — the SHA that CI and the leak review actually inspected — not the squash
+                                                                          commits GitHub produced on `main` (`c6fffc3844d9e5d912d6467967ab6ba433967314` and
+                                                                          `fc0a273fdc8aa9b4eb6d75520b23e83adeede0d5`). The inventory asks for the reviewed head because
+                                                                          that is what the evidence attaches to; recording the squash SHA would point at a commit no
+                                                                          gate ever ran against. Public's reviewed head is the post-rebase SHA, not the earlier
+                                                                          `bf07e05e2` whose gate ran on a superseded base. -->
 
 ### Phase 1 Gate
 
@@ -1122,43 +1122,43 @@ Run in **both** worktrees.
 - [x] [AI] Both pull requests are merged and both branches are recorded as delivered in the
       inventory
       <!-- Implementation notes (P1-GATE-069): public #491 `state=MERGED` at 05:15:14Z, private #167
-                                                                  `state=MERGED` at 05:15:24Z, both confirmed by querying each PR's `state` rather than inferred
-                                                                  from the merge command exiting 0. Both DU1 inventory rows now read `delivered` and carry their
-                                                                  40-character reviewed-head SHA. -->
+                                                                          `state=MERGED` at 05:15:24Z, both confirmed by querying each PR's `state` rather than inferred
+                                                                          from the merge command exiting 0. Both DU1 inventory rows now read `delivered` and carry their
+                                                                          40-character reviewed-head SHA. -->
 - [x] [AI] `rtk gh workflow run rhino-cli-parity-audit.yml --repo wahidyankf/ose-private` completes
       successfully against the merged state; save the run URL to `evidence/du1-parity-audit.txt`
       <!-- Implementation notes (P1-GATE-070): `conclusion=success`, run
-                                                                  https://github.com/wahidyankf/ose-private/actions/runs/34190037201, job "Compare against
-                                                                  canonical manifest" success. The run's own `headSha` is `fc0a273fdc8aa9b4eb6d75520b23e83adeede0d5`
-                                                                  — the private squash commit — which is what makes this evidence about the *merged* state rather
-                                                                  than about the branch; the checkbox says "against the merged state" and a run dispatched before
-                                                                  the merges would not have satisfied it. Evidence saved to `evidence/du1-parity-audit.txt` with
-                                                                  both squash SHAs, the run URL, and the per-job conclusion.
-                                                                  That file was leak-scanned with the rest of the directory. The first scan reported hits, but
-                                                                  all 16 were false positives: my pattern's bare `/home/[a-z]` matched the *relative* path
-                                                                  `components/home/entry-item.tsx` in unrelated lint output. Rather than accept a red result or
-                                                                  quietly drop `/home/` from the search, the pattern was anchored so an absolute path must start
-                                                                  at a boundary — `(^|[^A-Za-z0-9_.-])/home/[a-z]` — which still catches a real `/home/<user>`
-                                                                  leak while not matching a relative segment. Re-scanned: zero absolute machine paths across all
-                                                                  14 evidence files. -->
+                                                                          https://github.com/wahidyankf/ose-private/actions/runs/34190037201, job "Compare against
+                                                                          canonical manifest" success. The run's own `headSha` is `fc0a273fdc8aa9b4eb6d75520b23e83adeede0d5`
+                                                                          — the private squash commit — which is what makes this evidence about the *merged* state rather
+                                                                          than about the branch; the checkbox says "against the merged state" and a run dispatched before
+                                                                          the merges would not have satisfied it. Evidence saved to `evidence/du1-parity-audit.txt` with
+                                                                          both squash SHAs, the run URL, and the per-job conclusion.
+                                                                          That file was leak-scanned with the rest of the directory. The first scan reported hits, but
+                                                                          all 16 were false positives: my pattern's bare `/home/[a-z]` matched the *relative* path
+                                                                          `components/home/entry-item.tsx` in unrelated lint output. Rather than accept a red result or
+                                                                          quietly drop `/home/` from the search, the pattern was anchored so an absolute path must start
+                                                                          at a boundary — `(^|[^A-Za-z0-9_.-])/home/[a-z]` — which still catches a real `/home/<user>`
+                                                                          leak while not matching a relative segment. Re-scanned: zero absolute machine paths across all
+                                                                          14 evidence files. -->
 - [x] [AI] `rtk npm run validate:config` exits 0 in both repositories on the merged `main`
 - [x] [AI] `rtk npm run doctor` still exits 0 in both worktrees with `extra-tools` empty — proving
       the refactor is a no-op until a tool is declared
       <!-- P1-GATE-071/072 evidence: evidence/p1-gate-071-072.txt. All four runs carry a
-                                                              TERMINAL_EXIT=0 marker written as the run's last action, per the Rule 7 landed in this plan.
-                                                              Public validate:config: 1648 checks, 0 failed, then bindings SUCCESS, then sync 92/92.
-                                                              Private validate:config: 1087 checks, 0 failed, then sync 57/57. Public doctor 15/16 OK,
-                                                              0 missing; private doctor 16/16. `doctor.extra-tools: []` in both repo-config.yml, so the
-                                                              no-op claim is proven against an empty declaration. Public HEAD 9787582a7, private HEAD
-                                                              fc0a273fd (the merged squash).
-                                                              The single public doctor warning is npm v11.16.0 against a required 11.11.0 — the cross-repo
-                                                              volta.npm pin divergence already routed to learnings.md. It is a warning, not a failure, and
-                                                              doctor still exits 0, which is exactly what this checkbox asserts.
-                                                              Getting here took several failed attempts whose cause is worth recording: HIPPO repeatedly
-                                                              emitted "shedding ephemeral child after memory-warning" and returned 75 AFTER the child had
-                                                              finished its work, because host swap was 9.9 of 11.3 GiB. Exit 75 is an admission deferral,
-                                                              not a failure; per recovery-and-safe-retry the deferral was allowed to clear and the same
-                                                              invocation was retried once, with no retry loop and no bypass. -->
+                                                                      TERMINAL_EXIT=0 marker written as the run's last action, per the Rule 7 landed in this plan.
+                                                                      Public validate:config: 1648 checks, 0 failed, then bindings SUCCESS, then sync 92/92.
+                                                                      Private validate:config: 1087 checks, 0 failed, then sync 57/57. Public doctor 15/16 OK,
+                                                                      0 missing; private doctor 16/16. `doctor.extra-tools: []` in both repo-config.yml, so the
+                                                                      no-op claim is proven against an empty declaration. Public HEAD 9787582a7, private HEAD
+                                                                      fc0a273fd (the merged squash).
+                                                                      The single public doctor warning is npm v11.16.0 against a required 11.11.0 — the cross-repo
+                                                                      volta.npm pin divergence already routed to learnings.md. It is a warning, not a failure, and
+                                                                      doctor still exits 0, which is exactly what this checkbox asserts.
+                                                                      Getting here took several failed attempts whose cause is worth recording: HIPPO repeatedly
+                                                                      emitted "shedding ephemeral child after memory-warning" and returned 75 AFTER the child had
+                                                                      finished its work, because host swap was 9.9 of 11.3 GiB. Exit 75 is an admission deferral,
+                                                                      not a failure; per recovery-and-safe-retry the deferral was allowed to clear and the same
+                                                                      invocation was retried once, with no retry loop and no bypass. -->
 
 > **Pause Safety**: both repositories carry an identical, behaviour-preserving `rhino-cli` with an
 > unused new configuration key. Nothing depends on it yet. Safe to stop. To resume:
@@ -1183,18 +1183,18 @@ One pull request in `ose-public`. No Java project exists yet; this phase makes o
       produces `unused Unit binding`. Run `rtk npm run test:validators`; acceptance: all three fail
       because `.java` is not scanned. Save output to `evidence/du2-red-validator.txt`.
       <!-- RED achieved, but only after correcting the first attempt, which is worth recording.
-                                                      Written literally as specified, two of the three cases PASSED before any GREEN work: the
-                                                      TypeScript extractor is the fallback for every non-`.fs` name, and its
-                                                      `\b(Given|When|Then)\s*\(` pattern happily matches the `Given("...")` inside a Java
-                                                      `@Given("...")` annotation, so binding count and patterns came out right by accident. The
-                                                      undefined-binding case passed for a different wrong reason — with `.java` outside
-                                                      `BINDING_FILE` no binding loads at all, so every step reads as undefined whether or not Java
-                                                      is supported. Both were false REDs: green after the fix, but green before it too, proving
-                                                      nothing. Corrected by adding assertions only a real Java extractor can satisfy —
-                                                      `keywordSensitive === true` (the TypeScript extractor hardcodes `false`) — and by asserting
-                                                      that a COMPLETE Java step file leaves zero `undefined Unit binding` errors, which is
-                                                      unsatisfiable while no `.java` binding loads. All three now fail for the stated reason;
-                                                      TERMINAL_EXIT=1 recorded in the evidence file. -->
+                                                              Written literally as specified, two of the three cases PASSED before any GREEN work: the
+                                                              TypeScript extractor is the fallback for every non-`.fs` name, and its
+                                                              `\b(Given|When|Then)\s*\(` pattern happily matches the `Given("...")` inside a Java
+                                                              `@Given("...")` annotation, so binding count and patterns came out right by accident. The
+                                                              undefined-binding case passed for a different wrong reason — with `.java` outside
+                                                              `BINDING_FILE` no binding loads at all, so every step reads as undefined whether or not Java
+                                                              is supported. Both were false REDs: green after the fix, but green before it too, proving
+                                                              nothing. Corrected by adding assertions only a real Java extractor can satisfy —
+                                                              `keywordSensitive === true` (the TypeScript extractor hardcodes `false`) — and by asserting
+                                                              that a COMPLETE Java step file leaves zero `undefined Unit binding` errors, which is
+                                                              unsatisfiable while no `.java` binding loads. All three now fail for the stated reason;
+                                                              TERMINAL_EXIT=1 recorded in the evidence file. -->
 
 - [x] [AI] **GREEN:** in `scripts/behaviour-coverage.mjs`, extend `BINDING_FILE` to
       `/\.(?:ts|tsx|fs|java)$/iu`, add `extractJavaBindings` matching
@@ -1320,13 +1320,13 @@ format-verify-java`, then `PASS`. Both wrappers log `No Gradle build file found 
 - [x] [AI] Add `java` to the `quality-gate` job's `needs` list. Acceptance: the aggregate gate
       cannot report success while the Java job failed.
       <!-- DU2-083: `needs` is now [build-rhino, format, enumerate, gate, typescript, dotnet, flutter,
-                              java, specs-structure]. Acceptance verified structurally rather than asserted: the aggregate
-                              step's condition is `contains(needs.*.result, 'failure')`, and `needs.*` enumerates only the
-                              jobs named in `needs` — so before this edit a failing Java job was invisible to the gate and
-                              it would have reported success. Parsed the workflow and confirmed `needs.includes('java')` is
-                              true and that the `contains(needs.*.result, 'failure')` expression is still the step's check.
-                              A skipped Java job stays harmless: the existing comment records that `skipped` is an expected
-                              result when a language is unaffected, and only `failure` blocks. `rtk actionlint` exits 0. -->
+                                      java, specs-structure]. Acceptance verified structurally rather than asserted: the aggregate
+                                      step's condition is `contains(needs.*.result, 'failure')`, and `needs.*` enumerates only the
+                                      jobs named in `needs` — so before this edit a failing Java job was invisible to the gate and
+                                      it would have reported success. Parsed the workflow and confirmed `needs.includes('java')` is
+                                      true and that the `contains(needs.*.result, 'failure')` expression is still the step's check.
+                                      A skipped Java job stays harmless: the existing comment records that `skipped` is an expected
+                                      result when a language is unaffected, and only `failure` blocks. `rtk actionlint` exits 0. -->
 
 ### Language Vocabulary, Documentation, and Agents
 
@@ -1351,18 +1351,18 @@ format-verify-java`, then `PASS`. Both wrappers log `No Gradle build file found 
       `repo-governance/development/infra/nx-targets/tag-convention-current-tags-and-examples.md` to
       add the `ose-lms-be` tag set as a copyable example.
       <!-- DU2-085: added a third worked example next to the existing F#/Giraffe and library ones —
-                              `{"name": "ose-lms-be", "tags": ["type:app", "platform:springboot", "lang:java",
-                              "domain:ose"]}` — which is exactly the tag set DU3-134 will write into
-                              apps/ose-lms-be/project.json. prettier exits 0, markdownlint-cli2 reports 0 errors, and the
-                              file is 336 words against the 650 target / 750 fail budget.
-                              Deliberate scoping decision: the row was added to the "Example" section only, NOT to the
-                              "Current Project Tags" table. That table states what exists today, and ose-lms-be does not
-                              exist until DU3 — adding it now would make a rules surface assert a project that no reviewer
-                              could find. The table row is carried to DU4-185 (reconcile every README index the plan
-                              touched), which runs after the project.json is real.
-                              Same pre-existing drift flagged in DU2-084 is visible here too and again left alone: the
-                              table records `rhino-cli` as `lang:rust` and `organiclever-be` as `lang:dotnet`, while the
-                              actual project.json files carry `lang:fsharp`. Carried to DU2-RP-097. -->
+                                      `{"name": "ose-lms-be", "tags": ["type:app", "platform:springboot", "lang:java",
+                                      "domain:ose"]}` — which is exactly the tag set DU3-134 will write into
+                                      apps/ose-lms-be/project.json. prettier exits 0, markdownlint-cli2 reports 0 errors, and the
+                                      file is 336 words against the 650 target / 750 fail budget.
+                                      Deliberate scoping decision: the row was added to the "Example" section only, NOT to the
+                                      "Current Project Tags" table. That table states what exists today, and ose-lms-be does not
+                                      exist until DU3 — adding it now would make a rules surface assert a project that no reviewer
+                                      could find. The table row is carried to DU4-185 (reconcile every README index the plan
+                                      touched), which runs after the project.json is real.
+                                      Same pre-existing drift flagged in DU2-084 is visible here too and again left alone: the
+                                      table records `rhino-cli` as `lang:rust` and `organiclever-be` as `lang:dotnet`, while the
+                                      actual project.json files carry `lang:fsharp`. Carried to DU2-RP-097. -->
   - _Suggested executor: `rules-maker`_
 - [x] [AI] Create the four Java style-guide documents under
       `docs/explanation/software-engineering/programming-languages/java/`: `README.md` (including
@@ -1404,26 +1404,26 @@ format-verify-java`, then `PASS`. Both wrappers log `No Gradle build file found 
       Guidance list, stating it is active for the LMS backend only and is not the default for new
       backends.
       <!-- DU2-087: all three named surfaces updated. (1) Documentation-pattern list — the phrase
-                              "Domain-Specific Standards Pattern (Rust, F#, C#)" appears TWICE in this file, once in
-                              Overview and once under Language Coverage; both now read "(Rust, F#, C#, Java)", because
-                              updating one would have left the file disagreeing with itself. (2) "Which Language for My
-                              Task" gained the row "LMS backend (ose-lms-be only) | Java/Spring Boot | Java Standards —
-                              active for the LMS backend only; not the default for new backends". (3) Platform Guidance
-                              gained "Java: Active for the LMS backend (ose-lms-be) only — not the default for new
-                              backends, which remain F#". Both required qualifiers appear verbatim on surfaces (2) and (3).
-                              Two additions beyond the literal checkbox, both inside this same file and both needed to stop
-                              it contradicting itself: a `### ☕ [Java]` per-language section between F# and Rust (every
-                              other language has one, and the Platform Guidance entry would otherwise point at a language
-                              the section list denies exists), and a Current Language Usage row marking Java ✅ Active —
-                              ose-lms-be only. The emoji gate does not apply — `convention-emoji` is scoped to code
-                              extensions, not markdown.
-                              Defect found and fixed in DU2-086's output: `rhino governance readme-index validate` failed
-                              with 3 high/unannotated findings, because java/README.md indexed its three siblings as a
-                              TABLE. The gate requires the derived-annotation bullet form
-                              `- [<title>](<path>) — <description> <when_to_use>`. Replaced the table with three annotated
-                              bullets carrying each target's frontmatter title and description plus a "Read this when …"
-                              clause; the audit now passes. Verified after: readme-index PASSED, `md links validate` over
-                              the whole programming-languages tree reports "All links valid", markdownlint 0 errors. -->
+                                      "Domain-Specific Standards Pattern (Rust, F#, C#)" appears TWICE in this file, once in
+                                      Overview and once under Language Coverage; both now read "(Rust, F#, C#, Java)", because
+                                      updating one would have left the file disagreeing with itself. (2) "Which Language for My
+                                      Task" gained the row "LMS backend (ose-lms-be only) | Java/Spring Boot | Java Standards —
+                                      active for the LMS backend only; not the default for new backends". (3) Platform Guidance
+                                      gained "Java: Active for the LMS backend (ose-lms-be) only — not the default for new
+                                      backends, which remain F#". Both required qualifiers appear verbatim on surfaces (2) and (3).
+                                      Two additions beyond the literal checkbox, both inside this same file and both needed to stop
+                                      it contradicting itself: a `### ☕ [Java]` per-language section between F# and Rust (every
+                                      other language has one, and the Platform Guidance entry would otherwise point at a language
+                                      the section list denies exists), and a Current Language Usage row marking Java ✅ Active —
+                                      ose-lms-be only. The emoji gate does not apply — `convention-emoji` is scoped to code
+                                      extensions, not markdown.
+                                      Defect found and fixed in DU2-086's output: `rhino governance readme-index validate` failed
+                                      with 3 high/unannotated findings, because java/README.md indexed its three siblings as a
+                                      TABLE. The gate requires the derived-annotation bullet form
+                                      `- [<title>](<path>) — <description> <when_to_use>`. Replaced the table with three annotated
+                                      bullets carrying each target's frontmatter title and description plus a "Read this when …"
+                                      clause; the audit now passes. Verified after: readme-index PASSED, `md links validate` over
+                                      the whole programming-languages tree reports "All links valid", markdownlint 0 errors. -->
   - _Suggested executor: `docs-maker`_
 - [x] [AI] Create `.claude/skills/swe-programming-java/SKILL.md`, sourcing the four documents above,
       modelled on `.claude/skills/swe-programming-fsharp/SKILL.md`. Acceptance: the file is under
@@ -1431,25 +1431,25 @@ format-verify-java`, then `PASS`. Both wrappers log `No Gradle build file found 
       `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- run rhino-cli:test:quick`
       after the edit, which runs the word-budget gate.
       <!-- DU2-088: created .claude/skills/swe-programming-java/SKILL.md at 579 words — under the
-                              650-word target, well under the 750 fail threshold. Acceptance met as written: the full
-                              `nx run rhino-cli:test:quick` under the ephemeral HIPPO boundary exits 0 (57 features, 497
-                              expanded scenarios), and `rhino governance word-budget validate` exits 0 with no finding of
-                              any severity naming the new file. The only WARNs it emits are three pre-existing
-                              rules-grooming files at 652-683 words, untouched by this delivery unit.
-                              Modelled on swe-programming-fsharp: same frontmatter shape, same Prerequisite Knowledge
-                              block, same authoritative-source-plus-index structure. Two deliberate differences. First, the
-                              ayokoding links use the `.../learn/legacy/software-engineering/...` path, which is where the
-                              Java content actually lives; the F# skill's links omit `legacy/` and are stale — noted, not
-                              fixed here, since it is outside this checkbox. Second, no `reference/` sub-modules: the F#
-                              skill splits into two because it fronts 12 documents, whereas this fronts three, so a split
-                              would add indirection without reducing anything.
-                              Content is a genuine quick reference rather than a table of contents — the rules an agent
-                              would otherwise get wrong are stated inline (constructor injection only, keep decisions out
-                              of the framework, declare configuration you depend on, fail fast on a malformed port, never
-                              catch Throwable, nothing internal reaches a client) plus the testing contract including the
-                              keyword-sensitivity difference between Cucumber-JVM and the TypeScript adapter. Also states
-                              the scope limit up front: Java is active for ose-lms-be only and is not the default for new
-                              backends. -->
+                                      650-word target, well under the 750 fail threshold. Acceptance met as written: the full
+                                      `nx run rhino-cli:test:quick` under the ephemeral HIPPO boundary exits 0 (57 features, 497
+                                      expanded scenarios), and `rhino governance word-budget validate` exits 0 with no finding of
+                                      any severity naming the new file. The only WARNs it emits are three pre-existing
+                                      rules-grooming files at 652-683 words, untouched by this delivery unit.
+                                      Modelled on swe-programming-fsharp: same frontmatter shape, same Prerequisite Knowledge
+                                      block, same authoritative-source-plus-index structure. Two deliberate differences. First, the
+                                      ayokoding links use the `.../learn/legacy/software-engineering/...` path, which is where the
+                                      Java content actually lives; the F# skill's links omit `legacy/` and are stale — noted, not
+                                      fixed here, since it is outside this checkbox. Second, no `reference/` sub-modules: the F#
+                                      skill splits into two because it fronts 12 documents, whereas this fronts three, so a split
+                                      would add indirection without reducing anything.
+                                      Content is a genuine quick reference rather than a table of contents — the rules an agent
+                                      would otherwise get wrong are stated inline (constructor injection only, keep decisions out
+                                      of the framework, declare configuration you depend on, fail fast on a malformed port, never
+                                      catch Throwable, nothing internal reaches a client) plus the testing contract including the
+                                      keyword-sensitivity difference between Cucumber-JVM and the TypeScript adapter. Also states
+                                      the scope limit up front: Java is active for ose-lms-be only and is not the default for new
+                                      backends. -->
 - [x] [AI] Create `.claude/agents/swe/swe-java-dev.md` modelled on
       `.claude/agents/swe/swe-fsharp-dev.md`, referencing the new skill. Acceptance: same word
       budget check passes.
@@ -1503,20 +1503,20 @@ unannotated`) — exit 0, "no orphan or ghost references found", and zero lines 
       Acceptance: both exit 0, and the generated `.opencode/`, `.codex/`, and `.agents/` files are
       staged in the same commit as their `.claude/` sources. Never hand-edit a mirror.
       <!-- DU2-091: `rtk npm run generate:bindings` exits 0 — "Agents: 89 converted", "codex: 89
-                              agent(s) emitted", "codex: 3 skill file(s) mirrored, 0 stale removed". Both acceptance
-                              commands then exit 0: `validate:sync` 93/93 passed, 0 failed; `harness:bindings-validation`
-                              199/199 checks passed, 0 failed. Before regeneration the same validation failed with 6
-                              checks, naming exactly the drift this step resolves, so the pass is a real state change
-                              rather than a gate that was already green.
-                              Five generated paths changed, all to be staged in the DU2 commit alongside their `.claude/`
-                              sources, none hand-edited: `.opencode/agents/swe-java-dev.md` (new),
-                              `.codex/agents/swe-java-dev.toml` (new), `.agents/skills/swe-programming-java/`
-                              (new — README.md and SKILL.md), `.agents/skills/README.md` (modified), and
-                              `.codex/config.toml` (modified, generated region only).
-                              One expectation corrected against reality rather than assumed: `.codex/agents/` holds `.toml`
-                              files, not `.md`. Checking for `.codex/agents/swe-java-dev.md` returns "No such file", which
-                              reads as a missing mirror; the actual emitted mirror is `swe-java-dev.toml`, and the
-                              directory contains 89 `.toml` files matching the 89 `.claude/` agent sources. -->
+                                      agent(s) emitted", "codex: 3 skill file(s) mirrored, 0 stale removed". Both acceptance
+                                      commands then exit 0: `validate:sync` 93/93 passed, 0 failed; `harness:bindings-validation`
+                                      199/199 checks passed, 0 failed. Before regeneration the same validation failed with 6
+                                      checks, naming exactly the drift this step resolves, so the pass is a real state change
+                                      rather than a gate that was already green.
+                                      Five generated paths changed, all to be staged in the DU2 commit alongside their `.claude/`
+                                      sources, none hand-edited: `.opencode/agents/swe-java-dev.md` (new),
+                                      `.codex/agents/swe-java-dev.toml` (new), `.agents/skills/swe-programming-java/`
+                                      (new — README.md and SKILL.md), `.agents/skills/README.md` (modified), and
+                                      `.codex/config.toml` (modified, generated region only).
+                                      One expectation corrected against reality rather than assumed: `.codex/agents/` holds `.toml`
+                                      files, not `.md`. Checking for `.codex/agents/swe-java-dev.md` returns "No such file", which
+                                      reads as a missing mirror; the actual emitted mirror is `swe-java-dev.toml`, and the
+                                      directory contains 89 `.toml` files matching the 89 `.claude/` agent sources. -->
 - [x] [AI] Declare the `java` tool in `repo-config.yml` under `doctor.extra-tools`, using the shape
       in `tech-docs.md` §D-5 and the Phase 0 resolved LTS. Run `rtk npm run doctor`; acceptance: the
       output now includes a `java` row reporting the installed JDK version, proving the stderr probe
@@ -1550,17 +1550,17 @@ unannotated`) — exit 0, "no orphan or ghost references found", and zero lines 
 - [x] [AI] Add the `ose-lms-be` row to `docs/reference/web-sites.md` — both the app table (port 8303) and the port-variable table (`OSE_LMS_BE_PORT`). Acceptance: `rtk npm run lint:md` exits
       0 and both tables carry the row.
       <!-- DU2-093: both tables carry the row, each inserted directly after its `ose-be` sibling so
-                              the OSE backends stay adjacent. App table line 22:
-                              `| ose-lms-be | (Java 25 / Spring Boot 4) | 8303 | — |` — the Prod Branch cell is an em dash
-                              because, like ose-be and organiclever-be, this service has no production branch. Port-variable
-                              table line 40: `| ose-lms-be | \`OSE_LMS_BE_PORT\` |`.
-                              Acceptance met: `rtk npm run lint:md` exits 0 over 7,619 files (up from 7,613 before this
-                              delivery unit's new documents), and both tables carry the row.
-                              Port 8303 is claimed exactly once in this file, checked rather than assumed. The stronger
-                              workspace-wide uniqueness check is DU4-184's job, once a project.json actually binds it. The
-                              row also makes the "Overriding a port" prose above it true for this service in advance: the
-                              flag-then-variable-then-default precedence and the fail-on-malformed-value rule are what
-                              DU3-140's PortResolver implements and what AC-PORT-01..03 assert. -->
+                                      the OSE backends stay adjacent. App table line 22:
+                                      `| ose-lms-be | (Java 25 / Spring Boot 4) | 8303 | — |` — the Prod Branch cell is an em dash
+                                      because, like ose-be and organiclever-be, this service has no production branch. Port-variable
+                                      table line 40: `| ose-lms-be | \`OSE_LMS_BE_PORT\` |`.
+                                      Acceptance met: `rtk npm run lint:md` exits 0 over 7,619 files (up from 7,613 before this
+                                      delivery unit's new documents), and both tables carry the row.
+                                      Port 8303 is claimed exactly once in this file, checked rather than assumed. The stronger
+                                      workspace-wide uniqueness check is DU4-184's job, once a project.json actually binds it. The
+                                      row also makes the "Overriding a port" prose above it true for this service in advance: the
+                                      flag-then-variable-then-default precedence and the fail-on-malformed-value rule are what
+                                      DU3-140's PortResolver implements and what AC-PORT-01..03 assert. -->
 
 ### Rules Propagation — DU2 (`ose-public` only)
 
@@ -1569,141 +1569,158 @@ unannotated`) — exit 0, "no orphan or ghost references found", and zero lines 
       Java-job CI routing obligation. Record all three in
       `local-tmp/rules-propagation/rules-propagation__lms-init-du2__manifest.md`.
       <!-- DU2-RP-094: manifest written at the required path with all three rules normalized to a
-                              falsifiable sentence plus how each is falsified and its change type. R1 (tag vocabulary) is an
-                              extension — two values admitted, none removed, no precedence altered. R2 (.java formatting)
-                              and R3 (Java CI routing) are new rules; no prior surface stated any obligation for .java, and
-                              R3 is structurally parallel to the three routing rules already in place for TypeScript, .NET,
-                              and Flutter. Each sentence is written so a reviewer can hold a concrete repository state
-                              against it — e.g. R3 is falsified by opening a PR touching only a lang:java project and
-                              reading which jobs ran, not by reading intent. -->
+                                      falsifiable sentence plus how each is falsified and its change type. R1 (tag vocabulary) is an
+                                      extension — two values admitted, none removed, no precedence altered. R2 (.java formatting)
+                                      and R3 (Java CI routing) are new rules; no prior surface stated any obligation for .java, and
+                                      R3 is structurally parallel to the three routing rules already in place for TypeScript, .NET,
+                                      and Flutter. Each sentence is written so a reviewer can hold a concrete repository state
+                                      against it — e.g. R3 is falsified by opening a PR touching only a lang:java project and
+                                      reading which jobs ran, not by reading intent. -->
 - [x] [AI] **Steps 2–3 — classification and conflict scan:** inventory every surface stating the
       language vocabulary or the formatter registry. Search with
       `rtk grep -rln "lang:ts\|lang:fsharp\|formatting-verify" repo-governance/ docs/ .github/ AGENTS.md CLAUDE.md`.
       Record a per-surface verdict and halt on any higher-layer contradiction.
       <!-- DU2-RP-095: per-surface verdict table recorded in the manifest for 13 surface groups.
-                              The prescribed grep was run (6 files) but NOT trusted as the inventory, because it has a
-                              vocabulary gap: the canonical table in tag-convention-four-dimension-scheme.md writes its
-                              values bare (`ts`, `rust`, `dotnet`), never `lang:`-prefixed, so the pattern
-                              `lang:ts\|lang:fsharp\|formatting-verify` misses the very surface R1 is about. Ran three
-                              widened scans instead, one per rule — 20, 57, and 1 file — and read each hit to decide
-                              "states the subject" vs "merely refers to it".
-                              Higher-layer contradiction check: none, so no halt. AGENTS.md and CLAUDE.md are the
-                              instruction layer and outrank every repo-governance surface; neither matches `lang:`,
-                              `formatter`, `Spotless`, `Elixir`, or `java` at all, so there is no higher-layer claim to
-                              contradict.
-                              One same-layer contradiction found, which is a Step 6 tidy rather than a halt:
-                              `nx-targets/formatting-and-file-type-linting.md` asserts "Only Elixir uses a wrapper script
-                              because mix format requires the project root" — `scripts/format-java.sh` falsifies that
-                              sentence, and the same file's glob→formatter table has no `*.java` row. Two further surfaces
-                              state the subject incompletely and need a Java entry:
-                              `quality/code/language-specific-auto-formatters.md` and
-                              `nx-target-naming/lint-staged-membership-rule.md`.
-                              One surface already states R3 generically and needs no edit:
-                              `ci-conventions/naming-conventions-and-adding-a-new-app-to-ci.md` items 8 and 9 already
-                              require `.github/actions/setup-{lang}/action.yml` and language detection in the PR quality
-                              gate — DU2-079 and DU2-080 comply with a rule that was already written.
-                              Four pre-existing defects were recorded rather than silently inherited: three stale
-                              vocabulary entries and a formatter table listing only 2 of the ~10 registered formatters. -->
+                                      The prescribed grep was run (6 files) but NOT trusted as the inventory, because it has a
+                                      vocabulary gap: the canonical table in tag-convention-four-dimension-scheme.md writes its
+                                      values bare (`ts`, `rust`, `dotnet`), never `lang:`-prefixed, so the pattern
+                                      `lang:ts\|lang:fsharp\|formatting-verify` misses the very surface R1 is about. Ran three
+                                      widened scans instead, one per rule — 20, 57, and 1 file — and read each hit to decide
+                                      "states the subject" vs "merely refers to it".
+                                      Higher-layer contradiction check: none, so no halt. AGENTS.md and CLAUDE.md are the
+                                      instruction layer and outrank every repo-governance surface; neither matches `lang:`,
+                                      `formatter`, `Spotless`, `Elixir`, or `java` at all, so there is no higher-layer claim to
+                                      contradict.
+                                      One same-layer contradiction found, which is a Step 6 tidy rather than a halt:
+                                      `nx-targets/formatting-and-file-type-linting.md` asserts "Only Elixir uses a wrapper script
+                                      because mix format requires the project root" — `scripts/format-java.sh` falsifies that
+                                      sentence, and the same file's glob→formatter table has no `*.java` row. Two further surfaces
+                                      state the subject incompletely and need a Java entry:
+                                      `quality/code/language-specific-auto-formatters.md` and
+                                      `nx-target-naming/lint-staged-membership-rule.md`.
+                                      One surface already states R3 generically and needs no edit:
+                                      `ci-conventions/naming-conventions-and-adding-a-new-app-to-ci.md` items 8 and 9 already
+                                      require `.github/actions/setup-{lang}/action.yml` and language detection in the PR quality
+                                      gate — DU2-079 and DU2-080 comply with a rule that was already written.
+                                      Four pre-existing defects were recorded rather than silently inherited: three stale
+                                      vocabulary entries and a formatter table listing only 2 of the ~10 registered formatters. -->
 - [x] [AI] **Step 4 — placement and eviction:** place each rule on the narrowest surface that binds
       — the tag convention for vocabulary, `repo-config.yml` for the formatter, the workflow for CI
       routing. Confirm no admission to `AGENTS.md` or `CLAUDE.md` is proposed; if one is, name the
       eviction that makes room rather than raising a threshold.
       <!-- DU2-RP-096: placement recorded per rule with the reason nothing narrower binds. R1 →
-                              tag-convention-four-dimension-scheme.md, because no machine surface holds the admitted tag
-                              values at all (project.json carries tags but declares no vocabulary; repo-config.yml has no
-                              tag schema). R2 → repo-config.yml `gates:`, because the registry is the executable surface;
-                              the narrower-looking package.json lint-staged block is GENERATED by `gate emit`, so editing
-                              it would be editing an output. R3 → pr-quality-gate.yml, the only surface that decides which
-                              job runs.
-                              Confirmed: no admission to AGENTS.md or CLAUDE.md is proposed, so no eviction is named. The
-                              reason is not "no room" — each rule fails the admission test on its merits. R1 is a lookup
-                              table an agent needs only while writing a project.json, one link from AGENTS.md §Conventions.
-                              R2 needs no instruction at all, because `format-java` rewrites the staged file whether or not
-                              anyone read anything — a rule that executes does not also need to be remembered. R3 is
-                              invisible to an author: routing is decided from the project's tags, so nobody writing Java
-                              has to know the job exists for it to run.
-                              Also recorded: three widenings a looser reading would have permitted and this run declined —
-                              the Current Project Tags row (deferred to DU4-185, since ose-lms-be does not exist until DU3),
-                              the stale vocabulary entries (pre-existing, outside all three rules, not corrected under
-                              cover of this change), and an AGENTS.md §Quality Gates sentence. -->
+                                      tag-convention-four-dimension-scheme.md, because no machine surface holds the admitted tag
+                                      values at all (project.json carries tags but declares no vocabulary; repo-config.yml has no
+                                      tag schema). R2 → repo-config.yml `gates:`, because the registry is the executable surface;
+                                      the narrower-looking package.json lint-staged block is GENERATED by `gate emit`, so editing
+                                      it would be editing an output. R3 → pr-quality-gate.yml, the only surface that decides which
+                                      job runs.
+                                      Confirmed: no admission to AGENTS.md or CLAUDE.md is proposed, so no eviction is named. The
+                                      reason is not "no room" — each rule fails the admission test on its merits. R1 is a lookup
+                                      table an agent needs only while writing a project.json, one link from AGENTS.md §Conventions.
+                                      R2 needs no instruction at all, because `format-java` rewrites the staged file whether or not
+                                      anyone read anything — a rule that executes does not also need to be remembered. R3 is
+                                      invisible to an author: routing is decided from the project's tags, so nobody writing Java
+                                      has to know the job exists for it to run.
+                                      Also recorded: three widenings a looser reading would have permitted and this run declined —
+                                      the Current Project Tags row (deferred to DU4-185, since ose-lms-be does not exist until DU3),
+                                      the stale vocabulary entries (pre-existing, outside all three rules, not corrected under
+                                      cover of this change), and an AGENTS.md §Quality Gates sentence. -->
 - [x] [AI] **Step 6 — write and tidy:** land the canonical edits, then reconcile every other surface
       that states the same subject, including the languages README and the platform-bindings catalog
       if the new agent changes a claim there.
       <!-- DU2-RP-097: canonical edits had already landed (DU2-084 for R1, DU2-077/078 for R2,
-                              DU2-080..083 for R3); this step reconciled the three other surfaces that state the same
-                              subject.
-                              (1) `nx-targets/formatting-and-file-type-linting.md` — added the `*.java` →
-                              `scripts/format-java.sh` row AND rewrote the sentence "Only Elixir uses a wrapper script
-                              because mix format requires the project root", which format-java.sh had silently falsified.
-                              It now states the shared reason both wrappers exist — the formatter is invoked from a project
-                              root rather than on bare file paths — rather than treating Elixir as a special case. This is
-                              the contradiction Steps 2-3 flagged, now closed. 304 → 361 words.
-                              (2) `quality/code/language-specific-auto-formatters.md` — added `Java | spotlessApply |
-                              Pre-commit (lint-staged)`. 95 → 103 words.
-                              (3) `nx-target-naming/lint-staged-membership-rule.md` — Qualifying Checks now names Spotless
-                              (`*.java`) beside `mix format`, with the wrapper reason stated once for both. 465 → 483 words.
-                              Both surfaces the checkbox named explicitly: the languages README was reconciled at DU2-087
-                              (five separate places in that one file). The platform-bindings catalog needs NO edit, and
-                              that was checked by reading it rather than assumed — it describes each harness's mechanism,
-                              surfaces, and ownership classes and states no agent inventory or count, so adding one agent
-                              changes no claim in it; the agent's mirrors are generated and verified at Step 8.
-                              Verified after the tidy: word-budget exit 0 with all three files under the 650 target,
-                              `md links validate repo-governance` exit 0 "All links valid", markdownlint over
-                              repo-governance/**/*.md 0 errors. -->
+                                      DU2-080..083 for R3); this step reconciled the three other surfaces that state the same
+                                      subject.
+                                      (1) `nx-targets/formatting-and-file-type-linting.md` — added the `*.java` →
+                                      `scripts/format-java.sh` row AND rewrote the sentence "Only Elixir uses a wrapper script
+                                      because mix format requires the project root", which format-java.sh had silently falsified.
+                                      It now states the shared reason both wrappers exist — the formatter is invoked from a project
+                                      root rather than on bare file paths — rather than treating Elixir as a special case. This is
+                                      the contradiction Steps 2-3 flagged, now closed. 304 → 361 words.
+                                      (2) `quality/code/language-specific-auto-formatters.md` — added `Java | spotlessApply |
+                                      Pre-commit (lint-staged)`. 95 → 103 words.
+                                      (3) `nx-target-naming/lint-staged-membership-rule.md` — Qualifying Checks now names Spotless
+                                      (`*.java`) beside `mix format`, with the wrapper reason stated once for both. 465 → 483 words.
+                                      Both surfaces the checkbox named explicitly: the languages README was reconciled at DU2-087
+                                      (five separate places in that one file). The platform-bindings catalog needs NO edit, and
+                                      that was checked by reading it rather than assumed — it describes each harness's mechanism,
+                                      surfaces, and ownership classes and states no agent inventory or count, so adding one agent
+                                      changes no claim in it; the agent's mirrors are generated and verified at Step 8.
+                                      Verified after the tidy: word-budget exit 0 with all three files under the 650 target,
+                                      `md links validate repo-governance` exit 0 "All links valid", markdownlint over
+                                      repo-governance/**/*.md 0 errors. -->
 - [x] [AI] **Step 7 — enforcement disposition:** record the three-way outcome per rule. Expected:
       vocabulary **enforced** by `repo-config validate` plus the tag convention; formatting
       **enforced** by the gate pair; CI routing **enforced** by the `quality-gate` aggregate needing
       the `java` job.
       <!-- DU2-RP-098: three-way outcome recorded per rule, each tested against the repository
-                              rather than copied from the plan's expectation. Two of the three expectations held; one did
-                              not, and is recorded as wrong rather than restated.
-                              R1 vocabulary → UNENFORCED BY DECISION, not "enforced by repo-config validate". That
-                              expectation fails on inspection: `repo-config validate` reads repo-config.yml, which has no
-                              tag schema and no `tags` key; no `gates:` entry reads project.json tags; nx.json declares no
-                              tag constraints and there is no ESLint config, so @nx/enforce-module-boundaries is not
-                              configured to constrain values; and no F# validator reads project tags (the only `tags`
-                              handling is markdown frontmatter in Md.fs and Gherkin tags in behaviour-coverage.mjs). A
-                              project.json carrying `lang:kotlin` is caught by human review and nothing else. Worse, the
-                              one machine consequence fails OPEN: the detect job's per-tag `case` has no arm for an
-                              undeclared value, so the project silently gets no language job and the PR goes green having
-                              run nothing for it.
-                              Deliberately not fixed inside this delivery unit, with the reason recorded: a tag-vocabulary
-                              gate needs its own gate entry, a project-graph read, and its own Gherkin, and it would bind
-                              across all existing projects — four of which carry values the table does not admit
-                              (lang:fsharp, platform:giraffe) or omit values it does (rust, dotnet, axum). Landing it here
-                              would turn Java enablement into a repository-wide tag migration. Routed to learnings.md for
-                              Phase 5 triage as a `governance-tag-vocabulary` gate plus a loud `*)` default arm in detect,
-                              to be built after the stale entries are reconciled.
-                              R2 formatting → GATED. format-java (mutation, restages) at pre-commit via the generated
-                              lint-staged block; format-verify-java (check, verifies: format-java) in CI. Not asserted from
-                              the registry alone — DU2-078 proved both fire in an isolated fixture, and caught that `*.java`
-                              was missing from the generated lint-staged block until `gate emit` ran.
-                              R3 CI routing → GATED. detect emits has-java including in the fail-safe fallback, the java job
-                              is gated on it, all four sibling invocations exclude tag:lang:java, and quality-gate lists
-                              java in `needs` — which is what makes it visible to contains(needs.*.result, 'failure').
-                              Verified by parsing the workflow; end-to-end observation is staged at DU2-PP-115 (skipped)
-                              and DU3-PP-169 (runs and passes). -->
+                                      rather than copied from the plan's expectation. Two of the three expectations held; one did
+                                      not, and is recorded as wrong rather than restated.
+                                      R1 vocabulary → UNENFORCED BY DECISION, not "enforced by repo-config validate". That
+                                      expectation fails on inspection: `repo-config validate` reads repo-config.yml, which has no
+                                      tag schema and no `tags` key; no `gates:` entry reads project.json tags; nx.json declares no
+                                      tag constraints and there is no ESLint config, so @nx/enforce-module-boundaries is not
+                                      configured to constrain values; and no F# validator reads project tags (the only `tags`
+                                      handling is markdown frontmatter in Md.fs and Gherkin tags in behaviour-coverage.mjs). A
+                                      project.json carrying `lang:kotlin` is caught by human review and nothing else. Worse, the
+                                      one machine consequence fails OPEN: the detect job's per-tag `case` has no arm for an
+                                      undeclared value, so the project silently gets no language job and the PR goes green having
+                                      run nothing for it.
+                                      Deliberately not fixed inside this delivery unit, with the reason recorded: a tag-vocabulary
+                                      gate needs its own gate entry, a project-graph read, and its own Gherkin, and it would bind
+                                      across all existing projects — four of which carry values the table does not admit
+                                      (lang:fsharp, platform:giraffe) or omit values it does (rust, dotnet, axum). Landing it here
+                                      would turn Java enablement into a repository-wide tag migration. Routed to learnings.md for
+                                      Phase 5 triage as a `governance-tag-vocabulary` gate plus a loud `*)` default arm in detect,
+                                      to be built after the stale entries are reconciled.
+                                      R2 formatting → GATED. format-java (mutation, restages) at pre-commit via the generated
+                                      lint-staged block; format-verify-java (check, verifies: format-java) in CI. Not asserted from
+                                      the registry alone — DU2-078 proved both fire in an isolated fixture, and caught that `*.java`
+                                      was missing from the generated lint-staged block until `gate emit` ran.
+                                      R3 CI routing → GATED. detect emits has-java including in the fail-safe fallback, the java job
+                                      is gated on it, all four sibling invocations exclude tag:lang:java, and quality-gate lists
+                                      java in `needs` — which is what makes it visible to contains(needs.*.result, 'failure').
+                                      Verified by parsing the workflow; end-to-end observation is staged at DU2-PP-115 (skipped)
+                                      and DU3-PP-169 (runs and passes). -->
 - [x] [AI] **Step 8 — binding generation and verification:** run `rtk npm run generate:bindings`,
       `rtk npm run validate:sync`, `rtk npm run harness:bindings-validation`,
       `rtk npm run validate:config`, and `rtk npm run lint:md`. Acceptance: all exit 0 and every
       manifest rule has a binding gate or an explicit unenforced disposition.
       <!-- DU2-RP-099: all five commands exit 0, each with TERMINAL_EXIT recorded as the run's own
-                              last action. generate:bindings (89 agents converted, codex 89 emitted, 3 skill files
-                              mirrored, 0 stale removed), validate:sync (93/93), harness:bindings-validation (199/199),
-                              validate:config (93/93), lint:md (0 errors).
-                              A false failure was caught and is recorded rather than hidden: the first attempt ran all five
-                              from a shell loop as `rtk $cmd` and reported 127 five times. Under zsh an unquoted parameter
-                              is NOT word-split, so `rtk "npm run generate:bindings"` was executed as a single argument and
-                              not found. Five identical 127s read like a broken toolchain; the defect was in the harness
-                              around the check, not in anything being checked. Re-run individually, all five exit 0.
-                              Rule-to-binding closure holds: R2 → format-java + format-verify-java, R3 → the java job
-                              reachable by the quality-gate aggregate through `needs`, R1 → no gate, with the explicit
-                              unenforced-by-decision disposition and its follow-up recorded at Step 7. Every manifest rule
-                              therefore has either a binding gate or a stated unenforced disposition; none is silent. -->
-- [ ] [AI] **Step 9 — manifest, final status, and sibling obligation:** record the terminal state
+                                      last action. generate:bindings (89 agents converted, codex 89 emitted, 3 skill files
+                                      mirrored, 0 stale removed), validate:sync (93/93), harness:bindings-validation (199/199),
+                                      validate:config (93/93), lint:md (0 errors).
+                                      A false failure was caught and is recorded rather than hidden: the first attempt ran all five
+                                      from a shell loop as `rtk $cmd` and reported 127 five times. Under zsh an unquoted parameter
+                                      is NOT word-split, so `rtk "npm run generate:bindings"` was executed as a single argument and
+                                      not found. Five identical 127s read like a broken toolchain; the defect was in the harness
+                                      around the check, not in anything being checked. Re-run individually, all five exit 0.
+                                      Rule-to-binding closure holds: R2 → format-java + format-verify-java, R3 → the java job
+                                      reachable by the quality-gate aggregate through `needs`, R1 → no gate, with the explicit
+                                      unenforced-by-decision disposition and its follow-up recorded at Step 7. Every manifest rule
+                                      therefore has either a binding gate or a stated unenforced disposition; none is silent. -->
+- [x] [AI] **Step 9 — manifest, final status, and sibling obligation:** record the terminal state
       and the pull request URL. Record the sibling obligation explicitly as `none` — DU2 changes no
       parity-manifest file and no `repo-config.yml` key, only values on keys that already exist in
       both repositories.
+      <!-- Implementation notes (DU2-RP-100): manifest at
+              `local-tmp/rules-propagation/rules-propagation__lms-init-du2__manifest.md`, terminal state
+              **complete**, pull request https://github.com/wahidyankf/ose-public/pull/493 at head
+              `8e4210b71f7a19aff876649bcf90d4fa62b0f023` over base `4586e277e`, rule edits carried by commit
+              `703d72eee`. Final status per rule: R1 (tag vocabulary) placed on the tag convention,
+              **unenforced by decision** with a named follow-up routed to `learnings.md`; R2 (formatter gate
+              pair) placed on the `repo-config.yml` gate registry, **gated** and proven to fire in both
+              directions; R3 (Java CI job) placed on `pr-quality-gate.yml`, **gated**, verified structurally
+              with end-to-end observation staged at DU2-PP-115 and DU3-PP-169. Three surfaces tidied, one
+              same-layer contradiction closed, no instruction-surface admission proposed and therefore no
+              eviction.
+              Sibling obligation recorded as **none**, and verified against the working tree rather than
+              restated from the plan: `ose-private` mirrors `apps/rhino-cli` byte-for-byte and nothing else,
+              DU2 touches no file under `apps/rhino-cli/` and no parity-manifest file, and its only
+              `repo-config.yml` edits are values on `doctor.extra-tools` and the gate registry — keys DU1
+              already landed in both repositories. Nothing crosses, so no `ose-private` propagation run is
+              owed for this delivery unit. -->
 
 ### Local Quality Gates (Before Push) — DU2
 
@@ -1782,47 +1799,102 @@ skipped 0`. No cache question arises here — the script is a direct
 
 - [x] [AI] Do not stage or commit until the user explicitly authorizes the named change set
       <!-- Implementation notes (DU2-C-107): authorized. The standing `/goal` directive names this
-                      plan and instructs execution of every phase without stopping, which is the same authorization
-                      DU1 was committed under. Nothing was staged before it. -->
+                              plan and instructs execution of every phase without stopping, which is the same authorization
+                              DU1 was committed under. Nothing was staged before it. -->
 - [x] [AI] Expected commit shape: `feat(repo): enable java projects across the quality surfaces`
       <!-- Implementation notes (DU2-C-108): committed verbatim as the planned subject. One commit
-                      for the whole delivery unit, `703d72eee`, 37 files / 2643 insertions / 516 deletions. The body
-                      states the cost/benefit the PR convention requires — one 66-line shell wrapper plus one
-                      extractor function of new code, everything else configuration or documentation, against DU3's
-                      Java service landing into surfaces that already measure it. Rebased onto `origin/main`
-                      (`4586e277e`, PR #492) before pushing so the pull request's base is the current head rather
-                      than the two-commits-stale `c6fffc384` the branch was cut from; the rebase was clean and
-                      `git status` is empty after it. -->
+                              for the whole delivery unit, `703d72eee`, 37 files / 2643 insertions / 516 deletions. The body
+                              states the cost/benefit the PR convention requires — one 66-line shell wrapper plus one
+                              extractor function of new code, everything else configuration or documentation, against DU3's
+                              Java service landing into surfaces that already measure it. Rebased onto `origin/main`
+                              (`4586e277e`, PR #492) before pushing so the pull request's base is the current head rather
+                              than the two-commits-stale `c6fffc384` the branch was cut from; the rebase was clean and
+                              `git status` is empty after it. -->
 - [x] [AI] Keep each `.claude/` source and its generated mirrors in the same commit; split the
       validator change, the gate change, and the CI change only if each stands alone as build-valid
       <!-- Implementation notes (DU2-C-109): held. `.claude/agents/swe/swe-java-dev.md` and
-                      `.claude/skills/swe-programming-java/` ship in the same commit as every generated mirror they
-                      produce — `.opencode/agents/swe-java-dev.md`, `.codex/agents/swe-java-dev.toml`, the delimited
-                      region of `.codex/config.toml`, and `.agents/skills/swe-programming-java/` — so no commit in
-                      this branch's history has a source without its mirror. The validator, formatter-gate, and CI
-                      changes were deliberately NOT split: none of the three stands alone as build-valid, because
-                      `package.json`'s lint-staged block references `scripts/format-java.sh` (a split would leave a
-                      dangling reference) and the `java` quality-gate job's `needs`/aggregate wiring is meaningless
-                      without the `has-java` detection in `detect`. The convention's condition for splitting is not
-                      met, so one commit is the correct answer rather than the lazy one. -->
+                              `.claude/skills/swe-programming-java/` ship in the same commit as every generated mirror they
+                              produce — `.opencode/agents/swe-java-dev.md`, `.codex/agents/swe-java-dev.toml`, the delimited
+                              region of `.codex/config.toml`, and `.agents/skills/swe-programming-java/` — so no commit in
+                              this branch's history has a source without its mirror. The validator, formatter-gate, and CI
+                              changes were deliberately NOT split: none of the three stands alone as build-valid, because
+                              `package.json`'s lint-staged block references `scripts/format-java.sh` (a split would leave a
+                              dangling reference) and the `java` quality-gate job's `needs`/aggregate wiring is meaningless
+                              without the `has-java` detection in `detect`. The convention's condition for splitting is not
+                              met, so one commit is the correct answer rather than the lazy one. -->
 - [x] [AI] Do not extend a commit beyond the user-authorized change set
       <!-- Implementation notes (DU2-C-110): held. Every one of the 37 staged paths traces to a DU2
-                      checkbox or is this plan's own delivery record and evidence, which DU1's merged commit
-                      `c6fffc384` establishes as in-scope for a delivery-unit commit here. Nothing opportunistic was
-                      swept in: the pre-existing `no-unused-vars` warning in `apps/ayokoding-www` was left untouched
-                      precisely because fixing it would have extended this commit past its boundary. -->
+                              checkbox or is this plan's own delivery record and evidence, which DU1's merged commit
+                              `c6fffc384` establishes as in-scope for a delivery-unit commit here. Nothing opportunistic was
+                              swept in: the pre-existing `no-unused-vars` warning in `apps/ayokoding-www` was left untouched
+                              precisely because fixing it would have extended this commit past its boundary. -->
 
 ### Post-Push Verification — DU2
 
-- [ ] [AI] `rtk git switch -c lms-init/du2-java-enablement` then
+- [x] [AI] `rtk git switch -c lms-init/du2-java-enablement` then
       `rtk git push -u origin lms-init/du2-java-enablement`
-- [ ] [AI] Open a draft pull request against `main`; the body states the new-code cost and benefit
+      <!-- Implementation notes (DU2-PP-111): pushed at head
+              `8e4210b71f7a19aff876649bcf90d4fa62b0f023`, tracking
+              `origin/lms-init/du2-java-enablement`. The first push attempt was REJECTED by the `md-links`
+              pre-push gate, exit 1, two broken links — and it was right to reject: the DU2-090 note quoted
+              the two index bullets it had added verbatim, including their Markdown link syntax, and the
+              gate cannot tell a quoted link from a used one, so it resolved `./swe-java-dev.md` and
+              `./swe-programming-java/README.md` against this file's own directory. Fixed at the root by
+              rewriting both quoted bullets with `->` in place of the link syntax (commit `8e4210b`), not by
+              skipping the hook. `rhino md links validate plans/in-progress/lms-init` then exits 0 with
+              "All links valid! No broken links found.". Three commits on the branch: the change set, the
+              quality-gate plan record, and that link fix. -->
+- [x] [AI] Open a draft pull request against `main`; the body states the new-code cost and benefit
+      <!-- Implementation notes (DU2-PP-112): opened as
+              https://github.com/wahidyankf/ose-public/pull/493, draft, base `main`. The body states the
+              cost (one 66-line shell wrapper plus one extractor function; everything else configuration or
+              documentation, tests exempt) and the benefit (DU3's Java service lands into surfaces that
+              already measure it, instead of arriving with its gates disabled and needing a follow-up PR to
+              enable them). It also states the expectation that the `Java quality gate` job must report
+              `skipped` here, so a reviewer can falsify DU2-PP-115 from the checks list alone. -->
 - [ ] [AI] Poll CI every 2 minutes with `rtk gh pr checks <number>`. Never use `gh run watch`
 - [ ] [AI] Verify exact-current-head/base `Quality gate` passes and one clean current-head
       `pr-leak-review` is recorded
-- [ ] [AI] Confirm the `Java quality gate` job reports **skipped** on this pull request — no Java
+- [x] [AI] Confirm the `Java quality gate` job reports **skipped** on this pull request — no Java
       project exists yet, and a job that runs here would mean the detection is wrong
-- [ ] [AI] If any check fails, fix at the root cause and push a follow-up commit; never bypass
+      <!-- Implementation notes (DU2-PP-115): confirmed. `Java quality gate  completed  skipped` on
+              run 34209169469. Taken from the API's `conclusion` field rather than the checks list, because
+              the checks list renders it as "skipping" and only the job conclusion is the terminal state.
+              Two things make this a real assertion rather than a formality. First, the failure mode is
+              live: `detect` defaults `has-java=false` and flips it true only when an affected Nx project
+              carries `lang:java`, so a job that RAN here would mean the tag scan is matching something it
+              should not. Second, `detect` itself concluded `success`, which rules out the fail-safe
+              fallback — that path sets every `has-*` output to `true` and would have made this job run, so
+              a green `detect` is what makes `skipped` attributable to the tag scan rather than to an
+              error. `Flutter quality gate` also reports `skipped`, on the same mechanism, which is the
+              control case. Evidence: `evidence/du2-ci-java-skipped.txt`. -->
+- [x] [AI] If any check fails, fix at the root cause and push a follow-up commit; never bypass
+      <!-- Implementation notes (DU2-PP-116): all 14 executing CI checks passed first time and both
+              language-detection jobs correctly reported `skipped`, so nothing failed in CI. One real defect
+              did surface, and it was found by the mandated current-head `pr-leak-review` rather than by any
+              gate: **result `fail`, seven category-3 machine-specific absolute paths** in the newly added
+              `evidence/du2-red-validator.txt` — three `file://`-prefixed worktree paths in Node
+              test-runner stack traces (lines 65, 92, 109) and four macOS per-user temp paths in the
+              assertion diff (lines 86, 87, 88, 97). Verified independently before acting rather than taken
+              on the reviewer's word: a direct scan across all 17 evidence files confirmed exactly one dirty
+              file and confirmed that the one `/Users/` hit in `du2-doctor-java.txt` is a false positive —
+              it is that file's own sanitizer note listing the prefixes it scanned for.
+              Fixed at the root of the artifact, not line by line: two substitutions using the placeholder
+              tokens the other 16 evidence files already use (`<public-worktree>`, `<tmpdir>`), then a
+              re-scan of the whole plan tree returning zero real host paths. The only remaining matches
+              anywhere under `plans/in-progress/lms-init/` are already-anonymized `<user-hash>` prose in
+              this delivery record and the relative source path `components/home/entry-item.tsx` in
+              unrelated committed lint output — neither is a leak.
+              The deeper cause is recorded in `learnings.md` rather than papered over, because this is the
+              **second** occurrence of the identical class in one plan: DU1 hit it on PR #491 and fixed it
+              by broadening the sanitizer's pattern list and re-running it over the 13 evidence files that
+              existed then. That fix was correct and still holds — all 13 remain clean. It simply had no
+              reach over a fourteenth file written later. A manual sanitization step does not fail by
+              running wrong; it fails by not running at all on the next artifact, and nothing in the
+              repository fails a commit when a tracked file under `plans/**/evidence/` carries a host path.
+              The candidate durable fix (a glob-scoped pre-commit `check` gate over the plan tree) is
+              written up in `learnings.md` for Phase 5 routing rather than bolted on here, because adding a
+              new gate would extend this commit past its authorized change set. -->
 - [ ] [AI] Mark ready, merge, and record the pull request number and 40-character head SHA
 
 ### Phase 2 Gate

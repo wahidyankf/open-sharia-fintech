@@ -137,3 +137,31 @@
   result is not evidence for a file the target's inputs do not declare, and that a verification run
   must either disable the cache or assert the absence of a cache-hit line; or fix the affected
   targets' `inputs` so the relevant files are declared.
+
+## Learning: a manual sanitization step with no gate leaks on its second chance, not its first
+
+- **Context**: DU2-PP-114. The current-head `pr-leak-review` on PR #493 returned **fail** with
+  seven category-3 findings — three `file:///Users/<user>/.../scripts/behaviour-coverage.test.mjs`
+  stack-trace lines and four `/var/folders/<user-hash>/<session-hash>/T/...` assertion-diff lines,
+  all in the newly added `evidence/du2-red-validator.txt`.
+- **Observation**: this is the **second** occurrence of the identical leak class inside one plan.
+  DU1 hit it on PR #491, and the fix applied then was to broaden the sanitizer's pattern list
+  (adding `/var/folders` and `/private/tmp`) and re-run it over all 13 evidence files that existed
+  at that moment. That fix was correct and it held — every one of those 13 files is still clean.
+  It simply had no reach over a fourteenth file written later. The sanitizer is a step an agent
+  remembers to run, and the failure mode of a remembered step is not "it runs wrong", it is "it
+  does not run at all on the next artifact". Nothing in the repository fails when a tracked file
+  under `plans/**/evidence/` contains a host path; the only thing that catches it is a leak review
+  that runs after the commit is already pushed.
+- **Why it might generalize**: every recurrence of this class has been caught downstream of the
+  commit, by a reviewer rather than by a gate, which is the most expensive place to catch it and
+  the one place it can slip through if the review is skipped. The pattern list is already written
+  down and already proven — it is only unattached to anything that runs automatically. Candidate
+  durable fixes to weigh at triage: a `check`-type gate in the `repo-config.yml` registry, scoped
+  by glob to `plans/**/evidence/**` and `plans/**/*.md`, that fails on `/Users/`, `/home/<name>/`,
+  `/var/folders/`, and `/private/tmp/`, wired to the pre-commit surface so the leak never reaches
+  a push; and, because the same evidence-capture habit exists in `generated-reports/` and
+  `local-tmp/`, deciding explicitly whether the glob should cover those too or whether being
+  untracked is sufficient protection. Note the gate must not match a relative source path that
+  merely contains the substring `home/` — `components/home/entry-item.tsx` appears in existing
+  committed evidence and is not a leak, so the rule needs a leading-slash anchor.
