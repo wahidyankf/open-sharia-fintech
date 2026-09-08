@@ -1,0 +1,7 @@
+=== go ===
+go version go1.26.1 darwin/arm64
+=== golangci-lint ===
+golangci-lint has version 2.11.3 built with go1.26.1 from (unknown, modified: ?, mod sum: "h1:ySX1GtLwlwOEzcLKJifI/aIVesrcHDno+5mrro8rWes=") on (unknown)
+=== oapi-codegen ===
+github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen
+v2.6.0

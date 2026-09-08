@@ -1,0 +1,24 @@
+> .github/scripts/run-doctor.sh --fix
+Doctor Report
+=============
+✓ git        v2.39.5        (no version requirement)
+✓ volta      v2.0.2         (no version requirement)
+✓ node       v24.16.0       (required: 24.16.0)
+⚠ npm        v11.16.0       (required: 11.11.0, version mismatch)
+✓ rust       v1.95.0        (no version requirement)
+✓ cargo-llvm-cov v0.8.5         (no version requirement)
+✓ dotnet     v10.0.300      (required: ≥10.0.204 (major))
+✓ docker     v29.7.2        (no version requirement)
+✓ jq         v1.8.1         (no version requirement)
+✓ shellcheck v0.11.0        (no version requirement)
+✓ hadolint   v2.14.0        (no version requirement)
+✓ actionlint v1.7.12        (no version requirement)
+✓ playwright v1.60.0        (no version requirement)
+✓ shfmt      v3.13.1        (no version requirement)
+✓ tofu       v1.12.3        (required: ≥1.12.3)
+✓ clang-format v22.1.8        (no version requirement)
+✓ java       v25            (required: ≥25)
+Summary: 16/17 tools OK, 1 warning, 0 missing
+Target-share: all crates already share their target/ via the cache.
+Target-share fix: 0 created, 0 already correct, 0 plain dir(s) replaced
+Nothing to fix — all tools are installed.

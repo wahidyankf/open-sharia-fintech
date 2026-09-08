@@ -1,0 +1,13 @@
+=== ose-public repo-config.yml doctor.extra-tools ===
+174:  extra-tools:
+
+=== ose-private repo-config.yml doctor.extra-tools (origin/main) ===
+272:  extra-tools: []
+
+=== top-level key set comparison ===
+4d3
+< doctor
+7a7
+> doctor
+=== sorted top-level key set comparison ===
+KEY SETS IDENTICAL (order differs, membership does not)
