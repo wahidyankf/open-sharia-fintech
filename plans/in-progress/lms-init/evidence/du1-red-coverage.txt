@@ -1,0 +1,22 @@
+
+> nx run rhino-cli:"test:coverage:behaviour"
+
+> node scripts/behaviour-coverage.mjs --config apps/rhino-cli/behaviour-coverage.json --adapter behaviour
+
+<public-worktree>/specs/apps/rhino/cli/behaviours/system/doctor.feature: A repo-config-declared extra tool is probed like a built-in tool / a tool is listed under the doctor extra-tools section of repo-config.yml: undefined E2E binding.
+<public-worktree>/specs/apps/rhino/cli/behaviours/system/doctor.feature: A repo-config-declared extra tool is probed like a built-in tool / a tool is listed under the doctor extra-tools section of repo-config.yml: undefined Integration binding.
+<public-worktree>/specs/apps/rhino/cli/behaviours/system/doctor.feature: A repo-config-declared extra tool is probed like a built-in tool / a tool is listed under the doctor extra-tools section of repo-config.yml: undefined Unit binding.
+<public-worktree>/specs/apps/rhino/cli/behaviours/system/doctor.feature: A repo-config-declared extra tool is probed like a built-in tool / the output includes the configured extra tool: undefined E2E binding.
+<public-worktree>/specs/apps/rhino/cli/behaviours/system/doctor.feature: A repo-config-declared extra tool is probed like a built-in tool / the output includes the configured extra tool: undefined Integration binding.
+<public-worktree>/specs/apps/rhino/cli/behaviours/system/doctor.feature: A repo-config-declared extra tool is probed like a built-in tool / the output includes the configured extra tool: undefined Unit binding.
+Warning: command "node scripts/behaviour-coverage.mjs --config apps/rhino-cli/behaviour-coverage.json --adapter behaviour" exited with non-zero status code
+
+
+ NX   Running target test:coverage:behaviour for project rhino-cli failed
+
+Failed tasks:
+
+- rhino-cli:test:coverage:behaviour
+
+Hint: run the command with --verbose for more details.
+

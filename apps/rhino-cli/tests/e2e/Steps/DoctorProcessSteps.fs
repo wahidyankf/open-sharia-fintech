@@ -99,6 +99,16 @@ type DoctorProcessWorld() =
         File.WriteAllText(path, "#!/bin/sh\nprintf '%s\\n' '" + text.Replace("'", "'\\''") + "'\n")
         makeExecutable path
 
+    /// Same as `stub`, but the banner goes to stderr with stdout left empty —
+    /// the shape `java -version` actually has, and the only shape that proves
+    /// `version-stream: stderr` is load-bearing.
+    let stubStderr (name: string) (text: string) =
+        let path = Path.Combine(bin, name)
+
+        File.WriteAllText(path, "#!/bin/sh\nprintf '%s\\n' '" + text.Replace("'", "'\\''") + "' >&2\n")
+
+        makeExecutable path
+
     let write (relative: string) (text: string) =
         let path = Path.Combine(root, relative)
         Directory.CreateDirectory(Path.GetDirectoryName path) |> ignore
@@ -202,6 +212,25 @@ type DoctorProcessWorld() =
     member _.``a tool is listed under the doctor skip-tools section of repo-config.yml``() =
         write "repo-config.yml" "doctor:\n  skip-tools: [shfmt]\n"
         removeStub "shfmt"
+
+    [<Given>]
+    member _.``a tool is listed under the doctor extra-tools section of repo-config.yml``() =
+        stubStderr "java" "openjdk version \"25.0.4\" 2026-07-15"
+
+        write
+            "repo-config.yml"
+            (String.concat
+                "\n"
+                [ "doctor:"
+                  "  extra-tools:"
+                  "    - name: java"
+                  "      binary: java"
+                  "      version-args: [\"-version\"]"
+                  "      version-stream: stderr"
+                  "      required-version: \"25\""
+                  "      install:"
+                  "        brew: [brew, install, --cask, temurin@25]"
+                  "" ])
 
     [<Given>]
     member _.``a rust-toolchain.toml pins a channel and declares no lint components``() =
@@ -311,6 +340,11 @@ type DoctorProcessWorld() =
     [<Then>]
     member _.``the output does not include the skipped tool``() =
         Assert.DoesNotContain("shfmt", output ())
+
+    [<Then>]
+    member _.``the output includes the configured extra tool``() =
+        Assert.Contains("java", output ())
+        Assert.Contains("25.0.4", output ())
 
     [<Then>]
     member _.``it reports the toolchain component check as a warning naming rustfmt and clippy``() =

@@ -35,7 +35,8 @@ toolchain, or verifying an environment after adding a new project language.
 ## Contents
 
 - [Execution Mode](./development-environment-setup/execution-mode.md) — manual orchestration.
-- [Tool Inventory](./development-environment-setup/tool-inventory.md) — all 9 tools table.
+- [Tool Inventory](./development-environment-setup/tool-inventory.md) — the 16 built-in tools, plus
+  how `doctor.extra-tools` adds more.
 - [Quick Start: doctor --fix](./development-environment-setup/quick-start-doctor-fix.md) — one-command setup.
 
 ### Phases

@@ -157,6 +157,22 @@ doctor:
   # this data rather than naming an application-specific backend path.
   dotnet-global-json: apps/ose-be/global.json
 
+  # Doctor tools declared here rather than compiled into the F# inventory.
+  # A name absent from BOTH the built-in inventory and this list is rejected
+  # by `--tools` before any tool is probed, so this list is authoritative
+  # alongside the built-ins, not advisory.
+  #
+  # Each entry carries: `name` (the `--tools` identifier), `binary` (what is
+  # executed), `version-args`, `version-stream` (`stdout` or `stderr` —
+  # `java -version` writes to stderr, and a stdout-only probe would report an
+  # installed JDK as missing), `required-version` (compared with >=), and an
+  # `install` map keyed by package manager, whose value is the full argv with
+  # the command first. Doctor maps `darwin` to `brew` and `linux` to `apt`.
+  #
+  # Empty here until a language toolchain actually needs it, which keeps the
+  # config-driven inventory a no-op against the previous hardcoded behaviour.
+  extra-tools: []
+
 # governance-word-budget: registered here (config-only) at Phase 1 of
 # plans/done/2026-08-15__optimize-governance-md and armed as a `gates:` entry at
 # Phase 9 — it now runs at pre-push and in CI (see the entry below). Word count

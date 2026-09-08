@@ -293,7 +293,8 @@ let ``RepoConfig parses catalog entries and injected dotnet requirements without
         { RepoConfig.empty with
             Doctor =
                 { DotnetGlobalJson = Some "tooling/dotnet.json"
-                  SkipTools = [] } }
+                  SkipTools = []
+                  ExtraTools = [] } }
 
     let tool =
         buildDotnetToolDefWith (fun path -> Ok(sprintf "{ \"sdk\": { \"version\": \"%s\" } }" path)) configured
@@ -364,7 +365,8 @@ let ``RepoConfig semantic validation handles repeated shell placeholders and mis
         { RepoConfig.empty with
             Doctor =
                 { DotnetGlobalJson = Some "tooling/dotnet.json"
-                  SkipTools = [] } }
+                  SkipTools = []
+                  ExtraTools = [] } }
 
     Assert.Empty(semanticFindings validDoctor)
 

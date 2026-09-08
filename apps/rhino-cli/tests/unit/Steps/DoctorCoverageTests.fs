@@ -47,9 +47,9 @@ let ``Doctor value parsers and status codes cover every pure decision`` () =
     Assert.Equal(None, parseDoctorScope "other")
     Assert.True(isMinimalTool "git")
     Assert.False(isMinimalTool "rust")
-    Assert.True(Result.isError (parseDoctorToolName "  "))
-    Assert.True(Result.isError (parseDoctorToolName "unknown"))
-    Assert.Equal(Ok "git", parseDoctorToolName " git ")
+    Assert.True(Result.isError (parseDoctorToolName builtinDoctorToolInventory "  "))
+    Assert.True(Result.isError (parseDoctorToolName builtinDoctorToolInventory "unknown"))
+    Assert.Equal(Ok "git", parseDoctorToolName builtinDoctorToolInventory " git ")
 
 [<Fact>]
 let ``Version comparators cover semantic ordering and malformed fallbacks`` () =
@@ -155,7 +155,7 @@ let ``Install builders cover every supported platform branch`` () =
     Assert.Equal("8.0", dotnetChannel "8.0.401")
     Assert.Equal("10.0", dotnetChannel "preview")
     let inventory = buildToolDefs "/synthetic/repo"
-    Assert.Equal(doctorToolInventory.Length, inventory.Length)
+    Assert.Equal(builtinDoctorToolInventory.Length, inventory.Length)
     Assert.Equal("", inventory.[0].ReadReq())
     Assert.Equal("", inventory.[1].ReadReq())
 
@@ -443,3 +443,210 @@ let ``Target-share planners and formatters cover all pure states`` () =
               SkippedCi = false
               Ran = true }
     )
+
+[<Fact>]
+let ``Configured extra tools join the inventory, stay rejectable, and probe stderr`` () =
+    let javaTool: RhinoCli.Application.RepoConfig.DoctorExtraTool =
+        { Name = "java"
+          Binary = "java"
+          VersionArgs = [ "-version" ]
+          VersionStream = RhinoCli.Application.RepoConfig.StderrStream
+          RequiredVersion = "25"
+          Install = Map.ofList [ "brew", [ "brew"; "install"; "--cask"; "temurin@25" ] ] }
+
+    let configured =
+        { RhinoCli.Application.RepoConfig.empty with
+            Doctor =
+                { RhinoCli.Application.RepoConfig.empty.Doctor with
+                    ExtraTools = [ javaTool ] } }
+
+    // A declared extra tool joins the inventory the CLI validates `--tools` against.
+    let resolved = doctorToolInventoryFor configured
+    Assert.Contains("java", resolved)
+    Assert.Equal(builtinDoctorToolInventory.Length + 1, resolved.Length)
+    Assert.Equal(Ok "java", parseDoctorToolName resolved " java ")
+
+    // A name in neither inventory is still rejected, and a configured name is
+    // still rejected against an inventory that does not declare it.
+    Assert.True(Result.isError (parseDoctorToolName resolved "not-a-doctor-tool"))
+    Assert.True(Result.isError (parseDoctorToolName resolved "  "))
+    Assert.True(Result.isError (parseDoctorToolName builtinDoctorToolInventory "java"))
+
+    // The default configuration adds nothing, so the refactor is a no-op until
+    // a tool is actually declared.
+    Assert.Equal<string list>(builtinDoctorToolInventory, doctorToolInventoryFor RhinoCli.Application.RepoConfig.empty)
+
+    // A tool whose version lands on stderr parses from stderr, not stdout.
+    let javaDef = extraToolDef javaTool
+    Assert.True(javaDef.UseStderr)
+    Assert.Equal<string list>([ "-version" ], javaDef.Args)
+
+    let stderrOnly =
+        runOneDef (fun _ _ -> Ok("", "openjdk version \"25.0.4\" 2026-07-15", 0)) javaDef
+
+    Assert.Equal(Passing, stderrOnly.Status)
+    Assert.Equal("25.0.4", stderrOnly.InstalledVersion)
+
+    // The same probe reading stdout would see nothing — this is why
+    // `version-stream` exists at all.
+    let stdoutReader = { javaDef with UseStderr = false }
+
+    Assert.Equal(
+        Warning,
+        (runOneDef (fun _ _ -> Ok("", "openjdk version \"25.0.4\" 2026-07-15", 0)) stdoutReader).Status
+    )
+
+    // Extra tools are appended to the built-in defs so selection filters them
+    // exactly like a built-in.
+    let defs = buildToolDefsFor configured "/synthetic/repo"
+    Assert.Equal(builtinDoctorToolInventory.Length + 1, defs.Length)
+    Assert.Single(selectToolDefs defs FullScope (Some [ "java" ]) []) |> ignore
+    Assert.Empty(selectToolDefs defs FullScope (Some [ "java" ]) [ "java" ])
+
+    // An extra tool carries its declared per-platform install command.
+    let steps = (Option.get javaDef.InstallCmd) "25" "darwin"
+    Assert.Single(steps) |> ignore
+    Assert.Equal("brew", steps.Head.Command)
+    Assert.Equal<string list>([ "install"; "--cask"; "temurin@25" ], steps.Head.Args)
+    Assert.Empty((Option.get javaDef.InstallCmd) "25" "other")
+
+[<Fact>]
+let ``Extra-tool declarations round-trip through the repo-config parser`` () =
+    let document =
+        String.concat
+            "\n"
+            [ "doctor:"
+              "  extra-tools:"
+              "    - name: java"
+              "      binary: java"
+              "      version-args: [\"-version\"]"
+              "      version-stream: stderr"
+              "      required-version: \"25\""
+              "      install:"
+              "        brew: [brew, install, --cask, temurin@25]"
+              "        apt: [apt-get, install, -y, temurin-25-jdk]"
+              // Every optional field omitted: proves each one has a default
+              // rather than throwing on a sparse declaration.
+              "    - name: sparse"
+              "    - name: odd"
+              "      binary: odd"
+              "      version-stream: stdout"
+              "" ]
+
+    let config =
+        match RhinoCli.Application.RepoConfig.parse document with
+        | Ok config -> config
+        | Error message -> failwithf "expected a parse, got: %s" message
+
+    let tools = config.Doctor.ExtraTools
+    Assert.Equal(3, tools.Length)
+    Assert.Equal<string list>([ "java"; "sparse"; "odd" ], tools |> List.map (fun t -> t.Name))
+
+    let java = tools.Head
+    Assert.Equal("java", java.Binary)
+    Assert.Equal<string list>([ "-version" ], java.VersionArgs)
+    Assert.Equal(RhinoCli.Application.RepoConfig.StderrStream, java.VersionStream)
+    Assert.Equal("25", java.RequiredVersion)
+    Assert.Equal<string list>([ "apt-get"; "install"; "-y"; "temurin-25-jdk" ], java.Install.["apt"])
+
+    let sparse = tools.[1]
+    Assert.Equal("", sparse.Binary)
+    Assert.Empty(sparse.VersionArgs)
+    Assert.Equal(RhinoCli.Application.RepoConfig.StdoutStream, sparse.VersionStream)
+    Assert.Equal("", sparse.RequiredVersion)
+    Assert.Empty(sparse.Install)
+
+    Assert.Equal(RhinoCli.Application.RepoConfig.StdoutStream, tools.[2].VersionStream)
+
+    // An unrecognized stream is a hard parse fault, not a silent fallback to
+    // stdout: a mis-spelled stream on a stderr tool would otherwise report an
+    // installed tool as missing.
+    match
+        RhinoCli.Application.RepoConfig.parse
+            "doctor:\n  extra-tools:\n    - name: odd\n      version-stream: sideways\n"
+    with
+    | Ok _ -> failwith "an unknown version-stream must not parse"
+    | Error message ->
+        Assert.Contains("doctor.extra-tools[0].version-stream", message)
+        Assert.Contains("unknown variant `sideways`", message)
+        Assert.Contains("`stdout`, `stderr`", message)
+
+    // A declaration with no install map carries no remediation rather than an
+    // install command that would run with no arguments.
+    Assert.True((extraToolDef sparse).InstallCmd.IsNone)
+
+    // Both package managers Doctor knows how to dispatch to, plus the platform
+    // that has neither.
+    Assert.Equal(Some "brew", installManagerFor "darwin")
+    Assert.Equal(Some "apt", installManagerFor "linux")
+    Assert.Equal(None, installManagerFor "other")
+
+    let installer = (extraToolDef java).InstallCmd |> Option.get
+    Assert.Equal("apt-get", (installer "25" "linux").Head.Command)
+
+    // Declared for a manager this platform does not use: no steps, not a crash.
+    let brewOnly =
+        { java with
+            Install = Map.ofList [ "brew", [ "brew"; "install" ] ] }
+
+    Assert.Empty(((extraToolDef brewOnly).InstallCmd |> Option.get) "25" "linux")
+
+[<Fact>]
+let ``Extra-tool declarations must be runnable and must not shadow a built-in`` () =
+    let findings document =
+        match RhinoCli.Application.RepoConfig.parse document with
+        | Ok config -> RhinoCli.Application.RepoConfig.semanticFindings config
+        | Error message -> failwithf "expected a parse, got: %s" message
+
+    // A complete declaration is accepted — the conforming direction, without
+    // which the checks below prove only that something always fails.
+    Assert.Empty(
+        findings (
+            String.concat
+                "\n"
+                [ "doctor:"
+                  "  extra-tools:"
+                  "    - name: java"
+                  "      binary: java"
+                  "      version-args: [\"-version\"]"
+                  "" ]
+        )
+    )
+
+    let blank =
+        findings (String.concat "\n" [ "doctor:"; "  extra-tools:"; "    - version-args: []"; "" ])
+
+    Assert.Contains("doctor.extra-tools[0].name: required field is missing or blank", blank)
+    Assert.Contains("doctor.extra-tools[0].binary: required field is missing or blank", blank)
+    Assert.Contains(blank, fun f -> f.StartsWith("doctor.extra-tools[0].version-args: required field"))
+
+    let shadowing =
+        findings (
+            String.concat
+                "\n"
+                [ "doctor:"
+                  "  extra-tools:"
+                  "    - name: jq"
+                  "      binary: jq"
+                  "      version-args: [\"--version\"]"
+                  "" ]
+        )
+
+    Assert.Contains("doctor.extra-tools[0].name: \"jq\" is already a built-in Doctor tool", shadowing)
+
+    let duplicated =
+        findings (
+            String.concat
+                "\n"
+                [ "doctor:"
+                  "  extra-tools:"
+                  "    - name: java"
+                  "      binary: java"
+                  "      version-args: [\"-version\"]"
+                  "    - name: java"
+                  "      binary: java"
+                  "      version-args: [\"-version\"]"
+                  "" ]
+        )
+
+    Assert.Contains("doctor.extra-tools[1].name: duplicate Doctor tool \"java\"", duplicated)

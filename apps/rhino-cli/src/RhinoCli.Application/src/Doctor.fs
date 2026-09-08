@@ -774,41 +774,36 @@ let parseDoctorScope (s: string) : DoctorScope option =
 let isMinimalTool (name: string) : bool =
     List.contains name [ "git"; "volta"; "node"; "npm"; "docker"; "jq" ]
 
-/// Every Doctor tool name `--tools` may select
+/// Every Doctor tool name `--tools` may select without configuration. Re-exported
+/// from `RepoConfig` rather than restated, so the registry validator and the
+/// Doctor command can never disagree about what is built in
 /// [Repo-grounded — `repo_config/mod.rs::DOCTOR_TOOL_INVENTORY`].
-let doctorToolInventory: string list =
-    [ "git"
-      "volta"
-      "node"
-      "npm"
-      "rust"
-      "cargo-llvm-cov"
-      "dotnet"
-      "docker"
-      "jq"
-      "shellcheck"
-      "hadolint"
-      "actionlint"
-      "playwright"
-      "shfmt"
-      "tofu"
-      "clang-format" ]
+let builtinDoctorToolInventory: string list =
+    RhinoCli.Application.RepoConfig.builtinDoctorToolInventory
 
-/// Rejects a blank or unrecognized `--tools` selection before any tool is
-/// probed [Repo-grounded — `commands/doctor.rs::parse_doctor_tool_name`].
+/// Every Doctor tool name `--tools` may select given `config`: the built-ins
+/// plus each `doctor.extra-tools` declaration.
+let doctorToolInventoryFor (config: RhinoCli.Application.RepoConfig.RepoConfig) : string list =
+    RhinoCli.Application.RepoConfig.doctorToolInventoryFor config
+
+/// Rejects a blank selection, or one absent from `inventory`, before any tool
+/// is probed. `inventory` is the resolved set — built-ins plus configured
+/// extra tools — so a declared tool is accepted and an undeclared one is not
+/// [Repo-grounded — `commands/doctor.rs::parse_doctor_tool_name`].
 ///
 /// Gherkin (binds) — "An unknown selected tool is rejected before
-/// environment checks":
+/// environment checks" and "A tool absent from both the built-in and
+/// configured inventories is rejected":
 ///   Given an unknown Doctor tool is selected
 ///   When the developer runs the doctor command
 ///   Then the command exits with a failure code
 ///   And the invalid selection is rejected before any tool is probed
-let parseDoctorToolName (value: string) : Result<string, string> =
+let parseDoctorToolName (inventory: string list) (value: string) : Result<string, string> =
     let name = value.Trim()
 
     if name = "" then
         Error "Doctor tool name must not be blank"
-    elif not (List.contains name doctorToolInventory) then
+    elif not (List.contains name inventory) then
         Error(sprintf "unknown Doctor tool \"%s\"" name)
     else
         Ok name
@@ -1070,6 +1065,28 @@ let parseClangFormatVersion (out: string) : string =
             else
                 None))
     |> Option.defaultValue ""
+
+/// Extracts the first dotted-numeric token from a version banner, ignoring
+/// surrounding words and quotes. Configured `doctor.extra-tools` entries share
+/// this one parser because `repo-config.yml` declares no parser of its own —
+/// `openjdk version "25.0.4" 2026-07-15` yields `25.0.4`.
+let parseFirstVersionToken (out: string) : string =
+    let isVersionChar c = Char.IsDigit c || c = '.'
+
+    let rec scan (index: int) : string =
+        if index >= out.Length then
+            ""
+        elif Char.IsDigit out.[index] then
+            let mutable stop = index
+
+            while stop < out.Length && isVersionChar out.[stop] do
+                stop <- stop + 1
+
+            out.Substring(index, stop - index).TrimEnd('.')
+        else
+            scan (index + 1)
+
+    scan 0
 
 // --- Version readers [Repo-grounded — `checker.rs`'s "Version readers"
 // section] ---
@@ -1593,9 +1610,47 @@ let installPlaywright (_req: string) (platform: string) : InstallStep list =
             Command = "npx"
             Args = [ "playwright"; "install-deps" ] } ]
 
-/// Builds the ordered list of tool defs for `repoRoot`
+/// The package manager whose `install` entry applies on `platform`. Doctor
+/// dispatches on platform; `repo-config.yml` declares per package manager,
+/// because that is the vocabulary an install command is actually written in.
+let installManagerFor (platform: string) : string option =
+    match platform with
+    | "darwin" -> Some "brew"
+    | "linux" -> Some "apt"
+    | _ -> None
+
+/// Turns one `doctor.extra-tools` declaration into a `ToolDef` indistinguishable
+/// from a built-in: same probe, same comparator contract, same install shape.
+/// `UseStderr` carries the declared `version-stream`, which is the whole reason
+/// a JDK can be probed at all.
+let extraToolDef (tool: RhinoCli.Application.RepoConfig.DoctorExtraTool) : ToolDef =
+    { Name = tool.Name
+      Binary = tool.Binary
+      Source = "repo-config.yml → doctor.extra-tools"
+      Args = tool.VersionArgs
+      UseStderr = tool.VersionStream = RhinoCli.Application.RepoConfig.StderrStream
+      ParseVer = parseFirstVersionToken
+      Compare = compareGte
+      ReadReq = fun () -> tool.RequiredVersion
+      InstallCmd =
+        if Map.isEmpty tool.Install then
+            None
+        else
+            Some(fun _version platform ->
+                installManagerFor platform
+                |> Option.bind (fun manager -> Map.tryFind manager tool.Install)
+                |> function
+                    | Some(command :: args) ->
+                        [ { Description = "Install " + tool.Name
+                            Command = command
+                            Args = args } ]
+                    | _ -> []) }
+
+/// Builds the ordered list of tool defs for `repoRoot` under `config`.
+/// Configured extra tools are appended after the built-ins, so `selectToolDefs`
+/// filters and selects them with no special case
 /// [Repo-grounded — `tools.rs::build_tool_defs`].
-let buildToolDefs (repoRoot: string) : ToolDef list =
+let buildToolDefsFor (config: RhinoCli.Application.RepoConfig.RepoConfig) (repoRoot: string) : ToolDef list =
     let packageJsonPath = Path.Combine(repoRoot, "package.json")
 
     let rustToolchainTomlPath =
@@ -1607,9 +1662,7 @@ let buildToolDefs (repoRoot: string) : ToolDef list =
     // `tools.rs::configured_dotnet_global_json`'s repo-config lookup, which a
     // hardcoded root-relative path cannot reproduce.
     let dotnetToolDef =
-        RhinoCli.Application.RepoConfig.buildDotnetToolDef
-            repoRoot
-            (RhinoCli.Application.RepoConfig.loadOrDefault repoRoot)
+        RhinoCli.Application.RepoConfig.buildDotnetToolDef repoRoot config
 
     [ { Name = "git"
         Binary = "git"
@@ -1755,6 +1808,13 @@ let buildToolDefs (repoRoot: string) : ToolDef list =
         Compare = compareExact
         ReadReq = noReq
         InstallCmd = Some installClangFormat } ]
+    @ (config.Doctor.ExtraTools |> List.map extraToolDef)
+
+/// Builds the ordered list of tool defs for `repoRoot`, reading its own
+/// configuration. A configuration declaring no extra tools yields exactly the
+/// built-in list, which is what keeps this refactor a no-op.
+let buildToolDefs (repoRoot: string) : ToolDef list =
+    buildToolDefsFor (RhinoCli.Application.RepoConfig.loadOrDefault repoRoot) repoRoot
 
 /// Applies Doctor's scope, explicit-selection, and repository skip policies
 /// to an already constructed inventory. Keeping this decision independent of
@@ -1788,10 +1848,13 @@ let selectToolDefs
 ///   And the output reports only the selected tofu tool
 [<ExcludeFromCodeCoverage>]
 let selectedToolDefs (options: CheckOptions) : ToolDef list =
-    let skipTools =
-        (RhinoCli.Application.RepoConfig.loadOrDefault options.RepoRoot).Doctor.SkipTools
+    let config = RhinoCli.Application.RepoConfig.loadOrDefault options.RepoRoot
 
-    selectToolDefs (buildToolDefs options.RepoRoot) options.Scope options.SelectedTools skipTools
+    selectToolDefs
+        (buildToolDefsFor config options.RepoRoot)
+        options.Scope
+        options.SelectedTools
+        config.Doctor.SkipTools
 
 // --- Runner [Repo-grounded — `checker.rs`'s "Runner" section] ---
 

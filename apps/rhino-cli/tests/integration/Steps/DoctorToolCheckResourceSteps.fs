@@ -56,6 +56,14 @@ let private cannedOutput (binary: string) : string option =
     | "npx" -> Some "Version 1.58.0"
     | _ -> None
 
+/// Canned per-binary stderr output for tools that write their version banner
+/// to stderr rather than stdout. `java -version` is the reason
+/// `doctor.extra-tools` carries a `version-stream` field at all.
+let private cannedStderrOutput (binary: string) : string option =
+    match binary with
+    | "java" -> Some "openjdk version \"25.0.4\" 2026-07-15"
+    | _ -> None
+
 /// Finds the report line for the check named `name` in `report`'s plain-text
 /// `formatDoctorText` output — matched by the report line's second
 /// whitespace-delimited token (the name column) being exactly `name`, not
@@ -124,9 +132,14 @@ type DoctorToolCheckResourceSteps() =
             if Set.contains binary missingBinaries then
                 Error(sprintf "binary not found in PATH: %s" binary)
             else
-                match cannedOutput binary with
-                | Some out -> Ok(out, "", 0)
-                | None -> Error(sprintf "binary not found in PATH: %s" binary)
+                match cannedStderrOutput binary with
+                // A stderr-only banner is what makes `version-stream` load-bearing:
+                // stdout stays empty, exactly as a real `java -version` leaves it.
+                | Some err -> Ok("", err, 0)
+                | None ->
+                    match cannedOutput binary with
+                    | Some out -> Ok(out, "", 0)
+                    | None -> Error(sprintf "binary not found in PATH: %s" binary)
 
     let fakeFixRunner: FixRunner = fun _command _args -> Ok()
 
@@ -140,7 +153,11 @@ type DoctorToolCheckResourceSteps() =
         let invalidSelection =
             selectedTools
             |> List.tryPick (fun t ->
-                match parseDoctorToolName t with
+                match
+                    parseDoctorToolName
+                        (doctorToolInventoryFor (RhinoCli.Application.RepoConfig.loadOrDefault repoRoot))
+                        t
+                with
                 | Error message -> Some message
                 | Ok _ -> None)
 
@@ -242,6 +259,26 @@ type DoctorToolCheckResourceSteps() =
         missingBinaries <- Set.add "shfmt" missingBinaries
 
         File.WriteAllText(Path.Combine(repoRoot, "repo-config.yml"), "doctor:\n  skip-tools: [shfmt]\n")
+
+    [<Given>]
+    member _.``a tool is listed under the doctor extra-tools section of repo-config.yml``() =
+        writeConfig "24.11.1" "1.90.0"
+
+        File.WriteAllText(
+            Path.Combine(repoRoot, "repo-config.yml"),
+            String.concat
+                "\n"
+                [ "doctor:"
+                  "  extra-tools:"
+                  "    - name: java"
+                  "      binary: java"
+                  "      version-args: [\"-version\"]"
+                  "      version-stream: stderr"
+                  "      required-version: \"25\""
+                  "      install:"
+                  "        brew: [brew, install, --cask, temurin@25]"
+                  "" ]
+        )
 
     [<Given>]
     member _.``a rust-toolchain.toml pins a channel and declares no lint components``() =
@@ -404,6 +441,12 @@ type DoctorToolCheckResourceSteps() =
     [<Then>]
     member _.``the output does not include the skipped tool``() =
         Assert.DoesNotContain("shfmt", outputText)
+
+    [<Then>]
+    member _.``the output includes the configured extra tool``() =
+        let line = findCheckLine "java" outputText
+        Assert.StartsWith("\u2713", line)
+        Assert.Contains("25.0.4", line)
 
     [<Then>]
     member _.``it reports the toolchain component check as a warning naming rustfmt and clippy``() =

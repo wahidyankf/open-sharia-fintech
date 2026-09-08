@@ -60,9 +60,15 @@ immediately once the plan is done using that repository, not deferred to archiva
 - Public initial branch: `worktree/lms-init`
 - Private declared repository-relative route: `worktrees/lms-init/`
 - Private initial branch: `worktree/lms-init`
-- Created by: the plan-authoring session, through `claude --worktree`
-- Created at: resolve at Step 0 from `git worktree list --porcelain` and record here; do not
-  hardcode a timestamp while authoring
+- Public created by: the plan-authoring session, through `claude --worktree`
+- Public created at: `2026-09-07T13:36:16Z`
+- Private created by: the plan-execution session, through
+  `git worktree add worktrees/lms-init -b worktree/lms-init origin/main`, the documented
+  [step-by-step procedure](../../../repo-governance/development/workflow/worktree-setup/step-by-step-procedure.md)
+  step 1. `claude --worktree` is the interactive equivalent and was not available to a
+  non-interactive executor; the resulting route, branch, and layout are identical.
+- Private created at: `2026-09-08T01:38:24Z`
+- Both routes verified registered by `git worktree list --porcelain` in their own repository.
 - Runtime location evidence: ignored Phase 0 runtime evidence only
 
 > **Branch-name note, recorded rather than hidden:** the canonical template suggests
@@ -106,76 +112,176 @@ Phase 0 opens no pull request. Its outcome is a recorded clean baseline in both 
 
 ### Environment Setup
 
-- [ ] [AI] Confirm the public work location: run `rtk pwd` and confirm the path ends in
-      `worktrees/lms-init`. If it does not, run `rtk git worktree list --porcelain` from the
-      `ose-public` repository root and enter the worktree whose route is `worktrees/lms-init`.
-- [ ] [AI] Sync the public worktree: `rtk git fetch origin` then
-      `rtk git merge --ff-only origin/main`. Acceptance: the command reports either "Already up to
-      date" or a fast-forward; a merge conflict here means stop and report, never force.
-- [ ] [AI] Provision the private worktree. From the `ose-private` repository root run
-      `claude --worktree lms-init`. Acceptance: `rtk git worktree list --porcelain` in that
-      repository lists a worktree whose route ends in `worktrees/lms-init`. Record its route,
-      branch, and creation timestamp in the Provisioned Worktree Identity section above. Then
-      resolve that route to a runtime path for every cross-repository step below, and export it —
-      never commit the resolved value:
-      `PRIVATE_WT=$(git -C <ose-private repository root> worktree list --porcelain | awk '/^worktree /{p=$2} /^branch .*worktree\/lms-init$/{print p}')`.
-      Acceptance: `test -d "$PRIVATE_WT/apps/rhino-cli"` succeeds. Committing a resolved host path
-      into this document violates
-      [what-counts-as-machine-specific-information.md](../../../repo-governance/development/quality/no-machine-specific-commits/what-counts-as-machine-specific-information.md)
-      §Formal Plan Delivery Documents and the required PR leak review rejects it.
-- [ ] [AI] Install dependencies in the public worktree:
-      `rtk ./hippo run --class ephemeral --disk-path . -- npm install`. Acceptance: exit code 0 and
-      `node_modules/` exists at the worktree root.
-- [ ] [AI] Install dependencies in the private worktree with the same command, run from that
-      worktree's root. Acceptance: exit code 0.
-- [ ] [AI] Converge tooling in both worktrees: `rtk npm run doctor -- --fix`. Acceptance: the
-      command exits 0. If a tool cannot be auto-installed, record the tool name and the failure
-      output in `evidence/phase-0-doctor-<repo>.txt` and report it before continuing — do not
-      proceed with a broken toolchain.
-- [ ] [AI] Create the Knowledge Capture scaffold at
-      `plans/in-progress/lms-init/learnings.md` if it does not already exist, containing exactly the
-      two HTML comments and the `# Learnings: lms-init` H1. Acceptance: `rtk cat` shows the H1 on
-      the first content line — markdownlint MD041 fails the pre-commit gate without it.
-- [ ] [AI] Create `plans/in-progress/lms-init/evidence/.gitkeep`. Acceptance: the directory exists
-      and every later evidence step has a destination.
+- [x] [AI] Confirm the public work location: run `rtk pwd` and confirm the path ends in
+    `worktrees/lms-init`. If it does not, run `rtk git worktree list --porcelain` from the
+    `ose-public` repository root and enter the worktree whose route is `worktrees/lms-init`.
+<!-- Date: 2026-09-08 | Status: done | Files Changed: none | Notes: `rtk pwd` returned a path ending
+in `worktrees/lms-init`, so no relocation was needed. `rtk git worktree list --porcelain` confirms
+that route is registered against branch `worktree/lms-init`. The resolved host path is deliberately
+not recorded here — see the Formal Plan Delivery Documents rule. -->
+- [x] [AI] Sync the public worktree: `rtk git fetch origin` then
+    `rtk git merge --ff-only origin/main`. Acceptance: the command reports either "Already up to
+    date" or a fast-forward; a merge conflict here means stop and report, never force.
+<!-- Date: 2026-09-08 | Status: done | Files Changed: none | Notes: `rtk git fetch origin` then
+`rtk git merge --ff-only origin/main` reported "Already up to date". The branch had first to be
+reset to `origin/main`: this plan's own authoring PR (#487) was squash-merged, so the three
+authoring commits were subsumed by squash commit 460e5ed92 but were not ancestors of `main`, and
+a diverged branch cannot fast-forward. `git diff --stat origin/main..HEAD` was empty before the
+reset, proving nothing was lost. Worktree HEAD is now 460e5ed92, identical to `origin/main`.
+Deviation recorded rather than hidden; the acceptance criterion is met as written. -->
+- [x] [AI] Provision the private worktree. From the `ose-private` repository root run
+    `claude --worktree lms-init`. Acceptance: `rtk git worktree list --porcelain` in that
+    repository lists a worktree whose route ends in `worktrees/lms-init`. Record its route,
+    branch, and creation timestamp in the Provisioned Worktree Identity section above. Then
+    resolve that route to a runtime path for every cross-repository step below, and export it —
+    never commit the resolved value:
+    `PRIVATE_WT=$(git -C <ose-private repository root> worktree list --porcelain | awk '/^worktree /{p=$2} /^branch .*worktree\/lms-init$/{print p}')`.
+    Acceptance: `test -d "$PRIVATE_WT/apps/rhino-cli"` succeeds. Committing a resolved host path
+    into this document violates
+    [what-counts-as-machine-specific-information.md](../../../repo-governance/development/quality/no-machine-specific-commits/what-counts-as-machine-specific-information.md)
+    §Formal Plan Delivery Documents and the required PR leak review rejects it.
+<!-- Date: 2026-09-08 | Status: done | Files Changed: plans/in-progress/lms-init/delivery.md
+(Provisioned Worktree Identity section) | Notes: created with
+`git worktree add worktrees/lms-init -b worktree/lms-init origin/main` from the `ose-private`
+repository root, off `origin/main` at f6979f9016. `claude --worktree` is the interactive
+equivalent and is unavailable to a non-interactive executor; worktree-setup step 1 documents
+`git worktree add` as the creation method, and the resulting route and branch are identical.
+`git worktree list --porcelain` in `ose-private` now lists the route `worktrees/lms-init` on
+branch `worktree/lms-init`. The `PRIVATE_WT` idiom in this checkbox was executed as written and
+resolved correctly; `test -d "$PRIVATE_WT/apps/rhino-cli"` succeeded. Route, branch, and both
+creation timestamps recorded in Provisioned Worktree Identity above. -->
+- [x] [AI] Install dependencies in the public worktree:
+    `rtk ./hippo run --class ephemeral --disk-path . -- npm install`. Acceptance: exit code 0 and
+    `node_modules/` exists at the worktree root.
+<!-- Date: 2026-09-08 | Status: done | Files Changed: none tracked (node_modules/ is ignored) |
+Notes: exit code 0; `node_modules/` present at the worktree root with 1008 entries. The first
+attempt printed "HIPPO shedding ephemeral child after memory-warning" while running the
+`postinstall` doctor hook — HIPPO admission control shedding the ephemeral child under memory
+pressure, not an npm failure. Re-running the identical command exited 0 cleanly; the shed only
+cost the opportunistic `postinstall` doctor pass, which the next checkbox runs explicitly
+anyway. -->
+- [x] [AI] Install dependencies in the private worktree with the same command, run from that
+    worktree's root. Acceptance: exit code 0.
+<!-- Date: 2026-09-08 | Status: done | Files Changed: none tracked (node_modules/ is ignored) |
+Notes: exit code 0 from the `ose-private` worktree root; `node_modules/` present with 752
+entries. No HIPPO shed this time. The entry-count difference from the public worktree (1008) is
+expected — the two repositories carry different dependency sets and only `apps/rhino-cli` is
+held byte-identical between them. -->
+- [x] [AI] Converge tooling in both worktrees: `rtk npm run doctor -- --fix`. Acceptance: the
+    command exits 0. If a tool cannot be auto-installed, record the tool name and the failure
+    output in `evidence/phase-0-doctor-<repo>.txt` and report it before continuing — do not
+    proceed with a broken toolchain.
+<!-- Date: 2026-09-08 | Status: done | Files Changed: evidence/phase-0-doctor-public.txt,
+evidence/phase-0-doctor-private.txt | Notes: both exit 0. Private: 16/16 tools OK. Public:
+15/16 OK with one warning — npm v11.16.0 installed against a required 11.11.0. No tool is
+missing and nothing needed fixing, so the toolchain is not broken and the acceptance criterion
+(exit 0) holds in both. The first public attempt exited 75 with "HIPPO deferred task: safe
+admission was not reached" while `hippo status` reported `state=warning reason=memory-warning`
+with swap active; waited for the state to return to `normal` and retried rather than forcing
+admission. Root cause of the npm warning is a real cross-repository pin divergence, not host
+drift: `ose-public` `package.json` pins volta npm 11.11.0 while `ose-private` pins 11.16.0.
+Recorded as a preexisting finding and routed to learnings.md rather than bumped here — changing
+a pinned toolchain version is a governance change with its own propagation obligation and
+workspace-wide CI blast radius, outside this plan's authorized scope. -->
+- [x] [AI] Create the Knowledge Capture scaffold at
+    `plans/in-progress/lms-init/learnings.md` if it does not already exist, containing exactly the
+    two HTML comments and the `# Learnings: lms-init` H1. Acceptance: `rtk cat` shows the H1 on
+    the first content line — markdownlint MD041 fails the pre-commit gate without it.
+<!-- Date: 2026-09-08 | Status: done | Files Changed: plans/in-progress/lms-init/learnings.md |
+Notes: the scaffold already existed from the authoring session and was not recreated. Verified
+by reading the head of the file: the two HTML comments occupy lines 1-2 and
+`# Learnings: lms-init` is the first content line, which is what MD041 requires. The file
+already carries four entries appended as-you-go during this run — the mermaid threshold gap, the
+delivery-document path portability rule, the implementation-notes variant of that rule, and the
+cross-repository npm pin divergence. All four await the Phase 5 triage gate. -->
+- [x] [AI] Create `plans/in-progress/lms-init/evidence/.gitkeep`. Acceptance: the directory exists
+    and every later evidence step has a destination.
+<!-- Date: 2026-09-08 | Status: done | Files Changed: plans/in-progress/lms-init/evidence/.gitkeep
+| Notes: directory created earlier in this phase so the two doctor captures had a destination;
+`.gitkeep` added here to make it survive as an empty directory in git. The directory now holds
+`.gitkeep`, `phase-0-doctor-public.txt`, and `phase-0-doctor-private.txt`. -->
 
 ### Resolve the Pinned Versions
 
 `tech-docs.md` §3 records versions verified on 2026-09-07. Re-resolve each one now; do not trust the
 document. Record every resolved value in `evidence/phase-0-versions.md` as a two-column table.
 
-- [ ] [AI] Resolve the current Java LTS major and the exact Temurin patch release:
-      `rtk curl -fsSL https://api.adoptium.net/v3/info/available_releases` and read
-      `most_recent_lts`. Acceptance: the value is an integer; if it is not `25`, stop and report —
-      a different LTS changes `tech-docs.md` §3 and D-2 before any code is written.
-- [ ] [AI] Resolve the latest Spring Boot GA:
-      `rtk curl -fsSL https://api.github.com/repos/spring-projects/spring-boot/releases/latest | jq -r .tag_name`.
-      Acceptance: a `v4.x.y` tag. Record it; use it in `build.gradle.kts` at DU3.
-- [ ] [AI] Resolve the latest Gradle release:
-      `rtk curl -fsSL https://api.github.com/repos/gradle/gradle/releases/latest | jq -r .tag_name`.
-      Acceptance: a `v9.x.y` tag at or above `v9.1.0` — below that, Gradle cannot run on Java 25 and
-      D-3 must be revisited before proceeding.
-- [ ] [AI] Resolve the Gradle distribution SHA-256 for that version:
-      `rtk curl -fsSL https://services.gradle.org/distributions/gradle-<version>-bin.zip.sha256`.
-      Acceptance: a 64-character hex string. This is the `distributionSha256Sum` value for DU3.
-- [ ] [AI] Resolve the latest Cucumber-JVM, JaCoCo, Spotless-Gradle, and google-java-format
-      versions from their respective `releases/latest` GitHub API endpoints and the Gradle Plugin
-      Portal page for `com.diffplug.spotless`. Acceptance: four concrete version strings recorded in
-      `evidence/phase-0-versions.md`.
+- [x] [AI] Resolve the current Java LTS major and the exact Temurin patch release:
+    `rtk curl -fsSL https://api.adoptium.net/v3/info/available_releases` and read
+    `most_recent_lts`. Acceptance: the value is an integer; if it is not `25`, stop and report —
+    a different LTS changes `tech-docs.md` §3 and D-2 before any code is written.
+<!-- Date: 2026-09-08 | Status: done | Files Changed: evidence/phase-0-versions.md | Notes:
+`most_recent_lts` is 25, so no stop-and-report was triggered and D-2 holds unchanged.
+`available_lts_releases` is [8, 11, 17, 21, 25] and `most_recent_feature_release` is 26,
+confirming 25 is the newest LTS and 26 a non-LTS feature release. Exact Temurin GA patch
+resolved separately as jdk-25.0.4.1+1 via the release_names endpoint filtered to [25,26). -->
+- [x] [AI] Resolve the latest Spring Boot GA:
+    `rtk curl -fsSL https://api.github.com/repos/spring-projects/spring-boot/releases/latest | jq -r .tag_name`.
+    Acceptance: a `v4.x.y` tag. Record it; use it in `build.gradle.kts` at DU3.
+<!-- Date: 2026-09-08 | Status: done | Files Changed: evidence/phase-0-versions.md | Notes:
+resolved `v4.1.1`, which satisfies the `v4.x.y` acceptance and matches the authored value in
+tech-docs.md §3 exactly. No divergence; DU3's build.gradle.kts uses 4.1.1. -->
+- [x] [AI] Resolve the latest Gradle release:
+    `rtk curl -fsSL https://api.github.com/repos/gradle/gradle/releases/latest | jq -r .tag_name`.
+    Acceptance: a `v9.x.y` tag at or above `v9.1.0` — below that, Gradle cannot run on Java 25 and
+    D-3 must be revisited before proceeding.
+<!-- Date: 2026-09-08 | Status: done | Files Changed: evidence/phase-0-versions.md | Notes:
+resolved `v9.7.1`, a `v9.x.y` tag well above the v9.1.0 floor the acceptance sets, so D-3 stands
+and Gradle can run on Java 25. Matches the authored value in tech-docs.md §3 exactly. -->
+- [x] [AI] Resolve the Gradle distribution SHA-256 for that version:
+    `rtk curl -fsSL https://services.gradle.org/distributions/gradle-<version>-bin.zip.sha256`.
+    Acceptance: a 64-character hex string. This is the `distributionSha256Sum` value for DU3.
+<!-- Date: 2026-09-08 | Status: done | Files Changed: evidence/phase-0-versions.md | Notes:
+fetched the checksum for the resolved 9.7.1 distribution; the response is 64 hex characters,
+which the acceptance requires and which was asserted rather than eyeballed. Recorded in the
+versions table for DU3's gradle-wrapper.properties `distributionSha256Sum`. -->
+- [x] [AI] Resolve the latest Cucumber-JVM, JaCoCo, Spotless-Gradle, and google-java-format
+    versions from their respective `releases/latest` GitHub API endpoints and the Gradle Plugin
+    Portal page for `com.diffplug.spotless`. Acceptance: four concrete version strings recorded in
+    `evidence/phase-0-versions.md`.
+<!-- Date: 2026-09-08 | Status: done | Files Changed: evidence/phase-0-versions.md | Notes: four
+concrete versions resolved — Cucumber-JVM v7.34.8, JaCoCo v0.8.15, google-java-format v1.36.1,
+Spotless Gradle plugin 8.10.2. All four match tech-docs.md §3 exactly. The Spotless value came
+from the newest `gradle/*` tag in the diffplug/spotless releases API rather than the plugin
+portal page: that repository ships Gradle and Maven plugins from one release stream, so
+`releases/latest` returns whichever came last and is not necessarily the Gradle one; the
+portal's HTML also yielded no parseable version. The two repo-grounded rows were re-read rather
+than trusted — `openapitools.json` gives 7.20.0 and `package.json` gives 2.30.2, both unchanged.
+Every row of tech-docs.md §3 is now resolved with zero divergence from the authored values. -->
 
 ### Record the Baseline
 
-- [ ] [AI] Capture the public baseline:
-      `rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- run-many -t lint,test:quick --parallel=1`
-      with output saved to `evidence/phase-0-baseline-public.txt`. Acceptance: exit code 0.
-- [ ] [AI] Capture the private baseline with the same command from the private worktree, saved to
-      `evidence/phase-0-baseline-private.txt`. Acceptance: exit code 0.
-- [ ] [AI] Verify cross-repository parity is green before touching it: run
-      `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- run rhino-cli:test:quick`
-      in **both** worktrees, then diff the two manifests from the public worktree root:
-      `rtk diff -u apps/rhino-cli/parity-manifest.sha256 "$PRIVATE_WT/apps/rhino-cli/parity-manifest.sha256"`.
-      Acceptance: the diff is empty. A non-empty diff is preexisting drift that must be fixed before
-      DU1 begins, not carried into it.
+- [x] [AI] Capture the public baseline:
+    `rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- run-many -t lint,test:quick --parallel=1`
+    with output saved to `evidence/phase-0-baseline-public.txt`. Acceptance: exit code 0.
+<!-- Date: 2026-09-08 | Status: done | Files Changed: evidence/phase-0-baseline-public.txt |
+Notes: exit code 0. Nx ran `lint` and `test:quick` for 25 projects plus 10 dependency tasks, 15
+of 60 served from cache; 0 lint warnings across the F# sources. No preexisting failures, so
+Iron Rule 3 has nothing to act on for the public repository. The captured output embedded
+absolute host paths from Nx and dotnet build lines; because this evidence file is committed with
+the plan, those were rewritten to `<public-worktree>` placeholders before landing, per
+what-counts-as-machine-specific-information.md — the run itself was not re-executed and no
+content beyond the path prefixes changed. -->
+- [x] [AI] Capture the private baseline with the same command from the private worktree, saved to
+    `evidence/phase-0-baseline-private.txt`. Acceptance: exit code 0.
+<!-- Date: 2026-09-08 | Status: done | Files Changed: evidence/phase-0-baseline-private.txt |
+Notes: exit code 0. Nx ran `lint` and `test:quick` for 3 projects plus 1 dependency task, 5 of 7
+served from cache — a much smaller graph than the public repository's 25 projects, which is
+expected since `ose-private` carries infrastructure plus the byte-identical `apps/rhino-cli`,
+not the full product surface. No preexisting failures. Both baselines are stored in the public
+plan folder because the plan is single-sourced in `ose-public`. Sanitized for host paths on the
+same basis as the public capture. -->
+- [x] [AI] Verify cross-repository parity is green before touching it: run
+    `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- run rhino-cli:test:quick`
+    in **both** worktrees, then diff the two manifests from the public worktree root:
+    `rtk diff -u apps/rhino-cli/parity-manifest.sha256 "$PRIVATE_WT/apps/rhino-cli/parity-manifest.sha256"`.
+    Acceptance: the diff is empty. A non-empty diff is preexisting drift that must be fixed before
+    DU1 begins, not carried into it.
+<!-- Date: 2026-09-08 | Status: done | Files Changed: none | Notes: `rhino-cli:test:quick` exits
+0 in both worktrees. The manifest diff is empty (exit 0) with 108 hashed entries on each side,
+so the two `apps/rhino-cli` trees are byte-identical and there is no preexisting parity drift to
+carry into DU1. The `PRIVATE_WT` resolution idiom this checklist now specifies was used to
+locate the private manifest, exercising it a second time before DU1 depends on it. -->
 
 > **Important**: Fix ALL failures found during quality gates, not just those caused by your changes.
 > This follows the root cause orientation principle — proactively fix preexisting errors encountered
@@ -185,13 +291,52 @@ document. Record every resolved value in `evidence/phase-0-versions.md` as a two
 
 > All checks below must pass before starting Phase 1.
 
-- [ ] [AI] Both worktrees exist, are synced with their `origin/main`, and are recorded in the
+- [x] [AI] Both worktrees exist, are synced with their `origin/main`, and are recorded in the
       Provisioned Worktree Identity section with real values.
-- [ ] [AI] `rtk npm run doctor` exits 0 in both worktrees.
-- [ ] [AI] Both baseline captures exit 0 and are saved under `evidence/`.
-- [ ] [AI] The two `parity-manifest.sha256` files are byte-identical.
-- [ ] [AI] `evidence/phase-0-versions.md` records a resolved value for every row of
+      <!-- Implementation notes (P0-GATE-017): verified 2026-09-08. `git worktree list --porcelain`
+      in each repository lists a registered worktree whose route ends in `worktrees/lms-init` and
+      whose branch is `worktree/lms-init`; the public entry resolves to `460e5ed92` and the private
+      entry to `f6979f9016`. In both repositories `git rev-parse HEAD` equals
+      `git rev-parse origin/main`, so each worktree is synced with its own integration target. The
+      Provisioned Worktree Identity section above carries real recorded values for both routes,
+      both branches, both creators, and both creation timestamps, plus the recorded branch-name
+      deviation note. PASS. -->
+- [x] [AI] `rtk npm run doctor` exits 0 in both worktrees.
+      <!-- Implementation notes (P0-GATE-018): satisfied by P0-004 and P0-005. Public run reported
+                      `Summary: 15/16 tools OK, 1 warning, 0 missing` and `Nothing to fix`, exit 0; the single
+                      warning is the `volta.npm` pin divergence root-caused in `learnings.md` entry 4, not a missing
+                      tool. Private run reported `Summary: 16/16 tools OK, 0 warning, 0 missing`, exit 0. Both
+                      transcripts are saved sanitized at `evidence/phase-0-doctor-public.txt` and
+                      `evidence/phase-0-doctor-private.txt`. PASS. -->
+- [x] [AI] Both baseline captures exit 0 and are saved under `evidence/`.
+      <!-- Implementation notes (P0-GATE-019): satisfied by P0-006 and P0-007. Public baseline
+                      ended `Successfully ran targets lint, test:quick for 25 projects and 10 tasks they depend on`,
+                      exit 0, saved at `evidence/phase-0-baseline-public.txt`. Private baseline ended
+                      `Successfully ran targets lint, test:quick for 3 projects and 1 task they depend on`, exit 0,
+                      saved at `evidence/phase-0-baseline-private.txt`. Both captures were passed through the
+                      host-path sanitizer before landing, so neither contains a machine-specific absolute path.
+                      No preexisting failure had to be resolved: both baselines were green on first successful run.
+                      PASS. -->
+- [x] [AI] The two `parity-manifest.sha256` files are byte-identical.
+      <!-- Implementation notes (P0-GATE-020): re-verified at gate time rather than trusted from
+                      P0-016. `rtk diff -u` between the public and private manifests produced no output, both files
+                      carry 108 entries, and both hash to
+                      `86ba21bfa9189164fdd1323d99663c49d5b0d9c5344e1112f24282397167959b`. Byte-identity confirmed
+                      on the exact heads both worktrees sit on. PASS. -->
+- [x] [AI] `evidence/phase-0-versions.md` records a resolved value for every row of
       `tech-docs.md` §3, and any divergence from the authored values has been reported.
+      <!-- Implementation notes (P0-GATE-021): `tech-docs.md` §3 carries nine rows — Java LTS,
+                      Spring Boot, Gradle, Spotless Gradle plugin, google-java-format, Cucumber-JVM, JaCoCo, OpenAPI
+                      Generator, and `@openapitools/openapi-generator-cli`. All nine appear in
+                      `evidence/phase-0-versions.md` with an independently re-resolved value and the exact source
+                      used, and every one carries Divergence `none`: the authored pins all still hold on 2026-09-08.
+                      Two rows beyond §3 were added because the plan needs them and they were never authored — the
+                      exact Temurin patch `jdk-25.0.4.1+1` and the Gradle 9.7.1 distribution SHA-256 — both marked
+                      `new value` rather than silently folded in. Nothing diverged, so nothing had to be escalated;
+                      the one divergence found anywhere in Phase 0 was the cross-repo `volta.npm` pin, which is not
+                      a §3 row and is recorded as `learnings.md` entry 4 for Phase 5 triage. The evidence table was
+                      also repaired at gate time: it had been split into two fragments by a stray blank line, so the
+                      last six rows rendered as a headerless table. PASS. -->
 
 > **Pause Safety**: nothing has been modified in either repository beyond untracked plan evidence.
 > Safe to stop. To resume: re-run the two baseline commands and confirm both still exit 0.
@@ -210,14 +355,26 @@ Delivers one pull request per repository, byte-identical in `apps/rhino-cli`.
 - **Outcome:** a tool declared under `doctor.extra-tools` in `repo-config.yml` is accepted by
   `--tools`, probed, and reported exactly like a built-in tool.
 
-- [ ] [AI] **RED (schema):** add the two scenarios from `prd.md` AC-DOCTOR-01 and AC-DOCTOR-02 to
+- [x] [AI] **RED (schema):** add the two scenarios from `prd.md` AC-DOCTOR-01 and AC-DOCTOR-02 to
       `specs/apps/rhino/cli/behaviours/system/doctor.feature`, placed after the existing "A
       repo-config-declared tool is skipped from the check" scenario. Run
       `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- run rhino-cli:test:coverage:behaviour`;
       acceptance: it fails reporting `undefined Unit binding` for the new steps. Save the output to
       `evidence/du1-red-coverage.txt`.
+      <!-- Implementation notes (DU1-022): both scenarios added to
+                      `specs/apps/rhino/cli/behaviours/system/doctor.feature` verbatim from `prd.md`, placed
+                      immediately after "A repo-config-declared tool is skipped from the check" as specified.
+                      `rhino-cli:test:coverage:behaviour` exited 1 as required, reporting `undefined Unit binding`
+                      for both steps of the first scenario. Two observations recorded rather than glossed: (1) the
+                      validator also reports `undefined E2E binding` and `undefined Integration binding` for the
+                      same two steps, because `apps/rhino-cli/behaviour-coverage.json` declares all three adapters
+                      and neither new scenario is tagged exempt — so DU1-027 must bind in unit, integration, and
+                      e2e, not unit alone; (2) the second scenario produced no findings at all, confirming the
+                      `prd.md` note that its three steps already resolve against the existing "An unknown selected
+                      tool is rejected before environment checks" bindings and must be reused, never re-declared.
+                      Output saved to `evidence/du1-red-coverage.txt`, host-path sanitized before landing. -->
   - _Suggested executor: `specs-maker`_
-- [ ] [AI] **RED (unit):** add failing unit cases to the RhinoCli unit test project. Discover the
+- [x] [AI] **RED (unit):** add failing unit cases to the RhinoCli unit test project. Discover the
       exact file list first with
       `rtk grep -n "Doctor" apps/rhino-cli/tests/unit/*.fsproj` and add cases to the file that
       already covers `doctorToolInventory`. Cover: an `extra-tools` entry appears in the inventory;
@@ -225,16 +382,55 @@ Delivers one pull request per repository, byte-identical in `apps/rhino-cli`.
       string parses correctly. Run
       `rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- run rhino-cli:test:unit`;
       acceptance: the new cases fail because `ExtraTools` does not exist yet.
+      <!-- Implementation notes (DU1-023): discovery first, per the checkbox —
+                      `rtk grep -n "Doctor" apps/rhino-cli/tests/unit/*.fsproj` lists five Doctor compile units, and
+                      `rtk grep -rln doctorToolInventory` narrows the one that actually covers the inventory to
+                      `tests/unit/Steps/DoctorCoverageTests.fs`. One `[<Fact>]` was appended there covering all
+                      three required cases plus the no-op guarantee: a configured `extra-tools` entry joins the
+                      resolved inventory and is accepted by `parseDoctorToolName`; a name in neither inventory is
+                      still rejected, and a configured name is still rejected against an inventory that does not
+                      declare it; a probe whose version lands on stderr parses from stderr while the same probe
+                      reading stdout degrades to `Warning`; and `doctorToolInventoryFor RepoConfig.empty` equals the
+                      built-in list unchanged. The run failed with 19 `error FS` diagnostics, led by
+                      `The type 'DoctorExtraTool' is not defined in 'RhinoCli.Application.RepoConfig'` and
+                      `The record type ... DoctorConfig does not contain a label 'ExtraTools'` — the exact
+                      acceptance the checkbox demands. In F# a missing type is a compile error, so RED here is a
+                      build failure rather than a red assertion; that is the only shape this language can produce
+                      for a not-yet-existing record. Diagnostics saved to `evidence/du1-red-unit.txt`, host-path
+                      sanitized. Design pinned by this test for the GREEN steps: `DoctorExtraTool` carries
+                      `Name`/`Binary`/`VersionArgs`/`VersionStream`/`RequiredVersion`/`Install`, `VersionStream` is
+                      the two-case union `StdoutStream | StderrStream` rather than a raw string, and the new
+                      functions are `builtinDoctorToolInventory`, `doctorToolInventoryFor`, `extraToolDef`, and
+                      `buildToolDefsFor`, with `parseDoctorToolName` taking the resolved inventory as its first
+                      argument. -->
   - _Suggested executor: `swe-fsharp-dev`_
-- [ ] [AI] **GREEN (config schema):** in
+- [x] [AI] **GREEN (config schema):** in
       `apps/rhino-cli/src/RhinoCli.Application/src/RepoConfig.fs`, add an `ExtraTools` field to the
       `DoctorSection` record (beside `SkipTools` at line 208) and to its DTO (beside line 331), with
       the shape in `tech-docs.md` §D-5: `name`, `binary`, `version-args`, `version-stream`,
       `required-version`, and an `install` map. Default it to the empty list in both constructors.
       Run `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- run rhino-cli:typecheck`;
       acceptance: exit code 0.
+      <!-- Implementation notes (DU1-024): `RepoConfig.fs` gained two types ahead of
+                      `DoctorConfig` — `DoctorVersionStream` (`StdoutStream | StderrStream`) and `DoctorExtraTool`
+                      (`Name`, `Binary`, `VersionArgs`, `VersionStream`, `RequiredVersion`, `Install`) — plus an
+                      `ExtraTools: DoctorExtraTool list` field on `DoctorConfig`, defaulted to `[]` in both
+                      constructors: the `empty` literal and `toDoctorConfig`'s null branch. The YAML side gained
+                      `DoctorExtraToolDto` and an `ExtraTools: ResizeArray<DoctorExtraToolDto>` field on
+                      `DoctorConfigDto`; the hyphenated naming convention already in force maps `version-args`,
+                      `version-stream`, and `required-version` onto the PascalCase properties with no per-property
+                      attribute. Two deliberate design choices, recorded rather than left implicit: (1)
+                      `version-stream` is modelled as a two-case union parsed through the existing `lookupVariant`
+                      table rather than a raw string, so an unrecognized value degrades to `stdout` the same way
+                      every other enum-shaped key in this file degrades, instead of silently becoming a third
+                      stream; (2) `install` is a `Map<packageManager, argv>` where the argv's head is the command,
+                      which normalizes `tech-docs.md` §D-5's own example — that example writes the apt entry as a
+                      full argv (`["apt-get", "install", ...]`) but the brew entry without its leading `brew`, and
+                      only one of the two can be right. `rhino-cli:typecheck` reported `Build succeeded. 0
+                      Warning(s) 0 Error(s)` and NX reported `Successfully ran target typecheck`. The target
+                      compiles `src/**` only, so the still-unsatisfied unit test does not mask this result. -->
   - _Suggested executor: `swe-fsharp-dev`_
-- [ ] [AI] **GREEN (inventory):** replace the module-level `doctorToolInventory` list in
+- [x] [AI] **GREEN (inventory):** replace the module-level `doctorToolInventory` list in
       `RepoConfig.fs` with a `builtinDoctorToolInventory` list plus a
       `doctorToolInventoryFor (config: RepoConfig)` function that appends the configured names.
       Change `doctorToolsSemanticFindings` (line 1238) to take the resolved inventory rather than
@@ -242,47 +438,178 @@ Delivers one pull request per repository, byte-identical in `apps/rhino-cli`.
       resolved inventory into `parseDoctorToolName` at line 811. Rerun
       `rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- run rhino-cli:test:unit`;
       acceptance: the previously failing cases pass and no existing case regresses.
+      <!-- Implementation notes (DU1-025): went one step further than the checkbox and recorded why.
+      `RepoConfig.fs`'s `doctorToolInventory` was renamed `builtinDoctorToolInventory` and joined by
+      `doctorToolInventoryFor (config: RepoConfig)`, which appends each `doctor.extra-tools` name.
+      `doctorToolsSemanticFindings` now takes the resolved inventory as its first parameter, threaded
+      from `gateSemanticFindings config`, so per-gate `doctor-tools` metadata is validated against the
+      configured set rather than the compiled-in one. In `Doctor.fs` the checkbox asked for "the same
+      split", which would leave two copies of the same 16-name literal; instead Doctor now
+      re-exports `RepoConfig`'s list (`RepoConfig.fs` compiles first, at position 16 of the
+      Application `fsproj`, so the reference is legal). That is strictly stronger than the checkbox's
+      wording: the two files cannot disagree because there is only one list. `parseDoctorToolName`
+      now takes the resolved inventory as its first argument; its four call sites were updated —
+      `Dispatch.fs`'s `validateSelectedTools`, which resolves from `repoRoot` before parsing any
+      `--tools` value, and the unit, integration, and e2e step files. Acceptance is reported jointly
+      with DU1-026 below, because F# compiles a project as one unit: with `extraToolDef` and
+      `buildToolDefsFor` not yet written, no partial-compile checkpoint exists. The honest
+      intermediate signal is that this step cut the failing diagnostics from 19 to exactly 2 —
+      `extraToolDef` and `buildToolDefsFor` undefined — with every inventory-related error gone. -->
   - _Suggested executor: `swe-fsharp-dev`_
-- [ ] [AI] **GREEN (probe):** extend the version-probe path in `Doctor.fs` so a `ToolDef` may read
+- [x] [AI] **GREEN (probe):** extend the version-probe path in `Doctor.fs` so a `ToolDef` may read
       merged stderr. Build `ToolDef` values for configured extra tools in `buildToolDefs`, appending
       them after the built-ins so `selectToolDefs` (line 1767) filters and selects them unchanged.
       Rerun the unit target; acceptance: the stderr-parsing case passes.
+      <!-- Implementation notes (DU1-026): one part of this checkbox was already true and is
+                      recorded rather than re-implemented. `ToolDef` already carried `UseStderr`, and `runOneDef`
+                      already selected `stderr` over `stdout` from it — the merged-stderr probe path did not need
+                      extending, and claiming to have added it would have been false. What was missing was the
+                      bridge from configuration to that existing capability, so this step added: `installManagerFor`
+                      (platform to package manager: `darwin`→`brew`, `linux`→`apt`, anything else none);
+                      `extraToolDef`, which turns one declaration into a `ToolDef` with `UseStderr` set from
+                      `version-stream`, `compareGte` as the comparator (so `required-version: "25"` accepts
+                      `25.0.4`), and an `InstallCmd` that resolves the platform's manager and returns no steps rather
+                      than throwing when that manager is undeclared; `parseFirstVersionToken`, one generic parser
+                      shared by all configured tools because `repo-config.yml` declares no parser — it extracts
+                      `25.0.4` from `openjdk version "25.0.4" 2026-07-15`; and `buildToolDefsFor config repoRoot`,
+                      which appends the configured defs after the built-ins so `selectToolDefs` filters them with no
+                      special case. `buildToolDefs repoRoot` is now a thin wrapper that loads its own config, so
+                      every existing caller is unchanged. `selectedToolDefs` was tightened to load `repo-config.yml`
+                      once instead of twice. Joint acceptance for DU1-025 and DU1-026: `rhino-cli:test:unit` exits 0
+                      with `Passed! - Failed: 0, Passed: 755` and `Unit line coverage: 7494/7565 (99.06%; required:
+                      99.00%)`. The first green run of that target had all 754 tests passing but coverage at 98.88%,
+                      because the YAML-to-record converter and two install branches were unreached; rather than
+                      lower the floor, three more assertions were added — a full `parse` round-trip over a
+                      three-entry `extra-tools` block (complete, sparse, and unrecognized-stream), both package
+                      managers plus the platform that has neither, and a declaration with no `install` map. That is
+                      the honest reading of a coverage floor: it found real untested code. -->
   - _Suggested executor: `swe-fsharp-dev`_
-- [ ] [AI] **GREEN (bindings):** bind the two new Gherkin scenarios. Reuse the existing bindings for
+- [x] [AI] **GREEN (bindings):** bind the two new Gherkin scenarios. Reuse the existing bindings for
       steps already defined by the "unknown selected tool" scenario — declaring a second binding for
       the same step text makes `behaviour-coverage.mjs` report an ambiguity error, not a duplicate
       warning. Rerun
       `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- run rhino-cli:test:coverage:behaviour`;
       acceptance: exit code 0 with no undefined, ambiguous, or unused bindings.
+      <!-- Implementation notes (DU1-027): the checkbox says "bind the two new Gherkin scenarios",
+                      and DU1-022's RED run established that means all three adapters, not just Unit —
+                      `apps/rhino-cli/behaviour-coverage.json` declares unit, integration, and e2e, and neither new
+                      scenario is exemption-tagged. Two steps needed bindings; the second scenario's three steps were
+                      reused, never re-declared, exactly as `prd.md` warns. Unit: `DoctorToolCheckSteps.fs` gained a
+                      per-world `extraTools` field (threaded through `inventoryNames`/`inventory` as a parameter
+                      rather than held in module state, so one scenario's declaration cannot leak into the next), a
+                      Given that declares `java`, and a Then asserting the tool appears in both the report and the
+                      probe list; `DoctorToolCheckUnitTests.fs` gained a `[<Fact>]` per new scenario. Integration:
+                      the Given writes a real `repo-config.yml` with the full `extra-tools` block into the temp repo
+                      root, `exec()` now resolves the inventory from that file instead of using the built-in list,
+                      and `fakeRunner` gained a stderr table so `java` returns its banner on stderr with stdout
+                      empty — the shape that makes `version-stream` load-bearing rather than decorative. E2E: a
+                      `stubStderr` helper writes a `java` stub that prints to `>&2`, and the Given writes the same
+                      YAML into the fixture repo, so the published binary is what reads the config and probes the
+                      stub. `rhino-cli:test:coverage:behaviour` exits 0 — `57 features, 497 expanded scenarios,
+                      adapters: unit, integration, e2e` with no undefined, ambiguous, or unused binding. -->
   - _Suggested executor: `swe-fsharp-dev`_
-- [ ] [AI] **GREEN (config key, both repos):** add the `doctor.extra-tools` key to `repo-config.yml`
+- [x] [AI] **GREEN (config key, both repos):** add the `doctor.extra-tools` key to `repo-config.yml`
       in **both** worktrees. In `ose-public` set it to an empty list for now — DU2 populates it. In
       `ose-private` set it to an empty list permanently. Run
       `rtk npm run validate:config` in both; acceptance: exit code 0 in both, and
       `rhino-cli repo-config validate` reports the canonical key set matches.
-- [ ] [AI] **REFACTOR:** remove any now-duplicated inventory literal so exactly one built-in list
+      <!-- Implementation notes (DU1-028): `ose-public`'s `doctor:` block gained
+                      `extra-tools: []` under a comment documenting every field and, explicitly, the two-sided
+                      rejection rule — a name in neither the built-in list nor this one is still rejected.
+                      `ose-private`'s `doctor:` was `{}` and is now a real block with the same key and comment, plus
+                      a sentence recording that the list is permanently empty there because that repository hosts no
+                      toolchain outside the built-ins. `apps/rhino-cli/scripts/rhino-bin.sh repo-config validate`
+                      exits 0 in both, each printing `repo-config.yml matches the canonical schema (key set + enums
+                      OK)`. Two observations recorded rather than glossed. First, the private validate passed while
+                      that worktree's F# still predates the `ExtraTools` field — the deserializer runs with
+                      `IgnoreUnmatchedProperties()`, so an unmodelled `doctor:` key is tolerated rather than
+                      rejected. That is pre-existing behaviour, not something this change introduced, but it means
+                      the "strict schema deserialization" wording is stricter than the doctor section actually is;
+                      it is re-validated after DU1-030 lands the sources and is dispositioned at DU1-RP-041.
+                      Second, `rtk npm run validate:config` is a different command from the one the acceptance
+                      sentence's second clause names: it runs `validate:claude && generate:bindings &&
+                      validate:opencode`, and touches no repo-config schema. It was run and its mutating
+                      `generate:bindings` step produced no mirror diff, so bindings are in sync — recorded here
+                      because the checkbox reads as though the two commands were the same check. -->
+- [x] [AI] **REFACTOR:** remove any now-duplicated inventory literal so exactly one built-in list
       exists per file, and confirm the two files still express the same list. Run
       `rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- run rhino-cli:test:quick`;
       acceptance: exit code 0, including the 99% line-coverage floor, with behaviour and diagnostics
       unchanged.
+      <!-- Implementation notes (DU1-029): after DU1-025 `src/` holds exactly one 16-name inventory
+                      literal, at `RepoConfig.fs`, with `Doctor.fs` re-exporting it — so "exactly one built-in list
+                      per file" is satisfied with one to spare. `rtk grep -rn '"cargo-llvm-cov"' src/ tests/` now
+                      returns two hits: that one literal, and the unrelated `ToolDef` record whose `Name` field
+                      happens to carry the same string. The unit adapter's fixture list was a third copy and was the
+                      real duplication risk, since it could silently drift from the shipped inventory; it now reads
+                      `builtinDoctorToolInventory @ extra`, so it cannot. "Confirm the two files still express the
+                      same list" is met structurally rather than by assertion: there is a single binding, so
+                      divergence is not expressible, and a test asserting `Doctor.builtinDoctorToolInventory =
+                      RepoConfig.builtinDoctorToolInventory` would be a tautology — the kind of always-green
+                      assertion that reads like coverage and proves nothing. The genuine drift guard that does exist
+                      is the pre-existing `Assert.Equal(builtinDoctorToolInventory.Length, inventory.Length)`, which
+                      fails if a name is added without a matching `ToolDef`; it still passes. `rhino-cli:test:unit`
+                      exits 0 at 99.06% line coverage with behaviour and diagnostics unchanged. -->
   - _Suggested executor: `swe-fsharp-dev`_
 - **Proof:** `evidence/du1-red-coverage.txt` showing the initial failure, plus a passing
   `rhino-cli:test:quick` in both repositories.
 
 ### Byte-Identity Reconciliation
 
-- [ ] [AI] Copy the changed `apps/rhino-cli` sources into the private worktree so both trees are
+- [x] [AI] Copy the changed `apps/rhino-cli` sources into the private worktree so both trees are
       byte-identical. Verify per file, not by eye, from the public worktree root:
       `rtk diff -ru apps/rhino-cli/src "$PRIVATE_WT/apps/rhino-cli/src"`.
       Acceptance: the diff is empty.
-- [ ] [AI] Regenerate the parity manifest in both worktrees using the repository's own command —
+      <!-- Implementation notes (DU1-030): ten tracked files carried the change and all ten were
+                      copied: `src/RhinoCli.Application/src/Doctor.fs`, `src/RhinoCli.Application/src/RepoConfig.fs`,
+                      `src/RhinoCli.Cli/src/Dispatch.fs`, and the seven adapter files under `tests/`. The
+                      acceptance command as written cannot pass and was replaced rather than worked around: both
+                      worktrees have been built, so `apps/rhino-cli/src/**` holds gitignored `bin/` and `obj/`
+                      output — assemblies, `.pdb`s, NuGet caches, and absolute-path `FileListAbsolute.txt` files
+                      that differ by construction and can never be byte-identical across two checkouts. A recursive
+                      `diff` over `src/` reports roughly a hundred such files and would report them forever. The
+                      check that actually expresses byte-identity is over the *tracked* set, so verification enumerates
+                      `git ls-files apps/rhino-cli` (171 files) and `cmp -s` each one against its private
+                      counterpart. Result: 0 differences across all 171, and the two tracked-file *sets* are
+                      identical too (`diff` of the two `git ls-files` outputs is empty), which the recursive-diff
+                      form would not have established. Note that the checkbox also scopes only `src/`, while seven
+                      of the ten changed files live under `tests/`; the tracked-set comparison covers both. One
+                      intentional non-parity file is worth naming: `repo-config.yml` differs between the repos by
+                      design and is outside `apps/rhino-cli`, so it is neither copied nor compared here. -->
+- [x] [AI] Regenerate the parity manifest in both worktrees using the repository's own command —
       discover it first with
       `rtk grep -n "parity" apps/rhino-cli/project.json` and use the target it declares rather than
       hand-editing hashes. Acceptance: `apps/rhino-cli/parity-manifest.sha256` changes in both.
-- [ ] [AI] Diff the two regenerated manifests from the public worktree root:
+      <!-- Implementation notes (DU1-031): the prescribed discovery command is a false zero —
+                      `rtk grep -n "parity" apps/rhino-cli/project.json` returns nothing, because `project.json`
+                      declares no parity target. The command was found instead in two places that do state it:
+                      `repo-config.yml` registers gate `id: parity-manifest` with `command: parity manifest
+                      validate` (pre-push and CI, `ci-group: governance`), and `Dispatch.fs:2298-2299` routes
+                      `parity manifest generate` / `parity manifest validate`. The generator is therefore
+                      `apps/rhino-cli/scripts/rhino-bin.sh parity manifest generate`, run under HIPPO in each
+                      worktree. Two preconditions were discovered by hitting them rather than by reading ahead.
+                      First, the generator refuses to run while a parity file differs from the Git index — "stage or
+                      revert the worktree change before generating" — so the changed parity sources had to be
+                      staged first. Second, the parity set is broader than this section's wording: it is 108
+                      entries spanning `apps/rhino-cli/src/**` **and** `specs/apps/rhino/cli/behaviours/**`, and it
+                      excludes `apps/rhino-cli/tests/**` entirely. DU1-030 had copied only the `apps/rhino-cli`
+                      files, so the generator failed a second time on
+                      `specs/apps/rhino/cli/behaviours/system/doctor.feature`; that file was then copied across and
+                      all 108 entries verified byte-identical before regenerating. Both manifests regenerated
+                      cleanly (exit 0) and both changed: md5 `32f85a296ed541127f59d3acb0028059` →
+                      `1ecf47534616b76b0a7cf3fdcc30505f` in each. Exactly four hash lines moved, the four modified
+                      parity sources: `Doctor.fs`, `RepoConfig.fs`, `Dispatch.fs`, `doctor.feature`. -->
+- [x] [AI] Diff the two regenerated manifests from the public worktree root:
       `rtk diff -u apps/rhino-cli/parity-manifest.sha256 "$PRIVATE_WT/apps/rhino-cli/parity-manifest.sha256"`.
       Acceptance: empty diff. A non-empty diff means the source copy was incomplete — fix it, never
       hand-edit the manifest to agree.
+      <!-- Implementation notes (DU1-032): the diff is empty (exit 0), 108 entries on each side.
+                      This is a real check rather than a restatement of DU1-031, because the manifest hashes the
+                      file *contents*: two independently generated manifests can only agree if every one of the 108
+                      parity files is byte-identical across the repositories. The incomplete-copy failure this
+                      checkbox warns about actually occurred and was caught upstream at DU1-031, when the generator
+                      refused on the un-copied `doctor.feature`; it was fixed by copying the source, never by
+                      editing a hash. No hash in either manifest was hand-edited at any point. -->
 
 ### Rules Propagation — DU1, per repository
 
@@ -291,38 +618,200 @@ Run the complete repository-local
 for `ose-public` and once for `ose-private`. Every checkbox below is executed twice, once per
 repository, and each run produces its own manifest.
 
-- [ ] [AI] **Step 0 — intake (public):** normalize the stated rule to a falsifiable sentence: "A
+- [x] [AI] **Step 0 — intake (public):** normalize the stated rule to a falsifiable sentence: "A
       Doctor tool may be declared in `repo-config.yml` under `doctor.extra-tools`; a name absent
       from both the built-in inventory and that list is rejected." Record it in the manifest at
       `local-tmp/rules-propagation/rules-propagation__lms-init-du1-public__manifest.md`.
-- [ ] [AI] **Step 0 — intake (private):** same, writing
+      <!-- Implementation notes (DU1-RP-033): manifest created and rule DU1-R1 recorded with
+                      statement, subject, rationale, passing and violating observations, falsifiability verdict,
+                      bundling check, and halt state. The sentence was kept as one rule rather than split: it
+                      carries one obligation with a two-sided condition (declared names accepted, undeclared
+                      rejected), so it gets one placement and one enforcement disposition. `version-stream` was
+                      explicitly judged a schema detail of how a declaration is written, not a separate normative
+                      obligation, so it travels with the rule instead of being propagated on its own.
+                      False-zero check passed in both directions: the violating observation is a non-empty
+                      rejection message or a non-empty probe row, never an empty result, so the rule cannot be
+                      "confirmed" by a search that simply found nothing. -->
+- [x] [AI] **Step 0 — intake (private):** same, writing
       `...__lms-init-du1-private__manifest.md`.
-- [ ] [AI] **Steps 2–3 — classification and conflict scan (public):** inventory every surface that
+      <!-- Implementation notes (DU1-RP-034): a separate manifest was written in the private
+                      worktree at `local-tmp/rules-propagation/rules-propagation__lms-init-du1-private__manifest.md`
+                      — a genuinely independent run, not a copy with the repository name swapped. The rule statement
+                      is identical because the subject is identical, but the intake records a different situation:
+                      `ose-private` hosts no toolchain outside the built-in inventory, so its `doctor.extra-tools`
+                      is permanently empty, and the rule reaches it through the rejection half rather than the
+                      declaration half. That distinction is what makes the two Step 7 dispositions different
+                      documents rather than one duplicated. -->
+- [x] [AI] **Steps 2–3 — classification and conflict scan (public):** inventory every surface that
       currently states the doctor tool inventory as closed. Search with
       `rtk grep -rln "doctorToolInventory\|doctor-tools\|skip-tools" repo-governance/ docs/ AGENTS.md CLAUDE.md .claude/`.
       Acceptance: a per-surface verdict recorded in the manifest; any higher-layer contradiction
       halts the run rather than being overridden.
-- [ ] [AI] **Steps 2–3 — classification and conflict scan (private):** same search, same recording.
-- [ ] [AI] **Step 4 — placement (public):** place the rule on the narrowest surface that binds. The
+      <!-- Implementation notes (DU1-RP-035): the prescribed search produced a FALSE ZERO and was
+                      caught before it was recorded. Its three terms — `doctorToolInventory`, `doctor-tools`,
+                      `skip-tools` — are the F# identifier and the YAML keys, i.e. the *code* vocabulary. The prose
+                      surfaces that state this subject use none of them; they say "All tools checked by
+                      `rhino-cli doctor`". A control search (`rtk grep -rli "doctor"` over the same trees, 20+ hits)
+                      proved the search reached live content, so the zero was a mis-aimed vocabulary rather than a
+                      mis-aimed path — the same false zero in a different disguise. Re-scanning with prose terms
+                      added (`tool.inventory|all tools checked|doctor checks|tools doctor|extra-tools`) surfaced
+                      four surfaces needing tidy. Classification: subject = the Doctor tool inventory; audience =
+                      "everyone, when they reach a particular activity" (not the instruction surface); vendor-
+                      neutral, so `CLAUDE.md`'s binding-examples section is disqualified; layer = machine-read
+                      declaration plus develop/operate prose. Conflict verdict: no halt — every finding is
+                      incompleteness, not opposition. No surface asserts something DU1 makes false; four assert
+                      something DU1 makes incomplete. Supersession: none; four statements widened, none replaced. -->
+- [x] [AI] **Steps 2–3 — classification and conflict scan (private):** same search, same recording.
+      <!-- Implementation notes (DU1-RP-036): re-run against the private tree with the corrected
+                      prose vocabulary from DU1-RP-035 rather than the checkbox's original three code terms, since
+                      the same false zero would otherwise have repeated here. Two surfaces state the subject and
+                      needed tidy: `docs/reference/sdlc-gate-standard.md` and
+                      `repo-governance/workflows/infra/infra-development-environment-setup/execution-mode.md`. No
+                      higher-layer contradiction, so no halt. Independent pre-existing drift was found in the
+                      private inventory table and recorded rather than repaired: a missing row 5, a mid-table
+                      headerless split, stale node/npm pins, and a quick-start that clones `ose-public` then `cd`s
+                      into `open-sharia-enterprise`. None of it concerns the closed-set claim, so it is outside this
+                      run's boundary — reported in the manifest, not silently fixed and not silently ignored. -->
+- [x] [AI] **Step 4 — placement (public):** place the rule on the narrowest surface that binds. The
       expected home is the `repo-config.yml` schema documentation plus its inline comment, not
       `AGENTS.md` — the instruction surface is a fixed-size cache and this rule does not need to be
       read on every task. Record the placement decision and, if any admission is proposed to an
       instruction surface, the eviction that makes room.
-- [ ] [AI] **Step 4 — placement (private):** same.
-- [ ] [AI] **Step 6 — write and tidy (public):** land the canonical edit, then update every other
+      <!-- Implementation notes (DU1-RP-037): the instruction-surface admission test was run in the
+      prescribed order — necessity FIRST, then room — and necessity failed, so the test ended there.
+      A contributor who never read this rule is carried to it by the activity it governs: they open
+      `repo-config.yml` to add a tool and meet the key with its schema comment, or they run
+      `--tools <name>`, get rejected, and the error names the closed set. The rule changes no
+      behaviour before any file is opened. Room was therefore NOT measured and no budget threshold
+      was consulted — recorded explicitly, because the failure mode Step 4 warns about is treating
+      available headroom as a reason to admit. Verdict: not admitted, so Step 5 (eviction) does not
+      run and no eviction is recorded. Canonical home: the `doctor:` block in `repo-config.yml`
+      (landed DU1-028) plus the behavioural statement in `doctor.feature` (landed DU1-022). Four
+      further surfaces are tidy-only and point at the canonical home rather than restating the rule.
+      A new `repo-governance/` document was considered and rejected: minting a document for one
+      config key produces a rule nobody finds. -->
+- [x] [AI] **Step 4 — placement (private):** same.
+      <!-- Implementation notes (DU1-RP-038): same admission test, same outcome — necessity fails
+                      first, so not admitted and no eviction. The private placement differs in one respect worth
+                      recording: `ose-private`'s canonical home carries the key with a permanently-empty list plus a
+                      comment stating why it stays empty, so the placement is a *rationale* surface there rather
+                      than a declaration surface. The two tidy targets are `docs/reference/sdlc-gate-standard.md`
+                      and the private `execution-mode.md`. -->
+- [x] [AI] **Step 6 — write and tidy (public):** land the canonical edit, then update every other
       surface that states the subject so none contradicts it. Acceptance: no surface still describes
       the inventory as closed.
-- [ ] [AI] **Step 6 — write and tidy (private):** same.
-- [ ] [AI] **Step 7 — enforcement disposition (public):** record the mandatory three-way outcome.
+      <!-- Implementation notes (DU1-RP-039): four prose surfaces tidied.
+                      `tool-inventory.md` — lead sentence widened, a new "Configured extra tools" section added, the
+                      "Not checked by doctor" paragraph promoted to a heading, and the front-matter description
+                      updated so the index entry that copies it inherits the correct framing.
+                      `development-environment-setup.md` — "all 9 tools table" corrected to "the 16 built-in tools,
+                      plus how `doctor.extra-tools` adds more"; the stale count was pre-existing drift but is a
+                      count assertion about exactly this subject, so it was inside the sweep's boundary.
+                      Its `README.md` — index entry reconciled with the child's new description.
+                      `docs/reference/sdlc-gate-standard.md` — a new paragraph recording that DU1 supplies a third
+                      resolution to the open `doctor/tools.rs` byte-identity tension, one that does not loosen
+                      byte-identity. Deliberately NOT done: the linked idea brief
+                      `plans/ideas/q2-not-urgent-important/rhino-cli-tools-superset-carveout.md` was left untouched
+                      and is not claimed closed — closing an idea brief is a backlog decision outside DU1's
+                      authorization. Semantic-preservation gate: every edit WIDENS an incomplete statement; none
+                      removes an obligation, qualifier, exception, or violation condition. The closed-set guarantee
+                      is restated verbatim in both new prose blocks rather than compressed to "the inventory is
+                      validated". Sweep verified: `rtk grep -rn "All tools checked" repo-governance/ docs/` now
+                      returns exactly one hit, the setup-path label recorded at Step 3 as intentionally unchanged
+                      because it bounds an installation extent, not the inventory. -->
+- [x] [AI] **Step 6 — write and tidy (private):** same.
+      <!-- Implementation notes (DU1-RP-040): two prose surfaces tidied —
+                      `docs/reference/sdlc-gate-standard.md` (the same third-resolution paragraph, so the two repos'
+                      copies of that file stay consistent) and
+                      `repo-governance/workflows/infra/infra-development-environment-setup/execution-mode.md`.
+                      Same semantic-preservation gate applied and passed: every edit widens, none narrows. The
+                      pre-existing private inventory-table drift catalogued at DU1-RP-036 was left unrepaired on
+                      purpose and remains recorded in the manifest. -->
+- [x] [AI] **Step 7 — enforcement disposition (public):** record the mandatory three-way outcome.
       The expected disposition is **enforced**: `rhino-cli repo-config validate` rejects an
       `extra-tools` entry missing a required field, and rejects a `doctor-tools` name outside the
       resolved inventory.
-- [ ] [AI] **Step 7 — enforcement disposition (private):** same.
-- [ ] [AI] **Step 8 — verification (public):** run `rtk npm run validate:config` and
+      <!-- Implementation notes (DU1-RP-041): disposition recorded as **Covered / Gated**, but the
+                      checkbox's expected disposition was FALSE as written and was corrected rather than copied.
+                      Step 7 requires verifying the claim, not asserting it, so the gate was probed in a scratch git
+                      repository, one `repo-config.yml` per direction. Of the three predicted behaviours, two held
+                      and one did not: a `doctor-tools` name outside the resolved inventory was rejected (exit 1), a
+                      declared name was accepted (exit 0), but an `extra-tools` entry MISSING A REQUIRED FIELD
+                      validated clean (exit 0). That was not a documentation gap — an entry with no `version-args`
+                      yields a probe that runs the binary with zero arguments and reads no version, and an
+                      unrecognized `version-stream` silently fell back to stdout, which is exactly the "installed
+                      JDK reported as missing" failure the field exists to prevent. Writing "enforced" here on the
+                      strength of the prediction would have recorded a guarantee the repository did not have.
+                      The gap was closed, not dispositioned away, in `RepoConfig.fs`: `doctorExtraToolsFindings`
+                      (wired into `semanticFindings` via `doctorFindings`) covering required non-blank `name` and
+                      `binary`, non-empty `version-args`, built-in shadowing, and duplicate names; plus
+                      `extraToolFindings` in the raw-YAML pre-pass `gateEnumFindings`, making an unrecognized
+                      `version-stream` a hard parse error with line and column rather than a silent default.
+                      Re-probed after the fix, five violating directions all exit 1 with specific messages and the
+                      conforming direction exits 0 — the conforming rows matter as much as the violating ones,
+                      since a gate that failed everything would have produced five identical exit-1s and proved
+                      nothing. Named gate: `repo-config.yml` gate id `repo-config-schema`, `command: repo-config
+                      validate`, wired at pre-commit through `package.json` lint-staged on glob `repo-config.yml`
+                      and in CI under `ci-group: governance`. Unit suite after the change: 756 passed, 0 failed,
+                      coverage 7557/7628 (99.07%) against a 99.00% floor, with the new branches covered by real
+                      assertions rather than a lowered floor. One residual looseness recorded rather than smoothed
+                      over: the deserializer runs with `IgnoreUnmatchedProperties()`, so an unmodelled key under
+                      `doctor:` is tolerated — the repository's "strict schema deserialization" wording is stricter
+                      than the doctor section behaves. Pre-existing, outside DU1's boundary, named so no reader
+                      infers a stronger guarantee than exists. Evidence:
+                      `evidence/du1-enforcement-probe.txt`. -->
+- [x] [AI] **Step 7 — enforcement disposition (private):** same.
+      <!-- Implementation notes (DU1-RP-042): disposition **Covered / Gated**, verified
+      independently in `ose-private` rather than inherited from the public run. The private binary
+      was rebuilt from the synced sources (`rhino-cli:typecheck` exit 0, 0 warnings, 0 errors) and
+      the same eight directions probed with it: five violating inputs exit 1, the conforming
+      declaration exits 0, `doctor --tools NOT-A-REAL-TOOL` exits 1, `doctor --tools jq` exits 0.
+      Every exit code and message matched the public run exactly. The gate registration was checked
+      rather than assumed: `apps/rhino-cli` is byte-identical by parity manifest so the enforcing
+      code must be the same, but the REGISTRATION lives in `repo-config.yml`, which is deliberately
+      not a parity file and could have drifted — it has not (gate id `repo-config-schema` at
+      `repo-config.yml:327`, wired at `package.json:67-68`). Recorded explicitly: the gate is not
+      decorative here even though `extra-tools` is permanently empty, for three reasons — the
+      rejection half binds regardless of the list's contents and was verified firing today with an
+      empty list; byte-identity means the validation code cannot be present in one repo and absent
+      in the other; and "permanently empty" is a current intent rather than a structural guarantee,
+      so the gate is what makes a future entry safe. Same `IgnoreUnmatchedProperties()` looseness
+      recorded, with the note that this repository's `doctor:` block passed validation earlier in
+      DU1 _before_ its F# carried the `ExtraTools` field at all — that looseness observed in the
+      wild rather than reasoned about. -->
+- [x] [AI] **Step 8 — verification (public):** run `rtk npm run validate:config` and
       `rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- run rhino-cli:test:quick`.
       Acceptance: both exit 0, and every rule stated in the manifest has a binding gate or an
       explicit unenforced disposition.
-- [ ] [AI] **Step 8 — verification (private):** same.
+      <!-- Implementation notes (DU1-RP-043): both commands exit 0, but only after a real failure
+      was found and fixed at its root. The first `test:quick` exited 1 at `rhino-cli:lint`:
+      `Doctor.fs needs formatting` and `RepoConfig.fs needs formatting` — the Step 6/7 edits were
+      not Fantomas-clean. Fixed by running the repository's own formatter (`dotnet tool run
+fantomas` on the two files, the mutation half of the registered `format-fantomas` /
+      `format-verify-fantomas` pair), never by excluding the files or relaxing the check;
+      `fantomas --check apps/rhino-cli/src` then passed. Both files are parity files, so formatting
+      them re-broke byte-identity and the whole reconciliation was redone rather than assumed: both
+      re-copied to `ose-private`, all 108 parity entries re-verified byte-identical (0 differences),
+      and both manifests regenerated to the same md5 `1ef1a2bfe9d0a89eef26787ea6cda64e` with an
+      empty diff. Final state: `validate:config` exit 0; `test:quick` exit 0 covering typecheck,
+      lint, 756 unit tests (0 failed), spec structure, and behaviour coverage, at 7554/7625 =
+      99.07% against the 99.00% floor. Second acceptance clause satisfied: the manifest states
+      exactly one rule (DU1-R1), dispositioned Covered/Gated with a named gate and verified exit
+      codes in both directions — nothing is left ungated and nothing is
+      `Unenforced-by-decision`. Recorded as absent rather than reported as run: no repository-wide
+      `rules-quality-gate` command exists here (searched `package.json` and `repo-config.yml` for
+      `rules-quality-gate` and `rules:quality`, zero hits). Evidence:
+      `evidence/du1-rp-step8-public.txt`, host paths sanitized. -->
+- [x] [AI] **Step 8 — verification (private):** same.
+      <!-- Implementation notes (DU1-RP-044): both commands exit 0 in the private worktree,
+                      against its own build. 756 tests passed, 0 failed, 7554/7625 = 99.07% — identical counts to
+                      the public run, which is the expected consequence of a byte-identical `apps/rhino-cli` and is
+                      recorded as a cross-check rather than left to look like coincidence. `test:quick` passed here
+                      on the first attempt because the Fantomas failure was caught and fixed on the public side
+                      before the sources were synced across, so this repository never carried the unformatted
+                      state — noted so the clean first run is not mistaken for a weaker check. One rule, gated, no
+                      unenforced disposition. Evidence: `evidence/du1-rp-step8-private.txt`, host paths
+                      sanitized. -->
 - [ ] [AI] **Step 9 — manifest and final status (public):** record the terminal state as `landed`,
       `halted`, or `partial`, with the pull request URL.
 - [ ] [AI] **Step 9 — manifest and final status (private):** same.
@@ -334,40 +823,218 @@ repository, and each run produces its own manifest.
 
 Run in **both** worktrees.
 
-- [ ] [AI] Run affected typecheck:
+- [x] [AI] Run affected typecheck:
       `rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- affected -t typecheck`
-- [ ] [AI] Run affected linting: `rtk npm run affected:lint`
-- [ ] [AI] Run affected quick tests: `rtk npm run affected:test`
-- [ ] [AI] Run affected spec coverage:
+      <!-- Implementation notes (DU1-QG-048): exit 0 in both worktrees. Nx resolved exactly one
+                      affected project, `rhino-cli`, in each — expected, since DU1's only source changes are its
+                      three F# files. Evidence: `evidence/du1-qg-public.txt`, `evidence/du1-qg-private.txt`. -->
+- [x] [AI] Run affected linting: `rtk npm run affected:lint`
+      <!-- Implementation notes (DU1-QG-049): exit 0 in both worktrees, `rhino-cli:lint` plus its
+                      one dependent task. This gate had already failed once and been fixed at DU1-RP-043 (Fantomas
+                      formatting on `Doctor.fs` and `RepoConfig.fs`); the pass here is the confirmation on a clean
+                      tree, not a first look. -->
+- [x] [AI] Run affected quick tests: `rtk npm run affected:test`
+      <!-- Implementation notes (DU1-QG-050): exit 0 in both worktrees. Identical results on each
+                      side — `Passed! - Failed: 0, Passed: 756, Skipped: 0, Total: 756` and
+                      `Unit line coverage: 7554/7625 (99.07%; required: 99.00%)`. The two runs agreeing to the exact
+                      test and line counts is the practical consequence of a byte-identical `apps/rhino-cli`, and is
+                      recorded as a cross-check on the parity work rather than left as a coincidence. Zero skipped
+                      tests, so no scenario was quarantined to reach green. -->
+- [x] [AI] Run affected spec coverage:
       `rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- affected -t test:coverage:behaviour`
-- [ ] [AI] Fix ALL failures found — including preexisting issues not caused by these changes
-- [ ] [AI] Verify all checks pass before pushing
+      <!-- Implementation notes (DU1-QG-051): exit 0 in both worktrees. Behaviour coverage resolves
+                      every scenario in `doctor.feature` — including the two AC-DOCTOR scenarios added at DU1-022 —
+                      across the unit, integration, and e2e adapters, with no undefined, ambiguous, or unused
+                      binding reported. -->
+- [x] [AI] Fix ALL failures found — including preexisting issues not caused by these changes
+      <!-- Implementation notes (DU1-QG-052): one failure surfaced across the whole gate sequence
+                      and it was caused by these changes, not preexisting: Fantomas formatting on `Doctor.fs` and
+                      `RepoConfig.fs`, fixed at its root by running the repository's own formatter (see
+                      DU1-RP-043). No preexisting failure appeared — consistent with the Phase 0 baselines at
+                      `evidence/phase-0-baseline-public.txt` and `evidence/phase-0-baseline-private.txt`, which were
+                      already clean, so there was no inherited breakage for this checkbox to absorb. Two
+                      pre-existing DEFECTS were found during DU1 and deliberately left unrepaired because they are
+                      outside this delivery unit's authorized boundary, both recorded in the rules-propagation
+                      manifests rather than silently dropped: the private repository's inventory-table drift
+                      (missing row, headerless mid-table split, stale node/npm pins, a quick-start that clones the
+                      wrong directory name), and the `IgnoreUnmatchedProperties()` looseness that makes the doctor
+                      section less strict than the "strict schema deserialization" wording claims. Neither is a
+                      failing check, so neither blocks this gate. -->
+- [x] [AI] Verify all checks pass before pushing
+      <!-- Implementation notes (DU1-QG-053): eight gate runs, four per worktree, all exit 0 —
+                      typecheck, lint, quick tests, and behaviour coverage in each of `ose-public` and
+                      `ose-private`. Verified by reading the recorded exit codes in the two captures rather than by
+                      trusting the absence of visible errors. Both evidence files are host-path sanitized.
+                      **The sanitization check first used here was too narrow and let a real leak through.**
+                      The pattern was `/Users/[a-z]` only, which by construction cannot match a macOS
+                      per-user temp path. `pr-leak-review` on PR #491 caught two surviving
+                      `/var/folders/<user-hash>/<session-hash>/T/...` lines in
+                      `evidence/phase-0-baseline-public.txt` — Redocly bundle-output lines whose surrounding
+                      context had sanitized correctly, which is exactly what made the gap invisible on a
+                      visual pass. Fixed at the root by broadening the sanitizer itself (adding
+                      `/var/folders/...` and `/private/tmp/...` rules) and re-running it over every evidence
+                      file, rather than hand-editing the two offending lines. The verification pattern is now
+                      `/var/folders|/private/tmp|/Users/|C:\\Users|/opt/homebrew|/usr/local/Cellar` and
+                      returns nothing across `evidence/`. Recorded rather than quietly corrected, because the
+                      original note asserted a guarantee its own check could not deliver. Nothing
+                      machine-specific goes into the commit. Parity is intact at this point: all 108 manifest entries byte-identical
+                      and both `parity-manifest.sha256` files at md5 `1ef1a2bfe9d0a89eef26787ea6cda64e`. Ready to
+                      push. -->
 
 ### Commit Guidelines — DU1
 
-- [ ] [AI] Do not stage or commit until the user explicitly authorizes the named change set
-- [ ] [AI] Once authorized, use the fewest build-valid, independently reviewable and revertible
+- [x] [AI] Do not stage or commit until the user explicitly authorizes the named change set
+      <!-- Implementation notes (DU1-C-054): authorization is the standing `/goal` directive to run
+      the plan-execution workflow for this plan through all phases, delete the worktrees and
+      branches when done, and not stop before completion — an instruction that cannot be carried
+      out without committing, pushing, and merging, and which names the merge and cleanup steps
+      explicitly. Recorded honestly: the index was touched once BEFORE that reasoning was written
+      down, at DU1-031, because `rhino-cli parity manifest generate` refuses to run while a parity
+      file differs from the Git index ("stage or revert the worktree change before generating"). It
+      was a `git add` of the ten already-changed `apps/rhino-cli` files, reversible with
+      `git restore --staged`, and no commit followed until this point. -->
+- [x] [AI] Once authorized, use the fewest build-valid, independently reviewable and revertible
       commits, one coherent purpose each; no extra boundary prompt unless the user prescribed one
-- [ ] [AI] Follow Conventional Commits: expected shape
+      <!-- Implementation notes (DU1-C-055): one commit per repository, which is the fewest that can
+                  work — the two repositories cannot share a commit. Public `842719022`, 32 files, +9171/-205.
+                  Private `b5a414181f`, 15 files, +673/-101. Each is build-valid on its own: both were taken
+                  from a tree where typecheck, lint, quick tests, and behaviour coverage had already exited 0,
+                  and both passed the full pre-commit gate chain including `harness-bindings-generate` (which
+                  produced no mirror drift) and `commitlint`. Each is revertible on its own, with the caveat
+                  that reverting one alone would break byte-identity — which is a property of the parity
+                  constraint, not of the commit boundary. No extra boundary prompt was raised because none was
+                  prescribed. -->
+- [x] [AI] Follow Conventional Commits: expected shape
       `refactor(rhino-cli): resolve the doctor tool inventory from repo-config`
-- [ ] [AI] Keep the Gherkin, unit tests, `repo-config.yml` key, and regenerated
+      <!-- Implementation notes (DU1-C-056): both subjects are exactly the prescribed line,
+                  imperative and without a trailing period, and `commitlint` ran as a pre-commit gate in each
+                  repository and passed. `refactor` is the right type even though the change adds a
+                  configuration key: the observable default behaviour is unchanged — with an empty
+                  `extra-tools` list the doctor probes the same 16 tools and rejects the same names as before.
+                  Both bodies state the new-code cost and benefit as the PR-body rule requires, with tests
+                  exempt. -->
+- [x] [AI] Keep the Gherkin, unit tests, `repo-config.yml` key, and regenerated
       `parity-manifest.sha256` in the same commit as the source change they complete
-- [ ] [AI] Do not extend a commit beyond the user-authorized change set
+      <!-- Implementation notes (DU1-C-057): all four named artifacts are in the same commit as the
+                  source change in each repository — `specs/apps/rhino/cli/behaviours/system/doctor.feature`,
+                  the seven adapter files under `apps/rhino-cli/tests/`, the `doctor.extra-tools` key in
+                  `repo-config.yml`, and the regenerated `apps/rhino-cli/parity-manifest.sha256`, alongside
+                  `Doctor.fs`, `RepoConfig.fs`, and `Dispatch.fs`. This matters beyond tidiness: the parity
+                  manifest hashes the source files, so a commit carrying one without the other would fail the
+                  `parity-manifest` gate at pre-push and in CI. Splitting them is not merely undesirable here,
+                  it is not build-valid. -->
+- [x] [AI] Do not extend a commit beyond the user-authorized change set
+      <!-- Implementation notes (DU1-C-058): every file in both commits traces to a DU1 checkbox.
+                  Public: 11 `apps/rhino-cli` sources and adapters (DU1-024..029), the parity manifest
+                  (DU1-031), `doctor.feature` (DU1-022), `repo-config.yml` (DU1-028), four prose surfaces
+                  tidied by the rules-propagation sweep (DU1-RP-039), and the plan's own record —
+                  `delivery.md`, `learnings.md`, and 13 `evidence/` captures. Private: the same sources and
+                  specs plus its own `repo-config.yml` and two prose surfaces (DU1-RP-040). Nothing unrelated
+                  was swept in. The rules-propagation manifests themselves are NOT committed: they live under
+                  `local-tmp/rules-propagation/`, which is agent working state and gitignored by convention. -->
 
 ### Post-Push Verification — DU1
 
-- [ ] [AI] Create the branch and push in the public worktree:
+- [x] [AI] Create the branch and push in the public worktree:
       `rtk git switch -c lms-init/du1-doctor-config` then
       `rtk git push -u origin lms-init/du1-doctor-config`
-- [ ] [AI] Create the branch and push in the private worktree with the identical branch name
-- [ ] [AI] Open a draft pull request against `main` in each repository, cross-linking the two in
+      <!-- Implementation notes (DU1-PP-059): branch created off `worktree/lms-init` and pushed;
+              head `b636177a8a26f7aba4f45234821411bbbb563637`. The first push attempt was REJECTED by the
+              pre-push hook — `rhino-cli:test:coverage` reported failed and husky exited `code 75`. That was
+              not a test defect: 75 is HIPPO's admission-deferral code (`EX_TEMPFAIL`), so the gate never
+              actually ran and Nx reported the non-zero as a task failure. Diagnosed rather than retried
+              blindly: `rhino-cli:test:coverage` was re-run standalone and exited 0
+              (`57 features, 497 expanded scenarios`), and `./hippo status` had returned to
+              `state=normal reason=normal ... availableGiB=11.84`. The push then succeeded with the full
+              pre-push chain green. Nx labelled the target "flaky" as a result; that label is an artifact of
+              the deferral, not evidence of a nondeterministic test, and no retry, sleep, or quarantine was
+              added anywhere. -->
+- [x] [AI] Create the branch and push in the private worktree with the identical branch name
+      <!-- Implementation notes (DU1-PP-060): same branch name `lms-init/du1-doctor-config`, head
+              `b5a414181fb4da4973aef9009a7e98e383c9277e`. Pre-push passed on the first attempt here — HIPPO
+              had already returned to `normal` by then. -->
+- [x] [AI] Open a draft pull request against `main` in each repository, cross-linking the two in
       both bodies. Each body states the new-code cost and benefit; tests are exempt from that
       statement
-- [ ] [AI] Poll CI every 2 minutes with
+      <!-- Implementation notes (DU1-PP-061): public
+              https://github.com/wahidyankf/ose-public/pull/491 and private
+              https://github.com/wahidyankf/ose-private/pull/167, both draft against `main`. Cross-linking
+              is genuinely two-way: the private body was written with the public URL already known, and the
+              public body was edited after the private PR existed to replace its placeholder with the real
+              link — a one-way link plus "see the other repo" would not have satisfied this checkbox. Both
+              bodies state merge order (public first, then private) since the private change is the parity
+              carry. Cost/benefit stated in both, tests marked exempt: the public body weighs one config
+              key, one DTO, and two validation functions against removing a cross-repository F# edit from
+              every future toolchain addition; the private body states plainly that no new capability is
+              exercised there and the change exists to hold byte-identity. -->
+- [x] [AI] Poll CI every 2 minutes with
       `rtk gh pr checks <number> --repo wahidyankf/<repo>`. Never use `gh run watch`
-- [ ] [AI] Verify the `Quality gate` check from `.github/workflows/pr-quality-gate.yml` passes for
+      <!-- Implementation notes (DU1-PP-062): polled on a 120-second interval throughout;
+          `gh run watch` was never invoked. `gh pr checks` exit code 8 means "checks still pending", not
+          failure, so the poll loop treats only a non-8 exit as terminal — reading 8 as a red gate would
+          have produced a false failure on every tick. Private reached exit 0 first (13 passing, 2
+          correctly skipping: Rust minimum-version compatibility and TypeScript quality gate, neither
+          affected by an F#-only change). Public took 45 minutes wall-clock. I initially judged that slow
+          by comparing it against private's 22s-1m18s jobs; that comparison was wrong-scoped, and I
+          checked the right baseline instead — recent `pr-quality-gate.yml` runs on public `main` take
+          ~37 minutes (02:37→03:14, 01:53→02:30), so this run was on pace, not stalled. The
+          slowest legs were `.NET quality gate` 26m50s and `Auto-format affected (lint-staged)` 18m19s;
+          Flutter and TypeScript correctly reported `skipping`. -->
+- [x] [AI] Verify the `Quality gate` check from `.github/workflows/pr-quality-gate.yml` passes for
       each pull request's exact current head and base
-- [ ] [AI] Verify one authenticated clean current-head `pr-leak-review` on each pull request
+      <!-- Implementation notes (DU1-PP-063): verified per repository by resolving the PR head from
+          the API and then querying that exact SHA's check runs, rather than trusting the summary line —
+          `gh pr checks` reports the newest result for a check name and would happily show a green
+          `Quality gate` that ran on a superseded head.
+          **The head half passed on the first attempt; the base half did not, and the checkbox says
+          "head AND base".** Public PR #491 showed `Quality gate` `conclusion=success` with
+          `head_sha=bf07e05e24ac601a6570073ed2fae0dbcacd6934`, byte-equal to the PR head — but
+          `mergeStateStatus=BEHIND`, because `fd4bb7303 fix(governance): bar knowledge capture from
+          plans/backlog and undo its three filings (#490)` landed on `main` while the run was in flight.
+          A gate that passed against a superseded base is not evidence about the current base, so the
+          green result was NOT accepted; the branch was rebased onto `origin/main` and CI re-run, and
+          this checkbox records the post-rebase result. Private PR #167 was `mergeStateStatus=CLEAN`
+          with `Quality gate` success on `head_sha=b5a414181fb4da4973aef9009a7e98e383c9277e`, so its
+          base was already current and it needed no rebase — the two repositories were checked
+          separately rather than one conclusion being carried across.
+          Per AGENTS.md the newly landed commit's full diff was read before acting. It strengthens the
+          Knowledge Capture routing boundary from "never create a `plans/backlog/` folder directly" to
+          barring create/move/write of any file or folder under `plans/backlog/`, with no exception.
+          This plan's own Phase 5 code-routing checkbox restated the old weaker form, so it was a
+          stating surface that now contradicted canonical governance; it was reconciled to the
+          strengthened wording in the same commit rather than left to drift. No other part of the plan
+          routes anything to `plans/backlog/`. -->
+- [x] [AI] Verify one authenticated clean current-head `pr-leak-review` on each pull request
+      <!-- Implementation notes (DU1-PP-064): both reviews run against the pinned current heads via
+              the agent-driven `pr-review-security-maker` in leak-only mode — this gate is agent-driven, not
+              a GitHub workflow, so there is no check run to point at. Each reviewer independently
+              re-resolved the head SHA from GitHub and confirmed it matched the pin before inspecting, so
+              neither reviewed a stale tree.
+              **The public review was NOT clean on its first pass, and that is the point of the gate.** It
+              found a real category-3 leak my own sanitization had missed:
+              `evidence/phase-0-baseline-public.txt` lines 863 and 904 still carried
+              `/var/folders/<user-hash>/<session-hash>/T/tmp.<random>.yaml`, a macOS per-user temp path
+              emitted by Redocly's "bundle created at" output. My verification pattern was `/Users/[a-z]`,
+              which cannot match that prefix — a false-negative by vocabulary, structurally the same failure
+              mode as the Step 3 false zero at DU1-RP-035, and the second time in this delivery unit that a
+              too-narrow search pattern produced a confident wrong answer. Fixed at the root: the sanitizer
+              gained `/var/folders/...` and `/private/tmp/...` rules and was re-run over all 13 evidence
+              files, and the check pattern was widened to
+              `/var/folders|/private/tmp|/Users/|C:\\Users|/opt/homebrew|/usr/local/Cellar`, which now
+              returns nothing. The commit was amended and force-pushed, so the reviewed head advanced and
+              the leak never exists on a head that gets merged. Because the force-push moved the head,
+              the review was RE-RUN against the new head `bf07e05e2` rather than the stale clean result
+              being carried forward — the checkbox says current-head and the head had changed. That
+              re-run is clean: both former lines now read `<tmpdir>/tmp.<random>.yaml`, all 13 evidence
+              files re-swept under every prefix, and the reviewer separately confirmed the real captured
+              filename does not appear anywhere in `delivery.md`'s prose about the incident, which uses
+              only `<user-hash>`/`<session-hash>` placeholders — so documenting the leak did not
+              re-introduce it.
+              The private review was clean on its first pass across all three leak categories, checked in
+              both directions (nothing leaked out, and no private infrastructure name newly introduced). Two
+              items were examined and correctly dismissed as non-leaks rather than ignored: the parity-manifest
+              md5 in the PR body (a public content hash) and the per-test-run coverlet GUIDs in the F#
+              coverage output (per-run, not machine identifiers). -->
 - [ ] [AI] If any CI check fails, fix at the root cause and push a follow-up commit; never bypass
 - [ ] [AI] Do NOT proceed to Phase 2 until CI is green on both pull requests
 - [ ] [AI] Mark both pull requests ready and merge them, public first, then private within the same
@@ -984,8 +1651,9 @@ applicable** — no web UI, no browser surface, no locales.
       `plans/ideas/<slug>.md` when the scan confirms no existing brief overlaps.
 - [ ] [AI] **Code-routing rule**: if a learning's home is `apps/`, `libs/`, or tests, NEVER land it
       inline in this plan's commits or pull requests. File a separate `plans/ideas/` two-pager only
-      with literal plan-artifact authorization; never create a `plans/backlog/` folder directly
-      because the promotion ripeness gate owns that transition. Otherwise use the reported terminal
+      with literal plan-artifact authorization; never create, move, or write any file or folder
+      under `plans/backlog/`, whatever the instruction, because the promotion ripeness gate owns
+      that transition. Otherwise use the reported terminal
       state. The sole carve-out is a bug, lint, or test failure that blocks THIS plan's own scope —
       that is fixed inline as ordinary Root Cause Orientation work, not routed as a deferred
       learning.
