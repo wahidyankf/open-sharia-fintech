@@ -434,7 +434,16 @@ jobs:
           fetch-depth: 0
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-dotnet
-      - run: npx nx affected -t specs:structure-validation
+      # Every `specs:structure-validation` target shells into the SAME rhino-cli
+      # project with `dotnet run`, which restores and builds implicitly. Fanned
+      # out in parallel from a cold checkout, the first wave restores that one
+      # project concurrently and collides on its `obj/`:
+      # "The file '.../RhinoCli.Program/obj/project.assets.json' already exists".
+      # Serial execution keeps two dotnet processes off the same project, which
+      # is the same remedy -- and the same reason -- the `dotnet` job above
+      # records for its own `--parallel=1`. Only the first target pays the build
+      # cost; the rest find it warm.
+      - run: npx nx affected -t specs:structure-validation --parallel=1
 
   quality-gate:
     name: Quality gate
