@@ -15,5 +15,8 @@ group before release. Interactive children temporarily own the foreground termin
 non-controlling input remain unchanged.
 
 A guarded command returns only once its whole process group has retired, so a payload that leaves
-a persistent daemon behind — MSBuild node reuse is the one observed here — keeps the guard waiting
-long after the work itself finished. Disable the reuse or stop the daemon; never kill the guard.
+a persistent daemon behind keeps the guard waiting long after the work itself finished. The `run`
+branch of the consumer therefore defaults .NET's two daemon sources off —
+`MSBUILDDISABLENODEREUSE=1` and `DOTNET_CLI_USE_MSBUILD_SERVER=0` — while an explicit caller value
+still wins, and the consumer contract test asserts both defaults. Any other toolchain that detaches
+a daemon takes the same treatment at the wrapper; never kill the guard.

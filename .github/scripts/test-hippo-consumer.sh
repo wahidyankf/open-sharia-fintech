@@ -18,6 +18,14 @@ if grep -q -- '--concurrency-env GOMAXPROCS' hippo; then
 	exit 1
 fi
 
+# A supervised command must leave no detached build daemon behind in the process
+# group HIPPO waits on; a daemon that outlives the command turns a finished run
+# into an unbounded hang. .NET has two such daemon sources and both are defaulted
+# off on the `run` branch, each still deferring to an explicit caller value.
+[ "$(grep -c -- 'MSBUILDDISABLENODEREUSE=${MSBUILDDISABLENODEREUSE:-1}' hippo)" -eq 1 ]
+[ "$(grep -c -- 'DOTNET_CLI_USE_MSBUILD_SERVER=${DOTNET_CLI_USE_MSBUILD_SERVER:-0}' hippo)" -eq 1 ]
+[ "$(grep -c -- 'export MSBUILDDISABLENODEREUSE DOTNET_CLI_USE_MSBUILD_SERVER' hippo)" -eq 1 ]
+
 # The committed file is a safe example; each machine's active policy remains
 # ignored and the test never creates it in the real checkout.
 git check-ignore --quiet hippo.local.json
