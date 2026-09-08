@@ -165,3 +165,95 @@
   untracked is sufficient protection. Note the gate must not match a relative source path that
   merely contains the substring `home/` — `components/home/entry-item.tsx` appears in existing
   committed evidence and is not a leak, so the rule needs a leading-slash anchor.
+
+## Learning: teaching a validator to read a language is not the same as enabling that language
+
+- **Context**: DU3 pre-flight, before a single DU3 file was written. The drafted
+  `apps/ose-lms-be/project.json` was run through `validateProjectTargetContract` directly, and it
+  returned one error: `owner test:unit must enforce at least 99% line coverage.`
+- **Observation**: DU2 taught `scripts/behaviour-coverage.mjs` to extract Cucumber bindings from
+  `.java` sources, and the three AC-COV cases prove it does. But the same file's
+  `unitLineCoverageThreshold` recognizes exactly three ways of declaring a Unit line-coverage hard
+  gate — vitest `--coverage.thresholds.lines`, Coverlet `/p:Threshold` paired with
+  `/p:ThresholdType=line`, and the `dotnet-unit-coverage.mjs` collector's `--line-threshold`. All
+  three are TypeScript or .NET. A Gradle/JaCoCo `test:unit` returns `undefined`, which the closed
+  project-target contract reports as "does not enforce coverage at all" rather than "declares it in
+  a form I cannot read". The Java project would have been rejected by the very gate meant to
+  protect it, and the plan's DU3-135 acceptance (`ose-lms-be:test:coverage:unit` exits 0) could not
+  have held. A related hole sits beside it: `RUNTIME_RUNNER`, which keeps `test:coverage:*` targets
+  static, lists `vitest|playwright|cargo test|dotnet test|mix test|npm test` and no Gradle form, so
+  a Java coverage target could shell out to `./gradlew test` and pass a rule designed to forbid
+  exactly that.
+- **Why it might generalize**: language enablement has two halves that look like one. The visible
+  half is "can the tooling read this language's source", which is what gets tested and what the
+  delivery unit is named after. The invisible half is every _other_ place the existing enforcement
+  encodes a closed list of the languages it already knew about — threshold syntaxes, runner names,
+  formatter hooks, tag vocabularies. The second half fails open in one direction and closed in the
+  other: an unrecognized threshold blocks a compliant project, while an unrecognized runner lets a
+  non-compliant one through. Both were found here only because the project.json was run through the
+  validator before being written, not after. Candidate durable fixes to weigh at triage: a
+  checklist item in whatever governs adding a language to the repository, requiring an audit of
+  every closed language list in the enforcement machinery, not just the parser; or, more durably,
+  restructuring those closed lists into one declared per-language table so that adding a language
+  is a single data edit and a missing entry is visible rather than silent.
+
+## Learning: a formatter's own JDK is not the project's declared Java toolchain
+
+- **Date**: 2026-09-08
+- **Context**: DU3's first full CI run was green everywhere except `formatting-verify`, which
+  failed with eight identical `google-java-format(java.lang.reflect.InvocationTargetException)`
+  entries — one per Java file. The message names the source files, so it reads as a formatting
+  defect in the code. Every one of those files had passed `spotlessCheck` locally minutes before.
+- **What happened**: Spotless runs google-java-format inside the **Gradle daemon JVM**, not inside
+  the toolchain the build declares. `apps/ose-lms-be/build.gradle.kts` pins
+  `java { toolchain { languageVersion = JavaLanguageVersion.of(25) } }`, and that governs
+  compilation and tests — but not the formatter. The `formatting-verify` gate-group job provisions
+  a toolchain for every other language whose formatter it runs (.NET/Fantomas, Flutter/Dart, Ruff)
+  and none for Java, so Spotless ran on the runner image's default JDK 17. google-java-format
+  1.36.1 reaches into javac internals JDK 17 does not expose, and the reflective failure is
+  reported once per file rather than once per JVM. Setting `JAVA_HOME` to a local JDK 17 and
+  changing nothing else reproduced the CI failure byte for byte; the pinned JDK 25 passed the same
+  command on the same untouched sources. Fixed by adding `./.github/actions/setup-java` to both
+  jobs that can run a Java formatter gate.
+- **Why it might generalize**: two separate traps compose here. First, a declared language
+  toolchain is easy to read as "the JDK this project uses", when in Gradle it governs only
+  compilation and test execution — plugins that host a formatter or analyser in the daemon are
+  outside it. Second, the failure is reported in the vocabulary of the _files_ rather than of the
+  _runtime_, so the natural first response is to reformat sources that were already correct, which
+  would have made the build pass for the wrong reason and permanently mis-formatted the code.
+  A green local run proves nothing here, because the developer machine has the pinned JDK on PATH
+  while the runner does not. Candidate durable fixes to weigh at triage: state in the Java style
+  guides that Spotless binds to the daemon JVM and that CI must provision it explicitly; or add a
+  build-script precondition to `ose-lms-be` that fails Spotless tasks with the actual reason
+  ("daemon JVM is Java N, formatter needs ≥25") instead of a per-file reflective error; or give the
+  gate registry a way to declare a gate's required toolchain so a job cannot run a gate whose
+  toolchain it never installed — the mechanism the `doctor-tools:` field already gestures at but
+  which cannot install a JDK today.
+
+## Learning: a CI step whose log tail is dropped cannot be root-caused from CI
+
+- **Date**: 2026-09-08
+- **Context**: the `TypeScript quality gate` failed once inside `ayokoding-www:test:unit` and passed
+  on a re-run of the identical commit. Establishing _what_ failed turned out to be impossible from
+  GitHub: the step's log ends mid-sentence, immediately followed by
+  `##[error]Process completed with exit code 1.` — no vitest summary, no coverage table, no failing
+  test named.
+- **What happened**: three separate log sources were tried — the per-job logs endpoint, `gh run view
+--job … --log`, and the run's full log archive — and all three end at the same content point. The
+  decisive check was reading a **passing** run of the same job: its log ends the same abrupt way,
+  just without the error line. So the truncation is how this step is always captured, not a symptom
+  of the failure. The suite is large (165 files, 3,523 tests, v8 coverage, jsdom) and
+  `apps/ayokoding-www/vitest.config.ts` already documents `--parallel=2` and a raised `testTimeout`
+  added "to bound CI memory", so the process dying mid-write without a diagnostic is consistent with
+  resource exhaustion — but consistent-with is not evidence, and none was obtainable.
+- **Why it might generalize**: the repository's flaky-test rule requires fixing at the root cause and
+  forbids retry, sleep, widening, skipping, and quarantine. That rule silently assumes the root cause
+  is _observable_. When the only failing signal is an exit code and the diagnostic that would name
+  the cause is exactly the output that gets dropped, an executor has no compliant move available: it
+  cannot fix what it cannot see, and every remaining option is one the rule forbids. Candidate
+  durable fixes to weigh at triage: have long test steps write a machine-readable summary
+  (vitest's `json` reporter, or the existing `json-summary` coverage reporter) to a file and upload
+  it as an artifact, so the verdict survives independently of the console log; or split
+  `ayokoding-www:test:unit` so no single step emits a log long enough to be truncated; or state in
+  the flaky-test convention what an executor should do when a failure is real but unobservable —
+  today the honest answer is "record it and escalate", and the rule does not say so.

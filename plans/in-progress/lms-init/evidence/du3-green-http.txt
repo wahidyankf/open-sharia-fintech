@@ -1,0 +1,11 @@
+# DU3-143 GREEN — HealthController and HelloController exist
+
+Per-feature results from apps/ose-lms-be/build/test-results/test/ (Gradle JUnit XML):
+
+- LMS BE listener port resolution: tests=3 failures=0 errors=0
+- LMS BE Actuator exposure: tests=2 failures=1 errors=0
+- LMS BE health endpoint: tests=1 failures=0 errors=0
+- LMS BE hello endpoint: tests=1 failures=0 errors=0
+
+AC-HEALTH-01 and AC-HELLO-01 now pass. The only remaining failure is the Actuator health
+scenario, still 404 because spring-boot-starter-actuator is absent — DU3-146 adds it.

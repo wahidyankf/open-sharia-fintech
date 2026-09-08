@@ -1,0 +1,103 @@
+# DU3-PP-172 — root cause and fix for the `formatting-verify` CI failure
+
+## Symptom (CI, PR #495, head b7df3c465)
+
+Job `formatting-verify` failed; every other check passed, including `Java quality gate`.
+
+  Running gate format-verify-java
+  FAILURE: Build failed with an exception.
+  * What went wrong:
+  Execution failed for task ':spotlessJavaCheck' (registered in build file 'build.gradle.kts').
+  > There were 8 lint error(s), they must be fixed or suppressed.
+    src/main/java/com/oseplatform/lms/OseLmsBeApplication.java:LINE_UNDEFINED
+      google-java-format(java.lang.reflect.InvocationTargetException)
+      java.lang.reflect.InvocationTargetException (...)
+    ... the same line for all 8 Java files ...
+  format-verify-java	FAIL
+  Error: gate group formatting-verify failed
+
+The message names the source files, so it reads as a formatting defect. It is not one.
+
+## Root cause
+
+The `formatting-verify` gate group runs in the `gate` matrix job of pr-quality-gate.yml.
+That job provisions Node, .NET, Flutter and Ruff — one step per language whose formatter it
+runs — but nothing for Java. It therefore executed `format-verify-java` against the runner
+image's default JDK.
+
+The sibling `Auto-format affected (lint-staged)` job printed rhino doctor's own reading of
+that JDK in the same run:
+
+  ⚠ java       v17.0.20.1     (required: ≥25, version too old)
+
+Spotless runs google-java-format inside the Gradle daemon JVM, not inside the project's
+declared Java toolchain, so `java { toolchain { languageVersion = 25 } }` does not govern it.
+google-java-format 1.36.1 reaches into javac internals that JDK 17 does not expose, and the
+reflective failure surfaces once per file as an opaque per-file lint error.
+
+Local runs passed throughout DU3 only because this machine has Temurin 25 on PATH.
+
+## RED — reproduce the CI failure locally by changing nothing but the JDK
+
+  $ export JAVA_HOME="<home>/.sdkman/candidates/java/17.0.14-ms"
+  $ "$JAVA_HOME/bin/java" -version
+  openjdk version "17.0.14" 2025-01-21 LTS
+  OpenJDK Runtime Environment Microsoft-10800294 (build 17.0.14+7-LTS)
+
+  $ rtk ./hippo run --class transactional --disk-path . -- sh -c \
+      'cd apps/ose-lms-be && JAVA_HOME="'"$JAVA_HOME"'" ./gradlew --no-daemon --rerun-tasks \
+       -Dorg.gradle.java.installations.auto-detect=false spotlessCheck'
+  TERMINAL_EXIT=1
+
+  > There were 8 lint error(s), they must be fixed or suppressed.
+    src/main/java/com/oseplatform/lms/OseLmsBeApplication.java:LINE_UNDEFINED
+      google-java-format(java.lang.reflect.InvocationTargetException) ...
+    src/main/java/com/oseplatform/lms/config/PortResolver.java:LINE_UNDEFINED ...
+    src/main/java/com/oseplatform/lms/health/HealthController.java:LINE_UNDEFINED ...
+    src/main/java/com/oseplatform/lms/hello/HelloController.java:LINE_UNDEFINED ...
+    src/test/java/com/oseplatform/lms/RunCucumberTest.java:LINE_UNDEFINED ...
+    src/test/java/com/oseplatform/lms/steps/CucumberSpringConfiguration.java:LINE_UNDEFINED ...
+    src/test/java/com/oseplatform/lms/steps/HttpSteps.java:LINE_UNDEFINED ...
+    src/test/java/com/oseplatform/lms/steps/PortResolutionSteps.java:LINE_UNDEFINED ...
+  BUILD FAILED in 7s
+
+Byte-for-byte the CI failure: same task, same count, same exception, same eight paths.
+
+## GREEN — the same command on the pinned JDK, sources untouched
+
+  $ java -version
+  openjdk version "25" 2025-09-16 LTS
+  OpenJDK Runtime Environment Temurin-25+36 (build 25+36-LTS)
+
+  $ rtk ./hippo run --class transactional --disk-path . -- sh -c \
+      'cd apps/ose-lms-be && ./gradlew --no-daemon --no-build-cache --rerun-tasks spotlessCheck'
+  TERMINAL_EXIT=0
+
+  > Task :spotlessJava
+  > Task :spotlessJavaCheck
+  > Task :spotlessCheck
+  BUILD SUCCESSFUL in 3s
+  2 actionable tasks: 2 executed
+
+Not one Java file changed between RED and GREEN. The JDK is the entire difference.
+
+## Fix
+
+.github/workflows/pr-quality-gate.yml provisions the pinned JDK in both jobs that can run a
+Java formatter gate, matching how each job already provisions every other formatter's
+toolchain:
+
+  * `gate` (matrix): `- uses: ./.github/actions/setup-java` guarded by
+    `if: matrix.group.group == 'formatting-verify'`, beside the existing Dart and Ruff steps.
+    This is the job that failed.
+  * `format` (Auto-format affected / lint-staged): the same step, unconditional, beside the
+    existing Rust and Flutter steps. That job runs `scripts/format-java.sh` — the mutating
+    half of the same gate pair — and on `push` also runs the whole `formatting-verify` group.
+    It has no per-language routing, so it provisions unconditionally as Rust and Flutter do.
+
+No gate was weakened, skipped, or retried, and no Java source was reformatted to suit a
+formatter running on the wrong JDK.
+
+  $ apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=ci --only=actionlint
+  Running gate actionlint
+  ACTIONLINT_EXIT=0

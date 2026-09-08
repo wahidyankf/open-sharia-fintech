@@ -1,0 +1,27 @@
+# DU3 Local Quality Gates
+
+1. rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- affected -t typecheck
+   TERMINAL_EXIT=0
+    NX   Successfully ran target typecheck for 27 projects and 7 tasks they depend on
+
+2. rtk npm run affected:lint
+   TERMINAL_EXIT=0
+    NX   Successfully ran target lint for 27 projects and 13 tasks they depend on
+
+3. rtk npm run affected:test
+   TERMINAL_EXIT=0
+    NX   Successfully ran target test:quick for 27 projects
+   ose-lms-be: 4 features, 7 expanded scenarios, adapters: unit.
+
+4. rtk ./hippo run --class ephemeral --disk-path . -- npm exec nx -- affected -t test:coverage:behaviour
+   TERMINAL_EXIT=0
+    NX   Successfully ran target test:coverage:behaviour for 24 projects
+   ose-lms-be: 4 features, 7 expanded scenarios, adapters: unit.
+
+No failure was found, preexisting or otherwise, so nothing needed fixing at this gate.
+
+5. rtk git status --short — no generated or build output is tracked:
+   apps/ose-lms-be/generated-contracts/, apps/ose-lms-be/build/, apps/ose-lms-be/.gradle/,
+   and specs/apps/ose/lms-be/contracts/generated/ are all absent from the index and from
+   the untracked list. 42 files stage under apps/ose-lms-be/ and specs/apps/ose/lms-be/,
+   every one of them hand-authored.

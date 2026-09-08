@@ -1,0 +1,140 @@
+
+ NX   Running target test:unit for project ose-lms-be and 3 tasks it depends on:
+
+
+
+> nx run ose-lms-contracts:bundle
+
+> mkdir -p specs/apps/ose/lms-be/contracts/generated && npx @redocly/cli bundle specs/apps/ose/lms-be/contracts/openapi.yaml -o specs/apps/ose/lms-be/contracts/generated/openapi-bundled.yaml && npx @redocly/cli bundle specs/apps/ose/lms-be/contracts/openapi.yaml -o specs/apps/ose/lms-be/contracts/generated/openapi-bundled.json
+
+
+    [33m╔[33m═══════════════════════════════════════════════════════[33m╗[39m
+    [33m║                                                       ║[39m
+    [33m║[39m  A new version of [36mRedocly CLI[39m ([32m2.51.2[39m) is available.  [33m║[39m
+    [33m║[39m  Update now: `[36mnpm i -g @redocly/cli@latest[39m`.          [33m║[39m
+    [33m║[39m  Changelog: https://redocly.com/docs/cli/changelog/   [33m║[39m
+    [33m║                                                       ║[39m
+    [33m╚[33m═══════════════════════════════════════════════════════[33m╝[39m
+
+[90mbundling specs/apps/ose/lms-be/contracts/openapi.yaml...
+[39m📦 Created a bundle for [34mspecs/apps/ose/lms-be/contracts/openapi.yaml[39m at [34mspecs/apps/ose/lms-be/contracts/generated/openapi-bundled.yaml[39m [32m7ms[39m.
+
+    [33m╔[33m═══════════════════════════════════════════════════════[33m╗[39m
+    [33m║                                                       ║[39m
+    [33m║[39m  A new version of [36mRedocly CLI[39m ([32m2.51.2[39m) is available.  [33m║[39m
+    [33m║[39m  Update now: `[36mnpm i -g @redocly/cli@latest[39m`.          [33m║[39m
+    [33m║[39m  Changelog: https://redocly.com/docs/cli/changelog/   [33m║[39m
+    [33m║                                                       ║[39m
+    [33m╚[33m═══════════════════════════════════════════════════════[33m╝[39m
+
+[90mbundling specs/apps/ose/lms-be/contracts/openapi.yaml...
+[39m📦 Created a bundle for [34mspecs/apps/ose/lms-be/contracts/openapi.yaml[39m at [34mspecs/apps/ose/lms-be/contracts/generated/openapi-bundled.json[39m [32m7ms[39m.
+
+> nx run ose-lms-be:codegen
+
+> npx openapi-generator-cli generate -i $(pwd)/specs/apps/ose/lms-be/contracts/generated/openapi-bundled.yaml -g spring -o $(pwd)/apps/ose-lms-be/generated-contracts --model-package com.oseplatform.lms.contracts --global-property=models,modelDocs=false,apiDocs=false --additional-properties=useJakartaEe=true,useBeanValidation=false,performBeanValidation=false,openApiNullable=false,annotationLibrary=none,documentationProvider=none
+
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.github.benmanes.caffeine.cache.UnsafeAccess (file:<public-worktree>/node_modules/@openapitools/openapi-generator-cli/versions/7.20.0.jar)
+WARNING: Please consider reporting this to the maintainers of class com.github.benmanes.caffeine.cache.UnsafeAccess
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+[main] WARN  o.o.codegen.DefaultCodegen - OpenAPI 3.1 support is still in beta. To report an issue related to 3.1 spec, please kindly open an issue in the Github repo: https://github.com/openAPITools/openapi-generator.
+[main] INFO  o.o.codegen.DefaultGenerator - Generating with dryRun=false
+[main] INFO  o.o.c.ignore.CodegenIgnoreProcessor - No .openapi-generator-ignore file found.
+[main] INFO  o.o.codegen.DefaultGenerator - OpenAPI Generator: spring (server)
+[main] INFO  o.o.codegen.DefaultGenerator - Generator 'spring' is considered stable.
+[main] INFO  o.o.codegen.languages.SpringCodegen - ----------------------------------
+[main] INFO  o.o.c.languages.AbstractJavaCodegen - Environment variable JAVA_POST_PROCESS_FILE not defined so the Java code may not be properly formatted. To define it, try 'export JAVA_POST_PROCESS_FILE="/usr/local/bin/clang-format -i"' (Linux/Mac)
+[main] INFO  o.o.c.languages.AbstractJavaCodegen - NOTE: To enable file post-processing, 'enablePostProcessFile' must be set to `true` (--enable-post-process-file for CLI).
+[main] INFO  o.o.c.languages.AbstractJavaCodegen - Invoker Package Name, originally not set, is now derived from model package name: com.oseplatform.lms
+[main] INFO  o.o.c.languages.AbstractJavaCodegen - Processing operation getHealth
+[main] INFO  o.o.c.languages.AbstractJavaCodegen - Processing operation getHello
+[main] WARN  o.o.codegen.DefaultCodegen - OpenAPI 3.1 support is still in beta. To report an issue related to 3.1 spec, please kindly open an issue in the Github repo: https://github.com/openAPITools/openapi-generator.
+[main] INFO  o.o.codegen.TemplateManager - writing file <public-worktree>/apps/ose-lms-be/generated-contracts/src/main/java/com/oseplatform/lms/contracts/HealthResponse.java
+[main] INFO  o.o.codegen.TemplateManager - writing file <public-worktree>/apps/ose-lms-be/generated-contracts/src/main/java/com/oseplatform/lms/contracts/HelloResponse.java
+[main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of APIs.
+[main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of Webhooks.
+[main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of supporting files.
+############################################################################################
+# Thanks for using OpenAPI Generator.                                                      #
+# We appreciate your support! Please consider donation to help us maintain this project.   #
+# https://opencollective.com/openapi_generator/donate                                      #
+############################################################################################
+
+> nx run ose-lms-be:typecheck
+
+> ./gradlew --console=plain compileJava compileTestJava
+
+
+> Task :compileJava
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+> Task :processResources NO-SOURCE
+> Task :classes
+
+> Task :compileTestJava FAILED
+<public-worktree>/apps/ose-lms-be/src/test/java/com/oseplatform/lms/steps/PortResolutionSteps.java:6: error: package com.oseplatform.lms.config does not exist
+import com.oseplatform.lms.config.PortResolver;
+                                 ^
+<public-worktree>/apps/ose-lms-be/src/test/java/com/oseplatform/lms/steps/PortResolutionSteps.java:19: error: cannot find symbol
+  private final PortResolver resolver = new PortResolver();
+                ^
+  symbol:   class PortResolver
+  location: class PortResolutionSteps
+<public-worktree>/apps/ose-lms-be/src/test/java/com/oseplatform/lms/steps/PortResolutionSteps.java:19: error: cannot find symbol
+  private final PortResolver resolver = new PortResolver();
+                                            ^
+  symbol:   class PortResolver
+  location: class PortResolutionSteps
+<public-worktree>/apps/ose-lms-be/src/test/java/com/oseplatform/lms/steps/PortResolutionSteps.java:32: error: cannot find symbol
+    assertEquals(PortResolver.PORT_ENVIRONMENT_VARIABLE, name);
+                 ^
+  symbol:   variable PortResolver
+  location: class PortResolutionSteps
+4 errors
+
+[Incubating] Problems report is available at: file://<public-worktree>/apps/ose-lms-be/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':compileTestJava' (registered by plugin class 'org.gradle.api.plugins.JavaBasePlugin').
+> Compilation failed; see the compiler output below.
+  <public-worktree>/apps/ose-lms-be/src/test/java/com/oseplatform/lms/steps/PortResolutionSteps.java:19: error: cannot find symbol
+    private final PortResolver resolver = new PortResolver();
+                  ^
+    symbol:   class PortResolver
+    location: class PortResolutionSteps
+  <public-worktree>/apps/ose-lms-be/src/test/java/com/oseplatform/lms/steps/PortResolutionSteps.java:19: error: cannot find symbol
+    private final PortResolver resolver = new PortResolver();
+                                              ^
+    symbol:   class PortResolver
+    location: class PortResolutionSteps
+  <public-worktree>/apps/ose-lms-be/src/test/java/com/oseplatform/lms/steps/PortResolutionSteps.java:32: error: cannot find symbol
+      assertEquals(PortResolver.PORT_ENVIRONMENT_VARIABLE, name);
+                   ^
+    symbol:   variable PortResolver
+    location: class PortResolutionSteps
+  <public-worktree>/apps/ose-lms-be/src/test/java/com/oseplatform/lms/steps/PortResolutionSteps.java:6: error: package com.oseplatform.lms.config does not exist
+  import com.oseplatform.lms.config.PortResolver;
+                                   ^
+  4 errors
+
+* Try:
+> Check your code and dependencies to fix the compilation error(s)
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+
+BUILD FAILED in 823ms
+2 actionable tasks: 2 executed
+Warning: command "./gradlew --console=plain compileJava compileTestJava" exited with non-zero status code
+
+
+ NX   Running target test:unit for project ose-lms-be and 3 tasks it depends on failed
+
+Failed tasks:
+
+- ose-lms-be:typecheck
+
+Hint: run the command with --verbose for more details.
+

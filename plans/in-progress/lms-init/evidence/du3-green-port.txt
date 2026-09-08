@@ -1,0 +1,19 @@
+# DU3-140 GREEN — port-resolution scenarios after PortResolver exists
+
+Per-feature results from apps/ose-lms-be/build/test-results/test/ (Gradle JUnit XML).
+Exactly one XML per feature file: engine discovery is pinned to the suite, so no scenario
+runs twice.
+
+- LMS BE listener port resolution: tests=3 failures=0 errors=0
+- LMS BE Actuator exposure: tests=2 failures=2 errors=0
+- LMS BE health endpoint: tests=1 failures=1 errors=0
+- LMS BE hello endpoint: tests=1 failures=1 errors=0
+
+Scenario names in the port-resolution suite:
+
+- PASS: The default port applies when nothing overrides it
+- PASS: The prefixed environment variable overrides the default
+- PASS: A malformed port value is rejected at startup
+
+The four HTTP scenarios still fail: HttpSteps.java does not exist yet, so their steps are
+undefined. DU3-142 introduces those bindings and DU3-143/146 make them pass.

@@ -529,11 +529,14 @@ function referencesTarget(command, target) {
   return new RegExp(`(?:^|[\\s:'"])(?:[a-z0-9-]+:)?${escaped}(?=$|[\\s'"])`, "iu").test(command);
 }
 
-const RUNTIME_RUNNER = /\b(?:vitest|playwright|cargo\s+test|dotnet\s+test|mix\s+test|npm\s+test)\b/iu;
+const RUNTIME_RUNNER =
+  /\b(?:vitest|playwright|cargo\s+test|dotnet\s+test|mix\s+test|npm\s+test|gradlew?\b[^"]*\btest\b)/iu;
 const VITEST_LINE_THRESHOLD = /--coverage\.thresholds\.lines(?:=|\s+)(\d+(?:\.\d+)?)/iu;
 const COVERLET_THRESHOLD = /\/p:Threshold(?:=|\s+)(\d+(?:\.\d+)?)/iu;
 const COVERLET_LINE_TYPE = /\/p:ThresholdType(?:=|\s+)line\b/iu;
 const COLLECTOR_LINE_THRESHOLD = /\bdotnet-unit-coverage\.mjs\b[^\n]*--line-threshold(?:=|\s+)(\d+(?:\.\d+)?)/iu;
+const JACOCO_VERIFY_TASK = /\bjacocoTestCoverageVerification\b/u;
+const JACOCO_LINE_THRESHOLD = /-Pcoverage\.line\.minimum(?:=|\s+)(\d+(?:\.\d+)?)/iu;
 
 function unitLineCoverageThreshold(target) {
   const surface = commandSurface(target);
@@ -543,6 +546,8 @@ function unitLineCoverageThreshold(target) {
   if (coverlet !== null && COVERLET_LINE_TYPE.test(surface)) return Number(coverlet[1]);
   const collector = COLLECTOR_LINE_THRESHOLD.exec(surface);
   if (collector !== null) return Number(collector[1]);
+  const jacoco = JACOCO_LINE_THRESHOLD.exec(surface);
+  if (jacoco !== null && JACOCO_VERIFY_TASK.test(surface)) return Number(jacoco[1]);
   return undefined;
 }
 

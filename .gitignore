@@ -129,6 +129,11 @@ target/
 *.jar
 *.exec
 
+# The Gradle wrapper JAR is not a build artifact: it is the wrapper contract, and a clone
+# without it cannot run `./gradlew` at all. The `*.jar` rule above would swallow it silently,
+# so every Gradle root re-includes its own.
+!apps/*/gradle/wrapper/gradle-wrapper.jar
+
 # Rust build artifacts + shared-cache `target` symlinks created by
 # `rhino-cli doctor --fix` (the `target/` rule above matches directories only,
 # not the symlink form, so the symlinked `target` entries need their own rule)
@@ -172,6 +177,7 @@ coverage.xml
 **/generated_contracts/
 # Bundled OpenAPI spec + docs
 specs/apps/a-demo/contracts/generated/
+specs/apps/ose/lms-be/contracts/generated/
 
 # MemSearch vector index (local user-specific data)
 .memsearch/

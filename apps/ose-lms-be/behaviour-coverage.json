@@ -1,0 +1,10 @@
+{
+  "project": "ose-lms-be",
+  "corpus": ["../../specs/apps/ose/lms-be/behaviours"],
+  "adapters": {
+    "unit": {
+      "bindings": ["src/test/java"],
+      "driver": "build.gradle.kts"
+    }
+  }
+}

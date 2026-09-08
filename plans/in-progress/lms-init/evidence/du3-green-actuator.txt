@@ -1,0 +1,24 @@
+# DU3-146 GREEN — Actuator exposing health and nothing else
+
+Command:
+  rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- run ose-lms-be:test:unit
+TERMINAL_EXIT=0
+
+Per-feature results (apps/ose-lms-be/build/test-results/test/):
+
+  LMS BE listener port resolution: tests=3 failures=0 errors=0
+  LMS BE Actuator exposure:        tests=2 failures=0 errors=0
+  LMS BE health endpoint:          tests=1 failures=0 errors=0
+  LMS BE hello endpoint:           tests=1 failures=0 errors=0
+  TOTAL scenarios=7 failures=0
+
+AC-ACT-01 passes: /actuator/health returns 200 with {"status":"UP"}.
+AC-ACT-02 passes: /actuator/env returns 404, which is exactly the status the
+feature file already asserts, so no Gherkin change was needed in prd.md or in
+behaviours/health/actuator.feature.
+
+The 99% JaCoCo line floor is included in this target and is satisfied. Reaching
+it required the PortResolver reduction recorded in the Phase 3 Execution Notes:
+the resolver carried a `--port` flag branch for a flag this service does not
+have, and a range check no scenario exercises. Both were removed rather than
+covered by inventing scenarios the PRD does not contain.

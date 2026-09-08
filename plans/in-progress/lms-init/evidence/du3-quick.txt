@@ -1,0 +1,32 @@
+# DU3-141 / DU3-144 / DU3-147 REFACTOR + DU3-135 + Phase 3 Gate — ose-lms-be:test:quick
+
+Command:
+  rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- run ose-lms-be:test:quick
+TERMINAL_EXIT=0
+
+Targets that ran, all green: codegen, typecheck, lint (spotlessCheck), test:unit
+(test + jacocoTestCoverageVerification at -Pcoverage.line.minimum=99),
+specs:structure-validation, test:coverage:unit, test:coverage:behaviour.
+
+Static behaviour coverage, both adapters:
+
+  259:ose-lms-be: 4 features, 7 expanded scenarios, adapters: unit.
+  273:ose-lms-be: 4 features, 7 expanded scenarios, adapters: unit.
+
+Every one of the four feature files resolves in the Unit adapter, and the Unit
+adapter carries no exemption, so all seven scenarios are genuinely proven.
+
+Tail of the run:
+
+  
+  
+   NX   Successfully ran target test:coverage for project ose-lms-be
+  
+  
+  
+  
+  
+   NX   Successfully ran target test:quick for project ose-lms-be
+  
+  Nx read the output from the cache instead of running the command for 1 out of 1 tasks.
+  
