@@ -36,6 +36,13 @@ so `git diff --name-only origin/main -- 'apps/*/content'` matches nothing and re
 file changed" — the true answer on the branch that produced this example was one file. Prefer a
 form whose empty result can only mean empty: take the full diff and filter it.
 
+A cache hit is the same false zero one layer up. `nx run <project>:<target>` exits 0 while
+printing `read the output from the cache`, which proves a previous run was green, not that
+anything ran against the file you just changed — and it will do that whenever the target's
+declared `inputs` omit that file. So an acceptance phrased as "run `<nx target>`; it exits 0"
+is satisfiable without executing anything. When the run is the evidence, pass `--skipNxCache`
+or assert no cache-hit line appears; when it is merely convenient, the cache is fine.
+
 **Do**: measure under `bash` with an explicit array or a `case`; loop N times and divide; assert
 `$?` is 0 and the output is non-empty before recording any duration.
 

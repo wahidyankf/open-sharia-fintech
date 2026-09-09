@@ -28,6 +28,7 @@
   covers the neighbouring `stateDiagram` case and may be the right place to fold this in rather
   than opening a new brief — check it first, and note that its own analysis warns any such rule
   must WARN rather than FAIL given the corpus size.
+- **Terminal state**: Reported without plan authorization. The knowledge itself is already durable — the render-fidelity caveat states that a green `md mermaid validate` is necessary but not sufficient, and names Rule 3's 20-character flowchart limit — so no doc edit would add anything. What is missing is automatic: lowering the flowchart default to 20, or printing Rule 3's number in the violation message so the printed threshold and the binding rule agree. Both are `apps/rhino-cli` changes, which the code-routing rule forbids landing in this plan, and no `plans/ideas/` artifact was authorized. Handoff evidence: this entry, plus the existing neighbouring two-pager `plans/ideas/q2-not-urgent-important/mermaid-state-label-render-clipping-warn.md`, which its own analysis says any such rule must WARN rather than FAIL.
 
 ## Learning: absolute worktree paths in a delivery document are a leak, not a convenience
 
@@ -52,6 +53,7 @@
   identity section it already checks; or state the portable two-repository idiom (resolve once into
   a variable at the provisioning step) directly in the plans convention so authors reach for it
   before inventing an absolute path.
+- **Terminal state**: Reported without plan authorization. The binding rule already exists and already names `plans/**/delivery.md`; the gap is that nothing catches a violation until the leak review, after the PR is open. The fix is either a `plan-checker` extension or a pre-commit path check — both code — and the portable two-repository idiom would be new normative text on a rules surface, which requires a `rules-propagation` run this plan's Phase 5 does not include. Handoff evidence: this entry records the exact violation, the four occurrences, and the fix actually applied (resolve the private worktree once into a `PRIVATE_WT` variable at the provisioning step).
 
 ## Learning: implementation notes are part of the delivery document the leak review inspects
 
@@ -74,6 +76,7 @@
   the rule is visible where notes are written rather than only where worktree identity is declared;
   and extend whatever check enforces the portability rule to cover HTML-comment note blocks, since
   an author who has just read the rule can still violate it one edit later.
+- **Terminal state**: Reported without plan authorization. Same surface and same blocker as the entry above: the portability rule already scopes to the whole committed document including notes, so nothing is under-documented. The missing piece is an enforcement extension that reads HTML-comment note blocks, which is code. Handoff evidence: this entry, plus the concrete safe form it identifies — record the property verified ("the path ends in `worktrees/lms-init`"), never the value that satisfied it.
 
 ## Learning: the parity-sibling repositories have drifted apart on their pinned npm version
 
@@ -96,6 +99,7 @@
   related-repositories reference which surfaces are parity-bound and which are deliberately
   independent, so a divergence like this is legible as intentional or accidental rather than
   ambiguous.
+- **Terminal state**: Routed inline to [`docs/reference/related-repositories.md`](../../../docs/reference/related-repositories.md), under **What is deliberately not identical**, which already catalogues one `package.json` divergence between the siblings. That section is descriptive reference content on a non-rules surface, so the edit adds no obligation and triggers no propagation. Extending the nightly parity audit to compare `volta` pins is the automatic fix and remains code-homed and unfiled.
 
 ## Learning: a controlled vocabulary nobody validates fails open, not closed
 
@@ -121,6 +125,7 @@
   `::error::` for an unrecognized `lang:` value, so an unknown tag fails loudly at the point it
   would otherwise be dropped. Reconcile the four stale table entries first, or the gate lands red
   across 23 existing projects.
+- **Terminal state**: Reported without plan authorization. Both candidate fixes are code — a `governance-tag-vocabulary` gate reading every `project.json` `tags` array, and a `*)` default arm in the `detect` job that emits `::error::` for an unrecognized `lang:` value. Handoff evidence: this entry names the live drift precisely (the table admits `rust` and `dotnet`, which no project uses, and omits `fsharp` and `giraffe`, which 6 and 2 projects use) and records the sequencing constraint — reconcile those four stale entries first, or the gate lands red across 23 existing projects.
 
 ## Learning: an Nx-cached target is not evidence that a gate ran
 
@@ -137,6 +142,7 @@
   result is not evidence for a file the target's inputs do not declare, and that a verification run
   must either disable the cache or assert the absence of a cache-hit line; or fix the affected
   targets' `inputs` so the relevant files are declared.
+- **Terminal state**: Routed inline to [`trustworthy-measurement/rule-1-prove-the-command-ran.md`](../../../repo-governance/development/practice/trustworthy-measurement/rule-1-prove-the-command-ran.md). This is an elaboration of the rule already on that page rather than a new rule — Rule 1's subject is proving the command ran, and a cache hit means it did not — so it sits alongside the shell builtin-transform traps as the same false zero one layer up. The learning proved itself again during this plan's own Phase 4 gate, which first exited 0 with 84 of 84 tasks served from cache and had to be re-run uncached before it counted.
 
 ## Learning: a manual sanitization step with no gate leaks on its second chance, not its first
 
@@ -165,6 +171,7 @@
   untracked is sufficient protection. Note the gate must not match a relative source path that
   merely contains the substring `home/` — `components/home/entry-item.tsx` appears in existing
   committed evidence and is not a leak, so the rule needs a leading-slash anchor.
+- **Terminal state**: Reported without plan authorization. The fix is a new `check`-type gate in the `repo-config.yml` registry wired to pre-commit — enforcement machinery, so code-homed. Handoff evidence: this entry carries the whole specification ready to implement — the pattern list (`/Users/`, `/home/<name>/`, `/var/folders/`, `/private/tmp/`), the glob scope (`plans/**/evidence/**` and `plans/**/*.md`), the open question of whether to cover `generated-reports/` and `local-tmp/`, and the false-positive constraint that the rule needs a leading-slash anchor so `components/home/entry-item.tsx` is not flagged.
 
 ## Learning: teaching a validator to read a language is not the same as enabling that language
 
@@ -196,6 +203,7 @@
   every closed language list in the enforcement machinery, not just the parser; or, more durably,
   restructuring those closed lists into one declared per-language table so that adding a language
   is a single data edit and a missing entry is visible rather than silent.
+- **Terminal state**: Reported without plan authorization. The durable fix is structural — restructure the closed per-language lists scattered through the enforcement machinery (threshold syntaxes, `RUNTIME_RUNNER` names, formatter hooks, tag vocabularies) into one declared table so adding a language is a single data edit and a missing entry is visible rather than silent. That is code. Handoff evidence: this entry, plus the two concrete holes this plan actually closed under DU3-134b and DU3-134c, which are worked examples of the general shape.
 
 ## Learning: a formatter's own JDK is not the project's declared Java toolchain
 
@@ -229,6 +237,7 @@
   gate registry a way to declare a gate's required toolchain so a job cannot run a gate whose
   toolchain it never installed — the mechanism the `doctor-tools:` field already gestures at but
   which cannot install a JDK today.
+- **Terminal state**: Reported without plan authorization. The natural home is the Java style guides under `docs/explanation/software-engineering/`, which the repo glossary counts as a repo-rules surface, so stating this there is rule work requiring a `rules-propagation` run that Phase 5 does not include. The stronger fixes are code anyway: a build-script precondition failing Spotless with the actual reason, or a way for the gate registry to declare a gate's required toolchain. The defect itself was already fixed under DU3-PP-172 by adding `setup-java` to both jobs that can run a Java formatter gate. Handoff evidence: this entry records the byte-for-byte reproduction — `JAVA_HOME` set to JDK 17 fails, the pinned JDK 25 passes, same untouched sources.
 
 ## Learning: a CI step whose log tail is dropped cannot be root-caused from CI
 
@@ -257,6 +266,7 @@
   `ayokoding-www:test:unit` so no single step emits a log long enough to be truncated; or state in
   the flaky-test convention what an executor should do when a failure is real but unobservable —
   today the honest answer is "record it and escalate", and the rule does not say so.
+- **Terminal state**: Reported without plan authorization. Every candidate fix is code or CI configuration: emit a machine-readable vitest summary as an uploaded artifact, or split the suite so no single step truncates. Handoff evidence: this entry records the decisive measurement — a **passing** run of the same job truncates identically, which is what proves the truncation is how the step is always captured rather than a symptom of the failure. It also names a real gap in the flaky-test convention: it assumes the root cause is observable, and says nothing about what to do when a failure is real but unobservable.
 
 ## A deliberate wrong-toolchain reproduction can poison the next honest run
 
@@ -285,6 +295,7 @@
   the formatter gate so the next person spends minutes rather than an hour. The generalization is
   not Java-specific — any cached-by-default tool (Gradle, Nx, Bazel, `cargo`, `pytest` caches) can
   carry a deliberately-broken run forward into an honest one.
+- **Terminal state**: Reported without plan authorization. The fix belongs in the TDD/flaky-test guidance — a RED run that deliberately mis-configures a toolchain must be followed by an explicit state-clearing step before the next local gate is trusted — and that is new normative text on a rules surface, so it needs a `rules-propagation` run rather than an ad-hoc edit during archival. Handoff evidence: this entry, including the deliberate re-reproduction from a known-green state that proves causation (a JDK-17 `--rerun-tasks` run poisons the next honest JDK-25 run; `--rerun-tasks` clears it; a wrong-JDK run without `--rerun-tasks` poisons nothing) and the generalization beyond Java to any cached-by-default tool.
 
 ## A file ledger that omits a lockfile hides a build-breaking edit
 
@@ -314,6 +325,7 @@
   ever left the machine. The narrower lesson stands on its own: after adding a workspace package,
   run the installer and diff the lockfile, rather than trusting that local gates going green means
   the dependency graph is actually consistent.
+- **Terminal state**: Reported without plan authorization. Both fixes are blocked for different reasons: requiring a paired `package-lock.json` ledger entry is new normative text in the plans convention, a rules surface needing propagation; the cheap pre-push check that fails when a workspace `package.json` has no matching lockfile entry is code. Handoff evidence: this entry records the full mechanism and the reason it is quiet — every local gate resolves binaries from an already-populated root `node_modules`, so only CI's `npm ci` disagrees, one push later than it should.
 
 ## A shed and a test failure are indistinguishable in the output that a human reads
 
@@ -341,6 +353,7 @@ ayokoding-www failed`, then `Failed tasks: - ayokoding-www:test:unit`. It was no
   run was shed and no gate verdict was reached — so the exit code's meaning appears where the
   reader is already looking. Neither touches HIPPO itself, which is an independent upstream
   repository and is never modified from here.
+- **Terminal state**: Reported without plan authorization. Both candidate fixes are configuration or code in this repository — passing `--wait-for-admission` on the `gate-surface-guards.pre-push` entry, and having the gate runner detect a 75 from its HIPPO wrapper and print one line saying the run was shed and no gate verdict was reached. Neither touches HIPPO itself, which is an independent upstream repository and is never modified from here. Handoff evidence: `evidence/du4-prepush-shed.txt` plus this entry, which together carry the sampled `state=critical reason=swap-critical availableGiB=7.68` measurement caught at the moment the child died.
 
 ## Recording a failure as unexplained is a result, not an omission
 
@@ -365,3 +378,4 @@ ayokoding-www failed`, then `Failed tasks: - ayokoding-www:test:unit`. It was no
   you are relying on; and treat "not reproduced across N specified attempts" as a finding worth
   writing down, because the next person to meet the signature then starts from measurements instead
   of from scratch.
+- **Terminal state**: Reported without plan authorization. The transferable habits belong in the measurement and flaky-test guidance — say which part of the evidence a diagnosis explains, prefer a forced uncached run when the green is what you are relying on, and treat "not reproduced across N specified attempts" as a finding worth writing down — which is new normative text on a rules surface and needs a `rules-propagation` run. Handoff evidence: `evidence/du4-prepush-shed.txt`, which is structured around exactly this and opens by retracting an earlier draft's overclaim that the shed explained both signatures.
