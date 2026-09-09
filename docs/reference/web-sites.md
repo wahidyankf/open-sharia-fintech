@@ -21,7 +21,7 @@ created: 2026-08-14
 | ose-be               | api.oseplatform.com (F# / Giraffe / ASP.NET 10)          | 8302 | —                           |
 | ose-lms-be           | (Java 25 / Spring Boot 4)                                | 8303 | —                           |
 | organiclever-be      | (F# / Giraffe / ASP.NET 10, Kubernetes)                  | 8202 | —                           |
-| islamic-be           | (Go 1.26 / Gin)                                          | 8402 | —                           |
+| roots-be             | (Go 1.26 / Gin)                                          | 8402 | —                           |
 
 ## Overriding a port
 
@@ -39,7 +39,7 @@ than falling back silently.
 | organiclever-be      | `ORGANICLEVER_BE_PORT`      |
 | ose-be               | `OSE_BE_PORT`               |
 | ose-lms-be           | `OSE_LMS_BE_PORT`           |
-| islamic-be           | `ISLAMIC_BE_PORT`           |
+| roots-be             | `ROOTS_BE_PORT`             |
 
 ```bash
 ./hippo run --class service --disk-path . -- npm exec nx -- dev ose-www --port=4000       # flag

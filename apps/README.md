@@ -12,7 +12,7 @@
 | AyoKoding                                    | [ayokoding-www](./ayokoding-www/README.md)                                                                  | Educational content platform.                                            |
 | OrganicLever's public presence               | [organiclever-www](./organiclever-www/README.md)                                                            | Marketing website for the OrganicLever productivity platform.            |
 | OrganicLever's life journal                  | [organiclever-app-web](./organiclever-app-web/README.md) and [organiclever-be](./organiclever-be/README.md) | Local-first journal and productivity tracker, with its REST API backend. |
-| Islamic tools                                | [islamic-be](./islamic-be/README.md)                                                                        | REST API backend for the Islamic tooling surface.                        |
+| Roots                                        | [roots-be](./roots-be/README.md)                                                                            | REST API backend for the Roots Islamic-tooling surface.                  |
 
 ## Tools
 
@@ -33,7 +33,7 @@ End-to-end projects keep browser and API behaviour separate from the application
 | AyoKoding                   | [ayokoding-www-fe-e2e](./ayokoding-www-fe-e2e/)                  | [ayokoding-www-be-e2e](./ayokoding-www-be-e2e/)         |
 | OrganicLever public website | [organiclever-www-fe-e2e](./organiclever-www-fe-e2e/README.md)   | Not applicable; the site has no backend public boundary |
 | OrganicLever product        | [organiclever-app-web-e2e](./organiclever-app-web-e2e/README.md) | [organiclever-be-e2e](./organiclever-be-e2e/README.md)  |
-| Islamic tools               | Not applicable; the service has no browser surface               | [islamic-be-e2e](./islamic-be-e2e/README.md)            |
+| Roots                       | Not applicable; the service has no browser surface               | [roots-be-e2e](./roots-be-e2e/README.md)                |
 
 ## Work with an app
 

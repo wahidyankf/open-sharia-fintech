@@ -13,9 +13,9 @@ when_to_use: Use when copying an existing project's tag set as a template or che
 | `ayokoding-www-be-e2e`     | `["type:e2e", "platform:playwright", "lang:ts", "domain:ayokoding"]`     |
 | `ayokoding-www-fe-e2e`     | `["type:e2e", "platform:playwright", "lang:ts", "domain:ayokoding"]`     |
 | `crane-cli`                | `["type:app", "platform:cli", "lang:fsharp", "domain:crane"]`            |
-| `islamic-be` †             | `["type:app", "platform:gin", "lang:go", "domain:islamic"]`              |
-| `islamic-be-e2e` †         | `["type:e2e", "platform:playwright", "lang:ts", "domain:islamic"]`       |
-| `islamic-contracts` †      | `["type:lib", "domain:islamic"]`                                         |
+| `roots-be` †               | `["type:app", "platform:gin", "lang:go", "domain:roots"]`                |
+| `roots-be-e2e` †           | `["type:e2e", "platform:playwright", "lang:ts", "domain:roots"]`         |
+| `roots-contracts` †        | `["type:lib", "domain:roots"]`                                           |
 | `organiclever-app-web`     | `["type:app", "platform:nextjs", "lang:ts", "domain:organiclever"]`      |
 | `organiclever-app-web-e2e` | `["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever"]`  |
 | `organiclever-be`          | `["type:app", "platform:giraffe", "lang:fsharp", "domain:organiclever"]` |

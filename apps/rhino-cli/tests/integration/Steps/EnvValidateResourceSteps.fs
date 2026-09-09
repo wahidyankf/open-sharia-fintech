@@ -120,7 +120,7 @@ type EnvValidateSteps() =
                   Lang = "fsharp"
                   Allowlist = [] }
 
-    // The Go counterpart of the wrapper scenario above. islamic-be hands its pure
+    // The Go counterpart of the wrapper scenario above. roots-be hands its pure
     // resolver both `os.LookupEnv` and the key, so the key is never an argument to
     // the reader itself; the fixture reproduces that exact shape rather than a
     // direct `os.Getenv` call, which would not prove the case that matters.

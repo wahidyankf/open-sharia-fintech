@@ -28,7 +28,9 @@ Archived plans and completed project planning documents.
 - [2026-09-09: islamic-be-init](./2026-09-09__islamic-be-init/README.md) — Taught the monorepo Go,
   then shipped `islamic-be` (Go 1.26 + Gin, health endpoint) and its `islamic-be-e2e` Playwright-BDD
   suite on that lane. Six delivery units, six PRs: `ose-public#496`–`#501` plus the parity
-  counterpart `ose-private#169`. Go was **half-provisioned** at the start — `Brewfile`, the `gofmt`
+  counterpart `ose-private#169`. Both projects were later renamed to `roots-be` and
+  `roots-be-e2e`; this record keeps the names in force at the time it was written.
+  Go was **half-provisioned** at the start — `Brewfile`, the `gofmt`
   gate pair, and a `TestCoverage.Format.Go` arm had all survived the deletion of the last Go
   project, while the CI job, the binding extractor, the coverage-threshold arm, the tag vocabulary,
   and the env scanner had not — so a `lang: go` value read as supported and was in fact routed into

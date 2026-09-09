@@ -11,12 +11,12 @@ Tags are the standard mechanism for attaching structured metadata to projects in
 
 Every project declares tags along four dimensions. Each dimension uses a fixed prefix and a controlled vocabulary.
 
-| Dimension | Prefix      | Allowed Values                                                                    | Required                       | Purpose                                                       |
-| --------- | ----------- | --------------------------------------------------------------------------------- | ------------------------------ | ------------------------------------------------------------- |
-| Type      | `type:`     | `app`, `lib`, `e2e`                                                               | Always                         | Distinguishes deployable apps, reusable libs, and test suites |
-| Platform  | `platform:` | `axum`, `cli`, `gin`, `giraffe`, `nextjs`, `playwright`, `springboot`             | Apps and e2e projects          | Framework or runtime environment                              |
-| Language  | `lang:`     | `dotnet`, `fsharp`, `go`, `java`, `rust`, `ts`                                    | Projects with application code | Primary language of source code                               |
-| Domain    | `domain:`   | `ayokoding`, `config`, `crane`, `islamic`, `organiclever`, `ose`, `tooling`, `ui` | Always                         | Business or product domain                                    |
+| Dimension | Prefix      | Allowed Values                                                                  | Required                       | Purpose                                                       |
+| --------- | ----------- | ------------------------------------------------------------------------------- | ------------------------------ | ------------------------------------------------------------- |
+| Type      | `type:`     | `app`, `lib`, `e2e`                                                             | Always                         | Distinguishes deployable apps, reusable libs, and test suites |
+| Platform  | `platform:` | `axum`, `cli`, `gin`, `giraffe`, `nextjs`, `playwright`, `springboot`           | Apps and e2e projects          | Framework or runtime environment                              |
+| Language  | `lang:`     | `dotnet`, `fsharp`, `go`, `java`, `rust`, `ts`                                  | Projects with application code | Primary language of source code                               |
+| Domain    | `domain:`   | `ayokoding`, `config`, `crane`, `organiclever`, `ose`, `roots`, `tooling`, `ui` | Always                         | Business or product domain                                    |
 
 ## Special Rules
 
@@ -24,6 +24,6 @@ Every project declares tags along four dimensions. Each dimension uses a fixed p
 
 **Values are listed alphabetically**: The vocabulary is a set, not a ranking. Alphabetical order makes an omission visible when a new project is tagged.
 
-**Use `domain:islamic` for generic Sharia-compliance tooling**: Services and libraries that implement Islamic-finance or Sharia-compliance capability for any consumer use `domain:islamic`. Use `domain:ose` only for projects belonging exclusively to the OSE product surface.
+**Use `domain:roots` for generic Sharia-compliance tooling**: Services and libraries that implement Islamic-finance or Sharia-compliance capability for any consumer use `domain:roots`. Use `domain:ose` only for projects belonging exclusively to the OSE product surface.
 
 **Use `domain:tooling` for general-purpose utilities**: Projects that are not tied to a specific product domain (e.g., `rhino-cli`) use `domain:tooling`. Use a product domain tag only when the project belongs exclusively to that product.
