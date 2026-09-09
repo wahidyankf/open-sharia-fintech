@@ -128,6 +128,12 @@ The byte-identity boundary covers `apps/rhino-cli` and the shared Gherkin tree, 
 running the same underlying command. Resolve every command a cross-repo plan invokes against each
 repository's own `package.json` rather than assuming the name carries over.
 
+The `volta` toolchain pins in `package.json` have diverged the same way: `ose-public` pins
+`npm` to `11.11.0` and `ose-private` to `11.16.0`. Nothing compares them, so on one host with one
+installed npm, `rhino-cli doctor` reports a version warning in `ose-public` and a clean
+16/16 in `ose-private` — two verdicts from the same machine. Read a doctor warning about a
+toolchain version as a statement about that repo's pin, not about the host.
+
 ## Sync cadence
 
 Content parity and the `rhino-cli` byte-identity boundary above answer **what** stays identical;

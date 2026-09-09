@@ -9,6 +9,22 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-09-09: lms-init](./2026-09-09__lms-init/README.md) — Taught the monorepo Java, then shipped
+  `ose-lms-be` (Java 25 + Spring Boot, health and hello endpoints, Actuator exposed to health only)
+  and its `ose-lms-be-e2e` Playwright-BDD suite on that lane. Four delivery units, five PRs:
+  `ose-public#487`, `#491`, `#493`, `#495`, `#503`, plus the parity counterpart `ose-private#167`.
+  Java was provisioned from nothing, and the work surfaced a general shape worth remembering:
+  teaching a validator to _read_ a language is not the same as _enabling_ it, because the
+  enforcement machinery encodes closed per-language lists in several other places — a JaCoCo
+  coverage threshold the contract could not parse, and a `RUNTIME_RUNNER` list with no Gradle form,
+  were both found by running the project config through the validator before writing it. Six
+  defects were fixed at their root rather than worked around, including a Spotless failure caused
+  by the Gradle daemon JVM rather than the declared toolchain, a `specs-structure` CI job racing
+  itself over one shared dotnet project, and a `package-lock.json` missing its new workspace entry
+  — invisible locally, fatal under `npm ci`. One pre-push failure signature was never reproduced
+  across ten forced runs and is recorded as **open and unexplained** rather than retried into
+  green.
+
 - [2026-09-09: islamic-be-init](./2026-09-09__islamic-be-init/README.md) — Taught the monorepo Go,
   then shipped `islamic-be` (Go 1.26 + Gin, health endpoint) and its `islamic-be-e2e` Playwright-BDD
   suite on that lane. Six delivery units, six PRs: `ose-public#496`–`#501` plus the parity

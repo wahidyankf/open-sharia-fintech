@@ -79,15 +79,16 @@ immediately once the plan is done using that repository, not deferred to archiva
 
 ### Delivery Branch Inventory
 
-| Branch                                | Repository    | Mode      | Lifecycle state | Proof                                                                               |
-| ------------------------------------- | ------------- | --------- | --------------- | ----------------------------------------------------------------------------------- |
-| `worktree/lms-init`                   | `ose-public`  | `to-pr`   | `active`        | carries the plan-authoring PR; record its number and 40-character head SHA on merge |
-| `worktree/lms-init`                   | `ose-private` | `pending` | `pending`       | `git worktree add` at Step 0                                                        |
-| `lms-init/du1-doctor-config`          | `ose-public`  | `to-pr`   | `delivered`     | PR #491 merged, reviewed head `acdd9393f1d3628738ea38f6c616b3cddf9c99cd`            |
-| `lms-init/du1-doctor-config`          | `ose-private` | `to-pr`   | `delivered`     | PR #167 merged, reviewed head `b5a414181fb4da4973aef9009a7e98e383c9277e`            |
-| `lms-init/du2-java-enablement`        | `ose-public`  | `to-pr`   | `delivered`     | PR #493 merged, reviewed head `74a091c4f3f8b48e53cb34150ef75bfec71d79e0`            |
-| `lms-init/du3-contract-and-service`   | `ose-public`  | `to-pr`   | `delivered`     | PR #495 merged, reviewed head `1977661574f445648eb5e0bca2b4de1048ca3f1c`            |
-| `lms-init/du4-e2e-and-reconciliation` | `ose-public`  | `to-pr`   | `pending`       | record merged PR number and 40-character head SHA at DU4                            |
+| Branch                                    | Repository    | Mode    | Lifecycle state | Proof                                                                        |
+| ----------------------------------------- | ------------- | ------- | --------------- | ---------------------------------------------------------------------------- |
+| `worktree/lms-init`                       | `ose-public`  | `to-pr` | `delivered`     | PR #487 merged, reviewed head `232d4a336fa111f3a7d7ef18ed8bcd2444dea986`     |
+| `worktree/lms-init`                       | `ose-private` | `n/a`   | `unused`        | provisioned at Step 0; 0 commits ahead of `origin/main`, opened no PR        |
+| `lms-init/du1-doctor-config`              | `ose-public`  | `to-pr` | `delivered`     | PR #491 merged, reviewed head `acdd9393f1d3628738ea38f6c616b3cddf9c99cd`     |
+| `lms-init/du1-doctor-config`              | `ose-private` | `to-pr` | `delivered`     | PR #167 merged, reviewed head `b5a414181fb4da4973aef9009a7e98e383c9277e`     |
+| `lms-init/du2-java-enablement`            | `ose-public`  | `to-pr` | `delivered`     | PR #493 merged, reviewed head `74a091c4f3f8b48e53cb34150ef75bfec71d79e0`     |
+| `lms-init/du3-contract-and-service`       | `ose-public`  | `to-pr` | `delivered`     | PR #495 merged, reviewed head `1977661574f445648eb5e0bca2b4de1048ca3f1c`     |
+| `lms-init/du4-e2e-and-reconciliation`     | `ose-public`  | `to-pr` | `delivered`     | PR #503 merged, reviewed head `0e18a9987ef8053a4c2e9b272f9eb28980ed7c7f`     |
+| `lms-init/knowledge-capture-and-archival` | `ose-public`  | `to-pr` | `active`        | carries Phase 5 routing and archival; record PR number and head SHA on merge |
 
 Append every plan-created delivery branch before use. Before removal, classify every entry as
 delivered, unused, or retained/escalated; an active or unrecorded branch blocks cleanup.
@@ -513,13 +514,14 @@ One pull request in `ose-public`. No Java project exists yet; this phase makes o
       under `--check`, and exit non-zero on any non-zero sub-command. Run
       `rtk shellcheck scripts/format-java.sh` and `rtk shfmt -d scripts/format-java.sh`;
       acceptance: both exit 0.
-- [ ] [AI] Register the gate pair in `repo-config.yml` beside the other formatter pairs:
+- [x] [AI] Register the gate pair in `repo-config.yml` beside the other formatter pairs:
       `format-java` (`type: mutation`, `category: formatter`, `command: scripts/format-java.sh`,
       `kind: external`, `restages: true`, `surfaces.pre-commit` scoped `affected-file-type` on
       `"*.java"`) and `format-verify-java` (`type: check`,
       `command: scripts/format-java.sh --check`, `ci-group: formatting-verify`,
       `verifies: format-java`, `surfaces.ci` on the same glob). Run
       `rtk npm run validate:config`; acceptance: exit code 0.
+      <!-- Implementation notes (DU2-077): both gates are registered — `format-java` at `repo-config.yml` line 713 and `format-verify-java` at line 722, with the command, kind, restages, verifies, ci-group, and surface scoping the plan specifies — and `npm run validate:config` exits 0. The work landed in DU2 and shipped in that delivery unit; only the tick was missed, and it is backfilled here rather than left to fail the archival audit. The omission is provable rather than assumed: the very next checkbox's note describes registering this pair and explains that doing so alone would have left `format-java` silently never firing at pre-commit, which is why `rhino gate emit --surface=pre-commit` was run to add the `"*.java"` lint-staged entry that still sits at `package.json` line 127. -->
 - [x] [AI] Prove both gates actually fire. In a scratch directory outside the worktree, create an
       isolated no-origin git fixture, stage a deliberately misformatted `.java` file, run the gate
       runner, and confirm `Running gate format-java` appears in the output. Repeat with `--check`
@@ -1239,13 +1241,16 @@ applicable** — no web UI, no browser surface, no locales.
       <!-- Implementation notes (DU4-PP-200): the push was rejected seven times before it landed, and the diagnosis is written up in full at `evidence/du4-prepush-shed.txt`. Two rejections exited 75 and were traced, by sampling `hippo status` every five seconds through a run, to a HIPPO shed at `state=critical reason=swap-critical` — the supervised vitest child is killed, Nx reports the dead child as a failed task, and the shed is indistinguishable from a test failure in the printed output. Five more exited 1 with the host measured normal, always naming `organiclever-app-web:test:unit`, and were never reproduced: that target passes alone under both HIPPO classes, alongside three other suites, and — decisively — inside a full `NX_SKIP_NX_CACHE=true` re-run of the entire surface that executed 206 targets green with zero failed tasks. That second signature is recorded as OPEN, not closed, because claiming the shed explained it would have been false and calling it flaky and retrying would have been the evasion the flaky-tests rule forbids. Nothing was retried into a pass: the push went out only after the forced uncached surface run proved every task green. -->
 - [x] [AI] Open a draft pull request against `main`; the body states the new-code cost and benefit
       <!-- Implementation notes (DU4-PP-201): PR #503, opened as a draft against `main`. The body states the cost — one ~100-line process supervisor and four step bindings of genuinely new code, everything else configuration modelled on `apps/ose-be-e2e` — against the benefit that the LMS backend's status codes, bodies, and Actuator exposure are now asserted against a really-started jar, the only layer that can catch a misconfigured port, a jar that does not boot, or an accidentally exposed Actuator endpoint. -->
-- [ ] [AI] Poll CI every 2 minutes with `rtk gh pr checks <number>`. Never use `gh run watch`
-- [ ] [AI] Verify exact-current-head/base `Quality gate` and one clean current-head
+- [x] [AI] Poll CI every 2 minutes with `rtk gh pr checks <number>`. Never use `gh run watch`
+      <!-- Implementation notes (DU4-PP-202): polled at a strict two-minute interval, never `gh run watch`. Three heads were polled in total, because two rebases were forced by `origin/main` moving mid-run. The first head failed twice and both failures were real defects, fixed at DU4-PP-204. The final head, `0e18a9987ef8053a4c2e9b272f9eb28980ed7c7f`, went terminal in ten polls at roughly eighteen minutes: `pr-quality-gate` reported `completed success`, and `gh pr checks 503` reported seventeen `pass` with `Flutter quality gate` correctly `skipping` and zero failures. One polling trap is worth recording: `gh run list --limit N` interleaves workflows, so an unfiltered query surfaced a `validate-env` run that had nothing to do with the gate; every poll therefore filtered on `workflowName`, `headSha`, and `event` together rather than taking the newest row. -->
+- [x] [AI] Verify exact-current-head/base `Quality gate` and one clean current-head
       `pr-leak-review`
+      <!-- Implementation notes (DU4-PP-203): both halves verified against one pinned head, `0e18a9987ef8053a4c2e9b272f9eb28980ed7c7f`. The `Quality gate` check run reports `status=completed conclusion=success` with `head_sha` equal to that SHA, and a sweep of every check run on the same commit returns no entry whose conclusion is neither `success` nor `skipped`. The base was equally verified rather than assumed: `git merge-base HEAD origin/main` equals `origin/main` at `fcf9d44261749de7b15f873ac1a0b94e880cb956`, checked immediately before the merge, not once at the start. That check earned its keep — `origin/main` moved twice during this unit, each time invalidating a green run, and both times the branch was rebased rather than merged on a stale base. The leak review is agent-driven, not a workflow, so there is no check run to point at: `pr-review-security-maker` ran in leak-only mode over the full `fcf9d4426..0e18a9987` diff plus the PR title, body, comments, and reviews, and was instructed to re-read `git rev-parse HEAD` after reviewing so the verdict provably covers the head it started from. It returned `pass` over 30 files with zero findings, confirming the same SHA before and after. -->
 - [x] [AI] If any check fails, fix at the root cause and push a follow-up commit; never bypass
       <!-- Implementation notes (DU4-PP-204b): the second head surfaced a second real defect, `NU1605: Detected package downgrade: FSharp.Core from 10.1.401 to 10.1.400`, failing `ose-be:test:unit` and `organiclever-be:test:unit`. Cause: `setup-dotnet` floats `dotnet-version: 10.0.x` and the runner installed SDK **10.0.401**, whose implicit `FSharp.Core` is 10.1.401; the four F# test projects pin the package to a literal, and the app projects they reference take the SDK's implicit version, so the two sources are free to diverge and any SDK patch that raises the implicit above the literal is a downgrade. `main` stayed green only because its incremental affected sets do not run those tests — this unit's lockfile edit makes every project affected, which is why the PR met it first. Bumped all four literals to 10.1.401 and replaced the stale rationale comments, which still described a 10.1.300 problem that no longer exists. The two integration projects were pinned at 10.1.302 and carried the identical latent break one SDK bump ahead of being noticed, so they were fixed in the same pass rather than left. Verified locally: both unit suites `TERMINAL_EXIT=0` (49 and 44 tests) and both integration projects build clean. One iteration cost: the first comment contained `--`, which XML forbids, and MSBuild rejected the project files with MSB4025; caught locally before pushing. -->
       <!-- Implementation notes (DU4-PP-204a): one check failed on the first head, `Specs structure validation (all affected)`, and it was a real defect rather than noise. Two tasks died with `error : The file '.../RhinoCli.Program/obj/project.assets.json' already exists`. The job fans 31 Nx targets out at the default parallelism and every one of them shells into the SAME rhino-cli project with `dotnet run`, which restores and builds implicitly; from a cold checkout the first wave restores that one project concurrently and collides on its `obj/`. Not caused by this unit's code, but this unit's new project widened the fan-out that lost the race. The remedy is `--parallel=1`, which is not invented here: the `dotnet` job in the same workflow already records the identical reasoning for its own serial run, and the `ose-private` sibling already runs both of its `specs:structure-validation` invocations with `--parallel=1` — the public repository was the outlier, so this closes a drift rather than opening one, and creates no sibling obligation. Verified locally with `--skipNxCache`: 31 projects, `TERMINAL_EXIT=0`. `actionlint` exits 0 on the edited workflow. -->
-- [ ] [AI] Mark ready, merge, and record the pull request number and 40-character head SHA
+- [x] [AI] Mark ready, merge, and record the pull request number and 40-character head SHA
+      <!-- Implementation notes (DU4-PP-205): pull request **#503**, head SHA **`0e18a9987ef8053a4c2e9b272f9eb28980ed7c7f`**, squash-merged into `main` as `b797d85215d0da8790794e8edc2a310cb3378c5c` at 2026-09-09T00:23:43Z, with the remote branch deleted by the merge. Squash matches every prior delivery unit and the surrounding history — `#495` through `#504` are all single squashed commits — so `main` keeps one commit per pull request. `gh pr merge` printed `fatal: 'main' is already checked out at` the primary repository and exited non-zero: that is its local post-merge checkout failing, not the merge, because `main` is held by the primary worktree. The merge was therefore confirmed through the API rather than by re-running the command, which would have been the genuinely dangerous response: `state=MERGED` with a real `mergeCommit`, and `git ls-remote` showing the branch gone. -->
 
 ### Phase 4 Execution Notes
 
@@ -1268,13 +1273,18 @@ prose, not a reduction in scope.
 
 > All checks below must pass before starting Phase 5.
 
-- [ ] [AI] `rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- run-many -t lint,test:quick --parallel=1`
+- [x] [AI] `rtk ./hippo run --class transactional --disk-path . -- npm exec nx -- run-many -t lint,test:quick --parallel=1`
       exits 0 across the whole workspace
-- [ ] [AI] `ose-lms-be-e2e:test:e2e` passes all four HTTP scenarios
-- [ ] [AI] Every `AET-###` defect finding is ticked, or carries recorded explicit user permission to
+      <!-- Implementation notes (P4-GATE-206): `TERMINAL_EXIT=0` across 31 projects and the 22 tasks they depend on. Run twice on purpose. The first run also exited 0 but served **84 of 84 tasks from cache**, meaning not one command actually executed — that is not evidence a gate passed, only evidence the inputs were seen before, so it was discarded and re-run with `NX_SKIP_NX_CACHE=true --skipNxCache`. The second run contains zero `from the cache` and zero `existing outputs match the cache` lines and really executed every target, including all fifteen distinct `ose-lms-be` and `ose-lms-be-e2e` invocations. Re-running mattered here beyond principle: this gate runs on the post-merge tree, which carries another plan's commits that had never been executed locally at all. Only `no-empty-pattern` warnings remain, all preexisting and none in code this plan wrote. -->
+- [x] [AI] `ose-lms-be-e2e:test:e2e` passes all four HTTP scenarios
+      <!-- Implementation notes (P4-GATE-207): `TERMINAL_EXIT=0`, `4 passed (2.7s)`, run with `--skipNxCache` against a jar rebuilt from the post-merge tree in the same invocation (`BUILD_EXIT=0`), so the assertions are made against real bytes rather than a stale artefact. The four named scenarios are `Actuator health endpoint reports the service is up`, `Actuator exposes no endpoint other than health`, `Health endpoint returns a healthy status`, and `Hello endpoint returns the greeting` — one per acceptance criterion, `AC-ACT-01`, `AC-ACT-02`, `AC-HEALTH-01`, and `AC-HELLO-01`. Each ran through the real supervisor: the suite spawns `java -jar` on port 8403, polls `/api/v1/health` until it answers, and tears the process down afterwards, so a jar that failed to boot would fail the gate rather than silently skip. -->
+- [x] [AI] Every `AET-###` defect finding is ticked, or carries recorded explicit user permission to
       defer
-- [ ] [AI] Every README index and registry table the plan touched is reconciled
-- [ ] [AI] `rtk git status --short` is clean apart from plan evidence
+      <!-- Implementation notes (P4-GATE-208): the rule-16 retest produced exactly two defect findings and both are ticked, with no deferral requested and therefore none needed. `AET-001` — three different error-envelope shapes depending on which layer rejected the request — and `AET-002` — the `OPTIONS` `Allow` header contradicting the actually-supported methods. A scan for any `- [ ]` line mentioning `AET-` returns nothing, so the gate is met by exhaustion rather than by recollection. The separate `SG-###` spec-gap proposals are not defect findings and were triaged under DU4-AET-191. -->
+- [x] [AI] Every README index and registry table the plan touched is reconciled
+      <!-- Implementation notes (P4-GATE-209): checked surface by surface rather than trusted. `apps/README.md` and `docs/reference/monorepo-structure.md` list both new apps; `docs/reference/web-sites.md` carries the `ose-lms-be` rows and correctly carries none for `ose-lms-be-e2e`, which is a test harness with no domain or port of its own; `specs/apps/ose/README.md` carries the LMS corpus entries; `ose-lms-be` appears in the tag-vocabulary example table and in both OpenAPI contract-first registry tables. The agent index needed care: `.claude/agents/README.md` contains no `java` at all, which looks like a miss but is not — that file indexes role subfolders, and the annotated entry lives at `.claude/agents/swe/README.md` line 12, alongside its C# and F# siblings. The skill is indexed at `.claude/skills/README.md` line 77 pointing at `swe-programming-java/README.md`, which exists and matches the sibling convention exactly. CI corroborates: the `governance` job, which runs the README-completeness validator, passed on the merged head. -->
+- [x] [AI] `rtk git status --short` is clean apart from plan evidence
+      <!-- Implementation notes (P4-GATE-210): `git status --short` reports exactly one entry, ` M plans/in-progress/lms-init/delivery.md`, which is the plan evidence this gate explicitly exempts. Filtering that path out leaves nothing, so no build output, generated contract, Gradle artefact, Playwright report, or jar leaked into the tracked tree despite a full uncached workspace run and a real jar build having just happened — the `.gitignore` entries added in DU3 and DU4 are doing their job. -->
 
 > **Pause Safety**: the LMS backend is complete for its declared scope — built, formatted, gated,
 > proven in two adapters, and reachable over real HTTP. `main` is deployable. Safe to stop. To
@@ -1284,24 +1294,29 @@ prose, not a reduction in scope.
 
 ## Phase 5: Knowledge Capture
 
-- [ ] [AI] Apply the litmus test to every `learnings.md` entry — keep only entries where a durable
+- [x] [AI] Apply the litmus test to every `learnings.md` entry — keep only entries where a durable
       surface would catch this automatically next time; discard the rest with a one-line reason.
-- [ ] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize to
+      <!-- Implementation notes (P5-211): all 14 entries survive; none discarded. Each names a mechanism that recurs beyond this plan and a concrete durable surface that would prevent recurrence, which is what the litmus asks. The closest call was the mermaid threshold entry, whose knowledge is already documented in three places — but the litmus asks whether a durable surface would catch it automatically, and today nothing does, so it survives as a reported gap rather than as a discard. -->
+- [x] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize to
       `<placeholder>` tokens or discard if the entry cannot be sanitized without losing its meaning.
-- [ ] [AI] Apply the **repo-relevance gate** to every surviving entry — infra-private content stays
+      <!-- Implementation notes (P5-212): no entry required sanitization or discard. The only host paths any entry needed to discuss are already written as placeholders — `file:///Users/<user>/...` and `/var/folders/<user-hash>/<session-hash>/T/...` in the sanitization entry, where the placeholder form is the point being made rather than a redaction of it. Independently corroborated: the current-head leak review over the full DU4 diff read `learnings.md` in its 30-file sweep and returned zero findings. No credentials, tokens, or protected environment values appear anywhere in the file. -->
+- [x] [AI] Apply the **repo-relevance gate** to every surviving entry — infra-private content stays
       in `ose-private` only; public-governance content may route to `ose-public`; never cross-route
       private content into a public repo.
-- [ ] [AI] Route each surviving entry to exactly one durable home. The rubric is open-ended — route
+      <!-- Implementation notes (P5-213): every entry is public-governance content and stays in `ose-public`; nothing routes into `ose-private` and nothing private is pulled the other way. The one entry that names the private sibling at all — the diverged `volta` npm pin — describes a fact about the public repository's own `package.json` alongside a version number that the public `docs/reference/related-repositories.md` already discusses in the same section, so it carries no infra-private content. No entry touches private infrastructure, credentials, or deployment topology. -->
+- [x] [AI] Route each surviving entry to exactly one durable home. The rubric is open-ended — route
       to whichever surface owns that kind of knowledge (`repo-governance/`, `docs/`,
       `.claude/agents/`, `.claude/skills/`, a post-mortem, or any other durable home), landing a
       small non-code edit inline. Create or update a `plans/ideas/<slug>.md` two-pager only when the
       user has literally authorized that plan artifact; otherwise report the follow-up and record
       `Reported without plan authorization` with handoff evidence.
-- [ ] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
+      <!-- Implementation notes (P5-214): 2 routed inline, 12 reported, each to exactly one home. Inline: the Nx-cache entry to `trustworthy-measurement/rule-1-prove-the-command-ran.md`, and the parity-pin entry to `docs/reference/related-repositories.md`. Those two are the only ones that could land, and the reason is a rule rather than effort. Repo rules per the AGENTS.md glossary include `repo-governance/`, `.claude/`, `repo-config.yml`, enforcement machinery, and the SE style guides under `docs/explanation/`, so putting new normative text on any of them is rule work requiring a `rules-propagation` run — which Phase 5 contains no checkboxes for, and which DU1 and DU2 each needed fifteen and seven boxes to do properly. The two that did land avoid that: the first is an elaboration of the rule already on that page, since Rule 1's subject is proving the command ran and a cache hit means it did not; the second is descriptive reference content on a non-rules surface. Every remaining fix is a gate, validator, or CI change, which the code-routing rule forbids landing inline. Reporting them is the honest terminal state, not a shortfall. -->
+- [x] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
       two-pagers FIRST after the user literally authorizes an idea artifact. Fold the learning into
       an authorized overlapping brief instead of creating a new file; only create a new authorized
       `plans/ideas/<slug>.md` when the scan confirms no existing brief overlaps.
-- [ ] [AI] **Code-routing rule**: if a learning's home is `apps/`, `libs/`, or tests, NEVER land it
+      <!-- Implementation notes (P5-215): not applicable, and deliberately so. No entry was routed to `plans/ideas/`, because that step is gated on the user literally authorizing a plan artifact and no such authorization was given — the standing directive authorizes executing this plan, not creating new idea briefs. The scan requirement therefore never triggers. One overlap is recorded anyway for whoever does get authorization: the mermaid entry belongs with the existing `plans/ideas/q2-not-urgent-important/mermaid-state-label-render-clipping-warn.md`, which already covers the neighbouring stateDiagram case, rather than in a new file. -->
+- [x] [AI] **Code-routing rule**: if a learning's home is `apps/`, `libs/`, or tests, NEVER land it
       inline in this plan's commits or pull requests. File a separate `plans/ideas/` two-pager only
       with literal plan-artifact authorization; never create, move, or write any file or folder
       under `plans/backlog/`, whatever the instruction, because the promotion ripeness gate owns
@@ -1309,22 +1324,27 @@ prose, not a reduction in scope.
       state. The sole carve-out is a bug, lint, or test failure that blocks THIS plan's own scope —
       that is fixed inline as ordinary Root Cause Orientation work, not routed as a deferred
       learning.
-- [ ] [AI] Record the terminal state of every entry (routed inline / explicitly authorized two-pager
+      <!-- Implementation notes (P5-216): every code-homed learning is reported, none landed inline, and nothing was created, moved, or written under `plans/backlog/`. The code-homed set is the twelve reported entries — new gates, validators, CI reporter changes, an `apps/rhino-cli` default, and enforcement-machinery restructuring. The carve-out was exercised only where it genuinely applies: defects that blocked this plan's own scope were fixed inline as ordinary root-cause work rather than deferred, which is why the JaCoCo threshold gap, the Gradle `RUNTIME_RUNNER` gap, the missing `setup-java`, the specs-structure race, the FSharp.Core downgrade, and the absent lockfile entry are all closed rather than sitting in this list. -->
+- [x] [AI] Record the terminal state of every entry (routed inline / explicitly authorized two-pager
       at `<path>` / reported without plan authorization with handoff evidence / discarded with
       reason) directly in `learnings.md`.
-- [ ] [AI] If execution genuinely surfaced no generalizable learning, record the explicit escape
+      <!-- Implementation notes (P5-217): each of the 14 entries carries a `**Terminal state**:` bullet as its last line, written per entry rather than as a summary table so no entry can be silently uncovered. A count confirms the bijection — 14 `## ` headings, 14 terminal-state bullets, 2 `Routed inline` and 12 `Reported without plan authorization`. Each reported entry names its recommended durable home, why it could not land now, and where its handoff evidence lives, so the next executor starts from a specification rather than from a hint. -->
+- [x] [AI] If execution genuinely surfaced no generalizable learning, record the explicit escape
       `No generalizable learnings — <one-line reason>` instead of individual entries.
+      <!-- Implementation notes (P5-218): the escape does not apply and was correctly not used. Execution surfaced 14 generalizable learnings, all recorded individually with terminal states. -->
 
 ### Phase 5 Gate
 
 > All checks below must pass before starting Plan Archival.
 
-- [ ] [AI] Verify every `learnings.md` entry has reached a terminal state (routed / authorized and
+- [x] [AI] Verify every `learnings.md` entry has reached a terminal state (routed / authorized and
       filed / reported without plan authorization / discarded) or the explicit "none" escape is
       present — no entry left open.
-- [ ] [AI] Verify no code-homed learning landed inline — every code-routed learning has a
+      <!-- Implementation notes (P5-GATE-219): verified by count rather than by reading — `grep -c '^## '` returns 14 and the terminal-state bullet count returns 14, so the mapping is total. Breakdown: 2 routed inline, 12 reported without plan authorization, 0 authorized two-pagers, 0 discarded. No entry is left open and the explicit none-escape is correctly absent. -->
+- [x] [AI] Verify no code-homed learning landed inline — every code-routed learning has a
       corresponding explicitly authorized `plans/ideas/` two-pager or a report with handoff
       evidence.
+      <!-- Implementation notes (P5-GATE-220): holds. The two inline edits are both non-code and neither is code-homed — a paragraph in an existing measurement rule and a paragraph in a reference catalogue. No `apps/`, `libs/`, test, gate, validator, or workflow file was touched to route a learning. Every one of the twelve code-routed learnings carries a report with handoff evidence naming the recommended home and the blocker, and none has an authorized two-pager because none was authorized. -->
 
 > **Pause Safety**: all learnings are routed, authorized and filed, reported without plan
 > authorization, or explicitly discarded; nothing is left dangling in `learnings.md`. Safe to stop.
@@ -1334,54 +1354,76 @@ prose, not a reduction in scope.
 
 ### Plan Archival
 
-- [ ] [AI] Perform the **preliminary** plan-execution end-to-end delivery completeness audit: trace
+- [x] [AI] Perform the **preliminary** plan-execution end-to-end delivery completeness audit: trace
       approved scope and every canonical PRD acceptance criterion through delivery units, as-built
       artifacts, automated and manual proof, applicable migration/rollout/rollback evidence,
       conditional recovery dispositions, and Knowledge Capture. Reopen execution at the earliest
       affected packet for every missing or unsupported non-delivery row; only final-delivery proof
       may remain explicitly pending. Checked boxes alone are not proof.
-- [ ] [AI] Verify ALL delivery checklist items are ticked
-- [ ] [AI] Verify ALL quality gates pass (local + CI)
-- [ ] [AI] Verify ALL manual assertions pass with committed evidence in `evidence/` (curl output;
+      <!-- Implementation notes (ARCH-221): traced, not assumed. All 15 canonical PRD acceptance criteria map to a delivery unit, an as-built artifact, and executed proof. AC-HEALTH-01, AC-HELLO-01, AC-ACT-01 and AC-ACT-02 land as four scenarios across `health.feature`, `hello.feature`, and `actuator.feature`, each proven twice — in the Cucumber Unit adapter (DU3) and again over real HTTP against a booted jar (DU4, 4/4 passing). AC-PORT-01 through AC-PORT-03 are the three `port-resolution.feature` scenarios, each carrying an `@e2e-exempt` tag with a named alternative proof, which is correct rather than a coverage hole: port resolution completes before the HTTP boundary exists, so it is unobservable through it, and the Unit adapter proves it (`du3-red-port.txt` / `du3-green-port.txt`). AC-DOCTOR-01 and AC-DOCTOR-02 land in `specs/apps/rhino/cli/behaviours/system/doctor.feature` with F# bindings (`du1-red-unit.txt`). AC-COV-01..03 are the three Java-extractor cases in `scripts/behaviour-coverage.test.mjs` (`du2-red-validator.txt`). AC-FMT-01 and AC-FMT-02 are the two formatter gates, proven to actually fire in `du2-gate-trigger.txt`. AC-CI-01 is proven by `du3-ci-routing.txt` and `du2-ci-java-skipped.txt`, which show the Java job running and the other language jobs excluding it. No non-delivery row is missing or unsupported, so no packet is reopened. Migration, rollout, and rollback evidence is not applicable: this plan creates a new service with no predecessor, no data, and no traffic to cut over. The audit did surface one real defect — DU2-077 was unticked despite having shipped — which was verified against `repo-config.yml` and backfilled rather than waved through, which is exactly what "checked boxes alone are not proof" is meant to catch, in the inverse direction. -->
+- [x] [AI] Verify ALL delivery checklist items are ticked
+      <!-- Implementation notes (ARCH-222): verified mechanically. Every `- [ ]` checkbox above this archival section is now ticked; the only unticked boxes remaining are the archival steps still in flight and the Validation Checklist below, both of which close last by design. One box did not survive the scan — DU2-077, the `format-java`/`format-verify-java` registration — which was found unticked here even though the work shipped in DU2. It was confirmed present at `repo-config.yml` lines 713 and 722 with `validate:config` exiting 0 before being ticked, so the backfill records a fact rather than papering over a gap. -->
+- [x] [AI] Verify ALL quality gates pass (local + CI)
+      <!-- Implementation notes (ARCH-223): both halves verified on the post-merge tree. Local: the workspace-wide `lint,test:quick` run exits 0 across 31 projects and 22 dependent tasks with `NX_SKIP_NX_CACHE=true`, containing zero cache-read lines, so every target genuinely executed; the E2E suite passes 4/4 against a freshly built jar; `validate:config` exits 0. CI: `pr-quality-gate` reported `completed success` on head `0e18a9987ef8053a4c2e9b272f9eb28980ed7c7f`, with 17 checks passing, `Flutter quality gate` correctly skipping, and zero failures — `Build rhino-cli`, `Detect affected languages`, `Specs structure validation`, `harness`, `shell-docker-actions`, `governance`, `Go`, `Java`, `lint`, `markdown`, `formatting-verify`, `Auto-format affected`, `TypeScript`, `.NET`, and the `Quality gate` aggregate. -->
+- [x] [AI] Verify ALL manual assertions pass with committed evidence in `evidence/` (curl output;
       no screenshots apply — this plan has no UI surface)
-- [ ] [AI] Locale coverage in UI verification is not applicable — recorded, not skipped
-- [ ] [AI] Rule-15 EWT/UWT/DWT findings are not applicable — this plan touches no web UI
-- [ ] [AI] Verify every rule-16 AET defect finding is fixed (ticked) — deferral requires explicit
+      <!-- Implementation notes (ARCH-224): every manual assertion is recorded with a real status line and body in `evidence/du3-curl.txt`, covering `GET /api/v1/health`, `GET /api/v1/hello`, `/actuator/health`, a non-exposed Actuator endpoint returning 404, the `OSE_LMS_BE_PORT` override on 8399, a malformed port value failing at startup, and the two error cases (unknown path, `POST` to health). The rule-16 exploratory retest is separately recorded in `evidence/du4-aet-retest.txt`. No screenshots apply, correctly — this plan ships an HTTP API and no UI surface. -->
+- [x] [AI] Locale coverage in UI verification is not applicable — recorded, not skipped
+      <!-- Implementation notes (ARCH-225): recorded as not applicable, not skipped. `ose-lms-be` exposes JSON over HTTP with no rendered UI, no templates, and no user-facing localized strings; its only response bodies are a status field and a fixed greeting. There is no locale surface for a locale check to cover. -->
+- [x] [AI] Rule-15 EWT/UWT/DWT findings are not applicable — this plan touches no web UI
+      <!-- Implementation notes (ARCH-226): not applicable and recorded as such. The web-triad testers — exploratory, usability, and design — all evaluate a live website, and this plan ships no web UI: `ose-lms-be` is a headless Spring Boot API and `ose-lms-be-e2e` is a Playwright project used purely as an HTTP client, driving no browser. The API-side equivalent was run instead and is not skipped: rule-16's `api-exploratory-tester` executed under DU4-AET-188 and produced the two AET findings closed above. -->
+- [x] [AI] Verify every rule-16 AET defect finding is fixed (ticked) — deferral requires explicit
       user permission (only when genuinely impossible) for AET defect findings; `SG-###` spec-gap
       proposals may be triaged or deferred
-- [ ] [AI] Register the workflow-owned terminal audit task and its required post-delivery proof
+      <!-- Implementation notes (ARCH-227): both defect findings are fixed and ticked, and no deferral was requested or needed — so no user permission was required. `AET-001` (three different error-envelope shapes depending on which layer rejected the request) and `AET-002` (the `OPTIONS` `Allow` header contradicting the actually-supported methods) were both closed during DU4, with the contract updated to match. A scan for any unticked line mentioning `AET-` returns nothing. The `SG-###` spec-gap proposals were triaged separately under DU4-AET-191, which the rule permits. -->
+- [x] [AI] Register the workflow-owned terminal audit task and its required post-delivery proof
       fields; do not mark that gate complete before merge or direct-push confirmation. Its result
       belongs in the plan-execution final report, not a speculative pre-merge checkbox.
-- [ ] [AI] Classify every `Delivery Branch Inventory` entry as delivered, unused, or
+      <!-- Implementation notes (ARCH-228): registered in the harness task list as the terminal audit, held open deliberately. Its required post-delivery proof fields are the archival pull request's number, its 40-character reviewed head SHA, the `Quality gate` conclusion on that exact head, the current-head leak-review verdict, and the merge commit — none of which exist until the archival PR merges. It is therefore not marked complete here, which is the point of the checkbox: a pre-merge tick would assert a result that has not happened. The result is reported in the plan-execution final report once the merge is confirmed through the API. -->
+- [x] [AI] Classify every `Delivery Branch Inventory` entry as delivered, unused, or
       retained/escalated; a retained entry names who owns it and why it outlives the plan, and an
       entry whose state is ambiguous or whose proof is missing is escalated, never deleted. Both
       repositories' entries are classified.
-- [ ] [AI] Remove each worktree this plan provisioned, non-force, from each repository root:
+      <!-- Implementation notes (ARCH-229): all eight rows classified across both repositories — 6 delivered, 1 unused, 1 active — with no entry left ambiguous and nothing deleted to make a row tidy. Three rows changed state here. Public `worktree/lms-init` moves to delivered: PR #487 is `MERGED` with reviewed head `232d4a336fa111f3a7d7ef18ed8bcd2444dea986`. `lms-init/du4-e2e-and-reconciliation` moves to delivered against PR #503 and head `0e18a9987ef8053a4c2e9b272f9eb28980ed7c7f`. Private `worktree/lms-init` is classified **unused** rather than delivered, and that is a measurement rather than an assumption: `git rev-list --left-right --count origin/main...worktree/lms-init` reports it 0 commits ahead, so it carried no work and opened no PR — the private repository's only real delivery went through `lms-init/du1-doctor-config` as PR #167. One row was appended rather than reclassified: `lms-init/knowledge-capture-and-archival`, the branch carrying Phase 5 and this archival, registered `active` before use as the inventory requires, and recorded here rather than left off because a branch missing from the inventory blocks cleanup. -->
+- [x] [AI] Remove each worktree this plan provisioned, non-force, from each repository root:
       `rtk git worktree remove worktrees/lms-init`, after the checks in
       `repo-governance/development/workflow/worktree-and-artifact-cleanup/mandatory-pre-removal-checks.md`.
       Run this in `ose-private` first, then `ose-public` — the public worktree hosts this plan file
       and must be the last removed.
-- [ ] [AI] Complete branch cleanup for every branch this plan created, in **both** repositories, per
+      <!-- Implementation notes (ARCH-230): `ose-private` removed, `ose-public` deferred to the end by the checkbox's own instruction — it hosts this plan file, so it is removed after the archival pull request merges. All six mandatory pre-removal checks were run on the private worktree, not assumed. It was found on a **detached HEAD** at `bacbfbc322870dfdddc877c885d167191de21e9d` rather than on a branch, which the checks require resolving rather than shrugging at: `git merge-base --is-ancestor` proves that commit is contained in `origin/main` and `git log origin/main..` returns empty, so it carried no unique work. `git status --porcelain` was empty; PR #167 reports `MERGED` with `headRefName` and `headRefOid` matching the inventory's reviewed head exactly; and `git log origin/<branch>..<branch>` showed no unpushed commits. Removal used non-force `git worktree remove`, which exited 0 and left the private repository with only its root worktree. -->
+- [x] [AI] Complete branch cleanup for every branch this plan created, in **both** repositories, per
       `repo-governance/development/workflow/worktree-and-artifact-cleanup/branch-cleanup.md`, then
       run `rtk git worktree prune` in each. Follow that convention's proof gates; never relax them
       here.
-- [ ] [AI] After every pre-archival gate, including the preliminary audit, passes, run
+      <!-- Implementation notes (ARCH-231): every plan-created branch is deleted with its proof gates satisfied, and no gate was relaxed. `ose-private` is fully clean: `lms-init/du1-doctor-config` still had a live `origin/` ref equal to the recorded reviewed head `b5a414181fb4da4973aef9009a7e98e383c9277e`, so it took the ordinary path — upstream set, `git branch -d`, then `git push origin --delete` — and `worktree/lms-init` was deleted with `-d` after measuring it 0 commits ahead of `origin/main`, which is what classified it unused. `ose-public` split two ways. `worktree/lms-init` deleted with plain `-d` because its local tip had advanced to the merge commit `460e5ed926`, which is genuinely an ancestor of `main`. The other four declined `-d`, exactly as the convention predicts for a squash merge, so each was deleted under the four-part proof gate rather than by reaching for `-D`: PR `MERGED`; `headRefOid` equal to the local tip; the merge commit contained in `origin/main`; and a paginated timeline `head_ref_deleted` event — firing two seconds after each `mergedAt` — with repository `delete_branch_on_merge: true` explaining every absent remote ref. No remote ref was resurrected or re-deleted. `git worktree prune` ran in both repositories. The seven `prod-*` and `stag-*` environment branches were confirmed present and left untouched. -->
+- [x] [AI] After every pre-archival gate, including the preliminary audit, passes, run
       `rtk date +%F`; record the output as `<completion-date>`. Do not hardcode or predict this value
       while authoring the plan.
-- [ ] [AI] Move the plan via
+      <!-- Implementation notes (ARCH-232): `rtk date +%F` returned **2026-09-09**, resolved at this point rather than predicted during authoring, and after every pre-archival gate had passed. That ordering matters here: the plan was authored on a different date, and the date the archival actually completed is the one the folder name must carry. -->
+- [x] [AI] Move the plan via
       `rtk git mv plans/in-progress/lms-init/ plans/done/<completion-date>__lms-init/` (the
       `evidence/` subfolder moves with it)
-- [ ] [AI] Update `plans/in-progress/README.md` — remove the plan entry
-- [ ] [AI] Update `plans/done/README.md` — add the plan entry using the same resolved completion date
-- [ ] [AI] Update any other READMEs that reference this plan
-- [ ] [AI] Commit: `chore(plans): move lms-init to done`
+      <!-- Implementation notes (ARCH-233): moved with `git mv` to `plans/done/2026-09-09__lms-init/`, exit 0. Git records the whole move as renames rather than delete-plus-add — `git status --short` shows `R` for all 40 paths — which preserves history for every file. All 33 evidence artifacts moved with the folder as the checkbox requires, along with `brd.md`, `prd.md`, `tech-docs.md`, `learnings.md`, `README.md`, and this file. -->
+- [x] [AI] Update `plans/in-progress/README.md` — remove the plan entry
+      <!-- Implementation notes (ARCH-234): the `lms-init` bullet is removed. It was the only entry under **Active Plans**, so deleting it would have left a bare heading with no content; the section now reads `_No plans are currently in progress._` rather than being left empty, which keeps the index honest and readable instead of looking truncated. -->
+- [x] [AI] Update `plans/done/README.md` — add the plan entry using the same resolved completion date
+      <!-- Implementation notes (ARCH-235): added at the top of **Completed Projects**, newest-first, matching the surrounding format. It uses the same resolved date as the folder — `2026-09-09` — so the index entry and the directory name cannot drift. The summary names the four delivery units and all six pull requests, and deliberately records the two things a reader most needs: the general shape this plan surfaced (teaching a validator to read a language is not the same as enabling it) and the one pre-push failure signature that was never reproduced and is recorded as open rather than retried into green. -->
+- [x] [AI] Update any other READMEs that reference this plan
+      <!-- Implementation notes (ARCH-236): a repository-wide grep for `plans/in-progress/lms-init` found no other README or document referencing the plan — the only external reference was the `plans/in-progress/README.md` entry removed above. The remaining matches are all inside this delivery record's own historical implementation notes, which correctly keep the path that was true when each step ran; rewriting them would falsify the record rather than reconcile an index. -->
+- [x] [AI] Commit: `chore(plans): move lms-init to done`
+      <!-- Implementation notes (ARCH-237): committed on `lms-init/knowledge-capture-and-archival` with the planned subject. The commit carries the archival move as renames, the two Phase 5 inline routings, the DU4 merge-protocol records that could only be written after the merge, and the backfilled DU2-077 tick. It deliberately excludes the public worktree removal, which happens after this pull request merges because the worktree hosts these files. -->
 
 ---
 
 ### Validation Checklist
 
-- [ ] Every code outcome has separate detailed RED, GREEN, and REFACTOR checkboxes.
-- [ ] All tests pass (`rtk npm run affected:test`, the existing guarded root alias).
-- [ ] Code meets quality standards.
-- [ ] Documentation and rules are reconciled.
-- [ ] Acceptance criteria are verified.
+- [x] Every code outcome has separate detailed RED, GREEN, and REFACTOR checkboxes.
+      <!-- Implementation notes (VAL-238): holds for every code outcome. DU1 carries RED(schema)/RED(unit) then four GREEN boxes then REFACTOR; DU2 carries RED/GREEN/REFACTOR for the binding extractor; DU3 carries three full cycles — port resolution, the two endpoints, and Actuator exposure — plus the two added mid-flight for the JaCoCo threshold gap; DU4 carries RED/GREEN/REFACTOR for the E2E project. Each RED was taken from a real failing run with its output saved under `evidence/`, not asserted. One RED was moved rather than faked: DU4-179's planned acceptance could not fail, because the static coverage validator never resolves a TypeScript import, so the RED was taken from `typecheck`, which does. -->
+- [x] All tests pass (`rtk npm run affected:test`, the existing guarded root alias).
+      <!-- Implementation notes (VAL-239): proven at a strictly wider scope than this checkbox asks. Rather than the affected subset, the whole workspace ran `lint,test:quick` with the cache disabled — 31 projects and 22 dependent tasks, `TERMINAL_EXIT=0`, zero cache reads — plus the E2E suite at 4/4 against a freshly built jar. CI agrees on the exact merged head: 17 checks passed, 0 failed. -->
+- [x] Code meets quality standards.
+      <!-- Implementation notes (VAL-240): every language gate passes on the merged head — Java, TypeScript, .NET, Go, lint, markdown, formatting-verify, governance, harness, and shell-docker-actions. `ose-lms-be` holds a 99% JaCoCo line-coverage floor that the project-target contract enforces rather than merely declares, and static behaviour coverage reports zero undefined, ambiguous, or unused bindings across the affected set. The only lint output remaining anywhere is preexisting `no-empty-pattern` warnings in other projects, none in code this plan wrote. -->
+- [x] Documentation and rules are reconciled.
+      <!-- Implementation notes (VAL-241): every index and registry the plan touched is reconciled and verified individually under P4-GATE-209, and both rule changes went through the full `rules-propagation` workflow in their own delivery units — DU1 across both repositories, DU2 in the public repository with the sibling obligation explicitly recorded as none. Phase 5 deliberately did not add unpropagated rule text: where a learning's right home was a rules surface, it was reported for a future propagation run instead of edited ad hoc, which is the reconciliation the convention actually asks for. -->
+- [x] Acceptance criteria are verified.
+      <!-- Implementation notes (VAL-242): all 15 canonical acceptance criteria are traced to an artifact and an executed proof in the ARCH-221 audit above — four HTTP criteria proven twice (Unit and real-HTTP E2E), three port criteria proven in Unit with a recorded and justified `@e2e-exempt` rationale, two doctor criteria in the rhino-cli corpus, three coverage-validator criteria, two formatter criteria proven by making the gates actually fire, and one CI-routing criterion proven by observed job selection. No criterion rests on a checked box alone. -->
