@@ -19,10 +19,11 @@ origin/main)` line, or a recorded `git merge --ff-only origin/main` / `git rebas
      unpushed commit, and every PR-mode branch meets the canonical merged-PR/head and
      remote-or-auto-deletion proof. A direct push needs its recorded `origin/main` commit and no
      open PR; any other missing/mismatched proof retains and escalates.
-   - When all checks pass, require complete cleanup of all three artifact classes without another
-     confirmation prompt: non-force removal of the reconciled runtime path, canonical cleanup of eligible
-     plan-created local/remote branches (using the bare-repository order exception where needed),
-     and purge of only plan-local regenerable build output.
+   - When all checks pass, require complete cleanup of all four artifact classes without another
+     confirmation prompt: dev container stacks this session started brought down first (they
+     bind-mount the worktree), non-force removal of the reconciled runtime path, canonical cleanup of
+     eligible plan-created local/remote branches (bare-repository order exception where needed), and
+     purge of only plan-local regenerable build output.
    - Require evidence that diagnostic artifacts were preserved and shared caches were not removed.
      Active, `partial`, and `fail` runs retain output needed for diagnosis or resumption.
    - On a failed check or removal, require retention, surfaced evidence, and escalation. `partial`
@@ -59,6 +60,11 @@ origin/main)` line, or a recorded `git merge --ff-only origin/main` / `git rebas
   escalation: **HIGH**
 - Eligible plan-local regenerable build output retained without a recorded exception: **HIGH**
 - Diagnostic evidence or a shared cache removed during plan cleanup: **HIGH**
+- Session-started dev container stack left running, another session's stack brought down, or a
+  machine-wide Docker prune issued during plan cleanup: **HIGH**
+- Any `.env*` file or other local secret-bearing file removed during plan cleanup: **CRITICAL**
+- Anything other than regenerable build output removed from the primary checkout's working tree, or
+  the default branch deleted locally or on `origin`: **HIGH**
 - Worktree force-removed, removed without identity-proven ownership, or removed despite a failed
   pre-removal check: **HIGH**
 - Worktree mode: no worktree evidence in git history: **MEDIUM**

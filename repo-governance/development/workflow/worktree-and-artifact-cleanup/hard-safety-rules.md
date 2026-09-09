@@ -24,10 +24,29 @@ These bound every action the gate takes.
   sweeper described in the [Build-Artifact Sweeper Convention](../../infra/build-artifact-sweeper.md),
   which may remove the same shared cache on its own schedule. A cache you must not delete can still
   disappear; that is the environment, not a rule violation by another actor.
+- **A dev container stack is shared state.** A Compose project name derives from its
+  `infra/dev/{app}` directory and every dev stack binds fixed host ports, so one stack is identified
+  machine-wide rather than per worktree — `docker compose down` reaches whatever session actually
+  started it. Bring down only a stack this session started, on positive evidence, and leave it
+  running when ownership cannot be proven. Machine-wide reclaim — `docker system prune`,
+  `image prune -a`, `volume prune` — stays out of the gate for the same reason `git gc` does. See
+  [Docker-Artifact Cleanup](./docker-artifact-cleanup.md).
 - **Preserve diagnostic evidence.** Logs, traces, crash dumps, coverage output used to explain a
   failure, and any other non-regenerable evidence stay in place or move to an explicitly recorded
   evidence location before cleanup. An active, `partial`, or `fail` run retains its artifacts; a
   desire to reclaim disk never outranks diagnosis or resumption.
+- **In the primary checkout, only build output is removable.** Every other removal targets a worktree the plan provisioned or a branch it created. The primary checkout holds the
+  repository's only copies of gitignored `.env*` files and local infrastructure state — a worktree
+  provisioned from `origin/main` carries none of them — so a deletion there is unrecoverable. Regenerable build output is the one exception: it is gitignored and rebuildable by a
+  documented command, and the ambient sweeper already removes it there. The exception excludes the shared
+  cargo `target/` and every other shared cache, and the default branch is never deleted.
+- **Never delete a secret-bearing file.** `.env`, `.env.local`, every other `.env*` file, and any
+  local credential or infrastructure-state file sit outside every artifact class this gate removes.
+  They are gitignored and unregenerable — nothing in the repository reconstructs one — so deleting
+  one is permanent loss of the operator's own configuration, not a reclaimed artifact. This holds
+  for a file inside a worktree the gate is removing, which is part of why removal is non-force:
+  `git worktree remove` refuses while untracked files remain, and that refusal is a retain signal,
+  never something to override.
 - **Cleanup is itself non-destructive to others.** The gate may not use any operation that a
   concurrent actor could be harmed by. It removes; it never force-removes, rewrites, or prunes shared
   state.

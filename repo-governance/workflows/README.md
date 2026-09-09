@@ -31,12 +31,12 @@ Workflows support two execution modes and standard inputs (`mode`, `max-concurre
 
 ## Workflow Directories
 
+- [Dev Artifact Clean-Up](./dev-artifact-clean-up.md) — Sequences a repository's teardown:
+  pre-removal checks, dev containers, worktree, branches, build output, then the `main` reconcile.
+  Use when a plan has finished with a repository worktree and its artifacts must come down.
 - [Gherkin Implementation Review](./gherkin-implementation-review.md) — Semantically inspects every
   applicable scenario adapter for real production invocation and independent evidence; static
   binding counts cannot replace it.
-- [Git Clean-Up](./git-clean-up.md) — Sequences the teardown pass for one repository:
-  pre-removal checks, worktree, branches, build output, then the local `main` reconcile. Use when a
-  plan has finished with a repository worktree and its Git artifacts must come down.
 - [API Workflows](api/README.md) — Orchestrated processes for live REST and GraphQL API quality validation and remediation. Use when routing to a workflow that exercises a running REST or GraphQL API against its contract and specs.
 - [AyoKoding Web Workflows](ayokoding-web/README.md) — Workflows for keeping AyoKoding learning content accurate, useful, and well structured. Use when routing to a workflow that validates a specific AyoKoding tutorial type's quality.
 - [CI Workflows](ci/README.md) — Workflows for checking that repository CI setup follows its documented standards. Use when routing to a workflow that validates or fixes CI/CD standards compliance.
