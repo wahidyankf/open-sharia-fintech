@@ -171,7 +171,7 @@ doctor:
   #
   # `java` came first: the LMS backend (`ose-lms-be`) needs a JDK, and it is the
   # tool that motivated `version-stream` in the first place. `go` and
-  # `golangci-lint` follow for the Islamic-tools backend lane. Every entry here is
+  # `golangci-lint` follow for the Roots backend lane. Every entry here is
   # a list item under a key both repositories already declare, so the cross-repo
   # schema-parity rule on top-level key sets is unaffected.
   extra-tools:
@@ -331,11 +331,11 @@ env-contract:
         # app config value — same treatment as PORT/HOSTNAME for the TS apps.
         - APP_ENV
 
-    - root: apps/islamic-be
+    - root: apps/roots-be
       kind: app
       lang: go
       allowlist: []
-      # No allowlist entries. ISLAMIC_BE_PORT is genuinely read -- cmd/islamic-be
+      # No allowlist entries. ROOTS_BE_PORT is genuinely read -- cmd/roots-be
       # passes it beside os.LookupEnv at the composition root -- so the scanner
       # sees it and no exemption is needed. APP_ENV is not listed because this
       # service does not consult a tier-selection variable.

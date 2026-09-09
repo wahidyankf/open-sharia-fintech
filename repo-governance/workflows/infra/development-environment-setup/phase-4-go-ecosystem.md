@@ -1,12 +1,12 @@
 ---
-description: "Phase 4: install Go for the islamic-be backend and gofmt, and Lua for stylua."
+description: "Phase 4: install Go for the roots-be backend and gofmt, and Lua for stylua."
 when_to_use: "Use when setting up or verifying the Go and Lua toolchains."
 ---
 
 # Phase 4: Go and Lua Toolchains (Sequential)
 
 The two toolchains in this phase are no longer alike. **Go is a build-and-test dependency**:
-`apps/islamic-be` is written in it, so Go is needed to build, test, and lint that project as well
+`apps/roots-be` is written in it, so Go is needed to build, test, and lint that project as well
 as to run `gofmt` over the `*.go` course corpus under `apps/ayokoding-www/content/**`. **Lua is
 formatter-only**: no project is written in it, and `stylua` exists solely for the `*.lua` corpus.
 The `format-gofmt` / `format-verify-gofmt` and `format-stylua` / `format-verify-stylua` gates in
@@ -26,7 +26,7 @@ brew install go
 # Linux — download from https://go.dev/dl/
 ```
 
-`apps/islamic-be/go.mod` pins the language version, and `doctor.extra-tools` carries the matching
+`apps/roots-be/go.mod` pins the language version, and `doctor.extra-tools` carries the matching
 `required-version` floor compared with `>=`. A release below that floor fails the doctor row even
 though `gofmt` alone would have run fine on it.
 

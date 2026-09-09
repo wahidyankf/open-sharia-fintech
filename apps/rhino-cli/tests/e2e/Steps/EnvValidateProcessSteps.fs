@@ -96,7 +96,7 @@ type EnvValidateProcessSteps() =
     // The Go counterpart of the wrapper scenario above. The fixture uses the
     // injected-reader form — the key handed to a pure resolver alongside
     // `os.LookupEnv` rather than passed to it — because that is the shape
-    // apps/islamic-be actually uses, and a direct `os.Getenv` fixture would not
+    // apps/roots-be actually uses, and a direct `os.Getenv` fixture would not
     // prove it crosses the published CLI boundary.
     [<Given>]
     member _.``a Go app surface that reads a declared key through an injected lookup``() =

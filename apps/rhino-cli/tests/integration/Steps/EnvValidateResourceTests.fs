@@ -274,7 +274,7 @@ let ``scanGoReads detects a direct os.LookupEnv read`` () =
 // The injected-reader form: the app hands a pure resolver both the reader and the
 // key, so the key never appears as an argument to os.LookupEnv itself. This is the
 // Go analogue of F#'s `readEnvironment "KEY"` wrapper, and is the shape
-// apps/islamic-be actually uses.
+// apps/roots-be actually uses.
 [<Fact>]
 let ``scanGoReads detects the injected-reader form where the key sits beside the reader`` () =
     let root = newTempDir ()

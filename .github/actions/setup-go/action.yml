@@ -1,14 +1,14 @@
 name: "Setup Go"
-description: "Install the Go toolchain pinned by apps/islamic-be/go.mod, with module and build caches and a pinned golangci-lint"
+description: "Install the Go toolchain pinned by apps/roots-be/go.mod, with module and build caches and a pinned golangci-lint"
 inputs:
   go-version-file:
     description: "go.mod whose `go` directive pins the toolchain"
     required: false
-    default: "apps/islamic-be/go.mod"
+    default: "apps/roots-be/go.mod"
   cache-dependency-path:
     description: "go.sum used as the module-cache key"
     required: false
-    default: "apps/islamic-be/go.sum"
+    default: "apps/roots-be/go.sum"
   golangci-lint-version:
     description: "golangci-lint version (used by the lint-golangci gate)"
     required: false
