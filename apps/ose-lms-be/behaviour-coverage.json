@@ -5,6 +5,10 @@
     "unit": {
       "bindings": ["src/test/java"],
       "driver": "build.gradle.kts"
+    },
+    "e2e": {
+      "bindings": ["../ose-lms-be-e2e/steps"],
+      "driver": "../ose-lms-be-e2e/playwright.config.ts"
     }
   }
 }

@@ -257,3 +257,111 @@
   `ayokoding-www:test:unit` so no single step emits a log long enough to be truncated; or state in
   the flaky-test convention what an executor should do when a failure is real but unobservable —
   today the honest answer is "record it and escalate", and the rule does not say so.
+
+## A deliberate wrong-toolchain reproduction can poison the next honest run
+
+- **What happened**: the Phase 3 gate `ose-lms-be:test:quick` failed on merged `main` with the same
+  eight `google-java-format(InvocationTargetException)` entries as the CI bug DU3-PP-172 had already
+  fixed — on a machine whose `java` is Temurin 25, with no Java source change, and after CI had gone
+  green. The cause was not a regression and not the original bug. It was residue from that bug's own
+  RED reproduction: proving the JDK diagnosis required running Spotless under JDK 17 with
+  `--rerun-tasks` against the real project directory, and that run leaves `spotlessJava` recorded as
+  `UP-TO-DATE`, so every later run on the correct JDK keeps failing without ever recomputing it.
+  Reproduced deliberately from a known-green state to prove causation rather than assert it: the
+  JDK-17 rerun fails, and the very next plain JDK-25 run fails identically. `--rerun-tasks` clears
+  it. A wrong-JDK run _without_ `--rerun-tasks` poisons nothing, because the task is simply skipped.
+- **Why it might generalize**: RED-first is mandatory here, and for toolchain defects the only
+  faithful RED is to run the real tool, in the real project directory, under the wrong toolchain.
+  That makes the reproduction itself a mutation of local build state, and incremental build systems
+  are designed to trust that state. The failure mode is nasty because it is _indistinguishable from
+  the original defect_ — same task, same count, same exception, same file list — so the natural
+  reading is "the fix did not work" or "it regressed", and the natural next move is to reopen a
+  correctly-closed investigation. Nothing warns the executor, and CI cannot corroborate either way
+  because runners start clean, which makes local and CI disagree for a reason unrelated to the code.
+  Candidate durable fixes to weigh at triage: state in the TDD/flaky-test guidance that a RED run
+  which deliberately mis-configures a toolchain must be followed by an explicit state-clearing step
+  before the next local gate is trusted; or have the Java `lint` target run Spotless in a way that
+  does not silently inherit a stale snapshot; or, most cheaply, record the recovery command next to
+  the formatter gate so the next person spends minutes rather than an hour. The generalization is
+  not Java-specific — any cached-by-default tool (Gradle, Nx, Bazel, `cargo`, `pytest` caches) can
+  carry a deliberately-broken run forward into an honest one.
+
+## A file ledger that omits a lockfile hides a build-breaking edit
+
+- **What happened**: the DU4 ledger reconciliation compared `git status --short` against the plan's
+  `tech-docs.md` §5 file tree and found two changed paths the tree never listed. One is cosmetic:
+  `apps/README.md` was edited, and the plan's own DU4-185 checkbox names that file explicitly, so
+  the checklist and the ledger disagreed with each other. The other is not cosmetic. The root
+  `package.json` declares `workspaces: ["apps/*", "libs/*"]`, so creating
+  `apps/ose-lms-be-e2e/package.json` makes a new workspace package, and `package-lock.json` must
+  gain entries for it — the `ose-be-e2e` sibling has exactly two. Immediately after the E2E project
+  was written, `grep -c '"apps/ose-lms-be-e2e"' package-lock.json` returned **0**. Nothing local
+  complained: `test:e2e`, `test:quick`, `typecheck`, and `lint` all passed, because they resolve
+  binaries from the already-populated root `node_modules`. CI does not work that way — it runs
+  `npm ci`, which reinstalls strictly from the lockfile and fails when the lockfile and the declared
+  workspaces disagree. `npm install` fixed it with 10 insertions and 0 deletions, all confined to
+  the new workspace, with no version drift anywhere else.
+- **Why it might generalize**: the ledger is written before execution, by reasoning about which
+  files a change _touches_. A lockfile is not touched by the author at all — it is touched by the
+  package manager, as a consequence of a file the author did write. That whole category is
+  systematically easy to omit: lockfiles, generated harness mirrors, coverage baselines, parity
+  manifests. The failure is quiet in the worst way, because every local gate passes and only the
+  clean-install path in CI disagrees, which means the feedback arrives one push later than it
+  should. Candidate durable fixes to weigh at triage: have the plans convention require that a
+  ledger entry for any new `apps/*` or `libs/*` `package.json` carry a paired `package-lock.json`
+  entry; or add a cheap pre-push check that fails when a workspace `package.json` exists with no
+  matching lockfile entry, which is a two-line `grep` and would have caught this before the branch
+  ever left the machine. The narrower lesson stands on its own: after adding a workspace package,
+  run the installer and diff the lockfile, rather than trusting that local gates going green means
+  the dependency graph is actually consistent.
+
+## A shed and a test failure are indistinguishable in the output that a human reads
+
+- **What happened**: the DU4 push was rejected seven times. Two of those rejections exited 75, and
+  the surrounding output read as a test failure — `NX Running target test:unit for project
+ayokoding-www failed`, then `Failed tasks: - ayokoding-www:test:unit`. It was not a test failure.
+  The pre-push surface is re-executed through an outer `./hippo run --class ephemeral` guard
+  declared in `repo-config.yml`, and HIPPO "admits, supervises, and **sheds**" work from host
+  resource evidence. Sampling `hippo status` every five seconds through a run caught the moment:
+  `state=critical reason=swap-critical availableGiB=7.68`, and the vitest child died right there
+  with nothing printed after `Coverage enabled with v8`. HIPPO killed the process, Nx saw a
+  non-zero child, and reported the task as failed. The only truthful token in the whole output was
+  the exit code — 75, EX_TEMPFAIL, which the repository already treats as an admission deferral
+  rather than a gate failure.
+- **Why it might generalize**: the reader of that output has to already know that 75 means
+  deferral, and has to notice it under many screens of Nx text that say the opposite. Everything
+  visually prominent — the red NX banner, the named project, the "Failed tasks" list — points at a
+  test defect that does not exist. The cost is not theoretical: it sent this delivery unit down a
+  flaky-test investigation, and the flaky-tests-are-defects rule makes that investigation
+  mandatory and expensive precisely so nobody retries past a real defect. Two candidate durable
+  fixes to weigh at triage. First, the `gate-surface-guards.pre-push` entry could pass
+  `--wait-for-admission`, so a shed waits for capacity instead of surfacing as a rejected push;
+  that is strictly more patient than the current behaviour, not weaker. Second, and independent of
+  the first, the gate runner could detect a 75 from its HIPPO wrapper and print one line saying the
+  run was shed and no gate verdict was reached — so the exit code's meaning appears where the
+  reader is already looking. Neither touches HIPPO itself, which is an independent upstream
+  repository and is never modified from here.
+
+## Recording a failure as unexplained is a result, not an omission
+
+- **What happened**: alongside the two shed rejections above, five more pre-push runs exited 1 —
+  a different code, with the host measured at `state=normal` immediately beforehand each time, and
+  always naming the same project. The shed explanation did not cover them, and an early draft of the
+  evidence file claimed it did. Ten forced executions failed to reproduce the signature: the target
+  alone under both HIPPO classes, four vitest suites concurrently, four sequentially in one Nx
+  invocation, and finally the entire pre-push surface re-run with `NX_SKIP_NX_CACHE=true` so that
+  every task genuinely executed rather than replaying a cached pass — 206 targets, zero failed
+  tasks, and the suspect project really running 52 files and 547 tests inside the gate. The
+  signature was written up as OPEN, with every measurement attached, and the branch was pushed only
+  after the forced uncached run proved the surface green.
+- **Why it might generalize**: there were two comfortable exits available and both were wrong. One
+  was to stretch the confirmed shed mechanism to cover the second signature, which would have left a
+  false explanation in the repository that the next investigator would trust. The other was to call
+  it flaky and re-run until it passed, which is the exact evasion the flaky-tests rule forbids. What
+  made the third option safe was evidence rather than optimism: a cached pass proves nothing about a
+  gate, so the run that justified pushing was the one that forced every task to execute. The
+  transferable habits are narrow and concrete — when a diagnosis explains some of the evidence,
+  say which part; prefer a forced uncached run over an incidental green one when the green is what
+  you are relying on; and treat "not reproduced across N specified attempts" as a finding worth
+  writing down, because the next person to meet the signature then starts from measurements instead
+  of from scratch.

@@ -1,0 +1,99 @@
+DU4 rule-16 API exploratory retest — ose-lms-be on http://localhost:8303
+
+Run by the `api-exploratory-tester` agent in delivery output mode against the live service, with
+specs/apps/ose/lms-be/contracts/openapi.yaml as contract ground truth. Every finding below was
+then RE-VERIFIED independently with curl before being recorded; the agent's report was not taken
+on trust.
+
+## Baseline — the contract-documented surface conforms
+
+  $ curl -s -i http://localhost:8303/api/v1/health
+  HTTP/1.1 200      Content-Type: application/json      {"status":"healthy"}
+
+  $ curl -s -i http://localhost:8303/api/v1/hello
+  HTTP/1.1 200      Content-Type: application/json      {"message":"Hello, world!"}
+
+  $ curl -s -i http://localhost:8303/actuator/health
+  HTTP/1.1 200      {"groups":["liveness","readiness"],"status":"UP"}
+
+Actuator exposure invariant: 24 further endpoint ids were enumerated (info, beans, mappings,
+metrics, loggers, threaddump, heapdump, shutdown, conditions, configprops, scheduledtasks, caches,
+auditevents, sessions, flyway, liquibase, httptrace, httpexchanges, integrationgraph, quartz, and
+bare /actuator among them). All returned 404. `management.endpoints.web.exposure.include: health`
+holds with no leakage, and `show-details: never` leaks no component detail.
+
+## AET-001 — three different error-envelope shapes, depending on which layer rejects
+
+Severity Minor, priority Low. Re-verified 2026-09-08.
+
+  $ curl -s -i http://localhost:8303/api/v1/does-not-exist
+  HTTP/1.1 404      Content-Type: application/json
+  {"timestamp":"...","status":404,"error":"Not Found","path":"/api/v1/does-not-exist"}
+
+  $ curl -s -i -X POST http://localhost:8303/api/v1/health
+  HTTP/1.1 405      Content-Type: application/json
+  {"timestamp":"...","status":405,"error":"Method Not Allowed","path":"/api/v1/health"}
+
+  $ curl -s -i "http://localhost:8303/api/v1/hello%2f..%2fhealth"
+  HTTP/1.1 400      Content-Type: text/html;charset=utf-8
+  <!doctype html><html lang="en"><head><title>HTTP Status 400 - Bad Request</title>...
+
+  $ curl -s -i http://localhost:8303/actuator/health/bogus-group
+  HTTP/1.1 404      (no Content-Type header, body length 0)
+
+The first two are the application's own envelope and agree with each other. The third is Tomcat's
+connector-level rejection of an encoded slash, raised before DispatcherServlet, so it never reaches
+the error controller. The fourth is Actuator's own 404 path.
+
+## AET-002 — OPTIONS `Allow` contradicts itself when the request is preflight-shaped
+
+Severity Trivial, priority Low. Re-verified 2026-09-08.
+
+  $ curl -s -i -X OPTIONS http://localhost:8303/api/v1/health
+  HTTP/1.1 200      Allow: GET,HEAD,OPTIONS
+
+  $ curl -s -i -X OPTIONS -H 'Origin: http://example.com' \
+      -H 'Access-Control-Request-Method: GET' http://localhost:8303/api/v1/health
+  HTTP/1.1 200      Allow: GET, HEAD, POST, PUT, DELETE, OPTIONS, PATCH
+
+  $ curl -s -o /dev/null -w '%{http_code}\n' -X PUT http://localhost:8303/api/v1/health
+  405
+
+So the preflight-shaped response advertises four methods that are not in fact supported.
+
+  $ curl -s -i -H 'Origin: http://evil.example.com' http://localhost:8303/api/v1/health \
+      | grep -ic access-control
+  0
+
+No Access-Control-* header is ever granted, so no spec-compliant browser acts on that Allow list.
+
+## Disposition of the two AET findings
+
+Neither is a defect in code this delivery unit wrote, and neither violates a contract clause.
+
+  * AET-001 cases 3 and 4 are emitted by the Tomcat connector and by Spring Boot Actuator, on
+    paths no documented client flow reaches. Making them match the application envelope needs a
+    custom ErrorReportValve plus an Actuator response wrapper. For case 3 the alternative "fix" is
+    to permit encoded slashes, which relaxes a security-positive Tomcat default and would be a
+    strictly worse outcome.
+  * AET-002 is stock Spring MVC preflight fallback, present in any Spring Boot app with no explicit
+    CORS configuration. It is unobservable to a real client because no CORS headers are granted.
+    Adding CORS configuration to a service with no declared browser consumer would be speculative.
+
+Both are recorded rather than silently dropped, and both remain open for the maintainer to
+overrule. The contract-documented surface — the part this plan promises — conforms exactly.
+
+## SG-001 — actuator liveness/readiness sub-groups are undocumented
+
+  $ curl -s http://localhost:8303/actuator/health/liveness    {"status":"UP"}
+  $ curl -s http://localhost:8303/actuator/health/readiness   {"status":"UP"}
+
+Correct and intended, matching application.yaml's own comment, but not covered by actuator.feature.
+Triaged out of scope: see the delivery record.
+
+## SG-002 — the 405 response was undocumented; FIXED in this delivery unit
+
+Both operations correctly reject every non-GET verb with 405 and the application's JSON envelope,
+but the contract documented only 200. Closed by adding schemas/error.yaml#ErrorResponse and a
+"405" response to paths/health.yaml and paths/hello.yaml. Verified: the bundle regenerates, the
+generator emits ErrorResponse.java, and ose-lms-be:test:quick exits 0 with the 99% floor intact.

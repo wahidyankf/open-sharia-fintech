@@ -23,6 +23,8 @@ components:
       $ref: "./schemas/health.yaml#/HealthResponse"
     HelloResponse:
       $ref: "./schemas/hello.yaml#/HelloResponse"
+    ErrorResponse:
+      $ref: "./schemas/error.yaml#/ErrorResponse"
 
 paths:
   # Health

@@ -1,0 +1,158 @@
+DU4 — why `git push` was rejected seven times, what was proven, and what was not
+================================================================================
+
+This file records a diagnosis that was PARTLY successful. One of the two failure
+signatures was traced to a confirmed mechanism; the other was never reproduced
+under instrumentation and is recorded here as open rather than explained. An
+earlier draft of this file claimed the confirmed mechanism accounted for both.
+It did not, and that claim is retracted.
+
+THE TWO SIGNATURES
+------------------
+Signature A — exit 75, twice:
+
+    NX   Running target test:unit for project ayokoding-www failed
+    Failed tasks:
+    - ayokoding-www:test:unit
+    husky - pre-push script failed (code 75)
+
+    ...and on the next run, naming a DIFFERENT project:
+    Failed tasks:
+    - organiclever-app-web:test:unit
+    TERMINAL_EXIT=75
+
+Signature B — exit 1, five consecutive times, always the same project, each
+time with the host measured at `state=normal` immediately beforehand:
+
+    attempt=1 precheck: state=normal reason=normal availableGiB=13.12
+    attempt=1 TERMINAL_EXIT=1
+    Failed tasks:
+    - organiclever-app-web:test:unit
+    (identical for attempts 2, 3, 4, 5)
+
+Both signatures printed the SAME thing from vitest, which is nothing:
+
+    > nx run organiclever-app-web:"test:unit"
+    Generated src/contexts/journal/.../index.generated.ts with 2 migration(s).
+     RUN  v4.1.0 /<public-worktree>/apps/organiclever-app-web
+          Coverage enabled with v8
+
+    Warning: command "... npx vitest run --coverage ..." exited with non-zero
+    status code
+
+No test file lines, no failing assertion, no summary, no threshold report. A
+vitest run that genuinely fails always prints the failing test; one that finds
+no files prints "No test files found". This printed neither. A successful run of
+the same target prints, in this position, two "Not implemented: navigation to
+another Document" lines and then "Test Files 52 passed (52)".
+
+SIGNATURE A: CONFIRMED
+----------------------
+The whole pre-push surface is re-executed once through an outer HIPPO
+admission, declared in `repo-config.yml`:
+
+    gate-surface-guards:
+      pre-push:
+        command: env
+        args: [OSE_HIPPO_PRE_PUSH_ACTIVE=1, ./hippo, run, --class, ephemeral,
+               --disk-path, ., --]
+
+HIPPO "admits, supervises, and SHEDS local development work from host resource
+evidence" (`hippo --help`). Shedding terminates the supervised child.
+
+A third run was instrumented: `hippo status` sampled every 5 seconds for the
+duration. The shed is visible at the moment the task died:
+
+    1788904870 state=critical reason=swap-critical profile=balanced
+               concurrency=11 swap=active availableGiB=7.68 cpu=70.8%
+    1788904878 state=warning  reason=memory-warning availableGiB=9.60
+    1788904884 state=warning  reason=memory-warning availableGiB=10.56
+
+    TERMINAL_EXIT=75
+    Failed tasks:
+    - organiclever-app-web:test:unit
+
+75 is EX_TEMPFAIL: HIPPO reported a DEFERRAL, not a gate failure. The Nx
+"Failed tasks" line above it is an artefact — HIPPO killed the vitest process
+mid-run, Nx saw a non-zero child, and reported the task failed. The exit code
+was the only truthful part of that output.
+
+The host was not actually starving. At the time of measurement:
+
+    hw.memsize        32.0 GB
+    vm.swapusage      total 12288.00M  used 10792.12M  free 1495.88M
+    total RSS of every node + java + dotnet process   3.07 GB
+    system-wide memory free                          37%
+
+macOS does not release swap once allocated, so 10.8 GiB is a high-water mark
+left by earlier heavy work across several worktrees, not live pressure. HIPPO
+reads `swap=active` at that usage and flips to `state=critical
+reason=swap-critical` while ~25 GiB of RAM is genuinely free.
+
+SIGNATURE B: NOT REPRODUCED, NOT EXPLAINED
+------------------------------------------
+Five consecutive exit-1 failures, all naming `organiclever-app-web:test:unit`,
+all with the host measured normal beforehand. Every attempt to reproduce it
+outside the failing window succeeded instead:
+
+  1. The target alone, cache skipped, under `--class transactional`:  exit 0
+     (52 files, 547 tests, All files 99.02% lines against a 99% floor)
+  2. The same, under `--class ephemeral` — the class the guard actually uses,
+     tested because that was the one environmental difference left:  exit 0
+  3. Four vitest suites at once by hand (ayokoding-www, organiclever-app-web,
+     ose-www, organiclever-www):  all four exit 0. Concurrency is not the
+     trigger, and the gate is serial anyway — `repo-config.yml` declares
+     `test-quick` with `args: { parallel: ["1"] }`.
+  4. Four suites sequentially in one Nx invocation, cache skipped:  exit 0
+  5. THE DECISIVE ONE — the entire pre-push surface re-run with
+     `NX_SKIP_NX_CACHE=true`, so every task really executed rather than
+     replaying a cached pass:
+
+         206 targets ran
+         0 occurrences of "Failed tasks"
+         organiclever-app-web really ran inside the gate:
+             Test Files  52 passed (52)
+             Tests       547 passed (547)
+         TERMINAL_EXIT=0
+
+  Nx's own task history records the contradiction directly — the same task
+  hash produced a failure and then a success minutes apart, which is why Nx
+  printed "Nx detected a flaky task":
+
+      id    project        target     status   code  duration
+      3546  ayokoding-www  test:unit  success  0     172s
+      3541  ayokoding-www  test:unit  failure  1      69s
+
+  (Read from .nx/workspace-data/*.db. The newest rows live in the -wal file
+  until SQLite checkpoints, so the .db must be copied together with its -wal
+  and -shm or the most recent history is invisible. Copying the .db alone shows
+  no failure row at all and invites exactly the wrong conclusion.)
+
+  Nothing crashed: `~/Library/Logs/DiagnosticReports` holds no `node` report
+  from the window, so the process did not segfault or abort. Nx does not cache
+  failures, so the failing runs' terminal output is not recoverable after the
+  fact — only what the console captured at the time, quoted above.
+
+DISPOSITION
+-----------
+No test was changed, because no test was shown to be broken, and the strongest
+available evidence — a full forced execution of every task on the surface — is
+green. Signature A is explained and needs no code change here: exit 75 is an
+admission deferral, and the repository's own rule already says to treat it as
+one. HIPPO is an independent upstream repository and is never modified from
+this one.
+
+Signature B is left OPEN and is flagged to the user rather than closed. What is
+not known: why five consecutive runs failed identically with a normal host and
+then became unreproducible across ten forced executions. Recording it as
+"resolved by the shed explanation" would have been wrong, and recording it as a
+flaky test to be retried would be the exact evasion the flaky-tests-are-defects
+rule forbids. It is written down instead, with every measurement above, so the
+next person to see the signature starts from evidence rather than from scratch.
+
+Two repository-local improvements are out of scope for this delivery unit and
+are carried in learnings.md instead:
+  - the pre-push guard could pass `--wait-for-admission`, so a shed waits for
+    capacity rather than surfacing as a rejected push;
+  - a shed and a real test failure are indistinguishable in the printed output,
+    which is what made this take seven runs to characterise at all.
