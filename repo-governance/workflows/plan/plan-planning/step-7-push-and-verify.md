@@ -24,9 +24,10 @@ worktree, eligible plan-created branches, and plan-local regenerable build outpu
    Resolve the declared repository-relative route from the Provisioned Worktree Identity against the
    selected repository root, reconcile the resulting runtime path with `git worktree list --porcelain`,
    inventory every plan-created/current branch and plan-local build output, and perform all mandatory
-   pre-removal checks. When they pass, immediately clean all three eligible classes: non-force
-   removal of the resolved worktree, safe cleanup of eligible plan-created
-   branches, and removal of only plan-local regenerable build output. Preserve diagnostics and shared
+   pre-removal checks. When they pass, immediately clean all four eligible classes: bringing down
+   dev container stacks this session started, non-force removal of the resolved worktree, safe
+   cleanup of eligible plan-created branches, and removal of only plan-local regenerable build
+   output. Preserve diagnostics and shared
    caches, retain and escalate active/ambiguous/partial/fail state, and delete verified remote branches
    before the worktree only when the bare-repository ordering exception applies. Never force-remove or
    prune shared state.

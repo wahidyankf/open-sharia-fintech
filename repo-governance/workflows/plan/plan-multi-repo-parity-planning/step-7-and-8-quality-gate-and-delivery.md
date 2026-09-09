@@ -53,8 +53,9 @@ docs(explanation): add <objective-slug> parity decisions rationale
   [Worktree and Artifact Cleanup](../../../development/workflow/worktree-and-artifact-cleanup.md)
   gate: resolve the exact recorded identity, prove every unit delivered plus clean/idle and
   no-unpushed state, preserve diagnostic evidence, purge only plan-local regenerable output, apply
-  the bare-repository remote-branch order exception when needed, remove the exact worktree
-  non-force, clean eligible plan-created branches, then run `git worktree prune`. Retain and
+  the bare-repository remote-branch order exception when needed, bring down dev container stacks
+  this session started, remove the exact worktree non-force, clean eligible plan-created branches,
+  then run `git worktree prune`. Retain and
   escalate on ambiguous or failed proof; never remove on `partial` or `fail` and never prune shared
   state.
 - `worktree-to-pr` (default): Push branch `plan/<objective-slug>` to each repo. Create or update a
